@@ -1,136 +1,423 @@
-Return-Path: <jeremy.linton@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-acpi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com,
-	hanjun.guo@linaro.org,
-	lorenzo.pieralisi@arm.com,
-	rjw@rjwysocki.net,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org,
+Return-Path: <hanetzer@startmail.com>
+From: "Marty E. Plummer" <hanetzer@startmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: xuejiancheng@hisilicon.com,
+	leo.yan@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	jhugo@codeaurora.org,
-	wangxiongfeng2@huawei.com,
-	Jonathan.Zhang@cavium.com,
-	ahs3@redhat.com,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2 4/6] Topology: Add cluster on die macros and arm64 decoding
-Date: Tue, 19 Sep 2017 13:47:49 -0500
-Message-Id: <20170919184751.25110-5-jeremy.linton@arm.com>
-In-Reply-To: <20170919184751.25110-1-jeremy.linton@arm.com>
-References: <20170919184751.25110-1-jeremy.linton@arm.com>
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	wenpan@hisilicon.com,
+	robh+dt@kernel.org,
+	linux@armlinux.org.uk,
+	sboyd@codeaurora.org,
+	xuwei5@hisilicon.com,
+	zhangfei.gao@linaro.org,
+	"Marty E. Plummer" <hanetzer@startmail.com>
+Subject: [RFC PATCH 3/3] arm: dts: add Hi3521A dts
+Date: Thu, 14 Sep 2017 22:56:36 -0500
+Message-Id: <20170915035636.9903-4-hanetzer@startmail.com>
+In-Reply-To: <20170915035636.9903-1-hanetzer@startmail.com>
+References: <20170915035636.9903-1-hanetzer@startmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Many modern machines have cluster on die (COD) non-uniformity
-as well as the traditional multi-socket architectures. Reusing
-the multi-socket or NUMA on die concepts for these (as arm64 does)
-breaks down when presented with actual multi-socket/COD machines.
-Similar, problems are also visible on some x86 machines so it
-seems appropriate to start abstracting and making these topologies
-visible.
+Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
+marketed under the name Samsung SDR-B74301N
 
-To start, a topology_cod_id() macro is added which defaults to returning
-the same information as topology_physical_package_id(). Moving forward
-we can start to spit out the differences.
-
-For arm64, an additional package_id is added to the cpu_topology array.
-Initially this will be equal to the cluster_id as well.
-
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
 ---
- arch/arm64/include/asm/topology.h | 4 +++-
- arch/arm64/kernel/topology.c      | 8 ++++++--
- include/linux/topology.h          | 3 +++
- 3 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/Makefile              |   2 +
+ arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  52 ++++++
+ arch/arm/boot/dts/hi3521a.dtsi          | 310 ++++++++++++++++++++++++++++++++
+ 3 files changed, 364 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+ create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
 
-diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
-index 8b57339823e9..bd7517960d39 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -7,13 +7,15 @@ struct cpu_topology {
- 	int thread_id;
- 	int core_id;
- 	int cluster_id;
-+	int package_id;
- 	cpumask_t thread_sibling;
- 	cpumask_t core_sibling;
- };
- 
- extern struct cpu_topology cpu_topology[NR_CPUS];
- 
--#define topology_physical_package_id(cpu)	(cpu_topology[cpu].cluster_id)
-+#define topology_physical_package_id(cpu)	(cpu_topology[cpu].package_id)
-+#define topology_cod_id(cpu)		(cpu_topology[cpu].cluster_id)
- #define topology_core_id(cpu)		(cpu_topology[cpu].core_id)
- #define topology_core_cpumask(cpu)	(&cpu_topology[cpu].core_sibling)
- #define topology_sibling_cpumask(cpu)	(&cpu_topology[cpu].thread_sibling)
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 8d48b233e6ce..9147e5b6326d 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -67,6 +67,8 @@ static int __init parse_core(struct device_node *core, int cluster_id,
- 			leaf = false;
- 			cpu = get_cpu_for_node(t);
- 			if (cpu >= 0) {
-+				/* maintain DT cluster == package behavior */
-+				cpu_topology[cpu].package_id = cluster_id;
- 				cpu_topology[cpu].cluster_id = cluster_id;
- 				cpu_topology[cpu].core_id = core_id;
- 				cpu_topology[cpu].thread_id = i;
-@@ -88,7 +90,7 @@ static int __init parse_core(struct device_node *core, int cluster_id,
- 			       core);
- 			return -EINVAL;
- 		}
--
-+		cpu_topology[cpu].package_id = cluster_id;
- 		cpu_topology[cpu].cluster_id = cluster_id;
- 		cpu_topology[cpu].core_id = core_id;
- 	} else if (leaf) {
-@@ -228,7 +230,7 @@ static void update_siblings_masks(unsigned int cpuid)
- 	for_each_possible_cpu(cpu) {
- 		cpu_topo = &cpu_topology[cpu];
- 
--		if (cpuid_topo->cluster_id != cpu_topo->cluster_id)
-+		if (cpuid_topo->package_id != cpu_topo->package_id)
- 			continue;
- 
- 		cpumask_set_cpu(cpuid, &cpu_topo->core_sibling);
-@@ -273,6 +275,7 @@ void store_cpu_topology(unsigned int cpuid)
- 					 MPIDR_AFFINITY_LEVEL(mpidr, 2) << 8 |
- 					 MPIDR_AFFINITY_LEVEL(mpidr, 3) << 16;
- 	}
-+	cpuid_topo->package_id = cpuid_topo->cluster_id;
- 
- 	pr_debug("CPU%u: cluster %d core %d thread %d mpidr %#016llx\n",
- 		 cpuid, cpuid_topo->cluster_id, cpuid_topo->core_id,
-@@ -292,6 +295,7 @@ static void __init reset_cpu_topology(void)
- 		cpu_topo->thread_id = -1;
- 		cpu_topo->core_id = 0;
- 		cpu_topo->cluster_id = -1;
-+		cpu_topo->package_id = -1;
- 
- 		cpumask_clear(&cpu_topo->core_sibling);
- 		cpumask_set_cpu(cpu, &cpu_topo->core_sibling);
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index cb0775e1ee4b..4660749a7303 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -184,6 +184,9 @@ static inline int cpu_to_mem(int cpu)
- #ifndef topology_physical_package_id
- #define topology_physical_package_id(cpu)	((void)(cpu), -1)
- #endif
-+#ifndef topology_cod_id				/* cluster on die */
-+#define topology_cod_id(cpu)			topology_physical_package_id(cpu)
-+#endif
- #ifndef topology_core_id
- #define topology_core_id(cpu)			((void)(cpu), 0)
- #endif
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index faf46abaa4a2..e7b9b5dde20f 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
+ 	gemini-sq201.dtb \
+ 	gemini-wbd111.dtb \
+ 	gemini-wbd222.dtb
++dtb-$(CONFIG_ARCH_HI3521A) += \
++	hi3521a-rs-dm290e.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+new file mode 100644
+index 000000000000..b32c8392c93f
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++/dts-v1/;
++#include "hi3521a.dtsi"
++
++/ {
++	model = "RaySharp RS-DM-290E DVR Board";
++	compatible = "hisilicon,hi3521a";
++
++	aliases {
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &uart2;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0xf00000>;
++	};
++};
++
++&hi_sfc {
++	status = "okay";
++	spi-nor@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <104000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
+new file mode 100644
+index 000000000000..069b34627073
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3521a.dtsi
+@@ -0,0 +1,310 @@
++/*
++ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <dt-bindings/clock/hi3521a-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
++
++	hi_sfc: spi-nor-controller@10000000 {
++		compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
++		reg-names = "control", "memory";
++		clocks = <&crg HI3521A_FMC_CLK>;
++		status = "disabled";
++	};
++
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,pl390";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
++
++	clk_3m: clk_3m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <3000000>;
++	};
++
++	crg: clock-reset-controller@12040000 {
++		compatible = "hisilicon,hi3521a-crg";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		reg = <0x12040000 0x10000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		dmac: dma@10060000 {
++			compatible = "arm,pl080", "arm,primcell";
++			reg = <0x10060000 0x1000>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disabled";
++		};
++
++		dual_timer1: timer@12010000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12010000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-name = "apb_pclk";
++			status = "disabled";
++		};
++
++		dual_timer2: timer@12020000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12020000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-name = "apb_pclk";
++			status = "disabled";
++		};
++
++		dual_timer3: timer@12030000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12030000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-name = "apb_pclk";
++			status = "disabled";
++		};
++
++		wdt0: watchdog@12070000 {
++			compatible = "arm,sp805", "arm,primecell";
++			arm,primecell-periphid = <0x00141805>;
++			reg = <0x12070000 0x1000>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++		};
++
++		uart0: serial@12080000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12080000 0x1000>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3521A_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disabled";
++		};
++
++		uart1: serial@12090000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12090000 0x1000>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3521A_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disabled";
++		};
++
++		uart2: serial@120a0000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x120a0000 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3521A_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disabled";
++		};
++
++		gpio0: gpio@12150000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12150000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio1: gpio@12160000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12160000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio2: gpio@12170000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12170000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio3: gpio@12180000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12180000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio4: gpio@12190000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12190000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio5: gpio@121a0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121a0000 0x1000>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio6: gpio@121b0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121b0000 0x1000>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio7: gpio@121c0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121c0000 0x1000>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio8: gpio@121d0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121d0000 0x1000>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio9: gpio@121e0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121e0000 0x1000>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio10: gpio@121f0000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x121f0000 0x1000>;
++			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio11: gpio@12200000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12200000 0x1000>;
++			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio12: gpio@12210000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12210000 0x1000>;
++			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++
++		gpio13: gpio@12220000 {
++			compatible = "arm,pl061", "arm,primecell";
++			reg = <0x12220000 0x1000>;
++			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			status = "disabled";
++		};
++	};
++};
 -- 
-2.13.5
+2.14.1
