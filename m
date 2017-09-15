@@ -1,67 +1,107 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 12:02:11 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 10/13] drm/sun4i: hdmi: Add A31 specific DDC register
- definitions
-Message-ID: <20170926100211.io7hczwst4ziu7bn@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-11-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="spyxpvhgdslimos3"
-In-Reply-To: <20170926065919.24446-11-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:60457 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751797AbdIODDt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2017 23:03:49 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <59BB4314.7070405@samsung.com>
+Date: Fri, 15 Sep 2017 12:03:48 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos4: Enable VPLL and EPLL clocks for
+ suspend/resume cycle
+In-reply-to: <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170914143749eucas1p1f3206ff81fabc945ffc79cbddb45afc9@eucas1p1.samsung.com>
+        <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Marek,
 
---spyxpvhgdslimos3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2017년 09월 14일 23:37, Marek Szyprowski wrote:
+> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
+> VPLL and EPPL clocks were always enabled because the enable bit was never
+> touched. Those clocks have to be enabled during suspend/resume cycle,
+> because otherwise board fails to enter sleep mode. This patch enables them
+> unconditionally before entering system suspend state. System restore
+> function will set them to the previous state saved in the register cache
+> done before that unconditional enable.
+> 
+> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
+> CC: stable@vger.kernel.org # v4.13
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index e40b77583c47..d2fa36bef7d1 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -294,6 +294,15 @@ enum exynos4_plls {
+>  #define PLL_ENABLED	(1 << 31)
+>  #define PLL_LOCKED	(1 << 29)
+>  
+> +static void exynos4_clk_enable_pll(u32 reg)
+> +{
+> +	u32 pll_con;
+> +
+> +	pll_con = readl(reg_base + reg);
+> +	pll_con |= PLL_ENABLED;
+> +	writel(pll_con, reg_base + reg);
 
-On Tue, Sep 26, 2017 at 06:59:16AM +0000, Chen-Yu Tsai wrote:
-> The DDC block for the HDMI controller is different on the A31.
->=20
-> This patch adds the register definitions.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The original PLL3xx enable function waits for lock time
+after enabling the PLL in drivers/clk/samsung/clk-pll.c as following:
+But, this patch just sets the bit of PLL_ENABLED without waiting.
+You need to wait the lock time.
 
-Maxime
+Or if possible, you better to use the pll enable function
+in order to remove the duplicate code.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+static int samsung_pll3xxx_enable(struct clk_hw *hw)
+{
+       struct samsung_clk_pll *pll = to_clk_pll(hw);
+       u32 tmp;
 
---spyxpvhgdslimos3
-Content-Type: application/pgp-signature; name="signature.asc"
+       tmp = readl_relaxed(pll->con_reg);
+       tmp |= BIT(pll->enable_offs);
+       writel_relaxed(tmp, pll->con_reg);
 
------BEGIN PGP SIGNATURE-----
+       /* wait lock time */
+       do {
+               cpu_relax();
+               tmp = readl_relaxed(pll->con_reg);
+       } while (!(tmp & BIT(pll->lock_offs)));
 
-iQIcBAEBAgAGBQJZyiWjAAoJEBx+YmzsjxAgRY8QAJOz61vq8OwNYeG8EwFQfBVy
-1aLgHym1HThf1KMtIYcsIhEya2qgOiboxGobsTcYvBU4ML19cUxKByfrLDLGs7fA
-Mhr2ppo6Lwzzn/s5uYP2GPAMbq7YaBBNnVqOhrUury0ztz6n4JsDKZt0llWPWA+r
-Wv0ItvVvj/AM4ermDlz3dVlLZG3Y527HbVvQ4WRbK7V48EKjTS2dKvVznYu+T3X9
-So1utaZErJFaAhVA37GratseiSBhMtW8qgoamdYlpJUmpaoWtPbMA1/40olHIhlg
-Ter5skfV8TI87+g5rXVNezDBwyw0D9BSem4E21ek84FAbNV9OrgfRBTFEOpFZoRb
-ca2166nKn5uFezmTB+dt9dyhdL7T3D8dvOaIkm5GTn2yz9ky569/bpfeKPClbDVS
-XyRNCVyiriQ0TtBqByr/EPf5+ctnWVEmczBdzB38DBfWkrpzRPCeEWKgmLmR0tXb
-DE29j7fHjh5P+6sI5UoxYefhrRd0quEXR7FrlXobNJ3fqSQubf156N6V3VY2zY0H
-5QAQ88KkBxPcwLOtFEfN4bRePJN8c3JF+dTicgAOdoC7pp/MQwrGt6Af9hN7vTbr
-WwJQNNywlPf4RJZzUbklc0hU6sqoqo/+wHPz6OftkT6FfjItQtdb48ZEYqRnIAVw
-NpP84rjiPE1vXi69NIO3
-=sqQD
------END PGP SIGNATURE-----
+       return 0;
+}
 
---spyxpvhgdslimos3--
+> +}
+> +
+>  static void exynos4_clk_wait_for_pll(u32 reg)
+>  {
+>  	u32 pll_con;
+> @@ -315,6 +324,9 @@ static int exynos4_clk_suspend(void)
+>  	samsung_clk_save(reg_base, exynos4_save_pll,
+>  				ARRAY_SIZE(exynos4_clk_pll_regs));
+>  
+> +	exynos4_clk_enable_pll(EPLL_CON0);
+> +	exynos4_clk_enable_pll(VPLL_CON0);
+> +
+>  	if (exynos4_soc == EXYNOS4210) {
+>  		samsung_clk_save(reg_base, exynos4_save_soc,
+>  					ARRAY_SIZE(exynos4210_clk_save));
+> 
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
