@@ -1,72 +1,43 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 08/10] clk: fix CLK_SET_RATE_GATE with clock rate protection
-Date: Sun, 24 Sep 2017 22:00:28 +0200
-Message-Id: <20170924200030.6227-9-jbrunet@baylibre.com>
-In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: pxa: fix building on older compilers
+Date: Fri, 15 Sep 2017 21:53:47 +0200
+Message-Id: <20170915195402.1469159-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
-clock tree
+gcc-4.4 got confused by the inline assembler statement:
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+drivers/clk/pxa/clk-pxa.c: In function 'pxa2xx_core_turbo_switch':
+drivers/clk/pxa/clk-pxa.c:152: error: expected string literal before ')' token
+
+This removes the extraneous ':' to let all compilers parse the
+driver correctly.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/clk.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/clk/pxa/clk-pxa.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4693d5e20327..f990ef127a83 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -552,6 +552,9 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
- 		return;
+diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+index 74f64c3c4290..b80dc9d5855c 100644
+--- a/drivers/clk/pxa/clk-pxa.c
++++ b/drivers/clk/pxa/clk-pxa.c
+@@ -147,9 +147,7 @@ void pxa2xx_core_turbo_switch(bool on)
+ 	"	b	3f\n"
+ 	"2:	b	1b\n"
+ 	"3:	nop\n"
+-		: "=&r" (unused)
+-		: "r" (clkcfg)
+-		: );
++		: "=&r" (unused) : "r" (clkcfg));
  
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_unprotect(core);
-+
- 	if (--core->prepare_count > 0)
- 		return;
- 
-@@ -622,6 +625,16 @@ static int clk_core_prepare(struct clk_core *core)
- 
- 	core->prepare_count++;
- 
-+	/*
-+	 * CLK_SET_RATE_GATE is a special case of clock protection
-+	 * Instead of a consumer claiming exclusive rate control, it is
-+	 * actually the provider which prevents any consumer from making any
-+	 * operation which could result in a rate change or rate glitch while
-+	 * the clock is prepared.
-+	 */
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_protect(core);
-+
- 	return 0;
+ 	local_irq_restore(flags);
  }
- 
-@@ -1703,9 +1716,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (clk_core_rate_is_protected(core))
- 		return -EBUSY;
- 
--	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
--		return -EBUSY;
--
- 	/* calculate new rates and get the topmost changed clock */
- 	top = clk_calc_new_rates(core, req_rate);
- 	if (!top)
 -- 
-2.13.5
+2.9.0
