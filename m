@@ -1,76 +1,59 @@
-Return-Path: <shawnguo@kernel.org>
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	linux-clk@vger.kernel.org,
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH] clk: hi3798cv200: correct parent mux clock for 'clk_sdio0_ciu'
-Date: Wed, 27 Sep 2017 11:59:40 -0700
-Message-Id: <1506538780-15513-1-git-send-email-shawnguo@kernel.org>
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v2 6/9] ehci-atmel: Power down during suspend is normal
+Date: Fri, 15 Sep 2017 16:04:08 +0200
+Message-Id: <20170915140411.31716-7-romain.izard.pro@gmail.com>
+In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shawn Guo <shawn.guo@linaro.org>
+When an Atmel SoC is suspended with the backup mode, the USB bus will be
+powered down. As this is expected, do not return an error to the driver
+core when ehci_resume detects it.
 
-Other than 'mmc_mux', 'clk_sdio0_ciu' uses a different parent mux clock.
-Let's add this mux clock as 'sdio0_mux', and correct the parent of
-'clk_sdio0_ciu' to be it.
-
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 ---
- drivers/clk/hisilicon/crg-hi3798cv200.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/usb/host/ehci-atmel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index ed8bb5f7507f..8478948e858e 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -47,6 +47,8 @@
- #define HI3798CV200_FIXED_12M	81
- #define HI3798CV200_FIXED_48M	82
- #define HI3798CV200_FIXED_60M	83
-+#define HI3798CV200_FIXED_166P5M	84
-+#define HI3798CV200_SDIO0_MUX	85
+diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+index 7440722bfbf0..2a8b9bdc0e57 100644
+--- a/drivers/usb/host/ehci-atmel.c
++++ b/drivers/usb/host/ehci-atmel.c
+@@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
+ 	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
  
- #define HI3798CV200_CRG_NR_CLKS		128
+ 	atmel_start_clock(atmel_ehci);
+-	return ehci_resume(hcd, false);
++	ehci_resume(hcd, false);
++	return 0;
+ }
  
-@@ -63,6 +65,7 @@
- 	{ HI3798CV200_FIXED_75M, "75m", NULL, 0, 75000000, },
- 	{ HI3798CV200_FIXED_100M, "100m", NULL, 0, 100000000, },
- 	{ HI3798CV200_FIXED_150M, "150m", NULL, 0, 150000000, },
-+	{ HI3798CV200_FIXED_166P5M, "166p5m", NULL, 0, 165000000, },
- 	{ HI3798CV200_FIXED_200M, "200m", NULL, 0, 200000000, },
- 	{ HI3798CV200_FIXED_250M, "250m", NULL, 0, 250000000, },
- };
-@@ -75,12 +78,19 @@
- 		"100m", "25m"};
- static u32 comphy1_mux_table[] = {2, 3};
- 
-+static const char *const sdio_mux_p[] = {
-+		"100m", "50m", "150m", "166p5m" };
-+static u32 sdio_mux_table[] = {0, 1, 2, 3};
-+
- static struct hisi_mux_clock hi3798cv200_mux_clks[] = {
- 	{ HI3798CV200_MMC_MUX, "mmc_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
- 		CLK_SET_RATE_PARENT, 0xa0, 8, 3, 0, mmc_mux_table, },
- 	{ HI3798CV200_COMBPHY1_MUX, "combphy1_mux",
- 		comphy1_mux_p, ARRAY_SIZE(comphy1_mux_p),
- 		CLK_SET_RATE_PARENT, 0x188, 10, 2, 0, comphy1_mux_table, },
-+	{ HI3798CV200_SDIO0_MUX, "sdio0_mux", sdio_mux_p,
-+		ARRAY_SIZE(sdio_mux_p), CLK_SET_RATE_PARENT,
-+		0x9c, 8, 2, 0, sdio_mux_table, },
- };
- 
- static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
-@@ -104,7 +114,7 @@
- 	/* SDIO */
- 	{ HISTB_SDIO0_BIU_CLK, "clk_sdio0_biu", "200m",
- 			CLK_SET_RATE_PARENT, 0x9c, 0, 0, },
--	{ HISTB_SDIO0_CIU_CLK, "clk_sdio0_ciu", "mmc_mux",
-+	{ HISTB_SDIO0_CIU_CLK, "clk_sdio0_ciu", "sdio0_mux",
- 		CLK_SET_RATE_PARENT, 0x9c, 1, 0, },
- 	/* EMMC */
- 	{ HISTB_MMC_BIU_CLK, "clk_mmc_biu", "200m",
+ #ifdef CONFIG_OF
 -- 
-1.9.1
+2.11.0
