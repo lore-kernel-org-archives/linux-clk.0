@@ -1,181 +1,113 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v1 07/10] iio:adc:at91-sama5d2: Support backup mode
-To: Romain Izard <romain.izard.pro@gmail.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu
-	<rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
-	<thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
-	<stern@rowland.harvard.edu>, Eugen Hristev <Eugen.Hristev@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-8-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <760d7c25-afa4-2242-a278-e0989bca5478@microchip.com>
-Date: Fri, 8 Sep 2017 18:03:23 +0200
+Return-Path: <subhransu.s.prusty@intel.com>
+Date: Fri, 15 Sep 2017 18:12:31 +0530
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, harshapriya.n@intel.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+	patches.audio@intel.com, tiwai@suse.de, broonie@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH 4/6] ASoC: Intel: Skylake: Register clock
+ device and ops
+Message-ID: <20170915124220.GA12523@subhransu-desktop>
+References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+ <1504794565-19168-5-git-send-email-subhransu.s.prusty@intel.com>
+ <6e21a038-96d4-b58d-b1c7-ba5a5f32e7a8@linux.intel.com>
+ <20170908033135.GB19877@subhransu-desktop>
+ <20170908050120.GC19877@subhransu-desktop>
+ <77992acc-bf07-0c59-1429-74c5162dbd0e@linux.intel.com>
+ <20170915124016.GA12487@subhransu-desktop>
 MIME-Version: 1.0
-In-Reply-To: <20170908153604.28383-8-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170915124016.GA12487@subhransu-desktop>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/2017 at 17:36, Romain Izard wrote:
-> Support the backup mode for platform suspend, by restoring the hardware
-> registers on resume.
+On Fri, Sep 15, 2017 at 06:10:20PM +0530, Subhransu S. Prusty wrote:
+> On Fri, Sep 08, 2017 at 08:41:54AM -0500, Pierre-Louis Bossart wrote:
+> > On 9/8/17 12:01 AM, Subhransu S. Prusty wrote:
+> > >On Fri, Sep 08, 2017 at 09:01:36AM +0530, Subhransu S. Prusty wrote:
+> > >>On Thu, Sep 07, 2017 at 08:48:38PM -0500, Pierre-Louis Bossart wrote:
+> > >>>
+> > >>>
+> > >>>On 09/07/2017 09:29 AM, Subhransu S. Prusty wrote:
+> > >>>>From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+> > >>>>
+> > >>>>Create a platform device and register the clock ops. Clock
+> > >>>>prepare/unprepare are used to enable/disable the clock as the IPC will be
+> > >>>>sent in non-atomic context. The clk set_dma_control IPC structures are
+> > >>>>populated during the set_rate callback and IPC is sent to enable the clock
+> > >>>>during prepare callback.
+> > >>>>
+> > >>>[snip]
+> > >>>>+
+> > >>>>+static int skl_clk_prepare(void *pvt_data, u32 id, unsigned long rate)
+> > >>>>+{
+> > >>>>+	struct skl *skl = pvt_data;
+> > >>>>+	struct skl_clk_rate_cfg_table *rcfg;
+> > >>>>+	int vbus_id, clk_type, ret;
+> > >>>>+
+> > >>>>+	clk_type = skl_get_clk_type(id);
+> > >>>>+	if (clk_type < 0)
+> > >>>>+		return -EINVAL;
+> > >>>>+
+> > >>>>+	ret = skl_get_vbus_id(id, clk_type);
+> > >>>>+	if (ret < 0)
+> > >>>>+		return ret;
+> > >>>>+
+> > >>>>+	vbus_id = ret;
+> > >>>>+
+> > >>>>+	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
+> > >>>>+	if (!rcfg)
+> > >>>>+		return -EINVAL;
+> > >>>>+
+> > >>>>+	ret = skl_send_clk_dma_control(skl, rcfg, vbus_id, clk_type, true);
+> > >>>>+
+> > >>>>+	return ret;
+> > >>>>+}
+> > >>>In this patchset, the clocks are configured from the machine driver,
+> > >>>and the enable/disable conveniently placed in
+> > >>>platform_clock_control() or hw_params(), where the DSP is most
+> > >>>likely active.
+> > >>>If you expose a clock, codec driver implementers may want to use
+> > >>>them directly instead of relying on a machine driver. A number of
+> > >>>existing codecs do use the clk API, so there could be a case where a
+> > >>>codec driver calls devm_clk_get and clk_prepare_enable(), without
+> > >>>any ability to know what state the DSP is in.
+> > >>>What happens then if the DSP is in suspend? Does this force it back
+> > >>>to D0? Does the virtual clock driver return an error? Or are you
+> > >>>using the clk API with some restrictions on when the clock can be
+> > >>>configured?
+> > >>
+> > >>No, clk enable will not force the DSP to D0. So if the DSP is not active,
+> > >>the IPC will timeout and error will be propagated to the caller.
+> > >
+> > >Or may be it makes sense to enable the runtime pm for clk driver so that it
+> > >can activate the DSP. I will check this.
+> > 
+> > I was thinking of another case: we should not make the assumption
+> > that there is always a platform clock control and a hw_params
+> > callback, e.g. when an external component seen as a dummy codec
+> > needs the mclk/bitclock at all times to drive a second-level set of
+> > audio devices. In those cases the machine driver will get/enable the
+> > clock at startup and it needs to remain on no matter what the DSP
+> > state is. That's probably another case for disabling runtime-pm for
+> > as long as the machine driver wants the clock.
 > 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-
-Romain,
-
-Thanks for your series: definitively some of your patches need to be
-integrated (I've merged some of them in our current linux-4.9-at91 branch.
-However, It seems that some of your additions have already been
-submitted and/or accepted by maintainers.
-For instance an equivalent of this one seems already in Linus' tree:
-500a2eefd6b16ba141a8fb777ea6962d2eb65e3b ("iio: adc: at91-sama5d2_adc:
-add support for suspend/resume functionality").
-
-Please tell us if it fits what your observed on this driver (or others).
-
-Regards,
-
-> ---
->  drivers/iio/adc/at91-sama5d2_adc.c | 71 ++++++++++++++++++++++++++++++++------
->  1 file changed, 61 insertions(+), 10 deletions(-)
+> With the series "[PATCH v9 0/5] Add runtime PM support for clocks (on Exynos
+> SoC example)", runtime support is added in the common clock framework. This
+> is expected to be merged to clk-next after -rc1 drop. 
 > 
-> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-> index e10dca3ed74b..f9718c863363 100644
-> --- a/drivers/iio/adc/at91-sama5d2_adc.c
-> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
-> @@ -200,6 +200,7 @@ struct at91_adc_state {
->  	u32				conversion_value;
->  	struct at91_adc_soc_info	soc_info;
->  	wait_queue_head_t		wq_data_available;
-> +	unsigned int			current_rate;
->  	/*
->  	 * lock to prevent concurrent 'single conversion' requests through
->  	 * sysfs.
-> @@ -269,6 +270,8 @@ static void at91_adc_setup_samp_freq(struct at91_adc_state *st, unsigned freq)
->  	mr |= AT91_SAMA5D2_MR_PRESCAL(prescal);
->  	at91_adc_writel(st, AT91_SAMA5D2_MR, mr);
->  
-> +	st->current_rate = freq;
-> +
->  	dev_dbg(&indio_dev->dev, "freq: %u, startup: %u, prescal: %u\n",
->  		freq, startup, prescal);
->  }
-> @@ -375,7 +378,9 @@ static int at91_adc_write_raw(struct iio_dev *indio_dev,
->  	    val > st->soc_info.max_sample_rate)
->  		return -EINVAL;
->  
-> +	mutex_lock(&st->lock);
->  	at91_adc_setup_samp_freq(st, val);
-> +	mutex_unlock(&st->lock);
->  
->  	return 0;
->  }
-> @@ -386,6 +391,21 @@ static const struct iio_info at91_adc_info = {
->  	.driver_module = THIS_MODULE,
->  };
->  
-> +static void at91_adc_init_hw(struct at91_adc_state *st, unsigned int freq)
-> +{
-> +	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
-> +	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
-> +	/*
-> +	 * Transfer field must be set to 2 according to the datasheet and
-> +	 * allows different analog settings for each channel.
-> +	 */
-> +	at91_adc_writel(st, AT91_SAMA5D2_MR,
-> +			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
-> +
-> +	at91_adc_setup_samp_freq(st, freq);
-> +
-> +}
-> +
->  static int at91_adc_probe(struct platform_device *pdev)
->  {
->  	struct iio_dev *indio_dev;
-> @@ -482,16 +502,7 @@ static int at91_adc_probe(struct platform_device *pdev)
->  		goto vref_disable;
->  	}
->  
-> -	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
-> -	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
-> -	/*
-> -	 * Transfer field must be set to 2 according to the datasheet and
-> -	 * allows different analog settings for each channel.
-> -	 */
-> -	at91_adc_writel(st, AT91_SAMA5D2_MR,
-> -			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
-> -
-> -	at91_adc_setup_samp_freq(st, st->soc_info.min_sample_rate);
-> +	at91_adc_init_hw(st, st->soc_info.min_sample_rate);
->  
->  	ret = clk_prepare_enable(st->per_clk);
->  	if (ret)
-> @@ -541,12 +552,52 @@ static const struct of_device_id at91_adc_dt_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, at91_adc_dt_match);
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static int at91_adc_suspend(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct at91_adc_state *st = iio_priv(indio_dev);
-> +
-> +	clk_disable_unprepare(st->per_clk);
-> +
-> +	regulator_disable(st->vref);
-> +	regulator_disable(st->reg);
-> +
-> +	return 0;
-> +}
-> +
-> +static int at91_adc_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct at91_adc_state *st = iio_priv(indio_dev);
-> +	int err;
-> +
-> +	err = regulator_enable(st->reg);
-> +	if (err)
-> +		return err;
-> +
-> +	err = regulator_enable(st->vref);
-> +	if (err)
-> +		return err;
-> +
-> +	at91_adc_init_hw(st, st->current_rate);
-> +
-> +	err = clk_prepare_enable(st->per_clk);
-> +	return err;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(at91_adc_pm_ops, at91_adc_suspend, at91_adc_resume);
-> +
->  static struct platform_driver at91_adc_driver = {
->  	.probe = at91_adc_probe,
->  	.remove = at91_adc_remove,
->  	.driver = {
->  		.name = "at91-sama5d2_adc",
->  		.of_match_table = at91_adc_dt_match,
-> +		.pm = &at91_adc_pm_ops,
->  	},
->  };
->  module_platform_driver(at91_adc_driver)
+> Reference: http://www.spinics.net/lists/linux-clk/msg19755.html
 > 
+> So marking the parent clock with skylake device will help keep the DSP
+> active on call to enable clock.
 
+Will fix this in v2.
+
+> 
+> Regards,
+> Subhransu
+> 
+> -- 
 
 -- 
-Nicolas Ferre
