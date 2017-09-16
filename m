@@ -1,107 +1,68 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
-Date: Thu, 28 Sep 2017 16:14:57 -0700
-Message-Id: <20170928231502.27069-6-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Fri, 15 Sep 2017 22:26:28 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
+	thierry.reding@gmail.com, sboyd@codeaurora.org,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20170916052626.GA3704@Asurada>
+References: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
+ <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the Broadcom Hurricane 2 SoC clock controller. We can
-re-use the existing iProc clock library since the SoC's architecture is
-largely the same as its predecessors. For now, we just initialize the
-iProc ARM PLL.
+On Fri, Sep 15, 2017 at 12:31:45PM +0300, Peter De Schrijver wrote:
+> Apart from the typo in the commit message (preemption rather than preemtion):
 
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/clk/bcm/Kconfig   |  9 +++++++++
- drivers/clk/bcm/Makefile  |  1 +
- drivers/clk/bcm/clk-hr2.c | 27 +++++++++++++++++++++++++++
- 3 files changed, 37 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-hr2.c
+Sent a v2 to correct it. And included your Acked-by.
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 1d9187df167b..4c4bd85f707c 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -30,6 +30,15 @@ config CLK_BCM_CYGNUS
- 	help
- 	  Enable common clock framework support for the Broadcom Cygnus SoC
- 
-+config CLK_BCM_HR2
-+	bool "Broadcom Hurricane 2 clock support"
-+	depends on ARCH_BCM_HR2 || COMPILE_TEST
-+	select COMMON_CLK_IPROC
-+	default ARCH_BCM_HR2
-+	help
-+	  Enable common clock framework support for the Broadcom Hurricane 2
-+	  SoC
-+
- config CLK_BCM_NSP
- 	bool "Broadcom Northstar/Northstar Plus clock support"
- 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index a0c14fa4aa1e..755144195541 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
- obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835-aux.o
- obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
- obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
-+obj-$(CONFIG_CLK_BCM_HR2)	+= clk-hr2.o
- obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
- obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
- obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
-diff --git a/drivers/clk/bcm/clk-hr2.c b/drivers/clk/bcm/clk-hr2.c
-new file mode 100644
-index 000000000000..f7c5b7379475
---- /dev/null
-+++ b/drivers/clk/bcm/clk-hr2.c
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2017 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#include "clk-iproc.h"
-+
-+static void __init hr2_armpll_init(struct device_node *node)
-+{
-+	iproc_armpll_setup(node);
-+}
-+CLK_OF_DECLARE(hr2_armpll, "brcm,hr2-armpll", hr2_armpll_init);
--- 
-2.14.1
+Thanks
+
+> 
+> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> On Thu, Sep 14, 2017 at 06:36:14PM -0700, Nicolin Chen wrote:
+> > Below is the call trace of tegra210_init_pllu() function:
+> >   start_kernel()
+> >   -> time_init()
+> >   --> of_clk_init()
+> >   ---> tegra210_clock_init()
+> >   ----> tegra210_pll_init()
+> >   -----> tegra210_init_pllu()
+> > 
+> > Because the preemtion is disabled in the start_kernel before calling
+> > time_init, tegra210_init_pllu is actually in an atomic context while
+> > it includes a readl_relaxed_poll_timeout that might sleep.
+> > 
+> > So this patch just changes this readl_relaxed_poll_timeout() to its
+> > atomic version.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra210.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 0b9789a..ea695c4 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
+> >  	reg |= PLL_ENABLE;
+> >  	writel(reg, clk_base + PLLU_BASE);
+> >  
+> > -	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
+> > -				   reg & PLL_BASE_LOCK, 2, 1000);
+> > +	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+> > +					  reg & PLL_BASE_LOCK, 2, 1000);
+> >  	if (!(reg & PLL_BASE_LOCK)) {
+> >  		pr_err("Timed out waiting for PLL_U to lock\n");
+> >  		return -ETIMEDOUT;
+> > -- 
+> > 2.1.4
+> > 
