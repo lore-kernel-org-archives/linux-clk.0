@@ -1,182 +1,85 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard@mobile-devices.fr>,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 3/8] clk: at91: pmc: Support backup for programmable clocks
-Date: Thu, 28 Sep 2017 11:46:22 +0200
-Message-Id: <20170928094627.31017-4-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <sergej@taudac.com>
+From: Sergej Sawazki <sergej@taudac.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com
+Cc: linux@armlinux.org.uk,
+	linux-clk@vger.kernel.org,
+	ce3a@gmx.de,
+	Sergej Sawazki <sergej@taudac.com>,
+	Rabeeh Khoury <rabeeh@solid-run.com>
+Subject: [PATCH v2 2/2] clk: si5351: Apply PLL soft reset before enabling the outputs
+Date: Sat, 16 Sep 2017 13:44:42 +0200
+Message-Id: <1505562282-9111-3-git-send-email-sergej@taudac.com>
+In-Reply-To: <1505562282-9111-1-git-send-email-sergej@taudac.com>
+References: <1505562282-9111-1-git-send-email-sergej@taudac.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Romain Izard <romain.izard@mobile-devices.fr>
+The "Si5351A/B/C Data Sheet" states to apply a PLL soft reset before
+enabling the output clocks [1]. This is required to get a deterministic
+phase relationship between the output clocks.
 
-When an AT91 programmable clock is declared in the device tree, register
-it into the Power Management Controller driver. On entering suspend mode,
-the driver saves and restores the Programmable Clock registers to support
-the backup mode for these clocks.
+Without resetting the PLL, the phase relationship between the clocks is
+unpredictable. Fix this by resetting the PLL in si5351_clkout_prepare().
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+References:
+[1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+    Figure 12 ("I2C Programming Procedure")
+
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
 ---
-Changes in v2:
-* register PCKs on clock startup
+ drivers/clk/clk-si5351.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Changes in v3:
-* improve comments on hanling 0 in pmc_register_id and pmc_register_pck
-* declare local variables earlier for checkpatch
-
- drivers/clk/at91/clk-programmable.c |  2 ++
- drivers/clk/at91/pmc.c              | 35 +++++++++++++++++++++++++++++++++++
- drivers/clk/at91/pmc.h              |  2 ++
- 3 files changed, 39 insertions(+)
-
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 85a449cf61e3..0e6aab1252fc 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -204,6 +204,8 @@ at91_clk_register_programmable(struct regmap *regmap,
- 	if (ret) {
- 		kfree(prog);
- 		hw = ERR_PTR(ret);
-+	} else {
-+		pmc_register_pck(id);
- 	}
- 
- 	return hw;
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 07dc2861ad3f..1fa27f4ea538 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -22,6 +22,7 @@
- #include "pmc.h"
- 
- #define PMC_MAX_IDS 128
-+#define PMC_MAX_PCKS 8
- 
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
-@@ -50,6 +51,7 @@ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
- static struct regmap *pmcreg;
- 
- static u8 registered_ids[PMC_MAX_IDS];
-+static u8 registered_pcks[PMC_MAX_PCKS];
- 
- static struct
- {
-@@ -66,8 +68,13 @@ static struct
- 	u32 pcr[PMC_MAX_IDS];
- 	u32 audio_pll0;
- 	u32 audio_pll1;
-+	u32 pckr[PMC_MAX_PCKS];
- } pmc_cache;
- 
-+/*
-+ * As Peripheral ID 0 is invalid on AT91 chips, the identifier is stored
-+ * without alteration in the table, and 0 is for unused clocks.
-+ */
- void pmc_register_id(u8 id)
- {
- 	int i;
-@@ -82,9 +89,28 @@ void pmc_register_id(u8 id)
- 	}
- }
- 
-+/*
-+ * As Programmable Clock 0 is valid on AT91 chips, there is an offset
-+ * of 1 between the stored value and the real clock ID.
-+ */
-+void pmc_register_pck(u8 pck)
-+{
-+	int i;
-+
-+	for (i = 0; i < PMC_MAX_PCKS; i++) {
-+		if (registered_pcks[i] == 0) {
-+			registered_pcks[i] = pck + 1;
-+			break;
-+		}
-+		if (registered_pcks[i] == (pck + 1))
-+			break;
-+	}
-+}
-+
- static int pmc_suspend(void)
- {
- 	int i;
-+	u8 num;
- 
- 	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
- 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-@@ -103,6 +129,10 @@ static int pmc_suspend(void)
- 		regmap_read(pmcreg, AT91_PMC_PCR,
- 			    &pmc_cache.pcr[registered_ids[i]]);
- 	}
-+	for (i = 0; registered_pcks[i]; i++) {
-+		num = registered_pcks[i] - 1;
-+		regmap_read(pmcreg, AT91_PMC_PCKR(num), &pmc_cache.pckr[num]);
-+	}
- 
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index aba2895..9c4cc5d 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -903,13 +903,42 @@ static int _si5351_clkout_set_disable_state(
  	return 0;
  }
-@@ -119,6 +149,7 @@ static bool pmc_ready(unsigned int mask)
- static void pmc_resume(void)
- {
- 	int i;
-+	u8 num;
- 	u32 tmp;
- 	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
  
-@@ -143,6 +174,10 @@ static void pmc_resume(void)
- 			     pmc_cache.pcr[registered_ids[i]] |
- 			     AT91_PMC_PCR_CMD);
- 	}
-+	for (i = 0; registered_pcks[i]; i++) {
-+		num = registered_pcks[i] - 1;
-+		regmap_write(pmcreg, AT91_PMC_PCKR(num), pmc_cache.pckr[num]);
++void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
++{
++	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
++
++	switch (val & SI5351_CLK_INPUT_MASK) {
++	case SI5351_CLK_INPUT_XTAL:
++	case SI5351_CLK_INPUT_CLKIN:
++		return;  /* pll not used, no need to reset */
 +	}
++
++	si5351_reg_write(drvdata, SI5351_PLL_RESET,
++			 val & SI5351_CLK_PLL_SELECT ? SI5351_PLL_RESET_B :
++						       SI5351_PLL_RESET_A);
++
++	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
++		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
++		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
++}
++
+ static int si5351_clkout_prepare(struct clk_hw *hw)
+ {
+ 	struct si5351_hw_data *hwdata =
+ 		container_of(hw, struct si5351_hw_data, hw);
++	struct si5351_platform_data *pdata =
++		hwdata->drvdata->client->dev.platform_data;
  
- 	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
- 		mask |= AT91_PMC_LOCKU;
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 858e8ef7e8db..d22b1fa9ecdc 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -31,8 +31,10 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 
- #ifdef CONFIG_PM
- void pmc_register_id(u8 id);
-+void pmc_register_pck(u8 pck);
- #else
- static inline void pmc_register_id(u8 id) {}
-+static inline void pmc_register_pck(u8 pck) {}
- #endif
- 
- #endif /* __PMC_H_ */
+ 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
+ 			SI5351_CLK_POWERDOWN, 0);
++
++	/*
++	 * Do a pll soft reset on the parent pll -- needed to get a
++	 * deterministic phase relationship between the output clocks.
++	 */
++	if (pdata->clkout[hwdata->num].pll_reset)
++		_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
++
+ 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
+ 			(1 << hwdata->num), 0);
+ 	return 0;
 -- 
-2.11.0
+2.7.4
