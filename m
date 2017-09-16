@@ -1,42 +1,45 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?=
- <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] clk: rockchip: Delete an error message for a failed memory
- allocation in rockchip_clk_register_cpuclk()
-Message-ID: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 11:44:30 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sergej@taudac.com>
+From: Sergej Sawazki <sergej@taudac.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com
+Cc: linux@armlinux.org.uk,
+	linux-clk@vger.kernel.org,
+	ce3a@gmx.de,
+	Sergej Sawazki <sergej@taudac.com>
+Subject: [PATCH v2 0/2] clk: si5351: PLL reset fixes
+Date: Sat, 16 Sep 2017 13:44:40 +0200
+Message-Id: <1505562282-9111-1-git-send-email-sergej@taudac.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 11:38:17 +0200
+The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
+to get a deterministic phase offset relationship between the output clocks,
+it is necessary to reset the PLLs is certain scenarios.
 
-Omit an extra message for a memory allocation failure in this function.
+This patch-set:
+ * adds a dt-property for enabling/disabling the PLL reset
+ * adds resetting the PLL before enabling the outputs
 
-This issue was detected by using the Coccinelle software.
+Changes in v2 (thanks to Sebastian Hesselbarth for reviewing v1):
+ * removed fix for commit 6dc669a22c77 ("clk: si5351: Add PLL soft reset"),
+   it is already fixed by commit 73c950da6ec5 ("clk: si5351: fix PLL reset")
+ * adding the PLL reset dt-property is now the first patch, to avoid changing
+   the driver behavior for current users
+ * the debug message is squashed it into the patch adding the PLL reset function
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/rockchip/clk-cpu.c | 2 --
- 1 file changed, 2 deletions(-)
+Based on clk-next.
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 0e09684d43a5..32c19c0f1e14 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -322,8 +322,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 					     sizeof(*rates) * nrates,
- 					     GFP_KERNEL);
- 		if (!cpuclk->rate_table) {
--			pr_err("%s: could not allocate memory for cpuclk rates\n",
--			       __func__);
- 			ret = -ENOMEM;
- 			goto unregister_notifier;
- 		}
+Best regards,
+Sergej
+
+Sergej Sawazki (2):
+  clk: si5351: Add DT property to enable PLL reset
+  clk: si5351: Apply PLL soft reset before enabling the outputs
+
+ .../devicetree/bindings/clock/silabs,si5351.txt    |  1 +
+ drivers/clk/clk-si5351.c                           | 32 ++++++++++++++++++++++
+ include/linux/platform_data/si5351.h               |  2 ++
+ 3 files changed, 35 insertions(+)
+
 -- 
-2.14.1
+2.7.4
