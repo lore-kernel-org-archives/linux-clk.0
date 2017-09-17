@@ -1,60 +1,54 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+Return-Path: <hanetzer@startmail.com>
+From: "Marty E. Plummer" <hanetzer@startmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	xuejiancheng@hisilicon.com,
+	leo.yan@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 2/4] clk: tegra: Add peripheral clock registration helper
-Date: Fri,  1 Sep 2017 16:53:41 +0200
-Message-Id: <20170901145343.19890-2-thierry.reding@gmail.com>
-In-Reply-To: <20170901145343.19890-1-thierry.reding@gmail.com>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	wenpan@hisilicon.com,
+	robh+dt@kernel.org,
+	linux@armlinux.org.uk,
+	sboyd@codeaurora.org,
+	xuwei5@hisilicon.com,
+	zhangfei.gao@linaro.org,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	"Marty E. Plummer" <hanetzer@startmail.com>
+Subject: [RFC RESEND 2/3] arm: hisi: enable Hi3521A SoC
+Date: Sun, 17 Sep 2017 03:23:26 -0500
+Message-Id: <20170917082327.10058-3-hanetzer@startmail.com>
+In-Reply-To: <20170917082327.10058-1-hanetzer@startmail.com>
+References: <20170917082327.10058-1-hanetzer@startmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+Enable Hisilicon Hi3521A/Hi3520DCV300 SoC. This SoC series includes
+hardware mutlimedia codec cores, commonly used in consumer cctv/dvr
+security systems and ipcameras. The arm core is a Cortex A7.
 
-There is a common pattern that registers individual peripheral clocks
-from an initialization table. Add a common implementation to remove the
-duplication from various call sites.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
 ---
- drivers/clk/tegra/clk-periph.c | 8 ++++++++
- drivers/clk/tegra/clk.h        | 3 +++
- 2 files changed, 11 insertions(+)
+ arch/arm/mach-hisi/Kconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index cf80831de79d..9475c00b7cf9 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -203,3 +203,11 @@ struct clk *tegra_clk_register_periph_nodiv(const char *name,
- 	return _tegra_clk_register_periph(name, parent_names, num_parents,
- 			periph, clk_base, offset, CLK_SET_RATE_PARENT);
- }
-+
-+struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-+					   struct tegra_periph_init_data *init)
-+{
-+	return _tegra_clk_register_periph(init->name, init->p.parent_names,
-+					  init->num_parents, &init->periph,
-+					  clk_base, init->offset, init->flags);
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 872f1189ad7f..3b2763df51c2 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -662,6 +662,9 @@ struct tegra_periph_init_data {
- 			_clk_num, _gate_flags, _clk_id,\
- 			NULL, 0, NULL)
+diff --git a/arch/arm/mach-hisi/Kconfig b/arch/arm/mach-hisi/Kconfig
+index 65a048fa08ec..26755414f862 100644
+--- a/arch/arm/mach-hisi/Kconfig
++++ b/arch/arm/mach-hisi/Kconfig
+@@ -12,6 +12,12 @@ if ARCH_HISI
  
-+struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-+					   struct tegra_periph_init_data *init);
+ menu "Hisilicon platform type"
+ 
++config ARCH_HI3521A
++	bool "Hisilicon Hi3521A/Hi3520DCV300 family"
++	depends on ARCH_MULTI_V7
++	help
++	  Support for Hisilicon Hi3521A/Hi3520DCV300 SoC family
 +
- /**
-  * struct clk_super_mux - super clock
-  *
+ config ARCH_HI3xxx
+ 	bool "Hisilicon Hi36xx family"
+ 	depends on ARCH_MULTI_V7
 -- 
-2.13.3
+2.14.1
