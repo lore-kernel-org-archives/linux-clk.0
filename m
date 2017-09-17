@@ -1,70 +1,324 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:32:47 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 02/13] clk: sunxi-ng: sun6i: Rename HDMI DDC clock to
- avoid name collision
-Message-ID: <20170926093247.blcu52dzluqawzb5@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-3-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4hidansbmszwo3hv"
-In-Reply-To: <20170926065919.24446-3-wens@csie.org>
+Return-Path: <hanetzer@startmail.com>
+From: "Marty E. Plummer" <hanetzer@startmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	xuejiancheng@hisilicon.com,
+	leo.yan@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	wenpan@hisilicon.com,
+	robh+dt@kernel.org,
+	linux@armlinux.org.uk,
+	sboyd@codeaurora.org,
+	xuwei5@hisilicon.com,
+	zhangfei.gao@linaro.org,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	"Marty E. Plummer" <hanetzer@startmail.com>
+Subject: [RFC RESEND 1/3] clk: hisilicon: add CRG driver Hi3521A SoC
+Date: Sun, 17 Sep 2017 03:23:25 -0500
+Message-Id: <20170917082327.10058-2-hanetzer@startmail.com>
+In-Reply-To: <20170917082327.10058-1-hanetzer@startmail.com>
+References: <20170917082327.10058-1-hanetzer@startmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
+generates clock and reset signals used by other module blocks on SoC.
 
---4hidansbmszwo3hv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+---
+ drivers/clk/hisilicon/Kconfig             |   7 +
+ drivers/clk/hisilicon/Makefile            |   1 +
+ drivers/clk/hisilicon/crg-hi3521a.c       | 207 ++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/hi3521a-clock.h |  34 +++++
+ 4 files changed, 249 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3521a.c
+ create mode 100644 include/dt-bindings/clock/hi3521a-clock.h
 
-On Tue, Sep 26, 2017 at 06:59:08AM +0000, Chen-Yu Tsai wrote:
-> The HDMI DDC clock found in the CCU is the parent of the actual DDC
-> clock within the HDMI controller. That clock is also named "hdmi-ddc".
->=20
-> Rename the one in the CCU to "hdmi-ddc-parent". This makes more sense
-> than renaming the one in the HDMI controller to something else.
->=20
-> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-I'd rather stick to the datasheet names. What about "DDC" ?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---4hidansbmszwo3hv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyh6/AAoJEBx+YmzsjxAgQO4QALB420PC2F/Onf1As80O01IL
-yXOMB+atYGkwwejwNmW8i9Fk4H0riwhYvKDh+IbkVH8rptheAYzqSvukOsZRQEXY
-BQ9a85em8k3XT7EVvDXqEFqT0p3QIeZI19PTVPEeK2t7Lk56eWDvW9D0I0S3MgI7
-O0Pc+k+FXnvMVAiKnD+J/s6NK5Djbvpi26KULaBX3kbsSP5LJZUvKFXqm7sMk88X
-KgrMvesu7KMB9Q2vrcCjjYR3BEa9BbDfdxNT7E7MSCQ1Q8MYJwNdQQBQ5R91Ywc5
-544NSlG6c3haUMHi3UYpFt55T3EiaYPksCQE8VjMjso4nxs2CS2kjwi/9VK8bkD4
-y2/YeBg4F27JOxIxZ4AHuN7ZzdRT8F4HZgwTUh5Wt2qAuWa5sPuEanjlCjBc5x6w
-HXmfIASaIeS5iT300X13iYieDGxXhOfxzF2zqEkZj2/T0NfZ9VEmw9jfivQbpgBr
-Vu9qntEsS2VgHk70KiW3iqMbS3xDDKeYCRbluXJSNaCk9lpjI4n6jQvTIUjXQZSp
-SavBIuXXm9PXAv8mmzGd7E9lLEE/1RyYGDTb+1Lxrpwl+Zkw5Mgg+aGcdz1JdJU3
-CfajykZduus90ASKCOzCO6PjC/HTidEI2wZ2Hr0SrIRkmG5VRB4CyR68iNVuveoi
-nKLjYY+xp7OCvlCgaJ3d
-=UQ9Q
------END PGP SIGNATURE-----
-
---4hidansbmszwo3hv--
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 7098bfd32b1b..d93e3180a04f 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -14,6 +14,13 @@ config COMMON_CLK_HI3519
+ 	help
+ 	  Build the clock driver for hi3519.
+ 
++config COMMON_CLK_HI3521A
++	bool "Hi3521A/Hi3520DV300 Clock Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	default ARCH_HISI
++	help
++	  Build the clock driver for hi3521a/hi3520dv300
++
+ config COMMON_CLK_HI3660
+ 	bool "Hi3660 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 1e4c3ddbad84..46f8d619c923 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
+ obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
++obj-$(CONFIG_COMMON_CLK_HI3521A)+= crg-hi3521a.o
+ obj-$(CONFIG_COMMON_CLK_HI3660) += clk-hi3660.o
+ obj-$(CONFIG_COMMON_CLK_HI3798CV200)	+= crg-hi3798cv200.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+diff --git a/drivers/clk/hisilicon/crg-hi3521a.c b/drivers/clk/hisilicon/crg-hi3521a.c
+new file mode 100644
+index 000000000000..8c03ce2694c1
+--- /dev/null
++++ b/drivers/clk/hisilicon/crg-hi3521a.c
+@@ -0,0 +1,207 @@
++/*
++ * Copyright (C) 2017 Marty E. Plummer <hanetzer@startmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <dt-bindings/clock/hi3521a-clock.h>
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include "clk.h"
++#include "reset.h"
++
++#define HI3521A_INNER_CLK_OFFSET	64
++#define HI3521A_FIXED_2M		65
++#define HI3521A_FIXED_24M		66
++#define HI3521A_FIXED_50M		67
++#define HI3521A_FIXED_83M		68
++#define HI3521A_FIXED_100M		69
++#define HI3521A_FIXED_150M		70
++#define HI3521A_FMC_MUX			71
++#define HI3521A_UART_MUX		72
++
++#define HI3521A_NR_CLKS			128
++
++struct hi3521a_crg_data {
++	struct hisi_clock_data *clk_data;
++	struct hisi_reset_controller *rstc;
++};
++
++static const struct hisi_fixed_rate_clock hi3521a_fixed_rate_clks[] = {
++	{ HI3521A_FIXED_2M,     "2m", NULL, 0,   2000000, },
++	{ HI3521A_FIXED_24M,   "24m", NULL, 0,  24000000, },
++	{ HI3521A_FIXED_50M,   "50m", NULL, 0,  50000000, },
++	{ HI3521A_FIXED_83M,   "83m", NULL, 0,  83000000, },
++	{ HI3521A_FIXED_100M, "100m", NULL, 0, 100000000, },
++	{ HI3521A_FIXED_150M, "150m", NULL, 0, 150000000, },
++};
++
++static const char *const uart_mux_p[] = { "50m", "2m", "24m", };
++static const char *const fmc_mux_p[] = { "24m", "83m", "150m", };
++
++static u32 uart_mux_table[] = {0, 1, 2};
++static u32 fmc_mux_table[] = {0, 1, 2};
++
++static const struct hisi_mux_clock hi3521a_mux_clks[] = {
++	{ HI3521A_UART_MUX, "uart_mux", uart_mux_p, ARRAY_SIZE(uart_mux_p),
++		CLK_SET_RATE_PARENT, 0x84, 18, 2, 0, uart_mux_table, },
++	{ HI3521A_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
++		CLK_SET_RATE_PARENT, 0x74, 2, 2, 0, fmc_mux_table, },
++};
++
++static const struct hisi_gate_clock hi3521a_gate_clks[] = {
++	{ HI3521A_FMC_CLK, "clk_fmc", "fmc_mux", CLK_SET_RATE_PARENT,
++		0x74, 1, 0, },
++	{ HI3521A_UART0_CLK, "clk_uart0", "uart_mux", CLK_SET_RATE_PARENT,
++		0x84, 15, 0, },
++	{ HI3521A_UART1_CLK, "clk_uart1", "uart_mux", CLK_SET_RATE_PARENT,
++		0x84, 16, 0, },
++	{ HI3521A_UART2_CLK, "clk_uart2", "uart_mux", CLK_SET_RATE_PARENT,
++		0x84, 17, 0, },
++	{ HI3521A_SPI0_CLK, "clk_spi0", "50m", CLK_SET_RATE_PARENT,
++		0x84, 13, 0, },
++	/* { HI3521A_ETH_CLK, "clk_eth", NULL, */
++	/* 	0, 0x78, 1, 0, }, */
++	/* { HI3521A_ETH_MACIF_CLK, "clk_eth_macif", NULL, */
++	/* 	0, 0x78, 3, 0 }, */
++};
++
++static struct hisi_clock_data *hi3521a_clk_register(struct platform_device *pdev)
++{
++	struct hisi_clock_data *clk_data;
++	int ret;
++
++	clk_data = hisi_clk_alloc(pdev, HI3521A_NR_CLKS);
++	if (!clk_data)
++		return ERR_PTR(-ENOMEM);
++
++	ret = hisi_clk_register_fixed_rate(hi3521a_fixed_rate_clks,
++				     ARRAY_SIZE(hi3521a_fixed_rate_clks),
++				     clk_data);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ret = hisi_clk_register_mux(hi3521a_mux_clks,
++				ARRAY_SIZE(hi3521a_mux_clks),
++				clk_data);
++	if (ret)
++		goto unregister_fixed_rate;
++
++	ret = hisi_clk_register_gate(hi3521a_gate_clks,
++				ARRAY_SIZE(hi3521a_gate_clks),
++				clk_data);
++	if (ret)
++		goto unregister_mux;
++
++	ret = of_clk_add_provider(pdev->dev.of_node,
++			of_clk_src_onecell_get, &clk_data->clk_data);
++	if (ret)
++		goto unregister_gate;
++
++	return clk_data;
++
++unregister_fixed_rate:
++	hisi_clk_unregister_fixed_rate(hi3521a_fixed_rate_clks,
++				ARRAY_SIZE(hi3521a_fixed_rate_clks),
++				clk_data);
++
++unregister_mux:
++	hisi_clk_unregister_mux(hi3521a_mux_clks,
++				ARRAY_SIZE(hi3521a_mux_clks),
++				clk_data);
++unregister_gate:
++	hisi_clk_unregister_gate(hi3521a_gate_clks,
++				ARRAY_SIZE(hi3521a_gate_clks),
++				clk_data);
++	return ERR_PTR(ret);
++}
++
++static void hi3521a_clk_unregister(struct platform_device *pdev)
++{
++	struct hi3521a_crg_data *crg = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++
++	hisi_clk_unregister_gate(hi3521a_gate_clks,
++				ARRAY_SIZE(hi3521a_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_mux(hi3521a_mux_clks,
++				ARRAY_SIZE(hi3521a_mux_clks),
++				crg->clk_data);
++	hisi_clk_unregister_fixed_rate(hi3521a_fixed_rate_clks,
++				ARRAY_SIZE(hi3521a_fixed_rate_clks),
++				crg->clk_data);
++}
++
++static int hi3521a_clk_probe(struct platform_device *pdev)
++{
++	struct hi3521a_crg_data *crg;
++
++	crg = devm_kmalloc(&pdev->dev, sizeof(*crg), GFP_KERNEL);
++	if (!crg)
++		return -ENOMEM;
++
++	crg->rstc = hisi_reset_init(pdev);
++	if (!crg->rstc)
++		return -ENOMEM;
++
++	crg->clk_data = hi3521a_clk_register(pdev);
++	if (IS_ERR(crg->clk_data)) {
++		hisi_reset_exit(crg->rstc);
++		return PTR_ERR(crg->clk_data);
++	}
++
++	platform_set_drvdata(pdev, crg);
++	return 0;
++}
++
++static int hi3521a_clk_remove(struct platform_device *pdev)
++{
++	struct hi3521a_crg_data *crg = platform_get_drvdata(pdev);
++
++	hisi_reset_exit(crg->rstc);
++	hi3521a_clk_unregister(pdev);
++	return 0;
++}
++
++static const struct of_device_id hi3521a_clk_match_table[] = {
++	{ .compatible = "hisilicon,hi3521a-crg" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, hi3521a_clk_match_table);
++
++static struct platform_driver hi3521a_clk_driver = {
++	.probe		= hi3521a_clk_probe,
++	.remove		= hi3521a_clk_remove,
++	.driver		= {
++		.name	= "hi3521a-clk",
++		.of_match_table = hi3521a_clk_match_table,
++	},
++};
++
++static int __init hi3521a_clk_init(void)
++{
++	return platform_driver_register(&hi3521a_clk_driver);
++}
++core_initcall(hi3521a_clk_init);
++
++static void __exit hi3521a_clk_exit(void)
++{
++	platform_driver_unregister(&hi3521a_clk_driver);
++}
++module_exit(hi3521a_clk_exit);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("HiSilicon Hi3521a Clock Driver");
+diff --git a/include/dt-bindings/clock/hi3521a-clock.h b/include/dt-bindings/clock/hi3521a-clock.h
+new file mode 100644
+index 000000000000..666591236169
+--- /dev/null
++++ b/include/dt-bindings/clock/hi3521a-clock.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2017 Marty E. Plummer <hanetzer@startmail.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __DTS_HI3521A_CLOCK_H
++#define __DTS_HI3521A_CLOCK_H
++
++#define HI3521A_FMC_CLK			1
++#define HI3521A_SPI0_CLK		2
++#define HI3521A_UART0_CLK		3
++#define HI3521A_UART1_CLK		4
++#define HI3521A_UART2_CLK		5
++#define HI3521A_DMA_CLK			6
++#define HI3521A_IR_CLK			7
++#define HI3521A_ETH_PHY_CLK		8
++#define HI3521A_ETH_CLK			9
++#define HI3521A_ETH_MACIF_CLK		10
++#define HI3521A_USB2_BUS_CLK		11
++#define HI3521A_USB2_PORT_CLK		12
++
++#endif /* __DTS_HI3521A_CLK_H */
+-- 
+2.14.1
