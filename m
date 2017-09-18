@@ -1,77 +1,50 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 11/13] clk: qcom: support for Brammo PLL
-Date: Thu, 28 Sep 2017 23:20:48 +0530
-Message-Id: <1506621050-10129-12-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
-References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1505721917.25945.275.camel@linux.intel.com>
+Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Carlo
+ Caione <carlo@caione.org>, alan@linux.intel.com
+Cc: Michael Turquette <mturquette@baylibre.com>, "open list:COMMON CLK
+ FRAMEWORK" <linux-clk@vger.kernel.org>, Darren Hart <dvhart@infradead.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, Linux Upstreaming Team
+ <linux@endlessm.com>, Enric Balletbo Serra <eballetbo@gmail.com>, Carlo
+ Caione <carlo@endlessm.com>
+Date: Mon, 18 Sep 2017 11:05:17 +0300
+In-Reply-To: <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
+References: <20170714082356.28117-1-carlo@caione.org>
+	 <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
+	 <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com>
+	 <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-1. Brammo PLL does not allow configuration of VCO
-2. Supports the dynamic update in which the frequency can
-   be changed dynamically without turning off the PLL
-3. The register offsets are different from normal Alpha PLL
+On Thu, 2017-09-07 at 16:51 -0500, Pierre-Louis Bossart wrote:
+> 
+> 
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 24 ++++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 25 insertions(+)
+> > 
+> > Looks like the same code that was initially used as a reference for 
+> > support of PMC clocks in the clock framework, so now we have 2
+> > drivers 
+> > programming the same PMC hardware, not so good. We'd probably have
+> > to 
+> > move the atomisp driver to move to clk_get/prepare/enable instead
+> > of 
+> > the old vlv2_clck_get?
+> 
+> See attached an untested change to show the idea on moving to the clk 
+> API and get feedback (I am not a camera guy, just trying to help - 
+> compile-tested/checkpatch only).
+> This code *should* enable the same functionality using existing hooks
+> in 
+> the kernel (and handle the BYT/CHT clocking difference as a bonus).
+> I am sure Andy will have plenty of comments :-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 4844e63..c682387 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -922,4 +922,28 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 			.set_rate = alpha_pll_huayra_set_rate,
- 		},
- 	},
-+	[CLK_ALPHA_PLL_TYPE_BRAMMO] =  {
-+		.reg_offsets = {
-+			[PLL_L_VAL] = 0x04,
-+			[PLL_ALPHA_VAL] = 0x08,
-+			[PLL_ALPHA_VAL_U] = 0x0c,
-+			[PLL_USER_CTL] = 0x10,
-+			[PLL_CONFIG_CTL] = 0x18,
-+			[PLL_TEST_CTL] = 0x1c,
-+			[PLL_STATUS] = 0x24,
-+		},
-+		.alpha_width = 40,
-+		.flags = SUPPORTS_DYNAMIC_UPDATE,
-+		.ops = {
-+			.enable = alpha_pll_default_enable,
-+			.disable = alpha_pll_default_disable,
-+			.is_enabled = alpha_pll_default_is_enabled,
-+			.hwfsm_enable = alpha_pll_default_hwfsm_enable,
-+			.hwfsm_disable = alpha_pll_default_hwfsm_disable,
-+			.hwfsm_is_enabled = alpha_pll_default_hwfsm_is_enabled,
-+			.recalc_rate = alpha_pll_default_recalc_rate,
-+			.round_rate = alpha_pll_default_round_rate,
-+			.set_rate = alpha_pll_default_set_rate,
-+		},
-+	},
- };
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index fed783e..dee71b4 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -21,6 +21,7 @@
- enum {
- 	CLK_ALPHA_PLL_TYPE_DEFAULT,
- 	CLK_ALPHA_PLL_TYPE_HUAYRA,
-+	CLK_ALPHA_PLL_TYPE_BRAMMO,
- 	CLK_ALPHA_PLL_TYPE_MAX,
- };
- 
+I have one comment: nice clean up!
+
+AtomISP is a *horrible* mess.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
