@@ -1,137 +1,79 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v3 4/8] mtd: nand: atmel: Avoid ECC errors when leaving backup mode
-Date: Wed, 27 Sep 2017 10:35:51 +0200
-Message-Id: <20170927083555.16580-5-romain.izard.pro@gmail.com>
-In-Reply-To: <20170927083555.16580-1-romain.izard.pro@gmail.com>
-References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 18 Sep 2017 12:00:51 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
+ Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
+ <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David
+ Woodhouse <dwmw2@infradead.org>, Brian Norris
+ <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille
+ Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
+ <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
+ <stern@rowland.harvard.edu>, linux-pwm@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: Report PMECC failures as
+ errors
+Message-ID: <20170918120051.298bdabf@bbrezillon>
+In-Reply-To: <20170915140411.31716-6-romain.izard.pro@gmail.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+	<20170915140411.31716-6-romain.izard.pro@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-During backup mode, the contents of all registers will be cleared as the
-SoC will be completely powered down. For a product that boots on NAND
-Flash memory, the bootloader will obviously use the related controller
-to read the Flash and correct any detected error in the memory, before
-handling back control to the kernel's resuming entry point.
+Hi Romain,
 
-But it does not clean the NAND controller registers after use and on its
-side the kernel driver expects the error locator to be powered down and
-in a clean state. Add a resume hook for the PMECC error locator, and
-reset its registers.
+On Fri, 15 Sep 2017 16:04:07 +0200
+Romain Izard <romain.izard.pro@gmail.com> wrote:
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
-Change in v3:
-* keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
-  reset the controller after the bootloader has left it enabled.
+> It is not normal for the PMECC to fail when trying to fix ECC errors.
+> Report these cases as errors.
 
- drivers/mtd/nand/atmel/nand-controller.c |  3 +++
- drivers/mtd/nand/atmel/pmecc.c           | 22 ++++++++++++++--------
- drivers/mtd/nand/atmel/pmecc.h           |  1 +
- 3 files changed, 18 insertions(+), 8 deletions(-)
+I'm not sure we want to have ECC error messages at this level. ECC
+errors are rather unusual but not impossible, and sometimes it's even
+not a real error (I'm thinking of bitflips in erased pages for
+example, which are not necessarily detected/fixed in hardware).
 
-diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
-index f25eca79f4e5..86c2199380c2 100644
---- a/drivers/mtd/nand/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/atmel/nand-controller.c
-@@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
- 	struct atmel_nand_controller *nc = dev_get_drvdata(dev);
- 	struct atmel_nand *nand;
- 
-+	if (nand->pmecc)
-+		atmel_pmecc_resume(nand->pmecc);
-+
- 	list_for_each_entry(nand, &nc->chips, node) {
- 		int i;
- 
-diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-index 146af8218314..ff09c0f25dd4 100644
---- a/drivers/mtd/nand/atmel/pmecc.c
-+++ b/drivers/mtd/nand/atmel/pmecc.c
-@@ -765,6 +765,12 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
- }
- EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
- 
-+void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
-+{
-+	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+}
-+
- int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
- {
- 	struct atmel_pmecc *pmecc = user->pmecc;
-@@ -797,14 +803,17 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
- 
- void atmel_pmecc_disable(struct atmel_pmecc_user *user)
- {
--	struct atmel_pmecc *pmecc = user->pmecc;
--
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+	atmel_pmecc_reset(user->pmecc);
- 	mutex_unlock(&user->pmecc->lock);
- }
- EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
- 
-+void atmel_pmecc_resume(struct atmel_pmecc_user *user)
-+{
-+	atmel_pmecc_reset(user->pmecc);
-+}
-+EXPORT_SYMBOL_GPL(atmel_pmecc_resume);
-+
- int atmel_pmecc_wait_rdy(struct atmel_pmecc_user *user)
- {
- 	struct atmel_pmecc *pmecc = user->pmecc;
-@@ -855,10 +864,7 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
- 
- 	/* Disable all interrupts before registering the PMECC handler. */
- 	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
--
--	/* Reset the ECC engine */
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+	atmel_pmecc_reset(pmecc);
- 
- 	return pmecc;
- }
-diff --git a/drivers/mtd/nand/atmel/pmecc.h b/drivers/mtd/nand/atmel/pmecc.h
-index a8ddbfca2ea5..488a90f1965d 100644
---- a/drivers/mtd/nand/atmel/pmecc.h
-+++ b/drivers/mtd/nand/atmel/pmecc.h
-@@ -63,6 +63,7 @@ void atmel_pmecc_destroy_user(struct atmel_pmecc_user *user);
- 
- int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op);
- void atmel_pmecc_disable(struct atmel_pmecc_user *user);
-+void atmel_pmecc_resume(struct atmel_pmecc_user *user);
- int atmel_pmecc_wait_rdy(struct atmel_pmecc_user *user);
- int atmel_pmecc_correct_sector(struct atmel_pmecc_user *user, int sector,
- 			       void *data, void *ecc);
--- 
-2.11.0
+If we decide to print error messages when unfixable bitflips are
+detected, it should be done in the nand-controller driver (somewhere
+along those lines [1]).
+
+Regards,
+
+Boris
+
+[1]http://elixir.free-electrons.com/linux/latest/source/drivers/mtd/nand/atmel/nand-controller.c#L827
+
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> ---
+>  drivers/mtd/nand/atmel/pmecc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
+> index 8d1208f38025..2a23f1ff945f 100644
+> --- a/drivers/mtd/nand/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/atmel/pmecc.c
+> @@ -687,6 +687,8 @@ static int atmel_pmecc_err_location(struct atmel_pmecc_user *user)
+>  	 * Number of roots does not match the degree of smu
+>  	 * unable to correct error.
+>  	 */
+> +	dev_err(pmecc->dev,
+> +		"PMECC: Impossible to calculate error location.\n");
+>  	return -EBADMSG;
+>  }
+>  
+> @@ -729,7 +731,7 @@ int atmel_pmecc_correct_sector(struct atmel_pmecc_user *user, int sector,
+>  			ptr = ecc + byte - sectorsize;
+>  			area = "ECC";
+>  		} else {
+> -			dev_dbg(pmecc->dev,
+> +			dev_err(pmecc->dev,
+>  				"Invalid errpos value (%d, max is %d)\n",
+>  				errpos, (sectorsize + eccbytes) * 8);
+>  			return -EINVAL;
