@@ -1,34 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
-Date: Sat, 23 Sep 2017 08:15:28 +0800
-Message-Id: <20170923001531.14285-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:34643 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752315AbdIRIAc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Sep 2017 04:00:32 -0400
+Message-ID: <1505721629.25945.273.camel@linux.intel.com>
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by
+ the firmware"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Carlo Caione <carlo@endlessm.com>,
+        Johannes Stezenbach <js@sig21.net>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Date: Mon, 18 Sep 2017 11:00:29 +0300
+In-Reply-To: <CAL9uMOGf6vsMfsp4wFX+LNxR_UTiYyWpFWPW7L8nGivLi-0uQg@mail.gmail.com>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+         <CAL9uMOGf6vsMfsp4wFX+LNxR_UTiYyWpFWPW7L8nGivLi-0uQg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset imports simple DVFS support for Allwinner A64 SoC.
+On Wed, 2017-09-06 at 23:14 +0200, Carlo Caione wrote:
+> On Wed, Sep 6, 2017 at 10:42 PM, Johannes Stezenbach <js@sig21.net>
+> wrote:
 
-As the thermal sensor driver is not yet implemented and some boards
-have still no AXP PMIC support, now only two OPPs are present --
-648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
+> Also I will probably send an email tomorrow about this but today
+> (coincidentally) I discovered that this fix is not working anymore on
+> my platform. This is due to commit a49d25364df ("staging/atomisp: Add
+> support for the Intel IPU v2"). I haven't had a chance yet to
+> investigated why though.
 
-PATCH 1 is a fix to the CCU driver of A64, and the remaining patches
-set up the device tree bits of the DVFS on Pine64.
-
-Icenowy Zheng (3):
-  clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
-  arm64: allwinner: a64: add CPU opp table
-  arm64: allwinner: a64: set CPU regulator for Pine64
-
- .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 24 +++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 28 +++++++++++++++++++++-
- 3 files changed, 55 insertions(+), 1 deletion(-)
+When you are going to do, check as well my clean up series to atomisp.
+I noticed the driver messes up the things it shouldn't touch at all.
+I removed Intel MID related parts from it, so, I hope it will help you.
 
 -- 
-2.13.5
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
