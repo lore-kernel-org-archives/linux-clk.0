@@ -1,76 +1,115 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 2/8] clk: at91: pmc: Save SCSR during suspend
-Date: Thu, 28 Sep 2017 11:46:21 +0200
-Message-Id: <20170928094627.31017-3-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 18 Sep 2017 11:50:52 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
+ Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
+ <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David
+ Woodhouse <dwmw2@infradead.org>, Brian Norris
+ <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille
+ Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
+ <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
+ <stern@rowland.harvard.edu>, linux-pwm@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/9] mtd: nand: atmel: Avoid ECC errors when leaving
+ backup mode
+Message-ID: <20170918115052.4606d8e5@bbrezillon>
+In-Reply-To: <20170915140411.31716-5-romain.izard.pro@gmail.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+	<20170915140411.31716-5-romain.izard.pro@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The contents of the System Clock Status Register (SCSR) needs to be
-restored into the System Clock Enable Register (SCER).
+Hi Romain,
 
-As the bootloader will restore some clocks by itself, the issue can be
-missed as only the USB controller, the LCD controller, the Image Sensor
-controller and the programmable clocks will be impacted.
+On Fri, 15 Sep 2017 16:04:06 +0200
+Romain Izard <romain.izard.pro@gmail.com> wrote:
 
-Fix the obvious typo in the suspend/resume code, as the IMR register
-does not need to be saved twice.
+> During backup mode, the contents of all registers will be cleared as the
+> SoC will be completely powered down. For a product that boots on NAND
+> Flash memory, the bootloader will obviously use the related controller
+> to read the Flash and correct any detected error in the memory, before
+> handling back control to the kernel's resuming entry point.
+> 
+> In normal devices, it is up to the driver's suspend/resume code to
+> restore the registers in a valid state. But the PMECC is not a regular
+> device in the driver model when used with the legacy device tree binding
+> for the Atmel NAND controller, and suspend/resume code is not called.
+> 
+> As in my case the bootloader leaves the PMECC controller in a programmed
+> state, and the controller is only reset at boot or after a NAND access,
+> the first NAND Flash access with the Atmel controller will report
+> uncorrectable ECC errors.
+> 
+> To avoid this, systematically reset the PMECC controller before using
+> it.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> ---
+>  drivers/mtd/nand/atmel/pmecc.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
+> index 8c210a5776bc..8d1208f38025 100644
+> --- a/drivers/mtd/nand/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/atmel/pmecc.c
+> @@ -777,6 +777,9 @@ int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
+>  
+>  	mutex_lock(&user->pmecc->lock);
+>  
+> +	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> +	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> +
+>  	cfg = user->cache.cfg;
+>  	if (op == NAND_ECC_WRITE)
+>  		cfg |= PMECC_CFG_WRITE_OP;
+> @@ -797,10 +800,6 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
+>  
+>  void atmel_pmecc_disable(struct atmel_pmecc_user *user)
+>  {
+> -	struct atmel_pmecc *pmecc = user->pmecc;
+> -
+> -	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> -	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/pmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So know you leave the ECC engine enabled even when it's not in use? Not
+sure what kind of implication this has on power-consumption, but I
+think I'd prefer to keep the write RST+DISABLE sequence in the disable
+path.
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 5c2b26de303e..07dc2861ad3f 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -86,7 +86,7 @@ static int pmc_suspend(void)
- {
- 	int i;
- 
--	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-+	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
- 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
- 	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
- 	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-@@ -129,7 +129,7 @@ static void pmc_resume(void)
- 	if (pmc_cache.pllar != tmp)
- 		pr_warn("PLLAR was not configured properly by the firmware\n");
- 
--	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-+	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
- 	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
- 	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
- 	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
--- 
-2.11.0
+How about creating a atmel_pmecc_reset() function that you'd call from
+the nand-controller resume hook. Something like:
+
+void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
+{
+	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+}
+
+This way you can re-use the same function and call it from the probe
+and disable path as well.
+
+Regards,
+
+Boris
+
+>  	mutex_unlock(&user->pmecc->lock);
+>  }
+>  EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
+> @@ -856,10 +855,6 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
+>  	/* Disable all interrupts before registering the PMECC handler. */
+>  	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
+>  
+> -	/* Reset the ECC engine */
+> -	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> -	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> -
+>  	return pmecc;
+>  }
+>  
