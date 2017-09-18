@@ -1,39 +1,105 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:55:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH v5 4/7] clk: at91: clk-generated: create function to find
- best_diff
-Message-ID: <20170901225516.GF21656@codeaurora.org>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
- <4dde07bb3345d569778e7b1b5a8679bded095041.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <tirupath@codeaurora.org>
+Subject: Re: [PATCH V3] clk: qcom: Add spmi_pmic clock divider support
+To: Rob Herring <robh@kernel.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, mark.rutland@arm.com,
+ andy.gross@linaro.org, david.brown@linaro.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+References: <1504699207-9568-1-git-send-email-tirupath@codeaurora.org>
+ <20170913174032.u33zzo64ipk22vgp@rob-hp-laptop>
+From: Tirupathi Reddy T <tirupath@codeaurora.org>
+Message-ID: <b1a48f0e-7a96-079e-0e68-3d89368316ba@codeaurora.org>
+Date: Mon, 18 Sep 2017 17:00:55 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4dde07bb3345d569778e7b1b5a8679bded095041.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <20170913174032.u33zzo64ipk22vgp@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Quentin Schulz wrote:
-> The way to find the best_diff and do the appropriate process afterwards
-> can be re-used.
-> 
-> This patch prepares the driver for an upcoming patch that will allow
-> clk_generated to determine the rate of the audio_pll.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 9/13/2017 11:10 PM, Rob Herring wrote:
+> On Wed, Sep 06, 2017 at 05:30:07PM +0530, Tirupathi Reddy wrote:
+>> Clkdiv module provides a clock output on the PMIC with CXO as
+>> the source. This clock can be routed through PMIC GPIOs. Add
+>> a device driver to configure this clkdiv module.
+>>
+>> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+>> ---
+>>   .../bindings/clock/clk-spmi-pmic-div.txt           |  51 +++
+>>   drivers/clk/qcom/Kconfig                           |   9 +
+>>   drivers/clk/qcom/Makefile                          |   1 +
+>>   drivers/clk/qcom/clk-spmi-pmic-div.c               | 342 +++++++++++++++++++++
+>>   4 files changed, 403 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>>   create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>> new file mode 100644
+>> index 0000000..8b84b32
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>> @@ -0,0 +1,51 @@
+>> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
+>> +
+>> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
+>> +These clocks are typically wired through alternate functions on
+>> +gpio pins.
+>> +
+>> +=======================
+>> +Properties
+>> +=======================
+>> +
+>> +- compatible
+>> +	Usage:      required
+>> +	Value type: <string>
+>> +	Definition: must be one of:
+>> +		    "qcom,spmi-clkdiv"
+> If this is not a fallback, drop it.
+Here "qcom,spmi-clkdiv" is used as generic string for registering only 
+one clk and
+the pmic specific strings are used for registering more than one clk 
+following
+the given base address in "reg" property.
+>
+>> +		    "qcom,pm8998-clkdiv"
+>> +
+>> +- reg
+>> +	Usage:      required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: Addresses and sizes for the memory of this CLKDIV
+>> +		    peripheral.
+>> +
+>> +- clocks:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: reference to the xo clock.
+>> +
+>> +- clock-names:
+>> +	Usage: required
+>> +	Value type: <stringlist>
+>> +	Definition: must be "xo".
+> Missing #clock-cells
+Added in next patch set.
+>
+>> +
+>> +=======
+>> +Example
+>> +=======
+>> +
+>> +pm8998_clk_divs: qcom,clkdiv@5b00 {
+> clock@5b00
+Addressed in next patch.
+>
+>> +	compatible = "qcom,pm8998-clkdiv";
+>> +	reg = <0x5b00>;
+>> +	#clock-cells = <1>;
+>> +	clocks = <&xo_board>;
+>> +	clock-names = "xo";
+>> +
+>> +	assigned-clocks = <&pm8998_clk_divs 1>,
+>> +			  <&pm8998_clk_divs 2>,
+>> +			  <&pm8998_clk_divs 3>;
+>> +	assigned-clock-rates = <9600000>,
+>> +			       <9600000>,
+>> +			       <9600000>;
+>> +};
