@@ -1,135 +1,59 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 03/14] drm/sun4i: tcon: Add variant callback for TCON output muxing
-Date: Fri, 29 Sep 2017 16:22:55 +0800
-Message-Id: <20170929082306.16193-4-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <1505446920.4080.13.camel@aj.id.au>
+References: <20170823060957.31167-1-joel@jms.id.au> <20170823060957.31167-2-joel@jms.id.au>
+ <1505446920.4080.13.camel@aj.id.au>
+From: Joel Stanley <joel@jms.id.au>
+Date: Mon, 18 Sep 2017 22:49:44 +0930
+Message-ID: <CACPK8XeYWj_bx3qysjCQXJgdR6xWONAg09peJc-=ajX8UtFO_Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: Add Aspeed G5 clock driver
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Different SoCs have different muxing options and values for the TCON
-outputs. Instead of stuffing every possibility in sun4i_tcon_set_mux(),
-add a callback pointer to sun4i_tcon_quirks that each TCON variant
-can use to provide muxing support.
+On Fri, Sep 15, 2017 at 1:12 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
+> On Wed, 2017-08-23 at 15:39 +0930, Joel Stanley wrote:
+>> This driver supports the ast2500 and derivative BMC SoCs from Aspeed.
+>>
+>> All of the important clocks are supported, with most non-essential ones
+>> also implemented where information is available. I am working with
+>> Aspeed to clear up some of the missing information, including the
+>> missing parent-sibling relationships.
+>>
+>> We need to know the rate of the apb clock in order to correctly program
+>> the clocksource driver, so the apb and it's parents are created in the
+>> CLK_OF_DECLARE_DRIVER callback.
+>>
+>> The rest of the clocks are created at normal driver probe time. I
+>> followed the Gemini driver's lead with using the regmap where I could,
+>> but also having a pointer to the base address for use with the common
+>> clock callbacks.
+>>
+>> > Signed-off-by: Joel Stanley <joel@jms.id.au>
+>> ---
+>>  drivers/clk/Kconfig                      |  12 +
+>>  drivers/clk/Makefile                     |   1 +
+>>  drivers/clk/clk-aspeed.c                 | 547 +++++++++++++++++++++++++++++++
+>
+> The patch subject suggests the implementation is specific to the G5
+> series SoC, but the name of the driver is generic. How similar are the
+> G4 and G5 clock devices? Is the intent to expand the implementation to
+> also cover the G4 series, or should this be renamed to something more
+> specific?
 
-The current muxing options in sun4i_tcon_set_mux() for sun5i-a13 are
-moved to a new sun5i-specific callback function.
+The intent is to cover the G4 platforms with the same driver. I sent
+this version along early to get feedback on the structure.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 45 ++++++++++++++++++++++++--------------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  5 +++++
- 2 files changed, 33 insertions(+), 17 deletions(-)
+As it turns out, it was simple to get the G4 going with the same code.
+I'll send a v2 in the next day or so.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index e853dfe51389..7bf51abaee97 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -14,9 +14,12 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_encoder.h>
- #include <drm/drm_modes.h>
- #include <drm/drm_of.h>
- 
-+#include <uapi/drm/drm_mode.h>
-+
- #include <linux/component.h>
- #include <linux/ioport.h>
- #include <linux/of_address.h>
-@@ -112,23 +115,13 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			struct drm_encoder *encoder)
- {
--	u32 val;
--
--	if (!tcon->quirks->has_unknown_mux)
--		return;
-+	int ret = -ENOTSUPP;
- 
--	if (channel != 1)
--		return;
--
--	if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
--		val = 1;
--	else
--		val = 0;
-+	if (tcon->quirks->set_mux)
-+		ret = tcon->quirks->set_mux(tcon, encoder);
- 
--	/*
--	 * FIXME: Undocumented bits
--	 */
--	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
-+	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s: %d\n",
-+			 encoder->name, encoder->crtc->name, ret);
- }
- EXPORT_SYMBOL(sun4i_tcon_set_mux);
- 
-@@ -767,9 +760,27 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+/* platform specific TCON muxing callbacks */
-+static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
-+				  struct drm_encoder *encoder)
-+{
-+	u32 val;
-+
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
-+		val = 1;
-+	else
-+		val = 0;
-+
-+	/*
-+	 * FIXME: Undocumented bits
-+	 */
-+	return regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
-+}
-+
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
--	.has_unknown_mux = true,
--	.has_channel_1	= true,
-+	.has_unknown_mux	= true,
-+	.has_channel_1		= true,
-+	.set_mux		= sun5i_a13_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 5a219d1ccc26..6e699cbcf768 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -145,10 +145,15 @@
- 
- #define SUN4I_TCON_MAX_CHANNELS		2
- 
-+struct sun4i_tcon;
-+
- struct sun4i_tcon_quirks {
- 	bool	has_unknown_mux; /* sun5i has undocumented mux */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
-+
-+	/* callback to handle tcon muxing options */
-+	int	(*set_mux)(struct sun4i_tcon *, struct drm_encoder *);
- };
- 
- struct sun4i_tcon {
--- 
-2.14.2
+Cheers,
+
+Joel
