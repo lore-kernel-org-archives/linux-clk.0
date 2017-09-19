@@ -1,82 +1,78 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] clk/tegra: Delete an error message for a failed memory
- allocation in three functions
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 18:53:10 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jeremy.linton@arm.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-acpi@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com,
+	hanjun.guo@linaro.org,
+	lorenzo.pieralisi@arm.com,
+	rjw@rjwysocki.net,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	jhugo@codeaurora.org,
+	wangxiongfeng2@huawei.com,
+	Jonathan.Zhang@cavium.com,
+	ahs3@redhat.com,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v2 2/6] ACPI: Enable PPTT support on ARM64
+Date: Tue, 19 Sep 2017 13:47:47 -0500
+Message-Id: <20170919184751.25110-3-jeremy.linton@arm.com>
+In-Reply-To: <20170919184751.25110-1-jeremy.linton@arm.com>
+References: <20170919184751.25110-1-jeremy.linton@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 18:40:34 +0200
+Now that we have a PPTT parser, in preparation for its use
+on arm64, lets build it.
 
-Omit extra messages for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- drivers/clk/tegra/clk-audio-sync.c  | 4 +---
- drivers/clk/tegra/clk-divider.c     | 5 +----
- drivers/clk/tegra/clk-periph-gate.c | 4 +---
- 3 files changed, 3 insertions(+), 10 deletions(-)
+ arch/arm64/Kconfig         | 1 +
+ drivers/acpi/Makefile      | 1 +
+ drivers/acpi/arm64/Kconfig | 3 +++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-index 92d04ce2dee6..62a84c883dd4 100644
---- a/drivers/clk/tegra/clk-audio-sync.c
-+++ b/drivers/clk/tegra/clk-audio-sync.c
-@@ -62,10 +62,8 @@ struct clk *tegra_clk_register_sync_source(const char *name,
- 	struct clk *clk;
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 0df64a6a56d4..68c9d1289735 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -7,6 +7,7 @@ config ARM64
+ 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+ 	select ACPI_MCFG if ACPI
+ 	select ACPI_SPCR_TABLE if ACPI
++	select ACPI_PPTT if ACPI
+ 	select ARCH_CLOCKSOURCE_DATA
+ 	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+index 90265ab4437a..c92a0c937551 100644
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
+ obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
+ obj-$(CONFIG_ACPI_SPCR_TABLE)	+= spcr.o
+ obj-$(CONFIG_ACPI_DEBUGGER_USER) += acpi_dbg.o
++obj-$(CONFIG_ACPI_PPTT) 	+= pptt.o
  
- 	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
--	if (!sync) {
--		pr_err("%s: could not allocate sync source clk\n", __func__);
-+	if (!sync)
- 		return ERR_PTR(-ENOMEM);
--	}
+ # processor has its own "processor." module_param namespace
+ processor-y			:= processor_driver.o
+diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
+index 5a6f80fce0d6..74b855a669ea 100644
+--- a/drivers/acpi/arm64/Kconfig
++++ b/drivers/acpi/arm64/Kconfig
+@@ -7,3 +7,6 @@ config ACPI_IORT
  
- 	sync->rate = rate;
- 	sync->max_rate = max_rate;
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee14773..5ee9423ccac2 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -156,11 +156,8 @@ struct clk *tegra_clk_register_divider(const char *name,
- 	struct clk_init_data init;
- 
- 	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
--	if (!divider) {
--		pr_err("%s: could not allocate fractional divider clk\n",
--		       __func__);
-+	if (!divider)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &tegra_clk_frac_div_ops;
-diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-index 303ef32ee3f1..276cc4c59204 100644
---- a/drivers/clk/tegra/clk-periph-gate.c
-+++ b/drivers/clk/tegra/clk-periph-gate.c
-@@ -141,10 +141,8 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
- 		return ERR_PTR(-EINVAL);
- 
- 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--	if (!gate) {
--		pr_err("%s: could not allocate periph gate clk\n", __func__);
-+	if (!gate)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.flags = flags;
+ config ACPI_GTDT
+ 	bool
++
++config ACPI_PPTT
++	bool
+\ No newline at end of file
 -- 
-2.14.2
+2.13.5
