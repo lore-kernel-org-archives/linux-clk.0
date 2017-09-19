@@ -1,64 +1,46 @@
-Return-Path: <Alexey.Brodkin@synopsys.com>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Setting CPU clock frequency on early boot
-Date: Tue, 5 Sep 2017 15:37:48 +0000
-Message-ID: <1504625867.32565.34.camel@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:18148 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbdISI4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2017 04:56:46 -0400
+Subject: Re: [PATCH v2] clk: samsung: exynos4: Enable VPLL and EPLL clocks
+ for suspend/resume cycle
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <2954c690-5041-b7cb-bc5b-421485673ad1@samsung.com>
+Date: Tue, 19 Sep 2017 10:56:38 +0200
+MIME-version: 1.0
+In-reply-to: <1505468516-3324-1-git-send-email-m.szyprowski@samsung.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170915094209eucas1p1c959442cce50aea9553e4b73a36ab8a0@eucas1p1.samsung.com>
+        <1505468516-3324-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8sDQoNCkknZCBsaWtlIHRvIGdldCBzb21lIGZlZWRiYWNrIG9uIG91ciBpZGVhIGFzIHdl
-bGwgYXMgY2hlY2sNCmlmIHNvbWVib2R5IGZhY2VzIHNpbWlsYXIgc2l0dWF0aW9ucyBhbmQgaWYg
-c28gd2hhdCB3b3VsZCBiZSB0aGUgYmVzdA0Kd2F5IHRvIGltcGxlbWVudCBzb21lIGdlbmVyaWMg
-c29sdXRpb24gdGhhdCBzdWl0cyBldmVyeW9uZS4NCg0KU28gdGhhdCdzIG91ciBwcm9ibGVtOg0K
-MS4gT24gcG93ZXItb24gaGFyZHdhcmUgbWlnaHQgc3RhcnQgY2xvY2tpbmcgQ1BVIHdpdGggZWl0
-aGVyDQrCoCDCoHRvbyBoaWdoIGZyZXF1ZW5jeSAoc3VjaCB0aGF0IENQVSBtYXkgZ2V0IHN0dWNr
-IGF0IHNvbWUgcG9pbnQpDQrCoCDCoG9yIHRvbyBsb3cgZnJlcXVlbmN5Lg0KDQrCoCDCoFRoYXQg
-YWxsIHNvdW5kcyBzdHVwaWQgYnV0IGxldCBtZSBlbGFib3JhdGUgYSBiaXQgaGVyZS4NCsKgIMKg
-SSdtIHRhbGtpbmcgYWJvdXQgRlBHQS1iYXNlZCBkZXZib2FyZHMgZmlybXdhcmUgZm9yIHdoaWNo
-DQrCoCDCoChoZXJlIEkgbWVhbiBqdXN0IGltYWdlIGxvYWRlZCBpbiBGUEdBIHdpdGggQ1BVIGlt
-cGxlbWVudGF0aW9uDQrCoCDCoGJ1dCBub3Qgc29tZSBzb2Z0d2FyZSB5ZXQpIG1pZ2h0IG5vdCBi
-ZSBzdGFibGUgb3IgYmUgZXZlbiBleHBlcmltZW50YWwuDQoNCsKgIMKgRm9yIGV4YW1wbGUgd2Ug
-bWF5IGRlYWwgd2l0aCBkdWFsLWNvcmUgb3IgcXVhZC1jb3JlIGRlc2lnbnMuDQrCoCDCoEZvcm1l
-ciBtaWdodCBiZSBPSyBydW5uaW5nIEAxMDBNSHogYW5kIGxhdHRlciBpcyBvbmx5IHVzYWJsZQ0K
-wqAgwqBANzVNSHogYW5kIGxvd2VyLiBUaGUgc2ltcGxlc3Qgc29sdXRpb24gbWlnaHQgYmUgdG8g
-dXNlIHNvbWUgc2FmZQ0KwqAgwqB2YWx1ZSBiZWZvcmUgc29tZXRoaW5nIGxpa2UgQ1BVZnJlcSBr
-aWNrcyBpbi4gQnV0IHdlIGRvbid0IHlldCBoYXZlDQrCoCDCoENQVWZyZXEgZm9yIEFSQyAod2Ug
-ZG8gcGxhbiB0byBnZXQgaXQgd29ya2luZyBzb21ldGltZSBzb29uKSB3aGljaA0KwqAgwqBtZWFu
-cyBzaW1wbGUgY2hhbmdlIG9mIENQVSBmcmVxdWVuY3kgb25jZSB0aW1lLWtlZXBpbmcgaW5mcmFz
-dHJ1Y3R1cmUNCsKgIMKgd2FzIGJyb3VnaHQtdXAgaXMgbm90IGFuIG9wdGlvbi4uLiBJLmUuIHdl
-J2xsIGVuZCB1cCB3aXRoIHRoZSBzeXN0ZW0gcnVubmluZw0KwqAgwqBtdWNoIHNsb3dlciBjb21w
-YXJlZCB3aGF0IGNvdWxkIGhhdmUgYmVlbiBwb3NzaWJsZS4NCg0KMi4gVXAgdW50aWwgbm93IHdl
-IHVzZWQgdG8gZG8gZGlydHkgaGFja3MgaW4gZWFybHkgcGxhdGZvcm0gaW5pdCBjb2RlLg0KwqAg
-wqBOYW1lbHkgKHNlZcKgYXhzMTAzX2Vhcmx5X2luaXQoKSBpbsKgYXJjaC9hcmMvcGxhdC1heHMx
-MHgvYXhzMTB4LmMpOg0KwqAgwqAgMSkgUmVhZCBDUFUncyAiY2xvY2stZnJlcXVlbmN5IiBmcm9t
-IC5kdGIgKHJlbWVtYmVyIHdlJ3JlIG9uIHZlcnkgZWFybHkNCsKgIMKgIMKgIMKgYm9vdCBzdGFn
-ZSBzdGlsbCBzbyBubyBleHBhbmRlZCBEZXZUcmVlIHlldCBleGlzdHMpLg0KwqAgwqAgMikgQ2hl
-Y2sgaG93IG1hbnkgY29yZXMgd2UgaGF2ZSBhbmQgd2hpY2ggZnJlcSBpcyB1c2FibGUNCsKgIMKg
-IDMpIFVwZGF0ZSBQTEwgc2V0dGluZ3MgcmlnaHQgaW4gcGxhY2UgaWYgbmV3IGZyZXEgIT0gZXhp
-c3RpbmcgaW4gUExMLg0KDQrCoCDCoEV2ZW4gdGhvdWdoIGl0IGlzIHByb3ZlbiB0byB3b3JrIGJ1
-dCB3aXRoIG1vcmUgcGxhdGZvcm1zIGluIHRoZSBwaXBlbGluZQ0KwqAgwqB3ZSdsbCBuZWVkIHRv
-IGNvcHktcGFzdGUgcHJldHR5IG11Y2ggdGhlIHNhbWUgc3R1ZmYgYWNyb3NzIGFsbCBhZmZlY3Rl
-ZA0KwqAgwqBwbGF0cy4gV2hpY2ggaXMgbm90IG5pY2UuDQoNCsKgIMKgTW9yZW92ZXIgYmFjayBp
-biB0aGUgZGF5IHdlIGRpZG4ndCBoYXZlIGEgcHJvcGVyIGNsayBkcml2ZXIgZm9yIENQVSdzIFBM
-TC4NCsKgIMKgVGh1cyBhY3Rpbmcgb24gUExMIHJlZ2lzdGVycyByaWdodCBpbiBwbGFjZSB3YXMg
-dGhlIG9ubHkgdGhpbmcgd2Ugd2VyZSBhYmxlDQrCoCDCoHRvIGRvLiBOb3cgd2l0aCBpbnRyb2R1
-Y3Rpb24gb2Ygbm9ybWFsIGNsayBkcml2ZXINCsKgIMKgKHNlZcKgZHJpdmVycy9jbGsvYXhzMTB4
-L3BsbF9jbG9jay5jIGluIGxpbnV4LW5leHQpIHdlJ2QgbGlrZSB0byB1dGlsaXplDQrCoCDCoGl0
-IGFuZCBoYXZlIGEgY2xlYW5lciBhbmQgbW9yZSB1bml2ZXJzYWwgc29sdXRpb24gdG8gdGhlIHBy
-b2JsZW0uDQoNCsKgIMKgVGhhdCdzIGhvdyBpdCBjb3VsZCBiZSBkb25lIC3CoGh0dHA6Ly9wYXRj
-aHdvcmsub3psYWJzLm9yZy9wYXRjaC84MDEyNDAvDQrCoCDCoEJhc2ljYWxseSBpbiBhcmNoaXRl
-Y3R1cmUncyB0aW1lX2luaXQoKSB3ZSBjaGVjayBpZiB0aGVyZSdzIGV4cGxpY2l0bHkNCsKgIMKg
-c3BlY2lmaWVkICJjbG9jay1mcmVxdWVuY3kiIHBhcmFtZXRlciBpbiBjcHUncyBub2RlIGluIERl
-dmljZSBUcmVlIGFuZA0KwqAgwqBpZiB0aGVyZSdzIG9uZSB3ZSBzZXQgaXQgdmlhIGp1c3QgaW5z
-dGFudGlhdGVkIGNsayBkcml2ZXIuDQoNCldlIG1heSBpbmRlZWQgcHJvY2VlZCB3aXRoIG1lbnRp
-b25lZCBzb2x1dGlvbiBmb3IgQVJDIGJ1dCBpZiB0aGF0IG1ha2VzDQpzZW5zZSBmb3Igc29tZWJv
-ZHkgZWxzZSBpdCBtaWdodCB3b3J0aCBnZXR0aW5nIHNvbWV0aGluZyBzaW1pbGFyIGluIGdlbmVy
-aWMNCmluaXQgY29kZS4gQW55IHRob3VnaHRzPw0KDQpBbGwgY29tbWVudHMgYW5kIHN1Z2dlc3Rp
-b25zIGFyZSBtb3JlIHRoYW4gd2VsY29tZS4NCg0KLUFsZXhleQ==
+On 09/15/2017 11:41 AM, Marek Szyprowski wrote:
+> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
+> VPLL and EPPL clocks were always enabled because the enable bit was never
+> touched. Those clocks have to be enabled during suspend/resume cycle,
+> because otherwise board fails to enter sleep mode. This patch enables them
+> unconditionally before entering system suspend state. System restore
+> function will set them to the previous state saved in the register cache
+> done before that unconditional enable.
+> 
+> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
+> CC:stable@vger.kernel.org  # v4.13
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+Thanks, can you please resend so the patchwork catches the patch
+and with clk maintainers in Cc?
+
+-- 
+Regards,
+Sylwester
