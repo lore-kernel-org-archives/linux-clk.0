@@ -1,69 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:24:31 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 01/13] clk: sunxi-ng: sun6i: Export video PLLs
-Message-ID: <20170926092431.puk7e5ippmjwfy4x@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-2-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:40086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750823AbdISGkV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Sep 2017 02:40:21 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3ongovkpszxygp7q"
-In-Reply-To: <20170926065919.24446-2-wens@csie.org>
+In-Reply-To: <1505468516-3324-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170915094209eucas1p1c959442cce50aea9553e4b73a36ab8a0@eucas1p1.samsung.com>
+ <1505468516-3324-1-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 19 Sep 2017 08:40:20 +0200
+Message-ID: <CAJKOXPewCQEea19hPcu9b45pSfnru7bcZ+rRUkGMbb-wUG=GHA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: samsung: exynos4: Enable VPLL and EPLL clocks for
+ suspend/resume cycle
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Sep 15, 2017 at 11:41 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
+> VPLL and EPPL clocks were always enabled because the enable bit was never
+> touched. Those clocks have to be enabled during suspend/resume cycle,
+> because otherwise board fails to enter sleep mode. This patch enables them
+> unconditionally before entering system suspend state. System restore
+> function will set them to the previous state saved in the register cache
+> done before that unconditional enable.
+>
+> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
+> CC: stable@vger.kernel.org # v4.13
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Changelog:
+> v2:
+> - wait until PLL is properly locked
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index e40b77583c47..d8d3cb67b402 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -294,6 +294,18 @@ enum exynos4_plls {
+>  #define PLL_ENABLED    (1 << 31)
+>  #define PLL_LOCKED     (1 << 29)
+>
+> +static void exynos4_clk_enable_pll(u32 reg)
+> +{
+> +       u32 pll_con = readl(reg_base + reg);
+> +       pll_con |= PLL_ENABLED;
+> +       writel(pll_con, reg_base + reg);
+> +
+> +       while (!(pll_con & PLL_LOCKED)) {
+> +               cpu_relax();
+> +               pll_con = readl(reg_base + reg);
+> +       }
 
---3ongovkpszxygp7q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Tue, Sep 26, 2017 at 06:59:07AM +0000, Chen-Yu Tsai wrote:
-> The 2x outputs of the 2 video PLL clocks are directly used by the
-> HDMI controller block.
->=20
-> Export them so they can be referenced in the device tree.
->=20
-> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+As a follow up for the fix (separate patch) we could consider adding
+timeouts to both busy-loops (waiting on PLL_LOCKED). Also the busy
+loop itself could be factored out (less code duplicate). However both
+should not be part of this fix.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---3ongovkpszxygp7q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyhzPAAoJEBx+YmzsjxAglzEQAI37U0e29MoGz6ePrmcg9E1b
-6OzMpr0XfUr6/IsI3A4P6ie8zt0e+0qVCmtRV5STdTOmFPQYJqSmdvqheWIrkCgM
-oeakoaANy1KKUV9f8EHOj9bAJCvx8uvcppFZFqJH006XPEZhm8FJhoKtH71RLYa7
-C7wJ+1QLRBHA4uo+CPORNZakUnurfTrZzkxNmokB6FMcz5J9QXlOx0u9gmPx0hvM
-FxPz2sWq5ATNx5PTfq1rb/uHn6FceCgKpS+1A2B5wsZ/Y3eghyLnT5+XLNnt0FM4
-R/aW7ELvR2WgLJvnbbk/tbl92zYXR7YQIfNPEgylm2zJtxrLikaKqIxysCKp99vH
-HVMiz+wHZYOJQ9qrYmCQEkD98WJtWokFYR+s/ALkEFn2a/d1Rx2LVU8SNv6BooQV
-ObMrfpeOcdRYEmeIRKUsHBQ/j8NEfJIKJNXQc8mEiEbdn6VJTYFu4ow2ZQ2rQhqg
-CWREe++3Sx7Zq3LlvzzCYWQtYO89QqtB7i2P4OLzIt1PONZd/onQMzTsjzX5UMfx
-146OqSgoJV8m6u4qxg2NKdypkClf/sQ3hfyllRE7qACwzG0b5lcH+a5/DKOkbEz7
-jsSryFrVLVLSFFYWdFRwIkkvUlPGAGKR7tAtljF93r8eh/cxUOcwoYt/3QkzRlZH
-vp5hbV0AW8lHj38XTdK0
-=qNQW
------END PGP SIGNATURE-----
-
---3ongovkpszxygp7q--
+Best regards,
+Krzysztof
