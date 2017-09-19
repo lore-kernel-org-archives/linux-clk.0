@@ -1,47 +1,51 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 01/10] MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
-Date: Mon, 25 Sep 2017 17:09:22 -0700
-Message-Id: <20170926000931.670-2-f.fainelli@gmail.com>
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>
+Subject: [PATCH] dt-bindings: clk: stm32h7: fix clock-cell size
+Date: Tue, 19 Sep 2017 13:44:06 +0200
+Message-ID: <1505821446-6847-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the Broadcom iProc regepx with recently added Hurricane 2 SoC support.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+The clock-cell size is 1 on stm32h7 plaform.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Fixes: 3e4d618b0722 ("clk: stm32h7: Add stm32h743 clock driver")
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6671f375f7fc..3b48a1c2ddb8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2923,6 +2923,7 @@ N:	bcm583*
- N:	bcm585*
- N:	bcm586*
- N:	bcm88312
-+N:	hr2
- F:	arch/arm64/boot/dts/broadcom/ns2*
- F:	drivers/clk/bcm/clk-ns*
- F:	drivers/pinctrl/bcm/pinctrl-ns*
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+index a135504..cac24ee 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+@@ -32,7 +32,7 @@ Example:
+ 		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
+ 		reg = <0x58024400 0x400>;
+ 		#reset-cells = <1>;
+-		#clock-cells = <2>;
++		#clock-cells = <1>;
+ 		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
+ 
+ 		st,syscfg = <&pwrcfg>;
 -- 
-2.14.1
+1.9.1
