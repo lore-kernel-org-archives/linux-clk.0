@@ -1,28 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Sep 2017 14:17:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] clk: Export clk_bulk_prepare()
-Message-ID: <20170929211722.GK457@codeaurora.org>
-References: <20170923050029.19013-1-bjorn.andersson@linaro.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>
+Subject: [PATCH] clk: stm32h7: fix test of clock config
+Date: Tue, 19 Sep 2017 13:43:50 +0200
+Message-ID: <1505821430-6779-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170923050029.19013-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/22, Bjorn Andersson wrote:
-> Allow clk_bulk_prepare() to be referenced by kernel modules by adding
-> the missing EXPORT_SYMBOL_GPL().
-> 
-> Fixes: 266e4e9d9150 ("clk: add clk_bulk_get accessories")
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Applied to clk-fixes
+fix test of composite clock config (bad copy / past)
 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Fixes: 3e4d618b0722 ("clk: stm32h7: Add stm32h743 clock driver")
+---
+ drivers/clk/clk-stm32h7.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+index a94c3f5..61c3e40 100644
+--- a/drivers/clk/clk-stm32h7.c
++++ b/drivers/clk/clk-stm32h7.c
+@@ -384,7 +384,7 @@ static void get_cfg_composite_div(const struct composite_clk_gcfg *gcfg,
+ 	mux_ops = div_ops = gate_ops = NULL;
+ 	mux_hw = div_hw = gate_hw = NULL;
+ 
+-	if (gcfg->mux && gcfg->mux) {
++	if (gcfg->mux && cfg->mux) {
+ 		mux = _get_cmux(base + cfg->mux->offset,
+ 				cfg->mux->shift,
+ 				cfg->mux->width,
+@@ -410,7 +410,7 @@ static void get_cfg_composite_div(const struct composite_clk_gcfg *gcfg,
+ 		}
+ 	}
+ 
+-	if (gcfg->gate && gcfg->gate) {
++	if (gcfg->gate && cfg->gate) {
+ 		gate = _get_cgate(base + cfg->gate->offset,
+ 				cfg->gate->bit_idx,
+ 				gcfg->gate->flags, lock);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
