@@ -1,105 +1,95 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:58798 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752694AbdIVWVn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Sep 2017 18:21:43 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.de>
-Cc: Johannes Stezenbach <js@sig21.net>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-acpi@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
-Date: Sat, 23 Sep 2017 00:12:35 +0200
-Message-ID: <5668556.iq4Amxhha7@aspire.rjw.lan>
-In-Reply-To: <s5hzi9mdik2.wl-tiwai@suse.de>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170922080453.3bwad4ale4zizf42@sig21.net> <s5hzi9mdik2.wl-tiwai@suse.de>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:30671 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751053AbdISEAv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2017 00:00:51 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: [PATCH v4 0/9] Mediatek MT2712 clock and scpsys support 
+Date: Tue, 19 Sep 2017 12:00:21 +0800
+Message-ID: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, September 22, 2017 2:27:57 PM CEST Takashi Iwai wrote:
-> On Fri, 22 Sep 2017 10:04:53 +0200,
-> Johannes Stezenbach wrote:
-> > 
-> > On Fri, Sep 22, 2017 at 12:35:15AM +0200, Rafael J. Wysocki wrote:
-> > > On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
-> > > > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
-> > > > > So I would be inclined to think of that as a BIOS issue.
-> > > > 
-> > > > OK, wrt $Subject it sparks the question how to fix the
-> > > > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
-> > > > gate clocks enabled by the firmware".  Add quirks to
-> > > > the drivers for the devices that have the dangling
-> > > > PowerResources and manually call _OFF/_ON during suspend/resume?
-> > > > 
-> > > > I must admit I haven't looked deeper into the issue yet,
-> > > > i.e. I don't know which clock causes S0ix failure.
-> > > > If I understand correctly, before d31fd43c0f9a4 the
-> > > > clk framework would just disable all unused clocks
-> > > > registered by clk-pmc-atom.c, which are all of then except
-> > > > CLK3 which is used by the audio codec. And the audio codec
-> > > > would disable CLK3 during suspend.
-> > > > After d31fd43c0f9a4 all clocks that BIOS had enabled during boot
-> > > > are kept running.  Presumably we could also add the quirk to
-> > > > clk-pmc-atom.c to bypass what d31fd43c0f9a4 added on Asus E200HA?
-> > > 
-> > > Since this is S0ix, the "system level" is 0 all the time (as I said in a
-> > > previous message).
-> > 
-> > Damn.  Reading ACPI spec (6.1 and 6.2), it talks about _LPI and _RDI
-> > but E200HA doesn't have that in any ACPI table.
-> > The table in section 7.1 Power Resource Objects and the Power Management Models
-> > says "Choose a supported device state to enable a targeted system sleep or
-> > Low- power Idle state ... [use] _PRx".
-> > 
-> > > So there seem to be two possible ways to address this, unfortunately both
-> > > based on white- or blacklisting.
-> > > 
-> > > One of them would be to only do the d31fd43c0f9a4 approach for selected
-> > > systems where it needs to be done to avoid breakage.  The other one would
-> > > be to do it for all systems by default and blacklist the ones where that
-> > > leads to problems.
-> > > 
-> > > IMO it is better to disable clocks over suspend-resume, because that reduces
-> > > the system's power draw while suspended.  So that's what I would do and then
-> > > keep the clocks running only if that is known to be necessary.
-> > 
-> > d31fd43c0f9a4 was added to fix a "hard hangup on boot" issue,
-> > so I guess the default should be to keep clocks enabled.
-> > 
-> > BTW, in E200HA DSDT, the PowerResources in question are children of
-> > the I2Cx devices, presumably it means these clocks are to be used by
-> > devices connected to the i2c busses.  Maybe it's a left over from devices
-> > that are not present in E200HA, and we should ignore them.
-> > 
-> > In conclusion the BIOS bug is that it enables these clocks at boot,
-> > and the correct quirk is to make clk-pmc-atom.c disable them during init,
-> > but leave the _PRx handling for the used clocks (CLK3) to ACPI.
-> 
-> Well, I can't say which is the buggy behavior, but at least, I agree
-> with Rafael that white/blacklisting is likely the way to go.
-> 
-> One thing I'm wondering is whether it's specific to device or specific
-> to platform.  The ASUS one that showed a regression Johannes and I
-> have is the Cherrytrail, while the device showed the hang-at-boot was
-> Baytrail, IIRC.
+This series is based on v4.14-rc1 and composed of
+clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
 
-If I were to place bets, I'd bet on platform-specific and not machine model-
-specific.
+changes since v3:
+- Rebase to v4.14-rc1.
 
-Thanks,
-Rafael
+changes since v2:
+- ensure the clocks used by clocksource driver are registered
+  before clocksource init() by using CLK_OF_DECLARE()
+- correct the frequency of clk32k/clkrtc_ext/clkrtc_int
+
+changes since v1:
+- Rebase to v4.13-next-soc.
+- Refine scpsys and infracfg for bus protection.
+
+Weiyi Lu (9):
+  dt-bindings: ARM: Mediatek: Document bindings for MT2712
+  clk: mediatek: Add dt-bindings for MT2712 clocks
+  clk: mediatek: Add MT2712 clock support
+  arm: dts: mt2712: Add clock controller device nodes
+  dt-bindings: soc: add MT2712 power dt-bindings
+  soc: mediatek: extend bus protection API
+  soc: mediatek: add dependent clock jpgdec/audio for scpsys
+  soc: mediatek: add MT2712 scpsys support
+  arm: dts: Add power controller device node of MT2712
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
+ .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  131 ++
+ drivers/clk/mediatek/Kconfig                       |   50 +
+ drivers/clk/mediatek/Makefile                      |    8 +
+ drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
+ drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
+ drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
+ drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 +
+ drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
+ drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
+ drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
+ drivers/clk/mediatek/clk-mt2712.c                  | 1435 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h                     |    2 +
+ drivers/clk/mediatek/clk-pll.c                     |   13 +-
+ drivers/soc/mediatek/mtk-infracfg.c                |   32 +-
+ drivers/soc/mediatek/mtk-scpsys.c                  |  199 ++-
+ include/dt-bindings/clock/mt2712-clk.h             |  427 ++++++
+ include/dt-bindings/power/mt2712-power.h           |   26 +
+ include/linux/soc/mediatek/infracfg.h              |   12 +-
+ 31 files changed, 3049 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712.c
+ create mode 100644 include/dt-bindings/clock/mt2712-clk.h
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
 
