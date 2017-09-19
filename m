@@ -1,74 +1,190 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:60947 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751237AbdISEAw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2017 00:00:52 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 4/9] arm: dts: mt2712: Add clock controller device nodes
+Date: Tue, 19 Sep 2017 12:00:25 +0800
+Message-ID: <1505793630-12590-5-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGRGNgUmo6ZztajhG=uZrXGsC9pxySswxLd4P-gk6xdknLX-NQ@mail.gmail.com>
-References: <20170929082306.16193-1-wens@csie.org> <20170929082306.16193-5-wens@csie.org>
- <20170929102006.2wz7wrkpplxwynoh@flea> <CAGb2v65VhtEckRCXi4X5AjmC-5CSHavATu8fKyEHOivmYqZkww@mail.gmail.com>
- <CAGRGNgUmo6ZztajhG=uZrXGsC9pxySswxLd4P-gk6xdknLX-NQ@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 30 Sep 2017 13:58:25 +0800
-Message-ID: <CAGb2v66epS9OLAQthYOrn7B48E80jsfy9dhyLPHyo4NmAOTCbg@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 04/14] drm/sun4i: tcon: Add support
- for demuxing TCON output on A31
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Sep 30, 2017 at 1:35 PM, Julian Calaby <julian.calaby@gmail.com> wrote:
-> Hi Chen-Yu,
->
-> On Fri, Sep 29, 2017 at 8:22 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->> On Fri, Sep 29, 2017 at 6:20 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->>> On Fri, Sep 29, 2017 at 08:22:56AM +0000, Chen-Yu Tsai wrote:
->>>> On systems with 2 TCONs such as the A31, it is possible to demux the
->>>> output of the TCONs to one encoder.
->>>>
->>>> Add support for this for the A31.
->>>>
->>>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>>> ---
->>>>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 38 ++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 38 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> index 7bf51abaee97..c949309d4285 100644
->>>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> @@ -112,6 +112,21 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
->>>>  }
->>>>  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
->>>>
->>>> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
->>>
->>> Would that make sense to make it a bit more generic, and pass the id
->>> to look for as an argument?
->>
->> The reason to look for TCON0 explicitly is to access the muxing registers, which
->> are only available in TCON0. Other than that, there's nothing else
->> shared between
->> the two TCONs. So there's no particular reason to look for TCON1 explicitly.
->
-> In that case: in the bizarre case where we're trying to use this mux
-> type and there is no TCON0, shouldn't we fail?
+Add clock controller nodes for MT2712, include topckgen, infracfg,
+pericfg, mcucfg and apmixedsys. This patch also add six oscillators that
+provide clocks for MT2712.
 
-It gives out a big warning, indicating something is wrong. If TCON0 is not found
-it is most likely your device tree is broken. There's nothing more the
-driver can do.
-Are you suggesting to return NULL in this case, and also do error
-handling in the
-callers?
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 115 ++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-> (Also, the code doesn't make sense if we have some TCON1 and TCON2 in
-> that order as it'll return TCON2)
+diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+index 57d0396..d2ee3cd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+@@ -5,6 +5,7 @@
+  * SPDX-License-Identifier: (GPL-2.0 OR MIT)
+  */
+ 
++#include <dt-bindings/clock/mt2712-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -73,6 +74,48 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	clk32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "clk32k";
++	};
++
++	clkfpc: oscillator@2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clkfpc";
++	};
++
++	clkaud_ext_i_0: oscillator@3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <6500000>;
++		clock-output-names = "clkaud_ext_i_0";
++	};
++
++	clkaud_ext_i_1: oscillator@4 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <196608000>;
++		clock-output-names = "clkaud_ext_i_1";
++	};
++
++	clkaud_ext_i_2: oscillator@5 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <180633600>;
++		clock-output-names = "clkaud_ext_i_2";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupt-parent = <&gic>;
+@@ -86,6 +129,24 @@
+ 			      (GIC_CPU_MASK_RAW(0x13) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2712-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2712-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2712-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	uart5: serial@1000f000 {
+ 		compatible = "mediatek,mt2712-uart",
+ 			     "mediatek,mt6577-uart";
+@@ -96,6 +157,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2712-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mcucfg: syscon@10220000 {
++		compatible = "mediatek,mt2712-mcucfg", "syscon";
++		reg = <0 0x10220000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	sysirq: interrupt-controller@10220a80 {
+ 		compatible = "mediatek,mt2712-sysirq",
+ 			     "mediatek,mt6577-sysirq";
+@@ -167,5 +240,47 @@
+ 		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
++
++	mfgcfg: syscon@13000000 {
++		compatible = "mediatek,mt2712-mfgcfg", "syscon";
++		reg = <0 0x13000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mmsys: syscon@14000000 {
++		compatible = "mediatek,mt2712-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	imgsys: syscon@15000000 {
++		compatible = "mediatek,mt2712-imgsys", "syscon";
++		reg = <0 0x15000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	bdpsys: syscon@15010000 {
++		compatible = "mediatek,mt2712-bdpsys", "syscon";
++		reg = <0 0x15010000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vdecsys: syscon@16000000 {
++		compatible = "mediatek,mt2712-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: syscon@18000000 {
++		compatible = "mediatek,mt2712-vencsys", "syscon";
++		reg = <0 0x18000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	jpgdecsys: syscon@19000000 {
++		compatible = "mediatek,mt2712-jpgdecsys", "syscon";
++		reg = <0 0x19000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
+ };
+ 
+-- 
+1.9.1
 
-I'm guessing you want it to return NULL.
-
-ChenYu
