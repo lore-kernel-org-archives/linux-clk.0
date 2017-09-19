@@ -1,44 +1,154 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:49869 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751728AbdIUWdN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 18:33:13 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Johannes Stezenbach <js@sig21.net>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
-Date: Fri, 22 Sep 2017 00:24:06 +0200
-Message-ID: <6159689.HysJJF9vfD@aspire.rjw.lan>
-In-Reply-To: <2582638.tGggrMFmYq@aspire.rjw.lan>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170921162307.amdz2uyei7eackhs@sig21.net> <2582638.tGggrMFmYq@aspire.rjw.lan>
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v2 9/9] tty/serial: atmel: Prevent a warning on suspend
+To: Romain Izard <romain.izard.pro@gmail.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
+ Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
+	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
+	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
+ Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
+	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-10-romain.izard.pro@gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <380a15d6-c180-316f-a56b-011acd02df59@microchip.com>
+Date: Tue, 19 Sep 2017 12:19:33 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170915140411.31716-10-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, September 22, 2017 12:20:55 AM CEST Rafael J. Wysocki wrote:
-> On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
-> > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
-> > > So I would be inclined to think of that as a BIOS issue.
-> > 
-> > OK, wrt $Subject it sparks the question how to fix the
-> > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
-> > gate clocks enabled by the firmware".  Add quirks to
-> > the drivers for the devices that have the dangling
-> > PowerResources and manually call _OFF/_ON during suspend/resume?
+On 15/09/2017 at 16:04, Romain Izard wrote:
+> The atmel serial port driver reported the following warning on suspend:
+> atmel_usart f8020000.serial: ttyS1: Unable to drain transmitter
 > 
-> Well, it may just be better to do that in the core at the suspend
-> time, so I'm wondering if the appended patch makes any difference?
+> As the ATMEL_US_TXEMPTY status bit in ATMEL_US_CSR is always cleared
+> when the transmitter is disabled, we need to know the transmitter's
+> state to return the real fifo state. And as ATMEL_US_CR is write-only,
+> it is necessary to save the state of the transmitter in a local
+> variable, and update the variable when TXEN and TXDIS is written in
+> ATMEL_US_CR.
+> 
+> After those changes, atmel_tx_empty can return "empty" on suspend, the
+> warning in uart_suspend_port disappears, and suspending is 20ms shorter
+> for each enabled Atmel serial port.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 
-But if this is S0ix, then the system states is S0 anyway all the time, so
-I'm not sure about the point here, honestly.
+Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+on sama5d2 Xplained.
 
-Thanks,
-Rafael
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
+> ---
+>  drivers/tty/serial/atmel_serial.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> index 7551cab438ff..783af6648be0 100644
+> --- a/drivers/tty/serial/atmel_serial.c
+> +++ b/drivers/tty/serial/atmel_serial.c
+> @@ -171,6 +171,7 @@ struct atmel_uart_port {
+>  	bool			has_hw_timer;
+>  	struct timer_list	uart_timer;
+>  
+> +	bool			tx_stopped;
+>  	bool			suspended;
+>  	unsigned int		pending;
+>  	unsigned int		pending_status;
+> @@ -380,6 +381,10 @@ static int atmel_config_rs485(struct uart_port *port,
+>   */
+>  static u_int atmel_tx_empty(struct uart_port *port)
+>  {
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+> +
+> +	if (atmel_port->tx_stopped)
+> +		return TIOCSER_TEMT;
+>  	return (atmel_uart_readl(port, ATMEL_US_CSR) & ATMEL_US_TXEMPTY) ?
+>  		TIOCSER_TEMT :
+>  		0;
+> @@ -485,6 +490,7 @@ static void atmel_stop_tx(struct uart_port *port)
+>  	 * is fully transmitted.
+>  	 */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS);
+> +	atmel_port->tx_stopped = true;
+>  
+>  	/* Disable interrupts */
+>  	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+> @@ -492,6 +498,7 @@ static void atmel_stop_tx(struct uart_port *port)
+>  	if ((port->rs485.flags & SER_RS485_ENABLED) &&
+>  	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
+>  		atmel_start_rx(port);
+> +
+>  }
+>  
+>  /*
+> @@ -521,6 +528,7 @@ static void atmel_start_tx(struct uart_port *port)
+>  
+>  	/* re-enable the transmitter */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
+> +	atmel_port->tx_stopped = false;
+>  }
+>  
+>  /*
+> @@ -1866,6 +1874,7 @@ static int atmel_startup(struct uart_port *port)
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	/* enable xmit & rcvr */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	setup_timer(&atmel_port->uart_timer,
+>  			atmel_uart_timer_callback,
+> @@ -2122,6 +2131,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  
+>  	/* disable receiver and transmitter */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS | ATMEL_US_RXDIS);
+> +	atmel_port->tx_stopped = true;
+>  
+>  	/* mode */
+>  	if (port->rs485.flags & SER_RS485_ENABLED) {
+> @@ -2207,6 +2217,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	/* restore interrupts */
+>  	atmel_uart_writel(port, ATMEL_US_IER, imr);
+> @@ -2450,6 +2461,7 @@ static void atmel_console_write(struct console *co, const char *s, u_int count)
+>  
+>  	/* Make sure that tx path is actually able to send characters */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	uart_console_write(port, s, count, atmel_console_putchar);
+>  
+> @@ -2511,6 +2523,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
+>  {
+>  	int ret;
+>  	struct uart_port *port = &atmel_ports[co->index].uart;
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+>  	int baud = 115200;
+>  	int bits = 8;
+>  	int parity = 'n';
+> @@ -2528,6 +2541,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
+>  	atmel_uart_writel(port, ATMEL_US_IDR, -1);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	if (options)
+>  		uart_parse_options(options, &baud, &parity, &bits, &flow);
+> 
+
+
+-- 
+Nicolas Ferre
