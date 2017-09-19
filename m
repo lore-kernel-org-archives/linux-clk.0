@@ -1,42 +1,34 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/3] arm64: allwinner: a64: set CPU regulator for Pine64
-Date: Sat, 23 Sep 2017 08:15:31 +0800
-Message-Id: <20170923001531.14285-4-icenowy@aosc.io>
-In-Reply-To: <20170923001531.14285-1-icenowy@aosc.io>
-References: <20170923001531.14285-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        David Binderma <dcb314@hotmail.com>
+Subject: Re: linux-4.14-rc1/drivers/clk/clk-stm32h7.c: 2 * possible typo ?
+Date: Tue, 19 Sep 2017 09:24:29 +0000
+Message-ID: <0abb5cce-f98f-b3c1-4d53-7ae4bd0e44dd@st.com>
+References: <12ce6ec0-d351-4ffe-a5a0-cdc09f6aee39@st.com>
+ <73cadb19-a75e-4938-265f-890cc5a4d3b4@st.com>
+In-Reply-To: <73cadb19-a75e-4938-265f-890cc5a4d3b4@st.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The DCDC2 regulator of the AXP803 PMIC is used for the voltage scaling
-of the ARM cores on the A64 SoC.
-
-Add this definition to enable it on Pine64.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index d06e34b5d192..cc77503091f1 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -63,6 +63,10 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
--- 
-2.13.5
+SSBtaXNzZWQgRGF2aWQgLi4uDQoNCg0KT24gMDkvMTkvMjAxNyAxMToyMiBBTSwgR2FicmllbCBG
+RVJOQU5ERVogd3JvdGU6DQo+IEhpIERhdmlkLA0KPg0KPiBJIGNvbmZpcm0gaXQncyB0eXBvIGlz
+c3VlLiBJICdtIHJlYWR5IHRvIHNlbmQgYSBmaXggZm9yIHRoYXQuDQo+DQo+IE1hbnkgVGhhbmsn
+cw0KPg0KPiBHYWJyaWVsDQo+DQo+PiBIZWxsbyB0aGVyZSwNCj4+DQo+PiAxLg0KPj4NCj4+IGxp
+bnV4LTQuMTQtcmMxL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmM6Mzg3XTogKHN0eWxlKSBTYW1l
+IGV4cHJlc3Npb24NCj4+IG9uIGJvdGggc2lkZXMgb2YgJyYmJy4NCj4+DQo+PiBTb3VyY2UgY29k
+ZSBpcw0KPj4NCj4+ICAgIMKgwqDCoCBpZiAoZ2NmZy0+bXV4ICYmIGdjZmctPm11eCkgew0KPj4N
+Cj4+IDIuDQo+Pg0KPj4gW2xpbnV4LTQuMTQtcmMxL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmM6
+NDEzXTogKHN0eWxlKSBTYW1lIGV4cHJlc3Npb24NCj4+IG9uIGJvdGggc2lkZXMgb2YgJyYmJy4N
+Cj4+DQo+PiBEdXBsaWNhdGUuDQo+Pg0KPj4gUmVnYXJkcw0KPj4NCj4+IERhdmlkIEJpbmRlcm1h
+bg0K
