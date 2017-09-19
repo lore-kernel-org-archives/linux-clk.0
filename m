@@ -1,54 +1,63 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 00/13] Updates for QCOM Alpha PLL
-Date: Thu, 28 Sep 2017 23:20:37 +0530
-Message-Id: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 19 Sep 2017 16:25:04 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Romain Izard <romain.izard.pro@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
+Message-ID: <20170919152504.nhp5i734u75gb5gq@dell>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-9-romain.izard.pro@gmail.com>
+ <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series does the miscellaneous changes in QCOM Alpha PLL
-operation and structure to support other types of Alpha PLL’s.
+On Tue, 19 Sep 2017, Nicolas Ferre wrote:
 
-1. It adds the pll_type which will be used for determining all
-   the properties of Alpha PLL.
-2. It adds the support for Brammo and Huayra PLL’s for which
-   the support is not available in existing alpha PLL code.
-3. There won’t be any change in existing users of Alpha PLL’s
-   since all the newly added code will be under flag for the default
-   PLL operations.
+> On 15/09/2017 at 16:04, Romain Izard wrote:
+> > The controller used by a flexcom module is configured at boot, and left
+> > alone after this. As the configuration will be lost after backup mode,
+> > restore the state of the flexcom driver on resume.
+> > 
+> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> 
+> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> On sama5d2 Xplained board (i2c0 from flexcom 4).
+> and obviously:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> 
+> Thanks Romain!
+> 
+> Regards,
+> 
+> > ---
+> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
+> >  1 file changed, 50 insertions(+), 15 deletions(-)
 
-The previous RFC series can be found for this in
-https://www.spinics.net/lists/linux-clk/msg19305.html
-
-Abhishek Sahu (13):
-  clk: qcom: remove redundant PLL_MODE macro offset
-  clk: qcom: minor code reorganization related with offset variable
-  clk: qcom: support for alpha pll properties
-  clk: qcom: fix 16 bit alpha support calculation
-  clk: qcom: add and use alpha register width from PLL properties
-  clk: qcom: flag for 64 bit CONFIG_CTL
-  clk: qcom: support for alpha mode configuration
-  clk: qcom: support for dynamic updating the PLL
-  clk: qcom: add flag for VCO operation
-  clk: qcom: support for Huayra PLL
-  clk: qcom: support for Brammo PLL
-  clk: qcom: support for 2 bit PLL post divider
-  clk: qcom: add read-only alpha pll post divider operations
-
- drivers/clk/qcom/clk-alpha-pll.c | 701 +++++++++++++++++++++++++++++++++------
- drivers/clk/qcom/clk-alpha-pll.h |  19 +-
- 2 files changed, 609 insertions(+), 111 deletions(-)
+This is the first time I've seen this patch.  Why's that?
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
