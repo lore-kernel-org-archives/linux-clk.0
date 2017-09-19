@@ -1,119 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:38247 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751661AbdIJMkg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 10 Sep 2017 08:40:36 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/2] clk: sunxi-ng: add CLK_SET_RATE_UNGATE to all H3 PLLs
-Date: Sun, 10 Sep 2017 20:40:05 +0800
-Message-Id: <20170910124006.60250-2-icenowy@aosc.io>
-In-Reply-To: <20170910124006.60250-1-icenowy@aosc.io>
-References: <20170910124006.60250-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jeremy.linton@arm.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-acpi@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com,
+	hanjun.guo@linaro.org,
+	lorenzo.pieralisi@arm.com,
+	rjw@rjwysocki.net,
+	will.deacon@arm.com,
+	catalin.marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	jhugo@codeaurora.org,
+	wangxiongfeng2@huawei.com,
+	Jonathan.Zhang@cavium.com,
+	ahs3@redhat.com,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v2 4/6] Topology: Add cluster on die macros and arm64 decoding
+Date: Tue, 19 Sep 2017 13:47:49 -0500
+Message-Id: <20170919184751.25110-5-jeremy.linton@arm.com>
+In-Reply-To: <20170919184751.25110-1-jeremy.linton@arm.com>
+References: <20170919184751.25110-1-jeremy.linton@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PLLs on H3 have a lock bit, which will only be set to 1 when the PLL
-is really working.
+Many modern machines have cluster on die (COD) non-uniformity
+as well as the traditional multi-socket architectures. Reusing
+the multi-socket or NUMA on die concepts for these (as arm64 does)
+breaks down when presented with actual multi-socket/COD machines.
+Similar, problems are also visible on some x86 machines so it
+seems appropriate to start abstracting and making these topologies
+visible.
 
-Add CLK_SET_RATE_UNGATE to the PLLs, otherwise it will timeout when
-trying to set PLL clock frequency without enabling it.
+To start, a topology_cod_id() macro is added which defaults to returning
+the same information as topology_physical_package_id(). Moving forward
+we can start to spit out the differences.
 
-Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+For arm64, an additional package_id is added to the cpu_topology array.
+Initially this will be equal to the cluster_id as well.
+
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/topology.h | 4 +++-
+ arch/arm64/kernel/topology.c      | 8 ++++++--
+ include/linux/topology.h          | 3 +++
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 1729ff6a5aae..7a81c4885836 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -37,7 +37,7 @@ static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpux_clk, "pll-cpux",
- 				     16, 2,	/* P */
- 				     BIT(31),	/* gate */
- 				     BIT(28),	/* lock */
--				     0);
-+				     CLK_SET_RATE_UNGATE);
+diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
+index 8b57339823e9..bd7517960d39 100644
+--- a/arch/arm64/include/asm/topology.h
++++ b/arch/arm64/include/asm/topology.h
+@@ -7,13 +7,15 @@ struct cpu_topology {
+ 	int thread_id;
+ 	int core_id;
+ 	int cluster_id;
++	int package_id;
+ 	cpumask_t thread_sibling;
+ 	cpumask_t core_sibling;
+ };
  
- /*
-  * The Audio PLL is supposed to have 4 outputs: 3 fixed factors from
-@@ -55,7 +55,7 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   0, 5,	/* M */
- 				   BIT(31),	/* gate */
- 				   BIT(28),	/* lock */
--				   0);
-+				   CLK_SET_RATE_UNGATE);
+ extern struct cpu_topology cpu_topology[NR_CPUS];
  
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
- 					"osc24M", 0x0010,
-@@ -67,7 +67,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
- 					297000000,	/* frac rate 1 */
- 					BIT(31),	/* gate */
- 					BIT(28),	/* lock */
--					0);
-+					CLK_SET_RATE_UNGATE);
+-#define topology_physical_package_id(cpu)	(cpu_topology[cpu].cluster_id)
++#define topology_physical_package_id(cpu)	(cpu_topology[cpu].package_id)
++#define topology_cod_id(cpu)		(cpu_topology[cpu].cluster_id)
+ #define topology_core_id(cpu)		(cpu_topology[cpu].core_id)
+ #define topology_core_cpumask(cpu)	(&cpu_topology[cpu].core_sibling)
+ #define topology_sibling_cpumask(cpu)	(&cpu_topology[cpu].thread_sibling)
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 8d48b233e6ce..9147e5b6326d 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -67,6 +67,8 @@ static int __init parse_core(struct device_node *core, int cluster_id,
+ 			leaf = false;
+ 			cpu = get_cpu_for_node(t);
+ 			if (cpu >= 0) {
++				/* maintain DT cluster == package behavior */
++				cpu_topology[cpu].package_id = cluster_id;
+ 				cpu_topology[cpu].cluster_id = cluster_id;
+ 				cpu_topology[cpu].core_id = core_id;
+ 				cpu_topology[cpu].thread_id = i;
+@@ -88,7 +90,7 @@ static int __init parse_core(struct device_node *core, int cluster_id,
+ 			       core);
+ 			return -EINVAL;
+ 		}
+-
++		cpu_topology[cpu].package_id = cluster_id;
+ 		cpu_topology[cpu].cluster_id = cluster_id;
+ 		cpu_topology[cpu].core_id = core_id;
+ 	} else if (leaf) {
+@@ -228,7 +230,7 @@ static void update_siblings_masks(unsigned int cpuid)
+ 	for_each_possible_cpu(cpu) {
+ 		cpu_topo = &cpu_topology[cpu];
  
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x0018,
-@@ -79,7 +79,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					297000000,	/* frac rate 1 */
- 					BIT(31),	/* gate */
- 					BIT(28),	/* lock */
--					0);
-+					CLK_SET_RATE_UNGATE);
+-		if (cpuid_topo->cluster_id != cpu_topo->cluster_id)
++		if (cpuid_topo->package_id != cpu_topo->package_id)
+ 			continue;
  
- static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
- 				    "osc24M", 0x020,
-@@ -88,7 +88,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
- 				    0, 2,	/* M */
- 				    BIT(31),	/* gate */
- 				    BIT(28),	/* lock */
--				    0);
-+				    CLK_SET_RATE_UNGATE);
+ 		cpumask_set_cpu(cpuid, &cpu_topo->core_sibling);
+@@ -273,6 +275,7 @@ void store_cpu_topology(unsigned int cpuid)
+ 					 MPIDR_AFFINITY_LEVEL(mpidr, 2) << 8 |
+ 					 MPIDR_AFFINITY_LEVEL(mpidr, 3) << 16;
+ 	}
++	cpuid_topo->package_id = cpuid_topo->cluster_id;
  
- static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph0_clk, "pll-periph0",
- 					   "osc24M", 0x028,
-@@ -97,7 +97,7 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph0_clk, "pll-periph0",
- 					   BIT(31),	/* gate */
- 					   BIT(28),	/* lock */
- 					   2,		/* post-div */
--					   0);
-+					   CLK_SET_RATE_UNGATE);
+ 	pr_debug("CPU%u: cluster %d core %d thread %d mpidr %#016llx\n",
+ 		 cpuid, cpuid_topo->cluster_id, cpuid_topo->core_id,
+@@ -292,6 +295,7 @@ static void __init reset_cpu_topology(void)
+ 		cpu_topo->thread_id = -1;
+ 		cpu_topo->core_id = 0;
+ 		cpu_topo->cluster_id = -1;
++		cpu_topo->package_id = -1;
  
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x0038,
-@@ -109,7 +109,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					297000000,	/* frac rate 1 */
- 					BIT(31),	/* gate */
- 					BIT(28),	/* lock */
--					0);
-+					CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph1_clk, "pll-periph1",
- 					   "osc24M", 0x044,
-@@ -118,7 +118,7 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph1_clk, "pll-periph1",
- 					   BIT(31),	/* gate */
- 					   BIT(28),	/* lock */
- 					   2,		/* post-div */
--					   0);
-+					   CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
- 					"osc24M", 0x0048,
-@@ -130,7 +130,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
- 					297000000,	/* frac rate 1 */
- 					BIT(31),	/* gate */
- 					BIT(28),	/* lock */
--					0);
-+					CLK_SET_RATE_UNGATE);
- 
- static const char * const cpux_parents[] = { "osc32k", "osc24M",
- 					     "pll-cpux" , "pll-cpux" };
+ 		cpumask_clear(&cpu_topo->core_sibling);
+ 		cpumask_set_cpu(cpu, &cpu_topo->core_sibling);
+diff --git a/include/linux/topology.h b/include/linux/topology.h
+index cb0775e1ee4b..4660749a7303 100644
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -184,6 +184,9 @@ static inline int cpu_to_mem(int cpu)
+ #ifndef topology_physical_package_id
+ #define topology_physical_package_id(cpu)	((void)(cpu), -1)
+ #endif
++#ifndef topology_cod_id				/* cluster on die */
++#define topology_cod_id(cpu)			topology_physical_package_id(cpu)
++#endif
+ #ifndef topology_core_id
+ #define topology_core_id(cpu)			((void)(cpu), 0)
+ #endif
 -- 
 2.13.5
-
