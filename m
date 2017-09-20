@@ -1,88 +1,62 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
-Date: Fri, 29 Sep 2017 13:30:51 -0600
+Return-Path: <romain.izard@mobile-devices.fr>
 MIME-Version: 1.0
-In-Reply-To: <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: romain.izard@mobile-devices.fr
+In-Reply-To: <20170919152504.nhp5i734u75gb5gq@dell>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-9-romain.izard.pro@gmail.com> <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
+ <20170919152504.nhp5i734u75gb5gq@dell>
+From: Romain Izard <romain.izard.pro@gmail.com>
+Date: Wed, 20 Sep 2017 10:30:31 +0200
+Message-ID: <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>, Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27/2017 02:34 AM, Jon Hunter wrote:
-> 
-> On 27/09/17 02:57, Dmitry Osipenko wrote:
->> On 26.09.2017 17:50, Jon Hunter wrote:
->>>
->>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>> on Tegra20/30 SoC's.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>   .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>>>   1 file changed, 23 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>> new file mode 100644
->>>> index 000000000000..2af9aa76ae11
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>> @@ -0,0 +1,23 @@
->>>> +* NVIDIA Tegra AHB DMA controller
->>>> +
->>>> +Required properties:
->>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->>>> +- reg:		Should contain registers base address and length.
->>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
->>>> +- clocks:	Should contain one entry, DMA controller clock.
->>>> +- resets :	Should contain one entry, DMA controller reset.
->>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->>>> +		for the peripheral. For more details consult the Tegra TRM's
->>>> +		documentation, in particular AHB DMA channel control register
->>>> +		REQ_SEL field.
->>>
->>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>
+2017-09-19 17:25 GMT+02:00 Lee Jones <lee.jones@linaro.org>:
+> On Tue, 19 Sep 2017, Nicolas Ferre wrote:
+>
+>> On 15/09/2017 at 16:04, Romain Izard wrote:
+>> > The controller used by a flexcom module is configured at boot, and left
+>> > alone after this. As the configuration will be lost after backup mode,
+>> > restore the state of the flexcom driver on resume.
+>> >
+>> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 >>
->> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->> software to decide what trigger to select. So it shouldn't be in the binding.
-> 
-> I think it could be, if say a board wanted a GPIO to trigger a transfer.
-> 
->> And I think the same applies to requester... any objections?
-> 
-> Well, the REQ_SEL should definitely be in the binding.
-> 
-> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
-> like we never bothered with it for the APB DMA and so maybe no ones uses
-> this.
+>> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>> On sama5d2 Xplained board (i2c0 from flexcom 4).
+>> and obviously:
+>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>
+>> Thanks Romain!
+>>
+>> Regards,
+>>
+>> > ---
+>> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
+>> >  1 file changed, 50 insertions(+), 15 deletions(-)
+>
+> This is the first time I've seen this patch.  Why's that?
+>
 
-I don't think TRIG_SEL should be in the binding, at least at present. 
-While TRIG_SEL certainly is something used to configure the transfer, I 
-believe the semantics of the current DMA binding only cover DMA 
-transfers that are initiated when SW desires, rather than being a 
-combination of after SW programs the transfer plus some other HW event. 
-So, we always use a default/hard-coded TRIG_SEL value. As such, there's 
-no need for a TRIG_SEL value in DT. There's certainly no known use-case 
-that requires a non-default TRIG_SEL value at present. We could add an 
-extra #dma-cells value later if we find a use for it, and the semantics 
-of that use-case make sense to add it to the DMA specifier, rather than 
-some other separate higher-level property/driver/...
+As the patchset covers many subsystems, get_maintainers.pl provided a
+very long list of both developpers and mailing lists (28). I thought it
+was a good idea to shorten it a little. Bad idea. Sorry.
+
+Best regards,
+-- 
+Romain Izard
