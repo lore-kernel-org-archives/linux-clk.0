@@ -1,69 +1,106 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 29 Sep 2017 10:47:55 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 02/14] clk: sunxi-ng: sun6i: Rename HDMI DDC clock to
- avoid name collision
-Message-ID: <20170929084755.vsbqn4bq6z2n7c64@flea>
-References: <20170929082306.16193-1-wens@csie.org>
- <20170929082306.16193-3-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xy6qbslaheqpye3t"
-In-Reply-To: <20170929082306.16193-3-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs1.siol.net ([213.250.19.134]:43592 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751485AbdITTiq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Sep 2017 15:38:46 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org
+Cc: Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, icenowy@aosc.io,
+        linux-sunxi@googlegroups.com
+Subject: [RFC PATCH 0/7] sun8i H3 HDMI glue driver for DW HDMI
+Date: Wed, 20 Sep 2017 21:38:24 +0200
+Message-Id: <20170920193831.20268-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch series adds a HDMI glue driver for Allwinner H3 SoC. For now, only
+video and CEC functionality is supported. Audio needs more tweaks.
 
---xy6qbslaheqpye3t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Series is based on the H3 DE2 patch series available on mailing list:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-August/522697.html
+(ignore patches marked with [NOT FOR REVIEW NOW] tag)
 
-On Fri, Sep 29, 2017 at 08:22:54AM +0000, Chen-Yu Tsai wrote:
-> The HDMI DDC clock found in the CCU is the parent of the actual DDC
-> clock within the HDMI controller. That clock is also named "hdmi-ddc".
->=20
-> Rename the one in the CCU to "ddc". This makes more sense than renaming
-> the one in the HDMI controller to something else.
->=20
-> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Patch 1 adds support for polling plug detection since custom PHY used here
+doesn't support HPD interrupt.
 
-Applied, thanks!
-Maxime
+Patch 2 enables overflow workaround for v1.32a. This HDMI controller exhibits
+same issues as HDMI controller used in iMX6 SoCs.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Patch 3 adds CLK_SET_RATE_PARENT to hdmi clock.
 
---xy6qbslaheqpye3t
-Content-Type: application/pgp-signature; name="signature.asc"
+Patch 4 adds dt bindings documentation.
 
------BEGIN PGP SIGNATURE-----
+Patch 5 adds actual H3 HDMI glue driver.
 
-iQIcBAEBAgAGBQJZzgi7AAoJEBx+YmzsjxAgjsoP+QH8P/BNG52QblxUFTms57VL
-7dq4YRnOfdJKUPPka8p+fFUN9kEOYmvor5+XNn78ep0RlYGmWUjOvY6Y8uKu7MY4
-KYmtokxQ7XA1OpPQ2gyXd6pIxkDXniujkBqBsDKZQy7ZOz81dDJxpkRKGpFky/IQ
-AgQSGHh4pWJww8lUY1Yzt1IxkAQy13zLUfyDPghBR2yGsd1a0UaYlO3u6jqq9+3k
-+khyeUqO1aI4txyYqR38QZ/wAIZF/DRbX2L3gYgjSOKLnPM83g2+DXHQHlZyM0cN
-aY6EWibfEKczay4U5dceMwFbxj+DUBsYU3Aw6yZAcl11ZYleloFZVII4LR5Ei2o6
-jOmhOpSfS4v0IqEGTWL0++RMbhxCx3v09wZZyeS3nfgIySfCMla4NTPn8fPb8Yo7
-9c79r32mlsfaYFgpD6UnFDpjuF+13djd5DMn+k8AelHS9NwgLVIFEpwEsI9M6WjR
-dzJOHgTrRtaolfp5oo3JBjyhHKSbcvIw/Nb8vv3SBI8yYKVV/SOp9HenQVtTyx4g
-9OLZ27OWXb2Ay74HbCHfJFsJNN5ANtUTfUrd2NIef0PbPdc+OaEk0+NgKAMi+M0W
-p62C+TxQ+5z6FAFdk4yZX6QgnBcg/qWCH82PhE8/Rl/9QvkTjFz22npR3/GuHc2H
-TLXZSWHAF4Bt+YnA1yjb
-=TFeN
------END PGP SIGNATURE-----
+Patch 6 and 7 add HDMI node to DT and enable it where needed.
 
---xy6qbslaheqpye3t--
+Allwinner used DW HDMI controller in a non standard way:
+- register offsets obfuscation layer, which can fortunately be turned off
+- register read lock, which has to be disabled by magic number
+- custom PHY, which have to be initialized before DW HDMI controller
+- non standard clocks
+- no HPD interrupt
+
+Because of that, I have two questions:
+- Since HPD have to be polled, is it enough just to enable poll mode? I'm
+  mainly concerned about invalidating CEC address here.
+- PHY has to be initialized before DW HDMI controller to disable offset
+  obfuscation and read lock among other things. This means that all clocks have
+  to be enabled in glue driver. This poses a problem, since when using
+  component model, dw-hdmi bridge uses drvdata for it's own private data and
+  prevents glue layer to pass a pointer to unbind function, where clocks should
+  be disabled. I noticed same issue in meson DW HDMI glue driver, where clocks
+  are also not disabled when unbind callback is called. I noticed that when H3
+  SoC is shutdown, HDMI output is still enabled and lastest image is shown on
+  monitor until it is unplugged from power supply. Is there any simple solution
+  to this?
+
+Chen-Yu,
+TL Lim was unable to obtain any answer from Allwinner about HDMI clocks. I think
+it is safe to assume that divider in HDMI clock doesn't have any effect.
+
+Branch based on linux-next from 1. September with integrated patches is
+available here:
+https://github.com/jernejsk/linux-1/tree/h3_hdmi_rfc
+
+Some additonal info about H3 HDMI:
+https://linux-sunxi.org/DWC_HDMI_Controller
+
+Thanks to Jens Kuske, who figured out that it is actually DW HDMI controller
+and mapped scrambled register offsets to original ones.
+
+Icenowy Zheng (1):
+  ARM: sun8i: h3: Add DesignWare HDMI controller node
+
+Jernej Skrabec (6):
+  drm: bridge: Enable polling hpd event in dw_hdmi
+  drm: bridge: Enable workaround in dw_hdmi for v1.32a
+  clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
+  dt-bindings: Document Allwinner DWC HDMI TX node
+  drm: sun4i: Add a glue for the DesignWare HDMI controller in H3
+  ARM: sun8i: h3: Enable HDMI output on H3 boards
+
+ .../bindings/display/sunxi/sun4i-drm.txt           | 158 ++++++-
+ arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |  33 ++
+ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          |  33 ++
+ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           |  33 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |  33 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |  33 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |  33 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  33 ++
+ arch/arm/boot/dts/sun8i-h3.dtsi                    |   5 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  36 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  14 +-
+ drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+ drivers/gpu/drm/sun4i/Makefile                     |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 500 +++++++++++++++++++++
+ 15 files changed, 950 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+
+-- 
+2.14.1
+
