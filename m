@@ -1,193 +1,75 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 3/5] clk: aspeed: Add platform driver and register PLLs
-Date: Wed, 27 Sep 2017 15:57:00 +0930
-Message-Id: <20170927062702.11350-4-joel@jms.id.au>
-In-Reply-To: <20170927062702.11350-1-joel@jms.id.au>
-References: <20170927062702.11350-1-joel@jms.id.au>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org
+Subject: [RESEND RFC PATCH 2/7] drm: bridge: Enable workaround in dw_hdmi for
+ v1.32a
+Date: Wed, 20 Sep 2017 22:01:19 +0200
+Message-Id: <20170920200124.20457-3-jernej.skrabec@siol.net>
+In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
+References: <20170920200124.20457-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, narmstrong@baylibre.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, hans.verkuil@cisco.com,
+ Laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers a platform driver to set up all of the non-core clocks.
+Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
 
-The clocks that have configurable rates are now registered.
+Allwinner never released any kind of dw hdmi or errata documentation,
+so it is not clear how many iterations need to be executed. One
+iteration seems to be enough.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-
---
-v3:
- - Fix bclk and eclk calculation
- - Seperate out ast2400 and ast25000 for pll calculation
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/clk-aspeed.c | 127 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 127 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 14387055554f..e43016ea82cd 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -14,6 +14,8 @@
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -108,6 +110,20 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 09cb5a3e4c71..72969240a9d4 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1631,9 +1631,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 	 * then write one of the FC registers several times.
+ 	 *
+ 	 * The number of iterations matters and depends on the HDMI TX revision
+-	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+-	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+-	 * 4 and 1 iterations respectively.
++	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
++	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
++	 * as needing the workaround, with 4 iterations for v1.30a and 1
++	 * iteration for others.
+ 	 */
  
-+static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
-+
-+static const struct clk_div_table ast2500_mac_div_table[] = {
-+	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
- static const struct clk_div_table ast2400_div_table[] = {
- 	{ 0x0, 2 },
- 	{ 0x1, 4 },
-@@ -173,6 +189,117 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
- 			mult, div);
- }
- 
-+struct aspeed_clk_soc_data {
-+	const struct clk_div_table *div_table;
-+	const struct clk_div_table *mac_div_table;
-+	struct clk_hw *(*calc_pll)(const char *name, u32 val);
-+};
-+
-+static const struct aspeed_clk_soc_data ast2500_data = {
-+	.div_table = ast2500_div_table,
-+	.mac_div_table = ast2500_mac_div_table,
-+	.calc_pll = aspeed_ast2500_calc_pll,
-+};
-+
-+static const struct aspeed_clk_soc_data ast2400_data = {
-+	.div_table = ast2400_div_table,
-+	.mac_div_table = ast2400_div_table,
-+	.calc_pll = aspeed_ast2400_calc_pll,
-+};
-+
-+static int __init aspeed_clk_probe(struct platform_device *pdev)
-+{
-+	const struct aspeed_clk_soc_data *soc_data;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	struct clk_hw *hw;
-+	u32 val, rate;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "no syscon regmap\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	/* SoC generations share common layouts but have different divisors */
-+	soc_data = of_device_get_match_data(&pdev->dev);
-+
-+	/* UART clock div13 setting */
-+	regmap_read(map, ASPEED_MISC_CTRL, &val);
-+	if (val & BIT(12))
-+		rate = 24000000 / 13;
-+	else
-+		rate = 24000000;
-+	/* TODO: Find the parent data for the uart clock */
-+	hw = clk_hw_register_fixed_rate(NULL, "uart", NULL, 0, rate);
-+	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
-+
-+	/*
-+	 * Memory controller (M-PLL) PLL. This clock is configured by the
-+	 * bootloader, and is exposed to Linux as a read-only clock rate.
-+	 */
-+	regmap_read(map, ASPEED_MPLL_PARAM, &val);
-+	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	soc_data->calc_pll("mpll", val);
-+
-+	/* SD/SDIO clock divider (TODO: There's a gate too) */
-+	hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
-+
-+	/* MAC AHB bus clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "mac", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
-+			soc_data->mac_div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
-+
-+	/* LPC Host (LHCLK) clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "lhclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
-+
-+	/* Video Engine (ECLK) mux and clock divider */
-+	hw = clk_hw_register_mux(NULL, "eclk_mux",
-+			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
-+			scu_base + ASPEED_CLK_SELECTION, 2, 2,
-+			0, &aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-+	hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 28, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-+
-+	/* P-Bus (BCLK) clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
-+
-+	return 0;
-+};
-+
-+static const struct of_device_id aspeed_clk_dt_ids[] = {
-+	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
-+	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
-+	{ },
-+};
-+
-+static struct platform_driver aspeed_clk_driver = {
-+	.probe  = aspeed_clk_probe,
-+	.driver = {
-+		.name = "aspeed-clk",
-+		.of_match_table = aspeed_clk_dt_ids,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(aspeed_clk_driver);
-+
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
+ 	switch (hdmi->version) {
+@@ -1641,6 +1642,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 		count = 4;
+ 		break;
+ 	case 0x131a:
++	case 0x132a:
+ 		count = 1;
+ 		break;
+ 	default:
 -- 
 2.14.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
