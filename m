@@ -1,64 +1,222 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 9/9] arm: dts: Add power controller device node of MT2712
-Date: Tue, 19 Sep 2017 12:00:30 +0800
-Message-ID: <1505793630-12590-10-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org
+Subject: [RFC PATCH 4/7] dt-bindings: Document Allwinner DWC HDMI TX node
+Date: Wed, 20 Sep 2017 21:38:28 +0200
+Message-Id: <20170920193831.20268-5-jernej.skrabec@siol.net>
+In-Reply-To: <20170920193831.20268-1-jernej.skrabec@siol.net>
+References: <20170920193831.20268-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, narmstrong@baylibre.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, Laurent.pinchart@ideasonboard.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-add power controller node for MT2712
+Add documentation about Allwinner DWC HDMI TX node, found in H3 SoC.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../bindings/display/sunxi/sun4i-drm.txt           | 158 ++++++++++++++++++++-
+ 1 file changed, 157 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index d2ee3cd..fa87f92 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt2712-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/mt2712-power.h>
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 92512953943e..cb6aee5c486f 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -60,6 +60,40 @@ Required properties:
+     first port should be the input endpoint. The second should be the
+     output, usually to an HDMI connector.
  
- / {
- 	compatible = "mediatek,mt2712";
-@@ -147,6 +148,21 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt2712-scpsys", "syscon";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MM_SEL>,
-+			 <&topckgen CLK_TOP_MFG_SEL>,
-+			 <&topckgen CLK_TOP_VENC_SEL>,
-+			 <&topckgen CLK_TOP_JPGDEC_SEL>,
-+			 <&topckgen CLK_TOP_A1SYS_HP_SEL>,
-+			 <&topckgen CLK_TOP_VDEC_SEL>;
-+		clock-names = "mm", "mfg", "venc",
-+			"jpgdec", "audio", "vdec";
-+		infracfg = <&infracfg>;
-+	};
++DWC HDMI TX Encoder
++-----------------------------
 +
- 	uart5: serial@1000f000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
++The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
++with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
++
++These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
++Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
++following device-specific properties.
++
++Required properties:
++
++  - compatible: value must be one of:
++    * "allwinner,sun8i-h3-dw-hdmi"
++  - reg: two pairs of base address and size of memory-mapped region, first
++    for controller and second for PHY
++    registers.
++  - reg-io-width: See dw_hdmi.txt. Shall be 1.
++  - interrupts: HDMI interrupt number
++  - clocks: phandles to the clocks feeding the HDMI encoder
++    * iahb: the HDMI interface clock
++    * isfr: the HDMI module clock
++    * ddc: the HDMI ddc clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the encoder
++    * hdmi: the reset line for the HDMI
++    * ddc: the reset line for the DDC
++  - reset-names: the reset names mentioned above
++
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint. The second should be the
++    output, usually to an HDMI connector.
++
+ TV Encoder
+ ----------
+ 
+@@ -255,7 +289,7 @@ Required properties:
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
+ 
+-Example:
++Example 1:
+ 
+ panel: panel {
+ 	compatible = "olimex,lcd-olinuxino-43-ts";
+@@ -455,3 +489,125 @@ display-engine {
+ 	compatible = "allwinner,sun5i-a13-display-engine";
+ 	allwinner,pipelines = <&fe0>;
+ };
++
++Example 2:
++
++connector {
++	compatible = "hdmi-connector";
++	type = "a";
++
++	port {
++		hdmi_con_in: endpoint {
++			remote-endpoint = <&hdmi_out_con>;
++		};
++	};
++};
++
++de: display-engine {
++	compatible = "allwinner,sun8i-h3-display-engine";
++	allwinner,pipelines = <&mixer0>;
++};
++
++hdmi: hdmi@1ee0000 {
++	compatible = "allwinner,h3-dw-hdmi";
++	reg = <0x01ee0000 0x10000>,
++	      <0x01ef0000 0x10000>;
++	reg-io-width = <1>;
++	interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI>,
++		 <&ccu CLK_HDMI_DDC>;
++	clock-names = "iahb", "isfr", "ddc";
++	resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
++	reset-names = "hdmi", "ddc";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hdmi_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			hdmi_in_tcon0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_hdmi>;
++			};
++		};
++
++		hdmi_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			hdmi_out_con: endpoint {
++				remote-endpoint = <&hdmi_con_in>;
++			};
++		};
++	};
++};
++
++mixer0: mixer@1100000 {
++	compatible = "allwinner,sun8i-h3-de2-mixer0";
++	reg = <0x01100000 0x100000>;
++	clocks = <&display_clocks CLK_BUS_MIXER0>,
++		 <&display_clocks CLK_MIXER0>;
++	clock-names = "bus",
++		      "mod";
++	resets = <&display_clocks RST_MIXER0>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mixer0_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			mixer0_out_tcon0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_in_mixer0>;
++			};
++		};
++	};
++};
++
++tcon0: lcd-controller@1c0c000 {
++	compatible = "allwinner,sun8i-h3-tcon";
++	reg = <0x01c0c000 0x1000>;
++	interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_TCON0>,
++		 <&ccu CLK_TCON0>;
++	clock-names = "ahb",
++		      "tcon-ch1";
++	resets = <&ccu RST_BUS_TCON0>;
++	reset-names = "lcd";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		tcon0_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			tcon0_in_mixer0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&mixer0_out_tcon0>;
++			};
++		};
++
++		tcon0_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			tcon0_out_hdmi: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&hdmi_in_tcon0>;
++			};
++		};
++	};
++};
 -- 
-1.9.1
+2.14.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
