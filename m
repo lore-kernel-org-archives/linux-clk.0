@@ -1,72 +1,153 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [RESEND RFC PATCH 0/7] sun8i H3 HDMI glue driver for DW HDMI
-To: Jose Abreu <Jose.Abreu@synopsys.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        maxime.ripard@free-electrons.com, wens@csie.org
-Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
-        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        icenowy@aosc.io, linux-sunxi@googlegroups.com,
-        linux-media@vger.kernel.org
-References: <20170920200124.20457-1-jernej.skrabec@siol.net>
- <5172c185-c6b5-49c3-cf0a-c3e073459346@synopsys.com>
-From: Hans Verkuil <hansverk@cisco.com>
-Message-ID: <68fa56f8-9878-12d0-1696-4393abe45db5@cisco.com>
-Date: Thu, 21 Sep 2017 11:59:27 +0200
+Return-Path: <richard.genoud@gmail.com>
+Return-Path: <richard.genoud@gmail.com>
+Subject: Re: [PATCH v2 9/9] tty/serial: atmel: Prevent a warning on suspend
+To: Romain Izard <romain.izard.pro@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>,
+ Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Brian Norris <computersforpeace@gmail.com>,
+ Marek Vasut <marek.vasut@gmail.com>,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-10-romain.izard.pro@gmail.com>
+From: Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <dabb8094-3489-3617-0b09-3aff247b34a2@gmail.com>
+Date: Wed, 20 Sep 2017 16:35:05 +0200
 MIME-Version: 1.0
-In-Reply-To: <5172c185-c6b5-49c3-cf0a-c3e073459346@synopsys.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170915140411.31716-10-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21/17 11:39, Jose Abreu wrote:
-> Hi Jernej,
+On 15/09/2017 16:04, Romain Izard wrote:
+> The atmel serial port driver reported the following warning on suspend:
+> atmel_usart f8020000.serial: ttyS1: Unable to drain transmitter
 > 
-> On 20-09-2017 21:01, Jernej Skrabec wrote:
->> [added media mailing list due to CEC question]
->>
->> This patch series adds a HDMI glue driver for Allwinner H3 SoC. For now, only
->> video and CEC functionality is supported. Audio needs more tweaks.
->>
->> Series is based on the H3 DE2 patch series available on mailing list:
->> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_pipermail_linux-2Darm-2Dkernel_2017-2DAugust_522697.html&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=WHDsc6kcWAl4i96Vm5hJ_19IJiuxx_p_Rzo2g-uHDKw&m=coyfcQKSr2asrHcaCeWFmAP_9nkFkRK8s7Uw5bmVei4&s=JCFaMXK1MmZ3jE745_YcqZhZkaqtc6UapGfSSapcz_s&e= 
->> (ignore patches marked with [NOT FOR REVIEW NOW] tag)
->>
->> Patch 1 adds support for polling plug detection since custom PHY used here
->> doesn't support HPD interrupt.
->>
->> Patch 2 enables overflow workaround for v1.32a. This HDMI controller exhibits
->> same issues as HDMI controller used in iMX6 SoCs.
->>
->> Patch 3 adds CLK_SET_RATE_PARENT to hdmi clock.
->>
->> Patch 4 adds dt bindings documentation.
->>
->> Patch 5 adds actual H3 HDMI glue driver.
->>
->> Patch 6 and 7 add HDMI node to DT and enable it where needed.
->>
->> Allwinner used DW HDMI controller in a non standard way:
->> - register offsets obfuscation layer, which can fortunately be turned off
->> - register read lock, which has to be disabled by magic number
->> - custom PHY, which have to be initialized before DW HDMI controller
->> - non standard clocks
->> - no HPD interrupt
->>
->> Because of that, I have two questions:
->> - Since HPD have to be polled, is it enough just to enable poll mode? I'm
->>   mainly concerned about invalidating CEC address here.
+> As the ATMEL_US_TXEMPTY status bit in ATMEL_US_CSR is always cleared
+> when the transmitter is disabled, we need to know the transmitter's
+> state to return the real fifo state. And as ATMEL_US_CR is write-only,
+> it is necessary to save the state of the transmitter in a local
+> variable, and update the variable when TXEN and TXDIS is written in
+> ATMEL_US_CR.
 > 
-> You mean you get no interrupt when HPD status changes? Hans can
-> answer this better but then you will need to invalidate the cec
-> physical address yourself because right now its invalidated in
-> the dw-hdmi irq handler (see dw_hdmi_irq()).
+> After those changes, atmel_tx_empty can return "empty" on suspend, the
+> warning in uart_suspend_port disappears, and suspending is 20ms shorter
+> for each enabled Atmel serial port.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> ---
+>  drivers/tty/serial/atmel_serial.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> index 7551cab438ff..783af6648be0 100644
+> --- a/drivers/tty/serial/atmel_serial.c
+> +++ b/drivers/tty/serial/atmel_serial.c
+> @@ -171,6 +171,7 @@ struct atmel_uart_port {
+>  	bool			has_hw_timer;
+>  	struct timer_list	uart_timer;
+>  
+> +	bool			tx_stopped;
+>  	bool			suspended;
+>  	unsigned int		pending;
+>  	unsigned int		pending_status;
+> @@ -380,6 +381,10 @@ static int atmel_config_rs485(struct uart_port *port,
+>   */
+>  static u_int atmel_tx_empty(struct uart_port *port)
+>  {
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+> +
+> +	if (atmel_port->tx_stopped)
+> +		return TIOCSER_TEMT;
+>  	return (atmel_uart_readl(port, ATMEL_US_CSR) & ATMEL_US_TXEMPTY) ?
+>  		TIOCSER_TEMT :
+>  		0;
+> @@ -485,6 +490,7 @@ static void atmel_stop_tx(struct uart_port *port)
+>  	 * is fully transmitted.
+>  	 */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS);
+> +	atmel_port->tx_stopped = true;
+>  
+>  	/* Disable interrupts */
+>  	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+> @@ -492,6 +498,7 @@ static void atmel_stop_tx(struct uart_port *port)
+>  	if ((port->rs485.flags & SER_RS485_ENABLED) &&
+>  	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
+>  		atmel_start_rx(port);
+> +
+>  }
+This line feed is not needed.
+Otherwise,
 
-That's correct. When the HPD goes low you need to call cec_notifier_phys_addr_invalidate()
-to invalidate the physical address. This is not terribly time sensitive, i.e.
-checking this once a second would be quick enough.
+Acked-by: Richard Genoud <richard.genoud@gmail.com>
 
-Regards,
-
-	Hans
+>  
+>  /*
+> @@ -521,6 +528,7 @@ static void atmel_start_tx(struct uart_port *port)
+>  
+>  	/* re-enable the transmitter */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
+> +	atmel_port->tx_stopped = false;
+>  }
+>  
+>  /*
+> @@ -1866,6 +1874,7 @@ static int atmel_startup(struct uart_port *port)
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	/* enable xmit & rcvr */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	setup_timer(&atmel_port->uart_timer,
+>  			atmel_uart_timer_callback,
+> @@ -2122,6 +2131,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  
+>  	/* disable receiver and transmitter */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS | ATMEL_US_RXDIS);
+> +	atmel_port->tx_stopped = true;
+>  
+>  	/* mode */
+>  	if (port->rs485.flags & SER_RS485_ENABLED) {
+> @@ -2207,6 +2217,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	/* restore interrupts */
+>  	atmel_uart_writel(port, ATMEL_US_IER, imr);
+> @@ -2450,6 +2461,7 @@ static void atmel_console_write(struct console *co, const char *s, u_int count)
+>  
+>  	/* Make sure that tx path is actually able to send characters */
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	uart_console_write(port, s, count, atmel_console_putchar);
+>  
+> @@ -2511,6 +2523,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
+>  {
+>  	int ret;
+>  	struct uart_port *port = &atmel_ports[co->index].uart;
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+>  	int baud = 115200;
+>  	int bits = 8;
+>  	int parity = 'n';
+> @@ -2528,6 +2541,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
+>  	atmel_uart_writel(port, ATMEL_US_IDR, -1);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+> +	atmel_port->tx_stopped = false;
+>  
+>  	if (options)
+>  		uart_parse_options(options, &baud, &parity, &bits, &flow);
+> 
