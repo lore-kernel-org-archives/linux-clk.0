@@ -1,61 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:63848 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751629AbdIUOax (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 10:30:53 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Johannes Stezenbach <js@sig21.net>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
-Date: Thu, 21 Sep 2017 16:21:46 +0200
-Message-ID: <4036229.gTT6xKEFIS@aspire.rjw.lan>
-In-Reply-To: <20170921094013.hznamkxx5md4yhgf@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170908134920.qia2bdjvpahe3zvi@sig21.net> <20170921094013.hznamkxx5md4yhgf@sig21.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org
+Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
+        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        icenowy@aosc.io, linux-sunxi@googlegroups.com,
+        linux-media@vger.kernel.org
+Subject: [RESEND RFC PATCH 1/7] drm: bridge: Enable polling hpd event in dw_hdmi
+Date: Wed, 20 Sep 2017 22:01:18 +0200
+Message-Id: <20170920200124.20457-2-jernej.skrabec@siol.net>
+In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
+References: <20170920200124.20457-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, September 21, 2017 11:40:13 AM CEST Johannes Stezenbach wrote:
-> Hi,
-> 
-> TL;DR: ACPI 6.1 spec interpretation question:
-> 
->   7.2 Declaring a Power Resource Object
->   ...
->   Power resource objects can appear wherever is convenient in the namespace.
->   ...
->   Systemlevel is the deepest system sleep level OSPM must maintain to keep this
->   power resource on (0 equates to S0, 1 equates to S1, and so on).
-> 
-> Does it imply the OS should turn Power Resources off when changing
-> the system level below the systemlevel of the PowerResource?
+Some custom phys don't support hpd interrupts. Add support for polling
+such events.
 
-You can interpret that this way I guess.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-However, so far we have not had to deal with "dangling" power resources.
-
-> Otherwise, what purpose do PowerResource objects have that are not
-> mentioned in any device _PR[0-3W]?  Or is it BIOS bug?
-
-There also is _RDI that may refer to power resources, but I'm not aware of
-anyone using it in practice ATM.
-
-Other than that, I don't see why it would ever be necessary to declare
-a power resource that is not pointed to by any of the above.
-
-At least when the "power level" is changing from S0 to anything like S3,
-the firmware gets control anyway at one point and then it is free to
-manipulate whatever power resources it needs to turn off at that point.
-
-So I would be inclined to think of that as a BIOS issue.
-
-Thanks,
-Rafael
-
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index bf14214fa464..09cb5a3e4c71 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1954,7 +1954,11 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+ 	struct drm_connector *connector = &hdmi->connector;
+ 
+ 	connector->interlace_allowed = 1;
+-	connector->polled = DRM_CONNECTOR_POLL_HPD;
++	if (hdmi->phy.ops->setup_hpd)
++		connector->polled = DRM_CONNECTOR_POLL_HPD;
++	else
++		connector->polled = DRM_CONNECTOR_POLL_CONNECT |
++				    DRM_CONNECTOR_POLL_DISCONNECT;
+ 
+ 	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
+ 
+-- 
+2.14.1
