@@ -1,252 +1,328 @@
-Return-Path: <prasannatsmkumar@gmail.com>
-Return-Path: <prasannatsmkumar@gmail.com>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	ralf@linux-mips.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	paul@crapouillou.net,
-	malat@debian.org,
-	dom.peklo@gmail.com
-Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Subject: [RFC 2/4] clk: Add Ingenic X1000 CGU driver
-Date: Wed, 27 Sep 2017 20:45:25 +0530
-Message-Id: <20170927151527.25570-3-prasannatsmkumar@gmail.com>
-In-Reply-To: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
+CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Chen Zhong <chen.zhong@mediatek.com>, "Sean
+ Wang" <sean.wang@mediatek.com>
+Subject: [PATCH 4/4] clk: mediatek: add clocks dt-bindings required header for MT7622 SoC
+Date: Wed, 20 Sep 2017 17:49:28 +0800
+Message-ID: <5d5f18313d7d1fa1267bf1148b969b7592593cf2.1505890481.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1505890481.git.sean.wang@mediatek.com>
+References: <cover.1505890481.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the clocks provided by CGU in Ingenic X1000 SoC.
+From: Chen Zhong <chen.zhong@mediatek.com>
 
-Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Add the required header for the entire clocks dt-bindings exported
+from topckgen, apmixedsys, infracfg, pericfg, ethsys, pciesys, ssusbsys
+and audsys which could be found on MT7622 SoC.
+
+Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/clk/ingenic/Makefile    |   1 +
- drivers/clk/ingenic/x1000-cgu.c | 203 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 204 insertions(+)
- create mode 100644 drivers/clk/ingenic/x1000-cgu.c
+ include/dt-bindings/clock/mt7622-clk.h | 289 +++++++++++++++++++++++++++++++++
+ 1 file changed, 289 insertions(+)
+ create mode 100644 include/dt-bindings/clock/mt7622-clk.h
 
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index cd47b06..89c665b 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -1,3 +1,4 @@
- obj-y				+= cgu.o
- obj-$(CONFIG_MACH_JZ4740)	+= jz4740-cgu.o
- obj-$(CONFIG_MACH_JZ4780)	+= jz4780-cgu.o
-+obj-$(CONFIG_MACH_X1000)	+= x1000-cgu.o
-diff --git a/drivers/clk/ingenic/x1000-cgu.c b/drivers/clk/ingenic/x1000-cgu.c
+diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
 new file mode 100644
-index 0000000..a228688
+index 0000000..3e514ed
 --- /dev/null
-+++ b/drivers/clk/ingenic/x1000-cgu.c
-@@ -0,0 +1,203 @@
++++ b/include/dt-bindings/clock/mt7622-clk.h
+@@ -0,0 +1,289 @@
 +/*
-+ * Ingenic X1000 SoC CGU driver
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Chen Zhong <chen.zhong@mediatek.com>
 + *
-+ * Copyright (c) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <dt-bindings/clock/x1000-cgu.h>
-+#include "cgu.h"
++#ifndef _DT_BINDINGS_CLK_MT7622_H
++#define _DT_BINDINGS_CLK_MT7622_H
 +
-+/* CGU register offsets */
-+#define CGU_REG_CLOCKCONTROL	0x00
-+#define CGU_REG_APLL		0x10
-+#define CGU_REG_MPLL		0x14
++/* TOPCKGEN */
 +
-+/* CLKGR0, OPCR are not defined in X1000, JZ4780 PM so assuming them to be correct */
-+#define CGU_REG_CLKGR0		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_CLKGR1		0x28
-+#define CGU_REG_DDRCDR		0x2c
++#define CLK_TOP_TO_U2_PHY		0
++#define CLK_TOP_TO_U2_PHY_1P		1
++#define CLK_TOP_PCIE0_PIPE_EN		2
++#define CLK_TOP_PCIE1_PIPE_EN		3
++#define CLK_TOP_SSUSB_TX250M		4
++#define CLK_TOP_SSUSB_EQ_RX250M		5
++#define CLK_TOP_SSUSB_CDR_REF		6
++#define CLK_TOP_SSUSB_CDR_FB		7
++#define CLK_TOP_SATA_ASIC		8
++#define CLK_TOP_SATA_RBC		9
++#define CLK_TOP_TO_USB3_SYS		10
++#define CLK_TOP_P1_1MHZ			11
++#define CLK_TOP_4MHZ			12
++#define CLK_TOP_P0_1MHZ			13
++#define CLK_TOP_TXCLK_SRC_PRE		14
++#define CLK_TOP_RTC			15
++#define CLK_TOP_MEMPLL			16
++#define CLK_TOP_DMPLL			17
++#define CLK_TOP_SYSPLL_D2		18
++#define CLK_TOP_SYSPLL1_D2		19
++#define CLK_TOP_SYSPLL1_D4		20
++#define CLK_TOP_SYSPLL1_D8		21
++#define CLK_TOP_SYSPLL2_D4		22
++#define CLK_TOP_SYSPLL2_D8		23
++#define CLK_TOP_SYSPLL_D5		24
++#define CLK_TOP_SYSPLL3_D2		25
++#define CLK_TOP_SYSPLL3_D4		26
++#define CLK_TOP_SYSPLL4_D2		27
++#define CLK_TOP_SYSPLL4_D4		28
++#define CLK_TOP_SYSPLL4_D16		29
++#define CLK_TOP_UNIVPLL			30
++#define CLK_TOP_UNIVPLL_D2		31
++#define CLK_TOP_UNIVPLL1_D2		32
++#define CLK_TOP_UNIVPLL1_D4		33
++#define CLK_TOP_UNIVPLL1_D8		34
++#define CLK_TOP_UNIVPLL1_D16		35
++#define CLK_TOP_UNIVPLL2_D2		36
++#define CLK_TOP_UNIVPLL2_D4		37
++#define CLK_TOP_UNIVPLL2_D8		38
++#define CLK_TOP_UNIVPLL2_D16		39
++#define CLK_TOP_UNIVPLL_D5		40
++#define CLK_TOP_UNIVPLL3_D2		41
++#define CLK_TOP_UNIVPLL3_D4		42
++#define CLK_TOP_UNIVPLL3_D16		43
++#define CLK_TOP_UNIVPLL_D7		44
++#define CLK_TOP_UNIVPLL_D80_D4		45
++#define CLK_TOP_UNIV48M			46
++#define CLK_TOP_SGMIIPLL		47
++#define CLK_TOP_SGMIIPLL_D2		48
++#define CLK_TOP_AUD1PLL			49
++#define CLK_TOP_AUD2PLL			50
++#define CLK_TOP_AUD_I2S2_MCK		51
++#define CLK_TOP_TO_USB3_REF		52
++#define CLK_TOP_PCIE1_MAC_EN		53
++#define CLK_TOP_PCIE0_MAC_EN		54
++#define CLK_TOP_ETH_500M		55
++#define CLK_TOP_AXI_SEL			56
++#define CLK_TOP_MEM_SEL			57
++#define CLK_TOP_DDRPHYCFG_SEL		58
++#define CLK_TOP_ETH_SEL			59
++#define CLK_TOP_PWM_SEL			60
++#define CLK_TOP_F10M_REF_SEL		61
++#define CLK_TOP_NFI_INFRA_SEL		62
++#define CLK_TOP_FLASH_SEL		63
++#define CLK_TOP_UART_SEL		64
++#define CLK_TOP_SPI0_SEL		65
++#define CLK_TOP_SPI1_SEL		66
++#define CLK_TOP_MSDC50_0_SEL		67
++#define CLK_TOP_MSDC30_0_SEL		68
++#define CLK_TOP_MSDC30_1_SEL		69
++#define CLK_TOP_A1SYS_HP_SEL		70
++#define CLK_TOP_A2SYS_HP_SEL		71
++#define CLK_TOP_INTDIR_SEL		72
++#define CLK_TOP_AUD_INTBUS_SEL		73
++#define CLK_TOP_PMICSPI_SEL		74
++#define CLK_TOP_SCP_SEL			75
++#define CLK_TOP_ATB_SEL			76
++#define CLK_TOP_HIF_SEL			77
++#define CLK_TOP_AUDIO_SEL		78
++#define CLK_TOP_U2_SEL			79
++#define CLK_TOP_AUD1_SEL		80
++#define CLK_TOP_AUD2_SEL		81
++#define CLK_TOP_IRRX_SEL		82
++#define CLK_TOP_IRTX_SEL		83
++#define CLK_TOP_ASM_L_SEL		84
++#define CLK_TOP_ASM_M_SEL		85
++#define CLK_TOP_ASM_H_SEL		86
++#define CLK_TOP_APLL1_SEL		87
++#define CLK_TOP_APLL2_SEL		88
++#define CLK_TOP_I2S0_MCK_SEL		89
++#define CLK_TOP_I2S1_MCK_SEL		90
++#define CLK_TOP_I2S2_MCK_SEL		91
++#define CLK_TOP_I2S3_MCK_SEL		92
++#define CLK_TOP_APLL1_DIV		93
++#define CLK_TOP_APLL2_DIV		94
++#define CLK_TOP_I2S0_MCK_DIV		95
++#define CLK_TOP_I2S1_MCK_DIV		96
++#define CLK_TOP_I2S2_MCK_DIV		97
++#define CLK_TOP_I2S3_MCK_DIV		98
++#define CLK_TOP_A1SYS_HP_DIV		99
++#define CLK_TOP_A2SYS_HP_DIV		100
++#define CLK_TOP_APLL1_DIV_PD		101
++#define CLK_TOP_APLL2_DIV_PD		102
++#define CLK_TOP_I2S0_MCK_DIV_PD		103
++#define CLK_TOP_I2S1_MCK_DIV_PD		104
++#define CLK_TOP_I2S2_MCK_DIV_PD		105
++#define CLK_TOP_I2S3_MCK_DIV_PD		106
++#define CLK_TOP_A1SYS_HP_DIV_PD		107
++#define CLK_TOP_A2SYS_HP_DIV_PD		108
++#define CLK_TOP_NR_CLK			109
 +
-+/* bits within the OPCR register */
-+#define OPCR_SPENDN0		(1 << 7)
-+#define OPCR_SPENDN1		(1 << 6)
++/* INFRACFG */
 +
-+static struct ingenic_cgu *cgu;
++#define CLK_INFRA_MUX1_SEL		0
++#define CLK_INFRA_DBGCLK_PD		1
++#define CLK_INFRA_AUDIO_PD		2
++#define CLK_INFRA_IRRX_PD		3
++#define CLK_INFRA_APXGPT_PD		4
++#define CLK_INFRA_PMIC_PD		5
++#define CLK_INFRA_TRNG			6
++#define CLK_INFRA_NR_CLK		7
 +
-+static const s8 pll_od_encoding[16] = {
-+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
-+	0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+};
++/* PERICFG */
 +
-+static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
++#define CLK_PERIBUS_SEL			0
++#define CLK_PERI_THERM_PD		1
++#define CLK_PERI_PWM1_PD		2
++#define CLK_PERI_PWM2_PD		3
++#define CLK_PERI_PWM3_PD		4
++#define CLK_PERI_PWM4_PD		5
++#define CLK_PERI_PWM5_PD		6
++#define CLK_PERI_PWM6_PD		7
++#define CLK_PERI_PWM7_PD		8
++#define CLK_PERI_PWM_PD			9
++#define CLK_PERI_AP_DMA_PD		10
++#define CLK_PERI_MSDC30_0_PD		11
++#define CLK_PERI_MSDC30_1_PD		12
++#define CLK_PERI_UART0_PD		13
++#define CLK_PERI_UART1_PD		14
++#define CLK_PERI_UART2_PD		15
++#define CLK_PERI_UART3_PD		16
++#define CLK_PERI_UART4_PD		17
++#define CLK_PERI_BTIF_PD		18
++#define CLK_PERI_I2C0_PD		19
++#define CLK_PERI_I2C1_PD		20
++#define CLK_PERI_I2C2_PD		21
++#define CLK_PERI_SPI1_PD		22
++#define CLK_PERI_AUXADC_PD		23
++#define CLK_PERI_SPI0_PD		24
++#define CLK_PERI_SNFI_PD		25
++#define CLK_PERI_NFI_PD			26
++#define CLK_PERI_NFIECC_PD		27
++#define CLK_PERI_FLASH_PD		28
++#define CLK_PERI_IRTX_PD		29
++#define CLK_PERI_NR_CLK			30
 +
-+	/* External clocks */
++/* APMIXEDSYS */
 +
-+	[X1000_CLK_EXCLK] = { "ext", CGU_CLK_EXT },
-+	[X1000_CLK_RTCLK] = { "rtc", CGU_CLK_EXT },
++#define CLK_APMIXED_ARMPLL		0
++#define CLK_APMIXED_MAINPLL		1
++#define CLK_APMIXED_UNIV2PLL		2
++#define CLK_APMIXED_ETH1PLL		3
++#define CLK_APMIXED_ETH2PLL		4
++#define CLK_APMIXED_AUD1PLL		5
++#define CLK_APMIXED_AUD2PLL		6
++#define CLK_APMIXED_TRGPLL		7
++#define CLK_APMIXED_SGMIPLL		8
++#define CLK_APMIXED_MAIN_CORE_EN	9
++#define CLK_APMIXED_NR_CLK		10
 +
-+	/* PLLs */
++/* AUDIOSYS */
 +
-+#define DEF_PLL(name) { \
-+	.reg = CGU_REG_ ## name, \
-+	.m_shift = 19, \
-+	.m_bits = 13, \
-+	.m_offset = 1, \
-+	.n_shift = 13, \
-+	.n_bits = 6, \
-+	.n_offset = 1, \
-+	.od_shift = 9, \
-+	.od_bits = 4, \
-+	.od_max = 16, \
-+	.od_encoding = pll_od_encoding, \
-+	.stable_bit = 6, \
-+	.bypass_bit = 1, \
-+	.enable_bit = 0, \
-+}
++#define CLK_AUDIO_AFE			0
++#define CLK_AUDIO_HDMI			1
++#define CLK_AUDIO_SPDF			2
++#define CLK_AUDIO_APLL			3
++#define CLK_AUDIO_I2SIN1		4
++#define CLK_AUDIO_I2SIN2		5
++#define CLK_AUDIO_I2SIN3		6
++#define CLK_AUDIO_I2SIN4		7
++#define CLK_AUDIO_I2SO1			8
++#define CLK_AUDIO_I2SO2			9
++#define CLK_AUDIO_I2SO3			10
++#define CLK_AUDIO_I2SO4			11
++#define CLK_AUDIO_ASRCI1		12
++#define CLK_AUDIO_ASRCI2		13
++#define CLK_AUDIO_ASRCO1		14
++#define CLK_AUDIO_ASRCO2		15
++#define CLK_AUDIO_INTDIR		16
++#define CLK_AUDIO_A1SYS			17
++#define CLK_AUDIO_A2SYS			18
++#define CLK_AUDIO_UL1			19
++#define CLK_AUDIO_UL2			20
++#define CLK_AUDIO_UL3			21
++#define CLK_AUDIO_UL4			22
++#define CLK_AUDIO_UL5			23
++#define CLK_AUDIO_UL6			24
++#define CLK_AUDIO_DL1			25
++#define CLK_AUDIO_DL2			26
++#define CLK_AUDIO_DL3			27
++#define CLK_AUDIO_DL4			28
++#define CLK_AUDIO_DL5			29
++#define CLK_AUDIO_DL6			30
++#define CLK_AUDIO_DLMCH			31
++#define CLK_AUDIO_ARB1			32
++#define CLK_AUDIO_AWB			33
++#define CLK_AUDIO_AWB2			34
++#define CLK_AUDIO_DAI			35
++#define CLK_AUDIO_MOD			36
++#define CLK_AUDIO_ASRCI3		37
++#define CLK_AUDIO_ASRCI4		38
++#define CLK_AUDIO_ASRCO3		39
++#define CLK_AUDIO_ASRCO4		40
++#define CLK_AUDIO_MEM_ASRC1		41
++#define CLK_AUDIO_MEM_ASRC2		42
++#define CLK_AUDIO_MEM_ASRC3		43
++#define CLK_AUDIO_MEM_ASRC4		44
++#define CLK_AUDIO_MEM_ASRC5		45
++#define CLK_AUDIO_NR_CLK		46
 +
-+	[X1000_CLK_APLL] = {
-+		"apll", CGU_CLK_PLL,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.pll = DEF_PLL(APLL),
-+	},
++/* SSUSBSYS */
 +
-+	[X1000_CLK_MPLL] = {
-+		"mpll", CGU_CLK_PLL,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.pll = DEF_PLL(MPLL),
-+	},
++#define CLK_SSUSB_U2_PHY_1P_EN		0
++#define CLK_SSUSB_U2_PHY_EN		1
++#define CLK_SSUSB_REF_EN		2
++#define CLK_SSUSB_SYS_EN		3
++#define CLK_SSUSB_MCU_EN		4
++#define CLK_SSUSB_DMA_EN		5
++#define CLK_SSUSB_NR_CLK		6
 +
-+#undef DEF_PLL
++/* PCIESYS */
 +
-+	/* Muxes & dividers */
++#define CLK_PCIE_P1_AUX_EN		0
++#define CLK_PCIE_P1_OBFF_EN		1
++#define CLK_PCIE_P1_AHB_EN		2
++#define CLK_PCIE_P1_AXI_EN		3
++#define CLK_PCIE_P1_MAC_EN		4
++#define CLK_PCIE_P1_PIPE_EN		5
++#define CLK_PCIE_P0_AUX_EN		6
++#define CLK_PCIE_P0_OBFF_EN		7
++#define CLK_PCIE_P0_AHB_EN		8
++#define CLK_PCIE_P0_AXI_EN		9
++#define CLK_PCIE_P0_MAC_EN		10
++#define CLK_PCIE_P0_PIPE_EN		11
++#define CLK_SATA_AHB_EN			12
++#define CLK_SATA_AXI_EN			13
++#define CLK_SATA_ASIC_EN		14
++#define CLK_SATA_RBC_EN			15
++#define CLK_SATA_PM_EN			16
++#define CLK_PCIE_NR_CLK			17
 +
-+	[X1000_CLK_SCLKA] = {
-+		"sclk_a", CGU_CLK_MUX,
-+		.parents = { -1, X1000_CLK_APLL, X1000_CLK_EXCLK,
-+			     X1000_CLK_RTCLK },
-+		.mux = { CGU_REG_CLOCKCONTROL, 30, 2 },
-+	},
++/* ETHSYS */
 +
-+	[X1000_CLK_CPUMUX] = {
-+		"cpumux", CGU_CLK_MUX,
-+		.parents = { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL,
-+			     -1 },
-+		.mux = { CGU_REG_CLOCKCONTROL, 28, 2 },
-+	},
++#define CLK_ETH_HSDMA_EN		0
++#define CLK_ETH_ESW_EN			1
++#define CLK_ETH_GP2_EN			2
++#define CLK_ETH_GP1_EN			3
++#define CLK_ETH_GP0_EN			4
++#define CLK_ETH_NR_CLK			5
 +
-+	[X1000_CLK_CPU] = {
-+		"cpu", CGU_CLK_DIV,
-+		.parents = { X1000_CLK_CPUMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 0, 1, 4, 22, -1, -1 },
-+	},
++/* SGMIISYS */
 +
-+	[X1000_CLK_L2CACHE] = {
-+		"l2cache", CGU_CLK_DIV,
-+		.parents = { X1000_CLK_CPUMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 4, 1, 4, -1, -1, -1 },
-+	},
++#define CLK_SGMII_TX250M_EN		0
++#define CLK_SGMII_RX250M_EN		1
++#define CLK_SGMII_CDR_REF		2
++#define CLK_SGMII_CDR_FB		3
++#define CLK_SGMII_NR_CLK		4
 +
-+	[X1000_CLK_AHB0] = {
-+		"ahb0", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL,
-+			     -1 },
-+		.mux = { CGU_REG_CLOCKCONTROL, 26, 2 },
-+		.div = { CGU_REG_CLOCKCONTROL, 8, 1, 4, 21, -1, -1 },
-+	},
++#endif /* _DT_BINDINGS_CLK_MT7622_H */
 +
-+	[X1000_CLK_AHB2PMUX] = {
-+		"ahb2_apb_mux", CGU_CLK_MUX,
-+		.parents = { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL,
-+			     X1000_CLK_RTCLK },
-+		.mux = { CGU_REG_CLOCKCONTROL, 24, 2 },
-+	},
-+
-+	[X1000_CLK_AHB2] = {
-+		"ahb2", CGU_CLK_DIV,
-+		.parents = { X1000_CLK_AHB2PMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 12, 1, 4, 20, -1, -1 },
-+	},
-+
-+	[X1000_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { X1000_CLK_AHB2PMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 16, 1, 4, 20, -1, -1 },
-+	},
-+
-+	[X1000_CLK_DDR] = {
-+		"ddr", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL, -1 },
-+		.mux = { CGU_REG_DDRCDR, 30, 2 },
-+		.div = { CGU_REG_DDRCDR, 0, 1, 4, 29, 28, 27 },
-+	},
-+
-+	/* Gate-only clocks */
-+
-+	[X1000_CLK_UART0] = {
-+		"uart0", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 15 },
-+	},
-+
-+	[X1000_CLK_UART1] = {
-+		"uart1", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 16 },
-+	},
-+
-+	[X1000_CLK_UART2] = {
-+		"uart2", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 17 },
-+	},
-+
-+	[X1000_CLK_PDMA] = {
-+		"pdma", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 21 },
-+	},
-+
-+	[X1000_CLK_DDR0] = {
-+		"ddr0", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_DDR, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 30 },
-+	},
-+
-+	[X1000_CLK_DDR1] = {
-+		"ddr1", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_DDR, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 31 },
-+	},
-+
-+	[X1000_CLK_CORE1] = {
-+		"core1", CGU_CLK_GATE,
-+		.parents = { X1000_CLK_CPU, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR1, 15 },
-+	},
-+};
-+
-+static void __init x1000_cgu_init(struct device_node *np)
-+{
-+	int retval;
-+
-+	cgu = ingenic_cgu_new(x1000_cgu_clocks,
-+			      ARRAY_SIZE(x1000_cgu_clocks), np);
-+	if (!cgu) {
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+		return;
-+	}
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval) {
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+		return;
-+	}
-+}
-+CLK_OF_DECLARE(x1000_cgu, "ingenic,x1000-cgu", x1000_cgu_init);
 -- 
-2.10.0
+2.7.4
