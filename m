@@ -1,45 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:55:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH v5 3/7] clk: at91: add audio pll clock drivers
-Message-ID: <20170901225514.GE21656@codeaurora.org>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
- <f1c7acbfec384c2c33bf340464a98b731dac8c0c.1502346448.git-series.quentin.schulz@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f1c7acbfec384c2c33bf340464a98b731dac8c0c.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org
+Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
+        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        icenowy@aosc.io, linux-sunxi@googlegroups.com,
+        linux-media@vger.kernel.org
+Subject: [RESEND RFC PATCH 3/7] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
+Date: Wed, 20 Sep 2017 22:01:20 +0200
+Message-Id: <20170920200124.20457-4-jernej.skrabec@siol.net>
+In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
+References: <20170920200124.20457-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Quentin Schulz wrote:
-> This new clock driver set allows to have a fractional divided clock that
-> would generate a precise clock particularly suitable for audio
-> applications.
-> 
-> The main audio pll clock has two children clocks: one that is connected
-> to the PMC, the other that can directly drive a pad. As these two routes
-> have different enable bits and different dividers and divider formulas,
-> they are handled by two different drivers. Each of them could modify the
-> rate of the main audio pll parent.
-> 
-> The main audio pll clock can output 620MHz to 700MHz.
-> 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
+When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be set.
 
-Applied to clk-next
+Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
 
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 7a222ff1ad0a..36224ba93f9d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
+ 		      0x154, BIT(31), 0);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
