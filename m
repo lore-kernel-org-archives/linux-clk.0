@@ -1,80 +1,76 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Wed, 20 Sep 2017 11:18:29 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 01/13] clk: sunxi-ng: sun6i: Export video PLLs
-Date: Tue, 26 Sep 2017 14:59:07 +0800
-Message-Id: <20170926065919.24446-2-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-mtd <linux-mtd@lists.infradead.org>,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
+Message-ID: <20170920091829.wftbjshog3ixvpmu@piout.net>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-9-romain.izard.pro@gmail.com>
+ <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
+ <20170919152504.nhp5i734u75gb5gq@dell>
+ <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The 2x outputs of the 2 video PLL clocks are directly used by the
-HDMI controller block.
+On 20/09/2017 at 10:30:31 +0200, Romain Izard wrote:
+> 2017-09-19 17:25 GMT+02:00 Lee Jones <lee.jones@linaro.org>:
+> > On Tue, 19 Sep 2017, Nicolas Ferre wrote:
+> >
+> >> On 15/09/2017 at 16:04, Romain Izard wrote:
+> >> > The controller used by a flexcom module is configured at boot, and left
+> >> > alone after this. As the configuration will be lost after backup mode,
+> >> > restore the state of the flexcom driver on resume.
+> >> >
+> >> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> >>
+> >> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >> On sama5d2 Xplained board (i2c0 from flexcom 4).
+> >> and obviously:
+> >> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >>
+> >> Thanks Romain!
+> >>
+> >> Regards,
+> >>
+> >> > ---
+> >> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
+> >> >  1 file changed, 50 insertions(+), 15 deletions(-)
+> >
+> > This is the first time I've seen this patch.  Why's that?
+> >
+> 
+> As the patchset covers many subsystems, get_maintainers.pl provided a
+> very long list of both developpers and mailing lists (28). I thought it
+> was a good idea to shorten it a little. Bad idea. Sorry.
+> 
 
-Export them so they can be referenced in the device tree.
+I think the correct way of handling that would have been to send each
+patch to the proper subsystem as there are no dependency here.
 
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h      | 8 ++++++--
- include/dt-bindings/clock/sun6i-a31-ccu.h | 4 ++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
-index 4e434011e9e7..27e6ad4133ab 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
-@@ -27,7 +27,9 @@
- #define CLK_PLL_AUDIO_4X	4
- #define CLK_PLL_AUDIO_8X	5
- #define CLK_PLL_VIDEO0		6
--#define CLK_PLL_VIDEO0_2X	7
-+
-+/* The PLL_VIDEO0_2X clock is exported */
-+
- #define CLK_PLL_VE		8
- #define CLK_PLL_DDR		9
- 
-@@ -35,7 +37,9 @@
- 
- #define CLK_PLL_PERIPH_2X	11
- #define CLK_PLL_VIDEO1		12
--#define CLK_PLL_VIDEO1_2X	13
-+
-+/* The PLL_VIDEO1_2X clock is exported */
-+
- #define CLK_PLL_GPU		14
- #define CLK_PLL_MIPI		15
- #define CLK_PLL9		16
-diff --git a/include/dt-bindings/clock/sun6i-a31-ccu.h b/include/dt-bindings/clock/sun6i-a31-ccu.h
-index 4482530fb6f5..c5d13340184a 100644
---- a/include/dt-bindings/clock/sun6i-a31-ccu.h
-+++ b/include/dt-bindings/clock/sun6i-a31-ccu.h
-@@ -43,8 +43,12 @@
- #ifndef _DT_BINDINGS_CLK_SUN6I_A31_H_
- #define _DT_BINDINGS_CLK_SUN6I_A31_H_
- 
-+#define CLK_PLL_VIDEO0_2X	7
-+
- #define CLK_PLL_PERIPH		10
- 
-+#define CLK_PLL_VIDEO1_2X	13
-+
- #define CLK_CPU			18
- 
- #define CLK_AHB1_MIPIDSI	23
 -- 
-2.14.1
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
