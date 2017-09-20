@@ -1,78 +1,211 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 07/10] ARM: debug: Add Hurricane 2 UART2 debug addresses
-Date: Mon, 25 Sep 2017 17:09:28 -0700
-Message-Id: <20170926000931.670-8-f.fainelli@gmail.com>
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs1.siol.net ([213.250.19.134]:52899 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751679AbdITUBq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Sep 2017 16:01:46 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org
+Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
+        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        icenowy@aosc.io, linux-sunxi@googlegroups.com,
+        linux-media@vger.kernel.org
+Subject: [RESEND RFC PATCH 4/7] dt-bindings: Document Allwinner DWC HDMI TX node
+Date: Wed, 20 Sep 2017 22:01:21 +0200
+Message-Id: <20170920200124.20457-5-jernej.skrabec@siol.net>
+In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
+References: <20170920200124.20457-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Broadcom Hurricane 2 SoCs typically use their secondary UART for
-debug/console, provide a known good location for that.
+Add documentation about Allwinner DWC HDMI TX node, found in H3 SoC.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/Kconfig.debug | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../bindings/display/sunxi/sun4i-drm.txt           | 158 ++++++++++++++++++++-
+ 1 file changed, 157 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 6dcea8e8e941..0346805fe33c 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -169,6 +169,11 @@ choice
- 		depends on ARCH_BCM_5301X || ARCH_BCM_NSP
- 		select DEBUG_UART_8250
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 92512953943e..cb6aee5c486f 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -60,6 +60,40 @@ Required properties:
+     first port should be the input endpoint. The second should be the
+     output, usually to an HDMI connector.
  
-+	config DEBUG_BCM_HR2
-+		bool "Kernel low-level debugging on Hurricane 2 UART2"
-+		depends on ARCH_BCM_HR2
-+		select DEBUG_UART_8250
++DWC HDMI TX Encoder
++-----------------------------
 +
- 	config DEBUG_BCM_KONA_UART
- 		bool "Kernel low-level debugging messages via BCM KONA UART"
- 		depends on ARCH_BCM_MOBILE
-@@ -1508,6 +1513,7 @@ config DEBUG_UART_PHYS
- 	default 0x11009000 if DEBUG_MT8135_UART3
- 	default 0x16000000 if DEBUG_INTEGRATOR
- 	default 0x18000300 if DEBUG_BCM_5301X
-+	default 0x18000400 if DEBUG_BCM_HR2
- 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
- 	default 0x18020000 if DEBUG_SIRFATLAS7_UART1
- 	default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
-@@ -1623,6 +1629,7 @@ config DEBUG_UART_VIRT
- 	default 0xf01fb000 if DEBUG_NOMADIK_UART
- 	default 0xf0201000 if DEBUG_BCM2835 || DEBUG_BCM2836
- 	default 0xf1000300 if DEBUG_BCM_5301X
-+	default 0xf1000400 if DEBUG_BCM_HR2
- 	default 0xf1002000 if DEBUG_MT8127_UART0
- 	default 0xf1006000 if DEBUG_MT6589_UART0
- 	default 0xf1009000 if DEBUG_MT8135_UART3
-@@ -1728,7 +1735,8 @@ config DEBUG_UART_8250_SHIFT
- 	int "Register offset shift for the 8250 debug UART"
- 	depends on DEBUG_LL_UART_8250 || DEBUG_UART_8250
- 	default 0 if DEBUG_FOOTBRIDGE_COM1 || ARCH_IOP32X || DEBUG_BCM_5301X || \
--		DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || DEBUG_OMAP7XXUART3
-+		DEBUG_BCM_HR2 || DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || \
-+		DEBUG_OMAP7XXUART3
- 	default 2
++The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
++with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
++
++These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
++Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
++following device-specific properties.
++
++Required properties:
++
++  - compatible: value must be one of:
++    * "allwinner,sun8i-h3-dw-hdmi"
++  - reg: two pairs of base address and size of memory-mapped region, first
++    for controller and second for PHY
++    registers.
++  - reg-io-width: See dw_hdmi.txt. Shall be 1.
++  - interrupts: HDMI interrupt number
++  - clocks: phandles to the clocks feeding the HDMI encoder
++    * iahb: the HDMI interface clock
++    * isfr: the HDMI module clock
++    * ddc: the HDMI ddc clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the encoder
++    * hdmi: the reset line for the HDMI
++    * ddc: the reset line for the DDC
++  - reset-names: the reset names mentioned above
++
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint. The second should be the
++    output, usually to an HDMI connector.
++
+ TV Encoder
+ ----------
  
- config DEBUG_UART_8250_WORD
+@@ -255,7 +289,7 @@ Required properties:
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
+ 
+-Example:
++Example 1:
+ 
+ panel: panel {
+ 	compatible = "olimex,lcd-olinuxino-43-ts";
+@@ -455,3 +489,125 @@ display-engine {
+ 	compatible = "allwinner,sun5i-a13-display-engine";
+ 	allwinner,pipelines = <&fe0>;
+ };
++
++Example 2:
++
++connector {
++	compatible = "hdmi-connector";
++	type = "a";
++
++	port {
++		hdmi_con_in: endpoint {
++			remote-endpoint = <&hdmi_out_con>;
++		};
++	};
++};
++
++de: display-engine {
++	compatible = "allwinner,sun8i-h3-display-engine";
++	allwinner,pipelines = <&mixer0>;
++};
++
++hdmi: hdmi@1ee0000 {
++	compatible = "allwinner,h3-dw-hdmi";
++	reg = <0x01ee0000 0x10000>,
++	      <0x01ef0000 0x10000>;
++	reg-io-width = <1>;
++	interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI>,
++		 <&ccu CLK_HDMI_DDC>;
++	clock-names = "iahb", "isfr", "ddc";
++	resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
++	reset-names = "hdmi", "ddc";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hdmi_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			hdmi_in_tcon0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_hdmi>;
++			};
++		};
++
++		hdmi_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			hdmi_out_con: endpoint {
++				remote-endpoint = <&hdmi_con_in>;
++			};
++		};
++	};
++};
++
++mixer0: mixer@1100000 {
++	compatible = "allwinner,sun8i-h3-de2-mixer0";
++	reg = <0x01100000 0x100000>;
++	clocks = <&display_clocks CLK_BUS_MIXER0>,
++		 <&display_clocks CLK_MIXER0>;
++	clock-names = "bus",
++		      "mod";
++	resets = <&display_clocks RST_MIXER0>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mixer0_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			mixer0_out_tcon0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_in_mixer0>;
++			};
++		};
++	};
++};
++
++tcon0: lcd-controller@1c0c000 {
++	compatible = "allwinner,sun8i-h3-tcon";
++	reg = <0x01c0c000 0x1000>;
++	interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_TCON0>,
++		 <&ccu CLK_TCON0>;
++	clock-names = "ahb",
++		      "tcon-ch1";
++	resets = <&ccu RST_BUS_TCON0>;
++	reset-names = "lcd";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		tcon0_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			tcon0_in_mixer0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&mixer0_out_tcon0>;
++			};
++		};
++
++		tcon0_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			tcon0_out_hdmi: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&hdmi_in_tcon0>;
++			};
++		};
++	};
++};
 -- 
 2.14.1
+
