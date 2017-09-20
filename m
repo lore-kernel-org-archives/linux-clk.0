@@ -1,53 +1,95 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Wed, 20 Sep 2017 15:11:17 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: kbuild test robot <lkp@intel.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	"kbuild-all@01.org" <kbuild-all@01.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: Implement reset control status readback
-Date: Fri,  8 Sep 2017 12:39:54 +0800
-Message-Id: <20170908043954.13019-1-wens@csie.org>
+	Shawn Guo <shawnguo@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
+Message-ID: <20170920071117.GC32187@b29396-OptiPlex-7040>
+References: <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
+ <201709130826.AnbwLF3k%fengguang.wu@intel.com>
+ <CAMuHMdWQtKPbSUmyKQdMzuRuk2GZ2AD-XAosCo-of+_+x6pU5A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdWQtKPbSUmyKQdMzuRuk2GZ2AD-XAosCo-of+_+x6pU5A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now we were not providing a way to read back the status of our
-reset controls. Consumers had no real way to be certain whether a
-peripheral was held in reset or not.
+Hi Geert,
 
-Implement the status callback to complete the API support.
+On Wed, Sep 13, 2017 at 03:40:32PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Sep 13, 2017 at 2:34 AM, kbuild test robot <lkp@intel.com> wrote:
+> > [auto build test WARNING on clk/clk-next]
+> > [also build test WARNING on v4.13 next-20170912]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> >
+> > url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-bulk-add-of_clk_bulk_get/20170913-075645
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> > config: x86_64-randconfig-x001-201737 (attached as .config)
+> > compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> > reproduce:
+> >         # save the attached .config to linux build tree
+> >         make ARCH=x86_64
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> >    In file included from include/linux/dma/dw.h:15:0,
+> >                     from drivers//tty/serial/8250/8250_lpss.c:18:
+> >    include/linux/clk.h: In function 'of_clk_bulk_get':
+> >>> include/linux/clk.h:692:9: warning: return makes integer from pointer without a cast [-Wint-conversion]
+> >      return ERR_PTR(-ENOENT);
+> >             ^~~~~~~~~~~~~~~~
+> >    At top level:
+> >    include/linux/clk.h:689:12: warning: 'of_clk_bulk_get' defined but not used [-Wunused-function]
+> >     static int of_clk_bulk_get(struct device_node *np, int num_clks,
+> >                ^~~~~~~~~~~~~~~
+> >
+> > vim +692 include/linux/clk.h
+> >
+> >    681
+> >    682  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+> >    683  int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> >    684                                   struct clk_bulk_data *clks);
+> >    685  struct clk *of_clk_get(struct device_node *np, int index);
+> >    686  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+> >    687  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+> >    688  #else
+> >    689  static int of_clk_bulk_get(struct device_node *np, int num_clks,
+> >    690                             struct clk_bulk_data *clks)
+> >    691  {
+> >  > 692          return ERR_PTR(-ENOENT);
+> 
+> That should be plain "return -ENOENT;".
+> 
 
-Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_reset.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Sorry for the careless and thank you for the pointing out.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
-index 1dc4e98ea802..b67149143554 100644
---- a/drivers/clk/sunxi-ng/ccu_reset.c
-+++ b/drivers/clk/sunxi-ng/ccu_reset.c
-@@ -60,8 +60,22 @@ static int ccu_reset_reset(struct reset_controller_dev *rcdev,
- 	return 0;
- }
- 
-+static int ccu_reset_status(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
-+	const struct ccu_reset_map *map = &ccu->reset_map[id];
-+
-+	/*
-+	 * The reset control API expects 0 if reset is not asserted,
-+	 * which is the opposite of what our hardware uses.
-+	 */
-+	return !(map->bit & readl(ccu->base + map->reg));
-+}
-+
- const struct reset_control_ops ccu_reset_ops = {
- 	.assert		= ccu_reset_assert,
- 	.deassert	= ccu_reset_deassert,
- 	.reset		= ccu_reset_reset,
-+	.status		= ccu_reset_status,
- };
--- 
-2.14.1
+Will update it.
+
+Regards
+Dong Aisheng
+
+> >    693  }
+> >    694
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
