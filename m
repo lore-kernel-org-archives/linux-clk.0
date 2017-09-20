@@ -1,80 +1,46 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v1 02/10] clk: at91: pmc: Save SCSR during suspend
-To: Romain Izard <romain.izard.pro@gmail.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu
-	<rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
-	<thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
-	<stern@rowland.harvard.edu>, Alexandre Belloni
-	<alexandre.belloni@free-electrons.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-3-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <318420d4-044f-d018-f70e-3ed4fcfb0fd0@microchip.com>
-Date: Wed, 13 Sep 2017 14:10:41 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170908153604.28383-3-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs1.siol.net ([213.250.19.134]:43663 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751652AbdITTiw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Sep 2017 15:38:52 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com, wens@csie.org
+Cc: Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, icenowy@aosc.io,
+        linux-sunxi@googlegroups.com
+Subject: [RFC PATCH 3/7] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
+Date: Wed, 20 Sep 2017 21:38:27 +0200
+Message-Id: <20170920193831.20268-4-jernej.skrabec@siol.net>
+In-Reply-To: <20170920193831.20268-1-jernej.skrabec@siol.net>
+References: <20170920193831.20268-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/2017 at 17:35, Romain Izard wrote:
-> The contents of the System Clock Status Register (SCSR) needs to be
-> restored into the System Clock Enable Register (SCER).
-> 
-> As the bootloader will restore some clocks by itself, the issue can be
-> missed as only the USB controller, the LCD controller, the Image Sensor
-> controller and the programmable clocks will be impacted.
-> 
-> Fix the obvious typo in the suspend/resume code, as the IMR register
-> does not need to be saved twice.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be set.
 
-Yes, it looks like a typo:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
 
-I didn't experienced the issue with LCD nor USB though.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-
-> ---
->  drivers/clk/at91/pmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 5c2b26de303e..07dc2861ad3f 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -86,7 +86,7 @@ static int pmc_suspend(void)
->  {
->  	int i;
->  
-> -	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-> +	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
->  	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
->  	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
->  	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-> @@ -129,7 +129,7 @@ static void pmc_resume(void)
->  	if (pmc_cache.pllar != tmp)
->  		pr_warn("PLLAR was not configured properly by the firmware\n");
->  
-> -	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-> +	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
->  	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
->  	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
->  	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-> 
-
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 7a222ff1ad0a..36224ba93f9d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
+ 		      0x154, BIT(31), 0);
 -- 
-Nicolas Ferre
+2.14.1
+
