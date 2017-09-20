@@ -1,83 +1,458 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
-	<thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Peter De
- Schrijver" <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul
-	<vinod.koul@intel.com>
-CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
-Date: Wed, 27 Sep 2017 14:44:38 +0100
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Sep 2017 15:53:03 -0500
+From: Rob Herring <robh@kernel.org>
+To: "Marty E. Plummer" <hanetzer@startmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	xuejiancheng@hisilicon.com, leo.yan@linaro.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, wenpan@hisilicon.com,
+	linux@armlinux.org.uk, sboyd@codeaurora.org, xuwei5@hisilicon.com,
+	zhangfei.gao@linaro.org, gregkh@linuxfoundation.org, arnd@arndb.de
+Subject: Re: [RFC RESEND 3/3] arm: dts: add Hi3521A dts
+Message-ID: <20170920205303.lcycfuai75a7namk@rob-hp-laptop>
+References: <20170917082327.10058-1-hanetzer@startmail.com>
+ <20170917082327.10058-4-hanetzer@startmail.com>
 MIME-Version: 1.0
-In-Reply-To: <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170917082327.10058-4-hanetzer@startmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 27/09/17 13:12, Dmitry Osipenko wrote:
-> On 27.09.2017 11:34, Jon Hunter wrote:
->>
->> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>
->>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>> on Tegra20/30 SoC's.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>>>>  1 file changed, 23 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>> new file mode 100644
->>>>> index 000000000000..2af9aa76ae11
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>> @@ -0,0 +1,23 @@
->>>>> +* NVIDIA Tegra AHB DMA controller
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->>>>> +- reg:		Should contain registers base address and length.
->>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
->>>>> +- clocks:	Should contain one entry, DMA controller clock.
->>>>> +- resets :	Should contain one entry, DMA controller reset.
->>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->>>>> +		for the peripheral. For more details consult the Tegra TRM's
->>>>> +		documentation, in particular AHB DMA channel control register
->>>>> +		REQ_SEL field.
->>>>
->>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>
->>>
->>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->>> software to decide what trigger to select. So it shouldn't be in the binding.
->>
->> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>
+On Sun, Sep 17, 2017 at 03:23:27AM -0500, Marty E. Plummer wrote:
+> Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
+> marketed under the name Samsung SDR-B74301N
 > 
-> GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
-> are software-defined, so that software could create transfer chains.
+> Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+> ---
+>  arch/arm/boot/dts/Makefile              |   2 +
+>  arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  52 ++++++
+>  arch/arm/boot/dts/hi3521a.dtsi          | 310 ++++++++++++++++++++++++++++++++
+>  3 files changed, 364 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+>  create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index faf46abaa4a2..e7b9b5dde20f 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
+>  	gemini-sq201.dtb \
+>  	gemini-wbd111.dtb \
+>  	gemini-wbd222.dtb
+> +dtb-$(CONFIG_ARCH_HI3521A) += \
+> +	hi3521a-rs-dm290e.dtb
+>  dtb-$(CONFIG_ARCH_HI3xxx) += \
+>  	hi3620-hi4511.dtb
+>  dtb-$(CONFIG_ARCH_HIGHBANK) += \
+> diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+> new file mode 100644
+> index 000000000000..b32c8392c93f
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+> @@ -0,0 +1,52 @@
+> +/*
+> + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
+> + *
+> + * This program is free software: you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation, either version 3 of the License, or
+> + * (at your option) any later version.
 
-TRM shows the following in the APBDMA_TRIG_REG_0 ...
+Should be version 2 or later? Doesn't really matter to me from a DT 
+perspective, but it is in the kernel tree.
 
-"XRQ_A: XRQ.A (GPIOA) (Hardware initiated DMA request)"
+You can use SPDX tags if you want.
 
-Jon
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +/dts-v1/;
+> +#include "hi3521a.dtsi"
+> +
+> +/ {
+> +	model = "RaySharp RS-DM-290E DVR Board";
+> +	compatible = "hisilicon,hi3521a";
 
--- 
-nvpublic
+Needs a board compatible too.
+
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +		serial2 = &uart2;
+> +	};
+> +
+> +	memory {
+
+Needs a unit-address.
+
+> +		device_type = "memory";
+> +		reg = <0x80000000 0xf00000>;
+> +	};
+> +};
+> +
+> +&hi_sfc {
+> +	status = "okay";
+> +	spi-nor@0 {
+> +		compatible = "jedec,spi-nor";
+
+I don't remember offhand, but I think this should have a device specific 
+compatible too.
+
+> +		reg = <0>;
+> +		spi-max-frequency = <104000000>;
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&dual_timer0 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
+> new file mode 100644
+> index 000000000000..2af746fdec46
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/hi3521a.dtsi
+> @@ -0,0 +1,310 @@
+> +/*
+> + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
+> + *
+> + * This program is free software: you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation, either version 3 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <dt-bindings/clock/hi3521a-clock.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +/ {
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	chosen { };
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a7";
+> +			reg = <0>;
+> +		};
+> +	};
+> +
+> +	hi_sfc: spi-nor-controller@10000000 {
+> +		compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
+> +		reg-names = "control", "memory";
+> +		clocks = <&crg HI3521A_FMC_CLK>;
+> +		status = "disabled";
+> +	};
+> +
+> +	gic: interrupt-controller@10300000 {
+> +		compatible = "arm,pl390";
+> +		#interrupt-cells = <3>;
+> +		interrupt-controller;
+> +		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
+> +	};
+> +
+> +	clk_3m: clk_3m {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <3000000>;
+> +	};
+> +
+> +	crg: clock-reset-controller@12040000 {
+> +		compatible = "hisilicon,hi3521a-crg";
+> +		#clock-cells = <1>;
+> +		#reset-cells = <2>;
+> +		reg = <0x12040000 0x10000>;
+> +	};
+
+These memory mapped peripherals should be under a bus node.
+
+> +
+> +	soc {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+
+It is preferred to have a value here and limit the range of the bus 
+addresses.
+
+> +
+> +		dmac: dma@10060000 {
+
+dma-controller@...
+
+> +			compatible = "arm,pl080", "arm,primecell";
+> +			reg = <0x10060000 0x1000>;
+> +			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +			status = "disabled";
+
+I wouldn't think enabling dma would be a per board decision.
+
+> +		};
+> +
+> +		dual_timer0: timer@12000000 {
+> +			compatible = "arm,sp804", "arm,primecell";
+> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg = <0x12000000 0x1000>;
+> +			clocks = <&clk_3m>;
+> +			clock-names = "apb_pclk";
+
+IIRC, it is deprecated to have a single clock here. The h/w has 2 clock 
+inputs.
+
+Where's the ARM architected timer?
+
+> +			status = "disabled";
+> +		};
+> +
+> +		dual_timer1: timer@12010000 {
+> +			compatible = "arm,sp804", "arm,primecell";
+> +			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg = <0x12010000 0x1000>;
+> +			clocks = <&clk_3m>;
+> +			clock-name = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		dual_timer2: timer@12020000 {
+> +			compatible = "arm,sp804", "arm,primecell";
+> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg = <0x12020000 0x1000>;
+> +			clocks = <&clk_3m>;
+> +			clock-name = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		dual_timer3: timer@12030000 {
+> +			compatible = "arm,sp804", "arm,primecell";
+> +			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg = <0x12030000 0x1000>;
+> +			clocks = <&clk_3m>;
+> +			clock-name = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		wdt0: watchdog@12070000 {
+> +			compatible = "arm,sp805", "arm,primecell";
+> +			arm,primecell-periphid = <0x00141805>;
+> +			reg = <0x12070000 0x1000>;
+> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clk_3m>;
+> +			clock-names = "apb_pclk";
+> +		};
+> +
+> +		uart0: serial@12080000 {
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x12080000 0x1000>;
+> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&crg HI3521A_UART0_CLK>;
+> +			clock-names = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@12090000 {
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x12090000 0x1000>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&crg HI3521A_UART1_CLK>;
+> +			clock-names = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@120a0000 {
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x120a0000 0x1000>;
+> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&crg HI3521A_UART2_CLK>;
+> +			clock-names = "apb_pclk";
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio0: gpio@12150000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12150000 0x1000>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio1: gpio@12160000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12160000 0x1000>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio2: gpio@12170000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12170000 0x1000>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio3: gpio@12180000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12180000 0x1000>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio4: gpio@12190000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12190000 0x1000>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio5: gpio@121a0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121a0000 0x1000>;
+> +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio6: gpio@121b0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121b0000 0x1000>;
+> +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio7: gpio@121c0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121c0000 0x1000>;
+> +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio8: gpio@121d0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121d0000 0x1000>;
+> +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio9: gpio@121e0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121e0000 0x1000>;
+> +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio10: gpio@121f0000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x121f0000 0x1000>;
+> +			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio11: gpio@12200000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12200000 0x1000>;
+> +			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio12: gpio@12210000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12210000 0x1000>;
+> +			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gpio13: gpio@12220000 {
+> +			compatible = "arm,pl061", "arm,primecell";
+> +			reg = <0x12220000 0x1000>;
+> +			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +};
+> -- 
+> 2.14.1
+> 
