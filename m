@@ -1,49 +1,102 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 01/10] MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
-Date: Thu, 28 Sep 2017 16:14:53 -0700
-Message-Id: <20170928231502.27069-2-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<s.nawrocki@samsung.com>, <geert@linux-m68k.org>, Dong Aisheng
+	<aisheng.dong@nxp.com>, Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH V3 1/1] clk: bulk: add of_clk_bulk_get()
+Date: Wed, 20 Sep 2017 15:49:13 +0800
+Message-ID: <1505893753-16143-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the Broadcom iProc regepx with recently added Hurricane 2 SoC
-support.
+'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
+here to handle this for DT users without 'clock-names' specified.
 
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Reported-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v2:
+ * of_clk_bulk_get should return -ENOENT;
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6671f375f7fc..3b48a1c2ddb8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2923,6 +2923,7 @@ N:	bcm583*
- N:	bcm585*
- N:	bcm586*
- N:	bcm88312
-+N:	hr2
- F:	arch/arm64/boot/dts/broadcom/ns2*
- F:	drivers/clk/bcm/clk-ns*
- F:	drivers/pinctrl/bcm/pinctrl-ns*
+Changes since v1:
+ * using %pOF instead of full_name
+---
+ drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
+ include/linux/clk.h    |  8 ++++++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index c834f5a..896aa3b 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,37 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/of.h>
++
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
++
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = of_clk_get(np, i);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
++			       np, i, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++#endif
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 12c96d9..a1f1f05 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -680,10 +680,18 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+ }
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks);
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+ #else
++static int of_clk_bulk_get(struct device_node *np, int num_clks,
++			   struct clk_bulk_data *clks)
++{
++	return -ENOENT;
++}
++
+ static inline struct clk *of_clk_get(struct device_node *np, int index)
+ {
+ 	return ERR_PTR(-ENOENT);
 -- 
-2.14.1
+2.7.4
