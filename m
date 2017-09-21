@@ -1,74 +1,63 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v1 02/10] clk: at91: pmc: Save SCSR during suspend
-Date: Fri,  8 Sep 2017 17:35:56 +0200
-Message-Id: <20170908153604.28383-3-romain.izard.pro@gmail.com>
-In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:49555 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751738AbdIUWoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 18:44:23 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Johannes Stezenbach <js@sig21.net>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
+Date: Fri, 22 Sep 2017 00:35:15 +0200
+Message-ID: <4254964.MfDMP6QAfg@aspire.rjw.lan>
+In-Reply-To: <20170921162307.amdz2uyei7eackhs@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <4036229.gTT6xKEFIS@aspire.rjw.lan> <20170921162307.amdz2uyei7eackhs@sig21.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The contents of the System Clock Status Register (SCSR) needs to be
-restored into the System Clock Enable Register (SCER).
+On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
+> On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
+> > So I would be inclined to think of that as a BIOS issue.
+> 
+> OK, wrt $Subject it sparks the question how to fix the
+> issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
+> gate clocks enabled by the firmware".  Add quirks to
+> the drivers for the devices that have the dangling
+> PowerResources and manually call _OFF/_ON during suspend/resume?
+> 
+> I must admit I haven't looked deeper into the issue yet,
+> i.e. I don't know which clock causes S0ix failure.
+> If I understand correctly, before d31fd43c0f9a4 the
+> clk framework would just disable all unused clocks
+> registered by clk-pmc-atom.c, which are all of then except
+> CLK3 which is used by the audio codec. And the audio codec
+> would disable CLK3 during suspend.
+> After d31fd43c0f9a4 all clocks that BIOS had enabled during boot
+> are kept running.  Presumably we could also add the quirk to
+> clk-pmc-atom.c to bypass what d31fd43c0f9a4 added on Asus E200HA?
 
-As the bootloader will restore some clocks by itself, the issue can be
-missed as only the USB controller, the LCD controller, the Image Sensor
-controller and the programmable clocks will be impacted.
+Since this is S0ix, the "system level" is 0 all the time (as I said in a
+previous message).
 
-Fix the obvious typo in the suspend/resume code, as the IMR register
-does not need to be saved twice.
+So there seem to be two possible ways to address this, unfortunately both
+based on white- or blacklisting.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/clk/at91/pmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+One of them would be to only do the d31fd43c0f9a4 approach for selected
+systems where it needs to be done to avoid breakage.  The other one would
+be to do it for all systems by default and blacklist the ones where that
+leads to problems.
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 5c2b26de303e..07dc2861ad3f 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -86,7 +86,7 @@ static int pmc_suspend(void)
- {
- 	int i;
- 
--	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-+	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
- 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
- 	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
- 	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-@@ -129,7 +129,7 @@ static void pmc_resume(void)
- 	if (pmc_cache.pllar != tmp)
- 		pr_warn("PLLAR was not configured properly by the firmware\n");
- 
--	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-+	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
- 	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
- 	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
- 	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
--- 
-2.11.0
+IMO it is better to disable clocks over suspend-resume, because that reduces
+the system's power draw while suspended.  So that's what I would do and then
+keep the clocks running only if that is known to be necessary.
+
+Thanks,
+Rafael
+
