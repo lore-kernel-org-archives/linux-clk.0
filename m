@@ -1,56 +1,169 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH] clk: sunxi-ng: Implement reset control status readback
-Date: Tue, 26 Sep 2017 10:36:20 +0800
-Message-Id: <20170926023620.22284-1-wens@csie.org>
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 5/5] clk: aspeed: Add reset controller
+Date: Thu, 21 Sep 2017 13:56:41 +0930
+Message-Id: <20170921042641.7326-6-joel@jms.id.au>
+In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now we were not providing a way to read back the status of our
-reset controls. Consumers had no real way to be certain whether a
-peripheral was held in reset or not.
+There are some resets that are not associated with gates. These are
+represented by a reset controller.
 
-Implement the status callback to complete the API support.
-
-Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/clk/sunxi-ng/ccu_reset.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h |  9 ++++
+ 2 files changed, 90 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
-index 1dc4e98ea802..b67149143554 100644
---- a/drivers/clk/sunxi-ng/ccu_reset.c
-+++ b/drivers/clk/sunxi-ng/ccu_reset.c
-@@ -60,8 +60,22 @@ static int ccu_reset_reset(struct reset_controller_dev *rcdev,
- 	return 0;
- }
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index dec9db4ec47b..db97c0f9f99e 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
  
-+static int ccu_reset_status(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
-+	const struct ccu_reset_map *map = &ccu->reset_map[id];
+@@ -256,6 +257,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.is_enabled = aspeed_clk_is_enabled,
+ };
+ 
++/**
++ * struct aspeed_reset - Aspeed reset controller
++ * @map: regmap to access the containing system controller
++ * @rcdev: reset controller device
++ */
++struct aspeed_reset {
++	struct regmap			*map;
++	struct reset_controller_dev	rcdev;
++};
 +
-+	/*
-+	 * The reset control API expects 0 if reset is not asserted,
-+	 * which is the opposite of what our hardware uses.
-+	 */
-+	return !(map->bit & readl(ccu->base + map->reg));
++#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++
++static const u8 aspeed_resets[] = {
++	25, /* x-dma */
++	24, /* mctp */
++	23, /* adc */
++	22, /* jtag-master */
++	18, /* mic */
++	 9, /* pwm */
++	 8, /* pci-vga */
++	 2, /* i2c */
++	 1, /* ahb */
++};
++
++static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
 +}
 +
- const struct reset_control_ops ccu_reset_ops = {
- 	.assert		= ccu_reset_assert,
- 	.deassert	= ccu_reset_deassert,
- 	.reset		= ccu_reset_reset,
-+	.status		= ccu_reset_status,
- };
++static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++}
++
++static int aspeed_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 val, rst = BIT(aspeed_resets[id]);
++	int ret;
++
++	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return !!(val & rst);
++}
++
++static const struct reset_control_ops aspeed_reset_ops = {
++	.assert = aspeed_reset_assert,
++	.deassert = aspeed_reset_deassert,
++	.status = aspeed_reset_status,
++};
++
+ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+@@ -299,10 +362,11 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ 	const struct clk_div_table *mac_div_table;
+ 	const struct clk_div_table *div_table;
+ 	struct device *dev = &pdev->dev;
++	struct aspeed_reset *ar;
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
+-	int i;
++	int i, ret;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -310,6 +374,22 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
+ 
++	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
++	if (!ar)
++		return -ENOMEM;
++
++	ar->map = map;
++	ar->rcdev.owner = THIS_MODULE;
++	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
++	ar->rcdev.ops = &aspeed_reset_ops;
++	ar->rcdev.of_node = dev->of_node;
++
++	ret = devm_reset_controller_register(dev, &ar->rcdev);
++	if (ret) {
++		dev_err(dev, "could not register reset controller\n");
++		return ret;
++	}
++
+ 	/* SoC generations share common layouts but have different divisors */
+ 	soc_data = of_device_get_match_data(&pdev->dev);
+ 	div_table = soc_data->div_table;
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index afe06b77562d..a9d552b6bbd2 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -40,4 +40,13 @@
+ #define ASPEED_CLK_GATE_SDCLKCLK	(22 + ASPEED_CLK_GATES)
+ #define ASPEED_CLK_GATE_LHCCLK		(23 + ASPEED_CLK_GATES)
+ 
++#define ASPEED_RESET_XDMA		0
++#define ASPEED_RESET_MCTP		1
++#define ASPEED_RESET_JTAG_MASTER	2
++#define ASPEED_RESET_MIC		3
++#define ASPEED_RESET_PWM		4
++#define ASPEED_RESET_PCIVGA		5
++#define ASPEED_RESET_I2C		6
++#define ASPEED_RESET_AHB		7
++
+ #endif
 -- 
 2.14.1
