@@ -1,421 +1,211 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 06/10] ARM: dts: Add Broadcom Hurricane 2 DTS include file
-Date: Thu, 28 Sep 2017 16:14:58 -0700
-Message-Id: <20170928231502.27069-7-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v9 4/7] clk: qcom: Add A53 PLL support
+Date: Thu, 21 Sep 2017 19:49:37 +0300
+Message-Id: <20170921164940.20343-5-georgi.djakov@linaro.org>
+In-Reply-To: <20170921164940.20343-1-georgi.djakov@linaro.org>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Describe the Broadcom Hurricane 2 SoC comprised of a Cortex-A9 CPU
-complex along with standard iProc peripherals:
+The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
+a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
+are connected to a mux and half-integer divider, which is feeding the
+CPU cores.
 
-* timers
-* SPI controller
-* NAND controller
-* a single AMAC (Ethernet MAC controller)
-* dual PCIe controllers
+This patch adds support for the primary CPU PLL which generates the
+higher range of frequencies above 1GHz.
 
-The design is largely similar to existing iProc-based SoCs such as
-Northstar Plus.
-
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- arch/arm/boot/dts/bcm-hr2.dtsi | 368 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 368 insertions(+)
- create mode 100644 arch/arm/boot/dts/bcm-hr2.dtsi
+ .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
+ drivers/clk/qcom/Kconfig                           |  10 ++
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/a53-pll.c                         | 107 +++++++++++++++++++++
+ 4 files changed, 140 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
 
-diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.dtsi
+diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
 new file mode 100644
-index 000000000000..3f9cedd8011f
+index 000000000000..e3fa8118eaee
 --- /dev/null
-+++ b/arch/arm/boot/dts/bcm-hr2.dtsi
-@@ -0,0 +1,368 @@
++++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+@@ -0,0 +1,22 @@
++Qualcomm MSM8916 A53 PLL Binding
++--------------------------------
++The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
++above 1GHz.
++
++Required properties :
++- compatible : Shall contain only one of the following:
++
++		"qcom,msm8916-a53pll"
++
++- reg : shall contain base register location and length
++
++- #clock-cells : must be set to <0>
++
++Example:
++
++	a53pll: clock@b016000 {
++		compatible = "qcom,msm8916-a53pll";
++		reg = <0xb016000 0x40>;
++		#clock-cells = <0>;
++	};
++
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 9f6c278deead..81ac7b9378fe 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -12,6 +12,16 @@ config COMMON_CLK_QCOM
+ 	select REGMAP_MMIO
+ 	select RESET_CONTROLLER
+ 
++config QCOM_A53PLL
++	bool "MSM8916 A53 PLL"
++	depends on COMMON_CLK_QCOM
++	default ARCH_QCOM
++	help
++	  Support for the A53 PLL on MSM8916 devices. It provides
++	  the CPU with frequencies above 1GHz.
++	  Say Y if you want to support higher CPU frequencies on MSM8916
++	  devices.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 3f3aff229fb7..19ae884b5166 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -31,5 +31,6 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
++obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+new file mode 100644
+index 000000000000..6276934daa0a
+--- /dev/null
++++ b/drivers/clk/qcom/a53-pll.c
+@@ -0,0 +1,107 @@
 +/*
-+ *  BSD LICENSE
++ * Copyright (c) 2017, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
 + *
-+ *  Copyright(c) 2017 Broadcom.  All rights reserved.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
 + *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom Corporation nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+/ {
-+	compatible = "brcm,hr2";
-+	model = "Broadcom Hurricane 2 SoC";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
++#include "clk-pll.h"
++#include "clk-regmap.h"
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			next-level-cache = <&L2>;
-+			reg = <0x0>;
-+		};
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>;
-+	};
-+
-+	mpcore@19000000 {
-+		compatible = "simple-bus";
-+		ranges = <0x00000000 0x19000000 0x00023000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		a9pll: arm_clk@0 {
-+			#clock-cells = <0>;
-+			compatible = "brcm,hr2-armpll";
-+			clocks = <&osc>;
-+			reg = <0x0 0x1000>;
-+		};
-+
-+		timer@20200 {
-+			compatible = "arm,cortex-a9-global-timer";
-+			reg = <0x20200 0x100>;
-+			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&periph_clk>;
-+		};
-+
-+		twd-timer@20600 {
-+			compatible = "arm,cortex-a9-twd-timer";
-+			reg = <0x20600 0x20>;
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&periph_clk>;
-+		};
-+
-+		twd-watchdog@20620 {
-+			compatible = "arm,cortex-a9-twd-wdt";
-+			reg = <0x20620 0x20>;
-+			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
-+						  IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&periph_clk>;
-+		};
-+
-+		gic: interrupt-controller@21000 {
-+			compatible = "arm,cortex-a9-gic";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x21000 0x1000>,
-+			      <0x20100 0x100>;
-+		};
-+
-+		L2: l2-cache@22000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x22000 0x1000>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		osc: oscillator {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <25000000>;
-+		};
-+
-+		periph_clk: periph_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&a9pll>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+	};
-+
-+	axi@18000000 {
-+		compatible = "simple-bus";
-+		ranges = <0x00000000 0x18000000 0x0011c40c>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		uart0: serial@300 {
-+			compatible = "ns16550a";
-+			reg = <0x0300 0x100>;
-+			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@400 {
-+			compatible = "ns16550a";
-+			reg = <0x0400 0x100>;
-+			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc>;
-+			status = "disabled";
-+		};
-+
-+		dma@20000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x20000 0x1000>;
-+			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		amac0: ethernet@22000 {
-+			compatible = "brcm,nsp-amac";
-+			reg = <0x22000 0x1000>,
-+			      <0x110000 0x1000>;
-+			reg-names = "amac_base", "idm_base";
-+			interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		nand: nand@26000 {
-+			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
-+			reg = <0x26000 0x600>,
-+			      <0x11b408 0x600>,
-+			      <0x026f00 0x20>;
-+			reg-names = "nand", "iproc-idm", "iproc-ext";
-+			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			brcm,nand-has-wp;
-+		};
-+
-+		gpiob: gpio@30000 {
-+			compatible = "brcm,iproc-hr2-gpio", "brcm,iproc-gpio";
-+			reg = <0x30000 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			ngpios = <4>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pwm: pwm@31000 {
-+			compatible = "brcm,iproc-pwm";
-+			reg = <0x31000 0x28>;
-+			clocks = <&osc>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		rng: rng@33000 {
-+			compatible = "brcm,bcm-nsp-rng";
-+			reg = <0x33000 0x14>;
-+		};
-+
-+		qspi: qspi@27200 {
-+			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
-+			reg = <0x027200 0x184>,
-+			      <0x027000 0x124>,
-+			      <0x11c408 0x004>,
-+			      <0x0273a0 0x01c>;
-+			reg-names = "mspi", "bspi", "intr_regs",
-+				    "intr_status_reg";
-+			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "spi_lr_fullness_reached",
-+					  "spi_lr_session_aborted",
-+					  "spi_lr_impatient",
-+					  "spi_lr_session_done",
-+					  "spi_lr_overhead",
-+					  "mspi_done",
-+					  "mspi_halted";
-+			num-cs = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			/* partitions defined in board DTS */
-+		};
-+
-+		ccbtimer0: timer@34000 {
-+			compatible = "arm,sp804";
-+			reg = <0x34000 0x1000>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		ccbtimer1: timer@35000 {
-+			compatible = "arm,sp804";
-+			reg = <0x35000 0x1000>;
-+			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		i2c0: i2c@38000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x38000 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 95 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+		};
-+
-+		watchdog@39000 {
-+			compatible = "arm,sp805", "arm,primecell";
-+			reg = <0x39000 0x1000>;
-+			interrupts = <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		i2c1: i2c@3b000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x3b000 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+		};
-+	};
-+
-+	pflash: nor@20000000 {
-+		compatible = "cfi-flash", "jedec-flash";
-+		reg = <0x20000000 0x04000000>;
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		/* partitions defined in board DTS */
-+	};
-+
-+	pcie0: pcie@18012000 {
-+		compatible = "brcm,iproc-pcie";
-+		reg = <0x18012000 0x1000>;
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 186 IRQ_TYPE_NONE>;
-+
-+		linux,pci-domain = <0>;
-+
-+		bus-range = <0x00 0xff>;
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+
-+		/* Note: The HW does not support I/O resources.  So,
-+		 * only the memory resource range is being specified.
-+		 */
-+		ranges = <0x82000000 0 0x08000000 0x08000000 0 0x8000000>;
-+
-+		status = "disabled";
-+
-+		msi-parent = <&msi0>;
-+		msi0: msi-controller {
-+			compatible = "brcm,iproc-msi";
-+			msi-controller;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 182 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 183 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 184 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 185 IRQ_TYPE_NONE>;
-+			brcm,pcie-msi-inten;
-+		};
-+	};
-+
-+	pcie1: pcie@18013000 {
-+		compatible = "brcm,iproc-pcie";
-+		reg = <0x18013000 0x1000>;
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 192 IRQ_TYPE_NONE>;
-+
-+		linux,pci-domain = <1>;
-+
-+		bus-range = <0x00 0xff>;
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+
-+		/* Note: The HW does not support I/O resources.  So,
-+		 * only the memory resource range is being specified.
-+		 */
-+		ranges = <0x82000000 0 0x40000000 0x40000000 0 0x8000000>;
-+
-+		status = "disabled";
-+
-+		msi-parent = <&msi1>;
-+		msi1: msi-controller {
-+			compatible = "brcm,iproc-msi";
-+			msi-controller;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 189 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 190 IRQ_TYPE_NONE>,
-+				     <GIC_SPI 191 IRQ_TYPE_NONE>;
-+			brcm,pcie-msi-inten;
-+		};
-+	};
++static const struct pll_freq_tbl a53pll_freq[] = {
++	{  998400000, 52, 0x0, 0x1, 0 },
++	{ 1094400000, 57, 0x0, 0x1, 0 },
++	{ 1152000000, 62, 0x0, 0x1, 0 },
++	{ 1209600000, 65, 0x0, 0x1, 0 },
++	{ 1401600000, 73, 0x0, 0x1, 0 },
 +};
--- 
-2.14.1
++
++static const struct regmap_config a53pll_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x40,
++	.fast_io		= true,
++};
++
++static const struct of_device_id qcom_a53pll_match_table[] = {
++	{ .compatible = "qcom,msm8916-a53pll" },
++	{ }
++};
++
++static int qcom_a53pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	struct resource *res;
++	struct clk_pll *pll;
++	void __iomem *base;
++	struct clk_init_data init = { };
++	int ret;
++
++	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	pll->l_reg = 0x04;
++	pll->m_reg = 0x08;
++	pll->n_reg = 0x0c;
++	pll->config_reg = 0x14;
++	pll->mode_reg = 0x00;
++	pll->status_reg = 0x1c;
++	pll->status_bit = 16;
++	pll->freq_tbl = a53pll_freq;
++
++	init.name = "a53pll";
++	init.parent_names = (const char *[]){ "xo" };
++	init.num_parents = 1;
++	init.ops = &clk_pll_sr2_ops;
++	init.flags = CLK_IS_CRITICAL;
++	pll->clkr.hw.init = &init;
++
++	ret = devm_clk_register_regmap(dev, &pll->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		return ret;
++	}
++
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
++				     &pll->clkr.hw);
++	if (ret) {
++		dev_err(dev, "failed to add clock provider: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static struct platform_driver qcom_a53pll_driver = {
++	.probe = qcom_a53pll_probe,
++	.driver = {
++		.name = "qcom-a53pll",
++		.of_match_table = qcom_a53pll_match_table,
++	},
++};
++
++builtin_platform_driver(qcom_a53pll_driver);
