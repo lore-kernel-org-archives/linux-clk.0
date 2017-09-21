@@ -1,54 +1,96 @@
-Return-Path: <hanetzer@startmail.com>
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-	xuejiancheng@hisilicon.com,
-	leo.yan@linaro.org,
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	wenpan@hisilicon.com,
-	robh+dt@kernel.org,
-	linux@armlinux.org.uk,
-	sboyd@codeaurora.org,
-	xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	"Marty E. Plummer" <hanetzer@startmail.com>
-Subject: [RFC RESEND 2/3] arm: hisi: enable Hi3521A SoC
-Date: Sun, 17 Sep 2017 03:23:26 -0500
-Message-Id: <20170917082327.10058-3-hanetzer@startmail.com>
-In-Reply-To: <20170917082327.10058-1-hanetzer@startmail.com>
-References: <20170917082327.10058-1-hanetzer@startmail.com>
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v9 1/7] mailbox: qcom: Convert APCS IPC driver to use regmap
+Date: Thu, 21 Sep 2017 19:49:34 +0300
+Message-Id: <20170921164940.20343-2-georgi.djakov@linaro.org>
+In-Reply-To: <20170921164940.20343-1-georgi.djakov@linaro.org>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable Hisilicon Hi3521A/Hi3520DCV300 SoC. This SoC series includes
-hardware mutlimedia codec cores, commonly used in consumer cctv/dvr
-security systems and ipcameras. The arm core is a Cortex A7.
+This hardware block provides more functionalities that just IPC. Convert
+it to regmap to allow other child platform devices to use the same regmap.
 
-Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- arch/arm/mach-hisi/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-hisi/Kconfig b/arch/arm/mach-hisi/Kconfig
-index 65a048fa08ec..26755414f862 100644
---- a/arch/arm/mach-hisi/Kconfig
-+++ b/arch/arm/mach-hisi/Kconfig
-@@ -12,6 +12,12 @@ if ARCH_HISI
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 9924c6d7f05d..ab344bc6fa63 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -18,6 +18,7 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/mailbox_controller.h>
  
- menu "Hisilicon platform type"
+ #define QCOM_APCS_IPC_BITS	32
+@@ -26,19 +27,25 @@ struct qcom_apcs_ipc {
+ 	struct mbox_controller mbox;
+ 	struct mbox_chan mbox_chans[QCOM_APCS_IPC_BITS];
  
-+config ARCH_HI3521A
-+	bool "Hisilicon Hi3521A/Hi3520DCV300 family"
-+	depends on ARCH_MULTI_V7
-+	help
-+	  Support for Hisilicon Hi3521A/Hi3520DCV300 SoC family
+-	void __iomem *reg;
++	struct regmap *regmap;
+ 	unsigned long offset;
+ };
+ 
++static const struct regmap_config apcs_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x1000,
++	.fast_io = true,
++};
 +
- config ARCH_HI3xxx
- 	bool "Hisilicon Hi36xx family"
- 	depends on ARCH_MULTI_V7
--- 
-2.14.1
+ static int qcom_apcs_ipc_send_data(struct mbox_chan *chan, void *data)
+ {
+ 	struct qcom_apcs_ipc *apcs = container_of(chan->mbox,
+ 						  struct qcom_apcs_ipc, mbox);
+ 	unsigned long idx = (unsigned long)chan->con_priv;
+ 
+-	writel(BIT(idx), apcs->reg);
+-
+-	return 0;
++	return regmap_write(apcs->regmap, apcs->offset, BIT(idx));
+ }
+ 
+ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
+@@ -47,7 +54,9 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
+ 
+ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	struct qcom_apcs_ipc *apcs;
++	struct regmap *regmap;
+ 	struct resource *res;
+ 	unsigned long offset;
+ 	void __iomem *base;
+@@ -63,9 +72,14 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &apcs_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
+ 	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+-	apcs->reg = base + offset;
++	apcs->regmap = regmap;
++	apcs->offset = offset;
+ 
+ 	/* Initialize channel identifiers */
+ 	for (i = 0; i < ARRAY_SIZE(apcs->mbox_chans); i++)
