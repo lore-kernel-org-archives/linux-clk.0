@@ -1,107 +1,290 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Thu, 28 Sep 2017 18:42:39 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] clk: sunxi-ng: add mux and pll notifiers for A64 CPU
- clock
-In-Reply-To: <20170928102752.ceo54qccqakb4xyx@flea>
-References: <20170923001531.14285-1-icenowy@aosc.io>
- <20170923001531.14285-2-icenowy@aosc.io>
- <20170928102752.ceo54qccqakb4xyx@flea>
-Message-ID: <975c0c884d9a83faad6141df474a93af@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 1/5] clk: Add clock driver for ASPEED BMC SoCs
+Date: Thu, 21 Sep 2017 13:56:37 +0930
+Message-Id: <20170921042641.7326-2-joel@jms.id.au>
+In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-09-28 18:27，Maxime Ripard 写道：
-> Hi,
-> 
-> On Sat, Sep 23, 2017 at 12:15:29AM +0000, Icenowy Zheng wrote:
->> The A64 PLL_CPU clock has the same instability if some factor changed
->> without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
->> H3.
->> 
->> Add the mux and pll notifiers for A64 CPU clock to workaround the
->> problem.
->> 
->> Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 
->> +++++++++++++++++++++++++++-
->>  1 file changed, 27 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c 
->> b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
->> index 2bb4cabf802f..b55fa69dd0c1 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
->> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
->> @@ -879,11 +879,26 @@ static const struct sunxi_ccu_desc 
->> sun50i_a64_ccu_desc = {
->>  	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
->>  };
->> 
->> +static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
->> +	.common	= &pll_cpux_clk.common,
->> +	/* copy from pll_cpux_clk */
->> +	.enable	= BIT(31),
->> +	.lock	= BIT(28),
->> +};
->> +
->> +static struct ccu_mux_nb sun50i_a64_cpu_nb = {
->> +	.common		= &cpux_clk.common,
->> +	.cm		= &cpux_clk.mux,
->> +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
->> +	.bypass_index	= 1, /* index of 24 MHz oscillator */
->> +};
->> +
->> 
->>  static int sun50i_a64_ccu_probe(struct platform_device *pdev)
->>  {
->>  	struct resource *res;
->>  	void __iomem *reg;
->>  	u32 val;
->> +	int ret;
->> 
->>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  	reg = devm_ioremap_resource(&pdev->dev, res);
->> @@ -897,7 +912,18 @@ static int sun50i_a64_ccu_probe(struct 
->> platform_device *pdev)
->> 
->>  	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
->> 
->> -	return sunxi_ccu_probe(pdev->dev.of_node, reg, 
->> &sun50i_a64_ccu_desc);
->> +	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Gate then ungate PLL CPU after any rate changes */
->> +	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
->> +
->> +	/* Reparent CPU during PLL CPU rate changes */
->> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
->> +				  &sun50i_a64_cpu_nb);
->> +
->> +	return 0;
-> 
-> So this is the fourth user of the exact same code, can you turn that
-> into a shared function?
+This adds the stub of a driver for the ASPEED SoCs. The clocks are
+defined and the static registration is set up.
 
-I think it's not so worthful to extract the code, as:
-- the notifier structs contains info of the clocks
-- A31 seems not to need the PLL notifier.
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/Kconfig                      |  12 +++
+ drivers/clk/Makefile                     |   1 +
+ drivers/clk/clk-aspeed.c                 | 162 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/aspeed-clock.h |  43 ++++++++
+ 4 files changed, 218 insertions(+)
+ create mode 100644 drivers/clk/clk-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed-clock.h
 
-> 
-> Thanks!
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1c4e1aa6767e..9abe063ef8d2 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -142,6 +142,18 @@ config COMMON_CLK_GEMINI
+ 	  This driver supports the SoC clocks on the Cortina Systems Gemini
+ 	  platform, also known as SL3516 or CS3516.
+ 
++config COMMON_CLK_ASPEED
++	bool "Clock driver for Aspeed BMC SoCs"
++	depends on ARCH_ASPEED || COMPILE_TEST
++	default ARCH_ASPEED
++	select MFD_SYSCON
++	select RESET_CONTROLLER
++	---help---
++	  This driver supports the SoC clocks on the Aspeed BMC platforms.
++
++	  The G4 and G5 series, including the ast2400 and ast2500, are supported
++	  by this driver.
++
+ config COMMON_CLK_S2MPS11
+ 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+ 	depends on MFD_SEC_CORE || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c99f363826f0..575c68919d9b 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
++obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+new file mode 100644
+index 000000000000..824c54767009
+--- /dev/null
++++ b/drivers/clk/clk-aspeed.c
+@@ -0,0 +1,162 @@
++/*
++ * Copyright 2017 IBM Corporation
++ *
++ * Joel Stanley <joel@jms.id.au>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version
++ * 2 of the License, or (at your option) any later version.
++ */
++
++#define pr_fmt(fmt) "clk-aspeed: " fmt
++
++#include <linux/slab.h>
++#include <linux/of_address.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++#include <linux/spinlock.h>
++#include <linux/mfd/syscon.h>
++
++#include <dt-bindings/clock/aspeed-clock.h>
++
++#define ASPEED_RESET_CTRL	0x04
++#define ASPEED_CLK_SELECTION	0x08
++#define ASPEED_CLK_STOP_CTRL	0x0c
++#define ASPEED_MPLL_PARAM	0x20
++#define ASPEED_HPLL_PARAM	0x24
++#define ASPEED_MISC_CTRL	0x2c
++#define ASPEED_STRAP		0x70
++
++/* Keeps track of all clocks */
++static struct clk_hw_onecell_data *aspeed_clk_data;
++
++static void __iomem *scu_base;
++
++/**
++ * struct aspeed_gate_data - Aspeed gated clocks
++ * @clock_idx: bit used to gate this clock in the clock register
++ * @reset_idx: bit used to reset this IP in the reset register. -1 if no
++ *             reset is required when enabling the clock
++ * @name: the clock name
++ * @parent_name: the name of the parent clock
++ * @flags: standard clock framework flags
++ */
++struct aspeed_gate_data {
++	u8		clock_idx;
++	s8		reset_idx;
++	const char	*name;
++	const char	*parent_name;
++	unsigned long	flags;
++};
++
++/**
++ * struct aspeed_clk_gate - Aspeed specific clk_gate structure
++ * @hw:		handle between common and hardware-specific interfaces
++ * @reg:	register controlling gate
++ * @clock_idx:	bit used to gate this clock in the clock register
++ * @reset_idx:	bit used to reset this IP in the reset register. -1 if no
++ *		reset is required when enabling the clock
++ * @flags:	hardware-specific flags
++ * @lock:	register lock
++ *
++ * Some of the clocks in the Aspeed SoC must be put in reset before enabling.
++ * This modified version of clk_gate allows an optional reset bit to be
++ * specified.
++ */
++struct aspeed_clk_gate {
++	struct clk_hw	hw;
++	struct regmap	*map;
++	u8		clock_idx;
++	s8		reset_idx;
++	u8		flags;
++	spinlock_t	*lock;
++};
++
++#define to_aspeed_clk_gate(_hw) container_of(_hw, struct aspeed_clk_gate, hw)
++
++/* TODO: ask Aspeed about the actual parent data */
++static const struct aspeed_gate_data aspeed_gates[] __initconst = {
++/*	 clk rst   name			parent		flags	*/
++	{  0, -1, "eclk-gate",		"eclk",		0 }, /* Video Engine */
++	{  1,  7, "gclk-gate",		NULL,		0 }, /* 2D engine */
++	{  2, -1, "mclk-gate",		"mpll",		CLK_IS_CRITICAL }, /* SDRAM */
++	{  3,  6, "vclk-gate",		NULL,		0 }, /* Video Capture */
++	{  4, 10, "bclk-gate",		"bclk",		0 }, /* PCIe/PCI */
++	{  5, -1, "dclk-gate",		NULL,		0 }, /* DAC */
++	{  6, -1, "refclk-gate",	"clkin",	CLK_IS_CRITICAL },
++	{  7,  3, "usb-port2-gate",	NULL,		0 }, /* USB2.0 Host port 2 */
++	{  8,  5, "lclk-gate",		NULL,		0 }, /* LPC */
++	{  9, 15, "usb-uhci-gate",	NULL,		0 }, /* USB1.1 (requires port 2 enabled) */
++	{ 10, 13, "d1clk-gate",		NULL,		0 }, /* GFX CRT */
++	/* 11: reserved */
++	/* 12: reserved */
++	{ 13, 4,  "yclk-gate",		NULL,		0 }, /* HAC */
++	{ 14, 14, "usb-port1-gate",	NULL,		0 }, /* USB2 hub/USB2 host port 1/USB1.1 dev */
++	{ 15, -1, "uart1clk-gate",	"uart",		0 }, /* UART1 */
++	{ 16, -1, "uart2clk-gate",	"uart",		0 }, /* UART2 */
++	{ 17, -1, "uart5clk-gate",	"uart",		0 }, /* UART5 */
++	/* 18: reserved */
++	{ 19, -1, "espiclk-gate",	NULL,		0 }, /* eSPI */
++	{ 20, 11, "mac1clk-gate",	"clkin",	0 }, /* MAC1 */
++	{ 21, 12, "mac2clk-gate",	"clkin",	0 }, /* MAC2 */
++	/* 22: reserved */
++	/* 23: reserved */
++	{ 24, -1, "rsaclk-gate",	NULL,		0 }, /* RSA */
++	{ 25, -1, "uart3clk-gate",	"uart",		0 }, /* UART3 */
++	{ 26, -1, "uart4clk-gate",	"uart",		0 }, /* UART4 */
++	{ 27, 16, "sdclk-gate",		NULL,		0 }, /* SDIO/SD */
++	{ 28, -1, "lhclk-gate",		"lhclk",	0 }, /* LPC master/LPC+ */
++	/* 29: reserved */
++	/* 30: reserved */
++	/* 31: reserved */
++};
++
++static void __init aspeed_cc_init(struct device_node *np)
++{
++	struct regmap *map;
++	u32 val;
++	int ret;
++	int i;
++
++	scu_base = of_iomap(np, 0);
++	if (IS_ERR(scu_base))
++		return;
++
++	aspeed_clk_data = kzalloc(sizeof(*aspeed_clk_data) +
++			sizeof(*aspeed_clk_data->hws) * ASPEED_NUM_CLKS,
++			GFP_KERNEL);
++	if (!aspeed_clk_data)
++		return;
++
++	/*
++	 * This way all clock fetched before the platform device probes,
++	 * except those we assign here for early use, will be deferred.
++	 */
++	for (i = 0; i < ASPEED_NUM_CLKS; i++)
++		aspeed_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
++
++	map = syscon_node_to_regmap(np);
++	if (IS_ERR(map)) {
++		pr_err("no syscon regmap\n");
++		return;
++	}
++	/*
++	 * We check that the regmap works on this very first access,
++	 * but as this is an MMIO-backed regmap, subsequent regmap
++	 * access is not going to fail and we skip error checks from
++	 * this point.
++	 */
++	ret = regmap_read(map, ASPEED_STRAP, &val);
++	if (ret) {
++		pr_err("failed to read strapping register\n");
++		return;
++	}
++
++	aspeed_clk_data->num = ASPEED_NUM_CLKS;
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
++	if (ret)
++		pr_err("failed to add DT provider: %d\n", ret);
++};
++CLK_OF_DECLARE_DRIVER(aspeed_cc_g5, "aspeed,ast2500-scu", aspeed_cc_init);
++CLK_OF_DECLARE_DRIVER(aspeed_cc_g4, "aspeed,ast2400-scu", aspeed_cc_init);
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+new file mode 100644
+index 000000000000..afe06b77562d
+--- /dev/null
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -0,0 +1,43 @@
++#ifndef DT_BINDINGS_ASPEED_CLOCK_H
++#define DT_BINDINGS_ASPEED_CLOCK_H
++
++#define ASPEED_NUM_CLKS	34
++
++#define ASPEED_CLK_HPLL			0
++#define ASPEED_CLK_AHB			1
++#define ASPEED_CLK_APB			2
++#define ASPEED_CLK_UART			3
++#define ASPEED_CLK_SDIO			4
++#define ASPEED_CLK_ECLK			5
++#define ASPEED_CLK_ECLK_MUX		6
++#define ASPEED_CLK_LHCLK		7
++#define ASPEED_CLK_MAC			8
++#define ASPEED_CLK_BCLK			9
++#define ASPEED_CLK_MPLL			10
++#define ASPEED_CLK_GATES		11
++#define ASPEED_CLK_GATE_ECLK		(0 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_GCLK		(1 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_MCLK		(2 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_VCLK		(3 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_BCLK		(4 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_DCLK		(5 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_REFCLK		(6 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_USBPORT2CLK	(7 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_LCLK		(8 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_USBUHCICLK	(9 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_D1CLK		(10 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_YCLK		(11 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_USBPORT1CLK	(12 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_UART1CLK	(13 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_UART2CLK	(14 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_UART5CLK	(15 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_ESPICLK		(16 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_MAC1CLK		(17 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_MAC2CLK		(18 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_RSACLK		(19 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_UART3CLK	(20 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_UART4CLK	(21 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_SDCLKCLK	(22 + ASPEED_CLK_GATES)
++#define ASPEED_CLK_GATE_LHCCLK		(23 + ASPEED_CLK_GATES)
++
++#endif
+-- 
+2.14.1
