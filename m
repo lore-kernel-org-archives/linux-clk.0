@@ -1,61 +1,92 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Thu, 28 Sep 2017 21:52:38 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Message-ID: <20170928162238.GF30097@localhost>
-References: <cover.1506380746.git.digetx@gmail.com>
- <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
- <20170928092949.GB30097@localhost>
- <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
- <260fa409-0d07-ec9e-9e3b-fb08255026d8@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <260fa409-0d07-ec9e-9e3b-fb08255026d8@gmail.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v9 3/7] mailbox: qcom: Move the apcs struct into a separate header
+Date: Thu, 21 Sep 2017 19:49:36 +0300
+Message-Id: <20170921164940.20343-4-georgi.djakov@linaro.org>
+In-Reply-To: <20170921164940.20343-1-georgi.djakov@linaro.org>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 28, 2017 at 05:35:59PM +0300, Dmitry Osipenko wrote:
-> On 28.09.2017 17:06, Dmitry Osipenko wrote:
-> > On 28.09.2017 12:29, Vinod Koul wrote:
-> >>> +	default:
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +
-> >>> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
-> >>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
-> >>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
-> >>> +
-> >>> +	writel_relaxed(ahb_seq,
-> >>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
-> >>> +
-> >>> +	writel_relaxed(ahb_addr,
-> >>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
-> >>
-> >> oh no, you don't write to HW here. This can be called anytime when you have
-> >> txn running! You should save these and use them in prep_ calls.
-> >>
-> > 
-> > BTW, some of the DMA drivers have exactly the same problem. I now see that it is
-> > actually documented explicitly in provider.txt, but that's inconsistent across
-> > the actual drivers.
-> > 
-> 
-> Also, shouldn't prep_ and dma_slave_config be protected with locking? I don't
-> see DMA core doing any locking and seems none of the drivers too.
+Move the structure shared by the APCS IPC device and its subdevices
+into a separate header file.
 
-In prep when you modify the list yes (with vchan I suspect that maybe taken
-care), but in general yes driver needs to do that
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 +----------
+ include/linux/mailbox/qcom-apcs.h       | 34 +++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/mailbox/qcom-apcs.h
 
--- 
-~Vinod
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index fd9055eacf42..50c7f6c54b74 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -20,16 +20,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/mailbox_controller.h>
+-
+-#define QCOM_APCS_IPC_BITS	32
+-
+-struct qcom_apcs_ipc {
+-	struct mbox_controller mbox;
+-	struct mbox_chan mbox_chans[QCOM_APCS_IPC_BITS];
+-
+-	struct regmap *regmap;
+-	unsigned long offset;
+-};
++#include <linux/mailbox/qcom-apcs.h>
+ 
+ static const struct regmap_config apcs_regmap_config = {
+ 	.reg_bits = 32,
+diff --git a/include/linux/mailbox/qcom-apcs.h b/include/linux/mailbox/qcom-apcs.h
+new file mode 100644
+index 000000000000..7e48fa2372dc
+--- /dev/null
++++ b/include/linux/mailbox/qcom-apcs.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (c) 2017, Linaro Limited
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _LINUX_QCOM_APCS_H_
++#define _LINUX_QCOM_APCS_H_
++
++#define QCOM_APCS_IPC_BITS	32
++
++/**
++ * struct qcom_apcs_ipc - APCS shared struct
++ *
++ * @mbox: mailbox controller
++ * @mbox_chans: array of the available communication channels
++ * @offset: mailbox IPC register offset
++ * @regmap: register map used to access APCS registers
++ */
++struct qcom_apcs_ipc {
++	struct mbox_controller mbox;
++	struct mbox_chan mbox_chans[QCOM_APCS_IPC_BITS];
++	unsigned long offset;
++	struct regmap *regmap;
++};
++
++#endif /* _LINUX_QCOM_APCS_H_ */
