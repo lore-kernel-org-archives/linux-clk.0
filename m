@@ -1,103 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:39818 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934211AbdIYKnk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Sep 2017 06:43:40 -0400
-Date: Mon, 25 Sep 2017 12:43:28 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [PATCH 0/3] Simple DVFS support for Allwinner
- A64 SoC
-Message-ID: <20170925104328.jttvrdbptor5zhsr@flea.home>
-References: <20170923001531.14285-1-icenowy@aosc.io>
- <20170925101027.lghnnll4h6inreqm@flea.home>
- <27EF78BD-6285-4D8D-AA65-8294D797E2FB@aosc.io>
- <20170925102744.qixfwlheeimemhcf@flea.home>
- <1C624335-37C2-4F22-BE78-A94F26D1D248@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ennmauk36dyn7l5y"
-In-Reply-To: <1C624335-37C2-4F22-BE78-A94F26D1D248@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v9 0/7] Add support for Qualcomm A53 CPU clock
+Date: Thu, 21 Sep 2017 19:49:33 +0300
+Message-Id: <20170921164940.20343-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patchset adds support for the A53 CPU clock on MSM8916 platforms
+and allows scaling of the CPU frequency on msm8916 based platforms.
 
---ennmauk36dyn7l5y
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v8 (https://lkml.org/lkml/2017/6/23/476)
+ * Converted APCS mailbox driver to use regmap and to populate child
+ platform devices that will handle the rest of the functionality
+ provided by APCS block.
+ * Picked Rob's Ack for the PLL binding.
+ * Changed the APCS binding and put it into a separate patch.
+ * Addressed review comments.
+ * Minor changes.
 
-On Mon, Sep 25, 2017 at 10:29:38AM +0000, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2017=E5=B9=B49=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-6:27:44, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
-=B0:
-> >On Mon, Sep 25, 2017 at 10:12:09AM +0000, Icenowy Zheng wrote:
-> >> =E4=BA=8E 2017=E5=B9=B49=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
-=886:10:27, Maxime Ripard
-> ><maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
-> >> >Hi,
-> >> >
-> >> >On Sat, Sep 23, 2017 at 12:15:28AM +0000, Icenowy Zheng wrote:
-> >> >> This patchset imports simple DVFS support for Allwinner A64 SoC.
-> >> >>=20
-> >> >> As the thermal sensor driver is not yet implemented and some
-> >boards
-> >> >> have still no AXP PMIC support, now only two OPPs are present --
-> >> >> 648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
-> >> >>=20
-> >> >> PATCH 1 is a fix to the CCU driver of A64, and the remaining
-> >patches
-> >> >> set up the device tree bits of the DVFS on Pine64.
-> >> >
-> >> >How has this been tested?
-> >> >
-> >> >What tasks did you run, with what governor, etc...
-> >>=20
-> >> I only tested manual frequency switching between 648MHz and
-> >> 816MHz, and tested the PLL stuck issue by change the OPPs to
-> >> some random value.
-> >
-> >Ideally, we should test that it's actually reliable. Poorly chosen
-> >OPPs might lead to corrupt data that you might not get before a while.
->=20
-> These are OPPs from the official sys_config.fex .
+Changes since v7 (https://lkml.org/lkml/2016/10/31/296)
+ * Add the APCS clock controller to the APCS driver to expose both the
+ mailbox and clock controller functionality as discussed earlier:
+ https://lkml.org/lkml/2016/11/14/860
+ * Changed the a53pll compatible string as suggested by Rob.
 
-And the rest of the code isn't, such as the clock or regulator code
-that is critical as well here.
+Changes since v6 (https://lkml.org/lkml/2016/9/7/347)
+ * Addressed various comments from Stephen Boyd
 
-I'm not asking this out of nowhere, we've had to debug this more than
-once already.
+Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
+ * Rebase to clk-next and update according to the recent API changes.
 
-Maxime
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
 
---ennmauk36dyn7l5y
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
 
------BEGIN PGP SIGNATURE-----
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
 
-iQIcBAEBAgAGBQJZyN3QAAoJEBx+YmzsjxAgLwQQAK6OrtMSsYuq8CK1hKFuv6Gi
-AsNM5qfefMLGmBf8tWv8rsw9e+ThKGgLQpkfLQVLgIkNzkjSqqIRBy+ZQihx2XX1
-pXvEgxOfhLSXoPUu4LrhhdwU5pZgEbmigs98dXgOTPDMgOMiN6r3VWRtdQQ5JNiG
-wmj1FBteLfp4sw4r9myPsGYvQBlD7EBO4k+LpzBHEEQDyuSrcZNXyC3W7iIZau15
-woi80r+lmDGNsDeux+lbT9NKHh/2ir8EaquTCcGkHr0h3Tb/rannzRPQ6MxlWFQj
-MddHjpCC/aGrVtMKGBvhfOkgYCpe1/GTYUac/Bf6/VMSzP70lRLtCLW0BPpWxWvh
-crLkF8IepJyCbfgmDX1NVgUrQw9FJdKtdPbz/ZQzNZZBE1Bs1rpn08zgujTmjX8E
-fjLXDvpI98Kk3R0wUsWsI2fNTChrfO5Rack+oHy9GvJDApafrWo3zdu1WBZOixsX
-n6FXryWuVh6pLWmTPvQeREEqTZQvdv4H369L1b6kO89d7B0EaEacWTNtnoEHQuNw
-j0diNdnX8+8V2O8e1J7zLGIRmRm+ClCm8jOW3cSlbJh0l2/7BBvOHu6wkwDjHKm6
-MMTGFytbdej2NokMoQ6A5IQ5+CFRZrl0u4PaNQpIcYweUFSUdR1n3oLM1mbTMZ5d
-IQEcYq/moRp/Qrhdx+/n
-=+4O2
------END PGP SIGNATURE-----
 
---ennmauk36dyn7l5y--
+Georgi Djakov (7):
+  mailbox: qcom: Convert APCS IPC driver to use regmap
+  mailbox: qcom: Populate APCS child platform devices
+  mailbox: qcom: Move the apcs struct into a separate header
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  dt-bindings: clock: Document qcom,apcs binding
+  clk: qcom: Add APCS clock controller support
+
+ .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 ++
+ .../devicetree/bindings/clock/qcom,apcs.txt        |  27 +++
+ drivers/clk/qcom/Kconfig                           |  21 ++
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/a53-pll.c                         | 107 ++++++++++
+ drivers/clk/qcom/apcs-msm8916.c                    | 172 +++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              | 237 +++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |  54 +++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |  36 ++--
+ include/linux/mailbox/qcom-apcs.h                  |  34 +++
+ 10 files changed, 700 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,apcs.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/apcs-msm8916.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+ create mode 100644 include/linux/mailbox/qcom-apcs.h
