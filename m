@@ -1,59 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51661 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbdIMH2d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2017 03:28:33 -0400
-Date: Wed, 13 Sep 2017 09:28:29 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] Renesas R8A77970 CPG/MSSR clock support
-Message-ID: <20170913072829.GB6756@verge.net.au>
-References: <20170908213418.823028011@cogentembedded.com>
- <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 0/5] clk: Add Aspeed clock driver
+Date: Thu, 21 Sep 2017 13:56:36 +0930
+Message-Id: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 11, 2017 at 04:38:43PM +0200, Geert Uytterhoeven wrote:
-> Hi Sergei,
-> 
-> On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> >    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-> > 'linux.git' repo.
-> 
-> Thank you, looks good!
-> 
-> > As the DT patches in the R8A77970/Eagle board support series
-> > depend on the patch #1 of this series, it might make sense to merge this patch
-> > to the 'renesas.git' repo as well...
-> >
-> > [1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
-> 
-> The modern way to avoid this dependency is to use hardcoded numbers in
-> the initial submission of the DTS, cfr.
-> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=arm64-dt-for-v4.15&id=d917e0b24811eadeba419ba7318b967ee15933b3
-> 
-> After the definitions have hit upstream, you can replace the hardcoded
-> numbers by symbols, cfr.
-> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=d3f6987db28a4657bf3304eeeb8e2cd8dd510ad0
-> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=81426223583d5575767c77684be28c40034785bd
-> 
-> So I don't think Simon will merge the core clock definitions patch, unless
-> you plan to submit a full DTS describing the whole SoC in the initial
-> submissiong.
+This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
+Aspeed.
 
-Thanks, I would prefer if the DT patches followed the scheme described by
-Geert such that they do not depend on any part of this series. I expect
-that will allow the smoothest path for acceptance of those patches.
+This is version two of the series. Version one contained two patches; an update
+to the binding document and a single patch for the driver. Lee has merged the
+bindings change, so that is dropped from this series, and I split the driver
+out into a series of patches to make them easier to review.
+
+All of the important clocks are supported, with most non-essential ones
+also implemented where information is available. I am working with
+Aspeed to clear up some of the missing information, including the
+missing parent-sibling relationships.
+
+We need to know the rate of the apb clock in order to correctly program
+the clocksource driver, so the apb and it's parents are created in the
+CLK_OF_DECLARE_DRIVER callback.
+
+The rest of the clocks are created at normal driver probe time. I
+followed the Gemini driver's lead with using the regmap where I could,
+but also having a pointer to the base address for use with the common
+clock callbacks.
+
+The driver borrows from the clk_gate common clock infra spruce, but modifies
+it in order to support the clock gate and reset pair that most of the clocks
+have. This pair must be reset-ungated-released, with appropriate delays,
+according to the datasheet.
+
+The first patch introduces the core clock registration parts, and describes
+the clocks. The second creates the core clocks, giving the system enough to
+boot (but without uart). Next come the non-core clocks, and finally the reset
+controller that is used for the few cocks that don't have a gate to go with their
+reset pair.
+
+Please review!
+
+Cheers,
+
+Joel
+
+
+Joel Stanley (5):
+  clk: Add clock driver for ASPEED BMC SoCs
+  clk: aspeed: Register core clocks
+  clk: aspeed: Add platform driver and register PLLs
+  clk: aspeed: Register gated clocks
+  clk: aspeed: Add reset controller
+
+ drivers/clk/Kconfig                      |  12 +
+ drivers/clk/Makefile                     |   1 +
+ drivers/clk/clk-aspeed.c                 | 645 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/aspeed-clock.h |  52 +++
+ 4 files changed, 710 insertions(+)
+ create mode 100644 drivers/clk/clk-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed-clock.h
+
+-- 
+2.14.1
