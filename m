@@ -1,78 +1,44 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH v2] clk: mb86s7x: Drop non-building driver
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Satoru OKAMOTO <okamoto.satoru@socionext.com>,
- Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-References: <20170824225237.21485-1-afaerber@suse.de>
- <20170901203201.GB21656@codeaurora.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <8601a2ec-33dc-0024-55ce-963f05faca75@suse.de>
-Date: Mon, 4 Sep 2017 17:46:18 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:49869 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751728AbdIUWdN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 18:33:13 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Johannes Stezenbach <js@sig21.net>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
+Date: Fri, 22 Sep 2017 00:24:06 +0200
+Message-ID: <6159689.HysJJF9vfD@aspire.rjw.lan>
+In-Reply-To: <2582638.tGggrMFmYq@aspire.rjw.lan>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170921162307.amdz2uyei7eackhs@sig21.net> <2582638.tGggrMFmYq@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20170901203201.GB21656@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-Am 01.09.2017 um 22:32 schrieb Stephen Boyd:
-> On 08/25, Andreas Färber wrote:
->> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
->>
->>   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
->>    #include <soc/mb86s7x/scb_mhu.h>
->>             ^~~~~~~~~~~~~~~~~~~~~~~
->>   compilation terminated.
->>
->> And when commenting out that line, we get:
->>
->>   drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
->>   drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
->>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
->>           ^~~~~~~~~~~~~~~~~~~
->>   drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
->>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
->>                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->>   drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
->>   drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
->>   drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
->>      code = CMD_PERI_CLOCK_RATE_SET_REQ;
->>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->>   drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
->>      code = CMD_PERI_CLOCK_RATE_GET_REQ;
->>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->>             CMD_PERI_CLOCK_RATE_SET_REQ
->>   drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
->>   drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
->>      code = CMD_CPU_CLOCK_RATE_GET_REQ;
->>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>   drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
->>      code = CMD_CPU_CLOCK_RATE_SET_REQ;
->>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>             CMD_CPU_CLOCK_RATE_GET_REQ
->>   cc1: some warnings being treated as errors
->>   scripts/Makefile.build:302: recipe for target
->>   'drivers/clk/clk-mb86s7x.o' failed
->>   make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
->>
->> Remove the driver for now.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
+On Friday, September 22, 2017 12:20:55 AM CEST Rafael J. Wysocki wrote:
+> On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
+> > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
+> > > So I would be inclined to think of that as a BIOS issue.
+> > 
+> > OK, wrt $Subject it sparks the question how to fix the
+> > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
+> > gate clocks enabled by the firmware".  Add quirks to
+> > the drivers for the devices that have the dangling
+> > PowerResources and manually call _OFF/_ON during suspend/resume?
 > 
-> Applied to clk-next
+> Well, it may just be better to do that in the core at the suspend
+> time, so I'm wondering if the appended patch makes any difference?
 
-Thanks. Is this 4.14 or 4.15 material at this point? In particular I
-wonder which release I can proceed to introduce ARCH_MB86S7X in - I'm
-assuming we need to wait for this one to get merged, so 4.15 or 4.16
-respectively?
+But if this is S0ix, then the system states is S0 anyway all the time, so
+I'm not sure about the point here, honestly.
 
-Regards,
-Andreas
+Thanks,
+Rafael
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
