@@ -1,116 +1,224 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:58400 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751728AbdIUWaD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 18:30:03 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Johannes Stezenbach <js@sig21.net>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
-Date: Fri, 22 Sep 2017 00:20:55 +0200
-Message-ID: <2582638.tGggrMFmYq@aspire.rjw.lan>
-In-Reply-To: <20170921162307.amdz2uyei7eackhs@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <4036229.gTT6xKEFIS@aspire.rjw.lan> <20170921162307.amdz2uyei7eackhs@sig21.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 2/5] clk: aspeed: Register core clocks
+Date: Thu, 21 Sep 2017 13:56:38 +0930
+Message-Id: <20170921042641.7326-3-joel@jms.id.au>
+In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
-> On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
-> > So I would be inclined to think of that as a BIOS issue.
-> 
-> OK, wrt $Subject it sparks the question how to fix the
-> issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
-> gate clocks enabled by the firmware".  Add quirks to
-> the drivers for the devices that have the dangling
-> PowerResources and manually call _OFF/_ON during suspend/resume?
+This registers the core clocks; those which are required to calculate
+the rate of the timer periperhal so the system can load a clocksource
+driver.
 
-Well, it may just be better to do that in the core at the suspend
-time, so I'm wondering if the appended patch makes any difference?
-
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/acpi/power.c |   36 ++++++++++++++++++++++++++++++++++++
- drivers/acpi/sleep.h |    1 +
- 2 files changed, 37 insertions(+)
+ drivers/clk/clk-aspeed.c | 152 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 149 insertions(+), 3 deletions(-)
 
-Index: linux-pm/drivers/acpi/power.c
-===================================================================
---- linux-pm.orig/drivers/acpi/power.c
-+++ linux-pm/drivers/acpi/power.c
-@@ -64,6 +64,7 @@ struct acpi_power_resource {
- 	unsigned int ref_count;
- 	bool wakeup_enabled;
- 	struct mutex resource_lock;
-+	bool suspended;
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 824c54767009..e614c61b82d2 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -11,12 +11,12 @@
+ 
+ #define pr_fmt(fmt) "clk-aspeed: " fmt
+ 
+-#include <linux/slab.h>
+-#include <linux/of_address.h>
+ #include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_address.h>
+ #include <linux/regmap.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
+-#include <linux/mfd/syscon.h>
+ 
+ #include <dt-bindings/clock/aspeed-clock.h>
+ 
+@@ -28,6 +28,9 @@
+ #define ASPEED_MISC_CTRL	0x2c
+ #define ASPEED_STRAP		0x70
+ 
++/* Globally visible clocks */
++static DEFINE_SPINLOCK(aspeed_clk_lock);
++
+ /* Keeps track of all clocks */
+ static struct clk_hw_onecell_data *aspeed_clk_data;
+ 
+@@ -112,9 +115,137 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
+ 	/* 31: reserved */
  };
  
- struct acpi_power_resource_entry {
-@@ -839,6 +840,37 @@ int acpi_add_power_resource(acpi_handle
- }
- 
- #ifdef CONFIG_ACPI_SLEEP
-+void acpi_suspend_power_resources(u32 acpi_state)
++static const struct clk_div_table ast2400_div_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
++static const struct clk_div_table ast2500_div_table[] = {
++	{ 0x0, 4 },
++	{ 0x1, 8 },
++	{ 0x2, 12 },
++	{ 0x3, 16 },
++	{ 0x4, 20 },
++	{ 0x5, 24 },
++	{ 0x6, 28 },
++	{ 0x7, 32 },
++	{ 0 }
++};
++
++static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
 +{
-+	struct acpi_power_resource *resource;
++	unsigned int mult, div;
 +
-+	mutex_lock(&power_resource_list_lock);
++	if (val & BIT(20)) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
++		u32 p = (val >> 13) & 0x3f;
++		u32 m = (val >> 5) & 0xff;
++		u32 n = val & 0x1f;
 +
-+	list_for_each_entry(resource, &acpi_power_resource_list, list_node) {
-+		int result, state;
-+
-+		mutex_lock(&resource->resource_lock);
-+
-+		result = acpi_power_get_state(resource->device.handle, &state);
-+		if (result) {
-+			mutex_unlock(&resource->resource_lock);
-+			continue;
-+		}
-+
-+		if (state == ACPI_POWER_RESOURCE_STATE_ON
-+		    && resource->system_level < acpi_state) {
-+			dev_info(&resource->device.dev, "Turning OFF\n");
-+			__acpi_power_off(resource);
-+			resource->ref_count++;
-+			resource->suspended = true;
-+		}
-+
-+		mutex_unlock(&resource->resource_lock);
++		mult = (m + 1) / (n + 1);
++		div = p + 1;
 +	}
 +
-+	mutex_unlock(&power_resource_list_lock);
++	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
++			mult, div);
 +}
 +
- void acpi_resume_power_resources(void)
++static void __init aspeed_ast2400_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, div, mult;
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	WARN(val & BIT(18), "clock is strapped not configured");
++	if (val & BIT(17)) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
++		u32 n = (val >> 5) & 0x3f;
++		u32 od = (val >> 4) & 0x1;
++		u32 d = val & 0xf;
++
++		mult = (2 - od) * (n + 2);
++		div = d + 1;
++	}
++	hw = clk_hw_register_fixed_factor(NULL, "hpll", "clkin", 0, mult, div);
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = hw;
++
++	/*
++	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
++	 *   00: Select CPU:AHB = 1:1
++	 *   01: Select CPU:AHB = 2:1
++	 *   10: Select CPU:AHB = 4:1
++	 *   11: Select CPU:AHB = 3:1
++	 */
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 10) & 0x3;
++	div = val + 1;
++	if (div == 2)
++		div = 3;
++	else if (div == 3)
++		div = 2;
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
++			ast2400_div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++}
++
++static void __init aspeed_ast2500_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, div;
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_calc_pll("hpll", val);
++
++	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 9) & 0x7;
++	WARN_ON(val == 0);
++	div = 2 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	/* TODO: this is wrong! */
++	regmap_read(map, ASPEED_CLK_SELECTION, &val);
++	val = (val >> 23) & 0x7;
++	div = 4 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++};
++
++
+ static void __init aspeed_cc_init(struct device_node *np)
  {
- 	struct acpi_power_resource *resource;
-@@ -860,6 +892,10 @@ void acpi_resume_power_resources(void)
- 		    && resource->ref_count) {
- 			dev_info(&resource->device.dev, "Turning ON\n");
- 			__acpi_power_on(resource);
-+			if (resource->suspended) {
-+				resource->ref_count--;
-+				resource->suspended = false;
-+			}
- 		}
+ 	struct regmap *map;
++	unsigned long freq;
++	struct clk_hw *hw;
+ 	u32 val;
+ 	int ret;
+ 	int i;
+@@ -153,6 +284,21 @@ static void __init aspeed_cc_init(struct device_node *np)
+ 		return;
+ 	}
  
- 		mutex_unlock(&resource->resource_lock);
-Index: linux-pm/drivers/acpi/sleep.h
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.h
-+++ linux-pm/drivers/acpi/sleep.h
-@@ -5,6 +5,7 @@ extern void acpi_disable_wakeup_devices(
- extern struct list_head acpi_wakeup_device_list;
- extern struct mutex acpi_device_lock;
- 
-+extern void acpi_suspend_power_resources(u32 acpi_state);
- extern void acpi_resume_power_resources(void);
- extern void acpi_turn_off_unused_power_resources(void);
- 
-
++	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
++	if (val & BIT(23))
++		freq = 25000000;
++	else
++		freq = 24000000;
++	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
++	pr_debug("clkin @%lu MHz\n", freq / 1000000);
++
++	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
++		aspeed_ast2400_cc(map);
++	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
++		aspeed_ast2500_cc(map);
++	else
++		pr_err("unknown platform, failed to add clocks\n");
++
+ 	aspeed_clk_data->num = ASPEED_NUM_CLKS;
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
+ 	if (ret)
+-- 
+2.14.1
