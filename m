@@ -1,79 +1,198 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:58:38 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 06/13] drm/sun4i: hdmi: Allow using second PLL as TMDS
- clk parent
-Message-ID: <20170926095838.vvgdnm7bdodwtjzv@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-7-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qttlu3ybmjip77q3"
-In-Reply-To: <20170926065919.24446-7-wens@csie.org>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 4/5] clk: aspeed: Register gated clocks
+Date: Thu, 21 Sep 2017 13:56:40 +0930
+Message-Id: <20170921042641.7326-5-joel@jms.id.au>
+In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
+The majority of the clocks in the system are gates paired with a reset
+controller that holds the IP in reset.
 
---qttlu3ybmjip77q3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This borrows from clk_hw_register_gate, but registers two 'gates', one
+to control the clock enable register and the other to control the reset
+IP. This allows us to enforce the ordering:
 
-On Tue, Sep 26, 2017 at 06:59:12AM +0000, Chen-Yu Tsai wrote:
-> Allwinner SoCs typically have two PLLs reserved for video related usage.
-> At the moment we only support using the first one to feed the HDMI
-> transmitter block's TMDS clock.
->=20
-> Let the HDMI encoder's TMDS clock go through all of its parents when
-> calculating possible clock rates. This allows usage of the second video
-> PLL as its parent.
->=20
-> Note that this does not handle conflicting pixel clocks. It is entirely
-> possible to have an LCD panel use one pixel clock rate, only to be
-> overridden by the HDMI transmitter's clock rate request when the second
-> display pipeline is enabled.
->=20
-> This should be handled by having all the clock drivers honor clock rate
-> ranges, and have the consumers use clk_set_rate_min/clk_set_rate_max.
+ 1. Place IP in reset
+ 2. Enable clock
+ 3. Delay
+ 4. Release reset
 
-That, or relying on clk_set_rate_protect
+There are some gates that do not have an associated reset; these are
+handled by using -1 as the index for the reset.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/clk-aspeed.c | 128 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---qttlu3ybmjip77q3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyiTOAAoJEBx+YmzsjxAglWQP/izPBYzBNaNXOEgBjF1Cy4M1
-/q16lgMmGlN3ybVuwvCsGqmtLm4WPB4GWtq5d7+yeEBuc/XwAHzUZHALzKlXJfeg
-vRDU3br/GYHwmjB028IRb9Gu9tn5jLAB4HjtLzoxDqobW/HhjScRDy7YO67EmJeY
-7LIPw6ndzQRfD3C683AHUYV1bCSD4JsNENH9U19/gaLQy+Glbp7G6PmMo5tw0oJb
-CNwnsn4x8GPBD4N1uQpUFc9Yo8YwLNUJOIpsLUCeAgHHS7+uHA+WiSIlQDnait66
-0tSCabXfKkVF50POS0I4TwwwwetF18uf4ywIBIXHYrXkisu+AOrgJG5W8ZpsPlDy
-w02cd/ns4FTe3JaLY4G6kTSmWgevKf2N/1hn3Yr9HxkytnfLQQ1EAGWIxkzaAClb
-C7MXXczmKehRnSC3z+q5+hjVCUOAi/nkuqgqV42QXhYuQV6z7Clv649TB9E2SvMx
-X8awPInOLu4tSlE+hQvm5NjJ+PIMXw3nsA6oEwrBthBEEKn+pibmNoqgrb/rBZrI
-3LV8ib0FdFIU8QfiRbDc+k7NE/dPCf9Em1241iL6QgIAh4xOWzL9Waj08FCYssUN
-NZD2IAYsiDnhGw6hgtIHIcOoox8mibMCQcOKKO5xEvbdiMDGosGrcrBeoOLw95Gx
-8SimeMY+GH8mcgBsxk7d
-=cSMz
------END PGP SIGNATURE-----
-
---qttlu3ybmjip77q3--
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 19531798e040..dec9db4ec47b 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -191,6 +191,108 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+ 			mult, div);
+ }
+ 
++static int aspeed_clk_enable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++	u32 rst = BIT(gate->reset_idx);
++
++	spin_lock_irqsave(gate->lock, flags);
++
++	if (gate->reset_idx >= 0) {
++		/* Put IP in reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
++
++		/* Delay 100us */
++		udelay(100);
++	}
++
++	/* Enable clock */
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
++
++	if (gate->reset_idx >= 0) {
++		/* Delay 10ms */
++		/* TODO: can we sleep here? */
++		msleep(10);
++
++		/* Take IP out of reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
++	}
++
++	spin_unlock_irqrestore(gate->lock, flags);
++
++	return 0;
++}
++
++static void aspeed_clk_disable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++
++	spin_lock_irqsave(gate->lock, flags);
++
++	/* Disable clock */
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
++
++	spin_unlock_irqrestore(gate->lock, flags);
++}
++
++static int aspeed_clk_is_enabled(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	u32 clk = BIT(gate->clock_idx);
++	u32 reg;
++
++	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
++
++	return (reg & clk) ? 0 : 1;
++}
++
++static const struct clk_ops aspeed_clk_gate_ops = {
++	.enable = aspeed_clk_enable,
++	.disable = aspeed_clk_disable,
++	.is_enabled = aspeed_clk_is_enabled,
++};
++
++static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		struct regmap *map, u8 clock_idx, u8 reset_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	struct aspeed_clk_gate *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &aspeed_clk_gate_ops;
++	init.flags = flags | CLK_IS_BASIC;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->map = map;
++	gate->clock_idx = clock_idx;
++	gate->reset_idx = reset_idx;
++	gate->flags = clk_gate_flags;
++	gate->lock = lock;
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
+ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+@@ -200,6 +302,7 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
++	int i;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -269,6 +372,31 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ 			&aspeed_clk_lock);
+ 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
+ 
++	/* There are a number of clocks that not included in this driver as
++	 * more information is required:
++	 *   D2-PLL
++	 *   D-PLL
++	 *   YCLK
++	 *   RGMII
++	 *   RMII
++	 *   UART[1..5] clock source mux
++	 */
++
++	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
++		const struct aspeed_gate_data *gd;
++
++		gd = &aspeed_gates[i];
++		aspeed_clk_data->hws[ASPEED_CLK_GATES + i] =
++			aspeed_clk_hw_register_gate(NULL, gd->name,
++					     gd->parent_name,
++					     gd->flags,
++					     map,
++					     gd->clock_idx,
++					     gd->reset_idx,
++					     CLK_GATE_SET_TO_DISABLE,
++					     &aspeed_clk_lock);
++	}
++
+ 	return 0;
+ };
+ 
+-- 
+2.14.1
