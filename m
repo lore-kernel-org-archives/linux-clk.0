@@ -1,76 +1,35 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 20 Sep 2017 11:18:29 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-mtd <linux-mtd@lists.infradead.org>,
-	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
-Message-ID: <20170920091829.wftbjshog3ixvpmu@piout.net>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-9-romain.izard.pro@gmail.com>
- <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
- <20170919152504.nhp5i734u75gb5gq@dell>
- <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 21 Sep 2017 18:36:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Tirupathi Reddy <tirupath@codeaurora.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, mark.rutland@arm.com,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: Re: [PATCH V5] clk: qcom: Add spmi_pmic clock divider support
+Message-ID: <20170921233609.t65nskglysn4v4qp@rob-hp-laptop>
+References: <1505817286-12445-1-git-send-email-tirupath@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
+In-Reply-To: <1505817286-12445-1-git-send-email-tirupath@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/09/2017 at 10:30:31 +0200, Romain Izard wrote:
-> 2017-09-19 17:25 GMT+02:00 Lee Jones <lee.jones@linaro.org>:
-> > On Tue, 19 Sep 2017, Nicolas Ferre wrote:
-> >
-> >> On 15/09/2017 at 16:04, Romain Izard wrote:
-> >> > The controller used by a flexcom module is configured at boot, and left
-> >> > alone after this. As the configuration will be lost after backup mode,
-> >> > restore the state of the flexcom driver on resume.
-> >> >
-> >> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> >>
-> >> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> >> On sama5d2 Xplained board (i2c0 from flexcom 4).
-> >> and obviously:
-> >> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> >>
-> >> Thanks Romain!
-> >>
-> >> Regards,
-> >>
-> >> > ---
-> >> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
-> >> >  1 file changed, 50 insertions(+), 15 deletions(-)
-> >
-> > This is the first time I've seen this patch.  Why's that?
-> >
+On Tue, Sep 19, 2017 at 04:04:46PM +0530, Tirupathi Reddy wrote:
+> Clkdiv module provides a clock output on the PMIC with CXO as
+> the source. This clock can be routed through PMIC GPIOs. Add
+> a device driver to configure this clkdiv module.
 > 
-> As the patchset covers many subsystems, get_maintainers.pl provided a
-> very long list of both developpers and mailing lists (28). I thought it
-> was a good idea to shorten it a little. Bad idea. Sorry.
-> 
+> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+> ---
+>  .../bindings/clock/clk-spmi-pmic-div.txt           |  56 ++++
 
-I think the correct way of handling that would have been to send each
-patch to the proper subsystem as there are no dependency here.
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+>  drivers/clk/qcom/Kconfig                           |   9 +
+>  drivers/clk/qcom/Makefile                          |   1 +
+>  drivers/clk/qcom/clk-spmi-pmic-div.c               | 343 +++++++++++++++++++++
+>  4 files changed, 409 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>  create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
