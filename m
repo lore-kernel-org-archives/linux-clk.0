@@ -1,27 +1,61 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] clk-mux: Adjustments for clk_hw_register_mux_table()
-Message-ID: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 18:20:12 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:63848 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751629AbdIUOax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Sep 2017 10:30:53 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Johannes Stezenbach <js@sig21.net>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
+Date: Thu, 21 Sep 2017 16:21:46 +0200
+Message-ID: <4036229.gTT6xKEFIS@aspire.rjw.lan>
+In-Reply-To: <20170921094013.hznamkxx5md4yhgf@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170908134920.qia2bdjvpahe3zvi@sig21.net> <20170921094013.hznamkxx5md4yhgf@sig21.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 18:16:12 +0200
+On Thursday, September 21, 2017 11:40:13 AM CEST Johannes Stezenbach wrote:
+> Hi,
+> 
+> TL;DR: ACPI 6.1 spec interpretation question:
+> 
+>   7.2 Declaring a Power Resource Object
+>   ...
+>   Power resource objects can appear wherever is convenient in the namespace.
+>   ...
+>   Systemlevel is the deepest system sleep level OSPM must maintain to keep this
+>   power resource on (0 equates to S0, 1 equates to S1, and so on).
+> 
+> Does it imply the OS should turn Power Resources off when changing
+> the system level below the systemlevel of the PowerResource?
 
-Two update suggestions were taken into account
-from static source code analysis.
+You can interpret that this way I guess.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+However, so far we have not had to deal with "dangling" power resources.
 
- drivers/clk/clk-mux.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> Otherwise, what purpose do PowerResource objects have that are not
+> mentioned in any device _PR[0-3W]?  Or is it BIOS bug?
 
--- 
-2.14.1
+There also is _RDI that may refer to power resources, but I'm not aware of
+anyone using it in practice ATM.
+
+Other than that, I don't see why it would ever be necessary to declare
+a power resource that is not pointed to by any of the above.
+
+At least when the "power level" is changing from S0 to anything like S3,
+the firmware gets control anyway at one point and then it is free to
+manipulate whatever power resources it needs to turn off at that point.
+
+So I would be inclined to think of that as a BIOS issue.
+
+Thanks,
+Rafael
+
