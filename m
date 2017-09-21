@@ -1,130 +1,195 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] ACPI/PPTT: Add Processor Properties Topology Table
- parsing
-To: Jeremy Linton <jeremy.linton@arm.com>, <linux-acpi@vger.kernel.org>
-References: <20170919184751.25110-1-jeremy.linton@arm.com>
- <20170919184751.25110-2-jeremy.linton@arm.com>
- <4c9cfa18-507b-01c4-7464-ff2b149fbb68@huawei.com>
- <03912538-f7bf-f235-c87f-3ba275502db0@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <sudeep.holla@arm.com>,
-        <hanjun.guo@linaro.org>, <lorenzo.pieralisi@arm.com>,
-        <rjw@rjwysocki.net>, <will.deacon@arm.com>,
-        <catalin.marinas@arm.com>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <viresh.kumar@linaro.org>, <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <jhugo@codeaurora.org>,
-        <Jonathan.Zhang@cavium.com>, <ahs3@redhat.com>
-From: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <f1752bf4-b62e-e41a-bd58-783c15bba868@huawei.com>
-Date: Fri, 22 Sep 2017 09:15:21 +0800
-MIME-Version: 1.0
-In-Reply-To: <03912538-f7bf-f235-c87f-3ba275502db0@arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
+Date: Thu, 21 Sep 2017 13:56:39 +0930
+Message-Id: <20170921042641.7326-4-joel@jms.id.au>
+In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jeremy,
+This registers a platform driver to set up all of the non-core clocks.
 
-On 2017/9/22 2:48, Jeremy Linton wrote:
-> Hi,
-> 
-> On 09/20/2017 02:15 AM, Xiongfeng Wang wrote:
->> Hi Jeremy,
->>
->> On 2017/9/20 2:47, Jeremy Linton wrote:
->>> ACPI 6.2 adds a new table, which describes how processing units
->>> are related to each other in tree like fashion. Caches are
->>> also sprinkled throughout the tree and describe the properties
->>> of the caches in relation to other caches and processing units.
->>>
->>> Add the code to parse the cache hierarchy and report the total
->>> number of levels of cache for a given core using
->>> acpi_find_last_cache_level() as well as fill out the individual
->>> cores cache information with cache_setup_acpi() once the
->>> cpu_cacheinfo structure has been populated by the arch specific
->>> code.
->>>
->>> Further, report peers in the topology using setup_acpi_cpu_topology()
->>> to report a unique ID for each processing unit at a given level
->>> in the tree. These unique id's can then be used to match related
->>> processing units which exist as threads, COD (clusters
->>> on die), within a given package, etc.
->>>
->>> +
->>> +static int topology_setup_acpi_cpu(struct acpi_table_header *table,
->>> +                    unsigned int cpu, int level)
->>> +{
->>> +    struct acpi_pptt_processor *cpu_node;
->>> +    u32 acpi_cpu_id = acpi_cpu_get_madt_gicc(cpu)->uid;
->>> +
->>> +    cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
->>> +    if (cpu_node) {
->>> +        cpu_node = acpi_find_processor_package_id(table, cpu_node, level);
->>> +        return (int)((u8 *)cpu_node - (u8 *)table);
->>> +    }
->>> +    pr_err_once("PPTT table found, but unable to locate core for %d\n",
->>> +            cpu);
->>> +    return -ENOENT;
->>
->> Can we return -1 when PPTT doesn't exist? So that we can still get topo info from MPIDR.
->> 'store_cpu_topology()' determine whether cpu topology has been populated by checking
->> whether cluster_id is -1. If cluster_id is not -1, it won't read cpu topo info from MPIDR.
->> Or maybe we can change 'store_cpu_topology()' as well. If cluster_id is less than zero,
->> we read cpu topo info from MPIDR.
-> 
-> ? I will retest this, but any negative return from setup_acpi_topology() for the initial node (subsequent requests should minimally duplicate the cpu node rather than failing) request, should result in a call to reset_cpu_topology(), and the information being sourced from the MPIDR in store_cpu_topology(). There are various ways the tree could be "damaged" but if all the system cpus have matching valid acpi_id/cpu nodes, then that reflects a valid topology and there really isn't enough information to decide if its damaged. The one case where this isn't accurate is missing socket identifiers, but the code actually handles this as well as the lack of missing cluster/thread ids (which don't exist in the standard).
-> 
-Yes, you are right. I didn't notice the function reset_cpu_topology() before. Thanks for your explanation.
->>
->>> +}
->>> +
->>> +/*
->>> + * simply assign a ACPI cache entry to each known CPU cache entry
->>> + * determining which entries are shared is done later.
->>> + */
->>> +int cache_setup_acpi(unsigned int cpu)
->>> +{
->>> +    struct acpi_table_header *table;
->>> +    acpi_status status;
->>> +
->>> +    pr_debug("Cache Setup ACPI cpu %d\n", cpu);
->>> +
->>> +    status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
->>> +    if (ACPI_FAILURE(status)) {
->>> +        pr_err_once("No PPTT table found, cache topology may be inaccurate\n");
->>> +        return -ENOENT;
->>> +    }
->>> +
->>> +    cache_setup_acpi_cpu(table, cpu);
->>> +    acpi_put_table(table);
->>> +
->>> +    return status;
->>> +}
->>> +
->>> +/*
->>> + * Determine a topology unique ID for each thread/core/cluster/socket/etc.
->>> + * This ID can then be used to group peers.
->>> + */
->>> +int setup_acpi_cpu_topology(unsigned int cpu, int level)
->>> +{
->>> +    struct acpi_table_header *table;
->>> +    acpi_status status;
->>> +    int retval;
->>
->> Can we add a static int array to record already assigned id for each level?
->> So that we can count the id starting from zero. And also the id can be successive.
-> 
-> I don't like the idea of a node<->generated_id array/map in this module, although I've considered a number of ways to create more normalized values. Particularly, the one area that might be useful is utilizing the acpi id for the cores, which is problematic in the MT case. One of my other alternative ideas was to plug a unique node id into a reserved field in the table as the node is traversed. That idea is a little evil, and really should be part of the ACPI standard so the firmware is providing the ID's rather than dependent on the traversal order of the tree.
-> 
-> If it turns out that these ID's need to be zero based, or some other limitation I would prefer just renumbering them in update_siblings_mask() or parse_acpi_topology(). I hacked together a patch to renumber the package_id yesterday, but i'm pretty sure I've seen (non arm) machines with odd package/core ids in the past, and I don't really see anything in the ABI the dictating this. Let me clean it up a bit and I can post it as an additional patch on top of the PPTT patches.
-> 
-Yes, I agree. Renumbering the IDs in parse_acpi_topology() is better.
+The clocks that have configurable rates are now registered.
 
-> So, is this an actual use case/problem, or its just an "appearance" type of thing?
-> 
-It is not an actual use problem, just an "appearance".
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/clk-aspeed.c | 129 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 129 insertions(+)
 
-
-Thanks,
-Xiongfeng Wang
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index e614c61b82d2..19531798e040 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -115,6 +117,20 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
+ 	/* 31: reserved */
+ };
+ 
++static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
++
++static const struct clk_div_table ast2500_mac_div_table[] = {
++	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
+ static const struct clk_div_table ast2400_div_table[] = {
+ 	{ 0x0, 2 },
+ 	{ 0x1, 4 },
+@@ -139,6 +155,21 @@ static const struct clk_div_table ast2500_div_table[] = {
+ 	{ 0 }
+ };
+ 
++struct aspeed_clk_soc_data {
++	const struct clk_div_table *div_table;
++	const struct clk_div_table *mac_div_table;
++};
++
++static const struct aspeed_clk_soc_data ast2500_data = {
++	.div_table = ast2500_div_table,
++	.mac_div_table = ast2500_mac_div_table,
++};
++
++static const struct aspeed_clk_soc_data ast2400_data = {
++	.div_table = ast2400_div_table,
++	.mac_div_table = ast2400_div_table,
++};
++
+ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+ {
+ 	unsigned int mult, div;
+@@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+ 			mult, div);
+ }
+ 
++static int __init aspeed_clk_probe(struct platform_device *pdev)
++{
++	const struct aspeed_clk_soc_data *soc_data;
++	const struct clk_div_table *mac_div_table;
++	const struct clk_div_table *div_table;
++	struct device *dev = &pdev->dev;
++	struct regmap *map;
++	struct clk_hw *hw;
++	u32 val, rate;
++
++	map = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "no syscon regmap\n");
++		return PTR_ERR(map);
++	}
++
++	/* SoC generations share common layouts but have different divisors */
++	soc_data = of_device_get_match_data(&pdev->dev);
++	div_table = soc_data->div_table;
++	mac_div_table = soc_data->mac_div_table;
++
++	/* UART clock div13 setting */
++	regmap_read(map, ASPEED_MISC_CTRL, &val);
++	if (val & BIT(12))
++		rate = 24000000 / 13;
++	else
++		rate = 24000000;
++	/* TODO: Find the parent data for the uart clock */
++	hw = clk_hw_register_fixed_rate(NULL, "uart", NULL, 0, rate);
++	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
++
++	/*
++	 * Memory controller (M-PLL) PLL. This clock is configured by the
++	 * bootloader, and is exposed to Linux as a read-only clock rate.
++	 */
++	regmap_read(map, ASPEED_MPLL_PARAM, &val);
++	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	aspeed_calc_pll("mpll", val);
++
++	/* SD/SDIO clock divider (TODO: There's a gate too) */
++	hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
++			div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
++
++	/* MAC AHB bus clock divider */
++	hw = clk_hw_register_divider_table(NULL, "mac", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
++			mac_div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
++
++	/* LPC Host (LHCLK) clock divider */
++	hw = clk_hw_register_divider_table(NULL, "lhclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
++			div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
++
++	/* Video Engine (ECLK) mux and clock divider */
++	hw = clk_hw_register_mux(NULL, "eclk_mux",
++			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
++			scu_base + ASPEED_CLK_SELECTION, 2, 2,
++			0, &aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
++	hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
++			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
++			div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
++
++	/* P-Bus (BCLK) clock divider */
++	hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 0, 2, 0,
++			div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
++
++	return 0;
++};
++
++static const struct of_device_id aspeed_clk_dt_ids[] = {
++	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
++	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
++	{ },
++};
++
++static struct platform_driver aspeed_clk_driver = {
++	.probe  = aspeed_clk_probe,
++	.driver = {
++		.name = "aspeed-clk",
++		.of_match_table = aspeed_clk_dt_ids,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(aspeed_clk_driver);
++
++
+ static void __init aspeed_ast2400_cc(struct regmap *map)
+ {
+ 	struct clk_hw *hw;
+-- 
+2.14.1
