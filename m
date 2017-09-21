@@ -1,96 +1,122 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 4/9] mtd: nand: atmel: Avoid ECC errors when leaving backup mode
-Date: Fri, 15 Sep 2017 16:04:06 +0200
-Message-Id: <20170915140411.31716-5-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.sig21.net ([80.244.240.74]:45260 "EHLO mail.sig21.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751752AbdIUJke (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Sep 2017 05:40:34 -0400
+Date: Thu, 21 Sep 2017 11:40:13 +0200
+From: Johannes Stezenbach <js@sig21.net>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
+ firmware"
+Message-ID: <20170921094013.hznamkxx5md4yhgf@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <5bb7e3ca-38fc-1184-3bca-f666275c6180@linux.intel.com>
+ <20170908134920.qia2bdjvpahe3zvi@sig21.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170908134920.qia2bdjvpahe3zvi@sig21.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-During backup mode, the contents of all registers will be cleared as the
-SoC will be completely powered down. For a product that boots on NAND
-Flash memory, the bootloader will obviously use the related controller
-to read the Flash and correct any detected error in the memory, before
-handling back control to the kernel's resuming entry point.
+Hi,
 
-In normal devices, it is up to the driver's suspend/resume code to
-restore the registers in a valid state. But the PMECC is not a regular
-device in the driver model when used with the legacy device tree binding
-for the Atmel NAND controller, and suspend/resume code is not called.
+TL;DR: ACPI 6.1 spec interpretation question:
 
-As in my case the bootloader leaves the PMECC controller in a programmed
-state, and the controller is only reset at boot or after a NAND access,
-the first NAND Flash access with the Atmel controller will report
-uncorrectable ECC errors.
+  7.2 Declaring a Power Resource Object
+  ...
+  Power resource objects can appear wherever is convenient in the namespace.
+  ...
+  Systemlevel is the deepest system sleep level OSPM must maintain to keep this
+  power resource on (0 equates to S0, 1 equates to S1, and so on).
 
-To avoid this, systematically reset the PMECC controller before using
-it.
+Does it imply the OS should turn Power Resources off when changing
+the system level below the systemlevel of the PowerResource?
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/mtd/nand/atmel/pmecc.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+Otherwise, what purpose do PowerResource objects have that are not
+mentioned in any device _PR[0-3W]?  Or is it BIOS bug?
 
-diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-index 8c210a5776bc..8d1208f38025 100644
---- a/drivers/mtd/nand/atmel/pmecc.c
-+++ b/drivers/mtd/nand/atmel/pmecc.c
-@@ -777,6 +777,9 @@ int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
- 
- 	mutex_lock(&user->pmecc->lock);
- 
-+	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+
- 	cfg = user->cache.cfg;
- 	if (op == NAND_ECC_WRITE)
- 		cfg |= PMECC_CFG_WRITE_OP;
-@@ -797,10 +800,6 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
- 
- void atmel_pmecc_disable(struct atmel_pmecc_user *user)
- {
--	struct atmel_pmecc *pmecc = user->pmecc;
--
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
- 	mutex_unlock(&user->pmecc->lock);
- }
- EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
-@@ -856,10 +855,6 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
- 	/* Disable all interrupts before registering the PMECC handler. */
- 	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
- 
--	/* Reset the ECC engine */
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
--
- 	return pmecc;
- }
- 
--- 
-2.11.0
+
+Thanks,
+Johannes
+
+On Fri, Sep 08, 2017 at 03:49:20PM +0200, Johannes Stezenbach wrote:
+> (adding linux-acpi)
+> 
+> On Wed, Sep 06, 2017 at 04:02:10PM -0500, Pierre-Louis Bossart wrote:
+> > On 9/6/17 3:42 PM, Johannes Stezenbach wrote:
+> > > I'm poking around on Asus E200HA, based on Atom x5-Z8300 (Cherrytrail),
+> > > trying to get S0ix working, atm with gross hacks that are recorded in
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=193891
+> > > 
+> > > 
+> > > I found commit d31fd43c0f9a4 "clk: x86: Do not gate clocks enabled by the firmware"
+> > > prevents S0i3 entry.  Unfortunately the commit message doesn't explain
+> > > the problem it fixes, nor does it mention the platform.
+> > > 
+> > > How can we fix d31fd43c0f9a4 to not break S0i3?
+> > 
+> > In the existing audio machine drivers, I only use the clock framework for
+> > Baytrail. on Cherrytrail, the pmc_platform_clk3 used for the audio MCLK is
+> > actually managed by the BIOS (look for CLK3 in the DSDT) so there is no
+> > activity in the drivers, the audio don't even get/prepare/enable the
+> > pmc_platform_clk3 so I would guess there is an issue with a non-audio driver
+> > or the BIOS. Put differently, it may be so that by allowing the drivers to
+> > gate an unused clock we allowed you to enter S0i3 even if the bios didn't
+> > enable this mode. I would remove all pmc-clock related stuff and see what
+> > happens.
+> 
+> Thanks for this info and Carlo's reply.  I've been busy reading
+> source code, DSDT and ACPI spec, and now I'm confused. ;-/
+> 
+> As you say, these clocks are managed by BIOS and
+> clk-pmc-atom.c shouldn't mess with them, thus
+> d31fd43c0f9a4 is correct.  Nothing else in the
+> system besides sound/soc/intel/boards/ uses
+> pmc_plt_clk_3 (or other pmc_plt_clk*).
+> 
+> Now the question is why ACPI doesn't handle the clocks.
+> 
+> E200HA DSDT https://bugzilla.kernel.org/attachment.cgi?id=253921
+> has PowerResource defintions for the clocks
+> (where _ON and _OFF just set the same registers that
+> clk-pmc-atom.c uses, e.g. CKC3 at 0x6c for CLK3).
+> However, these PowerResources are only listed as child nodes
+> of the devices that use them, but are not referenced by _PR[0-3],
+> with the exception of CLK3 used by the audio codec.
+> 
+> The power resources exist in /sys as LNXPOWER:xx subnodes
+> of the device (e.g. i2c 809622C1:02/LNXPOWER:05) and are
+> also listed during boot.
+> 
+> acpi_bus_init_power_state() sets device->power.flags.power_resources = 1
+> only if _PR[0-3] exist.  Then acpi_device_set_power() only
+> calls acpi_power_transition() if power_resource == 1,
+> and acpi_power_transition() would only call acpi_power_off_list()
+> for the resources according to _PR[0-3].
+> 
+> I think this is all OK, maybe the BIOS is not optimal in
+> making the clocks available for device runtime pm.
+> What doesn't seem to happen, though, is that the PowerResources
+> are turned _OFF when system transitions to S0ix.  The PowerResources
+> have systemlevel == 0, meaning they should be turned off when the
+> system transitions out of S0, if I'm understanding the ACPI (6.1)
+> spec correctly in section 7.2 Declaring a Power Resource Object.
+> Well, actually I'm not sure, the wording of the ACPI spec is:
+> 
+>   "Systemlevel is the deepest system sleep level OSPM must maintain to keep
+>   this power resource on (0 equates to S0, 1 equates to S1, and so on)."
+> 
+> FWIW, I used "echo 0x00800000 >/sys/module/acpi/parameters/debug_layer"
+> to confirm devices transition between D0 and D3hot, but clock
+> resources are never turned off.
+> 
+> 
+> Johannes
+> 
