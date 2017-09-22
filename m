@@ -1,107 +1,105 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60457 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751797AbdIODDt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2017 23:03:49 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <59BB4314.7070405@samsung.com>
-Date: Fri, 15 Sep 2017 12:03:48 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: exynos4: Enable VPLL and EPLL clocks for
- suspend/resume cycle
-In-reply-to: <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170914143749eucas1p1f3206ff81fabc945ffc79cbddb45afc9@eucas1p1.samsung.com>
-        <1505399852-4787-1-git-send-email-m.szyprowski@samsung.com>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:58798 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752694AbdIVWVn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Sep 2017 18:21:43 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.de>
+Cc: Johannes Stezenbach <js@sig21.net>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-acpi@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
+Date: Sat, 23 Sep 2017 00:12:35 +0200
+Message-ID: <5668556.iq4Amxhha7@aspire.rjw.lan>
+In-Reply-To: <s5hzi9mdik2.wl-tiwai@suse.de>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170922080453.3bwad4ale4zizf42@sig21.net> <s5hzi9mdik2.wl-tiwai@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
-
-On 2017년 09월 14일 23:37, Marek Szyprowski wrote:
-> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
-> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
-> VPLL and EPPL clocks were always enabled because the enable bit was never
-> touched. Those clocks have to be enabled during suspend/resume cycle,
-> because otherwise board fails to enter sleep mode. This patch enables them
-> unconditionally before entering system suspend state. System restore
-> function will set them to the previous state saved in the register cache
-> done before that unconditional enable.
+On Friday, September 22, 2017 2:27:57 PM CEST Takashi Iwai wrote:
+> On Fri, 22 Sep 2017 10:04:53 +0200,
+> Johannes Stezenbach wrote:
+> > 
+> > On Fri, Sep 22, 2017 at 12:35:15AM +0200, Rafael J. Wysocki wrote:
+> > > On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
+> > > > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
+> > > > > So I would be inclined to think of that as a BIOS issue.
+> > > > 
+> > > > OK, wrt $Subject it sparks the question how to fix the
+> > > > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
+> > > > gate clocks enabled by the firmware".  Add quirks to
+> > > > the drivers for the devices that have the dangling
+> > > > PowerResources and manually call _OFF/_ON during suspend/resume?
+> > > > 
+> > > > I must admit I haven't looked deeper into the issue yet,
+> > > > i.e. I don't know which clock causes S0ix failure.
+> > > > If I understand correctly, before d31fd43c0f9a4 the
+> > > > clk framework would just disable all unused clocks
+> > > > registered by clk-pmc-atom.c, which are all of then except
+> > > > CLK3 which is used by the audio codec. And the audio codec
+> > > > would disable CLK3 during suspend.
+> > > > After d31fd43c0f9a4 all clocks that BIOS had enabled during boot
+> > > > are kept running.  Presumably we could also add the quirk to
+> > > > clk-pmc-atom.c to bypass what d31fd43c0f9a4 added on Asus E200HA?
+> > > 
+> > > Since this is S0ix, the "system level" is 0 all the time (as I said in a
+> > > previous message).
+> > 
+> > Damn.  Reading ACPI spec (6.1 and 6.2), it talks about _LPI and _RDI
+> > but E200HA doesn't have that in any ACPI table.
+> > The table in section 7.1 Power Resource Objects and the Power Management Models
+> > says "Choose a supported device state to enable a targeted system sleep or
+> > Low- power Idle state ... [use] _PRx".
+> > 
+> > > So there seem to be two possible ways to address this, unfortunately both
+> > > based on white- or blacklisting.
+> > > 
+> > > One of them would be to only do the d31fd43c0f9a4 approach for selected
+> > > systems where it needs to be done to avoid breakage.  The other one would
+> > > be to do it for all systems by default and blacklist the ones where that
+> > > leads to problems.
+> > > 
+> > > IMO it is better to disable clocks over suspend-resume, because that reduces
+> > > the system's power draw while suspended.  So that's what I would do and then
+> > > keep the clocks running only if that is known to be necessary.
+> > 
+> > d31fd43c0f9a4 was added to fix a "hard hangup on boot" issue,
+> > so I guess the default should be to keep clocks enabled.
+> > 
+> > BTW, in E200HA DSDT, the PowerResources in question are children of
+> > the I2Cx devices, presumably it means these clocks are to be used by
+> > devices connected to the i2c busses.  Maybe it's a left over from devices
+> > that are not present in E200HA, and we should ignore them.
+> > 
+> > In conclusion the BIOS bug is that it enables these clocks at boot,
+> > and the correct quirk is to make clk-pmc-atom.c disable them during init,
+> > but leave the _PRx handling for the used clocks (CLK3) to ACPI.
 > 
-> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
-> CC: stable@vger.kernel.org # v4.13
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Well, I can't say which is the buggy behavior, but at least, I agree
+> with Rafael that white/blacklisting is likely the way to go.
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index e40b77583c47..d2fa36bef7d1 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -294,6 +294,15 @@ enum exynos4_plls {
->  #define PLL_ENABLED	(1 << 31)
->  #define PLL_LOCKED	(1 << 29)
->  
-> +static void exynos4_clk_enable_pll(u32 reg)
-> +{
-> +	u32 pll_con;
-> +
-> +	pll_con = readl(reg_base + reg);
-> +	pll_con |= PLL_ENABLED;
-> +	writel(pll_con, reg_base + reg);
+> One thing I'm wondering is whether it's specific to device or specific
+> to platform.  The ASUS one that showed a regression Johannes and I
+> have is the Cherrytrail, while the device showed the hang-at-boot was
+> Baytrail, IIRC.
 
+If I were to place bets, I'd bet on platform-specific and not machine model-
+specific.
 
-The original PLL3xx enable function waits for lock time
-after enabling the PLL in drivers/clk/samsung/clk-pll.c as following:
-But, this patch just sets the bit of PLL_ENABLED without waiting.
-You need to wait the lock time.
+Thanks,
+Rafael
 
-Or if possible, you better to use the pll enable function
-in order to remove the duplicate code.
-
-static int samsung_pll3xxx_enable(struct clk_hw *hw)
-{
-       struct samsung_clk_pll *pll = to_clk_pll(hw);
-       u32 tmp;
-
-       tmp = readl_relaxed(pll->con_reg);
-       tmp |= BIT(pll->enable_offs);
-       writel_relaxed(tmp, pll->con_reg);
-
-       /* wait lock time */
-       do {
-               cpu_relax();
-               tmp = readl_relaxed(pll->con_reg);
-       } while (!(tmp & BIT(pll->lock_offs)));
-
-       return 0;
-}
-
-> +}
-> +
->  static void exynos4_clk_wait_for_pll(u32 reg)
->  {
->  	u32 pll_con;
-> @@ -315,6 +324,9 @@ static int exynos4_clk_suspend(void)
->  	samsung_clk_save(reg_base, exynos4_save_pll,
->  				ARRAY_SIZE(exynos4_clk_pll_regs));
->  
-> +	exynos4_clk_enable_pll(EPLL_CON0);
-> +	exynos4_clk_enable_pll(VPLL_CON0);
-> +
->  	if (exynos4_soc == EXYNOS4210) {
->  		samsung_clk_save(reg_base, exynos4_save_soc,
->  					ARRAY_SIZE(exynos4210_clk_save));
-> 
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
