@@ -1,108 +1,64 @@
-Return-Path: <jon.mason@broadcom.com>
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v2 6/9] ehci-atmel: Power down during suspend is normal
+To: Romain Izard <romain.izard.pro@gmail.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
+ Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
+	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
+	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
+ Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
+	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-7-romain.izard.pro@gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <90b0ce5e-d99e-7bba-0e6e-3d375053487d@microchip.com>
+Date: Fri, 22 Sep 2017 14:40:21 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170926000931.670-6-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com> <20170926000931.670-6-f.fainelli@gmail.com>
-From: Jon Mason <jon.mason@broadcom.com>
-Date: Tue, 26 Sep 2017 10:58:40 -0400
-Message-ID: <CAC3K-4rdV=z1TBtBmw9ngP4rNyvtTgtss23vaY3ZjbTgf8aycA@mail.gmail.com>
-Subject: Re: [PATCH 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
-	"maintainer:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170915140411.31716-7-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 25, 2017 at 8:09 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Add support for the Broadcom Hurricane 2 SoC clock controller. We can
-> re-use the existing iProc clock library since the SoC's architecture is
-> largely the same as its predecessors.
->
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+On 15/09/2017 at 16:04, Romain Izard wrote:
+> When an Atmel SoC is suspended with the backup mode, the USB bus will be
+> powered down. As this is expected, do not return an error to the driver
+> core when ehci_resume detects it.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 > ---
->  drivers/clk/bcm/Kconfig   |  9 +++++++++
->  drivers/clk/bcm/Makefile  |  1 +
->  drivers/clk/bcm/clk-hr2.c | 27 +++++++++++++++++++++++++++
->  3 files changed, 37 insertions(+)
->  create mode 100644 drivers/clk/bcm/clk-hr2.c
->
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 1d9187df167b..4c4bd85f707c 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -30,6 +30,15 @@ config CLK_BCM_CYGNUS
->         help
->           Enable common clock framework support for the Broadcom Cygnus SoC
->
-> +config CLK_BCM_HR2
-> +       bool "Broadcom Hurricane 2 clock support"
-> +       depends on ARCH_BCM_HR2 || COMPILE_TEST
-> +       select COMMON_CLK_IPROC
-> +       default ARCH_BCM_HR2
-> +       help
-> +         Enable common clock framework support for the Broadcom Hurricane 2
-> +         SoC
-> +
->  config CLK_BCM_NSP
->         bool "Broadcom Northstar/Northstar Plus clock support"
->         depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
-> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> index a0c14fa4aa1e..755144195541 100644
-> --- a/drivers/clk/bcm/Makefile
-> +++ b/drivers/clk/bcm/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_BCM2835)      += clk-bcm2835.o
->  obj-$(CONFIG_ARCH_BCM2835)     += clk-bcm2835-aux.o
->  obj-$(CONFIG_ARCH_BCM_53573)   += clk-bcm53573-ilp.o
->  obj-$(CONFIG_CLK_BCM_CYGNUS)   += clk-cygnus.o
-> +obj-$(CONFIG_CLK_BCM_HR2)      += clk-hr2.o
->  obj-$(CONFIG_CLK_BCM_NSP)      += clk-nsp.o
->  obj-$(CONFIG_CLK_BCM_NS2)      += clk-ns2.o
->  obj-$(CONFIG_CLK_BCM_SR)       += clk-sr.o
-> diff --git a/drivers/clk/bcm/clk-hr2.c b/drivers/clk/bcm/clk-hr2.c
-> new file mode 100644
-> index 000000000000..f7c5b7379475
-> --- /dev/null
-> +++ b/drivers/clk/bcm/clk-hr2.c
-> @@ -0,0 +1,27 @@
-> +/*
-> + * Copyright (C) 2017 Broadcom
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation version 2.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +
-> +#include "clk-iproc.h"
-> +
-> +static void __init hr2_armpll_init(struct device_node *node)
-> +{
-> +       iproc_armpll_setup(node);
-> +}
-> +CLK_OF_DECLARE(hr2_armpll, "brcm,hr2-armpll", hr2_armpll_init);
-> --
-> 2.14.1
+>  drivers/usb/host/ehci-atmel.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+> index 7440722bfbf0..2a8b9bdc0e57 100644
+> --- a/drivers/usb/host/ehci-atmel.c
+> +++ b/drivers/usb/host/ehci-atmel.c
+> @@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
+>  	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
+>  
+>  	atmel_start_clock(atmel_ehci);
+> -	return ehci_resume(hcd, false);
+> +	ehci_resume(hcd, false);
+> +	return 0;
 
-Per our offline conversation, the LCPLL in HR2 looks to be completely
-different than anything on NS/NSP/NS2 product line.  So, that will
-need a new driver.  Given that this is sufficient to get the HR2 board
-working, then it is acceptable to me.
+Ok, I agree with that as the underlying function takes care about the
+controller, in any case (even for !B+S-R case). So we don't have any
+added value to propagate this information.
 
-Thanks,
-Jon
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+>  }
+>  
+>  #ifdef CONFIG_OF
+> 
+
+
+-- 
+Nicolas Ferre
