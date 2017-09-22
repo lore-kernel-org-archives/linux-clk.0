@@ -1,97 +1,84 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
- <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
- <432fff47-6750-08c4-a91d-1a5d154245bc@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ca7ce856-208b-2753-a8a2-411b29288306@gmail.com>
-Date: Wed, 27 Sep 2017 17:29:19 +0300
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Fri, 22 Sep 2017 10:04:53 +0200
+From: Johannes Stezenbach <js@sig21.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
+ firmware"
+Message-ID: <20170922080453.3bwad4ale4zizf42@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <4036229.gTT6xKEFIS@aspire.rjw.lan>
+ <20170921162307.amdz2uyei7eackhs@sig21.net>
+ <4254964.MfDMP6QAfg@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <432fff47-6750-08c4-a91d-1a5d154245bc@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4254964.MfDMP6QAfg@aspire.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27.09.2017 16:46, Jon Hunter wrote:
+On Fri, Sep 22, 2017 at 12:35:15AM +0200, Rafael J. Wysocki wrote:
+> On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
+> > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
+> > > So I would be inclined to think of that as a BIOS issue.
+> > 
+> > OK, wrt $Subject it sparks the question how to fix the
+> > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
+> > gate clocks enabled by the firmware".  Add quirks to
+> > the drivers for the devices that have the dangling
+> > PowerResources and manually call _OFF/_ON during suspend/resume?
+> > 
+> > I must admit I haven't looked deeper into the issue yet,
+> > i.e. I don't know which clock causes S0ix failure.
+> > If I understand correctly, before d31fd43c0f9a4 the
+> > clk framework would just disable all unused clocks
+> > registered by clk-pmc-atom.c, which are all of then except
+> > CLK3 which is used by the audio codec. And the audio codec
+> > would disable CLK3 during suspend.
+> > After d31fd43c0f9a4 all clocks that BIOS had enabled during boot
+> > are kept running.  Presumably we could also add the quirk to
+> > clk-pmc-atom.c to bypass what d31fd43c0f9a4 added on Asus E200HA?
 > 
-> On 27/09/17 14:44, Jon Hunter wrote:
->>
->> On 27/09/17 13:12, Dmitry Osipenko wrote:
->>> On 27.09.2017 11:34, Jon Hunter wrote:
->>>>
->>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>
->>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>>> on Tegra20/30 SoC's.
->>>>>>>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>>>>>>  1 file changed, 23 insertions(+)
->>>>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..2af9aa76ae11
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>> @@ -0,0 +1,23 @@
->>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>> +
->>>>>>> +Required properties:
->>>>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->>>>>>> +- reg:		Should contain registers base address and length.
->>>>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
->>>>>>> +- clocks:	Should contain one entry, DMA controller clock.
->>>>>>> +- resets :	Should contain one entry, DMA controller reset.
->>>>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->>>>>>> +		for the peripheral. For more details consult the Tegra TRM's
->>>>>>> +		documentation, in particular AHB DMA channel control register
->>>>>>> +		REQ_SEL field.
->>>>>>
->>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>>
->>>>>
->>>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->>>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>>
->>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>>
->>>
->>> GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
->>> are software-defined, so that software could create transfer chains.
->>
->> TRM shows the following in the APBDMA_TRIG_REG_0 ...
->>
->> "XRQ_A: XRQ.A (GPIOA) (Hardware initiated DMA request)"
+> Since this is S0ix, the "system level" is 0 all the time (as I said in a
+> previous message).
+
+Damn.  Reading ACPI spec (6.1 and 6.2), it talks about _LPI and _RDI
+but E200HA doesn't have that in any ACPI table.
+The table in section 7.1 Power Resource Objects and the Power Management Models
+says "Choose a supported device state to enable a targeted system sleep or
+Low- power Idle state ... [use] _PRx".
+
+> So there seem to be two possible ways to address this, unfortunately both
+> based on white- or blacklisting.
 > 
-> Furthermore there are timer and hw-semaphore triggers as well.
+> One of them would be to only do the d31fd43c0f9a4 approach for selected
+> systems where it needs to be done to avoid breakage.  The other one would
+> be to do it for all systems by default and blacklist the ones where that
+> leads to problems.
 > 
+> IMO it is better to disable clocks over suspend-resume, because that reduces
+> the system's power draw while suspended.  So that's what I would do and then
+> keep the clocks running only if that is known to be necessary.
 
-Aha, I wasn't sure about what XRQ is. AHB DMA doesn't have XRQ.A as a trigger,
-but XRQ.C/D which I suppose corresponds to GPIO C/D.
+d31fd43c0f9a4 was added to fix a "hard hangup on boot" issue,
+so I guess the default should be to keep clocks enabled.
 
-Timer and hw-semaphore are more questionable, aren't semaphores software-only
-triggerable?
+BTW, in E200HA DSDT, the PowerResources in question are children of
+the I2Cx devices, presumably it means these clocks are to be used by
+devices connected to the i2c busses.  Maybe it's a left over from devices
+that are not present in E200HA, and we should ignore them.
 
--- 
-Dmitry
+In conclusion the BIOS bug is that it enables these clocks at boot,
+and the correct quirk is to make clk-pmc-atom.c disable them during init,
+but leave the _PRx handling for the used clocks (CLK3) to ACPI.
+
+Right?
+
+
+Thanks,
+Johannes
