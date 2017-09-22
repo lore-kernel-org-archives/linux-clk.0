@@ -1,59 +1,72 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 6/9] ehci-atmel: Power down during suspend is normal
-Date: Fri, 15 Sep 2017 16:04:08 +0200
-Message-Id: <20170915140411.31716-7-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.sig21.net ([80.244.240.74]:41239 "EHLO mail.sig21.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752055AbdIVVFC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Sep 2017 17:05:02 -0400
+Date: Fri, 22 Sep 2017 23:04:16 +0200
+From: Johannes Stezenbach <js@sig21.net>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-acpi@vger.kernel.org
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
+ firmware"
+Message-ID: <20170922210416.bqbuzgsa5gzfvnrx@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <4036229.gTT6xKEFIS@aspire.rjw.lan>
+ <20170921162307.amdz2uyei7eackhs@sig21.net>
+ <4254964.MfDMP6QAfg@aspire.rjw.lan>
+ <20170922080453.3bwad4ale4zizf42@sig21.net>
+ <s5hzi9mdik2.wl-tiwai@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <s5hzi9mdik2.wl-tiwai@suse.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When an Atmel SoC is suspended with the backup mode, the USB bus will be
-powered down. As this is expected, do not return an error to the driver
-core when ehci_resume detects it.
+On Fri, Sep 22, 2017 at 02:27:57PM +0200, Takashi Iwai wrote:
+> On Fri, 22 Sep 2017 10:04:53 +0200,
+> Johannes Stezenbach wrote:
+> > 
+> > In conclusion the BIOS bug is that it enables these clocks at boot,
+> > and the correct quirk is to make clk-pmc-atom.c disable them during init,
+> > but leave the _PRx handling for the used clocks (CLK3) to ACPI.
+> 
+> Well, I can't say which is the buggy behavior, but at least, I agree
+> with Rafael that white/blacklisting is likely the way to go.
+> 
+> One thing I'm wondering is whether it's specific to device or specific
+> to platform.  The ASUS one that showed a regression Johannes and I
+> have is the Cherrytrail, while the device showed the hang-at-boot was
+> Baytrail, IIRC.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/usb/host/ehci-atmel.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If I understand correctly, the clk-pmc-atom.c clocks are not used
+by the SoC itself but provided for devices added to system by OEM.
+So I don't think its platform (BYT vs. CHT) specific.
 
-diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
-index 7440722bfbf0..2a8b9bdc0e57 100644
---- a/drivers/usb/host/ehci-atmel.c
-+++ b/drivers/usb/host/ehci-atmel.c
-@@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
- 	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
- 
- 	atmel_start_clock(atmel_ehci);
--	return ehci_resume(hcd, false);
-+	ehci_resume(hcd, false);
-+	return 0;
- }
- 
- #ifdef CONFIG_OF
--- 
-2.11.0
+Meanwhile I have doubts about d31fd43c0f9a41, though.
+
+The original issue mentioned by Carlo:
+https://www.spinics.net/lists/platform-driver-x86/msg12092.html
+
+>>> We have a quirk downstream in place where we basically modified the
+>>> r8169 driver to claim the 25MHz pmc_plt_clk_4 clock, and this seems to
+>>> work fine, but we really want to find a more upstreamable and
+>>> definitive solution.
+
+It seems to me that this quirk to claim pmc_plt_clk_4 would
+actually be a better solution than just keeping
+clocks enabled.  And you'd need to handle the clock
+during suspend for S0ix to work, if Baytrail pmc_plt_clk_4
+has the same S0ix blocking behaviour as Cherrytrail CLK3.
+IOW, the driver which uses the pmc_plt_clk_4 clock needs
+to handle it if ACPI DSDT doesn't handle it via _PRx.
+
+
+Thanks,
+Johannes
