@@ -1,206 +1,188 @@
-Return-Path: <andrew@aj.id.au>
-Message-ID: <1506344081.30138.32.camel@aj.id.au>
-Subject: Re: [PATCH v2 5/5] clk: aspeed: Add reset controller
-From: Andrew Jeffery <andrew@aj.id.au>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Benjamin Herrenschmidt
-	 <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Rick Altherr
-	 <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
-	 <arnd@arndb.de>
-Date: Mon, 25 Sep 2017 22:24:41 +0930
-In-Reply-To: <20170921042641.7326-6-joel@jms.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au>
-	 <20170921042641.7326-6-joel@jms.id.au>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-wfRnG1yxeKqdf/Q9Mx1e"
-Mime-Version: 1.0
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v2 3/9] clk: at91: pmc: Support backup for programmable
+ clocks
+To: Romain Izard <romain.izard.pro@gmail.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
+ Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
+	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
+	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
+ Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
+	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Romain Izard
+	<romain.izard@mobile-devices.fr>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-4-romain.izard.pro@gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <d6359e89-7c78-fdec-fbab-eb885017ec58@microchip.com>
+Date: Fri, 22 Sep 2017 12:31:12 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170915140411.31716-4-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
+On 15/09/2017 at 16:04, Romain Izard wrote:
+> From: Romain Izard <romain.izard@mobile-devices.fr>
+> 
+> When an AT91 programmable clock is declared in the device tree, register
+> it into the Power Management Controller driver. On entering suspend mode,
+> the driver saves and restores the Programmable Clock registers to support
+> the backup mode for these clocks.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 
---=-wfRnG1yxeKqdf/Q9Mx1e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Romain,
 
-On Thu, 2017-09-21 at 13:56 +0930, Joel Stanley wrote:
-> There are some resets that are not associated with gates. These are
-> represented by a reset controller.
->=C2=A0
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+Some nitpicking and one comment. But on the overall patch, here is my:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+See below:
+
 > ---
-> =C2=A0drivers/clk/clk-aspeed.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 82 ++++++++++=
-+++++++++++++++++++++-
-> =C2=A0include/dt-bindings/clock/aspeed-clock.h |=C2=A0=C2=A09 ++++
-> =C2=A02 files changed, 90 insertions(+), 1 deletion(-)
->=C2=A0
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index dec9db4ec47b..db97c0f9f99e 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -17,6 +17,7 @@
-> =C2=A0#include <linux/of_device.h>
-> =C2=A0#include <linux/platform_device.h>
-> =C2=A0#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> =C2=A0#include <linux/slab.h>
-> =C2=A0#include <linux/spinlock.h>
-> =C2=A0
-> @@ -256,6 +257,68 @@ static const struct clk_ops aspeed_clk_gate_ops =3D =
-{
-> =C2=A0	.is_enabled =3D aspeed_clk_is_enabled,
-> =C2=A0};
-> =C2=A0
-> +/**
-> + * struct aspeed_reset - Aspeed reset controller
-> + * @map: regmap to access the containing system controller
-> + * @rcdev: reset controller device
-> + */
-> +struct aspeed_reset {
-> +	struct regmap			*map;
-> +	struct reset_controller_dev	rcdev;
-> +};
-> +
-> +#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
-> +
-> +static const u8 aspeed_resets[] =3D {
-> +	25, /* x-dma */
-> +	24, /* mctp */
-> +	23, /* adc */
-> +	22, /* jtag-master */
-> +	18, /* mic */
-> +	=C2=A09, /* pwm */
-> +	=C2=A08, /* pci-vga */
-> +	=C2=A02, /* i2c */
-> +	=C2=A01, /* ahb */
+> Changes in v2:
+> * register PCKs on clock startup
+> 
+>  drivers/clk/at91/clk-programmable.c |  2 ++
+>  drivers/clk/at91/pmc.c              | 27 +++++++++++++++++++++++++++
+>  drivers/clk/at91/pmc.h              |  2 ++
+>  3 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+> index 85a449cf61e3..0e6aab1252fc 100644
+> --- a/drivers/clk/at91/clk-programmable.c
+> +++ b/drivers/clk/at91/clk-programmable.c
+> @@ -204,6 +204,8 @@ at91_clk_register_programmable(struct regmap *regmap,
+>  	if (ret) {
+>  		kfree(prog);
+>  		hw = ERR_PTR(ret);
 
-Bit of a nit, but given you define macros for the indices, maybe use design=
-ated
-initialisers and drop the comments.
+Nit: "else" not needed.
 
-> +};
-> +
-> +static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
-> +				=C2=A0unsigned long id)
+> +	} else {
+> +		pmc_register_pck(id);
+>  	}
+>  
+>  	return hw;
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 07dc2861ad3f..3910b7537152 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -22,6 +22,7 @@
+>  #include "pmc.h"
+>  
+>  #define PMC_MAX_IDS 128
+> +#define PMC_MAX_PCKS 8
+>  
+>  int of_at91_get_clk_range(struct device_node *np, const char *propname,
+>  			  struct clk_range *range)
+> @@ -50,6 +51,7 @@ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
+>  static struct regmap *pmcreg;
+>  
+>  static u8 registered_ids[PMC_MAX_IDS];
+> +static u8 registered_pcks[PMC_MAX_PCKS];
+>  
+>  static struct
+>  {
+> @@ -66,8 +68,10 @@ static struct
+>  	u32 pcr[PMC_MAX_IDS];
+>  	u32 audio_pll0;
+>  	u32 audio_pll1;
+> +	u32 pckr[PMC_MAX_PCKS];
+>  } pmc_cache;
+>  
+> +/* Clock ID 0 is invalid */
+
+(read: so we can use the 0 value as an indicator that this place in the
+table hasn't been filled, so unused)
+
+>  void pmc_register_id(u8 id)
+>  {
+>  	int i;
+> @@ -82,6 +86,21 @@ void pmc_register_id(u8 id)
+>  	}
+>  }
+>  
+> +/* Programmable Clock 0 is valid */
+
+I understand the rationale behind these ^^ two comments, but I would
+like that it's more explicit. Saying that you will store the pck id as
+(id + 1) and that you would have to invert this operation while using
+the stored id.
+Maybe add a comment about this transformation to the struct definition
+as well...
+
+
+> +void pmc_register_pck(u8 pck)
 > +{
-> +	struct aspeed_reset *ar =3D to_aspeed_reset(rcdev);
-> +	u32 rst =3D BIT(aspeed_resets[id]);
+> +	int i;
 > +
-> +	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-> +}
-> +
-> +static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long id)
-> +{
-> +	struct aspeed_reset *ar =3D to_aspeed_reset(rcdev);
-> +	u32 rst =3D BIT(aspeed_resets[id]);
-> +
-> +	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-> +}
-> +
-> +static int aspeed_reset_status(struct reset_controller_dev *rcdev,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long id)
-> +{
-> +	struct aspeed_reset *ar =3D to_aspeed_reset(rcdev);
-> +	u32 val, rst =3D BIT(aspeed_resets[id]);
-> +	int ret;
-> +
-> +	ret =3D regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return !!(val & rst);
-> +}
-> +
-> +static const struct reset_control_ops aspeed_reset_ops =3D {
-> +	.assert =3D aspeed_reset_assert,
-> +	.deassert =3D aspeed_reset_deassert,
-> +	.status =3D aspeed_reset_status,
-> +};
-> +
-> =C2=A0static struct clk_hw *aspeed_clk_hw_register_gate(struct device *de=
-v,
-> =C2=A0		const char *name, const char *parent_name, unsigned long flags,
-> =C2=A0		struct regmap *map, u8 clock_idx, u8 reset_idx,
-> @@ -299,10 +362,11 @@ static int __init aspeed_clk_probe(struct platform_=
-device *pdev)
-> =C2=A0	const struct clk_div_table *mac_div_table;
-> =C2=A0	const struct clk_div_table *div_table;
-> =C2=A0	struct device *dev =3D &pdev->dev;
-> +	struct aspeed_reset *ar;
-> =C2=A0	struct regmap *map;
-> =C2=A0	struct clk_hw *hw;
-> =C2=A0	u32 val, rate;
-> -	int i;
-> +	int i, ret;
-> =C2=A0
-> =C2=A0	map =3D syscon_node_to_regmap(dev->of_node);
-> =C2=A0	if (IS_ERR(map)) {
-> @@ -310,6 +374,22 @@ static int __init aspeed_clk_probe(struct platform_d=
-evice *pdev)
-> =C2=A0		return PTR_ERR(map);
-> =C2=A0	}
-> =C2=A0
-> +	ar =3D devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
-> +	if (!ar)
-> +		return -ENOMEM;
-> +
-> +	ar->map =3D map;
-> +	ar->rcdev.owner =3D THIS_MODULE;
-> +	ar->rcdev.nr_resets =3D ARRAY_SIZE(aspeed_resets);
-> +	ar->rcdev.ops =3D &aspeed_reset_ops;
-> +	ar->rcdev.of_node =3D dev->of_node;
-> +
-> +	ret =3D devm_reset_controller_register(dev, &ar->rcdev);
-> +	if (ret) {
-> +		dev_err(dev, "could not register reset controller\n");
-> +		return ret;
+> +	for (i = 0; i < PMC_MAX_PCKS; i++) {
+> +		if (registered_pcks[i] == 0) {
+> +			registered_pcks[i] = pck + 1;
+> +			break;
+> +		}
+> +		if (registered_pcks[i] == (pck + 1))
+> +			break;
 > +	}
+> +}
 > +
-> =C2=A0	/* SoC generations share common layouts but have different divisor=
-s */
-> =C2=A0	soc_data =3D of_device_get_match_data(&pdev->dev);
-> =C2=A0	div_table =3D soc_data->div_table;
-> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindin=
-gs/clock/aspeed-clock.h
-> index afe06b77562d..a9d552b6bbd2 100644
-> --- a/include/dt-bindings/clock/aspeed-clock.h
-> +++ b/include/dt-bindings/clock/aspeed-clock.h
-> @@ -40,4 +40,13 @@
-> =C2=A0#define ASPEED_CLK_GATE_SDCLKCLK	(22 + ASPEED_CLK_GATES)
-> =C2=A0#define ASPEED_CLK_GATE_LHCCLK		(23 + ASPEED_CLK_GATES)
-> =C2=A0
-> +#define ASPEED_RESET_XDMA		0
-> +#define ASPEED_RESET_MCTP		1
-> +#define ASPEED_RESET_JTAG_MASTER	2
-> +#define ASPEED_RESET_MIC		3
-> +#define ASPEED_RESET_PWM		4
-> +#define ASPEED_RESET_PCIVGA		5
-> +#define ASPEED_RESET_I2C		6
-> +#define ASPEED_RESET_AHB		7
-> +
-> =C2=A0#endif
---=-wfRnG1yxeKqdf/Q9Mx1e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+>  static int pmc_suspend(void)
+>  {
+>  	int i;
+> @@ -103,6 +122,10 @@ static int pmc_suspend(void)
+>  		regmap_read(pmcreg, AT91_PMC_PCR,
+>  			    &pmc_cache.pcr[registered_ids[i]]);
+>  	}
+> +	for (i = 0; registered_pcks[i]; i++) {
+> +		u8 num = registered_pcks[i] - 1;
 
------BEGIN PGP SIGNATURE-----
+Nit: declaration are better made at the beginning of the function. This
+lead to a checkpatch warning:
+"WARNING: Missing a blank line after declarations"
 
-iQIcBAABCgAGBQJZyPySAAoJEJ0dnzgO5LT5vM8P/jaRq7k/Fcjn/p+sacVhWgw6
-D9zrFvlbKEiPIrVjsdmfqLPLdsxIfw1WZtZWYtZVE3dSXLcKOmK7Zgt7QspbMAGu
-wTCC2RUj5TSqd3qGScBZXG+0uE3HT9HmpM2V/PcqBMNBkKx0W9ANv2fKtYgzJc9i
-QkM8WFlPAp8ZCf+cq8SyTHdBEecVDG/ViuKz4u/n3O3cPPFTlDfu/2XVGHFoWUCZ
-WM1k8yXwpMvb2hO3UtjtKHLvbpt2RQN3L9c28FwHNCk6Ju57eNnbHZpAY0LfZZLK
-8XpniJ+MJl2eXgzeq2Nx9KyBCibWRWtOcAgwn4Xbq98yzS/5PwIubrJ3+JDn1zqT
-Y7NMBkYnI3JyQKm4PgJVLd5A46Mgvqh96vdQZ2A10nYzAGFSLrCx5C4NVWdeo4/w
-NlIzf2ylCR1OEMnsJPUrgNTnkMISVwqR8BU/qb9w1GNCXGHGFqI+oBxiiPNKf9Dq
-vD6EGhqoiYGhIevEq4lW4YNlB/4rcNdMxX3vWfHhviL5Aw+CSmcPFO7+tje1IVH6
-QzKCvssicnxNbe7EJwLoDD1FddfyJdfYVj8zD4EIQ+luuBunahUozxdlFRD7YuS6
-pI+ScsyDSIeLmGq771TocoAE0mufX2GhF/HtUppxJ9SQky0yjKVD6EdYXYpiLeGp
-TQ0kZ8/E67Gtlk6fHBxf
-=pfLO
------END PGP SIGNATURE-----
+> +		regmap_read(pmcreg, AT91_PMC_PCKR(num), &pmc_cache.pckr[num]);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -143,6 +166,10 @@ static void pmc_resume(void)
+>  			     pmc_cache.pcr[registered_ids[i]] |
+>  			     AT91_PMC_PCR_CMD);
+>  	}
+> +	for (i = 0; registered_pcks[i]; i++) {
+> +		u8 num = registered_pcks[i] - 1;
 
---=-wfRnG1yxeKqdf/Q9Mx1e--
+Ditto
+
+> +		regmap_write(pmcreg, AT91_PMC_PCKR(num), pmc_cache.pckr[num]);
+> +	}
+>  
+>  	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
+>  		mask |= AT91_PMC_LOCKU;
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 858e8ef7e8db..d22b1fa9ecdc 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -31,8 +31,10 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+>  
+>  #ifdef CONFIG_PM
+>  void pmc_register_id(u8 id);
+> +void pmc_register_pck(u8 pck);
+>  #else
+>  static inline void pmc_register_id(u8 id) {}
+> +static inline void pmc_register_pck(u8 pck) {}
+>  #endif
+>  
+>  #endif /* __PMC_H_ */
+> 
+
+
+-- 
+Nicolas Ferre
