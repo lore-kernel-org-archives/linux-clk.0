@@ -1,78 +1,96 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 0/5] clk: Add Aspeed clock driver
-Date: Wed, 27 Sep 2017 15:56:57 +0930
-Message-Id: <20170927062702.11350-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:53379 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752156AbdIWAQL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Sep 2017 20:16:11 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/3] arm64: allwinner: a64: add CPU opp table
+Date: Sat, 23 Sep 2017 08:15:30 +0800
+Message-Id: <20170923001531.14285-3-icenowy@aosc.io>
+In-Reply-To: <20170923001531.14285-1-icenowy@aosc.io>
+References: <20170923001531.14285-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
-Aspeed.
+Add the operating table for the CPU (ARM cores) on Allwinner A64 SoC.
 
-This is version three of the series. Version one contained two patches; an update
-to the binding document and a single patch for the driver. Lee has merged the
-bindings change, so that is dropped from this series, and I split the driver
-out into a series of patches to make them easier to review. Version three
-addresses reivew from Andrew and has seen more testing on hardware.
+OPPs higher to 816MHz is temporarily dropped, to prevent overheat on
+boards with AXP803 support and undervoltage on boards without AXP803
+support.
 
-All of the important clocks are supported, with most non-essential ones
-also implemented where information is available. I am working with
-Aspeed to clear up some of the missing information, including the
-missing parent-sibling relationships.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-We need to know the rate of the apb clock in order to correctly program
-the clocksource driver, so the apb and it's parents are created in the
-CLK_OF_DECLARE_DRIVER callback.
-
-The rest of the clocks are created at normal driver probe time. I
-followed the Gemini driver's lead with using the regmap where I could,
-but also having a pointer to the base address for use with the common
-clock callbacks.
-
-The driver borrows from the clk_gate common clock infra spruce, but modifies
-it in order to support the clock gate and reset pair that most of the clocks
-have. This pair must be reset-ungated-released, with appropriate delays,
-according to the datasheet.
-
-The first patch introduces the core clock registration parts, and describes
-the clocks. The second creates the core clocks, giving the system enough to
-boot (but without uart). Next come the non-core clocks, and finally the reset
-controller that is used for the few cocks that don't have a gate to go with their
-reset pair.
-
-Please review!
-
-Cheers,
-
-Joel
-
-Joel Stanley (5):
-  clk: Add clock driver for ASPEED BMC SoCs
-  clk: aspeed: Register core clocks
-  clk: aspeed: Add platform driver and register PLLs
-  clk: aspeed: Register gated clocks
-  clk: aspeed: Add reset controller
-
- drivers/clk/Kconfig                      |  12 +
- drivers/clk/Makefile                     |   1 +
- drivers/clk/clk-aspeed.c                 | 654 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/aspeed-clock.h |  52 +++
- 4 files changed, 719 insertions(+)
- create mode 100644 drivers/clk/clk-aspeed.c
- create mode 100644 include/dt-bindings/clock/aspeed-clock.h
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 20aba7b186aa..0532da4939eb 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -52,6 +52,23 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-648000000 {
++			opp-hz = /bits/ 64 <648000000>;
++			opp-microvolt = <1040000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++
++		opp-816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -61,6 +78,10 @@
+ 			device_type = "cpu";
+ 			reg = <0>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -68,6 +89,7 @@
+ 			device_type = "cpu";
+ 			reg = <1>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -75,6 +97,7 @@
+ 			device_type = "cpu";
+ 			reg = <2>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -82,6 +105,7 @@
+ 			device_type = "cpu";
+ 			reg = <3>;
+ 			enable-method = "psci";
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 	};
+ 
 -- 
-2.14.1
+2.13.5
+
