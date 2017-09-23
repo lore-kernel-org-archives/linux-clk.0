@@ -1,26 +1,37 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com
-Subject: Re: [PATCH v1 0/3] clk: rockchip: rk3128: fix up some clks
-Date: Sat, 09 Sep 2017 14:22:48 +0200
-Message-ID: <1851166.xyq0T9qeKP@phil>
-In-Reply-To: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
-References: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH] clk: Export clk_bulk_prepare()
+Date: Fri, 22 Sep 2017 22:00:29 -0700
+Message-Id: <20170923050029.19013-1-bjorn.andersson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 1. September 2017, 10:01:43 CEST schrieb Elaine Zhang:
-> Elaine Zhang (3):
->   clk: rockchip: rk3128: add pclk_pmu as critical clock
->   clk: rockchip: rk3128: fix up pvtm and mipi_24m gate regs description
->     error
->   clk: rockchip: rk3126: add sclk_timer5 as critical clock
+Allow clk_bulk_prepare() to be referenced by kernel modules by adding
+the missing EXPORT_SYMBOL_GPL().
 
-applied all 3 as fixes for 4.14
-(with some adjustments on subjects and commit messages)
+Fixes: 266e4e9d9150 ("clk: add clk_bulk_get accessories")
+Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/clk-bulk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-Thanks
-Heiko
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index c834f5abfc49..4c10456f8a32 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -105,6 +105,7 @@ int __must_check clk_bulk_prepare(int num_clks,
+ 
+ 	return  ret;
+ }
++EXPORT_SYMBOL_GPL(clk_bulk_prepare);
+ 
+ #endif /* CONFIG_HAVE_CLK_PREPARE */
+ 
+-- 
+2.12.0
