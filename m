@@ -1,68 +1,34 @@
-Return-Path: <julian.calaby@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v65VhtEckRCXi4X5AjmC-5CSHavATu8fKyEHOivmYqZkww@mail.gmail.com>
-References: <20170929082306.16193-1-wens@csie.org> <20170929082306.16193-5-wens@csie.org>
- <20170929102006.2wz7wrkpplxwynoh@flea> <CAGb2v65VhtEckRCXi4X5AjmC-5CSHavATu8fKyEHOivmYqZkww@mail.gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Sat, 30 Sep 2017 15:35:59 +1000
-Message-ID: <CAGRGNgUmo6ZztajhG=uZrXGsC9pxySswxLd4P-gk6xdknLX-NQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 04/14] drm/sun4i: tcon: Add support
- for demuxing TCON output on A31
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Brown <broonie@kernel.org>,
-	David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
+Date: Sat, 23 Sep 2017 08:15:28 +0800
+Message-Id: <20170923001531.14285-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+This patchset imports simple DVFS support for Allwinner A64 SoC.
 
-On Fri, Sep 29, 2017 at 8:22 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Fri, Sep 29, 2017 at 6:20 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> On Fri, Sep 29, 2017 at 08:22:56AM +0000, Chen-Yu Tsai wrote:
->>> On systems with 2 TCONs such as the A31, it is possible to demux the
->>> output of the TCONs to one encoder.
->>>
->>> Add support for this for the A31.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> ---
->>>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 38 ++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 38 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> index 7bf51abaee97..c949309d4285 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> @@ -112,6 +112,21 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
->>>  }
->>>  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
->>>
->>> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
->>
->> Would that make sense to make it a bit more generic, and pass the id
->> to look for as an argument?
->
-> The reason to look for TCON0 explicitly is to access the muxing registers, which
-> are only available in TCON0. Other than that, there's nothing else
-> shared between
-> the two TCONs. So there's no particular reason to look for TCON1 explicitly.
+As the thermal sensor driver is not yet implemented and some boards
+have still no AXP PMIC support, now only two OPPs are present --
+648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
 
-In that case: in the bizarre case where we're trying to use this mux
-type and there is no TCON0, shouldn't we fail?
+PATCH 1 is a fix to the CCU driver of A64, and the remaining patches
+set up the device tree bits of the DVFS on Pine64.
 
-(Also, the code doesn't make sense if we have some TCON1 and TCON2 in
-that order as it'll return TCON2)
+Icenowy Zheng (3):
+  clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+  arm64: allwinner: a64: add CPU opp table
+  arm64: allwinner: a64: set CPU regulator for Pine64
 
-Thanks,
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 24 +++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 28 +++++++++++++++++++++-
+ 3 files changed, 55 insertions(+), 1 deletion(-)
 
 -- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+2.13.5
