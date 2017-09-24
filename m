@@ -1,93 +1,93 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Fri, 8 Sep 2017 15:49:20 +0200
-From: Johannes Stezenbach <js@sig21.net>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
- firmware"
-Message-ID: <20170908134920.qia2bdjvpahe3zvi@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <5bb7e3ca-38fc-1184-3bca-f666275c6180@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5bb7e3ca-38fc-1184-3bca-f666275c6180@linux.intel.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v4 10/10] clk: fix set_rate_range when current rate is out of range
+Date: Sun, 24 Sep 2017 22:00:30 +0200
+Message-Id: <20170924200030.6227-11-jbrunet@baylibre.com>
+In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-(adding linux-acpi)
+Calling clk_core_set_rate() with core->req_rate is basically a no-op
+because of the early bail-out mechanism.
 
-On Wed, Sep 06, 2017 at 04:02:10PM -0500, Pierre-Louis Bossart wrote:
-> On 9/6/17 3:42 PM, Johannes Stezenbach wrote:
-> > I'm poking around on Asus E200HA, based on Atom x5-Z8300 (Cherrytrail),
-> > trying to get S0ix working, atm with gross hacks that are recorded in
-> > https://bugzilla.kernel.org/show_bug.cgi?id=193891
-> > 
-> > 
-> > I found commit d31fd43c0f9a4 "clk: x86: Do not gate clocks enabled by the firmware"
-> > prevents S0i3 entry.  Unfortunately the commit message doesn't explain
-> > the problem it fixes, nor does it mention the platform.
-> > 
-> > How can we fix d31fd43c0f9a4 to not break S0i3?
-> 
-> In the existing audio machine drivers, I only use the clock framework for
-> Baytrail. on Cherrytrail, the pmc_platform_clk3 used for the audio MCLK is
-> actually managed by the BIOS (look for CLK3 in the DSDT) so there is no
-> activity in the drivers, the audio don't even get/prepare/enable the
-> pmc_platform_clk3 so I would guess there is an issue with a non-audio driver
-> or the BIOS. Put differently, it may be so that by allowing the drivers to
-> gate an unused clock we allowed you to enter S0i3 even if the bios didn't
-> enable this mode. I would remove all pmc-clock related stuff and see what
-> happens.
+This may leave the clock in inconsistent state if the rate is out the
+requested range. Calling clk_core_set_rate() with the closest rate
+limit could solve the problem but:
+- The underlying determine_rate() callback needs to account for this
+  corner case (rounding within the range, if possible)
+- if only round_rate() is available, we rely on luck unfortunately.
 
-Thanks for this info and Carlo's reply.  I've been busy reading
-source code, DSDT and ACPI spec, and now I'm confused. ;-/
+Fixes: 1c8e600440c7 ("clk: Add rate constraints to clocks")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 37 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-As you say, these clocks are managed by BIOS and
-clk-pmc-atom.c shouldn't mess with them, thus
-d31fd43c0f9a4 is correct.  Nothing else in the
-system besides sound/soc/intel/boards/ uses
-pmc_plt_clk_3 (or other pmc_plt_clk*).
-
-Now the question is why ACPI doesn't handle the clocks.
-
-E200HA DSDT https://bugzilla.kernel.org/attachment.cgi?id=253921
-has PowerResource defintions for the clocks
-(where _ON and _OFF just set the same registers that
-clk-pmc-atom.c uses, e.g. CKC3 at 0x6c for CLK3).
-However, these PowerResources are only listed as child nodes
-of the devices that use them, but are not referenced by _PR[0-3],
-with the exception of CLK3 used by the audio codec.
-
-The power resources exist in /sys as LNXPOWER:xx subnodes
-of the device (e.g. i2c 809622C1:02/LNXPOWER:05) and are
-also listed during boot.
-
-acpi_bus_init_power_state() sets device->power.flags.power_resources = 1
-only if _PR[0-3] exist.  Then acpi_device_set_power() only
-calls acpi_power_transition() if power_resource == 1,
-and acpi_power_transition() would only call acpi_power_off_list()
-for the resources according to _PR[0-3].
-
-I think this is all OK, maybe the BIOS is not optimal in
-making the clocks available for device runtime pm.
-What doesn't seem to happen, though, is that the PowerResources
-are turned _OFF when system transitions to S0ix.  The PowerResources
-have systemlevel == 0, meaning they should be turned off when the
-system transitions out of S0, if I'm understanding the ACPI (6.1)
-spec correctly in section 7.2 Declaring a Power Resource Object.
-Well, actually I'm not sure, the wording of the ACPI spec is:
-
-  "Systemlevel is the deepest system sleep level OSPM must maintain to keep
-  this power resource on (0 equates to S0, 1 equates to S1, and so on)."
-
-FWIW, I used "echo 0x00800000 >/sys/module/acpi/parameters/debug_layer"
-to confirm devices transition between D0 and D3hot, but clock
-resources are never turned off.
-
-
-Johannes
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cbfff541ec8a..8bc3d9d4c7ff 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1921,6 +1921,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
+ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ {
+ 	int ret = 0;
++	unsigned long old_min, old_max, rate;
+ 
+ 	if (!clk)
+ 		return 0;
+@@ -1937,10 +1938,38 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 	if (clk->exclusive_count)
+ 		clk_core_rate_unprotect(clk->core);
+ 
+-	if (min != clk->min_rate || max != clk->max_rate) {
+-		clk->min_rate = min;
+-		clk->max_rate = max;
+-		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++	/* Save the current values in case we need to rollback the change */
++	old_min = clk->min_rate;
++	old_max = clk->max_rate;
++	clk->min_rate = min;
++	clk->max_rate = max;
++
++	rate = clk_core_get_rate_nolock(clk->core);
++	if (rate < min || rate > max) {
++		/*
++		 * FIXME:
++		 * We are in bit of trouble here, current rate is outside the
++		 * the requested range. We are going try to request appropriate
++		 * range boundary but there is a catch. It may fail for the
++		 * usual reason (clock broken, clock protected, etc) but also
++		 * because:
++		 * - round_rate() was not favorable and fell on the wrong
++		 *   side of the boundary
++		 * - the determine_rate() callback does not really check for
++		 *   this corner case when determining the rate
++		 */
++
++		if (rate < min)
++			rate = min;
++		else
++			rate = max;
++
++		ret = clk_core_set_rate_nolock(clk->core, rate);
++		if (ret) {
++			/* rollback the changes */
++			clk->min_rate = old_min;
++			clk->max_rate = old_max;
++		}
+ 	}
+ 
+ 	if (clk->exclusive_count)
+-- 
+2.13.5
