@@ -1,77 +1,72 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 To: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 07/13] clk: qcom: support for alpha mode configuration
-Date: Thu, 28 Sep 2017 23:20:44 +0530
-Message-Id: <1506621050-10129-8-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
-References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v4 08/10] clk: fix CLK_SET_RATE_GATE with clock rate protection
+Date: Sun, 24 Sep 2017 22:00:28 +0200
+Message-Id: <20170924200030.6227-9-jbrunet@baylibre.com>
+In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current configuration does not fully configure PLL alpha mode
-and values so this patch
+Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+clock tree
 
-1. Configures PLL_ALPHA_VAL_U for PLL which supports 40 bit alpha.
-2. Adds alpha enable and alpha mode configuration support.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 6 ++++++
- drivers/clk/qcom/clk-alpha-pll.h | 3 +++
- 2 files changed, 9 insertions(+)
+ drivers/clk/clk.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b33d120..07030d3 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -198,6 +198,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 		regmap_write(regmap, off + pll_cfg_ctl_u(type),
- 			     config->config_ctl_hi_val);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4693d5e20327..f990ef127a83 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -552,6 +552,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
+ 		return;
  
-+	if (pll_alpha_width(type) > 32)
-+		regmap_write(regmap, off + pll_alpha_u(type),
-+			     config->alpha_hi);
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_unprotect(core);
 +
- 	val = config->main_output_mask;
- 	val |= config->aux_output_mask;
- 	val |= config->aux2_output_mask;
-@@ -205,6 +209,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	val |= config->pre_div_val;
- 	val |= config->post_div_val;
- 	val |= config->vco_val;
-+	val |= config->alpha_en_mask;
-+	val |= config->alpha_mode_mask;
+ 	if (--core->prepare_count > 0)
+ 		return;
  
- 	mask = config->main_output_mask;
- 	mask |= config->aux_output_mask;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index b9caefc..17aa27c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -67,12 +67,15 @@ struct clk_alpha_pll_postdiv {
- struct alpha_pll_config {
- 	u32 l;
- 	u32 alpha;
-+	u32 alpha_hi;
- 	u32 config_ctl_val;
- 	u32 config_ctl_hi_val;
- 	u32 main_output_mask;
- 	u32 aux_output_mask;
- 	u32 aux2_output_mask;
- 	u32 early_output_mask;
-+	u32 alpha_en_mask;
-+	u32 alpha_mode_mask;
- 	u32 pre_div_val;
- 	u32 pre_div_mask;
- 	u32 post_div_val;
+@@ -622,6 +625,16 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 	core->prepare_count++;
+ 
++	/*
++	 * CLK_SET_RATE_GATE is a special case of clock protection
++	 * Instead of a consumer claiming exclusive rate control, it is
++	 * actually the provider which prevents any consumer from making any
++	 * operation which could result in a rate change or rate glitch while
++	 * the clock is prepared.
++	 */
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_protect(core);
++
+ 	return 0;
+ }
+ 
+@@ -1703,9 +1716,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (clk_core_rate_is_protected(core))
+ 		return -EBUSY;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.13.5
