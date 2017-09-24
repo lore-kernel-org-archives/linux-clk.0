@@ -1,147 +1,172 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 8/8] tty/serial: atmel: Prevent a warning on suspend
-Date: Thu, 28 Sep 2017 11:46:27 +0200
-Message-Id: <20170928094627.31017-9-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v4 04/10] clk: rework calls to round and determine rate callbacks
+Date: Sun, 24 Sep 2017 22:00:24 +0200
+Message-Id: <20170924200030.6227-5-jbrunet@baylibre.com>
+In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The atmel serial port driver reported the following warning on suspend:
-atmel_usart f8020000.serial: ttyS1: Unable to drain transmitter
+Rework the way the callbacks round_rate() and determine_rate() are called.
+The goal is to do this at a single point and make it easier to add
+conditions before calling them.
 
-As the ATMEL_US_TXEMPTY status bit in ATMEL_US_CSR is always cleared
-when the transmitter is disabled, we need to know the transmitter's
-state to return the real fifo state. And as ATMEL_US_CR is write-only,
-it is necessary to save the state of the transmitter in a local
-variable, and update the variable when TXEN and TXDIS is written in
-ATMEL_US_CR.
+Because of this factorization, rate returned by determine_rate() is also
+checked against the min and max rate values
 
-After those changes, atmel_tx_empty can return "empty" on suspend, the
-warning in uart_suspend_port disappears, and suspending is 20ms shorter
-for each enabled Atmel serial port.
+This rework is done to ease the integration of "protected" clock
+functionality.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/tty/serial/atmel_serial.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/clk.c | 82 +++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 52 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 7551cab438ff..ce45b4ada0bf 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -171,6 +171,7 @@ struct atmel_uart_port {
- 	bool			has_hw_timer;
- 	struct timer_list	uart_timer;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0913688dacb0..0905139a1893 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -833,10 +833,9 @@ static int clk_disable_unused(void)
+ }
+ late_initcall_sync(clk_disable_unused);
  
-+	bool			tx_stopped;
- 	bool			suspended;
- 	unsigned int		pending;
- 	unsigned int		pending_status;
-@@ -380,6 +381,10 @@ static int atmel_config_rs485(struct uart_port *port,
-  */
- static u_int atmel_tx_empty(struct uart_port *port)
+-static int clk_core_round_rate_nolock(struct clk_core *core,
+-				      struct clk_rate_request *req)
++static int clk_core_determine_round_nolock(struct clk_core *core,
++					   struct clk_rate_request *req)
  {
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+
-+	if (atmel_port->tx_stopped)
-+		return TIOCSER_TEMT;
- 	return (atmel_uart_readl(port, ATMEL_US_CSR) & ATMEL_US_TXEMPTY) ?
- 		TIOCSER_TEMT :
- 		0;
-@@ -485,6 +490,7 @@ static void atmel_stop_tx(struct uart_port *port)
- 	 * is fully transmitted.
- 	 */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS);
-+	atmel_port->tx_stopped = true;
+-	struct clk_core *parent;
+ 	long rate;
  
- 	/* Disable interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
-@@ -521,6 +527,7 @@ static void atmel_start_tx(struct uart_port *port)
+ 	lockdep_assert_held(&prepare_lock);
+@@ -844,15 +843,6 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 	if (!core)
+ 		return 0;
  
- 	/* re-enable the transmitter */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
-+	atmel_port->tx_stopped = false;
+-	parent = core->parent;
+-	if (parent) {
+-		req->best_parent_hw = parent->hw;
+-		req->best_parent_rate = parent->rate;
+-	} else {
+-		req->best_parent_hw = NULL;
+-		req->best_parent_rate = 0;
+-	}
+-
+ 	if (core->ops->determine_rate) {
+ 		return core->ops->determine_rate(core->hw, req);
+ 	} else if (core->ops->round_rate) {
+@@ -862,15 +852,58 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 			return rate;
+ 
+ 		req->rate = rate;
+-	} else if (core->flags & CLK_SET_RATE_PARENT) {
+-		return clk_core_round_rate_nolock(parent, req);
+ 	} else {
+-		req->rate = core->rate;
++		return -EINVAL;
+ 	}
+ 
+ 	return 0;
  }
  
- /*
-@@ -1866,6 +1873,7 @@ static int atmel_startup(struct uart_port *port)
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	/* enable xmit & rcvr */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
++static void clk_core_init_rate_req(struct clk_core * const core,
++				   struct clk_rate_request *req)
++{
++	struct clk_core *parent;
++
++	if (WARN_ON(!core || !req))
++		return;
++
++	parent = core->parent;
++	if (parent) {
++		req->best_parent_hw = parent->hw;
++		req->best_parent_rate = parent->rate;
++	} else {
++		req->best_parent_hw = NULL;
++		req->best_parent_rate = 0;
++	}
++}
++
++static bool clk_core_can_round(struct clk_core * const core)
++{
++	if (core->ops->determine_rate || core->ops->round_rate)
++		return true;
++
++	return false;
++}
++
++static int clk_core_round_rate_nolock(struct clk_core *core,
++				      struct clk_rate_request *req)
++{
++	lockdep_assert_held(&prepare_lock);
++
++	if (!core)
++		return 0;
++
++	clk_core_init_rate_req(core, req);
++
++	if (clk_core_can_round(core))
++		return clk_core_determine_round_nolock(core, req);
++	else if (core->flags & CLK_SET_RATE_PARENT)
++		return clk_core_round_rate_nolock(core->parent, req);
++
++	req->rate = core->rate;
++	return 0;
++}
++
+ /**
+  * __clk_determine_rate - get the closest rate actually supported by a clock
+  * @hw: determine the rate of this clock
+@@ -1356,34 +1389,23 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
  
- 	setup_timer(&atmel_port->uart_timer,
- 			atmel_uart_timer_callback,
-@@ -2122,6 +2130,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	/* find the closest rate and parent clk/rate */
+-	if (core->ops->determine_rate) {
++	if (clk_core_can_round(core)) {
+ 		struct clk_rate_request req;
  
- 	/* disable receiver and transmitter */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS | ATMEL_US_RXDIS);
-+	atmel_port->tx_stopped = true;
+ 		req.rate = rate;
+ 		req.min_rate = min_rate;
+ 		req.max_rate = max_rate;
+-		if (parent) {
+-			req.best_parent_hw = parent->hw;
+-			req.best_parent_rate = parent->rate;
+-		} else {
+-			req.best_parent_hw = NULL;
+-			req.best_parent_rate = 0;
+-		}
  
- 	/* mode */
- 	if (port->rs485.flags & SER_RS485_ENABLED) {
-@@ -2207,6 +2216,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
+-		ret = core->ops->determine_rate(core->hw, &req);
++		clk_core_init_rate_req(core, &req);
++
++		ret = clk_core_determine_round_nolock(core, &req);
+ 		if (ret < 0)
+ 			return NULL;
  
- 	/* restore interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IER, imr);
-@@ -2450,6 +2460,7 @@ static void atmel_console_write(struct console *co, const char *s, u_int count)
+ 		best_parent_rate = req.best_parent_rate;
+ 		new_rate = req.rate;
+ 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
+-	} else if (core->ops->round_rate) {
+-		ret = core->ops->round_rate(core->hw, rate,
+-					    &best_parent_rate);
+-		if (ret < 0)
+-			return NULL;
  
- 	/* Make sure that tx path is actually able to send characters */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
-+	atmel_port->tx_stopped = false;
- 
- 	uart_console_write(port, s, count, atmel_console_putchar);
- 
-@@ -2511,6 +2522,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
- {
- 	int ret;
- 	struct uart_port *port = &atmel_ports[co->index].uart;
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
- 	int baud = 115200;
- 	int bits = 8;
- 	int parity = 'n';
-@@ -2528,6 +2540,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
- 	atmel_uart_writel(port, ATMEL_US_IDR, -1);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
- 
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+-		new_rate = ret;
+ 		if (new_rate < min_rate || new_rate > max_rate)
+ 			return NULL;
+ 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
 -- 
-2.11.0
+2.13.5
