@@ -1,99 +1,71 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 13 Sep 2017 12:40:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tirupathi Reddy <tirupath@codeaurora.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, mark.rutland@arm.com,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: Re: [PATCH V3] clk: qcom: Add spmi_pmic clock divider support
-Message-ID: <20170913174032.u33zzo64ipk22vgp@rob-hp-laptop>
-References: <1504699207-9568-1-git-send-email-tirupath@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1504699207-9568-1-git-send-email-tirupath@codeaurora.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v4 07/10] clk: cosmetic changes to clk_summary debugfs entry
+Date: Sun, 24 Sep 2017 22:00:27 +0200
+Message-Id: <20170924200030.6227-8-jbrunet@baylibre.com>
+In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 06, 2017 at 05:30:07PM +0530, Tirupathi Reddy wrote:
-> Clkdiv module provides a clock output on the PMIC with CXO as
-> the source. This clock can be routed through PMIC GPIOs. Add
-> a device driver to configure this clkdiv module.
-> 
-> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
-> ---
->  .../bindings/clock/clk-spmi-pmic-div.txt           |  51 +++
->  drivers/clk/qcom/Kconfig                           |   9 +
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/clk-spmi-pmic-div.c               | 342 +++++++++++++++++++++
->  4 files changed, 403 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
->  create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
-> new file mode 100644
-> index 0000000..8b84b32
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
-> @@ -0,0 +1,51 @@
-> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
-> +
-> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
-> +These clocks are typically wired through alternate functions on
-> +gpio pins.
-> +
-> +=======================
-> +Properties
-> +=======================
-> +
-> +- compatible
-> +	Usage:      required
-> +	Value type: <string>
-> +	Definition: must be one of:
-> +		    "qcom,spmi-clkdiv"
+clk_summary debugfs entry was already well over the traditional 80
+characters per line limit but it grew even larger with the addition of
+clock protection.
 
-If this is not a fallback, drop it.
+   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase
+----------------------------------------------------------------------------------------------------
+ wifi32k                                  1            1            0       32768          0 0
+ vcpu                                     0            0            0  2016000000          0 0
+ xtal                                     5            5            0    24000000          0 0
 
-> +		    "qcom,pm8998-clkdiv"
-> +
-> +- reg
-> +	Usage:      required
-> +	Value type: <prop-encoded-array>
-> +	Definition: Addresses and sizes for the memory of this CLKDIV
-> +		    peripheral.
-> +
-> +- clocks:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: reference to the xo clock.
-> +
-> +- clock-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "xo".
+This patch reduce the width a bit:
+                                 enable  prepare  protect
+   clock                          count    count    count        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ wifi32k                              1        1        0       32768          0 0
+ vcpu                                 0        0        0  2016000000          0 0
+ xtal                                 5        5        0    24000000          0 0
 
-Missing #clock-cells
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> +
-> +=======
-> +Example
-> +=======
-> +
-> +pm8998_clk_divs: qcom,clkdiv@5b00 {
-
-clock@5b00
-
-> +	compatible = "qcom,pm8998-clkdiv";
-> +	reg = <0x5b00>;
-> +	#clock-cells = <1>;
-> +	clocks = <&xo_board>;
-> +	clock-names = "xo";
-> +
-> +	assigned-clocks = <&pm8998_clk_divs 1>,
-> +			  <&pm8998_clk_divs 2>,
-> +			  <&pm8998_clk_divs 3>;
-> +	assigned-clock-rates = <9600000>,
-> +			       <9600000>,
-> +			       <9600000>;
-> +};
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9d371088bb24..4693d5e20327 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2150,7 +2150,7 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
+ 
+-	seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
++	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+@@ -2177,8 +2177,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+-	seq_puts(s, "   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase\n");
+-	seq_puts(s, "----------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                               \n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy   phase\n");
++	seq_puts(s, "----------------------------------------------------------------------------------------\n");
+ 
+ 	clk_prepare_lock();
+ 
+-- 
+2.13.5
