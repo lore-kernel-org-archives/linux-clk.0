@@ -1,51 +1,46 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
- <20170928092949.GB30097@localhost>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
-Date: Thu, 28 Sep 2017 17:06:03 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170928092949.GB30097@localhost>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v4 01/10] clk: fix incorrect usage of ENOSYS
+Date: Sun, 24 Sep 2017 22:00:21 +0200
+Message-Id: <20170924200030.6227-2-jbrunet@baylibre.com>
+In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.09.2017 12:29, Vinod Koul wrote:
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
->> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
->> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
->> +
->> +	writel_relaxed(ahb_seq,
->> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
->> +
->> +	writel_relaxed(ahb_addr,
->> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
-> 
-> oh no, you don't write to HW here. This can be called anytime when you have
-> txn running! You should save these and use them in prep_ calls.
-> 
+ENOSYS is special and should only be used for incorrect syscall number.
+It does not seem to be the case here.
 
-BTW, some of the DMA drivers have exactly the same problem. I now see that it is
-actually documented explicitly in provider.txt, but that's inconsistent across
-the actual drivers.
+Reported by checkpatch.pl while working on clock protection.
 
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c8d83acda006..b31e56b09e25 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1804,7 +1804,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 
+ 	/* verify ops for for multi-parent clks */
+ 	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+-		ret = -ENOSYS;
++		ret = -EPERM;
+ 		goto out;
+ 	}
+ 
 -- 
-Dmitry
+2.13.5
