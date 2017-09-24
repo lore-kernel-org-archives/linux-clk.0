@@ -1,165 +1,290 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 00/14] drm/sun4i: hdmi: Support HDMI controller on A31
-Date: Fri, 29 Sep 2017 16:22:52 +0800
-Message-Id: <20170929082306.16193-1-wens@csie.org>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sergej Sawazki <ce3a@gmx.de>,
+	Jyri Sarha <jsarha@ti.com>
+Subject: [PATCH 1/2] clk: clk-gpio: Make GPIO clock provider use descriptors only
+Date: Sun, 24 Sep 2017 18:19:18 +0200
+Message-Id: <20170924161919.24832-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+After som grep:ing it turns out nothing in the kernel is really calling
+clk_[hw_]_register_gpio_[gate|mux](). All existing instances are just
+created directly from the device tree probe functions at the bottom of
+the clk-gpio.c clock provider file.
 
-This is v3 of my A31 HDMI support series.
+This means we can change the signature of the function without any
+consequences! Everyone should be using GPIO descriptors now, so let's
+just go in and enforce that.
 
-Changes since v2:
+This saves a bit of code since GPIO descriptors know inherently if they
+are active low so no need for the code keeping track of that.
 
-    - TCON muxing moved into functions for each platform, with pointers
-      to them in the TCON quirks structure.
+We leave it to the caller to come up with the GPIO descriptor. It is
+nowadays possible to do that even without a corresponding device, so
+no excuse not to pass them around. The one in-kernel user lifecycles
+it using devm_gpiod_get() in gpio_clk_driver_probe().
 
-    - CCU "hdmi-ddc" clock renamed to "ddc".
+Cc: Sergej Sawazki <ce3a@gmx.de>
+Cc: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+I don't have GPIO clocks in my setups so this will obviously
+need some testing.
 
-    - Added Maxime's acks.
+I guess the public APIs in clk-provider.h could actually be
+removed, but I'm not certain if that is proper. Maybe there
+are plans for this driver to be used by other providers than the
+device tree.
+---
+ drivers/clk/clk-gpio.c       | 90 +++++++++++++++++---------------------------
+ include/linux/clk-provider.h | 12 +++---
+ 2 files changed, 41 insertions(+), 61 deletions(-)
 
-Changes since v1:
-
-    - Core changes to sun4i-drm to support two display pipelines
-      have been merged into drm-misc and thus dropped from this
-      version
-
-    - Reworked DDC variant support onto new exposed I2C interface bits.
-
-    - Reworked DDC variant support to use regmap_fields.
-
-    - Patches to add variant support to various (TMDS, DDC, HDMI
-      controller) sub-blocks have been merged into one patch.
-
-This series adds support for the HDMI controller found on Allwinner
-A31/A31s SoCs. It builds upon Maxime's work that added support for
-the HDMI controller on the Allwinner A10s SoC.
-
-The HDMI controllers in the older generation Allwinner SoCs is very
-similar. The A10/A10s/A20 all have the same hardware block, with the
-A10 having slightly different initial configuration values. The A31's
-variant splits out the DDC parent clock, has different formulas for
-the DDC and TMDS clocks, and a different register layout for the DDC
-block. Also, it does not expose the CEC pins outside of the SoC, which
-is unfortunate.
-
-Patch 1 exports the 2x outputs of the two video PLLs. These feed the
-TMDS clock directly.
-
-Patch 2 renames the A31 CCU's DDC clock, so that it doesn't conflict
-with the DDC clock in the HDMI block.
-
-Patch 3 moves the existing TCON muxing code for the A13 into a separate
-function, pointed to by by function pointer in the quirks structure.
-The existing sun4i_tcon_set_mux() function calls the function pointer
-if it is set.
-
-Patch 4 adds support for the TCON demuxing feature on the A31. This is
-needed if the user wants to output through HDMI from the second display
-pipeline.
-
-Patch 5 adds proper error path cleanup to the HDMI driver.
-
-Patch 6 adds a regmap for the HDMI driver, to be used in a subsequent
-patch.
-
-Patch 7 allows the HDMI TMDS clock to use the second PLL as its parent,
-in case the first PLL is driving an incompatible dot clock.
-
-Patch 8 adds the A31 HDMI controller variant to the device tree binding.
-
-Patch 9 adds an iopoll-like polling macro for regmap_field. This is used
-in the next patch within the DDC part to poll for reset and I/O
-completion.
-
-Patch 10 adds support for different variants of the HDMI controller
-hardware, with the differences mentioned in the beginning of this
-letter.
-
-Patch 11 adds defines for the A31 specific DDC register offsets.
-
-Patch 12 adds support for the A31's HDMI controller variant.
-
-Patch 13 adds a device node for the HDMI controller on the A31.
-
-Patch 14 enable HDMI video output on three boards that I have.
-
-
-I also had simultaneous output on both display pipelines on the SinA31s,
-one with an LCD panel and the other using HDMI. After boot, both screens
-showed a proper console. The HDMI screen had higher resolution, so the
-console was limited to the upper left corner.
-
-Note that this series does not deal with conflicting pixel clocks.
-
-Assuming everyone is happy with the patches, I propose the following:
-
-    1. We sunxi maintainers will take the clk and dts patches through
-       our tree with minimal but proper cross references.
-
-    2. Mark can either take the regmap patch on an immutable branch,
-       which we then merge into drm-misc before applying the drm/sun4i
-       patches, or give his Ack for us to merge that patch through
-       drm-misc.
-
-As I still don't have a freedesktop.org account [1] to access drm-misc,
-Maxime will have to apply the patches for me.
-
-
-Regards
-ChenYu
-
-
-[1] https://bugs.freedesktop.org/show_bug.cgi?id=102920
-
-Chen-Yu Tsai (14):
-  clk: sunxi-ng: sun6i: Export video PLLs
-  clk: sunxi-ng: sun6i: Rename HDMI DDC clock to avoid name collision
-  drm/sun4i: tcon: Add variant callback for TCON output muxing
-  drm/sun4i: tcon: Add support for demuxing TCON output on A31
-  drm/sun4i: hdmi: Disable clks in bind function error path and unbind
-    function
-  drm/sun4i: hdmi: create a regmap for later use
-  drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
-  dt-bindings: display: sun4i: Add binding for A31 HDMI controller
-  regmap: add iopoll-like polling macro for regmap_field
-  drm/sun4i: hdmi: Add support for controller hardware variants
-  drm/sun4i: hdmi: Add A31 specific DDC register definitions
-  drm/sun4i: hdmi: Add support for A31's HDMI controller
-  ARM: dts: sun6i: Add device node for HDMI controller
-  ARM: dts: sun6i: Enable HDMI support on some A31/A31s devices
-
- .../bindings/display/sunxi/sun4i-drm.txt           |   3 +
- arch/arm/boot/dts/sun6i-a31-hummingbird.dts        |  21 ++
- arch/arm/boot/dts/sun6i-a31.dtsi                   |  55 +++++
- arch/arm/boot/dts/sun6i-a31s-primo81.dts           |  25 +++
- arch/arm/boot/dts/sun6i-a31s-sina31s.dts           |  25 +++
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |   2 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h               |   8 +-
- drivers/gpu/drm/sun4i/sun4i_hdmi.h                 | 107 ++++++++++
- drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c         |  38 +++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 204 +++++++++++++++---
- drivers/gpu/drm/sun4i/sun4i_hdmi_i2c.c             | 227 +++++++++++++++------
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c        |  68 +++---
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  83 ++++++--
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   5 +
- include/dt-bindings/clock/sun6i-a31-ccu.h          |   4 +
- include/linux/regmap.h                             |  39 ++++
- 16 files changed, 769 insertions(+), 145 deletions(-)
-
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 86b245746a6b..9d057073e110 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -15,9 +15,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/of_gpio.h>
+ #include <linux/err.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
+@@ -95,14 +93,12 @@ const struct clk_ops clk_gpio_mux_ops = {
+ EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
+ 
+ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low, unsigned long flags,
+-		const struct clk_ops *clk_gpio_ops)
++		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
++		unsigned long flags, const struct clk_ops *clk_gpio_ops)
+ {
+ 	struct clk_gpio *clk_gpio;
+ 	struct clk_hw *hw;
+ 	struct clk_init_data init = {};
+-	unsigned long gpio_flags;
+ 	int err;
+ 
+ 	if (dev)
+@@ -113,24 +109,13 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+ 	if (!clk_gpio)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (active_low)
+-		gpio_flags = GPIOF_ACTIVE_LOW | GPIOF_OUT_INIT_HIGH;
+-	else
+-		gpio_flags = GPIOF_OUT_INIT_LOW;
+-
+-	if (dev)
+-		err = devm_gpio_request_one(dev, gpio, gpio_flags, name);
+-	else
+-		err = gpio_request_one(gpio, gpio_flags, name);
+-	if (err) {
+-		if (err != -EPROBE_DEFER)
+-			pr_err("%s: %s: Error requesting clock control gpio %u\n",
+-					__func__, name, gpio);
+-		if (!dev)
+-			kfree(clk_gpio);
+-
+-		return ERR_PTR(err);
+-	}
++	/*
++	 * Set to disabled no matter what: NOTE if the GPIO line is active low
++	 * the GPIO descriptor knows this and will set it high to deassert the
++	 * line. This assumes the GPIO descriptor has been requested using
++	 * GPIOD_ASIS by the callers so we need to initialize it as disabled here.
++	 */
++	gpiod_set_value(gpiod, 0);
+ 
+ 	init.name = name;
+ 	init.ops = clk_gpio_ops;
+@@ -138,7 +123,7 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+ 
+-	clk_gpio->gpiod = gpio_to_desc(gpio);
++	clk_gpio->gpiod = gpiod;
+ 	clk_gpio->hw.init = &init;
+ 
+ 	hw = &clk_gpio->hw;
+@@ -151,7 +136,6 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+ 		return hw;
+ 
+ 	if (!dev) {
+-		gpiod_put(clk_gpio->gpiod);
+ 		kfree(clk_gpio);
+ 	}
+ 
+@@ -164,29 +148,27 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
+  * @dev: device that is registering this clock
+  * @name: name of this clock
+  * @parent_name: name of this clock's parent
+- * @gpio: gpio number to gate this clock
+- * @active_low: true if gpio should be set to 0 to enable clock
++ * @gpiod: gpio descriptor to gate this clock
+  * @flags: clock flags
+  */
+ struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
+-		const char *parent_name, unsigned gpio, bool active_low,
++		const char *parent_name, struct gpio_desc *gpiod,
+ 		unsigned long flags)
+ {
+ 	return clk_register_gpio(dev, name,
+ 			(parent_name ? &parent_name : NULL),
+-			(parent_name ? 1 : 0), gpio, active_low, flags,
++			(parent_name ? 1 : 0), gpiod, flags,
+ 			&clk_gpio_gate_ops);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
+ 
+ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+-		const char *parent_name, unsigned gpio, bool active_low,
++		const char *parent_name, struct gpio_desc *gpiod,
+ 		unsigned long flags)
+ {
+ 	struct clk_hw *hw;
+ 
+-	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpio, active_low,
+-				       flags);
++	hw = clk_hw_register_gpio_gate(dev, name, parent_name, gpiod, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+ 	return hw->clk;
+@@ -199,13 +181,12 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+  * @name: name of this clock
+  * @parent_names: names of this clock's parents
+  * @num_parents: number of parents listed in @parent_names
+- * @gpio: gpio number to gate this clock
+- * @active_low: true if gpio should be set to 0 to enable clock
++ * @gpiod: gpio descriptor to gate this clock
+  * @flags: clock flags
+  */
+ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low, unsigned long flags)
++		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
++		unsigned long flags)
+ {
+ 	if (num_parents != 2) {
+ 		pr_err("mux-clock %s must have 2 parents\n", name);
+@@ -213,18 +194,18 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ 	}
+ 
+ 	return clk_register_gpio(dev, name, parent_names, num_parents,
+-			gpio, active_low, flags, &clk_gpio_mux_ops);
++			gpiod, flags, &clk_gpio_mux_ops);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_gpio_mux);
+ 
+ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low, unsigned long flags)
++		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
++		unsigned long flags)
+ {
+ 	struct clk_hw *hw;
+ 
+ 	hw = clk_hw_register_gpio_mux(dev, name, parent_names, num_parents,
+-			gpio, active_low, flags);
++			gpiod, flags);
+ 	if (IS_ERR(hw))
+ 		return ERR_CAST(hw);
+ 	return hw->clk;
+@@ -236,10 +217,10 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	const char **parent_names, *gpio_name;
+ 	unsigned int num_parents;
+-	int gpio;
+-	enum of_gpio_flags of_flags;
++	struct gpio_desc *gpiod;
+ 	struct clk *clk;
+-	bool active_low, is_mux;
++	bool is_mux;
++	int ret;
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+ 	if (num_parents) {
+@@ -255,28 +236,27 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 
+ 	is_mux = of_device_is_compatible(node, "gpio-mux-clock");
+ 
+-	gpio_name = is_mux ? "select-gpios" : "enable-gpios";
+-	gpio = of_get_named_gpio_flags(node, gpio_name, 0, &of_flags);
+-	if (gpio < 0) {
+-		if (gpio == -EPROBE_DEFER)
++	gpio_name = is_mux ? "select" : "enable";
++	gpiod = devm_gpiod_get(&pdev->dev, gpio_name, GPIOD_ASIS);
++	if (IS_ERR(gpiod)) {
++		ret = PTR_ERR(gpiod);
++		if (ret == -EPROBE_DEFER)
+ 			pr_debug("%s: %s: GPIOs not yet available, retry later\n",
+ 					node->name, __func__);
+ 		else
+-			pr_err("%s: %s: Can't get '%s' DT property\n",
++			pr_err("%s: %s: Can't get '%s' named GPIO property\n",
+ 					node->name, __func__,
+ 					gpio_name);
+-		return gpio;
++		return ret;
+ 	}
+ 
+-	active_low = of_flags & OF_GPIO_ACTIVE_LOW;
+-
+ 	if (is_mux)
+ 		clk = clk_register_gpio_mux(&pdev->dev, node->name,
+-				parent_names, num_parents, gpio, active_low, 0);
++				parent_names, num_parents, gpiod, 0);
+ 	else
+ 		clk = clk_register_gpio_gate(&pdev->dev, node->name,
+-				parent_names ?  parent_names[0] : NULL, gpio,
+-				active_low, 0);
++				parent_names ?  parent_names[0] : NULL, gpiod,
++				0);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 5100ec1b5d55..063d8cb9926f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -682,10 +682,10 @@ struct clk_gpio {
+ 
+ extern const struct clk_ops clk_gpio_gate_ops;
+ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+-		const char *parent_name, unsigned gpio, bool active_low,
++		const char *parent_name, struct gpio_desc *gpiod,
+ 		unsigned long flags);
+ struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
+-		const char *parent_name, unsigned gpio, bool active_low,
++		const char *parent_name, struct gpio_desc *gpiod,
+ 		unsigned long flags);
+ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+ 
+@@ -701,11 +701,11 @@ void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
+ 
+ extern const struct clk_ops clk_gpio_mux_ops;
+ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low, unsigned long flags);
++		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
++		unsigned long flags);
+ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low, unsigned long flags);
++		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
++		unsigned long flags);
+ void clk_hw_unregister_gpio_mux(struct clk_hw *hw);
+ 
+ /**
 -- 
-2.14.2
+2.13.5
