@@ -1,48 +1,47 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 10/10] ARM: multi_v7_defconfig: Enable CONFIG_ARCH_BCM_HR2
-Date: Mon, 25 Sep 2017 17:09:31 -0700
-Message-Id: <20170926000931.670-11-f.fainelli@gmail.com>
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:53476 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933052AbdIYKM0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Sep 2017 06:12:26 -0400
+Date: Mon, 25 Sep 2017 18:12:09 +0800
+In-Reply-To: <20170925101027.lghnnll4h6inreqm@flea.home>
+References: <20170923001531.14285-1-icenowy@aosc.io> <20170925101027.lghnnll4h6inreqm@flea.home>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <27EF78BD-6285-4D8D-AA65-8294D797E2FB@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Turn on Broadcom Hurrican 2 SoC support by default to get access to its
-drivers.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 0cacdbf84a71..810cecf66eeb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -31,6 +31,7 @@ CONFIG_SOC_SAMA5D3=y
- CONFIG_SOC_SAMA5D4=y
- CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM_CYGNUS=y
-+CONFIG_ARCH_BCM_HR2=y
- CONFIG_ARCH_BCM_NSP=y
- CONFIG_ARCH_BCM_21664=y
- CONFIG_ARCH_BCM_281XX=y
--- 
-2.14.1
+于 2017年9月25日 GMT+08:00 下午6:10:27, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>Hi,
+>
+>On Sat, Sep 23, 2017 at 12:15:28AM +0000, Icenowy Zheng wrote:
+>> This patchset imports simple DVFS support for Allwinner A64 SoC.
+>> 
+>> As the thermal sensor driver is not yet implemented and some boards
+>> have still no AXP PMIC support, now only two OPPs are present --
+>> 648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
+>> 
+>> PATCH 1 is a fix to the CCU driver of A64, and the remaining patches
+>> set up the device tree bits of the DVFS on Pine64.
+>
+>How has this been tested?
+>
+>What tasks did you run, with what governor, etc...
+
+I only tested manual frequency switching between 648MHz and
+816MHz, and tested the PLL stuck issue by change the OPPs to
+some random value.
+
+>
+>Thanks!
+>Maxime
