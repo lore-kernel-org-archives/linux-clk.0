@@ -1,63 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:59752 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967121AbdIZPF1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Sep 2017 11:05:27 -0400
-To: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Alex Elder <elder@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] [media] clk-kona-setup: Delete two error messages for a
- failed memory allocation in parent_process()
-Message-ID: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 17:05:19 +0200
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock Fixes for 4.14
+Date: Mon, 25 Sep 2017 19:13:47 +0200
+Message-ID: <2374267.IN5p8oW94K@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 16:54:20 +0200
+Hi Mike, Stephen,
 
-Omit extra messages for a memory allocation failure in this function.
+please find below some fixes for the rk3128 clock controller that should
+hopefully be suitable for 4.14. The normal stuff some wrong register bits
+and some clocks that need to be critical for safe operation.
 
-This issue was detected by using the Coccinelle software.
+Otherwise from the main boards I test on, it looks like everything
+survived the merge window, so with a bit of luck this might be the only
+fixes for 4.14.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/bcm/clk-kona-setup.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Please pull.
 
-diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
-index c37a7f0e83aa..281f4322355c 100644
---- a/drivers/clk/bcm/clk-kona-setup.c
-+++ b/drivers/clk/bcm/clk-kona-setup.c
-@@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
- 	 */
- 	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
- 			       GFP_KERNEL);
--	if (!parent_names) {
--		pr_err("%s: error allocating %u parent names\n", __func__,
--				parent_count);
-+	if (!parent_names)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	/* There is at least one parent, so allocate a selector array */
- 	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
- 				   GFP_KERNEL);
- 	if (!parent_sel) {
--		pr_err("%s: error allocating %u parent selectors\n", __func__,
--				parent_count);
- 		kfree(parent_names);
- 
- 		return ERR_PTR(-ENOMEM);
--- 
-2.14.1
 
+Thanks
+Heiko
+
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.14-rockchip-clkfixes-1
+
+for you to fetch changes up to 00e6751ffc9e6e0651e514961316fd15f0409683:
+
+  clk: rockchip: add sclk_timer5 as critical clock on rk3128 (2017-09-17 01:55:36 +0200)
+
+----------------------------------------------------------------
+Some smallish fixes for the rk3128 clock support including
+some register errors and some clocks that should be critical
+for safe usage.
+
+----------------------------------------------------------------
+Elaine Zhang (3):
+      clk: rockchip: add pclk_pmu as critical clock on rk3128
+      clk: rockchip: fix up rk3128 pvtm and mipi_24m gate regs error
+      clk: rockchip: add sclk_timer5 as critical clock on rk3128
+
+ drivers/clk/rockchip/clk-rk3128.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
