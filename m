@@ -1,97 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from s62.goserver.host ([37.17.224.62]:46497 "EHLO s62.goserver.host"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751033AbdIBJ6q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 2 Sep 2017 05:58:46 -0400
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org, mturquette@baylibre.com,
-        linux@armlinux.org.uk, sebastian.hesselbarth@gmail.com
-Cc: rabeeh@solid-run.com, linux-clk@vger.kernel.org,
-        Sergej Sawazki <sergej@taudac.com>
-Subject: [RESEND PATCH 1/3] clk: si5351: Apply PLL soft reset before enabling the outputs
-Date: Sat,  2 Sep 2017 11:57:24 +0200
-Message-Id: <1504346246-4730-2-git-send-email-sergej@taudac.com>
-In-Reply-To: <1504346246-4730-1-git-send-email-sergej@taudac.com>
-References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] NVIDIA Tegra AHB DMA controller driver
+Date: Tue, 26 Sep 2017 02:22:01 +0300
+Message-Id: <cover.1506380746.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The "Si5351A/B/C Data Sheet" states to apply a PLL soft reset before
-enabling the output clocks [1]. This is required to get a deterministic
-phase relationship between the output clocks.
+NVIDIA Tegra20/30 SoC's have AHB DMA controller. It has 4 DMA channels,
+supports AHB <-> Memory and Memory <-> Memory transfers, slave / master
+modes. This driver is primarily supposed to be used by gpu/host1x in a
+master mode, performing 3D HW context stores.
 
-Without resetting the PLL, the phase relationship between the clocks is
-unpredictable. Fix this by resetting the PLL in si5351_clkout_prepare().
+Dmitry Osipenko (5):
+  clk: tegra: Add AHB DMA clock entry
+  clk: tegra: Bump SCLK clock rate to 216MHz on Tegra20
+  dt-bindings: Add DT bindings for NVIDIA Tegra AHB DMA controller
+  dmaengine: Add driver for NVIDIA Tegra AHB DMA controller
+  ARM: dts: tegra: Add AHB DMA controller nodes
 
-It also fixes a regression introduced in commit 6dc669a22c77 ("clk: si5351:
-Add PLL soft reset") that causes a disruption on platforms where clocks
-derived from different PLLs do different things by resetting only the PLL
-which the output clock is derived from.
+ .../bindings/dma/nvidia,tegra20-ahbdma.txt         |  23 +
+ arch/arm/boot/dts/tegra20.dtsi                     |   9 +
+ arch/arm/boot/dts/tegra30.dtsi                     |   9 +
+ drivers/clk/tegra/clk-id.h                         |   1 +
+ drivers/clk/tegra/clk-tegra-periph.c               |   1 +
+ drivers/clk/tegra/clk-tegra20.c                    |   8 +-
+ drivers/clk/tegra/clk-tegra30.c                    |   2 +
+ drivers/dma/Kconfig                                |   9 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/tegra20-ahb-dma.c                      | 679 +++++++++++++++++++++
+ 10 files changed, 741 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+ create mode 100644 drivers/dma/tegra20-ahb-dma.c
 
-References:
-[1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
-    Figure 12 ("I2C Programming Procedure")
-
-Fixes: 6dc669a22c77 ("clk: si5351: Add PLL soft reset")
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
----
- drivers/clk/clk-si5351.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 2492442..46bbc95 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -898,6 +898,21 @@ static int _si5351_clkout_set_disable_state(
- 	return 0;
- }
- 
-+void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
-+{
-+	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
-+
-+	switch (val & SI5351_CLK_INPUT_MASK) {
-+	case SI5351_CLK_INPUT_XTAL:
-+	case SI5351_CLK_INPUT_CLKIN:
-+		return;  /* PLL not used, no need to reset */
-+	}
-+
-+	si5351_reg_write(drvdata, SI5351_PLL_RESET,
-+			 (val & SI5351_CLK_PLL_SELECT) ? SI5351_PLL_RESET_B :
-+			 SI5351_PLL_RESET_A);
-+}
-+
- static int si5351_clkout_prepare(struct clk_hw *hw)
- {
- 	struct si5351_hw_data *hwdata =
-@@ -905,6 +920,14 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
- 
- 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
- 			SI5351_CLK_POWERDOWN, 0);
-+
-+	/*
-+	 * Reset the PLLs before enabling the outputs to get a deterministic
-+	 * phase relationship between the output clocks. Otherwise, the phase
-+	 * offset beween the clocks is unpredictable.
-+	 */
-+	_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
-+
- 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
- 			(1 << hwdata->num), 0);
- 	return 0;
-@@ -1095,8 +1118,7 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 	 * Do a pll soft reset on both plls, needed in some cases to get
- 	 * all outputs running.
- 	 */
--	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
--			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
-+	_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
 -- 
-2.7.4
-
+2.14.1
