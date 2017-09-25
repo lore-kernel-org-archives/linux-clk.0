@@ -1,423 +1,112 @@
-Return-Path: <hanetzer@startmail.com>
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: xuejiancheng@hisilicon.com,
-	leo.yan@linaro.org,
-	linux-clk@vger.kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	wenpan@hisilicon.com,
-	robh+dt@kernel.org,
-	linux@armlinux.org.uk,
-	sboyd@codeaurora.org,
-	xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org,
-	"Marty E. Plummer" <hanetzer@startmail.com>
-Subject: [RFC PATCH 3/3] arm: dts: add Hi3521A dts
-Date: Thu, 14 Sep 2017 22:56:36 -0500
-Message-Id: <20170915035636.9903-4-hanetzer@startmail.com>
-In-Reply-To: <20170915035636.9903-1-hanetzer@startmail.com>
-References: <20170915035636.9903-1-hanetzer@startmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.sig21.net ([80.244.240.74]:49077 "EHLO mail.sig21.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965005AbdIYTVV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Sep 2017 15:21:21 -0400
+Date: Mon, 25 Sep 2017 21:21:09 +0200
+From: Johannes Stezenbach <js@sig21.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
+Message-ID: <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <4254964.MfDMP6QAfg@aspire.rjw.lan>
+ <20170922080453.3bwad4ale4zizf42@sig21.net>
+ <1555462.9U3gvkyXAX@aspire.rjw.lan>
+ <20170925191749.2oamusbajgs6clcg@sig21.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170925191749.2oamusbajgs6clcg@sig21.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
-marketed under the name Samsung SDR-B74301N
+SATA controller is enabled on Asus E200HA even though the
+machine doesn't use it (it has eMMC storage), however
+SATA being on blocks S0ix entry so we need to disable it.
 
-Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+Signed-off-by: Johannes Stezenbach <js@sig21.net>
 ---
- arch/arm/boot/dts/Makefile              |   2 +
- arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  52 ++++++
- arch/arm/boot/dts/hi3521a.dtsi          | 310 ++++++++++++++++++++++++++++++++
- 3 files changed, 364 insertions(+)
- create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
- create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
+ drivers/platform/x86/pmc_atom.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index faf46abaa4a2..e7b9b5dde20f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
- 	gemini-sq201.dtb \
- 	gemini-wbd111.dtb \
- 	gemini-wbd222.dtb
-+dtb-$(CONFIG_ARCH_HI3521A) += \
-+	hi3521a-rs-dm290e.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += \
- 	hi3620-hi4511.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += \
-diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-new file mode 100644
-index 000000000000..b32c8392c93f
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-@@ -0,0 +1,52 @@
-+/*
-+ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index 8d13c86cc418..b5dd38712268 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/x86/clk-pmc-atom.h>
+@@ -57,6 +58,9 @@ struct pmc_dev {
+ static struct pmc_dev pmc_device;
+ static u32 acpi_base_addr;
+ 
++static u32 quirks;
++#define QUIRK_DISABLE_SATA BIT(0)
 +
-+/dts-v1/;
-+#include "hi3521a.dtsi"
+ static const struct pmc_clk byt_clks[] = {
+ 	{
+ 		.name = "xtal",
+@@ -271,6 +275,15 @@ static void pmc_hw_reg_setup(struct pmc_dev *pmc)
+ 	 * - GPIO_SCORE shared IRQ
+ 	 */
+ 	pmc_reg_write(pmc, PMC_S0IX_WAKE_EN, (u32)PMC_WAKE_EN_SETTING);
 +
-+/ {
-+	model = "RaySharp RS-DM-290E DVR Board";
-+	compatible = "hisilicon,hi3521a";
++	if (quirks & QUIRK_DISABLE_SATA) {
++		u32 func_dis;
 +
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+	};
++		pr_info("pmc: disable SATA IP\n");
++		func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
++		func_dis |= BIT_SATA;
++		pmc_reg_write(pmc, PMC_FUNC_DIS, func_dis);
++	}
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+@@ -500,6 +513,24 @@ static struct pmc_notifier_block pmc_freeze_nb = {
+ };
+ #endif
+ 
++static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
++{
++	pr_info("pmc: Asus E200HA detected\n");
++	quirks |= QUIRK_DISABLE_SATA;
++	return 1;
++}
 +
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0xf00000>;
-+	};
++static const struct dmi_system_id cht_table[] = {
++	{
++		.callback = cht_asus_e200ha_cb,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "E200HA"),
++		},
++	},
++	{ }
 +};
 +
-+&hi_sfc {
-+	status = "okay";
-+	spi-nor@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <104000000>;
-+	};
-+};
+ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct pmc_dev *pmc = &pmc_device;
+@@ -526,6 +557,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	pmc->map = map;
+ 
++	dmi_check_system(cht_table);
 +
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dual_timer0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
-new file mode 100644
-index 000000000000..069b34627073
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3521a.dtsi
-@@ -0,0 +1,310 @@
-+/*
-+ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <dt-bindings/clock/hi3521a-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	chosen { };
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+	};
-+
-+	hi_sfc: spi-nor-controller@10000000 {
-+		compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
-+		reg-names = "control", "memory";
-+		clocks = <&crg HI3521A_FMC_CLK>;
-+		status = "disabled";
-+	};
-+
-+	gic: interrupt-controller@10300000 {
-+		compatible = "arm,pl390";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-+	};
-+
-+	clk_3m: clk_3m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <3000000>;
-+	};
-+
-+	crg: clock-reset-controller@12040000 {
-+		compatible = "hisilicon,hi3521a-crg";
-+		#clock-cells = <1>;
-+		#reset-cells = <2>;
-+		reg = <0x12040000 0x10000>;
-+	};
-+
-+	soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		dmac: dma@10060000 {
-+			compatible = "arm,pl080", "arm,primcell";
-+			reg = <0x10060000 0x1000>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		dual_timer0: timer@12000000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12000000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer1: timer@12010000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12010000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer2: timer@12020000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12020000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer3: timer@12030000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12030000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		wdt0: watchdog@12070000 {
-+			compatible = "arm,sp805", "arm,primecell";
-+			arm,primecell-periphid = <0x00141805>;
-+			reg = <0x12070000 0x1000>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+		};
-+
-+		uart0: serial@12080000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12080000 0x1000>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART0_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@12090000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12090000 0x1000>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART1_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@120a0000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x120a0000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART2_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		gpio0: gpio@12150000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12150000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio1: gpio@12160000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12160000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio2: gpio@12170000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12170000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio3: gpio@12180000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12180000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio4: gpio@12190000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12190000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio5: gpio@121a0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121a0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio6: gpio@121b0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121b0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio7: gpio@121c0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121c0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio8: gpio@121d0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121d0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio9: gpio@121e0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121e0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio10: gpio@121f0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121f0000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio11: gpio@12200000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12200000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio12: gpio@12210000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12210000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio13: gpio@12220000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12220000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+	};
-+};
+ 	/* PMC hardware registers setup */
+ 	pmc_hw_reg_setup(pmc);
+ 
 -- 
 2.14.1
+
