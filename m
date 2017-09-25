@@ -1,148 +1,194 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:48022 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbdI1OVE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Sep 2017 10:21:04 -0400
-Date: Thu, 28 Sep 2017 16:20:50 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: icenowy@aosc.io
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] clk: sunxi-ng: add mux and pll notifiers for A64 CPU
- clock
-Message-ID: <20170928142050.gkbdqlwpfjmpdlg3@flea>
-References: <20170923001531.14285-1-icenowy@aosc.io>
- <20170923001531.14285-2-icenowy@aosc.io>
- <20170928102752.ceo54qccqakb4xyx@flea>
- <975c0c884d9a83faad6141df474a93af@aosc.io>
+Return-Path: <romain.izard@mobile-devices.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ynwlkhxyx47lxmvj"
-In-Reply-To: <975c0c884d9a83faad6141df474a93af@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: romain.izard@mobile-devices.fr
+In-Reply-To: <d6359e89-7c78-fdec-fbab-eb885017ec58@microchip.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+ <20170915140411.31716-4-romain.izard.pro@gmail.com> <d6359e89-7c78-fdec-fbab-eb885017ec58@microchip.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+Date: Mon, 25 Sep 2017 10:25:35 +0200
+Message-ID: <CAGkQfmOQ_5hb-OKWQxjboPS1V0v-jCPxyyDZyCyZLFYFoeXWbA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] clk: at91: pmc: Support backup for programmable clocks
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>, Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+2017-09-22 12:31 GMT+02:00 Nicolas Ferre <nicolas.ferre@microchip.com>:
+> On 15/09/2017 at 16:04, Romain Izard wrote:
+>> From: Romain Izard <romain.izard@mobile-devices.fr>
+>>
+>> When an AT91 programmable clock is declared in the device tree, register
+>> it into the Power Management Controller driver. On entering suspend mode,
+>> the driver saves and restores the Programmable Clock registers to support
+>> the backup mode for these clocks.
+>>
+>> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+>
+> Romain,
+>
+> Some nitpicking and one comment. But on the overall patch, here is my:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>
+> See below:
+>
+>> ---
+>> Changes in v2:
+>> * register PCKs on clock startup
+>>
+>>  drivers/clk/at91/clk-programmable.c |  2 ++
+>>  drivers/clk/at91/pmc.c              | 27 +++++++++++++++++++++++++++
+>>  drivers/clk/at91/pmc.h              |  2 ++
+>>  3 files changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+>> index 85a449cf61e3..0e6aab1252fc 100644
+>> --- a/drivers/clk/at91/clk-programmable.c
+>> +++ b/drivers/clk/at91/clk-programmable.c
+>> @@ -204,6 +204,8 @@ at91_clk_register_programmable(struct regmap *regmap,
+>>       if (ret) {
+>>               kfree(prog);
+>>               hw = ERR_PTR(ret);
+>
+> Nit: "else" not needed.
+>
+This is a shared idiom in all the atmel clock drivers, so I prefer to keep
+it this way.
 
---ynwlkhxyx47lxmvj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +     } else {
+>> +             pmc_register_pck(id);
+>>       }
+>>
+>>       return hw;
+>> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+>> index 07dc2861ad3f..3910b7537152 100644
+>> --- a/drivers/clk/at91/pmc.c
+>> +++ b/drivers/clk/at91/pmc.c
+>> @@ -22,6 +22,7 @@
+>>  #include "pmc.h"
+>>
+>>  #define PMC_MAX_IDS 128
+>> +#define PMC_MAX_PCKS 8
+>>
+>>  int of_at91_get_clk_range(struct device_node *np, const char *propname,
+>>                         struct clk_range *range)
+>> @@ -50,6 +51,7 @@ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
+>>  static struct regmap *pmcreg;
+>>
+>>  static u8 registered_ids[PMC_MAX_IDS];
+>> +static u8 registered_pcks[PMC_MAX_PCKS];
+>>
+>>  static struct
+>>  {
+>> @@ -66,8 +68,10 @@ static struct
+>>       u32 pcr[PMC_MAX_IDS];
+>>       u32 audio_pll0;
+>>       u32 audio_pll1;
+>> +     u32 pckr[PMC_MAX_PCKS];
+>>  } pmc_cache;
+>>
+>> +/* Clock ID 0 is invalid */
+>
+> (read: so we can use the 0 value as an indicator that this place in the
+> table hasn't been filled, so unused)
+>
+>>  void pmc_register_id(u8 id)
+>>  {
+>>       int i;
+>> @@ -82,6 +86,21 @@ void pmc_register_id(u8 id)
+>>       }
+>>  }
+>>
+>> +/* Programmable Clock 0 is valid */
+>
+> I understand the rationale behind these ^^ two comments, but I would
+> like that it's more explicit. Saying that you will store the pck id as
+> (id + 1) and that you would have to invert this operation while using
+> the stored id.
+> Maybe add a comment about this transformation to the struct definition
+> as well...
+>
 
-On Thu, Sep 28, 2017 at 10:42:39AM +0000, icenowy@aosc.io wrote:
-> > On Sat, Sep 23, 2017 at 12:15:29AM +0000, Icenowy Zheng wrote:
-> > > The A64 PLL_CPU clock has the same instability if some factor changed
-> > > without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
-> > > H3.
-> > >=20
-> > > Add the mux and pll notifiers for A64 CPU clock to workaround the
-> > > problem.
-> > >=20
-> > > Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
-> > >  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28
-> > > +++++++++++++++++++++++++++-
-> > >  1 file changed, 27 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> > > b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> > > index 2bb4cabf802f..b55fa69dd0c1 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> > > @@ -879,11 +879,26 @@ static const struct sunxi_ccu_desc
-> > > sun50i_a64_ccu_desc =3D {
-> > >  	.num_resets	=3D ARRAY_SIZE(sun50i_a64_ccu_resets),
-> > >  };
-> > >=20
-> > > +static struct ccu_pll_nb sun50i_a64_pll_cpu_nb =3D {
-> > > +	.common	=3D &pll_cpux_clk.common,
-> > > +	/* copy from pll_cpux_clk */
-> > > +	.enable	=3D BIT(31),
-> > > +	.lock	=3D BIT(28),
-> > > +};
-> > > +
-> > > +static struct ccu_mux_nb sun50i_a64_cpu_nb =3D {
-> > > +	.common		=3D &cpux_clk.common,
-> > > +	.cm		=3D &cpux_clk.mux,
-> > > +	.delay_us	=3D 1, /* > 8 clock cycles at 24 MHz */
-> > > +	.bypass_index	=3D 1, /* index of 24 MHz oscillator */
-> > > +};
-> > > +
-> > >=20
-> > >  static int sun50i_a64_ccu_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct resource *res;
-> > >  	void __iomem *reg;
-> > >  	u32 val;
-> > > +	int ret;
-> > >=20
-> > >  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > >  	reg =3D devm_ioremap_resource(&pdev->dev, res);
-> > > @@ -897,7 +912,18 @@ static int sun50i_a64_ccu_probe(struct
-> > > platform_device *pdev)
-> > >=20
-> > >  	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
-> > >=20
-> > > -	return sunxi_ccu_probe(pdev->dev.of_node, reg,
-> > > &sun50i_a64_ccu_desc);
-> > > +	ret =3D sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_des=
-c);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* Gate then ungate PLL CPU after any rate changes */
-> > > +	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
-> > > +
-> > > +	/* Reparent CPU during PLL CPU rate changes */
-> > > +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-> > > +				  &sun50i_a64_cpu_nb);
-> > > +
-> > > +	return 0;
-> >=20
-> > So this is the fourth user of the exact same code, can you turn that
-> > into a shared function?
->=20
-> I think it's not so worthful to extract the code, as:
+I will improve the comments for the next revision.
 
-It does, because the order is important. If you do not register the
-notifiers in the right order, you have a bug, and:
+>
+>> +void pmc_register_pck(u8 pck)
+>> +{
+>> +     int i;
+>> +
+>> +     for (i = 0; i < PMC_MAX_PCKS; i++) {
+>> +             if (registered_pcks[i] == 0) {
+>> +                     registered_pcks[i] = pck + 1;
+>> +                     break;
+>> +             }
+>> +             if (registered_pcks[i] == (pck + 1))
+>> +                     break;
+>> +     }
+>> +}
+>> +
+>>  static int pmc_suspend(void)
+>>  {
+>>       int i;
+>> @@ -103,6 +122,10 @@ static int pmc_suspend(void)
+>>               regmap_read(pmcreg, AT91_PMC_PCR,
+>>                           &pmc_cache.pcr[registered_ids[i]]);
+>>       }
+>> +     for (i = 0; registered_pcks[i]; i++) {
+>> +             u8 num = registered_pcks[i] - 1;
+>
+> Nit: declaration are better made at the beginning of the function. This
+> lead to a checkpatch warning:
+> "WARNING: Missing a blank line after declarations"
+>
 
-> - the notifier structs contains info of the clocks
+I'll fix this as well.
 
-this should be passed as a parameter anyway,
+>> +             regmap_read(pmcreg, AT91_PMC_PCKR(num), &pmc_cache.pckr[num]);
+>> +     }
+>>
+>>       return 0;
+>>  }
+>> @@ -143,6 +166,10 @@ static void pmc_resume(void)
+>>                            pmc_cache.pcr[registered_ids[i]] |
+>>                            AT91_PMC_PCR_CMD);
+>>       }
+>> +     for (i = 0; registered_pcks[i]; i++) {
+>> +             u8 num = registered_pcks[i] - 1;
+>
+> Ditto
+>
+>> +             regmap_write(pmcreg, AT91_PMC_PCKR(num), pmc_cache.pckr[num]);
+>> +     }
+>>
+>>       if (pmc_cache.uckr & AT91_PMC_UPLLEN)
+>>               mask |= AT91_PMC_LOCKU;
+>> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+>> index 858e8ef7e8db..d22b1fa9ecdc 100644
+>> --- a/drivers/clk/at91/pmc.h
+>> +++ b/drivers/clk/at91/pmc.h
+>> @@ -31,8 +31,10 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+>>
+>>  #ifdef CONFIG_PM
+>>  void pmc_register_id(u8 id);
+>> +void pmc_register_pck(u8 pck);
+>>  #else
+>>  static inline void pmc_register_id(u8 id) {}
+>> +static inline void pmc_register_pck(u8 pck) {}
+>>  #endif
+>>
+>>  #endif /* __PMC_H_ */
+>>
 
-> - A31 seems not to need the PLL notifier.
-
-And you don't care about the ordering in that case, since there's just
-one. If was talking about the H3, A64, R40 and A33 that all have that
-code.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---ynwlkhxyx47lxmvj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZzQVCAAoJEBx+YmzsjxAgWfIP/jVxa/nJyoiocVCqSrz2Sk4z
-pRXAByC+Qm6Hx95ZooK43H+BqXOwig32Vjx9X0YKSTDmU4t7giZwOM47/bTeJVsZ
-oyfD8h1bjR2wjfBV3KtzEaub5WdzllWWOhy9/T3cg7zuE9fbScpJ2DK+q6f/LwUn
-/nQChhHgLJtSoVwyxuRpjXLowB4wB/OsOQXP6vf+x0IK4P/KySaJ5PGbnqFNdxvG
-BH5LdZ2YxLOLV/B8ZFXRrEF0eVtIdla9VW4vMwlcO+XIQdwFB4sOWZQTmm9FO0s5
-PaWkLHyzbWleNg7U58lCwBTyRMyGECBVs9A1nsN/dA9Pe9Hgi7/TPcDL1a76gmAL
-XFib2wMB8a/MQS5jj5rEiugkBikiyofvLGTNvTPM2EN4m+v1JYMJq4xEpJZhyiQP
-ZLLa7aP6y5s2lB3QtpJ5kL0e6PqbAoo1tuHe7vrrhxJssQdiVYtIAn9cTZ9pQeGf
-vmgHmEdZAWntTh6qS4h6OB+1OUvbsKvV840w93jiR8sQkBKoqMvp0dp6i9xuw6XJ
-f1YWp6x4MH44FnZLQWHySb/azeT1NT6B0l1HhddUwJrUHVYbiE1MtHMUdCJtUn/A
-DrmrxSUFbfL9ZnMW13ZxEwjFHepr1uTIu+yy+webGbvfv3uKtlIEz0/ObwnGccwu
-EthZxRA6uDCASBGsRNMH
-=umA7
------END PGP SIGNATURE-----
-
---ynwlkhxyx47lxmvj--
+-- 
+Romain Izard
