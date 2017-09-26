@@ -1,68 +1,44 @@
-Return-Path: <nicoleotsuka@gmail.com>
-Return-Path: <nicoleotsuka@gmail.com>
-Date: Fri, 15 Sep 2017 22:26:28 -0700
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
-	thierry.reding@gmail.com, sboyd@codeaurora.org,
-	mturquette@baylibre.com, pgaikwad@nvidia.com
-Subject: Re: [PATCH] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Message-ID: <20170916052626.GA3704@Asurada>
-References: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
- <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Leo Yan <leo.yan@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk: hisilicon: Delete an error message for a failed memory
+ allocation in hisi_register_clkgate_sep()
+Message-ID: <920f1461-2c2a-430f-28ef-18af18788889@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 22:05:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 12:31:45PM +0300, Peter De Schrijver wrote:
-> Apart from the typo in the commit message (preemption rather than preemtion):
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 22:00:05 +0200
 
-Sent a v2 to correct it. And included your Acked-by.
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks
+This issue was detected by using the Coccinelle software.
 
-> 
-> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> On Thu, Sep 14, 2017 at 06:36:14PM -0700, Nicolin Chen wrote:
-> > Below is the call trace of tegra210_init_pllu() function:
-> >   start_kernel()
-> >   -> time_init()
-> >   --> of_clk_init()
-> >   ---> tegra210_clock_init()
-> >   ----> tegra210_pll_init()
-> >   -----> tegra210_init_pllu()
-> > 
-> > Because the preemtion is disabled in the start_kernel before calling
-> > time_init, tegra210_init_pllu is actually in an atomic context while
-> > it includes a readl_relaxed_poll_timeout that might sleep.
-> > 
-> > So this patch just changes this readl_relaxed_poll_timeout() to its
-> > atomic version.
-> > 
-> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra210.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 0b9789a..ea695c4 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
-> >  	reg |= PLL_ENABLE;
-> >  	writel(reg, clk_base + PLLU_BASE);
-> >  
-> > -	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
-> > -				   reg & PLL_BASE_LOCK, 2, 1000);
-> > +	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
-> > +					  reg & PLL_BASE_LOCK, 2, 1000);
-> >  	if (!(reg & PLL_BASE_LOCK)) {
-> >  		pr_err("Timed out waiting for PLL_U to lock\n");
-> >  		return -ETIMEDOUT;
-> > -- 
-> > 2.1.4
-> > 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/hisilicon/clkgate-separated.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
+index 7908bc3c9ec7..f028bcffe12c 100644
+--- a/drivers/clk/hisilicon/clkgate-separated.c
++++ b/drivers/clk/hisilicon/clkgate-separated.c
+@@ -105,10 +105,8 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
+ 	struct clk_init_data init;
+ 
+ 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
+-	if (!sclk) {
+-		pr_err("%s: fail to allocate separated gated clk\n", __func__);
++	if (!sclk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &clkgate_separated_ops;
+-- 
+2.14.1
