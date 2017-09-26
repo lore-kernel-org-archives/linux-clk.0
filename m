@@ -1,83 +1,80 @@
-Return-Path: <jeremy.linton@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-acpi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com,
-	hanjun.guo@linaro.org,
-	lorenzo.pieralisi@arm.com,
-	rjw@rjwysocki.net,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	jhugo@codeaurora.org,
-	wangxiongfeng2@huawei.com,
-	Jonathan.Zhang@cavium.com,
-	ahs3@redhat.com,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2 5/6] arm64: Fixup users of topology_physical_package_id
-Date: Tue, 19 Sep 2017 13:47:50 -0500
-Message-Id: <20170919184751.25110-6-jeremy.linton@arm.com>
-In-Reply-To: <20170919184751.25110-1-jeremy.linton@arm.com>
-References: <20170919184751.25110-1-jeremy.linton@arm.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 01/13] clk: sunxi-ng: sun6i: Export video PLLs
+Date: Tue, 26 Sep 2017 14:59:07 +0800
+Message-Id: <20170926065919.24446-2-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-There are a few arm64 specific users (cpufreq, psci, etc) which really
-want the cluster rather than the topology_physical_package_id(). Lets
-convert those users to topology_cod_id(). That way when we start
-differentiating the socket/cluster they will continue to behave correctly.
+The 2x outputs of the 2 video PLL clocks are directly used by the
+HDMI controller block.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Export them so they can be referenced in the device tree.
+
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk-mb86s7x.c        | 2 +-
- drivers/cpufreq/arm_big_little.c | 2 +-
- drivers/firmware/psci_checker.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.h      | 8 ++++++--
+ include/dt-bindings/clock/sun6i-a31-ccu.h | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-mb86s7x.c b/drivers/clk/clk-mb86s7x.c
-index 2a83a3ff1d09..da4b456f9afc 100644
---- a/drivers/clk/clk-mb86s7x.c
-+++ b/drivers/clk/clk-mb86s7x.c
-@@ -338,7 +338,7 @@ static struct clk_hw *mb86s7x_clclk_register(struct device *cpu_dev)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
+index 4e434011e9e7..27e6ad4133ab 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
+@@ -27,7 +27,9 @@
+ #define CLK_PLL_AUDIO_4X	4
+ #define CLK_PLL_AUDIO_8X	5
+ #define CLK_PLL_VIDEO0		6
+-#define CLK_PLL_VIDEO0_2X	7
++
++/* The PLL_VIDEO0_2X clock is exported */
++
+ #define CLK_PLL_VE		8
+ #define CLK_PLL_DDR		9
  
- 	clc->hw.init = &init;
--	clc->cluster = topology_physical_package_id(cpu_dev->id);
-+	clc->cluster = topology_cod_id(cpu_dev->id);
+@@ -35,7 +37,9 @@
  
- 	init.name = dev_name(cpu_dev);
- 	init.ops = &clk_clc_ops;
-diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
-index 17504129fd77..6ee69b3820de 100644
---- a/drivers/cpufreq/arm_big_little.c
-+++ b/drivers/cpufreq/arm_big_little.c
-@@ -72,7 +72,7 @@ static struct mutex cluster_lock[MAX_CLUSTERS];
+ #define CLK_PLL_PERIPH_2X	11
+ #define CLK_PLL_VIDEO1		12
+-#define CLK_PLL_VIDEO1_2X	13
++
++/* The PLL_VIDEO1_2X clock is exported */
++
+ #define CLK_PLL_GPU		14
+ #define CLK_PLL_MIPI		15
+ #define CLK_PLL9		16
+diff --git a/include/dt-bindings/clock/sun6i-a31-ccu.h b/include/dt-bindings/clock/sun6i-a31-ccu.h
+index 4482530fb6f5..c5d13340184a 100644
+--- a/include/dt-bindings/clock/sun6i-a31-ccu.h
++++ b/include/dt-bindings/clock/sun6i-a31-ccu.h
+@@ -43,8 +43,12 @@
+ #ifndef _DT_BINDINGS_CLK_SUN6I_A31_H_
+ #define _DT_BINDINGS_CLK_SUN6I_A31_H_
  
- static inline int raw_cpu_to_cluster(int cpu)
- {
--	return topology_physical_package_id(cpu);
-+	return topology_cod_id(cpu);
- }
++#define CLK_PLL_VIDEO0_2X	7
++
+ #define CLK_PLL_PERIPH		10
  
- static inline int cpu_to_cluster(int cpu)
-diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
-index 6523ce962865..a9465f5d344a 100644
---- a/drivers/firmware/psci_checker.c
-+++ b/drivers/firmware/psci_checker.c
-@@ -202,7 +202,7 @@ static int hotplug_tests(void)
- 	 */
- 	for (i = 0; i < nb_cluster; ++i) {
- 		int cluster_id =
--			topology_physical_package_id(cpumask_any(clusters[i]));
-+			topology_cod_id(cpumask_any(clusters[i]));
- 		ssize_t len = cpumap_print_to_pagebuf(true, page_buf,
- 						      clusters[i]);
- 		/* Remove trailing newline. */
++#define CLK_PLL_VIDEO1_2X	13
++
+ #define CLK_CPU			18
+ 
+ #define CLK_AHB1_MIPIDSI	23
 -- 
-2.13.5
+2.14.1
