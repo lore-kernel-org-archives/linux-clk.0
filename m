@@ -1,40 +1,85 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 27 Sep 2017 10:42:51 -0700
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk/spear: Delete five error messages for a failed
- memory allocation
-Message-ID: <20170927174251.GD12211@ubuntu>
-References: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 08/13] regmap: add iopoll-like polling macro for regmap_field
+Date: Tue, 26 Sep 2017 14:59:14 +0800
+Message-Id: <20170926065919.24446-9-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27-09-17, 18:15, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 18:00:21 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/clk/spear/clk-aux-synth.c  | 4 +---
->  drivers/clk/spear/clk-frac-synth.c | 4 +---
->  drivers/clk/spear/clk-gpt-synth.c  | 4 +---
->  drivers/clk/spear/clk-vco-pll.c    | 8 ++------
->  4 files changed, 5 insertions(+), 15 deletions(-)
+This patch adds a macro regmap_field_read_poll_timeout that works
+similar to the readx_poll_timeout defined in linux/iopoll.h, except
+that this can also return the error value returned by a failed
+regmap_field_read.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ include/linux/regmap.h | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 978abfbac617..93a4663d7acb 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -139,6 +139,45 @@ struct reg_sequence {
+ 	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
+ })
+ 
++/**
++ * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
++ *
++ * @field: Regmap field to read from
++ * @val: Unsigned integer variable to read the value into
++ * @cond: Break condition (usually involving @val)
++ * @sleep_us: Maximum time to sleep between reads in us (0
++ *            tight-loops).  Should be less than ~20ms since usleep_range
++ *            is used (see Documentation/timers/timers-howto.txt).
++ * @timeout_us: Timeout in us, 0 means never timeout
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_field_read
++ * error return value in case of a error read. In the two former cases,
++ * the last read value at @addr is stored in @val. Must not be called
++ * from atomic context if sleep_us or timeout_us are used.
++ *
++ * This is modelled after the readx_poll_timeout macros in linux/iopoll.h.
++ */
++#define regmap_field_read_poll_timeout(field, val, cond, sleep_us, timeout_us) \
++({ \
++	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
++	int pollret; \
++	might_sleep_if(sleep_us); \
++	for (;;) { \
++		pollret = regmap_field_read((field), &(val)); \
++		if (pollret) \
++			break; \
++		if (cond) \
++			break; \
++		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
++			pollret = regmap_field_read((field), &(val)); \
++			break; \
++		} \
++		if (sleep_us) \
++			usleep_range((sleep_us >> 2) + 1, sleep_us); \
++	} \
++	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
++})
++
+ #ifdef CONFIG_REGMAP
+ 
+ enum regmap_endian {
 -- 
-viresh
+2.14.1
