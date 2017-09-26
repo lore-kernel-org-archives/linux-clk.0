@@ -1,57 +1,50 @@
-Return-Path: <alexander.levin@verizon.com>
-From: "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
-Cc: Jose Abreu <Jose.Abreu@synopsys.com>, Jose Abreu <joabreu@synopsys.com>,
-	Carlos Palminha <palminha@synopsys.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "Levin, Alexander (Sasha Levin)"
-	<alexander.levin@verizon.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH for 4.9 22/59] clk/axs10x: Clear init field in driver probe
-Date: Thu, 14 Sep 2017 15:51:12 +0000
-Message-ID: <20170914155051.8289-22-alexander.levin@verizon.com>
-References: <20170914155051.8289-1-alexander.levin@verizon.com>
-In-Reply-To: <20170914155051.8289-1-alexander.levin@verizon.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Return-Path: alexander.levin@one.verizon.com
+In-Reply-To: <20170923050029.19013-1-bjorn.andersson@linaro.org>
+References: <20170923050029.19013-1-bjorn.andersson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 27 Sep 2017 01:57:29 +0200
+Message-ID: <CAPDyKFoS5QoMGx_SeZf4tJR6QSttAmZ8upVP17UyGceT9OsJtg@mail.gmail.com>
+Subject: Re: [PATCH] clk: Export clk_bulk_prepare()
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+On 23 September 2017 at 07:00, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> Allow clk_bulk_prepare() to be referenced by kernel modules by adding
+> the missing EXPORT_SYMBOL_GPL().
+>
+> Fixes: 266e4e9d9150 ("clk: add clk_bulk_get accessories")
+> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 6205406cf6f282d622f31de25036e6d1ab3a2ff5 ]
+If not too late,
 
-Init field must be cleared in driver probe as this structure is not
-dinamically allocated. If not, wrong flags can be passed to core.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Carlos Palminha <palminha@synopsys.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Fixes: 923587aafc2c ("clk/axs10x: Add I2S PLL clock driver")
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-Link: lkml.kernel.org/r/040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717=
-.git.joabreu@synopsys.com
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
----
- drivers/clk/axs10x/i2s_pll_clock.c | 1 +
- 1 file changed, 1 insertion(+)
+Kind regards
+Uffe
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pl=
-l_clock.c
-index 411310d29581..02d3bcd6216c 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *pd=
-ev)
- 	if (IS_ERR(pll_clk->base))
- 		return PTR_ERR(pll_clk->base);
-=20
-+	memset(&init, 0, sizeof(init));
- 	clk_name =3D node->name;
- 	init.name =3D clk_name;
- 	init.ops =3D &i2s_pll_ops;
---=20
-2.11.0
+> ---
+>  drivers/clk/clk-bulk.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> index c834f5abfc49..4c10456f8a32 100644
+> --- a/drivers/clk/clk-bulk.c
+> +++ b/drivers/clk/clk-bulk.c
+> @@ -105,6 +105,7 @@ int __must_check clk_bulk_prepare(int num_clks,
+>
+>         return  ret;
+>  }
+> +EXPORT_SYMBOL_GPL(clk_bulk_prepare);
+>
+>  #endif /* CONFIG_HAVE_CLK_PREPARE */
+>
+> --
+> 2.12.0
+>
