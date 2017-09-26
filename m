@@ -1,45 +1,29 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] X-Gene clock: Adjustments for seven function
+ implementations
+Message-ID: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 21:40:05 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170908213802.086308649@cogentembedded.com>
-References: <20170908213802.086308649@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Sep 2017 16:30:40 +0200
-Message-ID: <CAMuHMdWyahPE4mWPt5MTTj-qdtUTZFjZum0LnOR-8miif5vMdw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7797 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add R-Car V3M (R8A77970) Clock Pulse Generator / Module Standby and
-> Software Reset support,  using the CPG/MSSR driver core and the common
-> R-Car Gen3 code.
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 21:36:54 +0200
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.15.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Gr{oetje,eeting}s,
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Adjust six checks for null pointers
 
-                        Geert
+ drivers/clk/clk-xgene.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.14.1
