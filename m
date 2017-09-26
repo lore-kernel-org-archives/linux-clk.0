@@ -1,90 +1,63 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH 4/6] ASoC: Intel: Skylake: Register clock
- device and ops
-To: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Cc: alsa-devel@alsa-project.org, harshapriya.n@intel.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
- Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
- patches.audio@intel.com, tiwai@suse.de, broonie@kernel.org,
- linux-clk@vger.kernel.org
-References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
- <1504794565-19168-5-git-send-email-subhransu.s.prusty@intel.com>
- <6e21a038-96d4-b58d-b1c7-ba5a5f32e7a8@linux.intel.com>
- <20170908033135.GB19877@subhransu-desktop>
- <20170908050120.GC19877@subhransu-desktop>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <77992acc-bf07-0c59-1429-74c5162dbd0e@linux.intel.com>
-Date: Fri, 8 Sep 2017 08:41:54 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.17.12]:59752 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967121AbdIZPF1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Sep 2017 11:05:27 -0400
+To: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        Alex Elder <elder@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] [media] clk-kona-setup: Delete two error messages for a
+ failed memory allocation in parent_process()
+Message-ID: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 17:05:19 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170908050120.GC19877@subhransu-desktop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9/8/17 12:01 AM, Subhransu S. Prusty wrote:
-> On Fri, Sep 08, 2017 at 09:01:36AM +0530, Subhransu S. Prusty wrote:
->> On Thu, Sep 07, 2017 at 08:48:38PM -0500, Pierre-Louis Bossart wrote:
->>>
->>>
->>> On 09/07/2017 09:29 AM, Subhransu S. Prusty wrote:
->>>> From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
->>>>
->>>> Create a platform device and register the clock ops. Clock
->>>> prepare/unprepare are used to enable/disable the clock as the IPC will be
->>>> sent in non-atomic context. The clk set_dma_control IPC structures are
->>>> populated during the set_rate callback and IPC is sent to enable the clock
->>>> during prepare callback.
->>>>
->>> [snip]
->>>> +
->>>> +static int skl_clk_prepare(void *pvt_data, u32 id, unsigned long rate)
->>>> +{
->>>> +	struct skl *skl = pvt_data;
->>>> +	struct skl_clk_rate_cfg_table *rcfg;
->>>> +	int vbus_id, clk_type, ret;
->>>> +
->>>> +	clk_type = skl_get_clk_type(id);
->>>> +	if (clk_type < 0)
->>>> +		return -EINVAL;
->>>> +
->>>> +	ret = skl_get_vbus_id(id, clk_type);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	vbus_id = ret;
->>>> +
->>>> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
->>>> +	if (!rcfg)
->>>> +		return -EINVAL;
->>>> +
->>>> +	ret = skl_send_clk_dma_control(skl, rcfg, vbus_id, clk_type, true);
->>>> +
->>>> +	return ret;
->>>> +}
->>> In this patchset, the clocks are configured from the machine driver,
->>> and the enable/disable conveniently placed in
->>> platform_clock_control() or hw_params(), where the DSP is most
->>> likely active.
->>> If you expose a clock, codec driver implementers may want to use
->>> them directly instead of relying on a machine driver. A number of
->>> existing codecs do use the clk API, so there could be a case where a
->>> codec driver calls devm_clk_get and clk_prepare_enable(), without
->>> any ability to know what state the DSP is in.
->>> What happens then if the DSP is in suspend? Does this force it back
->>> to D0? Does the virtual clock driver return an error? Or are you
->>> using the clk API with some restrictions on when the clock can be
->>> configured?
->>
->> No, clk enable will not force the DSP to D0. So if the DSP is not active,
->> the IPC will timeout and error will be propagated to the caller.
-> 
-> Or may be it makes sense to enable the runtime pm for clk driver so that it
-> can activate the DSP. I will check this.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 16:54:20 +0200
 
-I was thinking of another case: we should not make the assumption that 
-there is always a platform clock control and a hw_params callback, e.g. 
-when an external component seen as a dummy codec needs the mclk/bitclock 
-at all times to drive a second-level set of audio devices. In those 
-cases the machine driver will get/enable the clock at startup and it 
-needs to remain on no matter what the DSP state is. That's probably 
-another case for disabling runtime-pm for as long as the machine driver 
-wants the clock.
+Omit extra messages for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/bcm/clk-kona-setup.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+index c37a7f0e83aa..281f4322355c 100644
+--- a/drivers/clk/bcm/clk-kona-setup.c
++++ b/drivers/clk/bcm/clk-kona-setup.c
+@@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
+ 	 */
+ 	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
+ 			       GFP_KERNEL);
+-	if (!parent_names) {
+-		pr_err("%s: error allocating %u parent names\n", __func__,
+-				parent_count);
++	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* There is at least one parent, so allocate a selector array */
+ 	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
+ 				   GFP_KERNEL);
+ 	if (!parent_sel) {
+-		pr_err("%s: error allocating %u parent selectors\n", __func__,
+-				parent_count);
+ 		kfree(parent_names);
+ 
+ 		return ERR_PTR(-ENOMEM);
+-- 
+2.14.1
+
