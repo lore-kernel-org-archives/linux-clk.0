@@ -1,49 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 13:28:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Wei Xu <xuwei5@hisilicon.com>
-Cc: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Dmitry Shmidt <dimitrysh@google.com>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH 2/2] arm64: dts: hi6220: enable watchdog
-Message-ID: <20170901202816.GZ21656@codeaurora.org>
-References: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
- <1503993518-24428-2-git-send-email-leo.yan@linaro.org>
- <20170901013233.GL21656@codeaurora.org>
- <59A937E7.2060303@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <59A937E7.2060303@hisilicon.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 07/13] dt-bindings: display: sun4i: Add binding for A31 HDMI controller
+Date: Tue, 26 Sep 2017 14:59:13 +0800
+Message-Id: <20170926065919.24446-8-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Wei Xu wrote:
-> Hi Stephen,
-> 
-> On 2017/9/1 2:32, Stephen Boyd wrote:
-> > On 08/29, Leo Yan wrote:
-> >> From: Dmitry Shmidt <dimitrysh@google.com>
-> >>
-> >> This patch is to add watchdog binding for Hi6220 on Hikey board.
-> >>
-> >> Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
-> >> ---
-> > 
-> > This will go through arm-soc?
-> > 
-> 
-> Can you pick up it for v4.14?
-> Otherwise I am fine to pick up it and queue for v4.15.
+The HDMI controller in the A31 SoC is slightly different from the
+earlier version. In addition to the TMDS clock and DDC controls,
+this version now takes a second DDC clock input.
 
-Sounds like it will go for v4.15. Otherwise, you can send it to
-arm-soc with the raw number instead of #define number and then
-fix it up to use the #define later.
+Add a compatible string for it, and add the DDC clock input to the
+list of clocks required.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 92441086caba..46df3b78ae9e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -41,14 +41,17 @@ CEC. It is one end of the pipeline.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun5i-a10s-hdmi
++    * allwinner,sun6i-a31-hdmi
+   - reg: base address and size of memory-mapped region
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the HDMI encoder
+     * ahb: the HDMI interface clock
+     * mod: the HDMI module clock
++    * ddc: the HDMI ddc clock (A31 only)
+     * pll-0: the first video PLL
+     * pll-1: the second video PLL
+   - clock-names: the clock names mentioned above
++  - resets: phandle to the reset control for the HDMI encoder (A31 only)
+   - dmas: phandles to the DMA channels used by the HDMI encoder
+     * ddc-tx: The channel for DDC transmission
+     * ddc-rx: The channel for DDC reception
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
