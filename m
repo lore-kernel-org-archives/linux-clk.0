@@ -1,202 +1,420 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v3 8/9] soc: mediatek: add MT2712 scpsys support
-Date: Tue, 12 Sep 2017 15:21:48 +0800
-Message-ID: <1505200909-23552-9-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 06/10] ARM: dts: Add Broadcom Hurricane 2 DTS include file
+Date: Mon, 25 Sep 2017 17:09:27 -0700
+Message-Id: <20170926000931.670-7-f.fainelli@gmail.com>
+In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
+References: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-add scpsys driver for MT2712
+Describe the Broadcom Hurricane 2 SoC comprised of a Cortex-A9 CPU
+complex along with standard iProc peripherals:
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+* timers
+* SPI controller
+* NAND controller
+* a single AMAC (Ethernet MAC controller)
+* dual PCIe controllers
+
+The design is largely similar to existing iProc-based SoCs such as
+Northstar Plus.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 112 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 106 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/bcm-hr2.dtsi | 368 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 368 insertions(+)
+ create mode 100644 arch/arm/boot/dts/bcm-hr2.dtsi
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 28c6e6a..c8abd06 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -21,6 +21,7 @@
- #include <linux/soc/mediatek/infracfg.h>
- 
- #include <dt-bindings/power/mt2701-power.h>
-+#include <dt-bindings/power/mt2712-power.h>
- #include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/power/mt7622-power.h>
- #include <dt-bindings/power/mt8173-power.h>
-@@ -32,7 +33,7 @@
- #define SPM_DIS_PWR_CON			0x023c
- #define SPM_CONN_PWR_CON		0x0280
- #define SPM_VEN2_PWR_CON		0x0298
--#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173 */
-+#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173, MT2712 */
- #define SPM_BDP_PWR_CON			0x029c	/* MT2701 */
- #define SPM_ETH_PWR_CON			0x02a0
- #define SPM_HIF_PWR_CON			0x02a4
-@@ -40,12 +41,12 @@
- #define SPM_MFG_2D_PWR_CON		0x02c0
- #define SPM_MFG_ASYNC_PWR_CON		0x02c4
- #define SPM_USB_PWR_CON			0x02cc
-+#define SPM_USB2_PWR_CON		0x02d4	/* MT2712 */
- #define SPM_ETHSYS_PWR_CON		0x02e0	/* MT7622 */
- #define SPM_HIF0_PWR_CON		0x02e4	/* MT7622 */
- #define SPM_HIF1_PWR_CON		0x02e8	/* MT7622 */
- #define SPM_WB_PWR_CON			0x02ec	/* MT7622 */
- 
--
- #define SPM_PWR_STATUS			0x060c
- #define SPM_PWR_STATUS_2ND		0x0610
- 
-@@ -64,12 +65,13 @@
- #define PWR_STATUS_ETH			BIT(15)
- #define PWR_STATUS_HIF			BIT(16)
- #define PWR_STATUS_IFR_MSC		BIT(17)
-+#define PWR_STATUS_USB2			BIT(19)	/* MT2712 */
- #define PWR_STATUS_VENC_LT		BIT(20)
- #define PWR_STATUS_VENC			BIT(21)
--#define PWR_STATUS_MFG_2D		BIT(22)
--#define PWR_STATUS_MFG_ASYNC		BIT(23)
--#define PWR_STATUS_AUDIO		BIT(24)
--#define PWR_STATUS_USB			BIT(25)
-+#define PWR_STATUS_MFG_2D		BIT(22)	/* MT8173 */
-+#define PWR_STATUS_MFG_ASYNC		BIT(23)	/* MT8173 */
-+#define PWR_STATUS_AUDIO		BIT(24)	/* MT8173, MT2712 */
-+#define PWR_STATUS_USB			BIT(25)	/* MT8173, MT2712 */
- #define PWR_STATUS_ETHSYS		BIT(24)	/* MT7622 */
- #define PWR_STATUS_HIF0			BIT(25)	/* MT7622 */
- #define PWR_STATUS_HIF1			BIT(26)	/* MT7622 */
-@@ -618,6 +620,85 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- };
- 
- /*
-+ * MT2712 power domain support
-+ */
-+static const struct scp_domain_data scp_domain_data_mt2712[] = {
-+	[MT2712_POWER_DOMAIN_MM] = {
-+		.name = "mm",
-+		.sta_mask = PWR_STATUS_DISP,
-+		.ctl_offs = SPM_DIS_PWR_CON,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_VDEC] = {
-+		.name = "vdec",
-+		.sta_mask = PWR_STATUS_VDEC,
-+		.ctl_offs = SPM_VDE_PWR_CON,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM, CLK_VDEC},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_VENC] = {
-+		.name = "venc",
-+		.sta_mask = PWR_STATUS_VENC,
-+		.ctl_offs = SPM_VEN_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = PWR_STATUS_ISP,
-+		.ctl_offs = SPM_ISP_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.clk_id = {CLK_MM},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_AUDIO] = {
-+		.name = "audio",
-+		.sta_mask = PWR_STATUS_AUDIO,
-+		.ctl_offs = SPM_AUDIO_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_AUDIO},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_USB] = {
-+		.name = "usb",
-+		.sta_mask = PWR_STATUS_USB,
-+		.ctl_offs = SPM_USB_PWR_CON,
-+		.sram_pdn_bits = GENMASK(10, 8),
-+		.sram_pdn_ack_bits = GENMASK(14, 12),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_USB2] = {
-+		.name = "usb2",
-+		.sta_mask = PWR_STATUS_USB2,
-+		.ctl_offs = SPM_USB2_PWR_CON,
-+		.sram_pdn_bits = GENMASK(10, 8),
-+		.sram_pdn_ack_bits = GENMASK(14, 12),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_MFG] = {
-+		.name = "mfg",
-+		.sta_mask = PWR_STATUS_MFG,
-+		.ctl_offs = SPM_MFG_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(19, 16),
-+		.clk_id = {CLK_MFG},
-+		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
-+		.active_wakeup = true,
-+	},
-+};
-+
+diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.dtsi
+new file mode 100644
+index 000000000000..467181b9d609
+--- /dev/null
++++ b/arch/arm/boot/dts/bcm-hr2.dtsi
+@@ -0,0 +1,368 @@
 +/*
-  * MT6797 power domain support
-  */
- 
-@@ -852,6 +933,22 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	}
- };
- 
-+static const struct scp_soc_data mt2712_data = {
-+	.domains = scp_domain_data_mt2712,
-+	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
-+	.regs = {
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		},
-+		.bus_prot = {
-+			.set_offs = INFRA_TOPAXI_PROTECTEN_SET,
-+			.clr_offs = INFRA_TOPAXI_PROTECTEN_CLR,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
-+	}
-+};
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom Corporation nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
- static const struct scp_soc_data mt6797_data = {
- 	.domains = scp_domain_data_mt6797,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
-@@ -910,6 +1007,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.compatible = "mediatek,mt2701-scpsys",
- 		.data = &mt2701_data,
- 	}, {
-+		.compatible = "mediatek,mt2712-scpsys",
-+		.data = &mt2712_data,
-+	}, {
- 		.compatible = "mediatek,mt6797-scpsys",
- 		.data = &mt6797_data,
- 	}, {
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++#include "skeleton.dtsi"
++
++/ {
++	compatible = "brcm,hr2";
++	model = "Broadcom Hurricane 2 SoC";
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			next-level-cache = <&L2>;
++			reg = <0x0>;
++		};
++	};
++
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>;
++	};
++
++	mpcore {
++		compatible = "simple-bus";
++		ranges = <0x00000000 0x19000000 0x00023000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		a9pll: arm_clk@00000 {
++			#clock-cells = <0>;
++			compatible = "brcm,hr2-armpll";
++			clocks = <&osc>;
++			reg = <0x00000 0x1000>;
++		};
++
++		timer@20200 {
++			compatible = "arm,cortex-a9-global-timer";
++			reg = <0x20200 0x100>;
++			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&periph_clk>;
++		};
++
++		twd-timer@20600 {
++			compatible = "arm,cortex-a9-twd-timer";
++			reg = <0x20600 0x20>;
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&periph_clk>;
++		};
++
++		twd-watchdog@20620 {
++			compatible = "arm,cortex-a9-twd-wdt";
++			reg = <0x20620 0x20>;
++			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
++						  IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&periph_clk>;
++		};
++
++		gic: interrupt-controller@21000 {
++			compatible = "arm,cortex-a9-gic";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x21000 0x1000>,
++			      <0x20100 0x100>;
++		};
++
++		L2: l2-cache {
++			compatible = "arm,pl310-cache";
++			reg = <0x22000 0x1000>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	clocks {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		osc: oscillator {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <25000000>;
++		};
++
++		periph_clk: periph_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&a9pll>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++	};
++
++	axi {
++		compatible = "simple-bus";
++		ranges = <0x00000000 0x18000000 0x0011c40c>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		uart0: serial@0300 {
++			compatible = "ns16550a";
++			reg = <0x0300 0x100>;
++			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&osc>;
++			status = "disabled";
++		};
++
++		uart1: serial@0400 {
++			compatible = "ns16550a";
++			reg = <0x0400 0x100>;
++			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&osc>;
++			status = "disabled";
++		};
++
++		dma@20000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x20000 0x1000>;
++			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			status = "disabled";
++		};
++
++		amac0: ethernet@22000 {
++			compatible = "brcm,nsp-amac";
++			reg = <0x022000 0x1000>,
++			      <0x110000 0x1000>;
++			reg-names = "amac_base", "idm_base";
++			interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		nand: nand@26000 {
++			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
++			reg = <0x026000 0x600>,
++			      <0x11b408 0x600>,
++			      <0x026f00 0x20>;
++			reg-names = "nand", "iproc-idm", "iproc-ext";
++			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			brcm,nand-has-wp;
++		};
++
++		gpiob: gpio@30000 {
++			compatible = "brcm,iproc-hr2-gpio", "brcm,iproc-gpio";
++			reg = <0x30000 0x50>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			ngpios = <4>;
++			interrupt-controller;
++			interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		pwm: pwm@31000 {
++			compatible = "brcm,iproc-pwm";
++			reg = <0x31000 0x28>;
++			clocks = <&osc>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
++		rng: rng@33000 {
++			compatible = "brcm,bcm-nsp-rng";
++			reg = <0x33000 0x14>;
++		};
++
++		qspi: qspi@27200 {
++			compatible = "brcm,spi-bcm-qspi", "brcm,spi-nsp-qspi";
++			reg = <0x027200 0x184>,
++			      <0x027000 0x124>,
++			      <0x11c408 0x004>,
++			      <0x0273a0 0x01c>;
++			reg-names = "mspi", "bspi", "intr_regs",
++				    "intr_status_reg";
++			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "spi_lr_fullness_reached",
++					  "spi_lr_session_aborted",
++					  "spi_lr_impatient",
++					  "spi_lr_session_done",
++					  "spi_lr_overhead",
++					  "mspi_done",
++					  "mspi_halted";
++			num-cs = <2>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			/* partitions defined in board DTS */
++		};
++
++		ccbtimer0: timer@34000 {
++			compatible = "arm,sp804";
++			reg = <0x34000 0x1000>;
++			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		ccbtimer1: timer@35000 {
++			compatible = "arm,sp804";
++			reg = <0x35000 0x1000>;
++			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		i2c0: i2c@38000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x38000 0x50>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 95 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++		};
++
++		watchdog@39000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x39000 0x1000>;
++			interrupts = <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		i2c1: i2c@3b000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x3b000 0x50>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++		};
++	};
++
++	pflash: nor@20000000 {
++		compatible = "cfi-flash", "jedec-flash";
++		reg = <0x20000000 0x04000000>;
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		/* partitions defined in board DTS */
++	};
++
++	pcie0: pcie@18012000 {
++		compatible = "brcm,iproc-pcie";
++		reg = <0x18012000 0x1000>;
++
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 0>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 186 IRQ_TYPE_NONE>;
++
++		linux,pci-domain = <0>;
++
++		bus-range = <0x00 0xff>;
++
++		#address-cells = <3>;
++		#size-cells = <2>;
++		device_type = "pci";
++
++		/* Note: The HW does not support I/O resources.  So,
++		 * only the memory resource range is being specified.
++		 */
++		ranges = <0x82000000 0 0x08000000 0x08000000 0 0x8000000>;
++
++		status = "disabled";
++
++		msi-parent = <&msi0>;
++		msi0: msi@18012000 {
++			compatible = "brcm,iproc-msi";
++			msi-controller;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 182 IRQ_TYPE_NONE>,
++				     <GIC_SPI 183 IRQ_TYPE_NONE>,
++				     <GIC_SPI 184 IRQ_TYPE_NONE>,
++				     <GIC_SPI 185 IRQ_TYPE_NONE>;
++			brcm,pcie-msi-inten;
++		};
++	};
++
++	pcie1: pcie@18013000 {
++		compatible = "brcm,iproc-pcie";
++		reg = <0x18013000 0x1000>;
++
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 0>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 192 IRQ_TYPE_NONE>;
++
++		linux,pci-domain = <1>;
++
++		bus-range = <0x00 0xff>;
++
++		#address-cells = <3>;
++		#size-cells = <2>;
++		device_type = "pci";
++
++		/* Note: The HW does not support I/O resources.  So,
++		 * only the memory resource range is being specified.
++		 */
++		ranges = <0x82000000 0 0x40000000 0x40000000 0 0x8000000>;
++
++		status = "disabled";
++
++		msi-parent = <&msi1>;
++		msi1: msi@18013000 {
++			compatible = "brcm,iproc-msi";
++			msi-controller;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_NONE>,
++				     <GIC_SPI 189 IRQ_TYPE_NONE>,
++				     <GIC_SPI 190 IRQ_TYPE_NONE>,
++				     <GIC_SPI 191 IRQ_TYPE_NONE>;
++			brcm,pcie-msi-inten;
++		};
++	};
++};
 -- 
-1.9.1
+2.14.1
