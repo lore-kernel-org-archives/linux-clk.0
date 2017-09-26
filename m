@@ -1,58 +1,44 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 7/9] soc: mediatek: add dependent clock jpgdec/audio for scpsys
-Date: Tue, 19 Sep 2017 12:00:28 +0800
-Message-ID: <1505793630-12590-8-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 2/2] clk-mux: Improve a size determination in
+ clk_hw_register_mux_table()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+Message-ID: <7d70d3de-ba3b-3619-05a8-9a4abe0dacfe@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 18:22:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-There are dependent clock jpgdec/audio in scpsys on MT2712,
-and will exist three dependent clocks on MT2712 VDEC.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 17:30:06 +0200
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/clk-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 2569390..28c6e6a 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -84,6 +84,8 @@ enum clk_id {
- 	CLK_ETHIF,
- 	CLK_VDEC,
- 	CLK_HIFSEL,
-+	CLK_JPGDEC,
-+	CLK_AUDIO,
- 	CLK_MAX,
- };
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 1746dbf2f7ea..39cabe157163 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -134,7 +134,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 	}
  
-@@ -96,10 +98,12 @@ enum clk_id {
- 	"ethif",
- 	"vdec",
- 	"hif_sel",
-+	"jpgdec",
-+	"audio",
- 	NULL,
- };
+ 	/* allocate the mux */
+-	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
  
--#define MAX_CLKS	2
-+#define MAX_CLKS	3
- 
- struct scp_domain_data {
- 	const char *name;
 -- 
-1.9.1
+2.14.1
