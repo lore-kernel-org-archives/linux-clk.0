@@ -1,122 +1,78 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 03/13] drm/sun4i: tcon: Add support for demuxing TCON output on A31
-Date: Tue, 26 Sep 2017 14:59:09 +0800
-Message-Id: <20170926065919.24446-4-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 07/10] ARM: debug: Add Hurricane 2 UART2 debug addresses
+Date: Mon, 25 Sep 2017 17:09:28 -0700
+Message-Id: <20170926000931.670-8-f.fainelli@gmail.com>
+In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
+References: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On systems with 2 TCONs such as the A31, it is possible to demux the
-output of the TCONs to one encoder.
+Broadcom Hurricane 2 SoCs typically use their secondary UART for
+debug/console, provide a known good location for that.
 
-Add support for this for the A31.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ arch/arm/Kconfig.debug | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index e853dfe51389..770b843a6fa9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -14,9 +14,12 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_encoder.h>
- #include <drm/drm_modes.h>
- #include <drm/drm_of.h>
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 6dcea8e8e941..0346805fe33c 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -169,6 +169,11 @@ choice
+ 		depends on ARCH_BCM_5301X || ARCH_BCM_NSP
+ 		select DEBUG_UART_8250
  
-+#include <uapi/drm/drm_mode.h>
++	config DEBUG_BCM_HR2
++		bool "Kernel low-level debugging on Hurricane 2 UART2"
++		depends on ARCH_BCM_HR2
++		select DEBUG_UART_8250
 +
- #include <linux/component.h>
- #include <linux/ioport.h>
- #include <linux/of_address.h>
-@@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
- }
- EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+ 	config DEBUG_BCM_KONA_UART
+ 		bool "Kernel low-level debugging messages via BCM KONA UART"
+ 		depends on ARCH_BCM_MOBILE
+@@ -1508,6 +1513,7 @@ config DEBUG_UART_PHYS
+ 	default 0x11009000 if DEBUG_MT8135_UART3
+ 	default 0x16000000 if DEBUG_INTEGRATOR
+ 	default 0x18000300 if DEBUG_BCM_5301X
++	default 0x18000400 if DEBUG_BCM_HR2
+ 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+ 	default 0x18020000 if DEBUG_SIRFATLAS7_UART1
+ 	default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
+@@ -1623,6 +1629,7 @@ config DEBUG_UART_VIRT
+ 	default 0xf01fb000 if DEBUG_NOMADIK_UART
+ 	default 0xf0201000 if DEBUG_BCM2835 || DEBUG_BCM2836
+ 	default 0xf1000300 if DEBUG_BCM_5301X
++	default 0xf1000400 if DEBUG_BCM_HR2
+ 	default 0xf1002000 if DEBUG_MT8127_UART0
+ 	default 0xf1006000 if DEBUG_MT6589_UART0
+ 	default 0xf1009000 if DEBUG_MT8135_UART3
+@@ -1728,7 +1735,8 @@ config DEBUG_UART_8250_SHIFT
+ 	int "Register offset shift for the 8250 debug UART"
+ 	depends on DEBUG_LL_UART_8250 || DEBUG_UART_8250
+ 	default 0 if DEBUG_FOOTBRIDGE_COM1 || ARCH_IOP32X || DEBUG_BCM_5301X || \
+-		DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || DEBUG_OMAP7XXUART3
++		DEBUG_BCM_HR2 || DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || \
++		DEBUG_OMAP7XXUART3
+ 	default 2
  
-+static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
-+{
-+	struct sun4i_drv *drv = drm->dev_private;
-+	struct sun4i_tcon *tcon;
-+
-+	list_for_each_entry(tcon, &drv->tcon_list, list)
-+		if (tcon->id == 0)
-+			return tcon;
-+
-+	dev_warn(drm->dev,
-+		 "TCON0 not found, display output muxing may not work\n");
-+
-+	return tcon;
-+}
-+
-+static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
-+{
-+	struct sun4i_tcon *tcon = sun4i_get_first_tcon(encoder->dev);
-+	int tcon_id = drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
-+	u32 shift;
-+
-+	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
-+			 encoder->name, encoder->crtc->name, tcon_id);
-+
-+	/* Only 2 TCONs */
-+	if (tcon_id >= 2)
-+		return -EINVAL;
-+
-+	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_TMDS:
-+		/* HDMI */
-+		shift = 8;
-+		break;
-+	case DRM_MODE_ENCODER_DSI:
-+		/* No MIPI DSI on A31s */
-+		if (of_device_is_compatible(tcon->dev->of_node,
-+					    "allwinner,sun6i-a31s-tcon"))
-+			return -EINVAL;
-+		shift = 0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
-+			   0x3 << shift, tcon_id << shift);
-+
-+	return 0;
-+}
-+
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			struct drm_encoder *encoder)
- {
-+	/* Get the device node of the display engine */
-+	struct device_node *node = encoder->dev->dev->of_node;
- 	u32 val;
- 
-+	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine") ||
-+	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine")) {
-+		_sun6i_tcon_set_mux(encoder);
-+		return;
-+	}
-+
- 	if (!tcon->quirks->has_unknown_mux)
- 		return;
- 
+ config DEBUG_UART_8250_WORD
 -- 
 2.14.1
