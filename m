@@ -1,47 +1,92 @@
-Return-Path: <colin.king@canonical.com>
-From: Colin King <colin.king@canonical.com>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH][clk-next] ARC: clk: fix spelling mistake: "configurarion" -> "configuration"
-Date: Mon,  4 Sep 2017 10:37:50 +0100
-Message-Id: <20170904093750.21755-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 05/13] drm/sun4i: hdmi: create a regmap for later use
+Date: Tue, 26 Sep 2017 14:59:11 +0800
+Message-Id: <20170926065919.24446-6-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+The HDMI driver is written with readl/writel I/O to the registers.
+However, to support the A31 variant, which has a different layout
+for the DDC registers, it was recommended to use regfields to have
+a cleaner implementation. To use regfields, we need to create an
+underlying regmap.
 
-Trivial fix to spelling mistake in dev_dbg message
+This patch only adds the regmap. It does not convert the existing
+driver accesses to use regmap.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk-hsdk-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  1 +
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
-index bbf237173b37..c4ee280f454d 100644
---- a/drivers/clk/clk-hsdk-pll.c
-+++ b/drivers/clk/clk-hsdk-pll.c
-@@ -139,7 +139,7 @@ static inline void hsdk_pll_set_cfg(struct hsdk_pll_clk *clk,
- 	val |= cfg->odiv << CGU_PLL_CTRL_ODIV_SHIFT;
- 	val |= cfg->band << CGU_PLL_CTRL_BAND_SHIFT;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index 1457750988da..b95512ec8eb6 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -163,6 +163,7 @@ struct sun4i_hdmi {
+ 	struct device		*dev;
  
--	dev_dbg(clk->dev, "write configurarion: %#x\n", val);
-+	dev_dbg(clk->dev, "write configuration: %#x\n", val);
+ 	void __iomem		*base;
++	struct regmap		*regmap;
  
- 	hsdk_pll_write(clk, CGU_PLL_CTRL, val);
- }
-@@ -169,7 +169,7 @@ static unsigned long hsdk_pll_recalc_rate(struct clk_hw *hw,
+ 	/* Parent clocks */
+ 	struct clk		*bus_clk;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 3cf1a6932fac..5ab811cda00e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -22,6 +22,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regmap.h>
  
- 	val = hsdk_pll_read(clk, CGU_PLL_CTRL);
+ #include "sun4i_backend.h"
+ #include "sun4i_crtc.h"
+@@ -267,6 +268,13 @@ static const struct cec_pin_ops sun4i_hdmi_cec_pin_ops = {
+ };
+ #endif
  
--	dev_dbg(clk->dev, "current configurarion: %#x\n", val);
-+	dev_dbg(clk->dev, "current configuration: %#x\n", val);
++static const struct regmap_config sun4i_hdmi_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0x580,
++};
++
+ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 			   void *data)
+ {
+@@ -321,6 +329,13 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 		goto err_disable_mod_clk;
+ 	}
  
- 	/* Check if PLL is disabled */
- 	if (val & CGU_PLL_CTRL_PD)
++	hdmi->regmap = devm_regmap_init_mmio(dev, hdmi->base,
++					     &sun4i_hdmi_regmap_config);
++	if (IS_ERR(hdmi->regmap)) {
++		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
++		return PTR_ERR(hdmi->regmap);
++	}
++
+ 	ret = sun4i_tmds_create(hdmi);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the TMDS clock\n");
 -- 
 2.14.1
