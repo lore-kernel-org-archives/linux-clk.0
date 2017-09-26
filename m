@@ -1,66 +1,177 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 2/3] clk/mmp: Use common error handling code in
- mmp_clk_register_mix()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-Message-ID: <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 09:26:23 +0200
-MIME-Version: 1.0
-In-Reply-To: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 13/13] ARM: dts: sun6i: Enable HDMI support on some A31/A31s devices
+Date: Tue, 26 Sep 2017 14:59:19 +0800
+Message-Id: <20170926065919.24446-14-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 22:33:18 +0200
+All the A31/A31s devices I own have some kind of HDMI connector wired
+to the dedicated HDMI pins on the SoC:
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+  - A31 Hummingbird (standard HDMI connector, display already enabled)
+  - Sinlinx SinA31s (standard HDMI connector)
+  - MSI Primo81 tablet (micro HDMI connector)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Enable the display pipeline (if needed) and HDMI output for them.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/mmp/clk-mix.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/sun6i-a31-hummingbird.dts | 21 +++++++++++++++++++++
+ arch/arm/boot/dts/sun6i-a31s-primo81.dts    | 25 +++++++++++++++++++++++++
+ arch/arm/boot/dts/sun6i-a31s-sina31s.dts    | 25 +++++++++++++++++++++++++
+ 3 files changed, 71 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-index 1ae532df20f7..b2471fb369f1 100644
---- a/drivers/clk/mmp/clk-mix.c
-+++ b/drivers/clk/mmp/clk-mix.c
-@@ -464,10 +464,9 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	if (config->table) {
- 		table_bytes = sizeof(*config->table) * config->table_size;
- 		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
--		if (!mix->table) {
--			kfree(mix);
--			return ERR_PTR(-ENOMEM);
--		}
-+		if (!mix->table)
-+			goto free_mix;
+diff --git a/arch/arm/boot/dts/sun6i-a31-hummingbird.dts b/arch/arm/boot/dts/sun6i-a31-hummingbird.dts
+index 9ecb5f0b3f83..19e382a11297 100644
+--- a/arch/arm/boot/dts/sun6i-a31-hummingbird.dts
++++ b/arch/arm/boot/dts/sun6i-a31-hummingbird.dts
+@@ -62,6 +62,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- 		mix->table_size = config->table_size;
- 	}
- 
-@@ -477,8 +476,7 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 					 GFP_KERNEL);
- 		if (!mix->mux_table) {
- 			kfree(mix->table);
--			kfree(mix);
--			return ERR_PTR(-ENOMEM);
-+			goto free_mix;
- 		}
- 	}
- 
-@@ -502,4 +500,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	}
- 
- 	return clk;
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
-+free_mix:
-+	kfree(mix);
-+	return ERR_PTR(-ENOMEM);
- }
+ 	vga-connector {
+ 		compatible = "vga-connector";
+ 
+@@ -162,6 +173,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0_pins_a>;
+diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+index 4c10123509c4..0cdb38ab3377 100644
+--- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
++++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+@@ -52,17 +52,42 @@
+ / {
+ 	model = "MSI Primo81 tablet";
+ 	compatible = "msi,primo81", "allwinner,sun6i-a31s";
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "c";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
+ };
+ 
+ &cpu0 {
+ 	cpu-supply = <&reg_dcdc3>;
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	/* rtl8188etv wifi is connected here */
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	/* pull-ups and device VDDIO use AXP221 DLDO3 */
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
+index b3d98222bd81..298476485bb4 100644
+--- a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
++++ b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
+@@ -53,6 +53,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -90,6 +101,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	/* USB 2.0 4 port hub IC */
+ 	status = "okay";
+@@ -112,6 +127,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
 -- 
 2.14.1
