@@ -1,43 +1,27 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@armlinux.org.uk,
-	sebastian.hesselbarth@gmail.com
-Cc: rabeeh@solid-run.com,
-	linux-clk@vger.kernel.org,
-	Sergej Sawazki <sergej@taudac.com>
-Subject: [RESEND PATCH 3/3] clk: si5351: Add a debug message for PLL reset
-Date: Sat,  2 Sep 2017 11:57:26 +0200
-Message-Id: <1504346246-4730-4-git-send-email-sergej@taudac.com>
-In-Reply-To: <1504346246-4730-1-git-send-email-sergej@taudac.com>
-References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] clk-mux: Adjustments for clk_hw_register_mux_table()
+Message-ID: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 18:20:12 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Print a debug message when resetting a PLL. It is useful to figure out
-what PLL is resetted and when.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 18:16:12 +0200
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
----
- drivers/clk/clk-si5351.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Two update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index aa8d8d9..7a122c7 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -917,6 +917,10 @@ void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
- 	si5351_reg_write(drvdata, SI5351_PLL_RESET,
- 			 (val & SI5351_CLK_PLL_SELECT) ? SI5351_PLL_RESET_B :
- 			 SI5351_PLL_RESET_A);
-+
-+	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
-+		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
-+		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
- }
- 
- static int si5351_clkout_prepare(struct clk_hw *hw)
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+
+ drivers/clk/clk-mux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
 -- 
-2.7.4
+2.14.1
