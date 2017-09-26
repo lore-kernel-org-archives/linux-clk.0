@@ -1,155 +1,104 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v3 6/8] pwm: atmel-tcb: Support backup mode
-Date: Wed, 27 Sep 2017 10:35:53 +0200
-Message-Id: <20170927083555.16580-7-romain.izard.pro@gmail.com>
-In-Reply-To: <20170927083555.16580-1-romain.izard.pro@gmail.com>
-References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 03/10] ARM: bcm: Add support for Broadcom Hurricane 2 SoC
+Date: Mon, 25 Sep 2017 17:09:24 -0700
+Message-Id: <20170926000931.670-4-f.fainelli@gmail.com>
+In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
+References: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Save and restore registers for the PWM on suspend and resume, which
-makes hibernation and backup modes possible.
+Add a Kconfig entry point and basic machine board code for the Broadcom
+Hurricane 2 SoCs used in 1G/10G switching products.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/pwm/pwm-atmel-tcb.c | 63 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 61 insertions(+), 2 deletions(-)
+ arch/arm/mach-bcm/Kconfig   |  9 +++++++++
+ arch/arm/mach-bcm/Makefile  |  3 +++
+ arch/arm/mach-bcm/bcm_hr2.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
+ create mode 100644 arch/arm/mach-bcm/bcm_hr2.c
 
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 75db585a2a94..acd3ce8ecf3f 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -37,11 +37,20 @@ struct atmel_tcb_pwm_device {
- 	unsigned period;		/* PWM period expressed in clk cycles */
- };
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 73be3d578851..76807581f9f3 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -36,6 +36,15 @@ config ARCH_BCM_CYGNUS
+ 	  BCM11300, BCM11320, BCM11350, BCM11360,
+ 	  BCM58300, BCM58302, BCM58303, BCM58305.
  
-+struct atmel_tcb_channel {
-+	u32 enabled;
-+	u32 cmr;
-+	u32 ra;
-+	u32 rb;
-+	u32 rc;
++config ARCH_BCM_HR2
++	bool "Broadcom Hurricane 2 SoC support"
++	depends on ARCH_MULTI_V7
++	select ARCH_BCM_IPROC
++	help
++	  Enable support for the Hurricane 2 family,
++	  which includes the following variants:
++	  BCM53342, BCM53343, BCM53344, BCM53346.
++
+ config ARCH_BCM_NSP
+ 	bool "Broadcom Northstar Plus SoC Support"
+ 	depends on ARCH_MULTI_V7
+diff --git a/arch/arm/mach-bcm/Makefile b/arch/arm/mach-bcm/Makefile
+index 980f5850097c..ec93c849a100 100644
+--- a/arch/arm/mach-bcm/Makefile
++++ b/arch/arm/mach-bcm/Makefile
+@@ -13,6 +13,9 @@
+ # Cygnus
+ obj-$(CONFIG_ARCH_BCM_CYGNUS) +=  bcm_cygnus.o
+ 
++# Hurricane 2
++obj-$(CONFIG_ARCH_BCM_HR2)	+= bcm_hr2.o
++
+ # Northstar Plus
+ obj-$(CONFIG_ARCH_BCM_NSP)	+= bcm_nsp.o
+ 
+diff --git a/arch/arm/mach-bcm/bcm_hr2.c b/arch/arm/mach-bcm/bcm_hr2.c
+new file mode 100644
+index 000000000000..c104f28995d7
+--- /dev/null
++++ b/arch/arm/mach-bcm/bcm_hr2.c
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <asm/mach/arch.h>
++
++static const char * const bcm_hr2_dt_compat[] __initconst = {
++	"brcm,hr2",
++	NULL,
 +};
 +
- struct atmel_tcb_pwm_chip {
- 	struct pwm_chip chip;
- 	spinlock_t lock;
- 	struct atmel_tc *tc;
- 	struct atmel_tcb_pwm_device *pwms[NPWM];
-+	struct atmel_tcb_channel bkup[NPWM / 2];
- };
- 
- static inline struct atmel_tcb_pwm_chip *to_tcb_chip(struct pwm_chip *chip)
-@@ -175,12 +184,15 @@ static void atmel_tcb_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	 * Use software trigger to apply the new setting.
- 	 * If both PWM devices in this group are disabled we stop the clock.
- 	 */
--	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC)))
-+	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC))) {
- 		__raw_writel(ATMEL_TC_SWTRG | ATMEL_TC_CLKDIS,
- 			     regs + ATMEL_TC_REG(group, CCR));
--	else
-+		tcbpwmc->bkup[group].enabled = 1;
-+	} else {
- 		__raw_writel(ATMEL_TC_SWTRG, regs +
- 			     ATMEL_TC_REG(group, CCR));
-+		tcbpwmc->bkup[group].enabled = 0;
-+	}
- 
- 	spin_unlock(&tcbpwmc->lock);
- }
-@@ -263,6 +275,7 @@ static int atmel_tcb_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	/* Use software trigger to apply the new setting */
- 	__raw_writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
- 		     regs + ATMEL_TC_REG(group, CCR));
-+	tcbpwmc->bkup[group].enabled = 1;
- 	spin_unlock(&tcbpwmc->lock);
- 	return 0;
- }
-@@ -445,10 +458,56 @@ static const struct of_device_id atmel_tcb_pwm_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int atmel_tcb_pwm_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		chan->cmr = readl(base + ATMEL_TC_REG(i, CMR));
-+		chan->ra = readl(base + ATMEL_TC_REG(i, RA));
-+		chan->rb = readl(base + ATMEL_TC_REG(i, RB));
-+		chan->rc = readl(base + ATMEL_TC_REG(i, RC));
-+	}
-+	return 0;
-+}
-+
-+static int atmel_tcb_pwm_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		writel(chan->cmr, base + ATMEL_TC_REG(i, CMR));
-+		writel(chan->ra, base + ATMEL_TC_REG(i, RA));
-+		writel(chan->rb, base + ATMEL_TC_REG(i, RB));
-+		writel(chan->rc, base + ATMEL_TC_REG(i, RC));
-+		if (chan->enabled) {
-+			writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
-+				base + ATMEL_TC_REG(i, CCR));
-+		}
-+	}
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(atmel_tcb_pwm_pm_ops, atmel_tcb_pwm_suspend,
-+			 atmel_tcb_pwm_resume);
-+
- static struct platform_driver atmel_tcb_pwm_driver = {
- 	.driver = {
- 		.name = "atmel-tcb-pwm",
- 		.of_match_table = atmel_tcb_pwm_dt_ids,
-+		.pm = &atmel_tcb_pwm_pm_ops,
- 	},
- 	.probe = atmel_tcb_pwm_probe,
- 	.remove = atmel_tcb_pwm_remove,
++DT_MACHINE_START(BCM_HR2_DT, "Broadcom Hurricane 2 SoC")
++	.l2c_aux_val	= 0,
++	.l2c_aux_mask	= ~0,
++	.dt_compat = bcm_hr2_dt_compat,
++MACHINE_END
 -- 
-2.11.0
+2.14.1
