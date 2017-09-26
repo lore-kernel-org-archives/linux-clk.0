@@ -1,195 +1,174 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 26 Sep 2017 11:56:03 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-Date: Thu, 21 Sep 2017 13:56:39 +0930
-Message-Id: <20170921042641.7326-4-joel@jms.id.au>
-In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 03/13] drm/sun4i: tcon: Add support for demuxing TCON
+ output on A31
+Message-ID: <20170926095603.c67y4rytydya7kjd@flea>
+References: <20170926065919.24446-1-wens@csie.org>
+ <20170926065919.24446-4-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fwfopzxho5wg6h5l"
+In-Reply-To: <20170926065919.24446-4-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers a platform driver to set up all of the non-core clocks.
 
-The clocks that have configurable rates are now registered.
+--fwfopzxho5wg6h5l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-aspeed.c | 129 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
+Hi,
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index e614c61b82d2..19531798e040 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -14,6 +14,8 @@
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -115,6 +117,20 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
- 	/* 31: reserved */
- };
- 
-+static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
-+
-+static const struct clk_div_table ast2500_mac_div_table[] = {
-+	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
- static const struct clk_div_table ast2400_div_table[] = {
- 	{ 0x0, 2 },
- 	{ 0x1, 4 },
-@@ -139,6 +155,21 @@ static const struct clk_div_table ast2500_div_table[] = {
- 	{ 0 }
- };
- 
-+struct aspeed_clk_soc_data {
-+	const struct clk_div_table *div_table;
-+	const struct clk_div_table *mac_div_table;
-+};
-+
-+static const struct aspeed_clk_soc_data ast2500_data = {
-+	.div_table = ast2500_div_table,
-+	.mac_div_table = ast2500_mac_div_table,
-+};
-+
-+static const struct aspeed_clk_soc_data ast2400_data = {
-+	.div_table = ast2400_div_table,
-+	.mac_div_table = ast2400_div_table,
-+};
-+
- static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
- {
- 	unsigned int mult, div;
-@@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
- 			mult, div);
- }
- 
-+static int __init aspeed_clk_probe(struct platform_device *pdev)
-+{
-+	const struct aspeed_clk_soc_data *soc_data;
-+	const struct clk_div_table *mac_div_table;
-+	const struct clk_div_table *div_table;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	struct clk_hw *hw;
-+	u32 val, rate;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "no syscon regmap\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	/* SoC generations share common layouts but have different divisors */
-+	soc_data = of_device_get_match_data(&pdev->dev);
-+	div_table = soc_data->div_table;
-+	mac_div_table = soc_data->mac_div_table;
-+
-+	/* UART clock div13 setting */
-+	regmap_read(map, ASPEED_MISC_CTRL, &val);
-+	if (val & BIT(12))
-+		rate = 24000000 / 13;
-+	else
-+		rate = 24000000;
-+	/* TODO: Find the parent data for the uart clock */
-+	hw = clk_hw_register_fixed_rate(NULL, "uart", NULL, 0, rate);
-+	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
-+
-+	/*
-+	 * Memory controller (M-PLL) PLL. This clock is configured by the
-+	 * bootloader, and is exposed to Linux as a read-only clock rate.
-+	 */
-+	regmap_read(map, ASPEED_MPLL_PARAM, &val);
-+	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	aspeed_calc_pll("mpll", val);
-+
-+	/* SD/SDIO clock divider (TODO: There's a gate too) */
-+	hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
-+			div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
-+
-+	/* MAC AHB bus clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "mac", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
-+			mac_div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
-+
-+	/* LPC Host (LHCLK) clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "lhclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-+			div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
-+
-+	/* Video Engine (ECLK) mux and clock divider */
-+	hw = clk_hw_register_mux(NULL, "eclk_mux",
-+			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
-+			scu_base + ASPEED_CLK_SELECTION, 2, 2,
-+			0, &aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-+	hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-+			div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-+
-+	/* P-Bus (BCLK) clock divider */
-+	hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 0, 2, 0,
-+			div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
-+
-+	return 0;
-+};
-+
-+static const struct of_device_id aspeed_clk_dt_ids[] = {
-+	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
-+	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
-+	{ },
-+};
-+
-+static struct platform_driver aspeed_clk_driver = {
-+	.probe  = aspeed_clk_probe,
-+	.driver = {
-+		.name = "aspeed-clk",
-+		.of_match_table = aspeed_clk_dt_ids,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(aspeed_clk_driver);
-+
-+
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
--- 
-2.14.1
+On Tue, Sep 26, 2017 at 06:59:09AM +0000, Chen-Yu Tsai wrote:
+> On systems with 2 TCONs such as the A31, it is possible to demux the
+> output of the TCONs to one encoder.
+>=20
+> Add support for this for the A31.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 61 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+> index e853dfe51389..770b843a6fa9 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -14,9 +14,12 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_encoder.h>
+>  #include <drm/drm_modes.h>
+>  #include <drm/drm_of.h>
+> =20
+> +#include <uapi/drm/drm_mode.h>
+> +
+>  #include <linux/component.h>
+>  #include <linux/ioport.h>
+>  #include <linux/of_address.h>
+> @@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tc=
+on, bool enable)
+>  }
+>  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+> =20
+> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
+> +{
+> +	struct sun4i_drv *drv =3D drm->dev_private;
+> +	struct sun4i_tcon *tcon;
+> +
+> +	list_for_each_entry(tcon, &drv->tcon_list, list)
+> +		if (tcon->id =3D=3D 0)
+> +			return tcon;
+> +
+> +	dev_warn(drm->dev,
+> +		 "TCON0 not found, display output muxing may not work\n");
+> +
+> +	return tcon;
+> +}
+> +
+> +static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
+> +{
+> +	struct sun4i_tcon *tcon =3D sun4i_get_first_tcon(encoder->dev);
+> +	int tcon_id =3D drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
+> +	u32 shift;
+> +
+> +	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
+> +			 encoder->name, encoder->crtc->name, tcon_id);
+> +
+> +	/* Only 2 TCONs */
+> +	if (tcon_id >=3D 2)
+> +		return -EINVAL;
+> +
+> +	switch (encoder->encoder_type) {
+> +	case DRM_MODE_ENCODER_TMDS:
+> +		/* HDMI */
+> +		shift =3D 8;
+> +		break;
+> +	case DRM_MODE_ENCODER_DSI:
+> +		/* No MIPI DSI on A31s */
+> +		if (of_device_is_compatible(tcon->dev->of_node,
+> +					    "allwinner,sun6i-a31s-tcon"))
+
+I'm not sure that test is needed.
+
+We won't end up in that case if we don't have a connected DSI block,
+which isn't going to be the case on the A31. And I guess we can tackle
+DSI later (when I'll send my patches...).
+
+> +			return -EINVAL;
+> +		shift =3D 0;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
+> +			   0x3 << shift, tcon_id << shift);
+> +
+> +	return 0;
+> +}
+> +
+>  void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+>  			struct drm_encoder *encoder)
+>  {
+> +	/* Get the device node of the display engine */
+> +	struct device_node *node =3D encoder->dev->dev->of_node;
+>  	u32 val;
+> =20
+> +	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine")=
+ ||
+> +	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine"=
+)) {
+> +		_sun6i_tcon_set_mux(encoder);
+> +		return;
+> +	}
+> +
+
+I'd really like to avoid mix and matching the structure defined
+behaviour and those of_device_is_compatible calls spread out
+everywhere.
+
+You can either add a flag or a function pointer.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--fwfopzxho5wg6h5l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZyiQzAAoJEBx+YmzsjxAgqMwP/3tZVN7F6Xj3iCLDqmrB1jUk
+hkXd4ZkpoZbU2o/HV0x4WgvkPaV4BKru89zxuefZO6OLsbK/Zt6RINy+JTL0jZss
+0LdJu3JZplnZulU4BBUMvmjIIYNdz2MupubhWYOxkYZ6DAa5UAT4z8P5PzojXOPm
+Rz+O5kQ6axk5mLE7tdYy0W2UZZX2JUnExDWqNekyxRNtLNWqAwxmOlPrsI0QmRK3
+z9AgcC3xDISn/R25dughBVUCQTMmJAAWY2lkZpjY7rehtJmrqCgGqKNxnryVGJfG
+k7RMZJYgli2tiTOTpm+J9sWLBn2G1IhOkwc6ETVmVvkocjm+AU/7fcfoCpTc0Rnm
+d7hXXE5iTgPbE7gXHD/3wm4KpF8vRvmzAx4SSqWgbp1clOWw+DuH+mwo6rVrFSo4
+kGmEGQPZCUWTYee3xBkz8mCh2ii6s+BYPdP7M8pYiqVZc6MS4P/q4cLENvF7WSdF
+5rU4VG3juMMN9kd/Lz8Excqk3O3DBKvZeg0wXIiWPsX3W+Q0XZesUcFoEdcHysBU
+ncfxxqWhBuCFBMg2kJ2OI4b+5tdLghrKSWueIWbIy28Yuh6h8hV/Ing8ISmFh6uG
+XNxXPid+Nnd8QTOuZjRByrxh9oSGa/WdYMZW9p3y7875Rnp/+BiwY8VG7eRv5NKY
+YcppixABuYLI24c/2+nD
+=P+kw
+-----END PGP SIGNATURE-----
+
+--fwfopzxho5wg6h5l--
