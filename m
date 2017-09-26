@@ -1,91 +1,79 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v1 03/10] clk: at91: pmc: Support backup for programmable
- clocks
-To: Romain Izard <romain.izard.pro@gmail.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu
-	<rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
-	<thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
-	<stern@rowland.harvard.edu>, Alexandre Belloni
-	<alexandre.belloni@free-electrons.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Romain
- Izard <romain.izard@mobile-devices.fr>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-4-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <b0c7e816-4a7c-609d-2bc7-281fc6ca751d@microchip.com>
-Date: Wed, 13 Sep 2017 14:29:35 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 26 Sep 2017 11:58:38 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 06/13] drm/sun4i: hdmi: Allow using second PLL as TMDS
+ clk parent
+Message-ID: <20170926095838.vvgdnm7bdodwtjzv@flea>
+References: <20170926065919.24446-1-wens@csie.org>
+ <20170926065919.24446-7-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20170908153604.28383-4-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qttlu3ybmjip77q3"
+In-Reply-To: <20170926065919.24446-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/2017 at 17:35, Romain Izard wrote:
-> From: Romain Izard <romain.izard@mobile-devices.fr>
-> 
-> Save and restore the System Clock and Programmable Clock register for
-> the backup use case.
 
-"System Clock" seems to be handled in another patch.
+--qttlu3ybmjip77q3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  drivers/clk/at91/pmc.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 07dc2861ad3f..5421b03553ec 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -66,6 +66,7 @@ static struct
->  	u32 pcr[PMC_MAX_IDS];
->  	u32 audio_pll0;
->  	u32 audio_pll1;
-> +	u32 pckr[3];
+On Tue, Sep 26, 2017 at 06:59:12AM +0000, Chen-Yu Tsai wrote:
+> Allwinner SoCs typically have two PLLs reserved for video related usage.
+> At the moment we only support using the first one to feed the HDMI
+> transmitter block's TMDS clock.
+>=20
+> Let the HDMI encoder's TMDS clock go through all of its parents when
+> calculating possible clock rates. This allows usage of the second video
+> PLL as its parent.
+>=20
+> Note that this does not handle conflicting pixel clocks. It is entirely
+> possible to have an LCD panel use one pixel clock rate, only to be
+> overridden by the HDMI transmitter's clock rate request when the second
+> display pipeline is enabled.
+>=20
+> This should be handled by having all the clock drivers honor clock rate
+> ranges, and have the consumers use clk_set_rate_min/clk_set_rate_max.
 
-Some products have different numbers of PCK (only 2 on at91sam9x5 for
-instance)...
+That, or relying on clk_set_rate_protect
 
->  } pmc_cache;
->  
->  void pmc_register_id(u8 id)
-> @@ -103,6 +104,8 @@ static int pmc_suspend(void)
->  		regmap_read(pmcreg, AT91_PMC_PCR,
->  			    &pmc_cache.pcr[registered_ids[i]]);
->  	}
-> +	for (i = 0; i < 3; i++)
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-And it might be a good practice to have this constant value in a #define.
-We have "#define PROG_ID_MAX  7" defined in
-drivers/clk/at91/clk-programmable.c.
+Maxime
 
-Regards,
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--qttlu3ybmjip77q3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		regmap_read(pmcreg, AT91_PMC_PCKR(i), &pmc_cache.pckr[i]);
->  
->  	return 0;
->  }
-> @@ -143,6 +146,8 @@ static void pmc_resume(void)
->  			     pmc_cache.pcr[registered_ids[i]] |
->  			     AT91_PMC_PCR_CMD);
->  	}
-> +	for (i = 0; i < 3; i++)
-> +		regmap_write(pmcreg, AT91_PMC_PCKR(i), pmc_cache.pckr[i]);
->  
->  	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
->  		mask |= AT91_PMC_LOCKU;
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAEBAgAGBQJZyiTOAAoJEBx+YmzsjxAglWQP/izPBYzBNaNXOEgBjF1Cy4M1
+/q16lgMmGlN3ybVuwvCsGqmtLm4WPB4GWtq5d7+yeEBuc/XwAHzUZHALzKlXJfeg
+vRDU3br/GYHwmjB028IRb9Gu9tn5jLAB4HjtLzoxDqobW/HhjScRDy7YO67EmJeY
+7LIPw6ndzQRfD3C683AHUYV1bCSD4JsNENH9U19/gaLQy+Glbp7G6PmMo5tw0oJb
+CNwnsn4x8GPBD4N1uQpUFc9Yo8YwLNUJOIpsLUCeAgHHS7+uHA+WiSIlQDnait66
+0tSCabXfKkVF50POS0I4TwwwwetF18uf4ywIBIXHYrXkisu+AOrgJG5W8ZpsPlDy
+w02cd/ns4FTe3JaLY4G6kTSmWgevKf2N/1hn3Yr9HxkytnfLQQ1EAGWIxkzaAClb
+C7MXXczmKehRnSC3z+q5+hjVCUOAi/nkuqgqV42QXhYuQV6z7Clv649TB9E2SvMx
+X8awPInOLu4tSlE+hQvm5NjJ+PIMXw3nsA6oEwrBthBEEKn+pibmNoqgrb/rBZrI
+3LV8ib0FdFIU8QfiRbDc+k7NE/dPCf9Em1241iL6QgIAh4xOWzL9Waj08FCYssUN
+NZD2IAYsiDnhGw6hgtIHIcOoox8mibMCQcOKKO5xEvbdiMDGosGrcrBeoOLw95Gx
+8SimeMY+GH8mcgBsxk7d
+=cSMz
+-----END PGP SIGNATURE-----
 
--- 
-Nicolas Ferre
+--qttlu3ybmjip77q3--
