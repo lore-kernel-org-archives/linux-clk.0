@@ -1,45 +1,269 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <1506497645.30138.37.camel@aj.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
- <1506343255.30138.29.camel@aj.id.au> <CACPK8Xd8RQ4s1xMsSuxHgQRiHS6vDtxVTAxu8Ba3J3it45MC5g@mail.gmail.com>
- <1506497645.30138.37.camel@aj.id.au>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 28 Sep 2017 14:29:22 +1000
-Message-ID: <CACPK8XeJE025GRT9kk9L1x1VsDGEmLG80G9LMM03vsvpHS+sYA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 09/11] clk: qcom: ipq8074: add GP and Crypto clocks
+Date: Tue, 26 Sep 2017 17:54:02 +0530
+Message-Id: <1506428644-2996-10-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 5:34 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
-> On Wed, 2017-09-27 at 16:13 +1000, Joel Stanley wrote:
->> > > +                     div_table,
->> >
->> > This doesn't seem to be correct. There's the problem of 0b000 and 0b001 mapping
->> > the same value of 2 for the AST2500, whose table then increments in steps of 1.
->> > The AST2400 mapping on the otherhand is multiples of 2 starting at 2, with no
->> > inconsistency for 0b000 vs 0b001.
->>
->> Yep, we do use a different table for ast2400 vs ast2500. See
->> ast2400_div_table vs ast2500_div_table.
->
-> Yep, but for the AST2500 this is a different table again to what you've
-> already defined (for the AST2500). However, for the AST2400 the table
-> looks the same as the other AST2400 tables.
+- It has 3 general purpose clock controller which supplies
+  the clock in GPIO pins.
+- It has Crypto Engine which has AXI, AHB and Core clocks.
+  Other non APSS processors can also use Crypto Engine so
+  these clocks are marked as VOTED clocks.
 
-You're right. I didn't realise you were pointing out something strange
-about eclk.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 199 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 199 insertions(+)
 
-I added another table for eclk, and the correct one is selected by the
-platform data.
-
-I'll send out v4 today if no more reviews come in.
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 54f96bb..52b859b 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -390,6 +390,22 @@ enum {
+ 	{ P_BIAS_PLL, 6 },
+ };
+ 
++static const char * const gcc_xo_gpll0_gpll6_gpll0_sleep_clk[] = {
++	"xo",
++	"gpll0",
++	"gpll6",
++	"gpll0_out_main_div2",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0, 1 },
++	{ P_GPLL6, 2 },
++	{ P_GPLL0_DIV2, 4 },
++	{ P_SLEEP_CLK, 6 },
++};
++
+ static struct clk_alpha_pll gpll0_main = {
+ 	.offset = 0x21000,
+ 	.clkr = {
+@@ -1925,6 +1941,74 @@ enum {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_crypto_clk_src[] = {
++	F(40000000, P_GPLL0_DIV2, 10, 0, 0),
++	F(80000000, P_GPLL0, 10, 0, 0),
++	F(100000000, P_GPLL0, 8, 0, 0),
++	F(160000000, P_GPLL0, 5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 crypto_clk_src = {
++	.cmd_rcgr = 0x16004,
++	.freq_tbl = ftbl_crypto_clk_src,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "crypto_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct freq_tbl ftbl_gp_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gp1_clk_src = {
++	.cmd_rcgr = 0x08004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp1_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 gp2_clk_src = {
++	.cmd_rcgr = 0x09004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp2_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 gp3_clk_src = {
++	.cmd_rcgr = 0x0a004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp3_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static struct clk_branch gcc_blsp1_ahb_clk = {
+ 	.halt_reg = 0x01008,
+ 	.clkr = {
+@@ -4123,6 +4207,111 @@ enum {
+ 	},
+ };
+ 
++static struct clk_branch gcc_crypto_ahb_clk = {
++	.halt_reg = 0x16024,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_ahb_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_crypto_axi_clk = {
++	.halt_reg = 0x16020,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(1),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_axi_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_crypto_clk = {
++	.halt_reg = 0x1601c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(2),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_clk",
++			.parent_names = (const char *[]){
++				"crypto_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp1_clk = {
++	.halt_reg = 0x08000,
++	.clkr = {
++		.enable_reg = 0x08000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp1_clk",
++			.parent_names = (const char *[]){
++				"gp1_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp2_clk = {
++	.halt_reg = 0x09000,
++	.clkr = {
++		.enable_reg = 0x09000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp2_clk",
++			.parent_names = (const char *[]){
++				"gp2_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp3_clk = {
++	.halt_reg = 0x0a000,
++	.clkr = {
++		.enable_reg = 0x0a000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp3_clk",
++			.parent_names = (const char *[]){
++				"gp3_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_hw *gcc_ipq8074_hws[] = {
+ 	&gpll0_out_main_div2.hw,
+ 	&gpll6_out_main_div2.hw,
+@@ -4219,6 +4408,10 @@ enum {
+ 	[NSS_PORT6_RX_DIV_CLK_SRC] = &nss_port6_rx_div_clk_src.clkr,
+ 	[NSS_PORT6_TX_CLK_SRC] = &nss_port6_tx_clk_src.clkr,
+ 	[NSS_PORT6_TX_DIV_CLK_SRC] = &nss_port6_tx_div_clk_src.clkr,
++	[CRYPTO_CLK_SRC] = &crypto_clk_src.clkr,
++	[GP1_CLK_SRC] = &gp1_clk_src.clkr,
++	[GP2_CLK_SRC] = &gp2_clk_src.clkr,
++	[GP3_CLK_SRC] = &gp3_clk_src.clkr,
+ 	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
+ 	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
+@@ -4348,6 +4541,12 @@ enum {
+ 	[GCC_UNIPHY1_PORT5_TX_CLK] = &gcc_uniphy1_port5_tx_clk.clkr,
+ 	[GCC_UNIPHY2_PORT6_RX_CLK] = &gcc_uniphy2_port6_rx_clk.clkr,
+ 	[GCC_UNIPHY2_PORT6_TX_CLK] = &gcc_uniphy2_port6_tx_clk.clkr,
++	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
++	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
++	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
++	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
++	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
++	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
