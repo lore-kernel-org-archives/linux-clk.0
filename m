@@ -1,74 +1,124 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 2/9] clk: at91: pmc: Save SCSR during suspend
-Date: Fri, 15 Sep 2017 16:04:04 +0200
-Message-Id: <20170915140411.31716-3-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 06/13] drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
+Date: Tue, 26 Sep 2017 14:59:12 +0800
+Message-Id: <20170926065919.24446-7-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The contents of the System Clock Status Register (SCSR) needs to be
-restored into the System Clock Enable Register (SCER).
+Allwinner SoCs typically have two PLLs reserved for video related usage.
+At the moment we only support using the first one to feed the HDMI
+transmitter block's TMDS clock.
 
-As the bootloader will restore some clocks by itself, the issue can be
-missed as only the USB controller, the LCD controller, the Image Sensor
-controller and the programmable clocks will be impacted.
+Let the HDMI encoder's TMDS clock go through all of its parents when
+calculating possible clock rates. This allows usage of the second video
+PLL as its parent.
 
-Fix the obvious typo in the suspend/resume code, as the IMR register
-does not need to be saved twice.
+Note that this does not handle conflicting pixel clocks. It is entirely
+possible to have an LCD panel use one pixel clock rate, only to be
+overridden by the HDMI transmitter's clock rate request when the second
+display pipeline is enabled.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+This should be handled by having all the clock drivers honor clock rate
+ranges, and have the consumers use clk_set_rate_min/clk_set_rate_max.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/at91/pmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 53 ++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 5c2b26de303e..07dc2861ad3f 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -86,7 +86,7 @@ static int pmc_suspend(void)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index 5cf2527bffc8..e8d4c311b80d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -67,11 +67,11 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
+ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 				     struct clk_rate_request *req)
  {
- 	int i;
+-	struct clk_hw *parent;
++	struct clk_hw *parent = NULL;
+ 	unsigned long best_parent = 0;
+ 	unsigned long rate = req->rate;
+ 	int best_div = 1, best_half = 1;
+-	int i, j;
++	int i, j, p;
  
--	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-+	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
- 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
- 	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
- 	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-@@ -129,7 +129,7 @@ static void pmc_resume(void)
- 	if (pmc_cache.pllar != tmp)
- 		pr_warn("PLLAR was not configured properly by the firmware\n");
+ 	/*
+ 	 * We only consider PLL3, since the TCON is very likely to be
+@@ -79,32 +79,37 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 	 * clock, so we should not need to do anything.
+ 	 */
  
--	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-+	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
- 	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
- 	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
- 	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
+-	parent = clk_hw_get_parent_by_index(hw, 0);
+-	if (!parent)
+-		return -EINVAL;
+-
+-	for (i = 1; i < 3; i++) {
+-		for (j = 1; j < 16; j++) {
+-			unsigned long ideal = rate * i * j;
+-			unsigned long rounded;
+-
+-			rounded = clk_hw_round_rate(parent, ideal);
+-
+-			if (rounded == ideal) {
+-				best_parent = rounded;
+-				best_half = i;
+-				best_div = j;
+-				goto out;
+-			}
+-
+-			if (abs(rate - rounded / i) <
+-			    abs(rate - best_parent / best_div)) {
+-				best_parent = rounded;
+-				best_div = i;
++	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
++		parent = clk_hw_get_parent_by_index(hw, p);
++		if (!parent)
++			continue;
++
++		for (i = 1; i < 3; i++) {
++			for (j = 1; j < 16; j++) {
++				unsigned long ideal = rate * i * j;
++				unsigned long rounded;
++
++				rounded = clk_hw_round_rate(parent, ideal);
++
++				if (rounded == ideal) {
++					best_parent = rounded;
++					best_half = i;
++					best_div = j;
++					goto out;
++				}
++
++				if (abs(rate - rounded / i) <
++				    abs(rate - best_parent / best_div)) {
++					best_parent = rounded;
++					best_div = i;
++				}
+ 			}
+ 		}
+ 	}
+ 
++	if (!parent)
++		return -EINVAL;
++
+ out:
+ 	req->rate = best_parent / best_half / best_div;
+ 	req->best_parent_rate = best_parent;
 -- 
-2.11.0
+2.14.1
