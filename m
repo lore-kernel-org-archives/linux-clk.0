@@ -1,52 +1,116 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Sep 2017 15:53:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
-Subject: Re: [PATCH 2/2] clk: clk-gpio: Request GPIO descriptor as LOW
-Message-ID: <20170929225346.GN457@codeaurora.org>
-References: <20170924161919.24832-1-linus.walleij@linaro.org>
- <20170924161919.24832-2-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170924161919.24832-2-linus.walleij@linaro.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 12/13] ARM: dts: sun6i: Add device node for HDMI controller
+Date: Tue, 26 Sep 2017 14:59:18 +0800
+Message-Id: <20170926065919.24446-13-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Linus Walleij wrote:
-> Requesting the GPIOD_OUT_LOW low will make sure the GPIO is
-> deasserted when requested. The gpiolib core will make sure that
-> if the GPIO line is active low, it will be logically driven high
-> when deasserted, see drivers/gpiolib.c gpiod_configure_flags().
-> 
-> Cc: Sergej Sawazki <ce3a@gmx.de>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/clk/clk-gpio.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 9d057073e110..151513c655c3 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -109,14 +109,6 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
->  	if (!clk_gpio)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	/*
-> -	 * Set to disabled no matter what: NOTE if the GPIO line is active low
-> -	 * the GPIO descriptor knows this and will set it high to deassert the
-> -	 * line. This assumes the GPIO descriptor has been requested using
-> -	 * GPIOD_ASIS by the callers so we need to initialize it as disabled here.
-> -	 */
-> -	gpiod_set_value(gpiod, 0);
-> -
+Now that we support the HDMI controller on the A31 SoC, we can add it
+to the device tree.
 
-Is there a reason why we split this patch out and then deleted
-the comment that was introduced in the previous patch? Why not
-combine these two patches into one?
+This adds a device node for the HDMI controller, and the of_graph nodes
+connecting it to the 2 TCONs.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun6i-a31.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index 93209cda28db..48b2382a18a9 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -289,6 +289,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon0_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon0>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -331,6 +337,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -411,6 +423,49 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		hdmi: hdmi@01c16000 {
++			compatible = "allwinner,sun6i-a31-hdmi";
++			reg = <0x01c16000 0x1000>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_AHB1_HDMI>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_PLL_VIDEO0_2X>,
++				 <&ccu CLK_PLL_VIDEO1_2X>;
++			clock-names = "ahb", "mod", "ddc", "pll-0", "pll-1";
++			resets = <&ccu RST_AHB1_HDMI>;
++			reset-names = "ahb";
++			dma-names = "ddc-tx", "ddc-rx", "audio-tx";
++			dmas = <&dma 13>, <&dma 13>, <&dma 14>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_out_hdmi>;
++					};
++
++					hdmi_in_tcon1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		usb_otg: usb@01c19000 {
+ 			compatible = "allwinner,sun6i-a31-musb";
+ 			reg = <0x01c19000 0x0400>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
