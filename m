@@ -1,50 +1,69 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170923050029.19013-1-bjorn.andersson@linaro.org>
-References: <20170923050029.19013-1-bjorn.andersson@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 27 Sep 2017 01:57:29 +0200
-Message-ID: <CAPDyKFoS5QoMGx_SeZf4tJR6QSttAmZ8upVP17UyGceT9OsJtg@mail.gmail.com>
-Subject: Re: [PATCH] clk: Export clk_bulk_prepare()
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 00/10] ARM: bcm: Add support for Broadcom Hurricane 2 SoC
+Date: Mon, 25 Sep 2017 17:09:21 -0700
+Message-Id: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23 September 2017 at 07:00, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> Allow clk_bulk_prepare() to be referenced by kernel modules by adding
-> the missing EXPORT_SYMBOL_GPL().
->
-> Fixes: 266e4e9d9150 ("clk: add clk_bulk_get accessories")
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi all,
 
-If not too late,
+This patch series adds basic (boot to prompt with essential peripherals
+working) support for Broadcom's Hurricane 2 SoC which is found in switching
+applications.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+This is also an iProc-family chip with a number of variations, including
+some in the clock controller that I have not been able to identify yet.
 
-Kind regards
-Uffe
+Florian Fainelli (10):
+  MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
+  dt-bindings: Add documentation for Broadcom Hurricane 2 SoCs
+  ARM: bcm: Add support for Broadcom Hurricane 2 SoC
+  dt-bindings: Document Broadcom Hurricane 2 clocks
+  clk: bcm: Add Broadcom Hurricane 2 clock support
+  ARM: dts: Add Broadcom Hurricane 2 DTS include file
+  ARM: debug: Add Hurricane 2 UART2 debug addresses
+  dt-bindings: Add Ubiquiti Networks vendor prefix
+  ARM: dts: Hurricane 2: Add basic support for Ubiquiti UniFi Switch 8
+  ARM: multi_v7_defconfig: Enable CONFIG_ARCH_BCM_HR2
 
-> ---
->  drivers/clk/clk-bulk.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index c834f5abfc49..4c10456f8a32 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -105,6 +105,7 @@ int __must_check clk_bulk_prepare(int num_clks,
->
->         return  ret;
->  }
-> +EXPORT_SYMBOL_GPL(clk_bulk_prepare);
->
->  #endif /* CONFIG_HAVE_CLK_PREPARE */
->
-> --
-> 2.12.0
->
+ .../devicetree/bindings/arm/bcm/brcm,hr2.txt       |  14 +
+ .../bindings/clock/brcm,iproc-clocks.txt           |  14 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ MAINTAINERS                                        |   1 +
+ arch/arm/Kconfig.debug                             |  10 +-
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/bcm-hr2.dtsi                     | 368 +++++++++++++++++++++
+ arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts  |  85 +++++
+ arch/arm/configs/multi_v7_defconfig                |   1 +
+ arch/arm/mach-bcm/Kconfig                          |   9 +
+ arch/arm/mach-bcm/Makefile                         |   3 +
+ arch/arm/mach-bcm/bcm_hr2.c                        |  25 ++
+ drivers/clk/bcm/Kconfig                            |   9 +
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-hr2.c                          |  27 ++
+ 15 files changed, 569 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
+ create mode 100644 arch/arm/boot/dts/bcm-hr2.dtsi
+ create mode 100644 arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts
+ create mode 100644 arch/arm/mach-bcm/bcm_hr2.c
+ create mode 100644 drivers/clk/bcm/clk-hr2.c
+
+-- 
+2.14.1
