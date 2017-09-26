@@ -1,92 +1,71 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Wed, 27 Sep 2017 17:08:11 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Wenyou Yang
- <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard
- Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
- Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
- <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
- Alan Stern <stern@rowland.harvard.edu>, Ludovic Desroches
- <ludovic.desroches@microchip.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, linux-pwm@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] mtd: nand: atmel: Avoid ECC errors when leaving
- backup mode
-Message-ID: <20170927170811.57830c1f@bbrezillon>
-In-Reply-To: <20170927083555.16580-5-romain.izard.pro@gmail.com>
-References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
-	<20170927083555.16580-5-romain.izard.pro@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 26 Sep 2017 11:56:47 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 05/13] drm/sun4i: hdmi: create a regmap for later use
+Message-ID: <20170926095647.o4p72dd6n3257n5m@flea>
+References: <20170926065919.24446-1-wens@csie.org>
+ <20170926065919.24446-6-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7by3ndkwhayzdm3u"
+In-Reply-To: <20170926065919.24446-6-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 27 Sep 2017 10:35:51 +0200
-Romain Izard <romain.izard.pro@gmail.com> wrote:
 
-> During backup mode, the contents of all registers will be cleared as the
-> SoC will be completely powered down. For a product that boots on NAND
-> Flash memory, the bootloader will obviously use the related controller
-> to read the Flash and correct any detected error in the memory, before
-> handling back control to the kernel's resuming entry point.
-> 
-> But it does not clean the NAND controller registers after use and on its
-> side the kernel driver expects the error locator to be powered down and
-> in a clean state. Add a resume hook for the PMECC error locator, and
-> reset its registers.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
-> Change in v3:
-> * keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
->   reset the controller after the bootloader has left it enabled.
-> 
->  drivers/mtd/nand/atmel/nand-controller.c |  3 +++
->  drivers/mtd/nand/atmel/pmecc.c           | 22 ++++++++++++++--------
->  drivers/mtd/nand/atmel/pmecc.h           |  1 +
->  3 files changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
-> index f25eca79f4e5..86c2199380c2 100644
-> --- a/drivers/mtd/nand/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/atmel/nand-controller.c
-> @@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
->  	struct atmel_nand_controller *nc = dev_get_drvdata(dev);
->  	struct atmel_nand *nand;
->  
-> +	if (nand->pmecc)
-> +		atmel_pmecc_resume(nand->pmecc);
-> +
+--7by3ndkwhayzdm3u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-nand is used uninitialized here, and atmel_pmecc_resume() should be
-passed a atmel_pmecc object not a atmel_pmecc_user.
+On Tue, Sep 26, 2017 at 06:59:11AM +0000, Chen-Yu Tsai wrote:
+> The HDMI driver is written with readl/writel I/O to the registers.
+> However, to support the A31 variant, which has a different layout
+> for the DDC registers, it was recommended to use regfields to have
+> a cleaner implementation. To use regfields, we need to create an
+> underlying regmap.
+>=20
+> This patch only adds the regmap. It does not convert the existing
+> driver accesses to use regmap.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-	if (nc->pmecc)
-		atmel_pmecc_resume(nc->pmecc);
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
->  	list_for_each_entry(nand, &nc->chips, node) {
->  		int i;
->  
-> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-> index 146af8218314..ff09c0f25dd4 100644
-> --- a/drivers/mtd/nand/atmel/pmecc.c
-> +++ b/drivers/mtd/nand/atmel/pmecc.c
-> @@ -765,6 +765,12 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
->  }
->  EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
->  
-> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
-> +{
-> +	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +}
+Maxime
 
-It's not used outside of this file, so it should have a static
-specifier. Anyway, I wonder why you don't expose atmel_pmecc_reset()
-directly instead of creating this atmel_pmecc_resume() wrapper.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--7by3ndkwhayzdm3u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZyiRfAAoJEBx+YmzsjxAgSxcQAJhOedHLqmYnKELB0+Ii54gQ
+bfhO+5OPyN3NGBO8/FwM1ce9/XFCZS4d/hHvvw974nVV1efM8oNAmSuyptz+wSWF
+rLRjxk8xwf5+D/BlkmoLemtc503PZCvFT6WGxFIVQ3gD1cl0Jk4Fne4OHvrhVY3s
+5iI0WV3tvZlq0EU6aUKv05fKJ6ThwEmwAXSkfTAtcot/bLDAP8O+1ApjP9ujxQp9
+foUpJXECV/ll78UAJBesfsgzGketBJc5vtUjHF6O+JbmfWJss/3uReh8djnc8emJ
+eB1XKB5C3/qLddNKPCovai++gpu/liqhK1Wp9EMh9lHOq+3CtuuRVFkdZCYFy4s2
+0paKWa9dMZg36LK8V1TRGoXJYrckd9sMWx1ONhdKAtm7aMrlUgsWWe9X0tgRqxne
+AR8q1zBANaxfg5mYafjqwo19jOZLUgXs+Wotw2Qk4OE8e0cVZVQhVnyyEOju/2cR
+fDGgnE7eoJcoxBEkPEPce/1OM78+5+1V6gXYTU4qTFuJVhOuCtdJ7Zs/F66OUbi9
+HSW87/sXpmL2BATPf9lcOfaMVrhrtXJDBI5qziFkLtfXkO93Sodqd8AmyT/5UF7q
+4k+MyYy3JDW/38ChlZO5GOJwFRPSipYm4O8I4ZQ2XqMnwpJpsFM4Z+eA6q/AiQUZ
+048WJyMLDFfiObKB0jWB
+=xYpk
+-----END PGP SIGNATURE-----
+
+--7by3ndkwhayzdm3u--
