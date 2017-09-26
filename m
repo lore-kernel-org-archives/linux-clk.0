@@ -1,78 +1,105 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 0/5] clk: Add Aspeed clock driver
-Date: Thu, 21 Sep 2017 13:56:36 +0930
-Message-Id: <20170921042641.7326-1-joel@jms.id.au>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
+Date: Mon, 25 Sep 2017 17:09:26 -0700
+Message-Id: <20170926000931.670-6-f.fainelli@gmail.com>
+In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
+References: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
-Aspeed.
+Add support for the Broadcom Hurricane 2 SoC clock controller. We can
+re-use the existing iProc clock library since the SoC's architecture is
+largely the same as its predecessors.
 
-This is version two of the series. Version one contained two patches; an update
-to the binding document and a single patch for the driver. Lee has merged the
-bindings change, so that is dropped from this series, and I split the driver
-out into a series of patches to make them easier to review.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/clk/bcm/Kconfig   |  9 +++++++++
+ drivers/clk/bcm/Makefile  |  1 +
+ drivers/clk/bcm/clk-hr2.c | 27 +++++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-hr2.c
 
-All of the important clocks are supported, with most non-essential ones
-also implemented where information is available. I am working with
-Aspeed to clear up some of the missing information, including the
-missing parent-sibling relationships.
-
-We need to know the rate of the apb clock in order to correctly program
-the clocksource driver, so the apb and it's parents are created in the
-CLK_OF_DECLARE_DRIVER callback.
-
-The rest of the clocks are created at normal driver probe time. I
-followed the Gemini driver's lead with using the regmap where I could,
-but also having a pointer to the base address for use with the common
-clock callbacks.
-
-The driver borrows from the clk_gate common clock infra spruce, but modifies
-it in order to support the clock gate and reset pair that most of the clocks
-have. This pair must be reset-ungated-released, with appropriate delays,
-according to the datasheet.
-
-The first patch introduces the core clock registration parts, and describes
-the clocks. The second creates the core clocks, giving the system enough to
-boot (but without uart). Next come the non-core clocks, and finally the reset
-controller that is used for the few cocks that don't have a gate to go with their
-reset pair.
-
-Please review!
-
-Cheers,
-
-Joel
-
-
-Joel Stanley (5):
-  clk: Add clock driver for ASPEED BMC SoCs
-  clk: aspeed: Register core clocks
-  clk: aspeed: Add platform driver and register PLLs
-  clk: aspeed: Register gated clocks
-  clk: aspeed: Add reset controller
-
- drivers/clk/Kconfig                      |  12 +
- drivers/clk/Makefile                     |   1 +
- drivers/clk/clk-aspeed.c                 | 645 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/aspeed-clock.h |  52 +++
- 4 files changed, 710 insertions(+)
- create mode 100644 drivers/clk/clk-aspeed.c
- create mode 100644 include/dt-bindings/clock/aspeed-clock.h
-
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 1d9187df167b..4c4bd85f707c 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -30,6 +30,15 @@ config CLK_BCM_CYGNUS
+ 	help
+ 	  Enable common clock framework support for the Broadcom Cygnus SoC
+ 
++config CLK_BCM_HR2
++	bool "Broadcom Hurricane 2 clock support"
++	depends on ARCH_BCM_HR2 || COMPILE_TEST
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_HR2
++	help
++	  Enable common clock framework support for the Broadcom Hurricane 2
++	  SoC
++
+ config CLK_BCM_NSP
+ 	bool "Broadcom Northstar/Northstar Plus clock support"
+ 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index a0c14fa4aa1e..755144195541 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835-aux.o
+ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+ obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
++obj-$(CONFIG_CLK_BCM_HR2)	+= clk-hr2.o
+ obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
+ obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
+diff --git a/drivers/clk/bcm/clk-hr2.c b/drivers/clk/bcm/clk-hr2.c
+new file mode 100644
+index 000000000000..f7c5b7379475
+--- /dev/null
++++ b/drivers/clk/bcm/clk-hr2.c
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (C) 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#include "clk-iproc.h"
++
++static void __init hr2_armpll_init(struct device_node *node)
++{
++	iproc_armpll_setup(node);
++}
++CLK_OF_DECLARE(hr2_armpll, "brcm,hr2-armpll", hr2_armpll_init);
 -- 
 2.14.1
