@@ -1,51 +1,49 @@
-Return-Path: <romain.perier@collabora.com>
-From: Romain Perier <romain.perier@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: philipp.tomsich@theobroma-systems.com,
-	klaus.goger@theobroma-systems.com,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Romain Perier <romain.perier@collabora.com>
-Subject: [PATCH v2 0/4] rockchip: Add efuse support for RK3368 SoCs
-Date: Mon,  4 Sep 2017 10:51:15 +0200
-Message-Id: <20170904085119.25981-1-romain.perier@collabora.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 4/4] clk-u300: Fix a typo in two comment lines
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ trivial@kernel.org
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+Message-ID: <c113ba39-e9b4-a4e5-6fa1-f83c9b59a4d5@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 20:25:15 +0200
+MIME-Version: 1.0
+In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This set of patches exports the right clocks, add required functions
-and data, and definition for enabling and supporting eFuse on RK3368
-SoCs.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 19:57:50 +0200
 
-Note: On my geekbox rk3368, I was unable to flash a working upstream ATF
-or upstream uboot (missing support for LPDDR3 init and timping). I cannot
-test the driver without the secure mode for this efuse on my hardware.So
-I am asking for testing. I think that it should work like on rk3288
+Add a missing character in these descriptions.
 
-Changes in v2:
-- Removed ARM SMC calls for efuse, we need to do as upstream ATF and
-  uboot mainline do, so no secure-regs for efuse
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-u300.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Romain Perier (4):
-  clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
-  clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
-  nvmem: rockchip: add support for RK3368
-  arm64: dts: rockchip: add efuse for RK3368 SoCs
-
- Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt |  1 +
- arch/arm64/boot/dts/rockchip/rk3368.dtsi                   | 14 ++++++++++++++
- drivers/clk/rockchip/clk-rk3368.c                          |  2 +-
- drivers/nvmem/rockchip-efuse.c                             |  4 ++++
- include/dt-bindings/clock/rk3368-cru.h                     |  1 +
- 5 files changed, 21 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
+index b36ca3a14c42..7b3e1921771f 100644
+--- a/drivers/clk/clk-u300.c
++++ b/drivers/clk/clk-u300.c
+@@ -256,7 +256,7 @@
+ #define U300_SYSCON_S1CCR_SEL_APP_FSM_CLK			(0x2 << 1)
+ #define U300_SYSCON_S1CCR_SEL_RTC_CLK				(0x4 << 1)
+ #define U300_SYSCON_S1CCR_SEL_APP_PLL208_CLK			(0x6 << 1)
+-/* SYS_2_CLK_CONTROL third clock contol 16 bit (R/W) */
++/* SYS_2_CLK_CONTROL third clock control 16 bit (R/W) */
+ #define U300_SYSCON_S2CCR					(0x128)
+ #define U300_SYSCON_S2CCR_FIELD_MASK				(0xC3FF)
+ #define U300_SYSCON_S2CCR_CLK_STEAL				(0x8000)
+@@ -378,7 +378,7 @@
+  *  +- ISP Image Signal Processor (U335 only)
+  *  +- CDS (U335 only)
+  *  +- DMA Direct Memory Access Controller
+- *  +- AAIF APP/ACC Inteface (Mobile Scalable Link, MSL)
++ *  +- AAIF APP/ACC Interface (Mobile Scalable Link, MSL)
+  *  +- APEX
+  *  +- VIDEO_ENC AVE2/3 Video Encoder
+  *  +- XGAM Graphics Accelerator Controller
 -- 
-2.11.0
+2.14.1
