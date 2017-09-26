@@ -1,49 +1,81 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 4/4] clk-u300: Fix a typo in two comment lines
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH] [media] clk-kona-setup: Delete two error messages for a
+ failed memory allocation in parent_process()
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+ bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+ Alex Elder <elder@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
  Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- trivial@kernel.org
-References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
-Message-ID: <c113ba39-e9b4-a4e5-6fa1-f83c9b59a4d5@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 20:25:15 +0200
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <d2a61d77-6bb0-b3ac-747f-1ca1a196d7b3@gmail.com>
+Date: Tue, 26 Sep 2017 10:40:06 -0700
 MIME-Version: 1.0
-In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+In-Reply-To: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 19:57:50 +0200
+On 09/26/2017 08:05 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 16:54:20 +0200
+> 
+> Omit extra messages for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add a missing character in these descriptions.
+Can you use subjects that match previous submissions done to the driver:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/clk-u300.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+6e2e7c9fdae3 clk-kona-setup: Use kmalloc_array() in parent_process()
+f37fccce4cc1 clk: bcm: kona: Migrate to clk_hw based registration and OF
+APIs
+4087a5f2e5e7 clk: bcm/kona: Do not use sizeof on pointer type
+7926b3f8c626 clk: bcm/kona: Remove ccu_list
+dc613840a625 clk: bcm281xx: add clock hysteresis support
+a597faccc7ee clk: bcm281xx: add clock policy support
+03548ec06ad3 clk: bcm281xx: define CCU clock data statically
+b12151ca5cd7 clk: bcm281xx: initialize CCU structures statically
+e756325206eb clk: bcm281xx: use init_data.name for clock name
+e813d49d2a47 clk: bcm281xx: don't use unnamed structs or unions
+1a5823c9209f clk: bcm281xx: don't disable unused peripheral clocks
+1f27f15258bf clk: bcm281xx: add initial clock framework support
 
-diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
-index b36ca3a14c42..7b3e1921771f 100644
---- a/drivers/clk/clk-u300.c
-+++ b/drivers/clk/clk-u300.c
-@@ -256,7 +256,7 @@
- #define U300_SYSCON_S1CCR_SEL_APP_FSM_CLK			(0x2 << 1)
- #define U300_SYSCON_S1CCR_SEL_RTC_CLK				(0x4 << 1)
- #define U300_SYSCON_S1CCR_SEL_APP_PLL208_CLK			(0x6 << 1)
--/* SYS_2_CLK_CONTROL third clock contol 16 bit (R/W) */
-+/* SYS_2_CLK_CONTROL third clock control 16 bit (R/W) */
- #define U300_SYSCON_S2CCR					(0x128)
- #define U300_SYSCON_S2CCR_FIELD_MASK				(0xC3FF)
- #define U300_SYSCON_S2CCR_CLK_STEAL				(0x8000)
-@@ -378,7 +378,7 @@
-  *  +- ISP Image Signal Processor (U335 only)
-  *  +- CDS (U335 only)
-  *  +- DMA Direct Memory Access Controller
-- *  +- AAIF APP/ACC Inteface (Mobile Scalable Link, MSL)
-+ *  +- AAIF APP/ACC Interface (Mobile Scalable Link, MSL)
-  *  +- APEX
-  *  +- VIDEO_ENC AVE2/3 Video Encoder
-  *  +- XGAM Graphics Accelerator Controller
+[media] is not appropriate here, other than that, the changes look good,
+thanks.
+
+> ---
+>  drivers/clk/bcm/clk-kona-setup.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+> index c37a7f0e83aa..281f4322355c 100644
+> --- a/drivers/clk/bcm/clk-kona-setup.c
+> +++ b/drivers/clk/bcm/clk-kona-setup.c
+> @@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
+>  	 */
+>  	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
+>  			       GFP_KERNEL);
+> -	if (!parent_names) {
+> -		pr_err("%s: error allocating %u parent names\n", __func__,
+> -				parent_count);
+> +	if (!parent_names)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	/* There is at least one parent, so allocate a selector array */
+>  	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
+>  				   GFP_KERNEL);
+>  	if (!parent_sel) {
+> -		pr_err("%s: error allocating %u parent selectors\n", __func__,
+> -				parent_count);
+>  		kfree(parent_names);
+>  
+>  		return ERR_PTR(-ENOMEM);
+> 
+
+
 -- 
-2.14.1
+Florian
