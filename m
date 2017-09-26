@@ -1,45 +1,65 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 1/2] clk-mux: Delete an error message for a failed memory
- allocation in clk_hw_register_mux_table()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
-Message-ID: <31bc9968-20e9-1fd0-0f16-80cb0f2bffe0@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 18:21:42 +0200
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <91112d33-2fd3-cb1c-a1db-5e5be9540d68@gmail.com>
+Date: Tue, 26 Sep 2017 18:16:50 +0300
 MIME-Version: 1.0
-In-Reply-To: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+In-Reply-To: <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 17:23:04 +0200
+On 26.09.2017 17:50, Jon Hunter wrote:
+> 
+> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>> on Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>> new file mode 100644
+>> index 000000000000..2af9aa76ae11
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>> @@ -0,0 +1,23 @@
+>> +* NVIDIA Tegra AHB DMA controller
+>> +
+>> +Required properties:
+>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>> +- reg:		Should contain registers base address and length.
+>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>> +- clocks:	Should contain one entry, DMA controller clock.
+>> +- resets :	Should contain one entry, DMA controller reset.
+>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>> +		for the peripheral. For more details consult the Tegra TRM's
+>> +		documentation, in particular AHB DMA channel control register
+>> +		REQ_SEL field.
+> 
+> What about the TRIG_SEL field? Do we need to handle this here as well?
+> 
 
-Omit an extra message for a memory allocation failure in this function.
+I've followed APB DMA here, that HW also has TRIG_SEL but ignores it for some
+reason. I think technically it should be present in the binding, yeah.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/clk-mux.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 16a3d5717f4e..1746dbf2f7ea 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -135,10 +135,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 
- 	/* allocate the mux */
- 	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
--	if (!mux) {
--		pr_err("%s: could not allocate mux clk\n", __func__);
-+	if (!mux)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	if (clk_mux_flags & CLK_MUX_READ_ONLY)
 -- 
-2.14.1
+Dmitry
