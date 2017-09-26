@@ -1,116 +1,122 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-Date: Fri, 8 Sep 2017 08:56:52 +0530
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, harshapriya.n@intel.com, tiwai@suse.de,
-	mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
-	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
-	patches.audio@intel.com, broonie@kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH 6/6] ASoC: Intel: kbl: Enable mclk and ssp
- sclk early
-Message-ID: <20170908032644.GA19877@subhransu-desktop>
-References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
- <1504794565-19168-7-git-send-email-subhransu.s.prusty@intel.com>
- <f1f70b1f-7b83-876a-f0ce-0db6d3542f18@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f1f70b1f-7b83-876a-f0ce-0db6d3542f18@linux.intel.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 03/13] drm/sun4i: tcon: Add support for demuxing TCON output on A31
+Date: Tue, 26 Sep 2017 14:59:09 +0800
+Message-Id: <20170926065919.24446-4-wens@csie.org>
+In-Reply-To: <20170926065919.24446-1-wens@csie.org>
+References: <20170926065919.24446-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 07, 2017 at 05:19:25PM -0500, Pierre-Louis Bossart wrote:
-> 
-> >+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-> >+			struct snd_kcontrol *k, int  event)
-> >+{
-> >+	struct snd_soc_dapm_context *dapm = w->dapm;
-> >+	struct snd_soc_card *card = dapm->card;
-> >+	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
-> >+
-> >+	clk_disable_unprepare(priv->mclk);
-> >+	clk_disable_unprepare(priv->sclk);
-> >+
-> >+	return 0;
-> >+}
-> >+
-> >  static const struct snd_soc_dapm_widget kabylake_widgets[] = {
-> >  	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-> >  	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-> >@@ -77,7 +95,8 @@ enum {
-> >  	SND_SOC_DAPM_SPK("HDMI1", NULL),
-> >  	SND_SOC_DAPM_SPK("HDMI2", NULL),
-> >  	SND_SOC_DAPM_SPK("HDMI3", NULL),
-> >-
-> >+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-> >+			platform_clock_control, SND_SOC_DAPM_POST_PMD),
-> [snip]
-> >+static int kabylake_enable_ssp_clks(struct snd_soc_card *card)
-> >+{
-> >+
-> >+	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
-> >+	int ret;
-> >+
-> >+	/* Enable MCLK */
-> >+	ret = clk_set_rate(priv->mclk, 24000000);
-> >+	if (ret < 0) {
-> >+		dev_err(card->dev, "Can't set rate for mclk, err: %d\n", ret);
-> >+		return ret;
-> >+	}
-> >+
-> >+	ret = clk_prepare_enable(priv->mclk);
-> >+	if (ret < 0) {
-> >+		dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-> >+		return ret;
-> >+	}
-> >+
-> >+	/* Enable SCLK */
-> >+	ret = clk_set_rate(priv->sclk, 3072000);
-> >+	if (ret < 0) {
-> >+		dev_err(card->dev, "Can't set rate for sclk, err: %d\n", ret);
-> >+		clk_disable_unprepare(priv->mclk);
-> >+		return ret;
-> >+	}
-> >+
-> >+	ret = clk_prepare_enable(priv->sclk);
-> >+	if (ret < 0) {
-> >+		dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-> >+		clk_disable_unprepare(priv->mclk);
-> >+	}
-> >+
-> >+	return ret;
-> >+}
-> >+
-> >  static int kabylake_rt5663_hw_params(struct snd_pcm_substream *substream,
-> >  	struct snd_pcm_hw_params *params)
-> >  {
-> >  	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> >  	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-> >+	struct snd_soc_card *card = rtd->card;
-> >  	int ret;
-> >+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
-> >+		ret = kabylake_enable_ssp_clks(card);
-> 
-> Is there a reason why the clocks need to be enabled in the
-> hw_params() instead of platform_clock_control()?
+On systems with 2 TCONs such as the A31, it is possible to demux the
+output of the TCONs to one encoder.
 
-Hi Pierre,
+Add support for this for the A31.
 
-Thanks for the review.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-For rt5663 the internal codec clock is configured in set_sysclk callback.
-And It is understood from realtek that the mclk/bclk need to turned ON
-before the set_sysclk call for a successful clock synchronization by the
-codec. So the clocks are enabled in hw_params and disabled in
-platform_clk_control.
-
-I will add comments explaining this in the v2 once I receive feedback for
-rest of the series.
-
-Regards,
-Subhransu
-
-> The code is not symmetrical between enable/disable, is this
-> intended? I remember seeing this in a different context (dialog
-> codec?).
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index e853dfe51389..770b843a6fa9 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -14,9 +14,12 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_encoder.h>
+ #include <drm/drm_modes.h>
+ #include <drm/drm_of.h>
+ 
++#include <uapi/drm/drm_mode.h>
++
+ #include <linux/component.h>
+ #include <linux/ioport.h>
+ #include <linux/of_address.h>
+@@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
+ }
+ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+ 
++static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
++{
++	struct sun4i_drv *drv = drm->dev_private;
++	struct sun4i_tcon *tcon;
++
++	list_for_each_entry(tcon, &drv->tcon_list, list)
++		if (tcon->id == 0)
++			return tcon;
++
++	dev_warn(drm->dev,
++		 "TCON0 not found, display output muxing may not work\n");
++
++	return tcon;
++}
++
++static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
++{
++	struct sun4i_tcon *tcon = sun4i_get_first_tcon(encoder->dev);
++	int tcon_id = drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
++	u32 shift;
++
++	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
++			 encoder->name, encoder->crtc->name, tcon_id);
++
++	/* Only 2 TCONs */
++	if (tcon_id >= 2)
++		return -EINVAL;
++
++	switch (encoder->encoder_type) {
++	case DRM_MODE_ENCODER_TMDS:
++		/* HDMI */
++		shift = 8;
++		break;
++	case DRM_MODE_ENCODER_DSI:
++		/* No MIPI DSI on A31s */
++		if (of_device_is_compatible(tcon->dev->of_node,
++					    "allwinner,sun6i-a31s-tcon"))
++			return -EINVAL;
++		shift = 0;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
++			   0x3 << shift, tcon_id << shift);
++
++	return 0;
++}
++
+ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+ 			struct drm_encoder *encoder)
+ {
++	/* Get the device node of the display engine */
++	struct device_node *node = encoder->dev->dev->of_node;
+ 	u32 val;
+ 
++	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine") ||
++	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine")) {
++		_sun6i_tcon_set_mux(encoder);
++		return;
++	}
++
+ 	if (!tcon->quirks->has_unknown_mux)
+ 		return;
+ 
 -- 
+2.14.1
