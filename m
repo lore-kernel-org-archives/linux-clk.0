@@ -1,45 +1,84 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] clk/versatile: Improve a size determination in
- icst_clk_setup()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
-Message-ID: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:40:51 +0200
-MIME-Version: 1.0
-In-Reply-To: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 10/11] dt-bindings: clock: qcom: add misc resets for PCIE and NSS
+Date: Tue, 26 Sep 2017 17:54:03 +0530
+Message-Id: <1506428644-2996-11-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:24:43 +0200
+PCIE and NSS has MISC reset register in which single register has
+multiple reset bit. The patch adds the DT bindings for these MISC
+resets.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/versatile/clk-icst.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h | 42 ++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 20ab4ceffb28..dafe7a45875d 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -359,7 +359,7 @@ static struct clk *icst_clk_setup(struct device *dev,
- 	struct clk_init_data init;
- 	struct icst_params *pclone;
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+index ff0b4ac..238f872 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+@@ -328,5 +328,47 @@
+ #define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	86
+ #define GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR	87
+ #define GCC_SMMU_CATS_BCR			88
++#define GCC_UBI0_AXI_ARES			89
++#define GCC_UBI0_AHB_ARES			90
++#define GCC_UBI0_NC_AXI_ARES			91
++#define GCC_UBI0_DBG_ARES			92
++#define GCC_UBI0_CORE_CLAMP_ENABLE		93
++#define GCC_UBI0_CLKRST_CLAMP_ENABLE		94
++#define GCC_UBI1_AXI_ARES			95
++#define GCC_UBI1_AHB_ARES			96
++#define GCC_UBI1_NC_AXI_ARES			97
++#define GCC_UBI1_DBG_ARES			98
++#define GCC_UBI1_CORE_CLAMP_ENABLE		99
++#define GCC_UBI1_CLKRST_CLAMP_ENABLE		100
++#define GCC_NSS_CFG_ARES			101
++#define GCC_NSS_IMEM_ARES			102
++#define GCC_NSS_NOC_ARES			103
++#define GCC_NSS_CRYPTO_ARES			104
++#define GCC_NSS_CSR_ARES			105
++#define GCC_NSS_CE_APB_ARES			106
++#define GCC_NSS_CE_AXI_ARES			107
++#define GCC_NSSNOC_CE_APB_ARES			108
++#define GCC_NSSNOC_CE_AXI_ARES			109
++#define GCC_NSSNOC_UBI0_AHB_ARES		110
++#define GCC_NSSNOC_UBI1_AHB_ARES		111
++#define GCC_NSSNOC_SNOC_ARES			112
++#define GCC_NSSNOC_CRYPTO_ARES			113
++#define GCC_NSSNOC_ATB_ARES			114
++#define GCC_NSSNOC_QOSGEN_REF_ARES		115
++#define GCC_NSSNOC_TIMEOUT_REF_ARES		116
++#define GCC_PCIE0_PIPE_ARES			117
++#define GCC_PCIE0_SLEEP_ARES			118
++#define GCC_PCIE0_CORE_STICKY_ARES		119
++#define GCC_PCIE0_AXI_MASTER_ARES		120
++#define GCC_PCIE0_AXI_SLAVE_ARES		121
++#define GCC_PCIE0_AHB_ARES			122
++#define GCC_PCIE0_AXI_MASTER_STICKY_ARES	123
++#define GCC_PCIE1_PIPE_ARES			124
++#define GCC_PCIE1_SLEEP_ARES			125
++#define GCC_PCIE1_CORE_STICKY_ARES		126
++#define GCC_PCIE1_AXI_MASTER_ARES		127
++#define GCC_PCIE1_AXI_SLAVE_ARES		128
++#define GCC_PCIE1_AHB_ARES			129
++#define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
  
--	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
-+	icst = kzalloc(sizeof(*icst), GFP_KERNEL);
- 	if (!icst)
- 		return ERR_PTR(-ENOMEM);
- 
+ #endif
 -- 
-2.14.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
