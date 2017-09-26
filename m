@@ -1,64 +1,56 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v2 6/9] ehci-atmel: Power down during suspend is normal
-To: Romain Izard <romain.izard.pro@gmail.com>, Alexandre Belloni
-	<alexandre.belloni@free-electrons.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
-	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
-	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
- Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
-	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-7-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <90b0ce5e-d99e-7bba-0e6e-3d375053487d@microchip.com>
-Date: Fri, 22 Sep 2017 14:40:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170915140411.31716-7-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH] clk: sunxi-ng: Implement reset control status readback
+Date: Tue, 26 Sep 2017 10:36:20 +0800
+Message-Id: <20170926023620.22284-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15/09/2017 at 16:04, Romain Izard wrote:
-> When an Atmel SoC is suspended with the backup mode, the USB bus will be
-> powered down. As this is expected, do not return an error to the driver
-> core when ehci_resume detects it.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  drivers/usb/host/ehci-atmel.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
-> index 7440722bfbf0..2a8b9bdc0e57 100644
-> --- a/drivers/usb/host/ehci-atmel.c
-> +++ b/drivers/usb/host/ehci-atmel.c
-> @@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
->  	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
->  
->  	atmel_start_clock(atmel_ehci);
-> -	return ehci_resume(hcd, false);
-> +	ehci_resume(hcd, false);
-> +	return 0;
+Until now we were not providing a way to read back the status of our
+reset controls. Consumers had no real way to be certain whether a
+peripheral was held in reset or not.
 
-Ok, I agree with that as the underlying function takes care about the
-controller, in any case (even for !B+S-R case). So we don't have any
-added value to propagate this information.
+Implement the status callback to complete the API support.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_reset.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
->  }
->  
->  #ifdef CONFIG_OF
-> 
-
-
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
+index 1dc4e98ea802..b67149143554 100644
+--- a/drivers/clk/sunxi-ng/ccu_reset.c
++++ b/drivers/clk/sunxi-ng/ccu_reset.c
+@@ -60,8 +60,22 @@ static int ccu_reset_reset(struct reset_controller_dev *rcdev,
+ 	return 0;
+ }
+ 
++static int ccu_reset_status(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
++	const struct ccu_reset_map *map = &ccu->reset_map[id];
++
++	/*
++	 * The reset control API expects 0 if reset is not asserted,
++	 * which is the opposite of what our hardware uses.
++	 */
++	return !(map->bit & readl(ccu->base + map->reg));
++}
++
+ const struct reset_control_ops ccu_reset_ops = {
+ 	.assert		= ccu_reset_assert,
+ 	.deassert	= ccu_reset_deassert,
+ 	.reset		= ccu_reset_reset,
++	.status		= ccu_reset_status,
+ };
 -- 
-Nicolas Ferre
+2.14.1
