@@ -1,250 +1,128 @@
-Return-Path: <hanetzer@startmail.com>
-Date: Wed, 20 Sep 2017 18:04:12 -0500
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	xuejiancheng@hisilicon.com, leo.yan@linaro.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, wenpan@hisilicon.com,
-	linux@armlinux.org.uk, sboyd@codeaurora.org, xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org, gregkh@linuxfoundation.org, arnd@arndb.de
-Subject: Re: [RFC RESEND 3/3] arm: dts: add Hi3521A dts
-Message-ID: <20170920230405.tz3vzoys2vn72rgv@proprietary-killer.fossland>
-References: <20170917082327.10058-1-hanetzer@startmail.com>
- <20170917082327.10058-4-hanetzer@startmail.com>
- <20170920205303.lcycfuai75a7namk@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170920205303.lcycfuai75a7namk@rob-hp-laptop>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 02/11] clk: qcom: add parent map for regmap mux
+Date: Tue, 26 Sep 2017 17:53:55 +0530
+Message-Id: <1506428644-2996-3-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 20, 2017 at 08:53:03PM +0000, Rob Herring wrote:
-> On Sun, Sep 17, 2017 at 03:23:27AM -0500, Marty E. Plummer wrote:
-> > Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
-> > marketed under the name Samsung SDR-B74301N
-> > 
-> > Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
-> > ---
-> >  arch/arm/boot/dts/Makefile              |   2 +
-> >  arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  52 ++++++
-> >  arch/arm/boot/dts/hi3521a.dtsi          | 310 ++++++++++++++++++++++++++++++++
-> >  3 files changed, 364 insertions(+)
-> >  create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> >  create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
-> > 
-> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> > index faf46abaa4a2..e7b9b5dde20f 100644
-> > --- a/arch/arm/boot/dts/Makefile
-> > +++ b/arch/arm/boot/dts/Makefile
-> > @@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
-> >  	gemini-sq201.dtb \
-> >  	gemini-wbd111.dtb \
-> >  	gemini-wbd222.dtb
-> > +dtb-$(CONFIG_ARCH_HI3521A) += \
-> > +	hi3521a-rs-dm290e.dtb
-> >  dtb-$(CONFIG_ARCH_HI3xxx) += \
-> >  	hi3620-hi4511.dtb
-> >  dtb-$(CONFIG_ARCH_HIGHBANK) += \
-> > diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> > new file mode 100644
-> > index 000000000000..b32c8392c93f
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> > @@ -0,0 +1,52 @@
-> > +/*
-> > + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-> > + *
-> > + * This program is free software: you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation, either version 3 of the License, or
-> > + * (at your option) any later version.
-> 
-> Should be version 2 or later? Doesn't really matter to me from a DT 
-> perspective, but it is in the kernel tree.
-> 
-> You can use SPDX tags if you want.
->
-Oh, that's a good idea. I hadn't seen any SPDX tags in the tree that I
-noticed before. I ended up just using the :Gpl command from neovim. 
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "hi3521a.dtsi"
-> > +
-> > +/ {
-> > +	model = "RaySharp RS-DM-290E DVR Board";
-> > +	compatible = "hisilicon,hi3521a";
-> 
-> Needs a board compatible too.
->
-Something like `compatible = "hisilicon,hi3521a", "raysharp,rs-dm-290e";` ? 
-> > +
-> > +	aliases {
-> > +		serial0 = &uart0;
-> > +		serial1 = &uart1;
-> > +		serial2 = &uart2;
-> > +	};
-> > +
-> > +	memory {
-> 
-> Needs a unit-address.
->
-Could you explain what you mean here? As in, memory@someaddr? What would
-I use here? 
-> > +		device_type = "memory";
-> > +		reg = <0x80000000 0xf00000>;
-> > +	};
-> > +};
-> > +
-> > +&hi_sfc {
-> > +	status = "okay";
-> > +	spi-nor@0 {
-> > +		compatible = "jedec,spi-nor";
-> 
-> I don't remember offhand, but I think this should have a device specific 
-> compatible too.
->
-Instead of "jedec,spi-nor" ? Specific to the SPI chip? 
-> > +		reg = <0>;
-> > +		spi-max-frequency = <104000000>;
-> > +	};
-> > +};
-> > +
-> > +&uart0 {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&dual_timer0 {
-> > +	status = "okay";
-> > +};
-> > diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
-> > new file mode 100644
-> > index 000000000000..2af746fdec46
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/hi3521a.dtsi
-> > @@ -0,0 +1,310 @@
-> > +/*
-> > + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-> > + *
-> > + * This program is free software: you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation, either version 3 of the License, or
-> > + * (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> > + */
-> > +
-> > +#include <dt-bindings/clock/hi3521a-clock.h>
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +/ {
-> > +	#address-cells = <1>;
-> > +	#size-cells = <1>;
-> > +	chosen { };
-> > +
-> > +	cpus {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		cpu0: cpu@0 {
-> > +			device_type = "cpu";
-> > +			compatible = "arm,cortex-a7";
-> > +			reg = <0>;
-> > +		};
-> > +	};
-> > +
-> > +	hi_sfc: spi-nor-controller@10000000 {
-> > +		compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +		reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
-> > +		reg-names = "control", "memory";
-> > +		clocks = <&crg HI3521A_FMC_CLK>;
-> > +		status = "disabled";
-> > +	};
-> > +
-> > +	gic: interrupt-controller@10300000 {
-> > +		compatible = "arm,pl390";
-> > +		#interrupt-cells = <3>;
-> > +		interrupt-controller;
-> > +		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-> > +	};
-> > +
-> > +	clk_3m: clk_3m {
-> > +		compatible = "fixed-clock";
-> > +		#clock-cells = <0>;
-> > +		clock-frequency = <3000000>;
-> > +	};
-> > +
-> > +	crg: clock-reset-controller@12040000 {
-> > +		compatible = "hisilicon,hi3521a-crg";
-> > +		#clock-cells = <1>;
-> > +		#reset-cells = <2>;
-> > +		reg = <0x12040000 0x10000>;
-> > +	};
-> 
-> These memory mapped peripherals should be under a bus node.
->
-Crap, will fix. 
-> > +
-> > +	soc {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		compatible = "simple-bus";
-> > +		interrupt-parent = <&gic>;
-> > +		ranges;
-> 
-> It is preferred to have a value here and limit the range of the bus 
-> addresses.
-> 
-Yeah, I think I've seen that before, I don't quite grok how that works.
-> > +
-> > +		dmac: dma@10060000 {
-> 
-> dma-controller@...
-> 
-Will fix.
-> > +			compatible = "arm,pl080", "arm,primecell";
-> > +			reg = <0x10060000 0x1000>;
-> > +			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> > +			status = "disabled";
-> 
-> I wouldn't think enabling dma would be a per board decision.
-> 
-I've just noticed that in general dtsi files just lay it all out and are
-mostly "disabled", though if you think this should be explicitly enabled
-thats fine by me.
-> > +		};
-> > +
-> > +		dual_timer0: timer@12000000 {
-> > +			compatible = "arm,sp804", "arm,primecell";
-> > +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-> > +			reg = <0x12000000 0x1000>;
-> > +			clocks = <&clk_3m>;
-> > +			clock-names = "apb_pclk";
-> 
-> IIRC, it is deprecated to have a single clock here. The h/w has 2 clock 
-> inputs.
->
-Are you meaning for the 0x0 index and 0x20 index clocks?
-> Where's the ARM architected timer?
-> 
-Unsure tbqf, just doing my best to translate a datasheet into code. Do
-all ARM soc's have one?
-> > -- 
-> > 2.14.1
-> > 
+Currently the driver assumes the register configuration value
+is identical to its index in the parent map. This patch adds
+the parent map field in regmap mux clock node which contains
+the mapping of parent index with actual register configuration
+value. If regmap node contains this parent map then the
+configuration value will be taken from this
+parent map instead of simply writing the index value.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h        | 10 ----------
+ drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
+ drivers/clk/qcom/clk-regmap-mux.h |  2 ++
+ drivers/clk/qcom/common.h         | 11 ++++++++++-
+ 4 files changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 1b3e8d2..ee66857 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -26,16 +26,6 @@ struct freq_tbl {
+ };
+ 
+ /**
+- * struct parent_map - map table for PLL source select configuration values
+- * @src: source PLL
+- * @cfg: configuration value
+- */
+-struct parent_map {
+-	u8 src;
+-	u8 cfg;
+-};
+-
+-/**
+  * struct mn - M/N:D counter
+  * @mnctr_en_bit: bit to enable mn counter
+  * @mnctr_reset_bit: bit to assert mn counter reset
+diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+index cae3071..0f3a1bd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.c
++++ b/drivers/clk/qcom/clk-regmap-mux.c
+@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mask;
+ 
++	if (mux->parent_map)
++		return qcom_find_src_index(hw, mux->parent_map, val);
++
+ 	return val;
+ }
+ 
+@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+ 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+ 	unsigned int val;
+ 
++	if (mux->parent_map)
++		index = mux->parent_map[index].cfg;
++
+ 	val = index;
+ 	val <<= mux->shift;
+ 
+diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+index 5cec761..7797cdd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.h
++++ b/drivers/clk/qcom/clk-regmap-mux.h
+@@ -16,11 +16,13 @@
+ 
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
++#include "common.h"
+ 
+ struct clk_regmap_mux {
+ 	u32			reg;
+ 	u32			shift;
+ 	u32			width;
++	const struct parent_map	*parent_map;
+ 	struct clk_regmap	clkr;
+ };
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 23c1927..00196ee 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -20,7 +20,6 @@
+ struct regmap;
+ struct freq_tbl;
+ struct clk_hw;
+-struct parent_map;
+ 
+ #define PLL_LOCK_COUNT_SHIFT	8
+ #define PLL_LOCK_COUNT_MASK	0x3f
+@@ -39,6 +38,16 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ };
+ 
++/**
++ * struct parent_map - map table for source select configuration values
++ * @src: source
++ * @cfg: configuration value
++ */
++struct parent_map {
++	u8 src;
++	u8 cfg;
++};
++
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
+ extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
