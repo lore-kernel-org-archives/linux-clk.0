@@ -1,63 +1,72 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 19 Sep 2017 16:25:04 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Romain Izard <romain.izard.pro@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
-Message-ID: <20170919152504.nhp5i734u75gb5gq@dell>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-9-romain.izard.pro@gmail.com>
- <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
+ example)
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae
+	<inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej
+	Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <be61a74a-55bd-53cf-20c6-49d3f91d944a@samsung.com>
+Date: Tue, 26 Sep 2017 12:04:24 +0200
+MIME-version: 1.0
+In-reply-to: <150483237153.48525.1363518996437790191@resonance>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
+	<1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+	<150483237153.48525.1363518996437790191@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 19 Sep 2017, Nicolas Ferre wrote:
+Hi Michael,
 
-> On 15/09/2017 at 16:04, Romain Izard wrote:
-> > The controller used by a flexcom module is configured at boot, and left
-> > alone after this. As the configuration will be lost after backup mode,
-> > restore the state of the flexcom driver on resume.
-> > 
-> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> 
-> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> On sama5d2 Xplained board (i2c0 from flexcom 4).
-> and obviously:
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> 
-> Thanks Romain!
-> 
-> Regards,
-> 
-> > ---
-> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
-> >  1 file changed, 50 insertions(+), 15 deletions(-)
+On 2017-09-08 02:59, Michael Turquette wrote:
+> Hi Marek,
+>
+> Quoting Marek Szyprowski (2017-08-21 01:04:58)
+>> Dear All,
+>>
+>> This patchset adds runtime PM support to common clock framework. This is an
+>> attempt to implement support for clock controllers, which belongs to a power
+>> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+>> us to solve various freeze/crash issues related to power management.
+>>
+>> The main idea behind this patchset is to keep clock's controller power domain
+>> enabled every time when at least one of its clock is enabled or access to its
+>> registers is being made. Clock controller driver (clock provider) can
+>> supply a struct device pointer, which is the used by clock core for tracking and
+>> managing clock's controller runtime pm state. Each clk_prepare() operation will
+>> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+>> will do pm_runtime_put() at the end.
+>>
+>> This runtime PM feature has been tested with Exynos4412 (not included in this
+>> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+>> respective power domains and need special handling during power on/off
+>> procedures. Till now it wasn't handled at all, what caused various problems.
+>>
+>> Patches for clocks drivers change the way the clock provider is initialized.
+>> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+>> infrastructure is being used. This is needed to let driver to use runtime PM
+>> feature and integrate with generic power domains. The side-effect of this change
+>> is a delay in clock provider registeration during system boot, so early
+>> initialized drivers might get EPROBEDEFER error when requesting their clocks.
+>> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
+>> finally merged to v4.13-rc1 and now it is handled correctly.
+>>
+>> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13-rc1.
+> Patches look good to me. It's too late for the v4.14 PR, but I'll merge
+> this to clk-next after -rc1 drops.
 
-This is the first time I've seen this patch.  Why's that?
+Gentle ping.
 
+v4.14-rc2 has been released yesterday. Is there a chance to get this 
+patchset merged
+to clk-next soon? It definitely needs some time for testing in 
+linux-next and now it
+is the best time for that...
+
+Best regards
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
