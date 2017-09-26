@@ -1,94 +1,82 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v1 01/10] clk: at91: pmc: Wait for clocks when resuming
-To: Romain Izard <romain.izard.pro@gmail.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu
-	<rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
-	<thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
-	<stern@rowland.harvard.edu>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-2-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <14fb5261-bb03-a6bd-6653-2a2c655b04ee@microchip.com>
-Date: Wed, 13 Sep 2017 14:15:30 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170908153604.28383-2-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 11/11] clk: qcom: ipq8074: add misc resets for PCIE and NSS
+Date: Tue, 26 Sep 2017 17:54:04 +0530
+Message-Id: <1506428644-2996-12-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09/2017 at 17:35, Romain Izard wrote:
-> Wait for the syncronization of all clocks when resuming, not only the
-> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-> when interrupts are masked, which is the case in here.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 775af473fe11..5c2b26de303e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->  	return 0;
->  }
->  
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
->  static void pmc_resume(void)
->  {
-> -	int i, ret = 0;
-> +	int i;
->  	u32 tmp;
-> +	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->  
->  	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->  	if (pmc_cache.mckr != tmp)
-> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->  			     AT91_PMC_PCR_CMD);
->  	}
->  
-> -	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-> -		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-> -					       !(tmp & AT91_PMC_LOCKU),
-> -					       10, 5000);
-> -		if (ret)
-> -			pr_crit("USB PLL didn't lock when resuming\n");
-> -	}
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
+PCIE and NSS has MISC reset register in which single register has
+multiple reset bit. The patch adds these resets with its
+corresponding reset bits.
 
-Okay, but I would prefer to keep the timeout property in it. So we may
-need to re-implement a timeout way-out here.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Regards,
-
->  }
->  
->  static struct syscore_ops pmc_syscore_ops = {
-> 
-
-
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 52b859b..30db425 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4639,6 +4639,48 @@ enum {
+ 	[GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x78000, 0 },
+ 	[GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x79000, 0 },
+ 	[GCC_SMMU_CATS_BCR] = { 0x7c000, 0 },
++	[GCC_UBI0_AXI_ARES] = { 0x68010, 0 },
++	[GCC_UBI0_AHB_ARES] = { 0x68010, 1 },
++	[GCC_UBI0_NC_AXI_ARES] = { 0x68010, 2 },
++	[GCC_UBI0_DBG_ARES] = { 0x68010, 3 },
++	[GCC_UBI0_CORE_CLAMP_ENABLE] = { 0x68010, 4 },
++	[GCC_UBI0_CLKRST_CLAMP_ENABLE] = { 0x68010, 5 },
++	[GCC_UBI1_AXI_ARES] = { 0x68010, 8 },
++	[GCC_UBI1_AHB_ARES] = { 0x68010, 9 },
++	[GCC_UBI1_NC_AXI_ARES] = { 0x68010, 10 },
++	[GCC_UBI1_DBG_ARES] = { 0x68010, 11 },
++	[GCC_UBI1_CORE_CLAMP_ENABLE] = { 0x68010, 12 },
++	[GCC_UBI1_CLKRST_CLAMP_ENABLE] = { 0x68010, 13 },
++	[GCC_NSS_CFG_ARES] = { 0x68010, 16 },
++	[GCC_NSS_IMEM_ARES] = { 0x68010, 17 },
++	[GCC_NSS_NOC_ARES] = { 0x68010, 18 },
++	[GCC_NSS_CRYPTO_ARES] = { 0x68010, 19 },
++	[GCC_NSS_CSR_ARES] = { 0x68010, 20 },
++	[GCC_NSS_CE_APB_ARES] = { 0x68010, 21 },
++	[GCC_NSS_CE_AXI_ARES] = { 0x68010, 22 },
++	[GCC_NSSNOC_CE_APB_ARES] = { 0x68010, 23 },
++	[GCC_NSSNOC_CE_AXI_ARES] = { 0x68010, 24 },
++	[GCC_NSSNOC_UBI0_AHB_ARES] = { 0x68010, 25 },
++	[GCC_NSSNOC_UBI1_AHB_ARES] = { 0x68010, 26 },
++	[GCC_NSSNOC_SNOC_ARES] = { 0x68010, 27 },
++	[GCC_NSSNOC_CRYPTO_ARES] = { 0x68010, 28 },
++	[GCC_NSSNOC_ATB_ARES] = { 0x68010, 29 },
++	[GCC_NSSNOC_QOSGEN_REF_ARES] = { 0x68010, 30 },
++	[GCC_NSSNOC_TIMEOUT_REF_ARES] = { 0x68010, 31 },
++	[GCC_PCIE0_PIPE_ARES] = { 0x75040, 0 },
++	[GCC_PCIE0_SLEEP_ARES] = { 0x75040, 1 },
++	[GCC_PCIE0_CORE_STICKY_ARES] = { 0x75040, 2 },
++	[GCC_PCIE0_AXI_MASTER_ARES] = { 0x75040, 3 },
++	[GCC_PCIE0_AXI_SLAVE_ARES] = { 0x75040, 4 },
++	[GCC_PCIE0_AHB_ARES] = { 0x75040, 5 },
++	[GCC_PCIE0_AXI_MASTER_STICKY_ARES] = { 0x75040, 6 },
++	[GCC_PCIE1_PIPE_ARES] = { 0x76040, 0 },
++	[GCC_PCIE1_SLEEP_ARES] = { 0x76040, 1 },
++	[GCC_PCIE1_CORE_STICKY_ARES] = { 0x76040, 2 },
++	[GCC_PCIE1_AXI_MASTER_ARES] = { 0x76040, 3 },
++	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
++	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
++	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
+ };
+ 
+ static const struct of_device_id gcc_ipq8074_match_table[] = {
 -- 
-Nicolas Ferre
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
