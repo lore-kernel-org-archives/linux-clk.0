@@ -1,31 +1,47 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] Ux500 clock: Adjustments for three function
- implementations
-Message-ID: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 20:45:06 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 01/10] MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
+Date: Mon, 25 Sep 2017 17:09:22 -0700
+Message-Id: <20170926000931.670-2-f.fainelli@gmail.com>
+In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
+References: <20170926000931.670-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 20:40:20 +0200
+Update the Broadcom iProc regepx with recently added Hurricane 2 SoC support.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in three functions
-  Improve a size determination in three functions
-
- drivers/clk/ux500/clk-prcc.c    | 6 ++----
- drivers/clk/ux500/clk-prcmu.c   | 6 ++----
- drivers/clk/ux500/clk-sysctrl.c | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6671f375f7fc..3b48a1c2ddb8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2923,6 +2923,7 @@ N:	bcm583*
+ N:	bcm585*
+ N:	bcm586*
+ N:	bcm88312
++N:	hr2
+ F:	arch/arm64/boot/dts/broadcom/ns2*
+ F:	drivers/clk/bcm/clk-ns*
+ F:	drivers/pinctrl/bcm/pinctrl-ns*
 -- 
-2.14.2
+2.14.1
