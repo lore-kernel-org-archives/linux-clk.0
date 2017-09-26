@@ -1,84 +1,52 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Fri, 22 Sep 2017 10:04:53 +0200
-From: Johannes Stezenbach <js@sig21.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
- firmware"
-Message-ID: <20170922080453.3bwad4ale4zizf42@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <4036229.gTT6xKEFIS@aspire.rjw.lan>
- <20170921162307.amdz2uyei7eackhs@sig21.net>
- <4254964.MfDMP6QAfg@aspire.rjw.lan>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 2/4] clk-u300: Improve a size determination in two functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+Message-ID: <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 20:22:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4254964.MfDMP6QAfg@aspire.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
+In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 22, 2017 at 12:35:15AM +0200, Rafael J. Wysocki wrote:
-> On Thursday, September 21, 2017 6:23:07 PM CEST Johannes Stezenbach wrote:
-> > On Thu, Sep 21, 2017 at 04:21:46PM +0200, Rafael J. Wysocki wrote:
-> > > So I would be inclined to think of that as a BIOS issue.
-> > 
-> > OK, wrt $Subject it sparks the question how to fix the
-> > issue exposed by commit d31fd43c0f9a4 "clk: x86: Do not
-> > gate clocks enabled by the firmware".  Add quirks to
-> > the drivers for the devices that have the dangling
-> > PowerResources and manually call _OFF/_ON during suspend/resume?
-> > 
-> > I must admit I haven't looked deeper into the issue yet,
-> > i.e. I don't know which clock causes S0ix failure.
-> > If I understand correctly, before d31fd43c0f9a4 the
-> > clk framework would just disable all unused clocks
-> > registered by clk-pmc-atom.c, which are all of then except
-> > CLK3 which is used by the audio codec. And the audio codec
-> > would disable CLK3 during suspend.
-> > After d31fd43c0f9a4 all clocks that BIOS had enabled during boot
-> > are kept running.  Presumably we could also add the quirk to
-> > clk-pmc-atom.c to bypass what d31fd43c0f9a4 added on Asus E200HA?
-> 
-> Since this is S0ix, the "system level" is 0 all the time (as I said in a
-> previous message).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 19:33:02 +0200
 
-Damn.  Reading ACPI spec (6.1 and 6.2), it talks about _LPI and _RDI
-but E200HA doesn't have that in any ACPI table.
-The table in section 7.1 Power Resource Objects and the Power Management Models
-says "Choose a supported device state to enable a targeted system sleep or
-Low- power Idle state ... [use] _PRx".
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> So there seem to be two possible ways to address this, unfortunately both
-> based on white- or blacklisting.
-> 
-> One of them would be to only do the d31fd43c0f9a4 approach for selected
-> systems where it needs to be done to avoid breakage.  The other one would
-> be to do it for all systems by default and blacklist the ones where that
-> leads to problems.
-> 
-> IMO it is better to disable clocks over suspend-resume, because that reduces
-> the system's power draw while suspended.  So that's what I would do and then
-> keep the clocks running only if that is known to be necessary.
+This issue was detected by using the Coccinelle software.
 
-d31fd43c0f9a4 was added to fix a "hard hangup on boot" issue,
-so I guess the default should be to keep clocks enabled.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-u300.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-BTW, in E200HA DSDT, the PowerResources in question are children of
-the I2Cx devices, presumably it means these clocks are to be used by
-devices connected to the i2c busses.  Maybe it's a left over from devices
-that are not present in E200HA, and we should ignore them.
-
-In conclusion the BIOS bug is that it enables these clocks at boot,
-and the correct quirk is to make clk-pmc-atom.c disable them during init,
-but leave the _PRx handling for the used clocks (CLK3) to ACPI.
-
-Right?
-
-
-Thanks,
-Johannes
+diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
+index e524c3775264..ae78461c7836 100644
+--- a/drivers/clk/clk-u300.c
++++ b/drivers/clk/clk-u300.c
+@@ -702,7 +702,7 @@ syscon_clk_register(struct device *dev, const char *name,
+ 	struct clk_init_data init;
+ 	int ret;
+ 
+-	sclk = kzalloc(sizeof(struct clk_syscon), GFP_KERNEL);
++	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
+ 	if (!sclk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1121,7 +1121,7 @@ mclk_clk_register(struct device *dev, const char *name,
+ 	struct clk_init_data init;
+ 	int ret;
+ 
+-	mclk = kzalloc(sizeof(struct clk_mclk), GFP_KERNEL);
++	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
+ 	if (!mclk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.14.1
