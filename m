@@ -1,48 +1,79 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 08/10] dt-bindings: Add Ubiquiti Networks vendor prefix
-Date: Thu, 28 Sep 2017 16:15:00 -0700
-Message-Id: <20170928231502.27069-9-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+	<thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Peter De
+ Schrijver" <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul
+	<vinod.koul@intel.com>
+CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+Date: Wed, 27 Sep 2017 09:34:37 +0100
+MIME-Version: 1.0
+In-Reply-To: <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the stock ticker: UBNT as the vendor prefix for Ubiquiti Networks.
 
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+On 27/09/17 02:57, Dmitry Osipenko wrote:
+> On 26.09.2017 17:50, Jon Hunter wrote:
+>>
+>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>> on Tegra20/30 SoC's.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>>  1 file changed, 23 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>> new file mode 100644
+>>> index 000000000000..2af9aa76ae11
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>> @@ -0,0 +1,23 @@
+>>> +* NVIDIA Tegra AHB DMA controller
+>>> +
+>>> +Required properties:
+>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>>> +- reg:		Should contain registers base address and length.
+>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>>> +- clocks:	Should contain one entry, DMA controller clock.
+>>> +- resets :	Should contain one entry, DMA controller reset.
+>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>>> +		for the peripheral. For more details consult the Tegra TRM's
+>>> +		documentation, in particular AHB DMA channel control register
+>>> +		REQ_SEL field.
+>>
+>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>
+> 
+> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+> software to decide what trigger to select. So it shouldn't be in the binding.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 1afd298eddd7..f08678fe96d9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -351,6 +351,7 @@ truly	Truly Semiconductors Limited
- tsd	Theobroma Systems Design und Consulting GmbH
- tyan	Tyan Computer Corporation
- ucrobotics	uCRobotics
-+ubnt	Ubiquiti Networks
- udoo	Udoo
- uniwest	United Western Technologies Corp (UniWest)
- upisemi	uPI Semiconductor Corp.
+I think it could be, if say a board wanted a GPIO to trigger a transfer.
+
+> And I think the same applies to requester... any objections?
+
+Well, the REQ_SEL should definitely be in the binding.
+
+Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+like we never bothered with it for the APB DMA and so maybe no ones uses
+this.
+
+Cheers
+Jon
+
 -- 
-2.14.1
+nvpublic
