@@ -1,105 +1,86 @@
-Return-Path: <jeremy.linton@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-acpi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sudeep.holla@arm.com,
-	hanjun.guo@linaro.org,
-	lorenzo.pieralisi@arm.com,
-	rjw@rjwysocki.net,
-	will.deacon@arm.com,
-	catalin.marinas@arm.com,
-	gregkh@linuxfoundation.org,
+Return-Path: <prasannatsmkumar@gmail.com>
+Return-Path: <prasannatsmkumar@gmail.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	ralf@linux-mips.org,
 	mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	jhugo@codeaurora.org,
-	wangxiongfeng2@huawei.com,
-	Jonathan.Zhang@cavium.com,
-	ahs3@redhat.com,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2 0/6] Support PPTT for ARM64
-Date: Tue, 19 Sep 2017 13:47:45 -0500
-Message-Id: <20170919184751.25110-1-jeremy.linton@arm.com>
+	linux-kernel@vger.kernel.org,
+	paul@crapouillou.net,
+	malat@debian.org,
+	dom.peklo@gmail.com
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Subject: [RFC 1/4] dt-bindings: Add Ingenic X1000 SoC clock define
+Date: Wed, 27 Sep 2017 20:45:24 +0530
+Message-Id: <20170927151527.25570-2-prasannatsmkumar@gmail.com>
+In-Reply-To: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-ACPI 6.2 adds the Processor Properties Topology Table (PPTT), which is
-used to describe the processor and cache topology. Ideally it is
-used to extend/override information provided by the hardware, but
-right now ARM64 is entirely dependent on firmware provided tables.
+Ingenic X1000 SoC has different set of peripherals than JZ4780 and
+JZ4740. Add a new device tree binding for the clock.
 
-This patch parses the table for the cache topology and CPU topology.
-For the latter we also add an additional topology_cod_id() macro,
-and a package_id for arm64. Initially the physical id will match
-the cluster id, but we update users of the cluster to utilize
-the new macro. When we enable ACPI/PPTT for arm64 we map the socket
-to the physical id as the remainder of the kernel expects.
+Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+---
+ include/dt-bindings/clock/x1000-cgu.h | 46 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 include/dt-bindings/clock/x1000-cgu.h
 
-For example on juno:
-[root@mammon-juno-rh topology]# lstopo-no-graphics
-  Package L#0
-    L2 L#0 (1024KB)
-      L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
-      L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
-      L1d L#2 (32KB) + L1i L#2 (32KB) + Core L#2 + PU L#2 (P#2)
-      L1d L#3 (32KB) + L1i L#3 (32KB) + Core L#3 + PU L#3 (P#3)
-    L2 L#1 (2048KB)
-      L1d L#4 (32KB) + L1i L#4 (48KB) + Core L#4 + PU L#4 (P#4)
-      L1d L#5 (32KB) + L1i L#5 (48KB) + Core L#5 + PU L#5 (P#5)
-  HostBridge L#0
-    PCIBridge
-      PCIBridge
-        PCIBridge
-          PCI 1095:3132
-            Block(Disk) L#0 "sda"
-        PCIBridge
-          PCI 1002:68f9
-            GPU L#1 "renderD128"
-            GPU L#2 "card0"
-            GPU L#3 "controlD64"
-        PCIBridge
-          PCI 11ab:4380
-            Net L#4 "enp8s0"
-
-v1->v2:
-
-The parser keys off the acpi_pptt_processor node to determine
-  unique cache's rather than the acpi_pptt_cache referenced by the
-  processor node. This allows PPTT tables which "share" cache nodes
-  across cpu nodes despite not being a shared cache.
-
-Normalize the socket, cluster and thread mapping so that they match
-  linux's traditional mapping for the physical id, and thread id.
-  Adding explicit scheduler knowledge of clusters (rather than just
-  their cache sharing attributes) is a subject for a future patch.
-
-Jeremy Linton (6):
-  ACPI/PPTT: Add Processor Properties Topology Table parsing
-  ACPI: Enable PPTT support on ARM64
-  drivers: base: cacheinfo: arm64: Add support for ACPI based firmware
-    tables
-  Topology: Add cluster on die macros and arm64 decoding
-  arm64: Fixup users of topology_physical_package_id
-  arm64: topology: Enable ACPI/PPTT based CPU topology.
-
- arch/arm64/Kconfig                |   1 +
- arch/arm64/include/asm/topology.h |   4 +-
- arch/arm64/kernel/cacheinfo.c     |  23 +-
- arch/arm64/kernel/topology.c      |  62 ++++-
- drivers/acpi/Makefile             |   1 +
- drivers/acpi/arm64/Kconfig        |   3 +
- drivers/acpi/pptt.c               | 459 ++++++++++++++++++++++++++++++++++++++
- drivers/base/cacheinfo.c          |  17 +-
- drivers/clk/clk-mb86s7x.c         |   2 +-
- drivers/cpufreq/arm_big_little.c  |   2 +-
- drivers/firmware/psci_checker.c   |   2 +-
- include/linux/cacheinfo.h         |  10 +-
- include/linux/topology.h          |   4 +
- 13 files changed, 570 insertions(+), 20 deletions(-)
- create mode 100644 drivers/acpi/pptt.c
-
+diff --git a/include/dt-bindings/clock/x1000-cgu.h b/include/dt-bindings/clock/x1000-cgu.h
+new file mode 100644
+index 0000000..17f05bc
+--- /dev/null
++++ b/include/dt-bindings/clock/x1000-cgu.h
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_X1000_CGU_H__
++#define __DT_BINDINGS_CLOCK_X1000_CGU_H__
++
++/* Add details for other peripherals when their support is added */
++#define X1000_CLK_EXCLK		0
++#define X1000_CLK_RTCLK		(X1000_CLK_EXCLK + 1)
++#define X1000_CLK_APLL		(X1000_CLK_RTCLK + 1)
++#define X1000_CLK_MPLL		(X1000_CLK_APLL + 1)
++
++#define X1000_CLK_SCLKA		(X1000_CLK_MPLL + 1)
++#define X1000_CLK_CPUMUX	(X1000_CLK_SCLKA + 1)
++#define X1000_CLK_CPU		(X1000_CLK_CPUMUX + 1)
++#define X1000_CLK_L2CACHE	(X1000_CLK_CPU + 1)
++#define X1000_CLK_AHB0		(X1000_CLK_L2CACHE + 1)
++#define X1000_CLK_AHB2PMUX	(X1000_CLK_AHB0 + 1)
++#define X1000_CLK_AHB2		(X1000_CLK_AHB2PMUX + 1)
++#define X1000_CLK_PCLK		(X1000_CLK_AHB2 + 1)
++#define X1000_CLK_DDR		(X1000_CLK_PCLK + 1)
++#define X1000_CLK_MSCMUX	(X1000_CLK_DDR + 1)
++#define X1000_CLK_MSC0		(X1000_CLK_MSCMUX + 1)
++#define X1000_CLK_MSC1		(X1000_CLK_MSC0 + 1)
++#define X1000_CLK_CIMMCLK	(X1000_CLK_MSC1 + 1)
++#define X1000_CLK_PCMPLL	(X1000_CLK_CIMMCLK + 1)
++#define X1000_CLK_PCM		(X1000_CLK_PCMPLL + 1)
++#define X1000_CLK_NEMC		(X1000_CLK_PCM + 1)
++#define X1000_CLK_UART0		(X1000_CLK_NEMC + 1)
++#define X1000_CLK_UART1		(X1000_CLK_UART0 + 1)
++#define X1000_CLK_UART2		(X1000_CLK_UART1 + 1)
++#define X1000_CLK_PDMA		(X1000_CLK_UART2 + 1)
++#define X1000_CLK_CIM		(X1000_CLK_PDMA + 1)
++#define X1000_CLK_DDR0		(X1000_CLK_CIM + 1)
++#define X1000_CLK_DDR1		(X1000_CLK_DDR0 + 1)
++#define X1000_CLK_CORE1		(X1000_CLK_DDR1	+ 1)
++
++#define X1000_CLK_I2SPLL	(X1000_CLK_CORE1 + 1)
++#define X1000_CLK_I2S		(X1000_CLK_I2SPLL + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_X1000_CGU_H__ */
 -- 
-2.13.5
+2.10.0
