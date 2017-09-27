@@ -1,142 +1,162 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1504714938.3829.40.camel@synopsys.com>
-References: <1504625867.32565.34.camel@synopsys.com> <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
- <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com> <1504705881.3829.19.camel@synopsys.com>
- <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com> <1504714938.3829.40.camel@synopsys.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 6 Sep 2017 14:20:04 -0500
-Message-ID: <CAL_Jsq+oBVeZ9FrvCZsVWyQjTiFw=mujf-p64oLEEo4XYkdmVQ@mail.gmail.com>
-Subject: Re: Setting CPU clock frequency on early boot
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
-	"Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <prasannatsmkumar@gmail.com>
+Return-Path: <prasannatsmkumar@gmail.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	ralf@linux-mips.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	paul@crapouillou.net,
+	malat@debian.org,
+	dom.peklo@gmail.com
+Cc: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Subject: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+Date: Wed, 27 Sep 2017 20:45:26 +0530
+Message-Id: <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+In-Reply-To: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 6, 2017 at 11:22 AM, Alexey Brodkin
-<Alexey.Brodkin@synopsys.com> wrote:
-> Hi Rob,
->
-> On Wed, 2017-09-06 at 10:25 -0500, Rob Herring wrote:
->> On Wed, Sep 6, 2017 at 8:51 AM, Alexey Brodkin
->> <Alexey.Brodkin@synopsys.com> wrote:
->> >
->> > Hi Vineet, Rob,
->> >
->> > On Tue, 2017-09-05 at 16:40 -0700, Vineet Gupta wrote:
->> > >
->> > > On 09/05/2017 03:04 PM, Rob Herring wrote:
->> > > >
->> > > >
->> > > > On Tue, Sep 5, 2017 at 10:37 AM, Alexey Brodkin
->> > > > <Alexey.Brodkin@synopsys.com> wrote:
->
-> [snip]
->
->> > Yeah, that's an interesting question. We may indeed move more smarts to the clock driver
->> > but:
->> >  1. We'll have duplicate code in different clock drivers. Even today that kind of clock
->> >     setup is applicable to AXS10x and HSDK platforms (and they use different clock drivers).
->>
->> No, you could provide a common, shared function to call. Then each
->> platform can opt-in. If you can make something that applies to every
->> single platform now or in the future, then I'd put it in arch. If you
->> have plans to decouple the timer and cpu clocks, then sounds like you
->> can't.
->
-> Right so we'll implement a function which is called by a platform if required.
-> That way we escape copy-pasting while keeping enough flexibility for current
-> and future platforms.
->
->> IMO, if it's not part of the defined CPU architecture, then don't put
->> it in arch/. That's how we end up with multiple copies of the same
->> thing done arbitrarily different ways because few people look across
->> architectures.
->
-> So do you propose to have the function [that reads "clock-frequency" from say
-> CPU node and passes its value to CPU's parent clock driver] in generic
-> [i.e. architecture agnostic] code somewhere in "init/main.c"?
+Add initial Ingenic X1000 SoC support. Provide minimum necessary
+information to boot kernel to an initramfs userspace.
 
-No, just like you said above and have the platform's clock driver
-initialize frequencies.
+Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+---
+ arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++++++++
+ arch/mips/jz4740/Kconfig              |  6 +++
+ arch/mips/jz4740/time.c               |  2 +-
+ 3 files changed, 100 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
 
-I haven't seen anyone else want such a thing as generally the
-bootloader should initialize things to something reasonable.
-
->> >  2. Print out of CPU frequency which is used during boot process for us is important as well
->> >     especially during bring-up of new HW.
->> >
->> >  3. If there's no dedicated "clock-frequency" parameter in CPU node we won't
->> >     change anything so that non-affected platforms will live as they used to.
->> >
->> > That said IMHO proposed implementation is what we want to kep for now.
->> >
->> > >
->> > > Also note that this code is using a new / adhoc DT binding cpu-freq in cou node to
->> > > do the override - is that acceptable ?
->>
->> No, I meant to point that out.
->
-> Sorry, but for me it's not clear what did you mean here.
-> Care to elaborate a bit more?
-
-I noticed the same thing and meant to highlight that in my first
-reply. Use clock-frequency, don't invent something new.
-
->> > I think we'll switch to more common "clock-frequency" in the next respin.
->> > Indeed "cpu-freq" might be a bit misleading.
->>
->> Ideally, you'd use the clock binding eventually.
->
-> Again I'm probably missing something :)
-
-"clock-frequency" property and the clock bindings (i.e. clocks =
-<&phandle>) are generally mutually exclusive at least within clock
-consumer side. There's the assigned-clocks binding which provides the
-ability to set both parent clocks and frequency.
-
-> I meant we will have both clock phandle and "clock-frequency" at the same time.
-> Something like this:
-> -------------------------------->8---------------------------
->         cpus {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
->                 cpu@0 {
->                         device_type = "cpu";
->                         compatible = "snps,archs38";
->                         reg = <0>;
->                         clocks = <&core_clk>;
->                         clock-frequency = <100000000>;  <-- That's where we want to set desired value
->                 };
->         ...
->         }
->
->         core_clk: core-clk@80 {
->                 compatible = "snps,axs10x-arc-pll-clock";
->                 reg = <0x80 0x10>, <0x100 0x10>;
->                 #clock-cells = <0>;
->                 clocks = <&input_clk>;
->         };
-> -------------------------------->8---------------------------
->
-> Or alternatively we may move "clock-frequency" right to the clock's node and have
-> it like that:
-> -------------------------------->8---------------------------
->         core_clk: core-clk@80 {
->                 compatible = "snps,axs10x-arc-pll-clock";
->                 reg = <0x80 0x10>, <0x100 0x10>;
->
-> #clock-cells = <0>;
->                 clocks = <&input_clk>;
->                 clock-frequency = <100000000>;  <-- That's where we want to set desired value
-
-I think this is how it should be done if you use clock-frequency prop.
-This is inline with how fixed-clock binding is done.
-
-Rob
+diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
+new file mode 100644
+index 0000000..abbb9ec
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+@@ -0,0 +1,93 @@
++/*
++ * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <dt-bindings/clock/x1000-cgu.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "ingenic,x1000";
++
++	cpuintc: interrupt-controller {
++		#address-cells = <0>;
++		#interrupt-cells = <1>;
++		interrupt-controller;
++		compatible = "mti,cpu-interrupt-controller";
++	};
++
++	intc: interrupt-controller@10001000 {
++		compatible = "ingenic,x1000-intc", "ingenic,jz4780-intc";
++		reg = <0x10001000 0x50>;
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&cpuintc>;
++		interrupts = <2>;
++	};
++
++	ext: ext {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++	};
++
++	rtc: rtc {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
++
++	cgu: jz4780-cgu@10000000 {
++		compatible = "ingenic,x1000-cgu";
++		reg = <0x10000000 0x100>;
++
++		clocks = <&ext>, <&rtc>;
++		clock-names = "ext", "rtc";
++
++		#clock-cells = <1>;
++	};
++
++	uart0: serial@10030000 {
++		compatible = "ingenic,x1000-uart", "ingenic,jz4780-uart";
++		reg = <0x10030000 0x100>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <51>;
++
++		clocks = <&ext>, <&cgu X1000_CLK_UART0>;
++		clock-names = "baud", "module";
++
++		status = "disabled";
++	};
++
++	uart1: serial@10031000 {
++		compatible = "ingenic,x1000-uart", "ingenic,jz4780-uart";
++		reg = <0x10031000 0x100>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <50>;
++
++		clocks = <&ext>, <&cgu X1000_CLK_UART1>;
++		clock-names = "baud", "module";
++
++		status = "disabled";
++	};
++
++	uart2: serial@10032000 {
++		compatible = "ingenic,x1000-uart", "ingenic,jz4780-uart";
++		reg = <0x10032000 0x100>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <49>;
++
++		clocks = <&ext>, <&cgu X1000_CLK_UART2>;
++		clock-names = "baud", "module";
++
++		status = "disabled";
++	};
++};
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 36f8201..338bc3f 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -22,3 +22,9 @@ config MACH_JZ4780
+ 	select MIPS_CPU_SCACHE
+ 	select SYS_HAS_CPU_MIPS32_R2
+ 	select SYS_SUPPORTS_HIGHMEM
++
++config MACH_X1000
++	bool
++	select MIPS_CPU_SCACHE
++	select SYS_HAS_CPU_MIPS32_R2
++	select SYS_HAS_EARLY_PRINTK
+diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+index bb1ad51..e28c734 100644
+--- a/arch/mips/jz4740/time.c
++++ b/arch/mips/jz4740/time.c
+@@ -113,7 +113,7 @@ static struct clock_event_device jz4740_clockevent = {
+ #ifdef CONFIG_MACH_JZ4740
+ 	.irq = JZ4740_IRQ_TCU0,
+ #endif
+-#ifdef CONFIG_MACH_JZ4780
++#if defined CONFIG_MACH_JZ4780 || defined CONFIG_MACH_X1000
+ 	.irq = JZ4780_IRQ_TCU2,
+ #endif
+ };
+-- 
+2.10.0
