@@ -1,87 +1,82 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 01/11] clk: qcom: add read-only divider operations
-Date: Tue, 26 Sep 2017 17:53:54 +0530
-Message-Id: <1506428644-2996-2-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
-References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk/tegra: Delete an error message for a failed memory
+ allocation in three functions
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Message-ID: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:53:10 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the divider settings are preconfigured and should not
-be changed by the clock framework during frequency change. This
-patch adds the read-only divider operation for QCOM dividers
-which is equivalent to generic divider operations in
-'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:40:34 +0200
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Omit extra messages for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/qcom/clk-regmap-divider.c | 29 +++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-divider.h |  1 +
- 2 files changed, 30 insertions(+)
+ drivers/clk/tegra/clk-audio-sync.c  | 4 +---
+ drivers/clk/tegra/clk-divider.c     | 5 +----
+ drivers/clk/tegra/clk-periph-gate.c | 4 +---
+ 3 files changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
-index 5348491..6cf9005 100644
---- a/drivers/clk/qcom/clk-regmap-divider.c
-+++ b/drivers/clk/qcom/clk-regmap-divider.c
-@@ -23,6 +23,29 @@ static inline struct clk_regmap_div *to_clk_regmap_div(struct clk_hw *hw)
- 	return container_of(to_clk_regmap(hw), struct clk_regmap_div, clkr);
- }
+diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+index 92d04ce2dee6..62a84c883dd4 100644
+--- a/drivers/clk/tegra/clk-audio-sync.c
++++ b/drivers/clk/tegra/clk-audio-sync.c
+@@ -62,10 +62,8 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+ 	struct clk *clk;
  
-+static long div_round_ro_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *prate)
-+{
-+	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
-+	struct clk_regmap *clkr = &divider->clkr;
-+	u32 div;
-+	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
-+
-+	regmap_read(clkr->regmap, divider->reg, &div);
-+	div >>= divider->shift;
-+	div &= BIT(divider->width) - 1;
-+	div += 1;
-+
-+	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-+		if (!hw_parent)
-+			return -EINVAL;
-+
-+		*prate = clk_hw_round_rate(hw_parent, rate * div);
-+	}
-+
-+	return DIV_ROUND_UP_ULL((u64)*prate, div);
-+}
-+
- static long div_round_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long *prate)
- {
-@@ -68,3 +91,9 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
- 	.recalc_rate = div_recalc_rate,
- };
- EXPORT_SYMBOL_GPL(clk_regmap_div_ops);
-+
-+const struct clk_ops clk_regmap_div_ro_ops = {
-+	.round_rate = div_round_ro_rate,
-+	.recalc_rate = div_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_div_ro_ops);
-diff --git a/drivers/clk/qcom/clk-regmap-divider.h b/drivers/clk/qcom/clk-regmap-divider.h
-index fc4492e..8c39c27 100644
---- a/drivers/clk/qcom/clk-regmap-divider.h
-+++ b/drivers/clk/qcom/clk-regmap-divider.h
-@@ -25,5 +25,6 @@ struct clk_regmap_div {
- };
+ 	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
+-	if (!sync) {
+-		pr_err("%s: could not allocate sync source clk\n", __func__);
++	if (!sync)
+ 		return ERR_PTR(-ENOMEM);
+-	}
  
- extern const struct clk_ops clk_regmap_div_ops;
-+extern const struct clk_ops clk_regmap_div_ro_ops;
+ 	sync->rate = rate;
+ 	sync->max_rate = max_rate;
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee14773..5ee9423ccac2 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -156,11 +156,8 @@ struct clk *tegra_clk_register_divider(const char *name,
+ 	struct clk_init_data init;
  
- #endif
+ 	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+-	if (!divider) {
+-		pr_err("%s: could not allocate fractional divider clk\n",
+-		       __func__);
++	if (!divider)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &tegra_clk_frac_div_ops;
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 303ef32ee3f1..276cc4c59204 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -141,10 +141,8 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate) {
+-		pr_err("%s: could not allocate periph gate clk\n", __func__);
++	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.flags = flags;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.2
