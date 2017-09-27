@@ -1,61 +1,102 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 04/10] dt-bindings: Document Broadcom Hurricane 2 clocks
-Date: Mon, 25 Sep 2017 17:09:25 -0700
-Message-Id: <20170926000931.670-5-f.fainelli@gmail.com>
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk/spear: Delete five error messages for a failed memory
+ allocation
+Message-ID: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:15:26 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Device Tree binding document for the Broadcom Hurricane 2 SoC
-which is an iProc based system.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:00:21 +0200
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Omit extra messages for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- .../devicetree/bindings/clock/brcm,iproc-clocks.txt        | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/spear/clk-aux-synth.c  | 4 +---
+ drivers/clk/spear/clk-frac-synth.c | 4 +---
+ drivers/clk/spear/clk-gpt-synth.c  | 4 +---
+ drivers/clk/spear/clk-vco-pll.c    | 8 ++------
+ 4 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index f2c5f0e4a363..f8e4a93466cb 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -137,6 +137,20 @@ These clock IDs are defined in:
-     ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
-     ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
+diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
+index f271c350ef94..ee7a7c043e3b 100644
+--- a/drivers/clk/spear/clk-aux-synth.c
++++ b/drivers/clk/spear/clk-aux-synth.c
+@@ -149,10 +149,8 @@ struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
+ 	}
  
-+Hurricane 2
-+------
-+PLL and leaf clock compatible strings for Hurricane 2 are:
-+ "brcm,hr2-armpll"
-+
-+The following table defines the set of PLL/clock for Hurricane 2:
-+
-+    Clock	Source		Index	ID
-+    ---		-----		-----	---------
-+    crystal	N/A		N/A	N/A
-+
-+    armpll	crystal		N/A	N/A
-+
-+
- Northstar and Northstar Plus
- ------
- PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+ 	aux = kzalloc(sizeof(*aux), GFP_KERNEL);
+-	if (!aux) {
+-		pr_err("could not allocate aux clk\n");
++	if (!aux)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* struct clk_aux assignments */
+ 	if (!masks)
+diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
+index 58d678b5b40a..c48f3ed2d570 100644
+--- a/drivers/clk/spear/clk-frac-synth.c
++++ b/drivers/clk/spear/clk-frac-synth.c
+@@ -136,10 +136,8 @@ struct clk *clk_register_frac(const char *name, const char *parent_name,
+ 	}
+ 
+ 	frac = kzalloc(sizeof(*frac), GFP_KERNEL);
+-	if (!frac) {
+-		pr_err("could not allocate frac clk\n");
++	if (!frac)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* struct clk_frac assignments */
+ 	frac->reg = reg;
+diff --git a/drivers/clk/spear/clk-gpt-synth.c b/drivers/clk/spear/clk-gpt-synth.c
+index 1a722e99e76e..6e95d7f3ade9 100644
+--- a/drivers/clk/spear/clk-gpt-synth.c
++++ b/drivers/clk/spear/clk-gpt-synth.c
+@@ -125,10 +125,8 @@ struct clk *clk_register_gpt(const char *name, const char *parent_name, unsigned
+ 	}
+ 
+ 	gpt = kzalloc(sizeof(*gpt), GFP_KERNEL);
+-	if (!gpt) {
+-		pr_err("could not allocate gpt clk\n");
++	if (!gpt)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* struct clk_gpt assignments */
+ 	gpt->reg = reg;
+diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
+index dc21ca4601aa..e06b821fa60e 100644
+--- a/drivers/clk/spear/clk-vco-pll.c
++++ b/drivers/clk/spear/clk-vco-pll.c
+@@ -292,16 +292,12 @@ struct clk *clk_register_vco_pll(const char *vco_name, const char *pll_name,
+ 	}
+ 
+ 	vco = kzalloc(sizeof(*vco), GFP_KERNEL);
+-	if (!vco) {
+-		pr_err("could not allocate vco clk\n");
++	if (!vco)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("could not allocate pll clk\n");
++	if (!pll)
+ 		goto free_vco;
+-	}
+ 
+ 	/* struct clk_vco assignments */
+ 	vco->mode_reg = mode_reg;
 -- 
-2.14.1
+2.14.2
