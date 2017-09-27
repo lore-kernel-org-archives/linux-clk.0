@@ -1,211 +1,92 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v9 4/7] clk: qcom: Add A53 PLL support
-Date: Thu, 21 Sep 2017 19:49:37 +0300
-Message-Id: <20170921164940.20343-5-georgi.djakov@linaro.org>
-In-Reply-To: <20170921164940.20343-1-georgi.djakov@linaro.org>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Wed, 27 Sep 2017 17:08:11 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Wenyou Yang
+ <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard
+ Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian
+ Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
+ <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
+ Alan Stern <stern@rowland.harvard.edu>, Ludovic Desroches
+ <ludovic.desroches@microchip.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, linux-pwm@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] mtd: nand: atmel: Avoid ECC errors when leaving
+ backup mode
+Message-ID: <20170927170811.57830c1f@bbrezillon>
+In-Reply-To: <20170927083555.16580-5-romain.izard.pro@gmail.com>
+References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+	<20170927083555.16580-5-romain.izard.pro@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
-a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
-are connected to a mux and half-integer divider, which is feeding the
-CPU cores.
+On Wed, 27 Sep 2017 10:35:51 +0200
+Romain Izard <romain.izard.pro@gmail.com> wrote:
 
-This patch adds support for the primary CPU PLL which generates the
-higher range of frequencies above 1GHz.
+> During backup mode, the contents of all registers will be cleared as the
+> SoC will be completely powered down. For a product that boots on NAND
+> Flash memory, the bootloader will obviously use the related controller
+> to read the Flash and correct any detected error in the memory, before
+> handling back control to the kernel's resuming entry point.
+> 
+> But it does not clean the NAND controller registers after use and on its
+> side the kernel driver expects the error locator to be powered down and
+> in a clean state. Add a resume hook for the PMECC error locator, and
+> reset its registers.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> ---
+> Change in v3:
+> * keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
+>   reset the controller after the bootloader has left it enabled.
+> 
+>  drivers/mtd/nand/atmel/nand-controller.c |  3 +++
+>  drivers/mtd/nand/atmel/pmecc.c           | 22 ++++++++++++++--------
+>  drivers/mtd/nand/atmel/pmecc.h           |  1 +
+>  3 files changed, 18 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
+> index f25eca79f4e5..86c2199380c2 100644
+> --- a/drivers/mtd/nand/atmel/nand-controller.c
+> +++ b/drivers/mtd/nand/atmel/nand-controller.c
+> @@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
+>  	struct atmel_nand_controller *nc = dev_get_drvdata(dev);
+>  	struct atmel_nand *nand;
+>  
+> +	if (nand->pmecc)
+> +		atmel_pmecc_resume(nand->pmecc);
+> +
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
- drivers/clk/qcom/Kconfig                           |  10 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/a53-pll.c                         | 107 +++++++++++++++++++++
- 4 files changed, 140 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+nand is used uninitialized here, and atmel_pmecc_resume() should be
+passed a atmel_pmecc object not a atmel_pmecc_user.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-new file mode 100644
-index 000000000000..e3fa8118eaee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-@@ -0,0 +1,22 @@
-+Qualcomm MSM8916 A53 PLL Binding
-+--------------------------------
-+The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
-+above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,msm8916-a53pll"
-+
-+- reg : shall contain base register location and length
-+
-+- #clock-cells : must be set to <0>
-+
-+Example:
-+
-+	a53pll: clock@b016000 {
-+		compatible = "qcom,msm8916-a53pll";
-+		reg = <0xb016000 0x40>;
-+		#clock-cells = <0>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9f6c278deead..81ac7b9378fe 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -12,6 +12,16 @@ config COMMON_CLK_QCOM
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 
-+config QCOM_A53PLL
-+	bool "MSM8916 A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	default ARCH_QCOM
-+	help
-+	  Support for the A53 PLL on MSM8916 devices. It provides
-+	  the CPU with frequencies above 1GHz.
-+	  Say Y if you want to support higher CPU frequencies on MSM8916
-+	  devices.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 3f3aff229fb7..19ae884b5166 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -31,5 +31,6 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..6276934daa0a
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,107 @@
-+/*
-+ * Copyright (c) 2017, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static const struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 65, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
-+};
-+
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
-+};
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,msm8916-a53pll" },
-+	{ }
-+};
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	struct resource *res;
-+	struct clk_pll *pll;
-+	void __iomem *base;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04;
-+	pll->m_reg = 0x08;
-+	pll->n_reg = 0x0c;
-+	pll->config_reg = 0x14;
-+	pll->mode_reg = 0x00;
-+	pll->status_reg = 0x1c;
-+	pll->status_bit = 16;
-+	pll->freq_tbl = a53pll_freq;
-+
-+	init.name = "a53pll";
-+	init.parent_names = (const char *[]){ "xo" };
-+	init.num_parents = 1;
-+	init.ops = &clk_pll_sr2_ops;
-+	init.flags = CLK_IS_CRITICAL;
-+	pll->clkr.hw.init = &init;
-+
-+	ret = devm_clk_register_regmap(dev, &pll->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-+				     &pll->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_a53pll_driver);
+	if (nc->pmecc)
+		atmel_pmecc_resume(nc->pmecc);
+
+>  	list_for_each_entry(nand, &nc->chips, node) {
+>  		int i;
+>  
+> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
+> index 146af8218314..ff09c0f25dd4 100644
+> --- a/drivers/mtd/nand/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/atmel/pmecc.c
+> @@ -765,6 +765,12 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
+>  }
+>  EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
+>  
+> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
+> +{
+> +	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> +	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+> +}
+
+It's not used outside of this file, so it should have a static
+specifier. Anyway, I wonder why you don't expose atmel_pmecc_reset()
+directly instead of creating this atmel_pmecc_resume() wrapper.
