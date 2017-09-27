@@ -1,76 +1,83 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/5] ARM: dts: tegra: Add AHB DMA controller nodes
-Date: Tue, 26 Sep 2017 02:22:06 +0300
-Message-Id: <d6610e316d40e1f9cd3e10d0b41efa24a7d464a1.1506380746.git.digetx@gmail.com>
-In-Reply-To: <cover.1506380746.git.digetx@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
-In-Reply-To: <cover.1506380746.git.digetx@gmail.com>
-References: <cover.1506380746.git.digetx@gmail.com>
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v3 0/8] Various patches for SAMA5D2 backup mode
+Date: Wed, 27 Sep 2017 10:35:47 +0200
+Message-Id: <20170927083555.16580-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add AHB DMA controller nodes to Tegra20/30 DT's.
+While the core of the backup mode for SAMA5D2 has been integrated in
+v4.13, it is far from complete. Individual controllers in the chip have
+drivers that do not support the reset of the registers during suspend,
+and they need to be adapted to handle it.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 9 +++++++++
- arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
- 2 files changed, 18 insertions(+)
+The first patch uses the clock wakeup code from the prototype backup
+mode instead of the version integrated in the mainline, as the mainline
+version is not stable. During a test loop with two-second backup
+suspend, the mainline version will hang in less than one day, whereas
+the prototype version has been running the same test for more than a
+week without hanging.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index f1579c9a7ef4..d0c0c26427f7 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -200,6 +200,15 @@
- 		reg = <0x60007000 0x1000>;
- 	};
- 
-+	ahbdma: ahbdma@60008000 {
-+		compatible = "nvidia,tegra20-ahbdma";
-+		reg = <0x60008000 0x2000>;
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
-+		resets = <&tegra_car 33>;
-+		#dma-cells = <1>;
-+	};
-+
- 	apbdma: dma@6000a000 {
- 		compatible = "nvidia,tegra20-apbdma";
- 		reg = <0x6000a000 0x1200>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 13960fda7471..0800d9a8c546 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -291,6 +291,15 @@
- 		reg = <0x60007000 0x1000>;
- 	};
- 
-+	ahbdma: ahbdma@60008000 {
-+		compatible = "nvidia,tegra20-ahbdma";
-+		reg = <0x60008000 0x2000>;
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_AHBDMA>;
-+		resets = <&tegra_car 33>;
-+		#dma-cells = <1>;
-+	};
-+
- 	apbdma: dma@6000a000 {
- 		compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
- 		reg = <0x6000a000 0x1400>;
+While all these patches are provided in a series, the clock, mtd,
+usb, pwm and mfd patch do not depend on each other.
+
+Changes in v2:
+* drop the IIO patch duplicating existing code
+* determine the number of programmable clocks to save dynamically
+* declare a required local variable in the tty/serial patch
+
+Changes in v3:
+* drop dev_printk changes for PMECC
+* rework the resume code for PMECC
+* improve comments on PMC clock handling
+
+Romain Izard (8):
+  clk: at91: pmc: Wait for clocks when resuming
+  clk: at91: pmc: Save SCSR during suspend
+  clk: at91: pmc: Support backup for programmable clocks
+  mtd: nand: atmel: Avoid ECC errors when leaving backup mode
+  ehci-atmel: Power down during suspend is normal
+  pwm: atmel-tcb: Support backup mode
+  atmel_flexcom: Support backup mode
+  tty/serial: atmel: Prevent a warning on suspend
+
+ drivers/clk/at91/clk-programmable.c      |  2 +
+ drivers/clk/at91/pmc.c                   | 63 ++++++++++++++++++++++++++-----
+ drivers/clk/at91/pmc.h                   |  2 +
+ drivers/mfd/atmel-flexcom.c              | 65 ++++++++++++++++++++++++--------
+ drivers/mtd/nand/atmel/nand-controller.c |  3 ++
+ drivers/mtd/nand/atmel/pmecc.c           | 22 +++++++----
+ drivers/mtd/nand/atmel/pmecc.h           |  1 +
+ drivers/pwm/pwm-atmel-tcb.c              | 63 ++++++++++++++++++++++++++++++-
+ drivers/tty/serial/atmel_serial.c        | 13 +++++++
+ drivers/usb/host/ehci-atmel.c            |  3 +-
+ 10 files changed, 201 insertions(+), 36 deletions(-)
+
 -- 
-2.14.1
+2.11.0
