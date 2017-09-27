@@ -1,214 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 8/9] soc: mediatek: add MT2712 scpsys support
-Date: Tue, 19 Sep 2017 12:00:29 +0800
-Message-ID: <1505793630-12590-9-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: James Liao <jamesjj.liao@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
- srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Fan Chen <fan.chen@mediatek.com>,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v3 2/8] clk: at91: pmc: Save SCSR during suspend
+Date: Wed, 27 Sep 2017 10:35:49 +0200
+Message-Id: <20170927083555.16580-3-romain.izard.pro@gmail.com>
+In-Reply-To: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-add scpsys driver for MT2712
+The contents of the System Clock Status Register (SCSR) needs to be
+restored into the System Clock Enable Register (SCER).
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+As the bootloader will restore some clocks by itself, the issue can be
+missed as only the USB controller, the LCD controller, the Image Sensor
+controller and the programmable clocks will be impacted.
+
+Fix the obvious typo in the suspend/resume code, as the IMR register
+does not need to be saved twice.
+
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 112 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 106 insertions(+), 6 deletions(-)
+ drivers/clk/at91/pmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 28c6e6a..c8abd06 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -21,6 +21,7 @@
- #include <linux/soc/mediatek/infracfg.h>
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 5c2b26de303e..07dc2861ad3f 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -86,7 +86,7 @@ static int pmc_suspend(void)
+ {
+ 	int i;
  
- #include <dt-bindings/power/mt2701-power.h>
-+#include <dt-bindings/power/mt2712-power.h>
- #include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/power/mt7622-power.h>
- #include <dt-bindings/power/mt8173-power.h>
-@@ -32,7 +33,7 @@
- #define SPM_DIS_PWR_CON			0x023c
- #define SPM_CONN_PWR_CON		0x0280
- #define SPM_VEN2_PWR_CON		0x0298
--#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173 */
-+#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173, MT2712 */
- #define SPM_BDP_PWR_CON			0x029c	/* MT2701 */
- #define SPM_ETH_PWR_CON			0x02a0
- #define SPM_HIF_PWR_CON			0x02a4
-@@ -40,12 +41,12 @@
- #define SPM_MFG_2D_PWR_CON		0x02c0
- #define SPM_MFG_ASYNC_PWR_CON		0x02c4
- #define SPM_USB_PWR_CON			0x02cc
-+#define SPM_USB2_PWR_CON		0x02d4	/* MT2712 */
- #define SPM_ETHSYS_PWR_CON		0x02e0	/* MT7622 */
- #define SPM_HIF0_PWR_CON		0x02e4	/* MT7622 */
- #define SPM_HIF1_PWR_CON		0x02e8	/* MT7622 */
- #define SPM_WB_PWR_CON			0x02ec	/* MT7622 */
+-	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
++	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
+ 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
+ 	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
+ 	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
+@@ -129,7 +129,7 @@ static void pmc_resume(void)
+ 	if (pmc_cache.pllar != tmp)
+ 		pr_warn("PLLAR was not configured properly by the firmware\n");
  
--
- #define SPM_PWR_STATUS			0x060c
- #define SPM_PWR_STATUS_2ND		0x0610
- 
-@@ -64,12 +65,13 @@
- #define PWR_STATUS_ETH			BIT(15)
- #define PWR_STATUS_HIF			BIT(16)
- #define PWR_STATUS_IFR_MSC		BIT(17)
-+#define PWR_STATUS_USB2			BIT(19)	/* MT2712 */
- #define PWR_STATUS_VENC_LT		BIT(20)
- #define PWR_STATUS_VENC			BIT(21)
--#define PWR_STATUS_MFG_2D		BIT(22)
--#define PWR_STATUS_MFG_ASYNC		BIT(23)
--#define PWR_STATUS_AUDIO		BIT(24)
--#define PWR_STATUS_USB			BIT(25)
-+#define PWR_STATUS_MFG_2D		BIT(22)	/* MT8173 */
-+#define PWR_STATUS_MFG_ASYNC		BIT(23)	/* MT8173 */
-+#define PWR_STATUS_AUDIO		BIT(24)	/* MT8173, MT2712 */
-+#define PWR_STATUS_USB			BIT(25)	/* MT8173, MT2712 */
- #define PWR_STATUS_ETHSYS		BIT(24)	/* MT7622 */
- #define PWR_STATUS_HIF0			BIT(25)	/* MT7622 */
- #define PWR_STATUS_HIF1			BIT(26)	/* MT7622 */
-@@ -618,6 +620,85 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- };
- 
- /*
-+ * MT2712 power domain support
-+ */
-+static const struct scp_domain_data scp_domain_data_mt2712[] = {
-+	[MT2712_POWER_DOMAIN_MM] = {
-+		.name = "mm",
-+		.sta_mask = PWR_STATUS_DISP,
-+		.ctl_offs = SPM_DIS_PWR_CON,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_VDEC] = {
-+		.name = "vdec",
-+		.sta_mask = PWR_STATUS_VDEC,
-+		.ctl_offs = SPM_VDE_PWR_CON,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM, CLK_VDEC},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_VENC] = {
-+		.name = "venc",
-+		.sta_mask = PWR_STATUS_VENC,
-+		.ctl_offs = SPM_VEN_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = PWR_STATUS_ISP,
-+		.ctl_offs = SPM_ISP_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.clk_id = {CLK_MM},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_AUDIO] = {
-+		.name = "audio",
-+		.sta_mask = PWR_STATUS_AUDIO,
-+		.ctl_offs = SPM_AUDIO_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_AUDIO},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_USB] = {
-+		.name = "usb",
-+		.sta_mask = PWR_STATUS_USB,
-+		.ctl_offs = SPM_USB_PWR_CON,
-+		.sram_pdn_bits = GENMASK(10, 8),
-+		.sram_pdn_ack_bits = GENMASK(14, 12),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_USB2] = {
-+		.name = "usb2",
-+		.sta_mask = PWR_STATUS_USB2,
-+		.ctl_offs = SPM_USB2_PWR_CON,
-+		.sram_pdn_bits = GENMASK(10, 8),
-+		.sram_pdn_ack_bits = GENMASK(14, 12),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_MFG] = {
-+		.name = "mfg",
-+		.sta_mask = PWR_STATUS_MFG,
-+		.ctl_offs = SPM_MFG_PWR_CON,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(19, 16),
-+		.clk_id = {CLK_MFG},
-+		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
-+		.active_wakeup = true,
-+	},
-+};
-+
-+/*
-  * MT6797 power domain support
-  */
- 
-@@ -852,6 +933,22 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	}
- };
- 
-+static const struct scp_soc_data mt2712_data = {
-+	.domains = scp_domain_data_mt2712,
-+	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
-+	.regs = {
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		},
-+		.bus_prot = {
-+			.set_offs = INFRA_TOPAXI_PROTECTEN_SET,
-+			.clr_offs = INFRA_TOPAXI_PROTECTEN_CLR,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
-+	}
-+};
-+
- static const struct scp_soc_data mt6797_data = {
- 	.domains = scp_domain_data_mt6797,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
-@@ -910,6 +1007,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.compatible = "mediatek,mt2701-scpsys",
- 		.data = &mt2701_data,
- 	}, {
-+		.compatible = "mediatek,mt2712-scpsys",
-+		.data = &mt2712_data,
-+	}, {
- 		.compatible = "mediatek,mt6797-scpsys",
- 		.data = &mt6797_data,
- 	}, {
+-	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
++	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
+ 	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
+ 	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
+ 	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.11.0
