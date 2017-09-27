@@ -1,82 +1,67 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 11/11] clk: qcom: ipq8074: add misc resets for PCIE and NSS
-Date: Tue, 26 Sep 2017 17:54:04 +0530
-Message-Id: <1506428644-2996-12-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
-References: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+Date: Wed, 27 Sep 2017 04:57:06 +0300
+MIME-Version: 1.0
+In-Reply-To: <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-PCIE and NSS has MISC reset register in which single register has
-multiple reset bit. The patch adds these resets with its
-corresponding reset bits.
+On 26.09.2017 17:50, Jon Hunter wrote:
+> 
+> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>> on Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>> new file mode 100644
+>> index 000000000000..2af9aa76ae11
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>> @@ -0,0 +1,23 @@
+>> +* NVIDIA Tegra AHB DMA controller
+>> +
+>> +Required properties:
+>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>> +- reg:		Should contain registers base address and length.
+>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>> +- clocks:	Should contain one entry, DMA controller clock.
+>> +- resets :	Should contain one entry, DMA controller reset.
+>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>> +		for the peripheral. For more details consult the Tegra TRM's
+>> +		documentation, in particular AHB DMA channel control register
+>> +		REQ_SEL field.
+> 
+> What about the TRIG_SEL field? Do we need to handle this here as well?
+> 
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq8074.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Actually, DMA transfer trigger isn't related a hardware description. It's up to
+software to decide what trigger to select. So it shouldn't be in the binding.
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 52b859b..30db425 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4639,6 +4639,48 @@ enum {
- 	[GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x78000, 0 },
- 	[GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x79000, 0 },
- 	[GCC_SMMU_CATS_BCR] = { 0x7c000, 0 },
-+	[GCC_UBI0_AXI_ARES] = { 0x68010, 0 },
-+	[GCC_UBI0_AHB_ARES] = { 0x68010, 1 },
-+	[GCC_UBI0_NC_AXI_ARES] = { 0x68010, 2 },
-+	[GCC_UBI0_DBG_ARES] = { 0x68010, 3 },
-+	[GCC_UBI0_CORE_CLAMP_ENABLE] = { 0x68010, 4 },
-+	[GCC_UBI0_CLKRST_CLAMP_ENABLE] = { 0x68010, 5 },
-+	[GCC_UBI1_AXI_ARES] = { 0x68010, 8 },
-+	[GCC_UBI1_AHB_ARES] = { 0x68010, 9 },
-+	[GCC_UBI1_NC_AXI_ARES] = { 0x68010, 10 },
-+	[GCC_UBI1_DBG_ARES] = { 0x68010, 11 },
-+	[GCC_UBI1_CORE_CLAMP_ENABLE] = { 0x68010, 12 },
-+	[GCC_UBI1_CLKRST_CLAMP_ENABLE] = { 0x68010, 13 },
-+	[GCC_NSS_CFG_ARES] = { 0x68010, 16 },
-+	[GCC_NSS_IMEM_ARES] = { 0x68010, 17 },
-+	[GCC_NSS_NOC_ARES] = { 0x68010, 18 },
-+	[GCC_NSS_CRYPTO_ARES] = { 0x68010, 19 },
-+	[GCC_NSS_CSR_ARES] = { 0x68010, 20 },
-+	[GCC_NSS_CE_APB_ARES] = { 0x68010, 21 },
-+	[GCC_NSS_CE_AXI_ARES] = { 0x68010, 22 },
-+	[GCC_NSSNOC_CE_APB_ARES] = { 0x68010, 23 },
-+	[GCC_NSSNOC_CE_AXI_ARES] = { 0x68010, 24 },
-+	[GCC_NSSNOC_UBI0_AHB_ARES] = { 0x68010, 25 },
-+	[GCC_NSSNOC_UBI1_AHB_ARES] = { 0x68010, 26 },
-+	[GCC_NSSNOC_SNOC_ARES] = { 0x68010, 27 },
-+	[GCC_NSSNOC_CRYPTO_ARES] = { 0x68010, 28 },
-+	[GCC_NSSNOC_ATB_ARES] = { 0x68010, 29 },
-+	[GCC_NSSNOC_QOSGEN_REF_ARES] = { 0x68010, 30 },
-+	[GCC_NSSNOC_TIMEOUT_REF_ARES] = { 0x68010, 31 },
-+	[GCC_PCIE0_PIPE_ARES] = { 0x75040, 0 },
-+	[GCC_PCIE0_SLEEP_ARES] = { 0x75040, 1 },
-+	[GCC_PCIE0_CORE_STICKY_ARES] = { 0x75040, 2 },
-+	[GCC_PCIE0_AXI_MASTER_ARES] = { 0x75040, 3 },
-+	[GCC_PCIE0_AXI_SLAVE_ARES] = { 0x75040, 4 },
-+	[GCC_PCIE0_AHB_ARES] = { 0x75040, 5 },
-+	[GCC_PCIE0_AXI_MASTER_STICKY_ARES] = { 0x75040, 6 },
-+	[GCC_PCIE1_PIPE_ARES] = { 0x76040, 0 },
-+	[GCC_PCIE1_SLEEP_ARES] = { 0x76040, 1 },
-+	[GCC_PCIE1_CORE_STICKY_ARES] = { 0x76040, 2 },
-+	[GCC_PCIE1_AXI_MASTER_ARES] = { 0x76040, 3 },
-+	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
-+	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
-+	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
- };
- 
- static const struct of_device_id gcc_ipq8074_match_table[] = {
+And I think the same applies to requester... any objections?
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Dmitry
