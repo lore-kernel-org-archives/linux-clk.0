@@ -1,62 +1,49 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 5/8] ehci-atmel: Power down during suspend is normal
-Date: Thu, 28 Sep 2017 11:46:24 +0200
-Message-Id: <20170928094627.31017-6-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Delete an error message for a failed
+ memory allocation in exynos_register_cpu_clock()
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo
+	Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <cffa4c0c-8b69-bac7-7845-a7a7fee6d898@samsung.com>
+Date: Wed, 27 Sep 2017 16:59:13 +0200
+MIME-version: 1.0
+In-reply-to: <19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20170927135526epcas1p37af4b72a90b97a4b88f9995a26bd0a32@epcas1p3.samsung.com>
+	<19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-When an Atmel SoC is suspended with the backup mode, the USB bus will be
-powered down. As this is expected, do not return an error to the driver
-core when ehci_resume detects it.
+On 09/27/2017 03:55 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 15:46:53 +0200
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/usb/host/ehci-atmel.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applied with summary line shortened to 
+"clk: samsung: Delete a memory allocation error message in clk-cpu.c",
+thanks.
 
-diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
-index 7440722bfbf0..2a8b9bdc0e57 100644
---- a/drivers/usb/host/ehci-atmel.c
-+++ b/drivers/usb/host/ehci-atmel.c
-@@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
- 	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
- 
- 	atmel_start_clock(atmel_ehci);
--	return ehci_resume(hcd, false);
-+	ehci_resume(hcd, false);
-+	return 0;
- }
- 
- #ifdef CONFIG_OF
--- 
-2.11.0
+> ---
+>  drivers/clk/samsung/clk-cpu.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> index 6686e8ba61f9..d2c99d8916b8 100644
+> --- a/drivers/clk/samsung/clk-cpu.c
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -457,8 +457,6 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+>  
+>  	cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
+>  	if (!cpuclk->cfg) {
+> -		pr_err("%s: could not allocate memory for cpuclk data\n",
+> -				__func__);
+>  		ret = -ENOMEM;
+>  		goto unregister_clk_nb;
+>  	}
