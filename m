@@ -1,55 +1,44 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
-To: Darren Hart <dvhart@infradead.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Carlo Caione <carlo@caione.org>, alan@linux.intel.com,
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
  Stephen Boyd <sboyd@codeaurora.org>,
- Linux Upstreaming Team <linux@endlessm.com>,
- Enric Balletbo Serra <eballetbo@gmail.com>, Carlo Caione <carlo@endlessm.com>
-References: <20170714082356.28117-1-carlo@caione.org>
- <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
- <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com>
- <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
- <1505721917.25945.275.camel@linux.intel.com> <20170922213614.GA10927@fury>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <b8a21732-9e91-4d5c-066b-2217dfe7d03a@linux.intel.com>
-Date: Fri, 22 Sep 2017 17:17:39 -0500
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk: samsung: Delete an error message for a failed memory
+ allocation in exynos_register_cpu_clock()
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Message-ID: <19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 15:55:17 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170922213614.GA10927@fury>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 15:46:53 +0200
 
+Omit an extra message for a memory allocation failure in this function.
 
-On 09/22/2017 04:36 PM, Darren Hart wrote:
-> On Mon, Sep 18, 2017 at 11:05:17AM +0300, Andy Shevchenko wrote:
->> On Thu, 2017-09-07 at 16:51 -0500, Pierre-Louis Bossart wrote:
->>>
->>>> Looks like the same code that was initially used as a reference for
->>>> support of PMC clocks in the clock framework, so now we have 2
->>>> drivers
->>>> programming the same PMC hardware, not so good. We'd probably have
->>>> to
->>>> move the atomisp driver to move to clk_get/prepare/enable instead
->>>> of
->>>> the old vlv2_clck_get?
->>> See attached an untested change to show the idea on moving to the clk
->>> API and get feedback (I am not a camera guy, just trying to help -
->>> compile-tested/checkpatch only).
->>> This code *should* enable the same functionality using existing hooks
->>> in
->>> the kernel (and handle the BYT/CHT clocking difference as a bonus).
->>> I am sure Andy will have plenty of comments :-)
->> I have one comment: nice clean up!
->>
->> AtomISP is a *horrible* mess.
->>
-> Pierre, will you be submitting this patch officially now that you have a
-> tested-by?
-it was merged by Sakari this morning in the media tree
+This issue was detected by using the Coccinelle software.
 
-https://git.linuxtv.org/sailus/media_tree.git/log/?h=atomisp
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/samsung/clk-cpu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
->
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 6686e8ba61f9..d2c99d8916b8 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -457,8 +457,6 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 
+ 	cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
+ 	if (!cpuclk->cfg) {
+-		pr_err("%s: could not allocate memory for cpuclk data\n",
+-				__func__);
+ 		ret = -ENOMEM;
+ 		goto unregister_clk_nb;
+ 	}
+-- 
+2.14.1
