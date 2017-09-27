@@ -1,93 +1,59 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 3/4] clk: tegra: Use tegra_clk_register_periph_data()
-Date: Fri,  1 Sep 2017 16:53:42 +0200
-Message-Id: <20170901145343.19890-3-thierry.reding@gmail.com>
-In-Reply-To: <20170901145343.19890-1-thierry.reding@gmail.com>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.17.11]:49546 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751158AbdI0Tjy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Sep 2017 15:39:54 -0400
+Subject: [PATCH 1/2] clk/versatile: Delete two error messages for a failed
+ memory allocation in icst_clk_setup()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+Message-ID: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 21:39:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 21:21:23 +0200
 
-Instead of open-coding the same pattern repeatedly, reuse the newly
-introduced tegra_clk_register_periph_data() helper that will unpack
-the initialization structure.
+Omit extra messages for a memory allocation failure in this function.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 5 +----
- drivers/clk/tegra/clk-tegra114.c     | 4 +---
- drivers/clk/tegra/clk-tegra20.c      | 4 +---
- drivers/clk/tegra/clk-tegra30.c      | 4 +---
- 4 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/clk/versatile/clk-icst.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 848255cc0209..090a5d792341 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -927,10 +927,7 @@ static void __init periph_clk_init(void __iomem *clk_base,
- 			continue;
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 09fbe66f1f11..20ab4ceffb28 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -360,15 +360,12 @@ static struct clk *icst_clk_setup(struct device *dev,
+ 	struct icst_params *pclone;
  
- 		data->periph.gate.regs = bank;
--		clk = tegra_clk_register_periph(data->name,
--			data->p.parent_names, data->num_parents,
--			&data->periph, clk_base, data->offset,
--			data->flags);
-+		clk = tegra_clk_register_periph_data(clk_base, data);
- 		*dt_clk = clk;
- 	}
- }
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index fd1a99c05c2d..63087d17c3e2 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1092,9 +1092,7 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+ 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
+-	if (!icst) {
+-		pr_err("could not allocate ICST clock!\n");
++	if (!icst)
+ 		return ERR_PTR(-ENOMEM);
+-	}
  
- 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
- 		data = &tegra_periph_clk_list[i];
--		clk = tegra_clk_register_periph(data->name,
--			data->p.parent_names, data->num_parents,
--			&data->periph, clk_base, data->offset, data->flags);
-+		clk = tegra_clk_register_periph_data(clk_base, data);
- 		clks[data->clk_id] = clk;
- 	}
- 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cbd60e9..2b839cb24436 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -850,9 +850,7 @@ static void __init tegra20_periph_clk_init(void)
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
- 		data = &tegra_periph_clk_list[i];
--		clk = tegra_clk_register_periph(data->name, data->p.parent_names,
--				data->num_parents, &data->periph,
--				clk_base, data->offset, data->flags);
-+		clk = tegra_clk_register_periph_data(clk_base, data);
- 		clks[data->clk_id] = clk;
- 	}
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index a2d163f759b4..98e8a55e4e1c 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1079,9 +1079,7 @@ static void __init tegra30_periph_clk_init(void)
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
- 		data = &tegra_periph_clk_list[i];
--		clk = tegra_clk_register_periph(data->name, data->p.parent_names,
--				data->num_parents, &data->periph,
--				clk_base, data->offset, data->flags);
-+		clk = tegra_clk_register_periph_data(clk_base, data);
- 		clks[data->clk_id] = clk;
+ 	pclone = kmemdup(desc->params, sizeof(*pclone), GFP_KERNEL);
+ 	if (!pclone) {
+ 		kfree(icst);
+-		pr_err("could not clone ICST params\n");
+ 		return ERR_PTR(-ENOMEM);
  	}
  
 -- 
-2.13.3
+2.14.2
+
