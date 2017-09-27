@@ -1,112 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6502 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbdITG5g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Sep 2017 02:57:36 -0400
-Subject: Re: [PATCH v2 0/6] Support PPTT for ARM64
-To: Jeremy Linton <jeremy.linton@arm.com>, <linux-acpi@vger.kernel.org>
-References: <20170919184751.25110-1-jeremy.linton@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <sudeep.holla@arm.com>,
-        <hanjun.guo@linaro.org>, <lorenzo.pieralisi@arm.com>,
-        <rjw@rjwysocki.net>, <will.deacon@arm.com>,
-        <catalin.marinas@arm.com>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <viresh.kumar@linaro.org>, <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <jhugo@codeaurora.org>,
-        <Jonathan.Zhang@cavium.com>, <ahs3@redhat.com>
-From: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <f0194dff-6fb4-b2ba-93a8-2dd3a5dd9186@huawei.com>
-Date: Wed, 20 Sep 2017 14:56:52 +0800
-MIME-Version: 1.0
-In-Reply-To: <20170919184751.25110-1-jeremy.linton@arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andrew@aj.id.au>
+Message-ID: <1506497645.30138.37.camel@aj.id.au>
+Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register
+ PLLs
+From: Andrew Jeffery <andrew@aj.id.au>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, Linux ARM
+ <linux-arm-kernel@lists.infradead.org>, Benjamin Herrenschmidt
+ <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Rick Altherr
+ <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
+ <arnd@arndb.de>
+Date: Wed, 27 Sep 2017 17:04:05 +0930
+In-Reply-To: <CACPK8Xd8RQ4s1xMsSuxHgQRiHS6vDtxVTAxu8Ba3J3it45MC5g@mail.gmail.com>
+References: <20170921042641.7326-1-joel@jms.id.au>
+	 <20170921042641.7326-4-joel@jms.id.au> <1506343255.30138.29.camel@aj.id.au>
+	 <CACPK8Xd8RQ4s1xMsSuxHgQRiHS6vDtxVTAxu8Ba3J3it45MC5g@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-3gN0lTQDvqLyuXQUU+kY"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jeremy,
 
-I have tested it on D05 board, the sysfs can display right information about
-cpu topo and cache topo, except that the core_id and physical_package_id are
-not continuous and counting from zero. But this doesn't influence the system.
+--=-3gN0lTQDvqLyuXQUU+kY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Xiongfeng Wang
+On Wed, 2017-09-27 at 16:13 +1000, Joel Stanley wrote:
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 div_table,
+> >=20
+> > This doesn't seem to be correct. There's the problem of 0b000 and 0b001=
+ mapping
+> > the same value of 2 for the AST2500, whose table then increments in ste=
+ps of 1.
+> > The AST2400 mapping on the otherhand is multiples of 2 starting at 2, w=
+ith no
+> > inconsistency for 0b000 vs 0b001.
+>=20
+> Yep, we do use a different table for ast2400 vs ast2500. See
+> ast2400_div_table vs ast2500_div_table.
 
-On 2017/9/20 2:47, Jeremy Linton wrote:
-> ACPI 6.2 adds the Processor Properties Topology Table (PPTT), which is
-> used to describe the processor and cache topology. Ideally it is
-> used to extend/override information provided by the hardware, but
-> right now ARM64 is entirely dependent on firmware provided tables.
-> 
-> This patch parses the table for the cache topology and CPU topology.
-> For the latter we also add an additional topology_cod_id() macro,
-> and a package_id for arm64. Initially the physical id will match
-> the cluster id, but we update users of the cluster to utilize
-> the new macro. When we enable ACPI/PPTT for arm64 we map the socket
-> to the physical id as the remainder of the kernel expects.
-> 
-> For example on juno:
-> [root@mammon-juno-rh topology]# lstopo-no-graphics
->   Package L#0
->     L2 L#0 (1024KB)
->       L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
->       L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
->       L1d L#2 (32KB) + L1i L#2 (32KB) + Core L#2 + PU L#2 (P#2)
->       L1d L#3 (32KB) + L1i L#3 (32KB) + Core L#3 + PU L#3 (P#3)
->     L2 L#1 (2048KB)
->       L1d L#4 (32KB) + L1i L#4 (48KB) + Core L#4 + PU L#4 (P#4)
->       L1d L#5 (32KB) + L1i L#5 (48KB) + Core L#5 + PU L#5 (P#5)
->   HostBridge L#0
->     PCIBridge
->       PCIBridge
->         PCIBridge
->           PCI 1095:3132
->             Block(Disk) L#0 "sda"
->         PCIBridge
->           PCI 1002:68f9
->             GPU L#1 "renderD128"
->             GPU L#2 "card0"
->             GPU L#3 "controlD64"
->         PCIBridge
->           PCI 11ab:4380
->             Net L#4 "enp8s0"
-> 
-> v1->v2:
-> 
-> The parser keys off the acpi_pptt_processor node to determine
->   unique cache's rather than the acpi_pptt_cache referenced by the
->   processor node. This allows PPTT tables which "share" cache nodes
->   across cpu nodes despite not being a shared cache.
-> 
-> Normalize the socket, cluster and thread mapping so that they match
->   linux's traditional mapping for the physical id, and thread id.
->   Adding explicit scheduler knowledge of clusters (rather than just
->   their cache sharing attributes) is a subject for a future patch.
-> 
-> Jeremy Linton (6):
->   ACPI/PPTT: Add Processor Properties Topology Table parsing
->   ACPI: Enable PPTT support on ARM64
->   drivers: base: cacheinfo: arm64: Add support for ACPI based firmware
->     tables
->   Topology: Add cluster on die macros and arm64 decoding
->   arm64: Fixup users of topology_physical_package_id
->   arm64: topology: Enable ACPI/PPTT based CPU topology.
-> 
->  arch/arm64/Kconfig                |   1 +
->  arch/arm64/include/asm/topology.h |   4 +-
->  arch/arm64/kernel/cacheinfo.c     |  23 +-
->  arch/arm64/kernel/topology.c      |  62 ++++-
->  drivers/acpi/Makefile             |   1 +
->  drivers/acpi/arm64/Kconfig        |   3 +
->  drivers/acpi/pptt.c               | 459 ++++++++++++++++++++++++++++++++++++++
->  drivers/base/cacheinfo.c          |  17 +-
->  drivers/clk/clk-mb86s7x.c         |   2 +-
->  drivers/cpufreq/arm_big_little.c  |   2 +-
->  drivers/firmware/psci_checker.c   |   2 +-
->  include/linux/cacheinfo.h         |  10 +-
->  include/linux/topology.h          |   4 +
->  13 files changed, 570 insertions(+), 20 deletions(-)
->  create mode 100644 drivers/acpi/pptt.c
-> 
+Yep, but for the AST2500 this is a different table again to what you've
+already defined (for the AST2500). However, for the AST2400 the table
+looks the same as the other AST2400 tables.
 
+Cheers,
+
+Andrew
+--=-3gN0lTQDvqLyuXQUU+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJZy1RtAAoJEJ0dnzgO5LT5i5gP/RcEvydeKE/HQZG2I2b2cSBx
+ceLsNY19/BLw4L8lITfSMtnzE3VjSFP3yeESsb2qtkiVsaq8RWqFE5zgP+RhFjUh
+uG7Mk8JyWmooqq+w3zc5GgDnNApJnkh8z52PWgesrG2rsJgqdXg/KugsnGLGVm0F
+89ngcvsMv3xfm5x2CqGkeoSbYf0fUStx96zqWqVmrppn867No/9xhvQO2TFFasN8
+9MoO2bYY8UCRcxW33sGA14QmXkweUh/gchJlEfPvGxaFX7ky8hJa67PcU2H0fNxL
+r1dU6IQjmVAhIJsB+R17Msi2hsWXI2rEuJ/QljtQtq//toVh0UKHj/bOyW7D5txn
+jdMI7ZgAb5q6Ef0gg3JaC8AjCRUBBiJntfKGixZ+QoKNo7zJJJjhPO2XTLVThJuE
+WD8ZQD7cS0YmBP9k9gDfPI73Zsuams4ETgdrsCH7imAu0AOPPXVxP8v3H1Vc3DvX
+Fw/HK7QDDSx2EQrgMtIZhKp9TJhVO7vQEL1cZ7/eZBsU44/L3fN3gPwxQ+syB/06
+TIk9PFs7XTsa8lY9jOOGd2aqEvLnkvTrFIWSE2zLBCGAL00GV5cd2MzEmVE84pz0
+CZISPJmhR461xkI/6XlyzG3u2oFHlj7w+rWi5w+E+zukDUWmYgkX9a9LaqlrPr9R
+Hd6AwOrtdva61KjGp7Nr
+=It07
+-----END PGP SIGNATURE-----
+
+--=-3gN0lTQDvqLyuXQUU+kY--
