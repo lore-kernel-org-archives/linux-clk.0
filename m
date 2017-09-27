@@ -1,367 +1,123 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de,
-	broonie@kernel.org,
-	lgirdwood@gmail.com,
-	patches.audio@intel.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	harshapriya.n@intel.com,
-	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Subject: [PATCH v2 5/7] ASoC: Intel: Skylake: Add ssp clock driver
-Date: Mon, 18 Sep 2017 10:26:48 +0530
-Message-Id: <1505710610-17952-6-git-send-email-subhransu.s.prusty@intel.com>
-In-Reply-To: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
-References: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/5] clk: tegra: Add AHB DMA clock entry
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Vinod Koul <vinod.koul@intel.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <b5fd087892544cd17042a4aa9dc0289fb761352c.1506380746.git.digetx@gmail.com>
+ <20170926095611.GW6290@tbergstrom-lnx.Nvidia.com>
+ <b575c935-e928-4d51-9905-40731c1aa9c4@gmail.com>
+ <20170927083605.GA6290@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <168d1f44-21ae-86c5-7d9b-981c370d012b@gmail.com>
+Date: Wed, 27 Sep 2017 12:41:55 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170927083605.GA6290@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+On 27.09.2017 11:36, Peter De Schrijver wrote:
+> On Tue, Sep 26, 2017 at 05:46:01PM +0300, Dmitry Osipenko wrote:
+>> On 26.09.2017 12:56, Peter De Schrijver wrote:
+>>> On Tue, Sep 26, 2017 at 02:22:02AM +0300, Dmitry Osipenko wrote:
+>>>> AHB DMA presents on Tegra20/30. Add missing entries, so that driver
+>>>> for AHB DMA could be implemented.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-id.h           | 1 +
+>>>>  drivers/clk/tegra/clk-tegra-periph.c | 1 +
+>>>>  drivers/clk/tegra/clk-tegra20.c      | 6 ++++++
+>>>>  drivers/clk/tegra/clk-tegra30.c      | 2 ++
+>>>>  4 files changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+>>>> index 689f344377a7..c1661b47bbda 100644
+>>>> --- a/drivers/clk/tegra/clk-id.h
+>>>> +++ b/drivers/clk/tegra/clk-id.h
+>>>> @@ -12,6 +12,7 @@ enum clk_id {
+>>>>  	tegra_clk_amx,
+>>>>  	tegra_clk_amx1,
+>>>>  	tegra_clk_apb2ape,
+>>>> +	tegra_clk_ahbdma,
+>>>>  	tegra_clk_apbdma,
+>>>>  	tegra_clk_apbif,
+>>>>  	tegra_clk_ape,
+>>>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+>>>> index 848255cc0209..95a3d8c95f06 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra-periph.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+>>>> @@ -823,6 +823,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+>>>>  	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+>>>>  	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+>>>>  	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+>>>> +	GATE("ahbdma", "clk_m", 33, 0, tegra_clk_ahbdma, 0),
+>>>
+>>> Parent for this should be hclk on Tegra30 and later chips as well..
+>>>
+>>
+>> It looks like other clocks have a wrong parent too here, aren't they? Like for
+>> example "apbdma" should have "pclk" as a parent, isn't it?
+>>
+> 
+> Yes. That is correct.
+> 
 
-For certain platforms it is required to start the clocks (mclk/sclk/fs)
-before the stream start. Example: for few chrome systems, codec needs the
-mclk/sclk to be enabled early for a successful clock synchronization and
-for few IVI platforms, clock need to be enabled at boot and should be ON
-always.
+Okay, I'll fix it in V2.
 
-This patch creates virtual clock driver, which allows the machine driver to
-use the clock interface to send IPCs to DSP to enable/disable the clocks.
+>>>>  	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+>>>>  	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+>>>>  	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>>>> index 837e5cbd60e9..e76c0d292ca7 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra20.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>>>> @@ -449,6 +449,7 @@ static struct tegra_devclk devclks[] __initdata = {
+>>>>  	{ .con_id = "audio", .dt_id = TEGRA20_CLK_AUDIO },
+>>>>  	{ .con_id = "audio_2x", .dt_id = TEGRA20_CLK_AUDIO_2X },
+>>>>  	{ .dev_id = "tegra20-ac97", .dt_id = TEGRA20_CLK_AC97 },
+>>>> +	{ .dev_id = "tegra-ahbdma", .dt_id = TEGRA20_CLK_AHBDMA },
+>>>
+>>> This isn't needed if you use DT bindings to get the clock handle.
+>>>
+>>
+>> Yes, I added it for consistency. Shouldn't we get rid of that all legacy stuff
+>> already?
+>>
+> 
+> We probably should, but we can start by not adding more :)
+> 
 
-Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
----
- sound/soc/intel/Kconfig               |   7 +
- sound/soc/intel/skylake/Makefile      |   5 +
- sound/soc/intel/skylake/skl-ssp-clk.c | 288 ++++++++++++++++++++++++++++++++++
- 3 files changed, 300 insertions(+)
- create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
+Sure ;)
 
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index b3c7f554ec30..b9d9d692b4e3 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -269,6 +269,13 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
-           Say Y if you have such a device.
-           If unsure select "N".
- 
-+config SND_SOC_INTEL_SKYLAKE_SSP_CLK
-+	tristate
-+	help
-+	   Enabling this will make the clk driver to be compiled and allow to
-+	   control MCLK/SCLK/FS clocks independent of the stream. It should be
-+	   enabled by the respective machine driver.
-+
- config SND_SOC_INTEL_SKYLAKE
- 	tristate
- 	select SND_HDA_EXT_CORE
-diff --git a/sound/soc/intel/skylake/Makefile b/sound/soc/intel/skylake/Makefile
-index 3380deb81015..9131c35ad4bb 100644
---- a/sound/soc/intel/skylake/Makefile
-+++ b/sound/soc/intel/skylake/Makefile
-@@ -13,3 +13,8 @@ snd-soc-skl-ipc-objs := skl-sst-ipc.o skl-sst-dsp.o cnl-sst-dsp.o \
- 		skl-sst-utils.o
- 
- obj-$(CONFIG_SND_SOC_INTEL_SKYLAKE) += snd-soc-skl-ipc.o
-+
-+#Skylake Clock device support
-+snd-soc-skl-ssp-clk-objs := skl-ssp-clk.o
-+
-+obj-$(CONFIG_SND_SOC_INTEL_SKYLAKE_SSP_CLK) += snd-soc-skl-ssp-clk.o
-diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c b/sound/soc/intel/skylake/skl-ssp-clk.c
-new file mode 100644
-index 000000000000..769ece306f58
---- /dev/null
-+++ b/sound/soc/intel/skylake/skl-ssp-clk.c
-@@ -0,0 +1,288 @@
-+/*
-+ *  skl-ssp-clk.c - ASoC skylake ssp clock driver
-+ *
-+ *  Copyright (C) 2017 Intel Corp
-+ *  Author: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-+ *  Author: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-+ *
-+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ *  This program is free software; you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation; version 2 of the License.
-+ *
-+ *  This program is distributed in the hope that it will be useful, but
-+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ *  General Public License for more details.
-+ *
-+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include "skl-ssp-clk.h"
-+
-+#define to_skl_clk(_hw)	container_of(_hw, struct skl_clk, hw)
-+
-+struct skl_clk_parent {
-+	struct clk_hw *hw;
-+	struct clk_lookup *lookup;
-+};
-+
-+struct skl_clk {
-+	struct clk_hw hw;
-+	struct clk_lookup *lookup;
-+	struct skl_clk_ops *ops;
-+	unsigned long rate;
-+	void *pvt_data;
-+	u32 id;
-+};
-+
-+struct skl_clk_data {
-+	struct skl_clk_parent parent[SKL_MAX_CLK_SRC];
-+	struct skl_clk *clk[SKL_MAX_CLK_CNT];
-+	u8 avail_clk_cnt;
-+};
-+
-+static int skl_clk_prepare(struct clk_hw *hw)
-+{
-+	struct skl_clk *clkdev = to_skl_clk(hw);
-+
-+	if (!clkdev->ops || !clkdev->ops->prepare)
-+		return -EIO;
-+
-+	if (!clkdev->rate)
-+		return -EINVAL;
-+
-+	return clkdev->ops->prepare(clkdev->pvt_data, clkdev->id, clkdev->rate);
-+}
-+
-+static void skl_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct skl_clk *clkdev = to_skl_clk(hw);
-+
-+	if (!clkdev->ops || !clkdev->ops->unprepare)
-+		return;
-+
-+	if (!clkdev->rate)
-+		return;
-+
-+	clkdev->ops->unprepare(clkdev->pvt_data, clkdev->id, clkdev->rate);
-+}
-+
-+static int skl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long parent_rate)
-+{
-+	struct skl_clk *clkdev = to_skl_clk(hw);
-+	int ret;
-+
-+	if (!clkdev->ops || !clkdev->ops->set_rate)
-+		return -EIO;
-+
-+	ret = clkdev->ops->set_rate(clkdev->id, rate);
-+	if (!ret)
-+		clkdev->rate = rate;
-+
-+	return ret;
-+}
-+
-+unsigned long skl_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct skl_clk *clkdev = to_skl_clk(hw);
-+
-+	if (clkdev->rate)
-+		return clkdev->rate;
-+
-+	if (!clkdev->ops || !clkdev->ops->recalc_rate)
-+		return -EIO;
-+
-+	clkdev->rate = clkdev->ops->recalc_rate(clkdev->id, parent_rate);
-+
-+	return clkdev->rate;
-+}
-+
-+/* Not supported by clk driver. Implemented to satisfy clk fw */
-+long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return rate;
-+}
-+
-+static const struct clk_ops skl_clk_ops = {
-+	.prepare = skl_clk_prepare,
-+	.unprepare = skl_clk_unprepare,
-+	.set_rate = skl_clk_set_rate,
-+	.round_rate = skl_clk_round_rate,
-+	.recalc_rate = skl_clk_recalc_rate,
-+};
-+
-+static void unregister_parent_src_clk(struct skl_clk_parent *pclk, u8 id)
-+{
-+	while (id--) {
-+		clkdev_drop(pclk[id].lookup);
-+		clk_hw_unregister_fixed_rate(pclk[id].hw);
-+	}
-+}
-+
-+static void unregister_src_clk(struct skl_clk_data *dclk)
-+{
-+	u8 cnt = dclk->avail_clk_cnt;
-+
-+	while (cnt--)
-+		clkdev_drop(dclk->clk[cnt]->lookup);
-+}
-+
-+static int skl_register_parent_clks(struct device *dev,
-+			struct skl_clk_parent *parent,
-+			struct skl_clk_parent_src *pclk)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < SKL_MAX_CLK_SRC; i++) {
-+
-+		/* Register Parent clock */
-+		parent[i].hw = clk_hw_register_fixed_rate(dev, pclk[i].name,
-+				pclk[i].parent_name, 0, pclk[i].rate);
-+		if (IS_ERR(parent[i].hw)) {
-+			ret = PTR_ERR_OR_ZERO(parent[i].hw);
-+			goto err;
-+		}
-+
-+		parent[i].lookup = clkdev_hw_create(parent[i].hw, pclk[i].name,
-+									NULL);
-+		if (!parent[i].lookup) {
-+			clk_hw_unregister_fixed_rate(parent[i].hw);
-+			ret = PTR_ERR_OR_ZERO(parent[i].lookup);
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+err:
-+	unregister_parent_src_clk(parent, i);
-+	return ret;
-+}
-+
-+/* REMOVE: send only ssp_clks[i], ops */
-+/* Assign fmt_config to clk_data */
-+static struct skl_clk *register_skl_clk(struct device *dev,
-+			struct skl_ssp_clk *clk,
-+			struct skl_clk_pdata *clk_pdata, int id)
-+{
-+	struct skl_clk *clkdev;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	clkdev = devm_kzalloc(dev, sizeof(*clkdev), GFP_KERNEL);
-+	if (!clkdev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = clk->name;
-+	init.ops = &skl_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = &clk->parent_name;
-+	init.num_parents = 1;
-+	clkdev->hw.init = &init;
-+	clkdev->ops = clk_pdata->ops;
-+	clkdev->pvt_data = clk_pdata->pvt_data;
-+
-+	clkdev->id = id;
-+	ret = devm_clk_hw_register(dev, &clkdev->hw);
-+	if (ret) {
-+		clkdev = ERR_PTR(ret);
-+		return clkdev;
-+	}
-+
-+	clkdev->lookup = clkdev_hw_create(&clkdev->hw, init.name, NULL);
-+	if (!clkdev->lookup)
-+		clkdev = ERR_PTR(-ENOMEM);
-+
-+	return clkdev;
-+}
-+
-+static int skl_clk_dev_probe(struct platform_device *pdev)
-+{
-+	struct skl_clk_pdata *clk_pdata;
-+	struct skl_clk_parent_src *parent_clks;
-+	struct skl_ssp_clk *clks;
-+	struct skl_clk_data *data;
-+	struct device *dev = &pdev->dev;
-+	struct device *parent_dev = dev->parent;
-+	int ret, i;
-+
-+	clk_pdata = dev_get_platdata(&pdev->dev);
-+	parent_clks = clk_pdata->parent_clks;
-+	clks = clk_pdata->ssp_clks;
-+	if (!parent_clks || !clks)
-+		return -EIO;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	/* Register Parent clock */
-+	ret = skl_register_parent_clks(parent_dev, data->parent, parent_clks);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < clk_pdata->num_clks; i++) {
-+		/*
-+		 * Only register valid clocks
-+		 * i.e. for which nhlt entry is present.
-+		 */
-+		if (clks[i].rate_cfg[0].rate == 0)
-+			continue;
-+
-+		data->clk[i] = register_skl_clk(dev, &clks[i], clk_pdata, i);
-+		if (IS_ERR(data->clk[i])) {
-+			ret = PTR_ERR(data->clk[i]);
-+			goto err_unreg_skl_clk;
-+		}
-+
-+		data->avail_clk_cnt++;
-+	}
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	return 0;
-+
-+err_unreg_skl_clk:
-+	unregister_src_clk(data);
-+	unregister_parent_src_clk(data->parent, SKL_MAX_CLK_SRC);
-+
-+	return ret;
-+}
-+
-+static int skl_clk_dev_remove(struct platform_device *pdev)
-+{
-+	struct skl_clk_data *data;
-+
-+	data = platform_get_drvdata(pdev);
-+	unregister_parent_src_clk(data->parent, SKL_MAX_CLK_SRC);
-+	unregister_src_clk(data);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver skl_clk_driver = {
-+	.driver = {
-+		.name = "skl-ssp-clk",
-+	},
-+	.probe = skl_clk_dev_probe,
-+	.remove = skl_clk_dev_remove,
-+};
-+
-+module_platform_driver(skl_clk_driver);
-+
-+MODULE_DESCRIPTION("Skylake clock driver");
-+MODULE_AUTHOR("Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>");
-+MODULE_AUTHOR("Subhransu S. Prusty <subhransu.s.prusty@intel.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:skl-ssp-clk");
+>>>>  	{ .dev_id = "tegra-apbdma", .dt_id = TEGRA20_CLK_APBDMA },
+>>>>  	{ .dev_id = "rtc-tegra", .dt_id = TEGRA20_CLK_RTC },
+>>>>  	{ .dev_id = "timer", .dt_id = TEGRA20_CLK_TIMER },
+>>>> @@ -806,6 +807,11 @@ static void __init tegra20_periph_clk_init(void)
+>>>>  				    clk_base, 0, 3, periph_clk_enb_refcnt);
+>>>>  	clks[TEGRA20_CLK_AC97] = clk;
+>>>>  
+>>>> +	/* ahbdma */
+>>>> +	clk = tegra_clk_register_periph_gate("ahbdma", "hclk", 0, clk_base,
+>>>> +				    0, 33, periph_clk_enb_refcnt);
+>>>> +	clks[TEGRA20_CLK_AHBDMA] = clk;
+>>>> +
+>>>
+>>> You can use the generic definition here if you correct the entry above.
+>>>
+>>
+>> Good point, same applies to "apbdma". Thank you for the suggestion.
+>>
+> 
+> Indeed.
+
 -- 
-1.9.1
+Dmitry
