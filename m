@@ -1,83 +1,193 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de,
-	broonie@kernel.org,
-	lgirdwood@gmail.com,
-	patches.audio@intel.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	harshapriya.n@intel.com,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Subject: [PATCH v2 0/7] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
-Date: Mon, 18 Sep 2017 10:26:43 +0530
-Message-Id: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 3/5] clk: aspeed: Add platform driver and register PLLs
+Date: Wed, 27 Sep 2017 15:57:00 +0930
+Message-Id: <20170927062702.11350-4-joel@jms.id.au>
+In-Reply-To: <20170927062702.11350-1-joel@jms.id.au>
+References: <20170927062702.11350-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-For certain platforms clocks (mclk/sclk/fs) are required to be up before
-the stream start.  Example: some codecs needs the mclk/sclk/fs to  be
-enabled early for a successful clock synchronization. Some patforms
-require clock to be enabled at boot and be always ON
+This registers a platform driver to set up all of the non-core clocks.
 
-By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
-these clocks can be enabled early after the firmware is downloaded.
+The clocks that have configurable rates are now registered.
 
-With this series, a virtual clock driver is created which provides
-interface to send the required IPCs from machine driver to enable the
-clocks. NHLT is parsed during probe and the clock information is populated.
-The pointer to blob is cached and sent along with the set_dma_control IPC
-structure during the clk prepare/unprepare callback. Clocks are created for
-a ssp if the nhlt table has endpoint configuration for that particular ssp.
-Skylake driver creates a platform driver with the clock information and
-register the clk ops callback.
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-kabylake machine driver uses the clock interface to enable the clocks early
-as it is required by the rt5663 driver for clock synchronization.
+--
+v3:
+ - Fix bclk and eclk calculation
+ - Seperate out ast2400 and ast25000 for pll calculation
 
-set_dma_control API can be used with different payload configuration.
-Modify the arguments to take configurable parameters.
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/clk-aspeed.c | 127 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
 
-v1 -> v2
-	- Register parent clocks with skylake device.
-	  With the patch "clk: Add support for runtime PM" soon to be merged
-	  will help DSP to stay active on call to clock enable.
-	  Reference: (https://patchwork.kernel.org/patch/9911741/)
-
-	- Fix the machine driver to enable clocks early for headphone
-	  playback path as well to fix a pop noise issue
-
-	- Include the eve machine driver changes as well
-
-Harsha Priya (1):
-  ASoC: Intel: kbl: Enable mclk and ssp sclk early
-
-Jaikrishna Nemallapudi (5):
-  ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
-  ASoC: Intel: Skylake: Parse nhlt to populate clock information
-  ASoC: Intel: Skylake: Prepare DMA control IPC to enable/disable clock
-  ASoC: Intel: Skylake: Register clock device and ops
-  ASoC: Intel: Skylake: Add ssp clock driver
-
-Naveen M (1):
-  ASoC: Intel: eve: Enable mclk and ssp sclk early
-
- sound/soc/intel/Kconfig                            |   9 +
- sound/soc/intel/boards/kbl_rt5663_max98927.c       |  98 ++++++-
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  97 +++++++
- sound/soc/intel/skylake/Makefile                   |   5 +
- sound/soc/intel/skylake/skl-i2s.h                  |  56 ++++
- sound/soc/intel/skylake/skl-messages.c             | 109 +++++++-
- sound/soc/intel/skylake/skl-nhlt.c                 | 148 +++++++++++
- sound/soc/intel/skylake/skl-ssp-clk.c              | 288 +++++++++++++++++++++
- sound/soc/intel/skylake/skl-ssp-clk.h              | 124 +++++++++
- sound/soc/intel/skylake/skl-topology.h             |   4 +-
- sound/soc/intel/skylake/skl.c                      | 235 +++++++++++++++++
- sound/soc/intel/skylake/skl.h                      |  12 +
- 12 files changed, 1173 insertions(+), 12 deletions(-)
- create mode 100644 sound/soc/intel/skylake/skl-i2s.h
- create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
- create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.h
-
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 14387055554f..e43016ea82cd 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -108,6 +110,20 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
+ 
++static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
++
++static const struct clk_div_table ast2500_mac_div_table[] = {
++	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
+ static const struct clk_div_table ast2400_div_table[] = {
+ 	{ 0x0, 2 },
+ 	{ 0x1, 4 },
+@@ -173,6 +189,117 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
+ 			mult, div);
+ }
+ 
++struct aspeed_clk_soc_data {
++	const struct clk_div_table *div_table;
++	const struct clk_div_table *mac_div_table;
++	struct clk_hw *(*calc_pll)(const char *name, u32 val);
++};
++
++static const struct aspeed_clk_soc_data ast2500_data = {
++	.div_table = ast2500_div_table,
++	.mac_div_table = ast2500_mac_div_table,
++	.calc_pll = aspeed_ast2500_calc_pll,
++};
++
++static const struct aspeed_clk_soc_data ast2400_data = {
++	.div_table = ast2400_div_table,
++	.mac_div_table = ast2400_div_table,
++	.calc_pll = aspeed_ast2400_calc_pll,
++};
++
++static int __init aspeed_clk_probe(struct platform_device *pdev)
++{
++	const struct aspeed_clk_soc_data *soc_data;
++	struct device *dev = &pdev->dev;
++	struct regmap *map;
++	struct clk_hw *hw;
++	u32 val, rate;
++
++	map = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "no syscon regmap\n");
++		return PTR_ERR(map);
++	}
++
++	/* SoC generations share common layouts but have different divisors */
++	soc_data = of_device_get_match_data(&pdev->dev);
++
++	/* UART clock div13 setting */
++	regmap_read(map, ASPEED_MISC_CTRL, &val);
++	if (val & BIT(12))
++		rate = 24000000 / 13;
++	else
++		rate = 24000000;
++	/* TODO: Find the parent data for the uart clock */
++	hw = clk_hw_register_fixed_rate(NULL, "uart", NULL, 0, rate);
++	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
++
++	/*
++	 * Memory controller (M-PLL) PLL. This clock is configured by the
++	 * bootloader, and is exposed to Linux as a read-only clock rate.
++	 */
++	regmap_read(map, ASPEED_MPLL_PARAM, &val);
++	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	soc_data->calc_pll("mpll", val);
++
++	/* SD/SDIO clock divider (TODO: There's a gate too) */
++	hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
++
++	/* MAC AHB bus clock divider */
++	hw = clk_hw_register_divider_table(NULL, "mac", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
++			soc_data->mac_div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
++
++	/* LPC Host (LHCLK) clock divider */
++	hw = clk_hw_register_divider_table(NULL, "lhclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
++
++	/* Video Engine (ECLK) mux and clock divider */
++	hw = clk_hw_register_mux(NULL, "eclk_mux",
++			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
++			scu_base + ASPEED_CLK_SELECTION, 2, 2,
++			0, &aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
++	hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
++			scu_base + ASPEED_CLK_SELECTION, 28, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
++
++	/* P-Bus (BCLK) clock divider */
++	hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
++
++	return 0;
++};
++
++static const struct of_device_id aspeed_clk_dt_ids[] = {
++	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
++	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
++	{ },
++};
++
++static struct platform_driver aspeed_clk_driver = {
++	.probe  = aspeed_clk_probe,
++	.driver = {
++		.name = "aspeed-clk",
++		.of_match_table = aspeed_clk_dt_ids,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(aspeed_clk_driver);
++
+ static void __init aspeed_ast2400_cc(struct regmap *map)
+ {
+ 	struct clk_hw *hw;
 -- 
-1.9.1
+2.14.1
