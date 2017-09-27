@@ -1,84 +1,45 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 2/2] clk/versatile: Improve a size determination in
+ icst_clk_setup()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+Message-ID: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 21:40:51 +0200
 MIME-Version: 1.0
-In-Reply-To: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net> <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 28 Sep 2017 18:04:18 +0200
-Message-ID: <CAPDyKFozYOX3P=pgHsWWV+2dsmwQVUc4d422Buf8+frChyPpig@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk/ux500: Improve a size determination in three functions
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27 September 2017 at 20:47, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:30:53 +0200
->
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 21:24:43 +0200
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> ---
->  drivers/clk/ux500/clk-prcc.c    | 2 +-
->  drivers/clk/ux500/clk-prcmu.c   | 2 +-
->  drivers/clk/ux500/clk-sysctrl.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-> index 5ca07e6d1f64..7cfb59c9136d 100644
-> --- a/drivers/clk/ux500/clk-prcc.c
-> +++ b/drivers/clk/ux500/clk-prcc.c
-> @@ -107,7 +107,7 @@ static struct clk *clk_reg_prcc(const char *name,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
-> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-> index c137934f23ab..9d1f2d4550ad 100644
-> --- a/drivers/clk/ux500/clk-prcmu.c
-> +++ b/drivers/clk/ux500/clk-prcmu.c
-> @@ -258,7 +258,7 @@ static struct clk *clk_reg_prcmu(const char *name,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
-> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> index e0a834c08a04..7c0403b733ae 100644
-> --- a/drivers/clk/ux500/clk-sysctrl.c
-> +++ b/drivers/clk/ux500/clk-sysctrl.c
-> @@ -139,7 +139,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
-> +       clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> --
-> 2.14.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/versatile/clk-icst.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 20ab4ceffb28..dafe7a45875d 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -359,7 +359,7 @@ static struct clk *icst_clk_setup(struct device *dev,
+ 	struct clk_init_data init;
+ 	struct icst_params *pclone;
+ 
+-	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
++	icst = kzalloc(sizeof(*icst), GFP_KERNEL);
+ 	if (!icst)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.14.2
