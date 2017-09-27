@@ -1,75 +1,73 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 2/2] clk/ux500: Improve a size determination in three
+ functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
+Message-ID: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 20:47:53 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <201709130826.AnbwLF3k%fengguang.wu@intel.com>
-References: <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com> <201709130826.AnbwLF3k%fengguang.wu@intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Sep 2017 15:40:32 +0200
-Message-ID: <CAMuHMdWQtKPbSUmyKQdMzuRuk2GZ2AD-XAosCo-of+_+x6pU5A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
-To: kbuild test robot <lkp@intel.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, "kbuild-all@01.org" <kbuild-all@01.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Shawn Guo <shawnguo@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 2:34 AM, kbuild test robot <lkp@intel.com> wrote:
-> [auto build test WARNING on clk/clk-next]
-> [also build test WARNING on v4.13 next-20170912]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-bulk-add-of_clk_bulk_get/20170913-075645
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: x86_64-randconfig-x001-201737 (attached as .config)
-> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
->
-> All warnings (new ones prefixed by >>):
->
->    In file included from include/linux/dma/dw.h:15:0,
->                     from drivers//tty/serial/8250/8250_lpss.c:18:
->    include/linux/clk.h: In function 'of_clk_bulk_get':
->>> include/linux/clk.h:692:9: warning: return makes integer from pointer without a cast [-Wint-conversion]
->      return ERR_PTR(-ENOENT);
->             ^~~~~~~~~~~~~~~~
->    At top level:
->    include/linux/clk.h:689:12: warning: 'of_clk_bulk_get' defined but not used [-Wunused-function]
->     static int of_clk_bulk_get(struct device_node *np, int num_clks,
->                ^~~~~~~~~~~~~~~
->
-> vim +692 include/linux/clk.h
->
->    681
->    682  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
->    683  int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
->    684                                   struct clk_bulk_data *clks);
->    685  struct clk *of_clk_get(struct device_node *np, int index);
->    686  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
->    687  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
->    688  #else
->    689  static int of_clk_bulk_get(struct device_node *np, int num_clks,
->    690                             struct clk_bulk_data *clks)
->    691  {
->  > 692          return ERR_PTR(-ENOENT);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 20:30:53 +0200
 
-That should be plain "return -ENOENT;".
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
->    693  }
->    694
+This issue was detected by using the Coccinelle software.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/ux500/clk-prcc.c    | 2 +-
+ drivers/clk/ux500/clk-prcmu.c   | 2 +-
+ drivers/clk/ux500/clk-sysctrl.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+index 5ca07e6d1f64..7cfb59c9136d 100644
+--- a/drivers/clk/ux500/clk-prcc.c
++++ b/drivers/clk/ux500/clk-prcc.c
+@@ -107,7 +107,7 @@ static struct clk *clk_reg_prcc(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+index c137934f23ab..9d1f2d4550ad 100644
+--- a/drivers/clk/ux500/clk-prcmu.c
++++ b/drivers/clk/ux500/clk-prcmu.c
+@@ -258,7 +258,7 @@ static struct clk *clk_reg_prcmu(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+index e0a834c08a04..7c0403b733ae 100644
+--- a/drivers/clk/ux500/clk-sysctrl.c
++++ b/drivers/clk/ux500/clk-sysctrl.c
+@@ -139,7 +139,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
++	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.14.2
