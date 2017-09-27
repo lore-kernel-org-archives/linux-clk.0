@@ -1,124 +1,78 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 06/13] drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
-Date: Tue, 26 Sep 2017 14:59:12 +0800
-Message-Id: <20170926065919.24446-7-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 0/5] clk: Add Aspeed clock driver
+Date: Wed, 27 Sep 2017 15:56:57 +0930
+Message-Id: <20170927062702.11350-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs typically have two PLLs reserved for video related usage.
-At the moment we only support using the first one to feed the HDMI
-transmitter block's TMDS clock.
+This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
+Aspeed.
 
-Let the HDMI encoder's TMDS clock go through all of its parents when
-calculating possible clock rates. This allows usage of the second video
-PLL as its parent.
+This is version three of the series. Version one contained two patches; an update
+to the binding document and a single patch for the driver. Lee has merged the
+bindings change, so that is dropped from this series, and I split the driver
+out into a series of patches to make them easier to review. Version three
+addresses reivew from Andrew and has seen more testing on hardware.
 
-Note that this does not handle conflicting pixel clocks. It is entirely
-possible to have an LCD panel use one pixel clock rate, only to be
-overridden by the HDMI transmitter's clock rate request when the second
-display pipeline is enabled.
+All of the important clocks are supported, with most non-essential ones
+also implemented where information is available. I am working with
+Aspeed to clear up some of the missing information, including the
+missing parent-sibling relationships.
 
-This should be handled by having all the clock drivers honor clock rate
-ranges, and have the consumers use clk_set_rate_min/clk_set_rate_max.
+We need to know the rate of the apb clock in order to correctly program
+the clocksource driver, so the apb and it's parents are created in the
+CLK_OF_DECLARE_DRIVER callback.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 53 ++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+The rest of the clocks are created at normal driver probe time. I
+followed the Gemini driver's lead with using the regmap where I could,
+but also having a pointer to the base address for use with the common
+clock callbacks.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-index 5cf2527bffc8..e8d4c311b80d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-@@ -67,11 +67,11 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
- static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 				     struct clk_rate_request *req)
- {
--	struct clk_hw *parent;
-+	struct clk_hw *parent = NULL;
- 	unsigned long best_parent = 0;
- 	unsigned long rate = req->rate;
- 	int best_div = 1, best_half = 1;
--	int i, j;
-+	int i, j, p;
- 
- 	/*
- 	 * We only consider PLL3, since the TCON is very likely to be
-@@ -79,32 +79,37 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 	 * clock, so we should not need to do anything.
- 	 */
- 
--	parent = clk_hw_get_parent_by_index(hw, 0);
--	if (!parent)
--		return -EINVAL;
--
--	for (i = 1; i < 3; i++) {
--		for (j = 1; j < 16; j++) {
--			unsigned long ideal = rate * i * j;
--			unsigned long rounded;
--
--			rounded = clk_hw_round_rate(parent, ideal);
--
--			if (rounded == ideal) {
--				best_parent = rounded;
--				best_half = i;
--				best_div = j;
--				goto out;
--			}
--
--			if (abs(rate - rounded / i) <
--			    abs(rate - best_parent / best_div)) {
--				best_parent = rounded;
--				best_div = i;
-+	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
-+		parent = clk_hw_get_parent_by_index(hw, p);
-+		if (!parent)
-+			continue;
-+
-+		for (i = 1; i < 3; i++) {
-+			for (j = 1; j < 16; j++) {
-+				unsigned long ideal = rate * i * j;
-+				unsigned long rounded;
-+
-+				rounded = clk_hw_round_rate(parent, ideal);
-+
-+				if (rounded == ideal) {
-+					best_parent = rounded;
-+					best_half = i;
-+					best_div = j;
-+					goto out;
-+				}
-+
-+				if (abs(rate - rounded / i) <
-+				    abs(rate - best_parent / best_div)) {
-+					best_parent = rounded;
-+					best_div = i;
-+				}
- 			}
- 		}
- 	}
- 
-+	if (!parent)
-+		return -EINVAL;
-+
- out:
- 	req->rate = best_parent / best_half / best_div;
- 	req->best_parent_rate = best_parent;
+The driver borrows from the clk_gate common clock infra spruce, but modifies
+it in order to support the clock gate and reset pair that most of the clocks
+have. This pair must be reset-ungated-released, with appropriate delays,
+according to the datasheet.
+
+The first patch introduces the core clock registration parts, and describes
+the clocks. The second creates the core clocks, giving the system enough to
+boot (but without uart). Next come the non-core clocks, and finally the reset
+controller that is used for the few cocks that don't have a gate to go with their
+reset pair.
+
+Please review!
+
+Cheers,
+
+Joel
+
+Joel Stanley (5):
+  clk: Add clock driver for ASPEED BMC SoCs
+  clk: aspeed: Register core clocks
+  clk: aspeed: Add platform driver and register PLLs
+  clk: aspeed: Register gated clocks
+  clk: aspeed: Add reset controller
+
+ drivers/clk/Kconfig                      |  12 +
+ drivers/clk/Makefile                     |   1 +
+ drivers/clk/clk-aspeed.c                 | 654 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/aspeed-clock.h |  52 +++
+ 4 files changed, 719 insertions(+)
+ create mode 100644 drivers/clk/clk-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed-clock.h
+
 -- 
 2.14.1
