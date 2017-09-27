@@ -1,93 +1,97 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 06/14] drm/sun4i: hdmi: create a regmap for later use
-Date: Fri, 29 Sep 2017 16:22:58 +0800
-Message-Id: <20170929082306.16193-7-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
+ <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
+ <432fff47-6750-08c4-a91d-1a5d154245bc@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ca7ce856-208b-2753-a8a2-411b29288306@gmail.com>
+Date: Wed, 27 Sep 2017 17:29:19 +0300
+MIME-Version: 1.0
+In-Reply-To: <432fff47-6750-08c4-a91d-1a5d154245bc@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI driver is written with readl/writel I/O to the registers.
-However, to support the A31 variant, which has a different layout
-for the DDC registers, it was recommended to use regfields to have
-a cleaner implementation. To use regfields, we need to create an
-underlying regmap.
+On 27.09.2017 16:46, Jon Hunter wrote:
+> 
+> On 27/09/17 14:44, Jon Hunter wrote:
+>>
+>> On 27/09/17 13:12, Dmitry Osipenko wrote:
+>>> On 27.09.2017 11:34, Jon Hunter wrote:
+>>>>
+>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>>>
+>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>>>>> on Tegra20/30 SoC's.
+>>>>>>>
+>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> ---
+>>>>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>>>>>>  1 file changed, 23 insertions(+)
+>>>>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..2af9aa76ae11
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>> @@ -0,0 +1,23 @@
+>>>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>>>> +
+>>>>>>> +Required properties:
+>>>>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>>>>>>> +- reg:		Should contain registers base address and length.
+>>>>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>>>>>>> +- clocks:	Should contain one entry, DMA controller clock.
+>>>>>>> +- resets :	Should contain one entry, DMA controller reset.
+>>>>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>>>>>>> +		for the peripheral. For more details consult the Tegra TRM's
+>>>>>>> +		documentation, in particular AHB DMA channel control register
+>>>>>>> +		REQ_SEL field.
+>>>>>>
+>>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>>>>
+>>>>>
+>>>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+>>>>> software to decide what trigger to select. So it shouldn't be in the binding.
+>>>>
+>>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+>>>>
+>>>
+>>> GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
+>>> are software-defined, so that software could create transfer chains.
+>>
+>> TRM shows the following in the APBDMA_TRIG_REG_0 ...
+>>
+>> "XRQ_A: XRQ.A (GPIOA) (Hardware initiated DMA request)"
+> 
+> Furthermore there are timer and hw-semaphore triggers as well.
+> 
 
-This patch only adds the regmap. It does not convert the existing
-driver accesses to use regmap.
+Aha, I wasn't sure about what XRQ is. AHB DMA doesn't have XRQ.A as a trigger,
+but XRQ.C/D which I suppose corresponds to GPIO C/D.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  1 +
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
+Timer and hw-semaphore are more questionable, aren't semaphores software-only
+triggerable?
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index 1457750988da..b95512ec8eb6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -163,6 +163,7 @@ struct sun4i_hdmi {
- 	struct device		*dev;
- 
- 	void __iomem		*base;
-+	struct regmap		*regmap;
- 
- 	/* Parent clocks */
- 	struct clk		*bus_clk;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 3cf1a6932fac..5ab811cda00e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -22,6 +22,7 @@
- #include <linux/iopoll.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
- 
- #include "sun4i_backend.h"
- #include "sun4i_crtc.h"
-@@ -267,6 +268,13 @@ static const struct cec_pin_ops sun4i_hdmi_cec_pin_ops = {
- };
- #endif
- 
-+static const struct regmap_config sun4i_hdmi_regmap_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+	.max_register	= 0x580,
-+};
-+
- static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 			   void *data)
- {
-@@ -321,6 +329,13 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 		goto err_disable_mod_clk;
- 	}
- 
-+	hdmi->regmap = devm_regmap_init_mmio(dev, hdmi->base,
-+					     &sun4i_hdmi_regmap_config);
-+	if (IS_ERR(hdmi->regmap)) {
-+		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
-+		return PTR_ERR(hdmi->regmap);
-+	}
-+
- 	ret = sun4i_tmds_create(hdmi);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the TMDS clock\n");
 -- 
-2.14.2
+Dmitry
