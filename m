@@ -1,92 +1,83 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 03/10] clk: add clk_core_set_phase_nolock function
-Date: Sun, 24 Sep 2017 22:00:23 +0200
-Message-Id: <20170924200030.6227-4-jbrunet@baylibre.com>
-In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+	<thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Peter De
+ Schrijver" <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul
+	<vinod.koul@intel.com>
+CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
+Date: Wed, 27 Sep 2017 14:44:38 +0100
+MIME-Version: 1.0
+In-Reply-To: <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a core function for set_phase, as it is done for set_rate and
-set_parent.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
+On 27/09/17 13:12, Dmitry Osipenko wrote:
+> On 27.09.2017 11:34, Jon Hunter wrote:
+>>
+>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>
+>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>>> on Tegra20/30 SoC's.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>>>>>  1 file changed, 23 insertions(+)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>> new file mode 100644
+>>>>> index 000000000000..2af9aa76ae11
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>> @@ -0,0 +1,23 @@
+>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+>>>>> +- reg:		Should contain registers base address and length.
+>>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
+>>>>> +- clocks:	Should contain one entry, DMA controller clock.
+>>>>> +- resets :	Should contain one entry, DMA controller reset.
+>>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+>>>>> +		for the peripheral. For more details consult the Tegra TRM's
+>>>>> +		documentation, in particular AHB DMA channel control register
+>>>>> +		REQ_SEL field.
+>>>>
+>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>>
+>>>
+>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+>>> software to decide what trigger to select. So it shouldn't be in the binding.
+>>
+>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+>>
+> 
+> GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
+> are software-defined, so that software could create transfer chains.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+TRM shows the following in the APBDMA_TRIG_REG_0 ...
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 3518f251cfd5..0913688dacb0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1875,6 +1875,25 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-+static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
-+{
-+	int ret = -EINVAL;
-+
-+	lockdep_assert_held(&prepare_lock);
-+
-+	if (!core)
-+		return 0;
-+
-+	trace_clk_set_phase(core, degrees);
-+
-+	if (core->ops->set_phase)
-+		ret = core->ops->set_phase(core->hw, degrees);
-+
-+	trace_clk_set_phase_complete(core, degrees);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_set_phase - adjust the phase shift of a clock signal
-  * @clk: clock signal source
-@@ -1897,7 +1916,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
-  */
- int clk_set_phase(struct clk *clk, int degrees)
- {
--	int ret = -EINVAL;
-+	int ret;
- 
- 	if (!clk)
- 		return 0;
-@@ -1908,17 +1927,7 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
- 
- 	clk_prepare_lock();
--
--	trace_clk_set_phase(clk->core, degrees);
--
--	if (clk->core->ops->set_phase)
--		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
--
--	trace_clk_set_phase_complete(clk->core, degrees);
--
--	if (!ret)
--		clk->core->phase = degrees;
--
-+	ret = clk_core_set_phase_nolock(clk->core, degrees);
- 	clk_prepare_unlock();
- 
- 	return ret;
+"XRQ_A: XRQ.A (GPIOA) (Hardware initiated DMA request)"
+
+Jon
+
 -- 
-2.13.5
+nvpublic
