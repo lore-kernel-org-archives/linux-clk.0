@@ -1,41 +1,159 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:55:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH v5 6/7] ASoC: atmel-classd: remove aclk clock from DT
- binding
-Message-ID: <20170901225523.GH21656@codeaurora.org>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
- <baa9ebcc16cba5f41ee5b01895ec7cfce60a8ddc.1502346448.git-series.quentin.schulz@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <baa9ebcc16cba5f41ee5b01895ec7cfce60a8ddc.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v3 7/8] atmel_flexcom: Support backup mode
+Date: Wed, 27 Sep 2017 10:35:54 +0200
+Message-Id: <20170927083555.16580-8-romain.izard.pro@gmail.com>
+In-Reply-To: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Quentin Schulz wrote:
-> Since gclk (generated-clk) is now able to determine the rate of the
-> audio_pll, there is no need for classd to have a direct phandle to the
-> audio_pll while already having a phandle to gclk.
-> 
-> This binding is used by no board in mainline so it is safe to be
-> modified.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
+The controller used by a flexcom module is configured at boot, and left
+alone after this. As the configuration will be lost after backup mode,
+restore the state of the flexcom driver on resume.
 
-Applied to clk-next
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 50 insertions(+), 15 deletions(-)
 
+diff --git a/drivers/mfd/atmel-flexcom.c b/drivers/mfd/atmel-flexcom.c
+index 064bde9cff5a..ef1235c4a179 100644
+--- a/drivers/mfd/atmel-flexcom.c
++++ b/drivers/mfd/atmel-flexcom.c
+@@ -39,34 +39,44 @@
+ #define FLEX_MR_OPMODE(opmode)	(((opmode) << FLEX_MR_OPMODE_OFFSET) &	\
+ 				 FLEX_MR_OPMODE_MASK)
+ 
++struct atmel_flexcom {
++	void __iomem *base;
++	u32 opmode;
++	struct clk *clk;
++};
+ 
+ static int atmel_flexcom_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct clk *clk;
+ 	struct resource *res;
+-	void __iomem *base;
+-	u32 opmode;
++	struct atmel_flexcom *afc;
+ 	int err;
++	u32 val;
++
++	afc = devm_kzalloc(&pdev->dev, sizeof(*afc), GFP_KERNEL);
++	if (!afc)
++		return -ENOMEM;
+ 
+-	err = of_property_read_u32(np, "atmel,flexcom-mode", &opmode);
++	platform_set_drvdata(pdev, afc);
++
++	err = of_property_read_u32(np, "atmel,flexcom-mode", &afc->opmode);
+ 	if (err)
+ 		return err;
+ 
+-	if (opmode < ATMEL_FLEXCOM_MODE_USART ||
+-	    opmode > ATMEL_FLEXCOM_MODE_TWI)
++	if (afc->opmode < ATMEL_FLEXCOM_MODE_USART ||
++	    afc->opmode > ATMEL_FLEXCOM_MODE_TWI)
+ 		return -EINVAL;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
++	afc->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(afc->base))
++		return PTR_ERR(afc->base);
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	afc->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(afc->clk))
++		return PTR_ERR(afc->clk);
+ 
+-	err = clk_prepare_enable(clk);
++	err = clk_prepare_enable(afc->clk);
+ 	if (err)
+ 		return err;
+ 
+@@ -76,9 +86,10 @@ static int atmel_flexcom_probe(struct platform_device *pdev)
+ 	 * inaccessible and are read as zero. Also the external I/O lines of the
+ 	 * Flexcom are muxed to reach the selected device.
+ 	 */
+-	writel(FLEX_MR_OPMODE(opmode), base + FLEX_MR);
++	val = FLEX_MR_OPMODE(afc->opmode);
++	writel(val, afc->base + FLEX_MR);
+ 
+-	clk_disable_unprepare(clk);
++	clk_disable_unprepare(afc->clk);
+ 
+ 	return devm_of_platform_populate(&pdev->dev);
+ }
+@@ -89,10 +100,34 @@ static const struct of_device_id atmel_flexcom_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, atmel_flexcom_of_match);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int atmel_flexcom_resume(struct device *dev)
++{
++	struct atmel_flexcom *afc = dev_get_drvdata(dev);
++	int err;
++	u32 val;
++
++	err = clk_prepare_enable(afc->clk);
++	if (err)
++		return err;
++
++	val = FLEX_MR_OPMODE(afc->opmode),
++	writel(val, afc->base + FLEX_MR);
++
++	clk_disable_unprepare(afc->clk);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(atmel_flexcom_pm_ops, NULL,
++			 atmel_flexcom_resume);
++
+ static struct platform_driver atmel_flexcom_driver = {
+ 	.probe	= atmel_flexcom_probe,
+ 	.driver	= {
+ 		.name		= "atmel_flexcom",
++		.pm		= &atmel_flexcom_pm_ops,
+ 		.of_match_table	= atmel_flexcom_of_match,
+ 	},
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
