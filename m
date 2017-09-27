@@ -1,88 +1,40 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
-	<thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Peter De
- Schrijver" <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Vinod Koul
-	<vinod.koul@intel.com>
-CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
- <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
-Message-ID: <432fff47-6750-08c4-a91d-1a5d154245bc@nvidia.com>
-Date: Wed, 27 Sep 2017 14:46:11 +0100
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 27 Sep 2017 10:42:51 -0700
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk/spear: Delete five error messages for a failed
+ memory allocation
+Message-ID: <20170927174251.GD12211@ubuntu>
+References: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
 MIME-Version: 1.0
-In-Reply-To: <96f28cc6-7cbf-308f-bc87-d96d3e7fe045@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 27/09/17 14:44, Jon Hunter wrote:
+On 27-09-17, 18:15, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:00:21 +0200
 > 
-> On 27/09/17 13:12, Dmitry Osipenko wrote:
->> On 27.09.2017 11:34, Jon Hunter wrote:
->>>
->>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>
->>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>> on Tegra20/30 SoC's.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>> ---
->>>>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>>>>>  1 file changed, 23 insertions(+)
->>>>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>> new file mode 100644
->>>>>> index 000000000000..2af9aa76ae11
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>> @@ -0,0 +1,23 @@
->>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->>>>>> +- reg:		Should contain registers base address and length.
->>>>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
->>>>>> +- clocks:	Should contain one entry, DMA controller clock.
->>>>>> +- resets :	Should contain one entry, DMA controller reset.
->>>>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->>>>>> +		for the peripheral. For more details consult the Tegra TRM's
->>>>>> +		documentation, in particular AHB DMA channel control register
->>>>>> +		REQ_SEL field.
->>>>>
->>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>
->>>>
->>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>
->>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>
->>
->> GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
->> are software-defined, so that software could create transfer chains.
+> Omit extra messages for a memory allocation failure in these functions.
 > 
-> TRM shows the following in the APBDMA_TRIG_REG_0 ...
+> This issue was detected by using the Coccinelle software.
 > 
-> "XRQ_A: XRQ.A (GPIOA) (Hardware initiated DMA request)"
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/clk/spear/clk-aux-synth.c  | 4 +---
+>  drivers/clk/spear/clk-frac-synth.c | 4 +---
+>  drivers/clk/spear/clk-gpt-synth.c  | 4 +---
+>  drivers/clk/spear/clk-vco-pll.c    | 8 ++------
+>  4 files changed, 5 insertions(+), 15 deletions(-)
 
-Furthermore there are timer and hw-semaphore triggers as well.
-
-Jon
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-nvpublic
+viresh
