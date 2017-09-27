@@ -1,62 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:54122 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933128AbdIYKcR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Sep 2017 06:32:17 -0400
-Date: Mon, 25 Sep 2017 18:29:38 +0800
-In-Reply-To: <20170925102744.qixfwlheeimemhcf@flea.home>
-References: <20170923001531.14285-1-icenowy@aosc.io> <20170925101027.lghnnll4h6inreqm@flea.home> <27EF78BD-6285-4D8D-AA65-8294D797E2FB@aosc.io> <20170925102744.qixfwlheeimemhcf@flea.home>
+Return-Path: <romain.izard@mobile-devices.fr>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] Re: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
-To: maxime.ripard@free-electrons.com,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <1C624335-37C2-4F22-BE78-A94F26D1D248@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: romain.izard@mobile-devices.fr
+In-Reply-To: <20170927170811.57830c1f@bbrezillon>
+References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+ <20170927083555.16580-5-romain.izard.pro@gmail.com> <20170927170811.57830c1f@bbrezillon>
+From: Romain Izard <romain.izard.pro@gmail.com>
+Date: Wed, 27 Sep 2017 17:32:10 +0200
+Message-ID: <CAGkQfmOYg6Usyd++KuGqMjDnaWaP77U5jfOL++3nN7PTcAhh9A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] mtd: nand: atmel: Avoid ECC errors when leaving
+ backup mode
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>, Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-pwm@vger.kernel.org,
+	linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-mtd <linux-mtd@lists.infradead.org>, linux-serial@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-于 2017年9月25日 GMT+08:00 下午6:27:44, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Mon, Sep 25, 2017 at 10:12:09AM +0000, Icenowy Zheng wrote:
->> 于 2017年9月25日 GMT+08:00 下午6:10:27, Maxime Ripard
-><maxime.ripard@free-electrons.com> 写到:
->> >Hi,
->> >
->> >On Sat, Sep 23, 2017 at 12:15:28AM +0000, Icenowy Zheng wrote:
->> >> This patchset imports simple DVFS support for Allwinner A64 SoC.
->> >> 
->> >> As the thermal sensor driver is not yet implemented and some
->boards
->> >> have still no AXP PMIC support, now only two OPPs are present --
->> >> 648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
->> >> 
->> >> PATCH 1 is a fix to the CCU driver of A64, and the remaining
->patches
->> >> set up the device tree bits of the DVFS on Pine64.
->> >
->> >How has this been tested?
->> >
->> >What tasks did you run, with what governor, etc...
->> 
->> I only tested manual frequency switching between 648MHz and
->> 816MHz, and tested the PLL stuck issue by change the OPPs to
->> some random value.
+2017-09-27 17:08 GMT+02:00 Boris Brezillon <boris.brezillon@free-electrons.com>:
+> On Wed, 27 Sep 2017 10:35:51 +0200
+> Romain Izard <romain.izard.pro@gmail.com> wrote:
 >
->Ideally, we should test that it's actually reliable. Poorly chosen
->OPPs might lead to corrupt data that you might not get before a while.
+>> During backup mode, the contents of all registers will be cleared as the
+>> SoC will be completely powered down. For a product that boots on NAND
+>> Flash memory, the bootloader will obviously use the related controller
+>> to read the Flash and correct any detected error in the memory, before
+>> handling back control to the kernel's resuming entry point.
+>>
+>> But it does not clean the NAND controller registers after use and on its
+>> side the kernel driver expects the error locator to be powered down and
+>> in a clean state. Add a resume hook for the PMECC error locator, and
+>> reset its registers.
+>>
+>> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+>> ---
+>> Change in v3:
+>> * keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
+>>   reset the controller after the bootloader has left it enabled.
+>>
+>>  drivers/mtd/nand/atmel/nand-controller.c |  3 +++
+>>  drivers/mtd/nand/atmel/pmecc.c           | 22 ++++++++++++++--------
+>>  drivers/mtd/nand/atmel/pmecc.h           |  1 +
+>>  3 files changed, 18 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
+>> index f25eca79f4e5..86c2199380c2 100644
+>> --- a/drivers/mtd/nand/atmel/nand-controller.c
+>> +++ b/drivers/mtd/nand/atmel/nand-controller.c
+>> @@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
+>>       struct atmel_nand_controller *nc = dev_get_drvdata(dev);
+>>       struct atmel_nand *nand;
+>>
+>> +     if (nand->pmecc)
+>> +             atmel_pmecc_resume(nand->pmecc);
+>> +
+>
+> nand is used uninitialized here, and atmel_pmecc_resume() should be
+> passed a atmel_pmecc object not a atmel_pmecc_user.
+>
+>         if (nc->pmecc)
+>                 atmel_pmecc_resume(nc->pmecc);
+>
+And yet I thought I correctly tested this code...
 
-These are OPPs from the official sys_config.fex .
+:(
 
+>>       list_for_each_entry(nand, &nc->chips, node) {
+>>               int i;
+>>
+>> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
+>> index 146af8218314..ff09c0f25dd4 100644
+>> --- a/drivers/mtd/nand/atmel/pmecc.c
+>> +++ b/drivers/mtd/nand/atmel/pmecc.c
+>> @@ -765,6 +765,12 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
+>>  }
+>>  EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
+>>
+>> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
+>> +{
+>> +     writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+>> +     writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+>> +}
 >
->Please test using:
->https://linux-sunxi.org/Hardware_Reliability_Tests#Reliability_of_cpufreq_voltage.2Ffrequency_settings
->
->And post the report.
->
->Maxime
+> It's not used outside of this file, so it should have a static
+> specifier. Anyway, I wonder why you don't expose atmel_pmecc_reset()
+> directly instead of creating this atmel_pmecc_resume() wrapper.
+
+I will fix this...
+
+-- 
+Romain Izard
