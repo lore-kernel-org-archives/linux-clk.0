@@ -1,94 +1,46 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v3 1/8] clk: at91: pmc: Wait for clocks when resuming
-Date: Wed, 27 Sep 2017 10:35:48 +0200
-Message-Id: <20170927083555.16580-2-romain.izard.pro@gmail.com>
-In-Reply-To: <20170927083555.16580-1-romain.izard.pro@gmail.com>
-References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 27 Sep 2017 16:44:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Chen Zhong <chen.zhong@mediatek.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: mediatek: document clk bindings
+ for MediaTek MT7622 SoC
+Message-ID: <20170927214429.2w7s3f7zpqr4kkvs@rob-hp-laptop>
+References: <cover.1505890481.git.sean.wang@mediatek.com>
+ <3a6338ca5f1513b897cac2facc7c0bf796b8c64f.1505890481.git.sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3a6338ca5f1513b897cac2facc7c0bf796b8c64f.1505890481.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Wait for the syncronization of all clocks when resuming, not only the
-UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-when interrupts are masked, which is the case in here.
+On Wed, Sep 20, 2017 at 05:49:25PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> This patch adds the binding documentation for apmixedsys, ethsys, hifsys,
+> infracfg, pericfg, topckgen and audsys for MT7622.
+> 
+> Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+>  .../bindings/arm/mediatek/mediatek,audsys.txt      | 22 ++++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,ethsys.txt      |  1 +
+>  .../bindings/arm/mediatek/mediatek,hifsys.txt      |  1 +
+>  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+>  .../bindings/arm/mediatek/mediatek,pciesys.txt     | 22 ++++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+>  .../bindings/arm/mediatek/mediatek,sgmiisys.txt    | 22 ++++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,ssusbsys.txt    | 22 ++++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+>  10 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 775af473fe11..5c2b26de303e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -107,10 +107,20 @@ static int pmc_suspend(void)
- 	return 0;
- }
- 
-+static bool pmc_ready(unsigned int mask)
-+{
-+	unsigned int status;
-+
-+	regmap_read(pmcreg, AT91_PMC_SR, &status);
-+
-+	return ((status & mask) == mask) ? 1 : 0;
-+}
-+
- static void pmc_resume(void)
- {
--	int i, ret = 0;
-+	int i;
- 	u32 tmp;
-+	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
- 
- 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
- 	if (pmc_cache.mckr != tmp)
-@@ -134,13 +144,11 @@ static void pmc_resume(void)
- 			     AT91_PMC_PCR_CMD);
- 	}
- 
--	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
--		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
--					       !(tmp & AT91_PMC_LOCKU),
--					       10, 5000);
--		if (ret)
--			pr_crit("USB PLL didn't lock when resuming\n");
--	}
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-+		mask |= AT91_PMC_LOCKU;
-+
-+	while (!pmc_ready(mask))
-+		cpu_relax();
- }
- 
- static struct syscore_ops pmc_syscore_ops = {
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
