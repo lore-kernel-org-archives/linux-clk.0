@@ -1,39 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:38228 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751587AbdIJMkV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 10 Sep 2017 08:40:21 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/2] clk: sunxi-ng: Add several flags to H3 CCU
-Date: Sun, 10 Sep 2017 20:40:04 +0800
-Message-Id: <20170910124006.60250-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk/ti: Delete an error message for a failed memory
+ allocation in two functions
+Message-ID: <120d01e4-5e58-e740-f6c7-c6835752aed3@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 19:22:47 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The H3 CCU is the earliest driver that uses sunxi-ng clk framework, and
-some problems show when doing further development.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 19:14:01 +0200
 
-This patchset fixes some issues by add several clock flags.
+Omit extra messages for a memory allocation failure in these functions.
 
-The first patch solves the problem that setting some PLL before ungating
-them will trigger timeout for waiting for lock by adds CLK_SET_RATE_UNGATE
-flag.
+This issue was detected by using the Coccinelle software.
 
-The second patch solves the problem that H3 GPU clock is not really tweaked
-by add CLK_SET_RATE_PARENT flag to it.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/ti/divider.c | 4 +---
+ drivers/clk/ti/mux.c     | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-Icenowy Zheng (2):
-  clk: sunxi-ng: add CLK_SET_RATE_UNGATE to all H3 PLLs
-  clk: sunxi-ng: add CLK_SET_RATE_PARENT flag to H3 GPU clock
-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 88f04a4cb890..77f93f6d2806 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -292,10 +292,8 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 
+ 	/* allocate the divider */
+ 	div = kzalloc(sizeof(*div), GFP_KERNEL);
+-	if (!div) {
+-		pr_err("%s: could not allocate divider clk\n", __func__);
++	if (!div)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &ti_clk_divider_ops;
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 18c267b38461..d4705803f3d3 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -108,10 +108,8 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 
+ 	/* allocate the mux */
+ 	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+-	if (!mux) {
+-		pr_err("%s: could not allocate mux clk\n", __func__);
++	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &ti_clk_mux_ops;
 -- 
-2.13.5
-
+2.14.2
