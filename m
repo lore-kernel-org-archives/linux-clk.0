@@ -1,92 +1,112 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 12:01:50 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 09/13] drm/sun4i: hdmi: Add support for controller
- hardware variants
-Message-ID: <20170926100150.5rgmraenrriekhna@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-10-wens@csie.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 27 Sep 2017 11:36:05 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Prashant
+ Gaikwad" <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, "Vinod
+ Koul" <vinod.koul@intel.com>, <linux-tegra@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/5] clk: tegra: Add AHB DMA clock entry
+Message-ID: <20170927083605.GA6290@tbergstrom-lnx.Nvidia.com>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <b5fd087892544cd17042a4aa9dc0289fb761352c.1506380746.git.digetx@gmail.com>
+ <20170926095611.GW6290@tbergstrom-lnx.Nvidia.com>
+ <b575c935-e928-4d51-9905-40731c1aa9c4@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vn4jicumbtbjskss"
-In-Reply-To: <20170926065919.24446-10-wens@csie.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <b575c935-e928-4d51-9905-40731c1aa9c4@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Sep 26, 2017 at 05:46:01PM +0300, Dmitry Osipenko wrote:
+> On 26.09.2017 12:56, Peter De Schrijver wrote:
+> > On Tue, Sep 26, 2017 at 02:22:02AM +0300, Dmitry Osipenko wrote:
+> >> AHB DMA presents on Tegra20/30. Add missing entries, so that driver
+> >> for AHB DMA could be implemented.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/clk/tegra/clk-id.h           | 1 +
+> >>  drivers/clk/tegra/clk-tegra-periph.c | 1 +
+> >>  drivers/clk/tegra/clk-tegra20.c      | 6 ++++++
+> >>  drivers/clk/tegra/clk-tegra30.c      | 2 ++
+> >>  4 files changed, 10 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> >> index 689f344377a7..c1661b47bbda 100644
+> >> --- a/drivers/clk/tegra/clk-id.h
+> >> +++ b/drivers/clk/tegra/clk-id.h
+> >> @@ -12,6 +12,7 @@ enum clk_id {
+> >>  	tegra_clk_amx,
+> >>  	tegra_clk_amx1,
+> >>  	tegra_clk_apb2ape,
+> >> +	tegra_clk_ahbdma,
+> >>  	tegra_clk_apbdma,
+> >>  	tegra_clk_apbif,
+> >>  	tegra_clk_ape,
+> >> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> >> index 848255cc0209..95a3d8c95f06 100644
+> >> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> >> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> >> @@ -823,6 +823,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+> >>  	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+> >>  	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+> >>  	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+> >> +	GATE("ahbdma", "clk_m", 33, 0, tegra_clk_ahbdma, 0),
+> > 
+> > Parent for this should be hclk on Tegra30 and later chips as well..
+> > 
+> 
+> It looks like other clocks have a wrong parent too here, aren't they? Like for
+> example "apbdma" should have "pclk" as a parent, isn't it?
+> 
 
---vn4jicumbtbjskss
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes. That is correct.
 
-On Tue, Sep 26, 2017 at 06:59:15AM +0000, Chen-Yu Tsai wrote:
-> The HDMI controller found in earlier Allwinner SoCs have slight
-> differences between the A10, A10s, and the A31:
->=20
->   - Need different initial values for the PLL related registers
->=20
->   - Different behavior of the DDC and TMDS clocks
->=20
->   - Different register layout for the DDC portion
->=20
->   - Separate DDC parent clock on the A31
->=20
->   - Explicit reset control
->=20
-> For the A31, the HDMI TMDS clock has a different value offset for
-> the divider. The HDMI DDC block is different from the one in the
-> other SoCs. As far as the DDC clock goes, it has no pre-divider,
-> as it is clocked from a slower parent clock, not the TMDS clock.
-> The divider offset from the register value is different. And the
-> clock control register is at a different offset.
->=20
-> A new variant data structure is created to store pointers to the
-> above functions, structures, and the different initial values.
-> Another flag notates whether there is a separate DDC parent clock.
-> If not, the TMDS clock is passed to the DDC clock create function,
-> as before.
->=20
-> Regmap fields are used to deal with the different register layout
-> of the DDC block.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >>  	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+> >>  	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+> >>  	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> >> index 837e5cbd60e9..e76c0d292ca7 100644
+> >> --- a/drivers/clk/tegra/clk-tegra20.c
+> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> >> @@ -449,6 +449,7 @@ static struct tegra_devclk devclks[] __initdata = {
+> >>  	{ .con_id = "audio", .dt_id = TEGRA20_CLK_AUDIO },
+> >>  	{ .con_id = "audio_2x", .dt_id = TEGRA20_CLK_AUDIO_2X },
+> >>  	{ .dev_id = "tegra20-ac97", .dt_id = TEGRA20_CLK_AC97 },
+> >> +	{ .dev_id = "tegra-ahbdma", .dt_id = TEGRA20_CLK_AHBDMA },
+> > 
+> > This isn't needed if you use DT bindings to get the clock handle.
+> > 
+> 
+> Yes, I added it for consistency. Shouldn't we get rid of that all legacy stuff
+> already?
+> 
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+We probably should, but we can start by not adding more :)
 
-Maxime
+> >>  	{ .dev_id = "tegra-apbdma", .dt_id = TEGRA20_CLK_APBDMA },
+> >>  	{ .dev_id = "rtc-tegra", .dt_id = TEGRA20_CLK_RTC },
+> >>  	{ .dev_id = "timer", .dt_id = TEGRA20_CLK_TIMER },
+> >> @@ -806,6 +807,11 @@ static void __init tegra20_periph_clk_init(void)
+> >>  				    clk_base, 0, 3, periph_clk_enb_refcnt);
+> >>  	clks[TEGRA20_CLK_AC97] = clk;
+> >>  
+> >> +	/* ahbdma */
+> >> +	clk = tegra_clk_register_periph_gate("ahbdma", "hclk", 0, clk_base,
+> >> +				    0, 33, periph_clk_enb_refcnt);
+> >> +	clks[TEGRA20_CLK_AHBDMA] = clk;
+> >> +
+> > 
+> > You can use the generic definition here if you correct the entry above.
+> > 
+> 
+> Good point, same applies to "apbdma". Thank you for the suggestion.
+> 
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Indeed.
 
---vn4jicumbtbjskss
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyiWOAAoJEBx+YmzsjxAgPMcQAKhJka5rdrFFsuwE4TzuM/uL
-01lg0F08m96IHLjmQoZit6Wopz6E1ABGLdkjEG1TFAXZU+bvBi19xC4X6K6MUaIj
-HhR5cZOauwQBliHkOR3Z9Wzxfzu9Z7zO+c76DAqvyaWgSR3DYM3Vs/jE6hQCj5Nb
-H6G6tHV9M9Jh0holZYsewec6x87N8X3IVkqm/lF/MMN4UbJDLviu9bhcUaN4Sp73
-xfsp3cQ7E7WIQW3cQa/prQXn9IaLBoXAAblzlyxY3KZPYYyrTSPal7o4BghT7inb
-glS1evTlnXZNE0W9azkVkwnm41fXnJH/JBWa4dQtVAenzp6SlHt8lBDHk6VGcgal
-qcxLEb4CawFkmC0nQSwEoBAEmUhiReqLn9IdZ6MNQMzEL7pZPa9wnQ9676xaYHyV
-FGROBVHTOKyjpFRfbyNMp2UeRMoba4E7QNTykBuwyaRTSza1l/7dcaaKMs1cbWkH
-iHWCT9q0nNmWCjFiW2vMeOKpEy12chiDy9j0S9T4hkARnha2GEINTLy9Ly2m5b40
-nbprpEAbz6T4wdrP5KIGNmiiYU+dhCWBMxYaiYGCYM2CGdhgnGLl/OcxwKngF0ya
-yd8w/tjgydVppc9mNouf96dG/ZSdh1JHjFeCRiUN3i1HQ5qP8H44yCSEV0vcXtlS
-ZK17qJzwTsub7bSeN9Zb
-=JMgp
------END PGP SIGNATURE-----
-
---vn4jicumbtbjskss--
+Peter.
