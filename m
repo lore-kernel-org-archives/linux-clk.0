@@ -1,274 +1,175 @@
-Return-Path: <hanetzer@startmail.com>
-Date: Wed, 20 Sep 2017 21:15:16 -0500
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	xuejiancheng@hisilicon.com, leo.yan@linaro.org,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	mark.rutland@arm.com, mturquette@baylibre.com, wenpan@hisilicon.com,
-	linux@armlinux.org.uk, sboyd@codeaurora.org, xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org, gregkh@linuxfoundation.org, arnd@arndb.de
-Subject: Re: [RFC RESEND 3/3] arm: dts: add Hi3521A dts
-Message-ID: <20170921021511.q6cbew5d5ec5cxxd@proprietary-killer.fossland>
-References: <20170917082327.10058-1-hanetzer@startmail.com>
- <20170917082327.10058-4-hanetzer@startmail.com>
- <20170920205303.lcycfuai75a7namk@rob-hp-laptop>
- <20170920230405.tz3vzoys2vn72rgv@proprietary-killer.fossland>
- <CAL_JsqLfRN=CjcDbwANE7gwCQS-_s99f6UANPLAooiaWB1mvfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAL_JsqLfRN=CjcDbwANE7gwCQS-_s99f6UANPLAooiaWB1mvfA@mail.gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 5/5] clk: aspeed: Add reset controller
+Date: Wed, 27 Sep 2017 15:57:02 +0930
+Message-Id: <20170927062702.11350-6-joel@jms.id.au>
+In-Reply-To: <20170927062702.11350-1-joel@jms.id.au>
+References: <20170927062702.11350-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 01:08:39AM +0000, Rob Herring wrote:
-> On Wed, Sep 20, 2017 at 6:04 PM, Marty E. Plummer
-> <hanetzer@startmail.com> wrote:
-> > On Wed, Sep 20, 2017 at 08:53:03PM +0000, Rob Herring wrote:
-> >> On Sun, Sep 17, 2017 at 03:23:27AM -0500, Marty E. Plummer wrote:
-> >> > Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
-> >> > marketed under the name Samsung SDR-B74301N
-> >> >
-> >> > Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
-> >> > ---
-> >> >  arch/arm/boot/dts/Makefile              |   2 +
-> >> >  arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  52 ++++++
-> >> >  arch/arm/boot/dts/hi3521a.dtsi          | 310 ++++++++++++++++++++++++++++++++
-> >> >  3 files changed, 364 insertions(+)
-> >> >  create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> >> >  create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
-> >> >
-> >> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> >> > index faf46abaa4a2..e7b9b5dde20f 100644
-> >> > --- a/arch/arm/boot/dts/Makefile
-> >> > +++ b/arch/arm/boot/dts/Makefile
-> >> > @@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
-> >> >     gemini-sq201.dtb \
-> >> >     gemini-wbd111.dtb \
-> >> >     gemini-wbd222.dtb
-> >> > +dtb-$(CONFIG_ARCH_HI3521A) += \
-> >> > +   hi3521a-rs-dm290e.dtb
-> >> >  dtb-$(CONFIG_ARCH_HI3xxx) += \
-> >> >     hi3620-hi4511.dtb
-> >> >  dtb-$(CONFIG_ARCH_HIGHBANK) += \
-> >> > diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> >> > new file mode 100644
-> >> > index 000000000000..b32c8392c93f
-> >> > --- /dev/null
-> >> > +++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-> >> > @@ -0,0 +1,52 @@
-> >> > +/*
-> >> > + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-> >> > + *
-> >> > + * This program is free software: you can redistribute it and/or modify
-> >> > + * it under the terms of the GNU General Public License as published by
-> >> > + * the Free Software Foundation, either version 3 of the License, or
-> >> > + * (at your option) any later version.
-> >>
-> >> Should be version 2 or later? Doesn't really matter to me from a DT
-> >> perspective, but it is in the kernel tree.
-> >>
-> >> You can use SPDX tags if you want.
-> >>
-> > Oh, that's a good idea. I hadn't seen any SPDX tags in the tree that I
-> > noticed before. I ended up just using the :Gpl command from neovim.
-> >> > + *
-> >> > + * This program is distributed in the hope that it will be useful,
-> >> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >> > + * GNU General Public License for more details.
-> >> > + *
-> >> > + * You should have received a copy of the GNU General Public License
-> >> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> >> > + */
-> >> > +
-> >> > +/dts-v1/;
-> >> > +#include "hi3521a.dtsi"
-> >> > +
-> >> > +/ {
-> >> > +   model = "RaySharp RS-DM-290E DVR Board";
-> >> > +   compatible = "hisilicon,hi3521a";
-> >>
-> >> Needs a board compatible too.
-> >>
-> > Something like `compatible = "hisilicon,hi3521a", "raysharp,rs-dm-290e";` ?
-> 
-> Yes, but flip the order. Most specific compatible first.
-> 
-> >> > +
-> >> > +   aliases {
-> >> > +           serial0 = &uart0;
-> >> > +           serial1 = &uart1;
-> >> > +           serial2 = &uart2;
-> >> > +   };
-> >> > +
-> >> > +   memory {
-> >>
-> >> Needs a unit-address.
-> >>
-> > Could you explain what you mean here? As in, memory@someaddr? What would
-> > I use here?
-> 
-> "memory@80000000". Building with W=2 will tell you.
-> 
-Ah, nice trick. Suppose that makes sense, as every other thing was the
-same on that sort of thing. Not sure if I've ever seen memory@addr
-before.
-> >> > +           device_type = "memory";
-> >> > +           reg = <0x80000000 0xf00000>;
-> >> > +   };
-> >> > +};
-> >> > +
-> >> > +&hi_sfc {
-> >> > +   status = "okay";
-> >> > +   spi-nor@0 {
-> >> > +           compatible = "jedec,spi-nor";
-> >>
-> >> I don't remember offhand, but I think this should have a device specific
-> >> compatible too.
-> >>
-> > Instead of "jedec,spi-nor" ? Specific to the SPI chip?
-> 
-> No, both with jedec,spi-nor 2nd.
-> 
-Gotcha, will fix it up.
-> >> > +           reg = <0>;
-> >> > +           spi-max-frequency = <104000000>;
-> >> > +   };
-> >> > +};
-> >> > +
-> >> > +&uart0 {
-> >> > +   status = "okay";
-> >> > +};
-> >> > +
-> >> > +&dual_timer0 {
-> >> > +   status = "okay";
-> >> > +};
-> >> > diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
-> >> > new file mode 100644
-> >> > index 000000000000..2af746fdec46
-> >> > --- /dev/null
-> >> > +++ b/arch/arm/boot/dts/hi3521a.dtsi
-> >> > @@ -0,0 +1,310 @@
-> >> > +/*
-> >> > + * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-> >> > + *
-> >> > + * This program is free software: you can redistribute it and/or modify
-> >> > + * it under the terms of the GNU General Public License as published by
-> >> > + * the Free Software Foundation, either version 3 of the License, or
-> >> > + * (at your option) any later version.
-> >> > + *
-> >> > + * This program is distributed in the hope that it will be useful,
-> >> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >> > + * GNU General Public License for more details.
-> >> > + *
-> >> > + * You should have received a copy of the GNU General Public License
-> >> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> >> > + */
-> >> > +
-> >> > +#include <dt-bindings/clock/hi3521a-clock.h>
-> >> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> > +/ {
-> >> > +   #address-cells = <1>;
-> >> > +   #size-cells = <1>;
-> >> > +   chosen { };
-> >> > +
-> >> > +   cpus {
-> >> > +           #address-cells = <1>;
-> >> > +           #size-cells = <0>;
-> >> > +
-> >> > +           cpu0: cpu@0 {
-> >> > +                   device_type = "cpu";
-> >> > +                   compatible = "arm,cortex-a7";
-> >> > +                   reg = <0>;
-> >> > +           };
-> >> > +   };
-> >> > +
-> >> > +   hi_sfc: spi-nor-controller@10000000 {
-> >> > +           compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
-> >> > +           #address-cells = <1>;
-> >> > +           #size-cells = <0>;
-> >> > +           reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
-> >> > +           reg-names = "control", "memory";
-> >> > +           clocks = <&crg HI3521A_FMC_CLK>;
-> >> > +           status = "disabled";
-> >> > +   };
-> >> > +
-> >> > +   gic: interrupt-controller@10300000 {
-> >> > +           compatible = "arm,pl390";
-> >> > +           #interrupt-cells = <3>;
-> >> > +           interrupt-controller;
-> >> > +           reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-> >> > +   };
-> >> > +
-> >> > +   clk_3m: clk_3m {
-> >> > +           compatible = "fixed-clock";
-> >> > +           #clock-cells = <0>;
-> >> > +           clock-frequency = <3000000>;
-> >> > +   };
-> >> > +
-> >> > +   crg: clock-reset-controller@12040000 {
-> >> > +           compatible = "hisilicon,hi3521a-crg";
-> >> > +           #clock-cells = <1>;
-> >> > +           #reset-cells = <2>;
-> >> > +           reg = <0x12040000 0x10000>;
-> >> > +   };
-> >>
-> >> These memory mapped peripherals should be under a bus node.
-> >>
-> > Crap, will fix.
-> >> > +
-> >> > +   soc {
-> >> > +           #address-cells = <1>;
-> >> > +           #size-cells = <1>;
-> >> > +           compatible = "simple-bus";
-> >> > +           interrupt-parent = <&gic>;
-> >> > +           ranges;
-> >>
-> >> It is preferred to have a value here and limit the range of the bus
-> >> addresses.
-> >>
-> > Yeah, I think I've seen that before, I don't quite grok how that works.
-> >> > +
-> >> > +           dmac: dma@10060000 {
-> >>
-> >> dma-controller@...
-> >>
-> > Will fix.
-> >> > +                   compatible = "arm,pl080", "arm,primecell";
-> >> > +                   reg = <0x10060000 0x1000>;
-> >> > +                   interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> >> > +                   status = "disabled";
-> >>
-> >> I wouldn't think enabling dma would be a per board decision.
-> >>
-> > I've just noticed that in general dtsi files just lay it all out and are
-> > mostly "disabled", though if you think this should be explicitly enabled
-> > thats fine by me.
-> >> > +           };
-> >> > +
-> >> > +           dual_timer0: timer@12000000 {
-> >> > +                   compatible = "arm,sp804", "arm,primecell";
-> >> > +                   interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> >> > +                                <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-> >> > +                   reg = <0x12000000 0x1000>;
-> >> > +                   clocks = <&clk_3m>;
-> >> > +                   clock-names = "apb_pclk";
-> >>
-> >> IIRC, it is deprecated to have a single clock here. The h/w has 2 clock
-> >> inputs.
-> >>
-> > Are you meaning for the 0x0 index and 0x20 index clocks?
-> 
-> Yes. Maybe it's 3 clocks. Anyway, should all be in the sp804 binding doc.
-> 
-> >> Where's the ARM architected timer?
-> >>
-> > Unsure tbqf, just doing my best to translate a datasheet into code. Do
-> > all ARM soc's have one?
-> 
-> All A7's should I think.
-> 
-Gotcha.
-> Rob
+There are some resets that are not associated with gates. These are
+represented by a reset controller.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+
+---
+v3:
+  - Add named initalisers for the reset defines
+  - Add define for ADC
+---
+ drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h | 10 ++++
+ 2 files changed, 91 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 42a69839d86e..4b08ad3b7960 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -272,6 +273,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.is_enabled = aspeed_clk_is_enabled,
+ };
+ 
++/**
++ * struct aspeed_reset - Aspeed reset controller
++ * @map: regmap to access the containing system controller
++ * @rcdev: reset controller device
++ */
++struct aspeed_reset {
++	struct regmap			*map;
++	struct reset_controller_dev	rcdev;
++};
++
++#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++
++static const u8 aspeed_resets[] = {
++	[ASPEED_RESET_XDMA]	= 25,
++	[ASPEED_RESET_MCTP]	= 24,
++	[ASPEED_RESET_ADC]	= 23,
++	[ASPEED_RESET_JTAG_MASTER] = 22,
++	[ASPEED_RESET_MIC]	= 18,
++	[ASPEED_RESET_PWM]	=  9,
++	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_I2C]	=  2,
++	[ASPEED_RESET_AHB]	=  1,
++};
++
++static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++}
++
++static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++}
++
++static int aspeed_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 val, rst = BIT(aspeed_resets[id]);
++	int ret;
++
++	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return !!(val & rst);
++}
++
++static const struct reset_control_ops aspeed_reset_ops = {
++	.assert = aspeed_reset_assert,
++	.deassert = aspeed_reset_deassert,
++	.status = aspeed_reset_status,
++};
++
+ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+@@ -313,10 +376,11 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+ 	struct device *dev = &pdev->dev;
++	struct aspeed_reset *ar;
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
+-	int i;
++	int i, ret;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -324,6 +388,22 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
+ 
++	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
++	if (!ar)
++		return -ENOMEM;
++
++	ar->map = map;
++	ar->rcdev.owner = THIS_MODULE;
++	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
++	ar->rcdev.ops = &aspeed_reset_ops;
++	ar->rcdev.of_node = dev->of_node;
++
++	ret = devm_reset_controller_register(dev, &ar->rcdev);
++	if (ret) {
++		dev_err(dev, "could not register reset controller\n");
++		return ret;
++	}
++
+ 	/* SoC generations share common layouts but have different divisors */
+ 	soc_data = of_device_get_match_data(&pdev->dev);
+ 
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index 4a99421d77c8..8e19646d8025 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -39,4 +39,14 @@
+ 
+ #define ASPEED_NUM_CLKS			35
+ 
++#define ASPEED_RESET_XDMA		0
++#define ASPEED_RESET_MCTP		1
++#define ASPEED_RESET_ADC		2
++#define ASPEED_RESET_JTAG_MASTER	3
++#define ASPEED_RESET_MIC		4
++#define ASPEED_RESET_PWM		5
++#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_I2C		7
++#define ASPEED_RESET_AHB		8
++
+ #endif
+-- 
+2.14.1
