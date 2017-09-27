@@ -1,143 +1,147 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v1 10/10] tty/serial: atmel: Prevent a warning on suspend
-Date: Fri,  8 Sep 2017 17:36:04 +0200
-Message-Id: <20170908153604.28383-11-romain.izard.pro@gmail.com>
-In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+Message-ID: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 09:27:40 +0200
+MIME-Version: 1.0
+In-Reply-To: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The atmel serial port driver reported the following warning on suspend:
-atmel_usart f8020000.serial: ttyS1: Unable to drain transmitter
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 09:00:21 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-As the ATMEL_US_TXEMPTY status bit in ATMEL_US_CSR is always cleared
-when the transmitter is disabled, we need to know the transmitter's
-state to return the real fifo state. And as ATMEL_US_CR is write-only,
-it is necessary to save the state of the transmitter in a local
-variable, and update the variable when TXEN and TXDIS is written in
-ATMEL_US_CR.
+The script “checkpatch.pl” pointed information out like the following.
 
-After those changes, atmel_tx_empty can return "empty" on suspend, the
-warning in uart_suspend_port disappears, and suspending is 20ms shorter
-for each enabled Atmel serial port.
+Comparison to NULL could be written !…
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/atmel_serial.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/mmp/clk-mix.c    | 4 ++--
+ drivers/clk/mmp/clk-mmp2.c   | 6 +++---
+ drivers/clk/mmp/clk-pxa168.c | 6 +++---
+ drivers/clk/mmp/clk-pxa910.c | 8 ++++----
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 7551cab438ff..195c0d1b594e 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -171,6 +171,7 @@ struct atmel_uart_port {
- 	bool			has_hw_timer;
- 	struct timer_list	uart_timer;
+diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+index b2471fb369f1..90814b2613c0 100644
+--- a/drivers/clk/mmp/clk-mix.c
++++ b/drivers/clk/mmp/clk-mix.c
+@@ -229,7 +229,7 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *hw,
+ 			parent_rate = clk_hw_get_rate(parent);
+ 			mix_rate = parent_rate / item->divisor;
+ 			gap = abs(mix_rate - req->rate);
+-			if (parent_best == NULL || gap < gap_best) {
++			if (!parent_best || gap < gap_best) {
+ 				parent_best = parent;
+ 				parent_rate_best = parent_rate;
+ 				mix_rate_best = mix_rate;
+@@ -247,7 +247,7 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *hw,
+ 				div = _get_div(mix, j);
+ 				mix_rate = parent_rate / div;
+ 				gap = abs(mix_rate - req->rate);
+-				if (parent_best == NULL || gap < gap_best) {
++				if (!parent_best || gap < gap_best) {
+ 					parent_best = parent;
+ 					parent_rate_best = parent_rate;
+ 					mix_rate_best = mix_rate;
+diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
+index 038023483b98..7460031714da 100644
+--- a/drivers/clk/mmp/clk-mmp2.c
++++ b/drivers/clk/mmp/clk-mmp2.c
+@@ -83,19 +83,19 @@ void __init mmp2_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
+ 	void __iomem *apbc_base;
  
-+	bool			tx_stopped;
- 	bool			suspended;
- 	unsigned int		pending;
- 	unsigned int		pending_status;
-@@ -380,6 +381,10 @@ static int atmel_config_rs485(struct uart_port *port,
-  */
- static u_int atmel_tx_empty(struct uart_port *port)
- {
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+
-+	if (atmel_port->tx_stopped)
-+		return TIOCSER_TEMT;
- 	return (atmel_uart_readl(port, ATMEL_US_CSR) & ATMEL_US_TXEMPTY) ?
- 		TIOCSER_TEMT :
- 		0;
-@@ -485,6 +490,7 @@ static void atmel_stop_tx(struct uart_port *port)
- 	 * is fully transmitted.
- 	 */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS);
-+	atmel_port->tx_stopped = true;
+ 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
+-	if (mpmu_base == NULL) {
++	if (!mpmu_base) {
+ 		pr_err("error to ioremap MPMU base\n");
+ 		return;
+ 	}
  
- 	/* Disable interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
-@@ -492,6 +498,7 @@ static void atmel_stop_tx(struct uart_port *port)
- 	if ((port->rs485.flags & SER_RS485_ENABLED) &&
- 	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
- 		atmel_start_rx(port);
-+
- }
+ 	apmu_base = ioremap(apmu_phys, SZ_4K);
+-	if (apmu_base == NULL) {
++	if (!apmu_base) {
+ 		pr_err("error to ioremap APMU base\n");
+ 		return;
+ 	}
  
- /*
-@@ -521,6 +528,7 @@ static void atmel_start_tx(struct uart_port *port)
+ 	apbc_base = ioremap(apbc_phys, SZ_4K);
+-	if (apbc_base == NULL) {
++	if (!apbc_base) {
+ 		pr_err("error to ioremap APBC base\n");
+ 		return;
+ 	}
+diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
+index a9ef9209532a..8e2551ab8462 100644
+--- a/drivers/clk/mmp/clk-pxa168.c
++++ b/drivers/clk/mmp/clk-pxa168.c
+@@ -75,19 +75,19 @@ void __init pxa168_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
+ 	void __iomem *apbc_base;
  
- 	/* re-enable the transmitter */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
-+	atmel_port->tx_stopped = false;
- }
+ 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
+-	if (mpmu_base == NULL) {
++	if (!mpmu_base) {
+ 		pr_err("error to ioremap MPMU base\n");
+ 		return;
+ 	}
  
- /*
-@@ -1866,6 +1874,7 @@ static int atmel_startup(struct uart_port *port)
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	/* enable xmit & rcvr */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
+ 	apmu_base = ioremap(apmu_phys, SZ_4K);
+-	if (apmu_base == NULL) {
++	if (!apmu_base) {
+ 		pr_err("error to ioremap APMU base\n");
+ 		return;
+ 	}
  
- 	setup_timer(&atmel_port->uart_timer,
- 			atmel_uart_timer_callback,
-@@ -2122,6 +2131,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	apbc_base = ioremap(apbc_phys, SZ_4K);
+-	if (apbc_base == NULL) {
++	if (!apbc_base) {
+ 		pr_err("error to ioremap APBC base\n");
+ 		return;
+ 	}
+diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
+index a520cf7702a1..7a7965141918 100644
+--- a/drivers/clk/mmp/clk-pxa910.c
++++ b/drivers/clk/mmp/clk-pxa910.c
+@@ -74,25 +74,25 @@ void __init pxa910_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
+ 	void __iomem *apbc_base;
  
- 	/* disable receiver and transmitter */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS | ATMEL_US_RXDIS);
-+	atmel_port->tx_stopped = true;
+ 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
+-	if (mpmu_base == NULL) {
++	if (!mpmu_base) {
+ 		pr_err("error to ioremap MPMU base\n");
+ 		return;
+ 	}
  
- 	/* mode */
- 	if (port->rs485.flags & SER_RS485_ENABLED) {
-@@ -2207,6 +2217,7 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
+ 	apmu_base = ioremap(apmu_phys, SZ_4K);
+-	if (apmu_base == NULL) {
++	if (!apmu_base) {
+ 		pr_err("error to ioremap APMU base\n");
+ 		return;
+ 	}
  
- 	/* restore interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IER, imr);
-@@ -2450,6 +2461,7 @@ static void atmel_console_write(struct console *co, const char *s, u_int count)
+ 	apbcp_base = ioremap(apbcp_phys, SZ_4K);
+-	if (apbcp_base == NULL) {
++	if (!apbcp_base) {
+ 		pr_err("error to ioremap APBC extension base\n");
+ 		return;
+ 	}
  
- 	/* Make sure that tx path is actually able to send characters */
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN);
-+	atmel_port->tx_stopped = false;
- 
- 	uart_console_write(port, s, count, atmel_console_putchar);
- 
-@@ -2528,6 +2540,7 @@ static int __init atmel_console_setup(struct console *co, char *options)
- 	atmel_uart_writel(port, ATMEL_US_IDR, -1);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
-+	atmel_port->tx_stopped = false;
- 
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+ 	apbc_base = ioremap(apbc_phys, SZ_4K);
+-	if (apbc_base == NULL) {
++	if (!apbc_base) {
+ 		pr_err("error to ioremap APBC base\n");
+ 		return;
+ 	}
 -- 
-2.11.0
+2.14.1
