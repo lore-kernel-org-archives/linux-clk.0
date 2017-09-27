@@ -1,39 +1,42 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 1 Sep 2017 09:32:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Romain Perier <romain.perier@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	devicetree@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 3/4] nvmem: rockchip: add support for RK3368
-Message-ID: <20170901143258.ccto72dhc5hd34ou@rob-hp-laptop>
-References: <20170828121604.15968-1-romain.perier@collabora.com>
- <20170828121604.15968-4-romain.perier@collabora.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?=
+ <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk: rockchip: Delete an error message for a failed memory
+ allocation in rockchip_clk_register_cpuclk()
+Message-ID: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 11:44:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170828121604.15968-4-romain.perier@collabora.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 28, 2017 at 02:16:03PM +0200, Romain Perier wrote:
-> This adds the necessary functions and data for handling support on RK3368
-> SoCs.
-> 
-> Signed-off-by: Romain Perier <romain.perier@collabora.com>
-> ---
->  .../devicetree/bindings/nvmem/rockchip-efuse.txt   |  1 +
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 11:38:17 +0200
 
-For the binding only:
+Omit an extra message for a memory allocation failure in this function.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This issue was detected by using the Coccinelle software.
 
->  drivers/nvmem/rockchip-efuse.c                     | 80 ++++++++++++++++++++++
->  2 files changed, 81 insertions(+)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/rockchip/clk-cpu.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 0e09684d43a5..32c19c0f1e14 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -322,8 +322,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 					     sizeof(*rates) * nrates,
+ 					     GFP_KERNEL);
+ 		if (!cpuclk->rate_table) {
+-			pr_err("%s: could not allocate memory for cpuclk rates\n",
+-			       __func__);
+ 			ret = -ENOMEM;
+ 			goto unregister_notifier;
+ 		}
+-- 
+2.14.1
