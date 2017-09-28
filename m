@@ -1,92 +1,107 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net> <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 28 Sep 2017 18:03:57 +0200
-Message-ID: <CAPDyKFo3LUS4fy0U88nqoMgTKszhBwrjMAJvS_3hn5whCg=Yrg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk/ux500: Delete an error message for a failed
- memory allocation in three functions
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
+Date: Thu, 28 Sep 2017 16:14:57 -0700
+Message-Id: <20170928231502.27069-6-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27 September 2017 at 20:46, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:23:58 +0200
->
-> Omit extra messages for a memory allocation failure in these functions.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Add support for the Broadcom Hurricane 2 SoC clock controller. We can
+re-use the existing iProc clock library since the SoC's architecture is
+largely the same as its predecessors. For now, we just initialize the
+iProc ARM PLL.
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/clk/bcm/Kconfig   |  9 +++++++++
+ drivers/clk/bcm/Makefile  |  1 +
+ drivers/clk/bcm/clk-hr2.c | 27 +++++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-hr2.c
 
-> ---
->  drivers/clk/ux500/clk-prcc.c    | 4 +---
->  drivers/clk/ux500/clk-prcmu.c   | 4 +---
->  drivers/clk/ux500/clk-sysctrl.c | 4 +---
->  3 files changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-> index f50592775c9d..5ca07e6d1f64 100644
-> --- a/drivers/clk/ux500/clk-prcc.c
-> +++ b/drivers/clk/ux500/clk-prcc.c
-> @@ -108,10 +108,8 @@ static struct clk *clk_reg_prcc(const char *name,
->         }
->
->         clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
-> -       if (!clk) {
-> -               pr_err("clk_prcc: %s could not allocate clk\n", __func__);
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         clk->base = ioremap(phy_base, SZ_4K);
->         if (!clk->base)
-> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-> index 6e3e16b2e5ca..c137934f23ab 100644
-> --- a/drivers/clk/ux500/clk-prcmu.c
-> +++ b/drivers/clk/ux500/clk-prcmu.c
-> @@ -259,10 +259,8 @@ static struct clk *clk_reg_prcmu(const char *name,
->         }
->
->         clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
-> -       if (!clk) {
-> -               pr_err("clk_prcmu: %s could not allocate clk\n", __func__);
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         clk->cg_sel = cg_sel;
->         clk->is_prepared = 1;
-> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> index 8a4e93ce1e42..e0a834c08a04 100644
-> --- a/drivers/clk/ux500/clk-sysctrl.c
-> +++ b/drivers/clk/ux500/clk-sysctrl.c
-> @@ -140,10 +140,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
->         }
->
->         clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
-> -       if (!clk) {
-> -               dev_err(dev, "clk_sysctrl: could not allocate clk\n");
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         /* set main clock registers */
->         clk->reg_sel[0] = reg_sel[0];
-> --
-> 2.14.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 1d9187df167b..4c4bd85f707c 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -30,6 +30,15 @@ config CLK_BCM_CYGNUS
+ 	help
+ 	  Enable common clock framework support for the Broadcom Cygnus SoC
+ 
++config CLK_BCM_HR2
++	bool "Broadcom Hurricane 2 clock support"
++	depends on ARCH_BCM_HR2 || COMPILE_TEST
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_HR2
++	help
++	  Enable common clock framework support for the Broadcom Hurricane 2
++	  SoC
++
+ config CLK_BCM_NSP
+ 	bool "Broadcom Northstar/Northstar Plus clock support"
+ 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index a0c14fa4aa1e..755144195541 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835-aux.o
+ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+ obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
++obj-$(CONFIG_CLK_BCM_HR2)	+= clk-hr2.o
+ obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
+ obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
+diff --git a/drivers/clk/bcm/clk-hr2.c b/drivers/clk/bcm/clk-hr2.c
+new file mode 100644
+index 000000000000..f7c5b7379475
+--- /dev/null
++++ b/drivers/clk/bcm/clk-hr2.c
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (C) 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#include "clk-iproc.h"
++
++static void __init hr2_armpll_init(struct device_node *node)
++{
++	iproc_armpll_setup(node);
++}
++CLK_OF_DECLARE(hr2_armpll, "brcm,hr2-armpll", hr2_armpll_init);
+-- 
+2.14.1
