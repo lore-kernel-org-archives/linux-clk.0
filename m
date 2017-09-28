@@ -1,157 +1,45 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <1506497645.30138.37.camel@aj.id.au>
+References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
+ <1506343255.30138.29.camel@aj.id.au> <CACPK8Xd8RQ4s1xMsSuxHgQRiHS6vDtxVTAxu8Ba3J3it45MC5g@mail.gmail.com>
+ <1506497645.30138.37.camel@aj.id.au>
+From: Joel Stanley <joel@jms.id.au>
+Date: Thu, 28 Sep 2017 14:29:22 +1000
+Message-ID: <CACPK8XeJE025GRT9kk9L1x1VsDGEmLG80G9LMM03vsvpHS+sYA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard@mobile-devices.fr>,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 3/9] clk: at91: pmc: Support backup for programmable clocks
-Date: Fri, 15 Sep 2017 16:04:05 +0200
-Message-Id: <20170915140411.31716-4-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Romain Izard <romain.izard@mobile-devices.fr>
+On Wed, Sep 27, 2017 at 5:34 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
+> On Wed, 2017-09-27 at 16:13 +1000, Joel Stanley wrote:
+>> > > +                     div_table,
+>> >
+>> > This doesn't seem to be correct. There's the problem of 0b000 and 0b001 mapping
+>> > the same value of 2 for the AST2500, whose table then increments in steps of 1.
+>> > The AST2400 mapping on the otherhand is multiples of 2 starting at 2, with no
+>> > inconsistency for 0b000 vs 0b001.
+>>
+>> Yep, we do use a different table for ast2400 vs ast2500. See
+>> ast2400_div_table vs ast2500_div_table.
+>
+> Yep, but for the AST2500 this is a different table again to what you've
+> already defined (for the AST2500). However, for the AST2400 the table
+> looks the same as the other AST2400 tables.
 
-When an AT91 programmable clock is declared in the device tree, register
-it into the Power Management Controller driver. On entering suspend mode,
-the driver saves and restores the Programmable Clock registers to support
-the backup mode for these clocks.
+You're right. I didn't realise you were pointing out something strange
+about eclk.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
-Changes in v2:
-* register PCKs on clock startup
+I added another table for eclk, and the correct one is selected by the
+platform data.
 
- drivers/clk/at91/clk-programmable.c |  2 ++
- drivers/clk/at91/pmc.c              | 27 +++++++++++++++++++++++++++
- drivers/clk/at91/pmc.h              |  2 ++
- 3 files changed, 31 insertions(+)
-
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 85a449cf61e3..0e6aab1252fc 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -204,6 +204,8 @@ at91_clk_register_programmable(struct regmap *regmap,
- 	if (ret) {
- 		kfree(prog);
- 		hw = ERR_PTR(ret);
-+	} else {
-+		pmc_register_pck(id);
- 	}
- 
- 	return hw;
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 07dc2861ad3f..3910b7537152 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -22,6 +22,7 @@
- #include "pmc.h"
- 
- #define PMC_MAX_IDS 128
-+#define PMC_MAX_PCKS 8
- 
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
-@@ -50,6 +51,7 @@ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
- static struct regmap *pmcreg;
- 
- static u8 registered_ids[PMC_MAX_IDS];
-+static u8 registered_pcks[PMC_MAX_PCKS];
- 
- static struct
- {
-@@ -66,8 +68,10 @@ static struct
- 	u32 pcr[PMC_MAX_IDS];
- 	u32 audio_pll0;
- 	u32 audio_pll1;
-+	u32 pckr[PMC_MAX_PCKS];
- } pmc_cache;
- 
-+/* Clock ID 0 is invalid */
- void pmc_register_id(u8 id)
- {
- 	int i;
-@@ -82,6 +86,21 @@ void pmc_register_id(u8 id)
- 	}
- }
- 
-+/* Programmable Clock 0 is valid */
-+void pmc_register_pck(u8 pck)
-+{
-+	int i;
-+
-+	for (i = 0; i < PMC_MAX_PCKS; i++) {
-+		if (registered_pcks[i] == 0) {
-+			registered_pcks[i] = pck + 1;
-+			break;
-+		}
-+		if (registered_pcks[i] == (pck + 1))
-+			break;
-+	}
-+}
-+
- static int pmc_suspend(void)
- {
- 	int i;
-@@ -103,6 +122,10 @@ static int pmc_suspend(void)
- 		regmap_read(pmcreg, AT91_PMC_PCR,
- 			    &pmc_cache.pcr[registered_ids[i]]);
- 	}
-+	for (i = 0; registered_pcks[i]; i++) {
-+		u8 num = registered_pcks[i] - 1;
-+		regmap_read(pmcreg, AT91_PMC_PCKR(num), &pmc_cache.pckr[num]);
-+	}
- 
- 	return 0;
- }
-@@ -143,6 +166,10 @@ static void pmc_resume(void)
- 			     pmc_cache.pcr[registered_ids[i]] |
- 			     AT91_PMC_PCR_CMD);
- 	}
-+	for (i = 0; registered_pcks[i]; i++) {
-+		u8 num = registered_pcks[i] - 1;
-+		regmap_write(pmcreg, AT91_PMC_PCKR(num), pmc_cache.pckr[num]);
-+	}
- 
- 	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
- 		mask |= AT91_PMC_LOCKU;
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 858e8ef7e8db..d22b1fa9ecdc 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -31,8 +31,10 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 
- #ifdef CONFIG_PM
- void pmc_register_id(u8 id);
-+void pmc_register_pck(u8 pck);
- #else
- static inline void pmc_register_id(u8 id) {}
-+static inline void pmc_register_pck(u8 pck) {}
- #endif
- 
- #endif /* __PMC_H_ */
--- 
-2.11.0
+I'll send out v4 today if no more reviews come in.
