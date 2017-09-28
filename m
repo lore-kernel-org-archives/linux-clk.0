@@ -1,47 +1,49 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Mon, 25 Sep 2017 21:17:49 +0200
-From: Johannes Stezenbach <js@sig21.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
- firmware"
-Message-ID: <20170925191749.2oamusbajgs6clcg@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <4254964.MfDMP6QAfg@aspire.rjw.lan>
- <20170922080453.3bwad4ale4zizf42@sig21.net>
- <1555462.9U3gvkyXAX@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1555462.9U3gvkyXAX@aspire.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2 01/10] MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
+Date: Thu, 28 Sep 2017 16:14:53 -0700
+Message-Id: <20170928231502.27069-2-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Sep 23, 2017 at 12:09:32AM +0200, Rafael J. Wysocki wrote:
-> On Friday, September 22, 2017 10:04:53 AM CEST Johannes Stezenbach wrote:
-> > In conclusion the BIOS bug is that it enables these clocks at boot,
-> > and the correct quirk is to make clk-pmc-atom.c disable them during init,
-> > but leave the _PRx handling for the used clocks (CLK3) to ACPI.
-> > 
-> > Right?
-> 
-> Well, depending.  The BIOS may need them for something, we just don't know.
-> 
-> But if the above works, that would be the cleanest way I suppose.
+Update the Broadcom iProc regepx with recently added Hurricane 2 SoC
+support.
 
-I had a previous quirk patch attached to
-https://bugzilla.kernel.org/show_bug.cgi?id=193891
-which disables the SATA controller.  I decided to
-do the clk quirk on top of it and sending both as RFC.
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-I test with v4.14-rc2 + sound/topic/dollar-cove-ti-4.13-v5
-+ sound/topic/soc-cx2072x-4.13 + your v4 i2c: designware
-patches + some more out of tree patches that allow me to enter S0ix.
-
-Thanks,
-Johannes
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6671f375f7fc..3b48a1c2ddb8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2923,6 +2923,7 @@ N:	bcm583*
+ N:	bcm585*
+ N:	bcm586*
+ N:	bcm88312
++N:	hr2
+ F:	arch/arm64/boot/dts/broadcom/ns2*
+ F:	drivers/clk/bcm/clk-ns*
+ F:	drivers/pinctrl/bcm/pinctrl-ns*
+-- 
+2.14.1
