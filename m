@@ -1,92 +1,105 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v2 1/9] clk: at91: pmc: Wait for clocks when resuming
-To: Romain Izard <romain.izard.pro@gmail.com>, Alexandre Belloni
-	<alexandre.belloni@free-electrons.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
-	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
-	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
- Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
-	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-2-romain.izard.pro@gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <e5e1fb83-3106-3f8f-26d6-8b2d3cb4748a@microchip.com>
-Date: Fri, 22 Sep 2017 14:13:26 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170915140411.31716-2-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2 03/10] ARM: bcm: Add support for Broadcom Hurricane 2 SoC
+Date: Thu, 28 Sep 2017 16:14:55 -0700
+Message-Id: <20170928231502.27069-4-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15/09/2017 at 16:04, Romain Izard wrote:
-> Wait for the syncronization of all clocks when resuming, not only the
-> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-> when interrupts are masked, which is the case in here.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Add a Kconfig entry point and basic machine board code for the Broadcom
+Hurricane 2 SoCs used in switching products.
 
-And here is my:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ arch/arm/mach-bcm/Kconfig   |  9 +++++++++
+ arch/arm/mach-bcm/Makefile  |  3 +++
+ arch/arm/mach-bcm/bcm_hr2.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
+ create mode 100644 arch/arm/mach-bcm/bcm_hr2.c
 
-> ---
->  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 775af473fe11..5c2b26de303e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->  	return 0;
->  }
->  
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
->  static void pmc_resume(void)
->  {
-> -	int i, ret = 0;
-> +	int i;
->  	u32 tmp;
-> +	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->  
->  	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->  	if (pmc_cache.mckr != tmp)
-> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->  			     AT91_PMC_PCR_CMD);
->  	}
->  
-> -	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-> -		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-> -					       !(tmp & AT91_PMC_LOCKU),
-> -					       10, 5000);
-> -		if (ret)
-> -			pr_crit("USB PLL didn't lock when resuming\n");
-> -	}
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
->  }
->  
->  static struct syscore_ops pmc_syscore_ops = {
-> 
-
-
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 73be3d578851..76807581f9f3 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -36,6 +36,15 @@ config ARCH_BCM_CYGNUS
+ 	  BCM11300, BCM11320, BCM11350, BCM11360,
+ 	  BCM58300, BCM58302, BCM58303, BCM58305.
+ 
++config ARCH_BCM_HR2
++	bool "Broadcom Hurricane 2 SoC support"
++	depends on ARCH_MULTI_V7
++	select ARCH_BCM_IPROC
++	help
++	  Enable support for the Hurricane 2 family,
++	  which includes the following variants:
++	  BCM53342, BCM53343, BCM53344, BCM53346.
++
+ config ARCH_BCM_NSP
+ 	bool "Broadcom Northstar Plus SoC Support"
+ 	depends on ARCH_MULTI_V7
+diff --git a/arch/arm/mach-bcm/Makefile b/arch/arm/mach-bcm/Makefile
+index 980f5850097c..ec93c849a100 100644
+--- a/arch/arm/mach-bcm/Makefile
++++ b/arch/arm/mach-bcm/Makefile
+@@ -13,6 +13,9 @@
+ # Cygnus
+ obj-$(CONFIG_ARCH_BCM_CYGNUS) +=  bcm_cygnus.o
+ 
++# Hurricane 2
++obj-$(CONFIG_ARCH_BCM_HR2)	+= bcm_hr2.o
++
+ # Northstar Plus
+ obj-$(CONFIG_ARCH_BCM_NSP)	+= bcm_nsp.o
+ 
+diff --git a/arch/arm/mach-bcm/bcm_hr2.c b/arch/arm/mach-bcm/bcm_hr2.c
+new file mode 100644
+index 000000000000..c104f28995d7
+--- /dev/null
++++ b/arch/arm/mach-bcm/bcm_hr2.c
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <asm/mach/arch.h>
++
++static const char * const bcm_hr2_dt_compat[] __initconst = {
++	"brcm,hr2",
++	NULL,
++};
++
++DT_MACHINE_START(BCM_HR2_DT, "Broadcom Hurricane 2 SoC")
++	.l2c_aux_val	= 0,
++	.l2c_aux_mask	= ~0,
++	.dt_compat = bcm_hr2_dt_compat,
++MACHINE_END
 -- 
-Nicolas Ferre
+2.14.1
