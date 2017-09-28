@@ -1,152 +1,88 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 7/9] pwm: atmel-tcb: Support backup mode
-Date: Fri, 15 Sep 2017 16:04:09 +0200
-Message-Id: <20170915140411.31716-8-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 12/13] clk: qcom: support for 2 bit PLL post divider
+Date: Thu, 28 Sep 2017 23:20:49 +0530
+Message-Id: <1506621050-10129-13-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Save and restore registers for the PWM on suspend and resume, which
-makes hibernation and backup modes possible.
+Current PLL driver only supports 4 bit PLL post divider so
+modified the PLL divider operations to support 2 bit PLL
+post divider.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/pwm/pwm-atmel-tcb.c | 63 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 61 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 75db585a2a94..acd3ce8ecf3f 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -37,11 +37,20 @@ struct atmel_tcb_pwm_device {
- 	unsigned period;		/* PWM period expressed in clk cycles */
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index c682387..62b84fa 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -39,7 +39,6 @@
+ # define PLL_LOCK_DET		BIT(31)
+ 
+ # define PLL_POST_DIV_SHIFT	8
+-# define PLL_POST_DIV_MASK	0xf
+ # define PLL_ALPHA_EN		BIT(24)
+ # define PLL_ALPHA_MODE		BIT(25)
+ # define PLL_VCO_SHIFT		20
+@@ -822,7 +821,7 @@ static int clk_alpha_pll_hwfsm_is_enabled(struct clk_hw *hw)
+ 		    &ctl);
+ 
+ 	ctl >>= PLL_POST_DIV_SHIFT;
+-	ctl &= PLL_POST_DIV_MASK;
++	ctl &= BIT(pll->width) - 1;
+ 
+ 	return parent_rate >> fls(ctl);
+ }
+@@ -836,13 +835,26 @@ static int clk_alpha_pll_hwfsm_is_enabled(struct clk_hw *hw)
+ 	{ }
  };
  
-+struct atmel_tcb_channel {
-+	u32 enabled;
-+	u32 cmr;
-+	u32 ra;
-+	u32 rb;
-+	u32 rc;
++static const struct clk_div_table clk_alpha_2bit_div_table[] = {
++	{ 0x0, 1 },
++	{ 0x1, 2 },
++	{ 0x3, 4 },
++	{ }
 +};
 +
- struct atmel_tcb_pwm_chip {
- 	struct pwm_chip chip;
- 	spinlock_t lock;
- 	struct atmel_tc *tc;
- 	struct atmel_tcb_pwm_device *pwms[NPWM];
-+	struct atmel_tcb_channel bkup[NPWM / 2];
- };
+ static long
+ clk_alpha_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				 unsigned long *prate)
+ {
+ 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++	const struct clk_div_table *table;
  
- static inline struct atmel_tcb_pwm_chip *to_tcb_chip(struct pwm_chip *chip)
-@@ -175,12 +184,15 @@ static void atmel_tcb_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	 * Use software trigger to apply the new setting.
- 	 * If both PWM devices in this group are disabled we stop the clock.
- 	 */
--	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC)))
-+	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC))) {
- 		__raw_writel(ATMEL_TC_SWTRG | ATMEL_TC_CLKDIS,
- 			     regs + ATMEL_TC_REG(group, CCR));
--	else
-+		tcbpwmc->bkup[group].enabled = 1;
-+	} else {
- 		__raw_writel(ATMEL_TC_SWTRG, regs +
- 			     ATMEL_TC_REG(group, CCR));
-+		tcbpwmc->bkup[group].enabled = 0;
-+	}
- 
- 	spin_unlock(&tcbpwmc->lock);
+-	return divider_round_rate(hw, rate, prate, clk_alpha_div_table,
++	if (pll->width == 2)
++		table = clk_alpha_2bit_div_table;
++	else
++		table = clk_alpha_div_table;
++
++	return divider_round_rate(hw, rate, prate, table,
+ 				  pll->width, CLK_DIVIDER_POWER_OF_TWO);
  }
-@@ -263,6 +275,7 @@ static int atmel_tcb_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	/* Use software trigger to apply the new setting */
- 	__raw_writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
- 		     regs + ATMEL_TC_REG(group, CCR));
-+	tcbpwmc->bkup[group].enabled = 1;
- 	spin_unlock(&tcbpwmc->lock);
- 	return 0;
- }
-@@ -445,10 +458,56 @@ static const struct of_device_id atmel_tcb_pwm_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
  
-+#ifdef CONFIG_PM_SLEEP
-+static int atmel_tcb_pwm_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		chan->cmr = readl(base + ATMEL_TC_REG(i, CMR));
-+		chan->ra = readl(base + ATMEL_TC_REG(i, RA));
-+		chan->rb = readl(base + ATMEL_TC_REG(i, RB));
-+		chan->rc = readl(base + ATMEL_TC_REG(i, RC));
-+	}
-+	return 0;
-+}
-+
-+static int atmel_tcb_pwm_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		writel(chan->cmr, base + ATMEL_TC_REG(i, CMR));
-+		writel(chan->ra, base + ATMEL_TC_REG(i, RA));
-+		writel(chan->rb, base + ATMEL_TC_REG(i, RB));
-+		writel(chan->rc, base + ATMEL_TC_REG(i, RC));
-+		if (chan->enabled) {
-+			writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
-+				base + ATMEL_TC_REG(i, CCR));
-+		}
-+	}
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(atmel_tcb_pwm_pm_ops, atmel_tcb_pwm_suspend,
-+			 atmel_tcb_pwm_resume);
-+
- static struct platform_driver atmel_tcb_pwm_driver = {
- 	.driver = {
- 		.name = "atmel-tcb-pwm",
- 		.of_match_table = atmel_tcb_pwm_dt_ids,
-+		.pm = &atmel_tcb_pwm_pm_ops,
- 	},
- 	.probe = atmel_tcb_pwm_probe,
- 	.remove = atmel_tcb_pwm_remove,
+@@ -857,7 +869,7 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	return regmap_update_bits(pll->clkr.regmap, pll->offset +
+ 				  pll_user_ctl(pll->pll_type),
+-				  PLL_POST_DIV_MASK << PLL_POST_DIV_SHIFT,
++				  (BIT(pll->width) - 1) << PLL_POST_DIV_SHIFT,
+ 				  div << PLL_POST_DIV_SHIFT);
+ }
+ 
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
