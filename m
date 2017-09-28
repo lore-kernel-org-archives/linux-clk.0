@@ -1,62 +1,181 @@
-Return-Path: <romain.izard@mobile-devices.fr>
-MIME-Version: 1.0
-Sender: romain.izard@mobile-devices.fr
-In-Reply-To: <20170919152504.nhp5i734u75gb5gq@dell>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-9-romain.izard.pro@gmail.com> <53aa7783-0ecf-1e68-1bf9-c470ba2f79eb@microchip.com>
- <20170919152504.nhp5i734u75gb5gq@dell>
-From: Romain Izard <romain.izard.pro@gmail.com>
-Date: Wed, 20 Sep 2017 10:30:31 +0200
-Message-ID: <CAGkQfmM08UqpLoMegRGQwmamN=Z74fem9VWT5yGcSjkYdS5c=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 8/9] atmel_flexcom: Support backup mode
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>, Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>,
-	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 01/13] clk: qcom: remove redundant PLL_MODE macro offset
+Date: Thu, 28 Sep 2017 23:20:38 +0530
+Message-Id: <1506621050-10129-2-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-09-19 17:25 GMT+02:00 Lee Jones <lee.jones@linaro.org>:
-> On Tue, 19 Sep 2017, Nicolas Ferre wrote:
->
->> On 15/09/2017 at 16:04, Romain Izard wrote:
->> > The controller used by a flexcom module is configured at boot, and left
->> > alone after this. As the configuration will be lost after backup mode,
->> > restore the state of the flexcom driver on resume.
->> >
->> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
->>
->> Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->> On sama5d2 Xplained board (i2c0 from flexcom 4).
->> and obviously:
->> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>
->> Thanks Romain!
->>
->> Regards,
->>
->> > ---
->> >  drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
->> >  1 file changed, 50 insertions(+), 15 deletions(-)
->
-> This is the first time I've seen this patch.  Why's that?
->
+The PLL_MODE offset macro is redundant which is defined as zero.
+The offset in PLL structure is the address of PLL_MODE register
+itself so the PLL_MODE can be removed. It will help in subsequent
+patches to support different PLL offset registers to reduce the
+code diff.
 
-As the patchset covers many subsystems, get_maintainers.pl provided a
-very long list of both developpers and mailing lists (28). I thought it
-was a good idea to shorten it a little. Bad idea. Sorry.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 47a1da3..b9be822 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -20,7 +20,6 @@
+ #include "clk-alpha-pll.h"
+ #include "common.h"
+ 
+-#define PLL_MODE		0x00
+ # define PLL_OUTCTRL		BIT(0)
+ # define PLL_BYPASSNL		BIT(1)
+ # define PLL_RESET_N		BIT(2)
+@@ -77,12 +76,12 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+ 	const char *name = clk_hw_get_name(&pll->clkr.hw);
+ 
+ 	off = pll->offset;
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return ret;
+ 
+ 	for (count = 100; count > 0; count--) {
+-		ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++		ret = regmap_read(pll->clkr.regmap, off, &val);
+ 		if (ret)
+ 			return ret;
+ 		if (inverse && !(val & mask))
+@@ -139,7 +138,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	regmap_update_bits(regmap, off + PLL_USER_CTL, mask, val);
+ 
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+-		qcom_pll_set_fsm_mode(regmap, off + PLL_MODE, 6, 0);
++		qcom_pll_set_fsm_mode(regmap, off, 6, 0);
+ }
+ 
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+@@ -149,7 +148,7 @@ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 
+ 	off = pll->offset;
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -158,7 +157,7 @@ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ 	if (pll->flags & SUPPORTS_OFFLINE_REQ)
+ 		val &= ~PLL_OFFLINE_REQ;
+ 
+-	ret = regmap_write(pll->clkr.regmap, off + PLL_MODE, val);
++	ret = regmap_write(pll->clkr.regmap, off, val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -175,12 +174,12 @@ static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 
+ 	off = pll->offset;
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return;
+ 
+ 	if (pll->flags & SUPPORTS_OFFLINE_REQ) {
+-		ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++		ret = regmap_update_bits(pll->clkr.regmap, off,
+ 					 PLL_OFFLINE_REQ, PLL_OFFLINE_REQ);
+ 		if (ret)
+ 			return;
+@@ -191,7 +190,7 @@ static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
+ 	}
+ 
+ 	/* Disable hwfsm */
+-	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++	ret = regmap_update_bits(pll->clkr.regmap, off,
+ 				 PLL_FSM_ENA, 0);
+ 	if (ret)
+ 		return;
+@@ -206,7 +205,7 @@ static int pll_is_enabled(struct clk_hw *hw, u32 mask)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 
+ 	off = pll->offset;
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -232,7 +231,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	off = pll->offset;
+ 
+ 	mask = PLL_OUTCTRL | PLL_RESET_N | PLL_BYPASSNL;
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -248,7 +247,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	if ((val & mask) == mask)
+ 		return 0;
+ 
+-	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++	ret = regmap_update_bits(pll->clkr.regmap, off,
+ 				 PLL_BYPASSNL, PLL_BYPASSNL);
+ 	if (ret)
+ 		return ret;
+@@ -260,7 +259,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	mb();
+ 	udelay(5);
+ 
+-	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++	ret = regmap_update_bits(pll->clkr.regmap, off,
+ 				 PLL_RESET_N, PLL_RESET_N);
+ 	if (ret)
+ 		return ret;
+@@ -269,7 +268,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_update_bits(pll->clkr.regmap, off + PLL_MODE,
++	ret = regmap_update_bits(pll->clkr.regmap, off,
+ 				 PLL_OUTCTRL, PLL_OUTCTRL);
+ 
+ 	/* Ensure that the write above goes through before returning. */
+@@ -285,7 +284,7 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
+ 
+ 	off = pll->offset;
+ 
+-	ret = regmap_read(pll->clkr.regmap, off + PLL_MODE, &val);
++	ret = regmap_read(pll->clkr.regmap, off, &val);
+ 	if (ret)
+ 		return;
+ 
+@@ -296,14 +295,14 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
+ 	}
+ 
+ 	mask = PLL_OUTCTRL;
+-	regmap_update_bits(pll->clkr.regmap, off + PLL_MODE, mask, 0);
++	regmap_update_bits(pll->clkr.regmap, off, mask, 0);
+ 
+ 	/* Delay of 2 output clock ticks required until output is disabled */
+ 	mb();
+ 	udelay(1);
+ 
+ 	mask = PLL_RESET_N | PLL_BYPASSNL;
+-	regmap_update_bits(pll->clkr.regmap, off + PLL_MODE, mask, 0);
++	regmap_update_bits(pll->clkr.regmap, off, mask, 0);
+ }
+ 
+ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
 -- 
-Romain Izard
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
