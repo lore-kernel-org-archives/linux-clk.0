@@ -1,62 +1,92 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 8 Sep 2017 09:37:33 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: Implement reset control status readback
-Message-ID: <20170908073733.k26y54ddunjf7pnp@flea.lan>
-References: <20170908043954.13019-1-wens@csie.org>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5xlsvuxw3j4ganvd"
-In-Reply-To: <20170908043954.13019-1-wens@csie.org>
+In-Reply-To: <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net> <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 28 Sep 2017 18:03:57 +0200
+Message-ID: <CAPDyKFo3LUS4fy0U88nqoMgTKszhBwrjMAJvS_3hn5whCg=Yrg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk/ux500: Delete an error message for a failed
+ memory allocation in three functions
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On 27 September 2017 at 20:46, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 20:23:58 +0200
+>
+> Omit extra messages for a memory allocation failure in these functions.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
---5xlsvuxw3j4ganvd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On Fri, Sep 08, 2017 at 12:39:54PM +0800, Chen-Yu Tsai wrote:
-> Until now we were not providing a way to read back the status of our
-> reset controls. Consumers had no real way to be certain whether a
-> peripheral was held in reset or not.
->=20
-> Implement the status callback to complete the API support.
->=20
-> Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---5xlsvuxw3j4ganvd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZski9AAoJEBx+YmzsjxAgO0kP/iAuBZ5uPB9XqDfhzaiHkaPK
-67aNslG26QCM/TiWfAu9ogiJIyATwA32OMXomL5uf4X+Y2rLVzISdvARUrh7SgyX
-PYzg0DZ3LEiRK8cyIXwGagUEKnnEhkpgKbKD7vdCxPK+wGmrgT3HrZDlKzxM7DbY
-ejRmeukrXo6EhsoLODcCMatguTKDSowFO+3tleUeHd3vHCPupVFMeABmO6obKdUg
-AdW62cHjQAJzMQK8qAoWvzL3quvrqcZGMUulLXAJpqLFkUDAXAawGPscW0zzEyTX
-DL57M2f/bMBs/6U4oNJC+LfDao9Sv8A0h7ZDB82DFNCqpu6vERS4DdE2OTJZtWYT
-Qj8XqBc/lkUcaJ0/kA/+d7Pz68PflznON6CLcMFLLHewNvWtxSmSoTiK9YMqeUP5
-0jzCnKQXZwXb4joMZiOvRwM6wGD26uPEeOT9sTRe/JuZiFa5cPLTslcAYIOZbk7W
-JoYKQ34REOLkL+opjXX8uvqNGLij1B0TKG6DTQMgy3f4q9Bn+gNhTT1JfAVfLujp
-tjMTbVhOdgcRhG/ZDlpfK5SpkpjlxR/rMhgwIxLia/tKNl8fihIm1sAOihqviHgR
-VtGa9bg2l2HSJBYIdxDOz3mfkxMilvoAFMlOMt4+QAV3VfbjMJuEKCOgOMYN16gV
-Q7zJwnh1dbAXL+a8KIVc
-=0b/Z
------END PGP SIGNATURE-----
-
---5xlsvuxw3j4ganvd--
+> ---
+>  drivers/clk/ux500/clk-prcc.c    | 4 +---
+>  drivers/clk/ux500/clk-prcmu.c   | 4 +---
+>  drivers/clk/ux500/clk-sysctrl.c | 4 +---
+>  3 files changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+> index f50592775c9d..5ca07e6d1f64 100644
+> --- a/drivers/clk/ux500/clk-prcc.c
+> +++ b/drivers/clk/ux500/clk-prcc.c
+> @@ -108,10 +108,8 @@ static struct clk *clk_reg_prcc(const char *name,
+>         }
+>
+>         clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
+> -       if (!clk) {
+> -               pr_err("clk_prcc: %s could not allocate clk\n", __func__);
+> +       if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+> -       }
+>
+>         clk->base = ioremap(phy_base, SZ_4K);
+>         if (!clk->base)
+> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+> index 6e3e16b2e5ca..c137934f23ab 100644
+> --- a/drivers/clk/ux500/clk-prcmu.c
+> +++ b/drivers/clk/ux500/clk-prcmu.c
+> @@ -259,10 +259,8 @@ static struct clk *clk_reg_prcmu(const char *name,
+>         }
+>
+>         clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
+> -       if (!clk) {
+> -               pr_err("clk_prcmu: %s could not allocate clk\n", __func__);
+> +       if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+> -       }
+>
+>         clk->cg_sel = cg_sel;
+>         clk->is_prepared = 1;
+> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+> index 8a4e93ce1e42..e0a834c08a04 100644
+> --- a/drivers/clk/ux500/clk-sysctrl.c
+> +++ b/drivers/clk/ux500/clk-sysctrl.c
+> @@ -140,10 +140,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
+>         }
+>
+>         clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
+> -       if (!clk) {
+> -               dev_err(dev, "clk_sysctrl: could not allocate clk\n");
+> +       if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+> -       }
+>
+>         /* set main clock registers */
+>         clk->reg_sel[0] = reg_sel[0];
+> --
+> 2.14.2
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
