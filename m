@@ -1,142 +1,500 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:54020 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752178AbdI2IX2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Sep 2017 04:23:28 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 12/14] drm/sun4i: hdmi: Add support for A31's HDMI controller
-Date: Fri, 29 Sep 2017 16:23:04 +0800
-Message-Id: <20170929082306.16193-13-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 03/13] clk: qcom: support for alpha pll properties
+Date: Thu, 28 Sep 2017 23:20:40 +0530
+Message-Id: <1506621050-10129-4-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI controller found in the A31 SoCs is slightly different
-from the one already supported, which is found in the A10s:
+Alpha PLL is a generic name used for QCOM PLL’s which uses L
+and Alpha values for configuring the integer and fractional part.
+QCOM SoC’s use different types of Alpha PLL’s for which basic
+software configuration part is common with following differences.
 
-  - Need different initial values for the PLL related registers
+1. All These PLL’s will have same basic registers like
+   PLL_MODE, L_VAL, ALPHA_VAL but some of the register offsets are
+   different in each PLL type.
+2. PLL dynamic programming sequence will be different in some
+   of the Alpha PLL’s
+3. Some of the PLL won’t have 64 bit config control, 64 bit
+   user control, VCO configuration etc.
 
-  - Different behavior of the DDC and TMDS clocks
+Now, this patch adds the Alpha PLL type in clock node and adds
+alpha PLL properties structure inside clk-alpha-pll.c. This PLL
+property will contain everything including register offsets, clock
+operations and other properties since all these properties will be
+fixed for Alpha PLL.
 
-  - Different register layout for the DDC portion
+This allows to support other types of Alpha PLL without addition
+of new flag and variable in structures of clk_alpha_pll.h. Also, we
+don’t have to add operation for each Alpha PLL’s and export them.
 
-  - Separate DDC parent clock
+In future, we can get rid of most of the flags like following
 
-This patch adds support for it.
+    struct clk_alpha_pll {
+            #define SUPPORTS_OFFLINE_REQ    BIT(0)
+            #define SUPPORTS_16BIT_ALPHA    BIT(1)
+            #define SUPPORTS_FSM_MODE       BIT(2)
+            u8 flags;
+    };
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+    struct clk_alpha_pll_postdiv {
+            u8 width;
+    };
+
+Since all the above properties will be always same for different
+instances of same type of Alpha PLL’s.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  3 ++
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 58 ++++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ drivers/clk/qcom/clk-alpha-pll.c | 231 ++++++++++++++++++++++++++++++++-------
+ drivers/clk/qcom/clk-alpha-pll.h |  10 ++
+ 2 files changed, 200 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index da4ea9efc6fa..186624de9b60 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -59,10 +59,13 @@
- #define SUN4I_HDMI_PAD_CTRL0_TXEN		BIT(23)
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index ab2f23c..d5bfc52 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -35,25 +35,12 @@
+ # define PLL_ACTIVE_FLAG	BIT(30)
+ # define PLL_LOCK_DET		BIT(31)
  
- #define SUN4I_HDMI_PAD_CTRL1_REG	0x204
-+#define SUN4I_HDMI_PAD_CTRL1_UNKNOWN		BIT(24)	/* set on A31 */
- #define SUN4I_HDMI_PAD_CTRL1_AMP_OPT		BIT(23)
- #define SUN4I_HDMI_PAD_CTRL1_AMPCK_OPT		BIT(22)
- #define SUN4I_HDMI_PAD_CTRL1_EMP_OPT		BIT(20)
- #define SUN4I_HDMI_PAD_CTRL1_EMPCK_OPT		BIT(19)
-+#define SUN4I_HDMI_PAD_CTRL1_PWSCK		BIT(18)
-+#define SUN4I_HDMI_PAD_CTRL1_PWSDT		BIT(17)
- #define SUN4I_HDMI_PAD_CTRL1_REG_DEN		BIT(15)
- #define SUN4I_HDMI_PAD_CTRL1_REG_DENCK		BIT(14)
- #define SUN4I_HDMI_PAD_CTRL1_REG_EMP(n)		(((n) & 7) << 10)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 114cbe60b3e6..027b5608dbe6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -324,6 +324,63 @@ static const struct sun4i_hdmi_variant sun5i_variant = {
- 	.ddc_fifo_has_dir	= true,
- };
+-#define PLL_L_VAL		0x04
+-#define PLL_ALPHA_VAL		0x08
+-#define PLL_ALPHA_VAL_U		0x0c
+-
+-#define PLL_USER_CTL		0x10
+ # define PLL_POST_DIV_SHIFT	8
+ # define PLL_POST_DIV_MASK	0xf
+ # define PLL_ALPHA_EN		BIT(24)
+ # define PLL_VCO_SHIFT		20
+ # define PLL_VCO_MASK		0x3
  
-+static const struct sun4i_hdmi_variant sun6i_variant = {
-+	.has_ddc_parent_clk	= true,
-+	.has_reset_control	= true,
-+	.pad_ctrl0_init_val	= 0xff |
-+				  SUN4I_HDMI_PAD_CTRL0_TXEN |
-+				  SUN4I_HDMI_PAD_CTRL0_CKEN |
-+				  SUN4I_HDMI_PAD_CTRL0_PWENG |
-+				  SUN4I_HDMI_PAD_CTRL0_PWEND |
-+				  SUN4I_HDMI_PAD_CTRL0_PWENC |
-+				  SUN4I_HDMI_PAD_CTRL0_LDODEN |
-+				  SUN4I_HDMI_PAD_CTRL0_LDOCEN,
-+	.pad_ctrl1_init_val	= SUN4I_HDMI_PAD_CTRL1_REG_AMP(6) |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_EMP(4) |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_DENCK |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_DEN |
-+				  SUN4I_HDMI_PAD_CTRL1_EMPCK_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_EMP_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_PWSDT |
-+				  SUN4I_HDMI_PAD_CTRL1_PWSCK |
-+				  SUN4I_HDMI_PAD_CTRL1_AMPCK_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_AMP_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_UNKNOWN,
-+	.pll_ctrl_init_val	= SUN4I_HDMI_PLL_CTRL_VCO_S(8) |
-+				  SUN4I_HDMI_PLL_CTRL_CS(3) |
-+				  SUN4I_HDMI_PLL_CTRL_CP_S(10) |
-+				  SUN4I_HDMI_PLL_CTRL_S(4) |
-+				  SUN4I_HDMI_PLL_CTRL_VCO_GAIN(4) |
-+				  SUN4I_HDMI_PLL_CTRL_SDIV2 |
-+				  SUN4I_HDMI_PLL_CTRL_LDO2_EN |
-+				  SUN4I_HDMI_PLL_CTRL_LDO1_EN |
-+				  SUN4I_HDMI_PLL_CTRL_HV_IS_33 |
-+				  SUN4I_HDMI_PLL_CTRL_PLL_EN,
+-#define PLL_USER_CTL_U		0x14
+-
+-#define PLL_CONFIG_CTL		0x18
+-#define PLL_CONFIG_CTL_U	0x20
+-#define PLL_TEST_CTL		0x1c
+-#define PLL_TEST_CTL_U		0x20
+-#define PLL_STATUS		0x24
+-
+ /*
+  * Even though 40 bits are present, use only 32 for ease of calculation.
+  */
+@@ -61,12 +48,90 @@
+ #define ALPHA_BITWIDTH		32
+ #define ALPHA_16BIT_MASK	0xffff
+ 
++/* Returns the alpha_pll_clk_ops for pll type */
++#define pll_clk_ops(hw)		(alpha_pll_props[to_clk_alpha_pll(hw)->	   \
++				 pll_type].ops)
 +
-+	.ddc_clk_reg		= REG_FIELD(SUN6I_HDMI_DDC_CLK_REG, 0, 6),
-+	.ddc_clk_pre_divider	= 1,
-+	.ddc_clk_m_offset	= 2,
++/* Returns the actual register offset for the reg crossponding to pll type */
++#define pll_reg(type, reg)	alpha_pll_props[type].reg_offsets[reg]
 +
-+	.tmds_clk_div_offset	= 1,
++/* Helpers to return the actual register offset */
++#define pll_l(type)		pll_reg(type, PLL_L_VAL)
++#define pll_alpha(type)		pll_reg(type, PLL_ALPHA_VAL)
++#define pll_alpha_u(type)	pll_reg(type, PLL_ALPHA_VAL_U)
++#define pll_user_ctl(type)	pll_reg(type, PLL_USER_CTL)
++#define pll_user_ctl_u(type)	pll_reg(type, PLL_USER_CTL_U)
++#define pll_cfg_ctl(type)	pll_reg(type, PLL_CONFIG_CTL)
++#define pll_test_ctl(type)	pll_reg(type, PLL_TEST_CTL)
++#define pll_test_ctl_u(type)	pll_reg(type, PLL_TEST_CTL_U)
++#define pll_status(type)	pll_reg(type, PLL_STATUS)
++#define pll_cfg_ctl_u(type)	pll_reg(type, PLL_CONFIG_CTL_U)
 +
-+	.field_ddc_en		= REG_FIELD(SUN6I_HDMI_DDC_CTRL_REG, 0, 0),
-+	.field_ddc_start	= REG_FIELD(SUN6I_HDMI_DDC_CTRL_REG, 27, 27),
-+	.field_ddc_reset	= REG_FIELD(SUN6I_HDMI_DDC_CTRL_REG, 31, 31),
-+	.field_ddc_addr_reg	= REG_FIELD(SUN6I_HDMI_DDC_ADDR_REG, 1, 31),
-+	.field_ddc_slave_addr	= REG_FIELD(SUN6I_HDMI_DDC_ADDR_REG, 1, 7),
-+	.field_ddc_int_status	= REG_FIELD(SUN6I_HDMI_DDC_INT_STATUS_REG, 0, 8),
-+	.field_ddc_fifo_clear	= REG_FIELD(SUN6I_HDMI_DDC_FIFO_CTRL_REG, 18, 18),
-+	.field_ddc_fifo_rx_thres = REG_FIELD(SUN6I_HDMI_DDC_FIFO_CTRL_REG, 4, 7),
-+	.field_ddc_fifo_tx_thres = REG_FIELD(SUN6I_HDMI_DDC_FIFO_CTRL_REG, 0, 3),
-+	.field_ddc_byte_count	= REG_FIELD(SUN6I_HDMI_DDC_CMD_REG, 16, 25),
-+	.field_ddc_cmd		= REG_FIELD(SUN6I_HDMI_DDC_CMD_REG, 0, 2),
-+	.field_ddc_sda_en	= REG_FIELD(SUN6I_HDMI_DDC_CTRL_REG, 6, 6),
-+	.field_ddc_sck_en	= REG_FIELD(SUN6I_HDMI_DDC_CTRL_REG, 4, 4),
-+
-+	.ddc_fifo_reg		= SUN6I_HDMI_DDC_FIFO_DATA_REG,
-+	.ddc_fifo_thres_incl	= true,
+ #define to_clk_alpha_pll(_hw) container_of(to_clk_regmap(_hw), \
+ 					   struct clk_alpha_pll, clkr)
+ 
+ #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), \
+ 					   struct clk_alpha_pll_postdiv, clkr)
+ 
++/**
++ * Contains the index which will be used for mapping with actual
++ * register offset in Alpha PLL
++ */
++enum {
++	PLL_L_VAL,
++	PLL_ALPHA_VAL,
++	PLL_ALPHA_VAL_U,
++	PLL_USER_CTL,
++	PLL_USER_CTL_U,
++	PLL_CONFIG_CTL,
++	PLL_CONFIG_CTL_U,
++	PLL_TEST_CTL,
++	PLL_TEST_CTL_U,
++	PLL_STATUS,
++	PLL_MAX_REGS,
 +};
 +
- static const struct regmap_config sun4i_hdmi_regmap_config = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -551,6 +608,7 @@ static int sun4i_hdmi_remove(struct platform_device *pdev)
++/**
++ * struct alpha_pll_clk_ops - operations for alpha PLL
++ * @enable: enable function when HW voting FSM is disabled
++ * @disable: disable function when HW voting FSM is disabled
++ * @is_enabled: check whether PLL is enabled when HW voting FSM is disabled
++ * @hwfsm_enable: check whether PLL is enabled when HW voting FSM is enabled
++ * @hwfsm_disable: check whether PLL is disabled when HW voting FSM is enabled
++ * @hwfsm_is_enabled: check whether PLL is enabled when HW voting FSM is enabled
++ * @recalc_rate: recalculate the rate of PLL by reading mode, L and Alpha Value
++ * @round_rate: returns the closest supported rate of PLL
++ * @set_rate: change the rate of this clock by actually programming the mode, L
++ *	      and Alpha Value registers
++ */
++struct alpha_pll_clk_ops {
++	int		(*enable)(struct clk_hw *hw);
++	void		(*disable)(struct clk_hw *hw);
++	int		(*is_enabled)(struct clk_hw *hw);
++	int		(*hwfsm_enable)(struct clk_hw *hw);
++	void		(*hwfsm_disable)(struct clk_hw *hw);
++	int		(*hwfsm_is_enabled)(struct clk_hw *hw);
++	unsigned long	(*recalc_rate)(struct clk_hw *hw,
++				       unsigned long parent_rate);
++	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *parent_rate);
++	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate);
++};
++
++/**
++ * struct alpha_pll_props - contains the various properties which
++ *			    will be fixed for PLL type.
++ * @reg_offsets: register offsets mapping array
++ * @ops: clock operations for alpha PLL
++ */
++struct alpha_pll_props {
++	u8 reg_offsets[PLL_MAX_REGS];
++	struct alpha_pll_clk_ops ops;
++};
++
++static const struct alpha_pll_props alpha_pll_props[];
++
+ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+ 			const char *action)
+ {
+@@ -112,11 +177,13 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ {
+ 	u32 val, mask;
+ 	u32 off = pll->offset;
++	u8 type = pll->pll_type;
  
- static const struct of_device_id sun4i_hdmi_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a10s-hdmi", .data = &sun5i_variant, },
-+	{ .compatible = "allwinner,sun6i-a31-hdmi", .data = &sun6i_variant, },
- 	{ }
+-	regmap_write(regmap, off + PLL_L_VAL, config->l);
+-	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
+-	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
+-	regmap_write(regmap, off + PLL_CONFIG_CTL_U, config->config_ctl_hi_val);
++	regmap_write(regmap, off + pll_l(type), config->l);
++	regmap_write(regmap, off + pll_alpha(type), config->alpha);
++	regmap_write(regmap, off + pll_cfg_ctl(type), config->config_ctl_val);
++	regmap_write(regmap, off + pll_cfg_ctl_u(type),
++		     config->config_ctl_hi_val);
+ 
+ 	val = config->main_output_mask;
+ 	val |= config->aux_output_mask;
+@@ -134,13 +201,13 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	mask |= config->post_div_mask;
+ 	mask |= config->vco_mask;
+ 
+-	regmap_update_bits(regmap, off + PLL_USER_CTL, mask, val);
++	regmap_update_bits(regmap, off + pll_user_ctl(type), mask, val);
+ 
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, off, 6, 0);
+ }
+ 
+-static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
++static int alpha_pll_default_hwfsm_enable(struct clk_hw *hw)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	int ret;
+@@ -165,7 +232,7 @@ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ 	return wait_for_pll_enable_active(pll);
+ }
+ 
+-static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
++static void alpha_pll_default_hwfsm_disable(struct clk_hw *hw)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	int ret;
+@@ -208,17 +275,17 @@ static int pll_is_enabled(struct clk_hw *hw, u32 mask)
+ 	return !!(val & mask);
+ }
+ 
+-static int clk_alpha_pll_hwfsm_is_enabled(struct clk_hw *hw)
++static int alpha_pll_default_hwfsm_is_enabled(struct clk_hw *hw)
+ {
+ 	return pll_is_enabled(hw, PLL_ACTIVE_FLAG);
+ }
+ 
+-static int clk_alpha_pll_is_enabled(struct clk_hw *hw)
++static int alpha_pll_default_is_enabled(struct clk_hw *hw)
+ {
+ 	return pll_is_enabled(hw, PLL_LOCK_DET);
+ }
+ 
+-static int clk_alpha_pll_enable(struct clk_hw *hw)
++static int alpha_pll_default_enable(struct clk_hw *hw)
+ {
+ 	int ret;
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+@@ -270,7 +337,7 @@ static int clk_alpha_pll_enable(struct clk_hw *hw)
+ 	return ret;
+ }
+ 
+-static void clk_alpha_pll_disable(struct clk_hw *hw)
++static void alpha_pll_default_disable(struct clk_hw *hw)
+ {
+ 	int ret;
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+@@ -342,22 +409,23 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ }
+ 
+ static unsigned long
+-clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++alpha_pll_default_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+ 	u32 l, low, high, ctl;
+ 	u64 a = 0, prate = parent_rate;
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 off = pll->offset;
++	u8 type = pll->pll_type;
+ 
+-	regmap_read(pll->clkr.regmap, off + PLL_L_VAL, &l);
++	regmap_read(pll->clkr.regmap, off + pll_l(type), &l);
+ 
+-	regmap_read(pll->clkr.regmap, off + PLL_USER_CTL, &ctl);
++	regmap_read(pll->clkr.regmap, off + pll_user_ctl(type), &ctl);
+ 	if (ctl & PLL_ALPHA_EN) {
+-		regmap_read(pll->clkr.regmap, off + PLL_ALPHA_VAL, &low);
++		regmap_read(pll->clkr.regmap, off + pll_alpha(type), &low);
+ 		if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+ 			a = low & ALPHA_16BIT_MASK;
+ 		} else {
+-			regmap_read(pll->clkr.regmap, off + PLL_ALPHA_VAL_U,
++			regmap_read(pll->clkr.regmap, off + pll_alpha_u(type),
+ 				    &high);
+ 			a = (u64)high << 32 | low;
+ 			a >>= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+@@ -367,12 +435,13 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ 	return alpha_pll_calc_rate(prate, l, a);
+ }
+ 
+-static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long prate)
++static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long prate)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	const struct pll_vco *vco;
+ 	u32 l, off = pll->offset;
++	u8 type = pll->pll_type;
+ 	u64 a;
+ 
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a);
+@@ -382,28 +451,29 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 	}
+ 
+-	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
++	regmap_write(pll->clkr.regmap, off + pll_l(type), l);
+ 
+ 	if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+-		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL,
++		regmap_write(pll->clkr.regmap, off + pll_alpha(type),
+ 			     a & ALPHA_16BIT_MASK);
+ 	} else {
+ 		a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+-		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL_U, a >> 32);
++		regmap_write(pll->clkr.regmap, off + pll_alpha_u(type),
++			     a >> 32);
+ 	}
+ 
+-	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
++	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
+ 			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+ 			   vco->val << PLL_VCO_SHIFT);
+ 
+-	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
+-			   PLL_ALPHA_EN);
++	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
++			   PLL_ALPHA_EN, PLL_ALPHA_EN);
+ 
+ 	return 0;
+ }
+ 
+-static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+-				     unsigned long *prate)
++static long alpha_pll_default_round_rate(struct clk_hw *hw, unsigned long rate,
++					 unsigned long *prate)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l;
+@@ -420,6 +490,54 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return clamp(rate, min_freq, max_freq);
+ }
+ 
++static int clk_alpha_pll_enable(struct clk_hw *hw)
++{
++	return pll_clk_ops(hw).enable(hw);
++}
++
++static void clk_alpha_pll_disable(struct clk_hw *hw)
++{
++	pll_clk_ops(hw).disable(hw);
++}
++
++static int clk_alpha_pll_is_enabled(struct clk_hw *hw)
++{
++	return pll_clk_ops(hw).is_enabled(hw);
++}
++
++static unsigned long
++clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	return pll_clk_ops(hw).recalc_rate(hw, parent_rate);
++}
++
++static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long *prate)
++{
++	return pll_clk_ops(hw).round_rate(hw, rate, prate);
++}
++
++static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long prate)
++{
++	return pll_clk_ops(hw).set_rate(hw, rate, prate);
++}
++
++static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
++{
++	return pll_clk_ops(hw).hwfsm_enable(hw);
++}
++
++static void clk_alpha_pll_hwfsm_disable(struct clk_hw *hw)
++{
++	pll_clk_ops(hw).hwfsm_disable(hw);
++}
++
++static int clk_alpha_pll_hwfsm_is_enabled(struct clk_hw *hw)
++{
++	return pll_clk_ops(hw).hwfsm_is_enabled(hw);
++}
++
+ const struct clk_ops clk_alpha_pll_ops = {
+ 	.enable = clk_alpha_pll_enable,
+ 	.disable = clk_alpha_pll_disable,
+@@ -446,7 +564,8 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
+ 	u32 ctl;
+ 
+-	regmap_read(pll->clkr.regmap, pll->offset + PLL_USER_CTL, &ctl);
++	regmap_read(pll->clkr.regmap, pll->offset + pll_user_ctl(pll->pll_type),
++		    &ctl);
+ 
+ 	ctl >>= PLL_POST_DIV_SHIFT;
+ 	ctl &= PLL_POST_DIV_MASK;
+@@ -482,7 +601,8 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	/* 16 -> 0xf, 8 -> 0x7, 4 -> 0x3, 2 -> 0x1, 1 -> 0x0 */
+ 	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
+ 
+-	return regmap_update_bits(pll->clkr.regmap, pll->offset + PLL_USER_CTL,
++	return regmap_update_bits(pll->clkr.regmap, pll->offset +
++				  pll_user_ctl(pll->pll_type),
+ 				  PLL_POST_DIV_MASK << PLL_POST_DIV_SHIFT,
+ 				  div << PLL_POST_DIV_SHIFT);
+ }
+@@ -493,3 +613,32 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.set_rate = clk_alpha_pll_postdiv_set_rate,
  };
- MODULE_DEVICE_TABLE(of, sun4i_hdmi_of_table);
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ops);
++
++/* Contains actual property values for different PLL types */
++static const struct
++alpha_pll_props alpha_pll_props[CLK_ALPHA_PLL_TYPE_MAX] = {
++	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
++		.reg_offsets = {
++			[PLL_L_VAL] = 0x04,
++			[PLL_ALPHA_VAL] = 0x08,
++			[PLL_ALPHA_VAL_U] = 0x0c,
++			[PLL_USER_CTL] = 0x10,
++			[PLL_USER_CTL_U] = 0x14,
++			[PLL_CONFIG_CTL] = 0x18,
++			[PLL_TEST_CTL] = 0x1c,
++			[PLL_TEST_CTL_U] = 0x20,
++			[PLL_STATUS] = 0x24,
++		},
++		.ops = {
++			.enable = alpha_pll_default_enable,
++			.disable = alpha_pll_default_disable,
++			.is_enabled = alpha_pll_default_is_enabled,
++			.hwfsm_enable = alpha_pll_default_hwfsm_enable,
++			.hwfsm_disable = alpha_pll_default_hwfsm_disable,
++			.hwfsm_is_enabled = alpha_pll_default_hwfsm_is_enabled,
++			.recalc_rate = alpha_pll_default_recalc_rate,
++			.round_rate = alpha_pll_default_round_rate,
++			.set_rate = alpha_pll_default_set_rate,
++		},
++	},
++};
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index d6e1ee2..4c91fbc 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -17,6 +17,12 @@
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
+ 
++/* Alpha PLL types */
++enum {
++	CLK_ALPHA_PLL_TYPE_DEFAULT,
++	CLK_ALPHA_PLL_TYPE_MAX,
++};
++
+ struct pll_vco {
+ 	unsigned long min_freq;
+ 	unsigned long max_freq;
+@@ -27,6 +33,7 @@ struct pll_vco {
+  * struct clk_alpha_pll - phase locked loop (PLL)
+  * @offset: base address of registers
+  * @vco_table: array of VCO settings
++ * @pll_type: alpha pll type
+  * @clkr: regmap clock handle
+  */
+ struct clk_alpha_pll {
+@@ -38,6 +45,7 @@ struct clk_alpha_pll {
+ #define SUPPORTS_16BIT_ALPHA	BIT(1)
+ #define SUPPORTS_FSM_MODE	BIT(2)
+ 	u8 flags;
++	u8 pll_type;
+ 
+ 	struct clk_regmap clkr;
+ };
+@@ -45,11 +53,13 @@ struct clk_alpha_pll {
+ /**
+  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
+  * @offset: base address of registers
++ * @pll_type: alpha pll type
+  * @width: width of post-divider
+  * @clkr: regmap clock handle
+  */
+ struct clk_alpha_pll_postdiv {
+ 	u32 offset;
++	u8 pll_type;
+ 	u8 width;
+ 
+ 	struct clk_regmap clkr;
 -- 
-2.14.2
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
