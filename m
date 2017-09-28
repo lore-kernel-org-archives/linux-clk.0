@@ -1,60 +1,62 @@
-Return-Path: <scott.branden@broadcom.com>
-Return-Path: <scott.branden@broadcom.com>
-Subject: Re: [PATCH] [media] clk-kona-setup: Delete two error messages for a
- failed memory allocation in parent_process()
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
- bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
- Alex Elder <elder@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Scott Branden <scott.branden@broadcom.com>
-Message-ID: <a7a7f4b5-6b4f-3606-550f-3dd37274fa61@broadcom.com>
-Date: Tue, 26 Sep 2017 09:46:53 -0700
-MIME-Version: 1.0
-In-Reply-To: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v4 5/8] ehci-atmel: Power down during suspend is normal
+Date: Thu, 28 Sep 2017 11:46:24 +0200
+Message-Id: <20170928094627.31017-6-romain.izard.pro@gmail.com>
+In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks for cleanup.
+When an Atmel SoC is suspended with the backup mode, the USB bus will be
+powered down. As this is expected, do not return an error to the driver
+core when ehci_resume detects it.
 
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/usb/host/ehci-atmel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 17-09-26 08:05 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 16:54:20 +0200
->
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->   drivers/clk/bcm/clk-kona-setup.c | 7 +------
->   1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
-> index c37a7f0e83aa..281f4322355c 100644
-> --- a/drivers/clk/bcm/clk-kona-setup.c
-> +++ b/drivers/clk/bcm/clk-kona-setup.c
-> @@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
->   	 */
->   	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
->   			       GFP_KERNEL);
-> -	if (!parent_names) {
-> -		pr_err("%s: error allocating %u parent names\n", __func__,
-> -				parent_count);
-> +	if (!parent_names)
->   		return ERR_PTR(-ENOMEM);
-> -	}
->   
->   	/* There is at least one parent, so allocate a selector array */
->   	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
->   				   GFP_KERNEL);
->   	if (!parent_sel) {
-> -		pr_err("%s: error allocating %u parent selectors\n", __func__,
-> -				parent_count);
->   		kfree(parent_names);
->   
->   		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+index 7440722bfbf0..2a8b9bdc0e57 100644
+--- a/drivers/usb/host/ehci-atmel.c
++++ b/drivers/usb/host/ehci-atmel.c
+@@ -205,7 +205,8 @@ static int __maybe_unused ehci_atmel_drv_resume(struct device *dev)
+ 	struct atmel_ehci_priv *atmel_ehci = hcd_to_atmel_ehci_priv(hcd);
+ 
+ 	atmel_start_clock(atmel_ehci);
+-	return ehci_resume(hcd, false);
++	ehci_resume(hcd, false);
++	return 0;
+ }
+ 
+ #ifdef CONFIG_OF
+-- 
+2.11.0
