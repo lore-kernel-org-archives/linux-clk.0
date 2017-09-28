@@ -1,64 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from www381.your-server.de ([78.46.137.84]:57334 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750782AbdIEJcz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2017 05:32:55 -0400
-From: Lars-Peter Clausen <lars@metafoo.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 2/2] clk: axi-clkgen: Round closest in round_rate() and recalc_rate()
-Date: Tue,  5 Sep 2017 11:32:41 +0200
-Message-Id: <20170905093241.18582-2-lars@metafoo.de>
-In-Reply-To: <20170905093241.18582-1-lars@metafoo.de>
-References: <20170905093241.18582-1-lars@metafoo.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
+ controller
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
+ <20170928092949.GB30097@localhost>
+ <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
+Message-ID: <260fa409-0d07-ec9e-9e3b-fb08255026d8@gmail.com>
+Date: Thu, 28 Sep 2017 17:35:59 +0300
+MIME-Version: 1.0
+In-Reply-To: <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-To minimize the rounding error round to the closest integer when
-calculating the result in the recalc_rate() and set_rate() callbacks.
+On 28.09.2017 17:06, Dmitry Osipenko wrote:
+> On 28.09.2017 12:29, Vinod Koul wrote:
+>>> +	default:
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
+>>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
+>>> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
+>>> +
+>>> +	writel_relaxed(ahb_seq,
+>>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
+>>> +
+>>> +	writel_relaxed(ahb_addr,
+>>> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
+>>
+>> oh no, you don't write to HW here. This can be called anytime when you have
+>> txn running! You should save these and use them in prep_ calls.
+>>
+> 
+> BTW, some of the DMA drivers have exactly the same problem. I now see that it is
+> actually documented explicitly in provider.txt, but that's inconsistent across
+> the actual drivers.
+> 
 
-Also in order to improve precision multiply first and then divide.
+Also, shouldn't prep_ and dma_slave_config be protected with locking? I don't
+see DMA core doing any locking and seems none of the drivers too.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
----
- drivers/clk/clk-axi-clkgen.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 95a6e9834392..48d11f2598e8 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -302,13 +302,17 @@ static long axi_clkgen_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long *parent_rate)
- {
- 	unsigned int d, m, dout;
-+	unsigned long long tmp;
- 
- 	axi_clkgen_calc_params(*parent_rate, rate, &d, &m, &dout);
- 
- 	if (d == 0 || dout == 0 || m == 0)
- 		return -EINVAL;
- 
--	return *parent_rate / d * m / dout;
-+	tmp = (unsigned long long)*parent_rate * m;
-+	tmp = DIV_ROUND_CLOSEST_ULL(tmp, dout * d);
-+
-+	return min_t(unsigned long long, tmp, LONG_MAX);
- }
- 
- static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
-@@ -344,8 +348,8 @@ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
- 	if (d == 0 || dout == 0)
- 		return 0;
- 
--	tmp = (unsigned long long)(parent_rate / d) * m;
--	do_div(tmp, dout);
-+	tmp = (unsigned long long)parent_rate * m;
-+	tmp = DIV_ROUND_CLOSEST_ULL(tmp, dout * d);
- 
- 	return min_t(unsigned long long, tmp, ULONG_MAX);
- }
 -- 
-2.11.0
-
+Dmitry
