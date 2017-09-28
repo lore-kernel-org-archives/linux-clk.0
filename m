@@ -1,41 +1,58 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@armlinux.org.uk,
-	sebastian.hesselbarth@gmail.com
-Cc: rabeeh@solid-run.com,
-	linux-clk@vger.kernel.org,
-	Sergej Sawazki <sergej@taudac.com>
-Subject: [RESEND PATCH 0/3] clk: si5351: PLL reset fixes
-Date: Sat,  2 Sep 2017 11:57:23 +0200
-Message-Id: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2 02/10] dt-bindings: Add documentation for Broadcom Hurricane 2 SoCs
+Date: Thu, 28 Sep 2017 16:14:54 -0700
+Message-Id: <20170928231502.27069-3-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
-to get a deterministic phase offset relationship between the output clocks,
-it is necessary to reset the PLLs is certain scenarios.
+Add binding documentation for the Broadcom Hurricane 2 SoCs used in
+switching control planes.
 
-This patch-set:
- * fixes a regression and adds resetting the PLL before enabling the outputs
- * adds a dt-property for enabling/disabling the PLL reset
- * adds a debug message for PLL reset (it is helpful during debugging,
-   probably no longer required?)
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
 
-Based on clk-next.
-
-Best regards,
-Sergej
-
-Sergej Sawazki (3):
-  clk: si5351: Apply PLL soft reset before enabling the outputs
-  clk: si5351: Add DT property to enable PLL reset
-  clk: si5351: Add a debug message for PLL reset
-
- .../devicetree/bindings/clock/silabs,si5351.txt    |  1 +
- drivers/clk/clk-si5351.c                           | 40 ++++++++++++++++++++--
- include/linux/platform_data/si5351.h               |  2 ++
- 3 files changed, 41 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
+new file mode 100644
+index 000000000000..a124c7fc4dcd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
+@@ -0,0 +1,14 @@
++Broadcom Hurricane 2 device tree bindings
++---------------------------------------
++
++Broadcom Hurricane 2 family of SoCs are used for switching control. These SoCs
++are based on Broadcom's iProc SoC architecture and feature a single core Cortex
++A9 ARM CPUs, DDR2/DDR3 memory, PCIe GEN-2, USB 2.0 and USB 3.0, serial and NAND
++flash and a PCIe attached integrated switching engine.
++
++Boards with Hurricane SoCs shall have the following properties:
++
++Required root node property:
++
++BCM53342
++compatible = "brcm,bcm53342", "brcm,hr2";
 -- 
-2.7.4
+2.14.1
