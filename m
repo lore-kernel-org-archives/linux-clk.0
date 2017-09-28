@@ -1,117 +1,77 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 07/14] drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
-Date: Fri, 29 Sep 2017 16:22:59 +0800
-Message-Id: <20170929082306.16193-8-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 06/13] clk: qcom: flag for 64 bit CONFIG_CTL
+Date: Thu, 28 Sep 2017 23:20:43 +0530
+Message-Id: <1506621050-10129-7-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On SoCs with two display pipelines, it is possible that the two
-pipelines are active at the same time, with potentially incompatible
-dot clocks.
+Some of the Alpha PLL’s (like Spark, Brammo PLL) do not have
+CONFIG_CTL_U register. This patch adds the flag in properties
+for PLL’s which have CONFIG_CTL_U register and checks the same
+while doing PLL initial configuration.
 
-Let the HDMI encoder's TMDS clock go through all of its parents when
-calculating possible clock rates. This allows usage of the second video
-PLL as its parent.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 53 ++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-index 5cf2527bffc8..e8d4c311b80d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-@@ -67,11 +67,11 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
- static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 				     struct clk_rate_request *req)
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 78eb6bf..b33d120 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -49,6 +49,9 @@
+ /* Returns the Alpha register width for pll type */
+ #define pll_alpha_width(type)	(alpha_pll_props[type].alpha_width)
+ 
++/* Returns the flags for pll type */
++#define pll_flags(type)		(alpha_pll_props[type].flags)
++
+ /* Returns the alpha_pll_clk_ops for pll type */
+ #define pll_clk_ops(hw)		(alpha_pll_props[to_clk_alpha_pll(hw)->	   \
+ 				 pll_type].ops)
+@@ -130,6 +133,9 @@ struct alpha_pll_clk_ops {
+ struct alpha_pll_props {
+ 	u8 reg_offsets[PLL_MAX_REGS];
+ 	u8 alpha_width;
++
++#define HAVE_64BIT_CONFIG_CTL	BIT(0)
++	u8 flags;
+ 	struct alpha_pll_clk_ops ops;
+ };
+ 
+@@ -180,7 +186,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
  {
--	struct clk_hw *parent;
-+	struct clk_hw *parent = NULL;
- 	unsigned long best_parent = 0;
- 	unsigned long rate = req->rate;
- 	int best_div = 1, best_half = 1;
--	int i, j;
-+	int i, j, p;
+ 	u32 val, mask;
+ 	u32 off = pll->offset;
+-	u8 type = pll->pll_type;
++	u8 type = pll->pll_type, flags = pll_flags(type);
  
- 	/*
- 	 * We only consider PLL3, since the TCON is very likely to be
-@@ -79,32 +79,37 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 	 * clock, so we should not need to do anything.
- 	 */
+ 	regmap_write(regmap, off + pll_l(type), config->l);
+ 	regmap_write(regmap, off + pll_alpha(type), config->alpha);
+@@ -188,6 +194,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	regmap_write(regmap, off + pll_cfg_ctl_u(type),
+ 		     config->config_ctl_hi_val);
  
--	parent = clk_hw_get_parent_by_index(hw, 0);
--	if (!parent)
--		return -EINVAL;
--
--	for (i = 1; i < 3; i++) {
--		for (j = 1; j < 16; j++) {
--			unsigned long ideal = rate * i * j;
--			unsigned long rounded;
--
--			rounded = clk_hw_round_rate(parent, ideal);
--
--			if (rounded == ideal) {
--				best_parent = rounded;
--				best_half = i;
--				best_div = j;
--				goto out;
--			}
--
--			if (abs(rate - rounded / i) <
--			    abs(rate - best_parent / best_div)) {
--				best_parent = rounded;
--				best_div = i;
-+	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
-+		parent = clk_hw_get_parent_by_index(hw, p);
-+		if (!parent)
-+			continue;
++	if (flags & HAVE_64BIT_CONFIG_CTL)
++		regmap_write(regmap, off + pll_cfg_ctl_u(type),
++			     config->config_ctl_hi_val);
 +
-+		for (i = 1; i < 3; i++) {
-+			for (j = 1; j < 16; j++) {
-+				unsigned long ideal = rate * i * j;
-+				unsigned long rounded;
-+
-+				rounded = clk_hw_round_rate(parent, ideal);
-+
-+				if (rounded == ideal) {
-+					best_parent = rounded;
-+					best_half = i;
-+					best_div = j;
-+					goto out;
-+				}
-+
-+				if (abs(rate - rounded / i) <
-+				    abs(rate - best_parent / best_div)) {
-+					best_parent = rounded;
-+					best_div = i;
-+				}
- 			}
- 		}
- 	}
- 
-+	if (!parent)
-+		return -EINVAL;
-+
- out:
- 	req->rate = best_parent / best_half / best_div;
- 	req->best_parent_rate = best_parent;
+ 	val = config->main_output_mask;
+ 	val |= config->aux_output_mask;
+ 	val |= config->aux2_output_mask;
 -- 
-2.14.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
