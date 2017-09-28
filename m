@@ -1,60 +1,86 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 00/11] Add remaining clocks for QCOM IPQ8074
-Date: Tue, 26 Sep 2017 17:53:53 +0530
-Message-Id: <1506428644-2996-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v4 0/8] Various patches for SAMA5D2 backup mode
+Date: Thu, 28 Sep 2017 11:46:19 +0200
+Message-Id: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds following IPQ8074 clocks
+While the core of the backup mode for SAMA5D2 has been integrated in
+v4.13, it is far from complete. Individual controllers in the chip have
+drivers that do not support the reset of the registers during suspend,
+and they need to be adapted to handle it.
 
-- Remaining General PLL’s, NSS UBI PLL and NSS Crypto PLL.
-- 2 instances of PCIE, USB, SDCC.
-- 2 NSS UBI core and common NSS clocks. NSS is network.
-  switching subsystem which accelerates the ethernet traffic.
-  IPQ8074 has two UBI cores and each core uses some separate
-  core clocks and remaining common clocks.
-- NSS Crypto Engine clocks
-- NSS ethernet port clocks. IPQ8074 has 6 Ethernet ports and each
-  port uses different clocks
-- Crypto engine clocks
-- PCIE and NSS MISC resets.
+The first patch uses the clock wakeup code from the prototype backup
+mode instead of the version integrated in the mainline, as the mainline
+version is not stable. During a test loop with two-second backup
+suspend, the mainline version will hang in less than one day, whereas
+the prototype version has been running the same test for more than a
+week without hanging.
 
-Abhishek Sahu (11):
-  clk: qcom: add read-only divider operations
-  clk: qcom: add parent map for regmap mux
-  clk: qcom: ipq8074: fix missing GPLL0 divider width
-  dt-bindings: clock: qcom: add remaining clocks for IPQ8074
-  clk: qcom: ipq8074: add remaining PLL’s
-  clk: qcom: ipq8074: add PCIE, USB and SDCC clocks
-  clk: qcom: ipq8074: add NSS clocks
-  clk: qcom: ipq8074: add NSS ethernet port clocks
-  clk: qcom: ipq8074: add GP and Crypto clocks
-  dt-bindings: clock: qcom: add misc resets for PCIE and NSS
-  clk: qcom: ipq8074: add misc resets for PCIE and NSS
+While all these patches are provided in a series, the clock, mtd,
+usb, pwm and mfd patch do not depend on each other.
 
- drivers/clk/qcom/clk-rcg.h                   |   10 -
- drivers/clk/qcom/clk-regmap-divider.c        |   29 +
- drivers/clk/qcom/clk-regmap-divider.h        |    1 +
- drivers/clk/qcom/clk-regmap-mux.c            |    6 +
- drivers/clk/qcom/clk-regmap-mux.h            |    2 +
- drivers/clk/qcom/common.h                    |   11 +-
- drivers/clk/qcom/gcc-ipq8074.c               | 3736 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h |  222 ++
- 8 files changed, 4006 insertions(+), 11 deletions(-)
+Changes in v2:
+* drop the IIO patch duplicating existing code
+* determine the number of programmable clocks to save dynamically
+* declare a required local variable in the tty/serial patch
+
+Changes in v3:
+* drop dev_printk changes for PMECC
+* rework the resume code for PMECC
+* improve comments on PMC clock handling
+
+Changes in v4:
+* fix a bug in the PMECC resume code
+
+Romain Izard (8):
+  clk: at91: pmc: Wait for clocks when resuming
+  clk: at91: pmc: Save SCSR during suspend
+  clk: at91: pmc: Support backup for programmable clocks
+  mtd: nand: atmel: Avoid ECC errors when leaving backup mode
+  ehci-atmel: Power down during suspend is normal
+  pwm: atmel-tcb: Support backup mode
+  atmel_flexcom: Support backup mode
+  tty/serial: atmel: Prevent a warning on suspend
+
+ drivers/clk/at91/clk-programmable.c      |  2 +
+ drivers/clk/at91/pmc.c                   | 63 ++++++++++++++++++++++++++-----
+ drivers/clk/at91/pmc.h                   |  2 +
+ drivers/mfd/atmel-flexcom.c              | 65 ++++++++++++++++++++++++--------
+ drivers/mtd/nand/atmel/nand-controller.c |  3 ++
+ drivers/mtd/nand/atmel/pmecc.c           | 17 +++++----
+ drivers/mtd/nand/atmel/pmecc.h           |  1 +
+ drivers/pwm/pwm-atmel-tcb.c              | 63 ++++++++++++++++++++++++++++++-
+ drivers/tty/serial/atmel_serial.c        | 13 +++++++
+ drivers/usb/host/ehci-atmel.c            |  3 +-
+ 10 files changed, 196 insertions(+), 36 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
