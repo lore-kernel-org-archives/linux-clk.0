@@ -1,116 +1,107 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 12/13] ARM: dts: sun6i: Add device node for HDMI controller
-Date: Tue, 26 Sep 2017 14:59:18 +0800
-Message-Id: <20170926065919.24446-13-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Thu, 28 Sep 2017 18:42:39 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: sunxi-ng: add mux and pll notifiers for A64 CPU
+ clock
+In-Reply-To: <20170928102752.ceo54qccqakb4xyx@flea>
+References: <20170923001531.14285-1-icenowy@aosc.io>
+ <20170923001531.14285-2-icenowy@aosc.io>
+ <20170928102752.ceo54qccqakb4xyx@flea>
+Message-ID: <975c0c884d9a83faad6141df474a93af@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we support the HDMI controller on the A31 SoC, we can add it
-to the device tree.
+在 2017-09-28 18:27，Maxime Ripard 写道：
+> Hi,
+> 
+> On Sat, Sep 23, 2017 at 12:15:29AM +0000, Icenowy Zheng wrote:
+>> The A64 PLL_CPU clock has the same instability if some factor changed
+>> without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+>> H3.
+>> 
+>> Add the mux and pll notifiers for A64 CPU clock to workaround the
+>> problem.
+>> 
+>> Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 
+>> +++++++++++++++++++++++++++-
+>>  1 file changed, 27 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c 
+>> b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> index 2bb4cabf802f..b55fa69dd0c1 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> @@ -879,11 +879,26 @@ static const struct sunxi_ccu_desc 
+>> sun50i_a64_ccu_desc = {
+>>  	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+>>  };
+>> 
+>> +static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
+>> +	.common	= &pll_cpux_clk.common,
+>> +	/* copy from pll_cpux_clk */
+>> +	.enable	= BIT(31),
+>> +	.lock	= BIT(28),
+>> +};
+>> +
+>> +static struct ccu_mux_nb sun50i_a64_cpu_nb = {
+>> +	.common		= &cpux_clk.common,
+>> +	.cm		= &cpux_clk.mux,
+>> +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
+>> +	.bypass_index	= 1, /* index of 24 MHz oscillator */
+>> +};
+>> +
+>> 
+>>  static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+>>  {
+>>  	struct resource *res;
+>>  	void __iomem *reg;
+>>  	u32 val;
+>> +	int ret;
+>> 
+>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>  	reg = devm_ioremap_resource(&pdev->dev, res);
+>> @@ -897,7 +912,18 @@ static int sun50i_a64_ccu_probe(struct 
+>> platform_device *pdev)
+>> 
+>>  	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+>> 
+>> -	return sunxi_ccu_probe(pdev->dev.of_node, reg, 
+>> &sun50i_a64_ccu_desc);
+>> +	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Gate then ungate PLL CPU after any rate changes */
+>> +	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
+>> +
+>> +	/* Reparent CPU during PLL CPU rate changes */
+>> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+>> +				  &sun50i_a64_cpu_nb);
+>> +
+>> +	return 0;
+> 
+> So this is the fourth user of the exact same code, can you turn that
+> into a shared function?
 
-This adds a device node for the HDMI controller, and the of_graph nodes
-connecting it to the 2 TCONs.
+I think it's not so worthful to extract the code, as:
+- the notifier structs contains info of the clocks
+- A31 seems not to need the PLL notifier.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun6i-a31.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index 93209cda28db..48b2382a18a9 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -289,6 +289,12 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon0_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon0>;
-+						allwinner,tcon-channel = <1>;
-+					};
- 				};
- 			};
- 		};
-@@ -331,6 +337,12 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+						allwinner,tcon-channel = <1>;
-+					};
- 				};
- 			};
- 		};
-@@ -411,6 +423,49 @@
- 			#size-cells = <0>;
- 		};
- 
-+		hdmi: hdmi@01c16000 {
-+			compatible = "allwinner,sun6i-a31-hdmi";
-+			reg = <0x01c16000 0x1000>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_AHB1_HDMI>, <&ccu CLK_HDMI>,
-+				 <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_PLL_VIDEO0_2X>,
-+				 <&ccu CLK_PLL_VIDEO1_2X>;
-+			clock-names = "ahb", "mod", "ddc", "pll-0", "pll-1";
-+			resets = <&ccu RST_AHB1_HDMI>;
-+			reset-names = "ahb";
-+			dma-names = "ddc-tx", "ddc-rx", "audio-tx";
-+			dmas = <&dma 13>, <&dma 13>, <&dma 14>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_out_hdmi>;
-+					};
-+
-+					hdmi_in_tcon1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		usb_otg: usb@01c19000 {
- 			compatible = "allwinner,sun6i-a31-musb";
- 			reg = <0x01c19000 0x0400>;
--- 
-2.14.1
+> 
+> Thanks!
+> Maxime
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
