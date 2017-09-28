@@ -1,78 +1,183 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	sebastian.hesselbarth@gmail.com
-Cc: linux@armlinux.org.uk,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	ce3a@gmx.de,
-	Sergej Sawazki <sergej@taudac.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: [PATCH v2 1/2] clk: si5351: Add DT property to enable PLL reset
-Date: Sat, 16 Sep 2017 13:44:41 +0200
-Message-Id: <1505562282-9111-2-git-send-email-sergej@taudac.com>
-In-Reply-To: <1505562282-9111-1-git-send-email-sergej@taudac.com>
-References: <1505562282-9111-1-git-send-email-sergej@taudac.com>
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 04/13] clk: qcom: fix 16 bit alpha support calculation
+Date: Thu, 28 Sep 2017 23:20:41 +0530
+Message-Id: <1506621050-10129-5-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add optional output clock DT property to enable PLL reset when a clock
-output is enabled.
+The alpha value calculation function has been written for 40 bit
+alpha which is not coming properly for 16 bit
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+1. Alpha value is being calculated on the basis of
+   ALPHA_BITWIDTH to make the computation easy for 40 bit alpha.
+   After calculating the 32 bit alpha, It is being converted to 40
+   bit alpha by making making lower bits zero. But if actual alpha
+   register width is less than ALPHA_BITWIDTH, then the actual width
+   can be used for calculation
+
+2. During 40 bit alpha pll set rate, the lower alpha register is
+   not being configured
+
+Now the changes have been made to calculate the rate and register
+values from alpha_width instead hardcoding it so that it can work
+for all the cases.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- Documentation/devicetree/bindings/clock/silabs,si5351.txt | 1 +
- drivers/clk/clk-si5351.c                                  | 3 +++
- include/linux/platform_data/si5351.h                      | 2 ++
- 3 files changed, 6 insertions(+)
+ drivers/clk/qcom/clk-alpha-pll.c | 55 ++++++++++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-index 28b2830..157ee02 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-@@ -45,6 +45,7 @@ Optional child node properties:
- - silabs,multisynth-source: source pll A(0) or B(1) of corresponding multisynth
-   divider.
- - silabs,pll-master: boolean, multisynth can change pll frequency.
-+- silabs,pll-reset: boolean, clock output can reset its pll.
- - silabs,disable-state : clock output disable state, shall be
-   0 = clock output is driven LOW when disabled
-   1 = clock output is driven HIGH when disabled
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 20d9076..aba2895 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1297,6 +1297,9 @@ static int si5351_dt_parse(struct i2c_client *client,
- 
- 		pdata->clkout[num].pll_master =
- 			of_property_read_bool(child, "silabs,pll-master");
-+
-+		pdata->clkout[num].pll_reset =
-+			of_property_read_bool(child, "silabs,pll-reset");
- 	}
- 	client->dev.platform_data = pdata;
- 
-diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
-index 533d980..da346f22 100644
---- a/include/linux/platform_data/si5351.h
-+++ b/include/linux/platform_data/si5351.h
-@@ -85,6 +85,7 @@ enum si5351_disable_state {
-  * @multisynth_src: multisynth source clock
-  * @clkout_src: clkout source clock
-  * @pll_master: if true, clkout can also change pll rate
-+ * @pll_reset: if true, clkout can reset its pll
-  * @drive: output drive strength
-  * @rate: initial clkout rate, or default if 0
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index d5bfc52..a12f7b4 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -45,8 +45,12 @@
+  * Even though 40 bits are present, use only 32 for ease of calculation.
   */
-@@ -94,6 +95,7 @@ struct si5351_clkout_config {
- 	enum si5351_drive_strength drive;
- 	enum si5351_disable_state disable_state;
- 	bool pll_master;
-+	bool pll_reset;
- 	unsigned long rate;
- };
+ #define ALPHA_REG_BITWIDTH	40
++#define ALPHA_REG_16BIT_WIDTH	16
+ #define ALPHA_BITWIDTH		32
+-#define ALPHA_16BIT_MASK	0xffff
++
++/* Returns the Alpha register width for pll */
++#define pll_alpha_width(pll)	(pll->flags & SUPPORTS_16BIT_ALPHA ?	\
++				 ALPHA_REG_16BIT_WIDTH : ALPHA_REG_BITWIDTH)
+ 
+ /* Returns the alpha_pll_clk_ops for pll type */
+ #define pll_clk_ops(hw)		(alpha_pll_props[to_clk_alpha_pll(hw)->	   \
+@@ -364,13 +368,16 @@ static void alpha_pll_default_disable(struct clk_hw *hw)
+ 	regmap_update_bits(pll->clkr.regmap, off, mask, 0);
+ }
+ 
+-static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
++static unsigned long
++alpha_pll_calc_rate(u64 prate, u32 l, u32 a, u32 alpha_width)
+ {
+-	return (prate * l) + ((prate * a) >> ALPHA_BITWIDTH);
++	return (prate * l) + ((prate * a) >>
++		(alpha_width < ALPHA_BITWIDTH ? alpha_width : ALPHA_BITWIDTH));
+ }
+ 
+ static unsigned long
+-alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a)
++alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
++		     u32 alpha_width)
+ {
+ 	u64 remainder;
+ 	u64 quotient;
+@@ -385,14 +392,16 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ 	}
+ 
+ 	/* Upper ALPHA_BITWIDTH bits of Alpha */
+-	quotient = remainder << ALPHA_BITWIDTH;
++	quotient = remainder << (alpha_width < ALPHA_BITWIDTH ?
++				 alpha_width : ALPHA_BITWIDTH);
++
+ 	remainder = do_div(quotient, prate);
+ 
+ 	if (remainder)
+ 		quotient++;
+ 
+ 	*a = quotient;
+-	return alpha_pll_calc_rate(prate, *l, *a);
++	return alpha_pll_calc_rate(prate, *l, *a, alpha_width);
+ }
+ 
+ static const struct pll_vco *
+@@ -414,7 +423,7 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ 	u32 l, low, high, ctl;
+ 	u64 a = 0, prate = parent_rate;
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+-	u32 off = pll->offset;
++	u32 off = pll->offset, alpha_width = pll_alpha_width(pll);
+ 	u8 type = pll->pll_type;
+ 
+ 	regmap_read(pll->clkr.regmap, off + pll_l(type), &l);
+@@ -422,17 +431,19 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ 	regmap_read(pll->clkr.regmap, off + pll_user_ctl(type), &ctl);
+ 	if (ctl & PLL_ALPHA_EN) {
+ 		regmap_read(pll->clkr.regmap, off + pll_alpha(type), &low);
+-		if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+-			a = low & ALPHA_16BIT_MASK;
+-		} else {
++		if (alpha_width > 32) {
+ 			regmap_read(pll->clkr.regmap, off + pll_alpha_u(type),
+ 				    &high);
+ 			a = (u64)high << 32 | low;
+-			a >>= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
++		} else {
++			a = low & GENMASK(alpha_width - 1, 0);
+ 		}
++
++		if (alpha_width > ALPHA_BITWIDTH)
++			a >>= alpha_width - ALPHA_BITWIDTH;
+ 	}
+ 
+-	return alpha_pll_calc_rate(prate, l, a);
++	return alpha_pll_calc_rate(prate, l, a, alpha_width);
+ }
+ 
+ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -440,11 +451,11 @@ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	const struct pll_vco *vco;
+-	u32 l, off = pll->offset;
++	u32 l, off = pll->offset, alpha_width = pll_alpha_width(pll);
+ 	u8 type = pll->pll_type;
+ 	u64 a;
+ 
+-	rate = alpha_pll_round_rate(rate, prate, &l, &a);
++	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+ 	vco = alpha_pll_find_vco(pll, rate);
+ 	if (!vco) {
+ 		pr_err("alpha pll not in a valid vco range\n");
+@@ -453,14 +464,14 @@ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	regmap_write(pll->clkr.regmap, off + pll_l(type), l);
+ 
+-	if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+-		regmap_write(pll->clkr.regmap, off + pll_alpha(type),
+-			     a & ALPHA_16BIT_MASK);
+-	} else {
+-		a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
++	if (alpha_width > ALPHA_BITWIDTH)
++		a <<= alpha_width - ALPHA_BITWIDTH;
++
++	if (alpha_width > 32)
+ 		regmap_write(pll->clkr.regmap, off + pll_alpha_u(type),
+ 			     a >> 32);
+-	}
++
++	regmap_write(pll->clkr.regmap, off + pll_alpha(type), a);
+ 
+ 	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
+ 			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+@@ -476,11 +487,11 @@ static long alpha_pll_default_round_rate(struct clk_hw *hw, unsigned long rate,
+ 					 unsigned long *prate)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+-	u32 l;
++	u32 l, alpha_width = pll_alpha_width(pll);
+ 	u64 a;
+ 	unsigned long min_freq, max_freq;
+ 
+-	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
++	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
+ 	if (alpha_pll_find_vco(pll, rate))
+ 		return rate;
  
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
