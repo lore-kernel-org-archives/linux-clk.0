@@ -1,508 +1,159 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org
-Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
-        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        icenowy@aosc.io, linux-sunxi@googlegroups.com,
-        linux-media@vger.kernel.org
-Subject: [RESEND RFC PATCH 7/7] ARM: sun8i: h3: Enable HDMI output on H3 boards
-Date: Wed, 20 Sep 2017 22:01:24 +0200
-Message-Id: <20170920200124.20457-8-jernej.skrabec@siol.net>
-In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
-References: <20170920200124.20457-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v4 7/8] atmel_flexcom: Support backup mode
+Date: Thu, 28 Sep 2017 11:46:26 +0200
+Message-Id: <20170928094627.31017-8-romain.izard.pro@gmail.com>
+In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on all boards which include HDMI connector.
+The controller used by a flexcom module is configured at boot, and left
+alone after this. As the configuration will be lost after backup mode,
+restore the state of the flexcom driver on resume.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 ---
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts       | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts        | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts       | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts    | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts     | 33 +++++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts      | 33 +++++++++++++++++++++++++
- 7 files changed, 231 insertions(+)
+ drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 50 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-index d756ff825116..52a0f954df1c 100644
---- a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/mfd/atmel-flexcom.c b/drivers/mfd/atmel-flexcom.c
+index 064bde9cff5a..ef1235c4a179 100644
+--- a/drivers/mfd/atmel-flexcom.c
++++ b/drivers/mfd/atmel-flexcom.c
+@@ -39,34 +39,44 @@
+ #define FLEX_MR_OPMODE(opmode)	(((opmode) << FLEX_MR_OPMODE_OFFSET) &	\
+ 				 FLEX_MR_OPMODE_MASK)
  
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -103,6 +114,10 @@
- 	};
- };
++struct atmel_flexcom {
++	void __iomem *base;
++	u32 opmode;
++	struct clk *clk;
++};
  
-+&de {
-+	status = "okay";
-+};
+ static int atmel_flexcom_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct clk *clk;
+ 	struct resource *res;
+-	void __iomem *base;
+-	u32 opmode;
++	struct atmel_flexcom *afc;
+ 	int err;
++	u32 val;
 +
- &ehci0 {
- 	status = "okay";
- };
-@@ -126,6 +141,16 @@
- 	status = "okay";
- };
++	afc = devm_kzalloc(&pdev->dev, sizeof(*afc), GFP_KERNEL);
++	if (!afc)
++		return -ENOMEM;
  
-+&hdmi {
-+	status = "okay";
-+};
+-	err = of_property_read_u32(np, "atmel,flexcom-mode", &opmode);
++	platform_set_drvdata(pdev, afc);
 +
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-@@ -139,6 +164,10 @@
- 	};
- };
++	err = of_property_read_u32(np, "atmel,flexcom-mode", &afc->opmode);
+ 	if (err)
+ 		return err;
  
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -212,6 +241,10 @@
- 	status = "okay";
- };
+-	if (opmode < ATMEL_FLEXCOM_MODE_USART ||
+-	    opmode > ATMEL_FLEXCOM_MODE_TWI)
++	if (afc->opmode < ATMEL_FLEXCOM_MODE_USART ||
++	    afc->opmode > ATMEL_FLEXCOM_MODE_TWI)
+ 		return -EINVAL;
  
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-index 546837ccd8af..8a4ec474f183 100644
---- a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
++	afc->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(afc->base))
++		return PTR_ERR(afc->base);
  
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
+-	clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	afc->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(afc->clk))
++		return PTR_ERR(afc->clk);
  
-@@ -100,6 +111,10 @@
- 	};
- };
+-	err = clk_prepare_enable(clk);
++	err = clk_prepare_enable(afc->clk);
+ 	if (err)
+ 		return err;
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -115,12 +130,26 @@
- 	status = "okay";
- };
+@@ -76,9 +86,10 @@ static int atmel_flexcom_probe(struct platform_device *pdev)
+ 	 * inaccessible and are read as zero. Also the external I/O lines of the
+ 	 * Flexcom are muxed to reach the selected device.
+ 	 */
+-	writel(FLEX_MR_OPMODE(opmode), base + FLEX_MR);
++	val = FLEX_MR_OPMODE(afc->opmode);
++	writel(val, afc->base + FLEX_MR);
  
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
- 	status = "okay";
- };
+-	clk_disable_unprepare(clk);
++	clk_disable_unprepare(afc->clk);
  
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -177,6 +206,10 @@
- 	status = "okay";
+ 	return devm_of_platform_populate(&pdev->dev);
+ }
+@@ -89,10 +100,34 @@ static const struct of_device_id atmel_flexcom_of_match[] = {
  };
+ MODULE_DEVICE_TABLE(of, atmel_flexcom_of_match);
  
-+&tcon0 {
-+	status = "okay";
-+};
++#ifdef CONFIG_PM_SLEEP
++static int atmel_flexcom_resume(struct device *dev)
++{
++	struct atmel_flexcom *afc = dev_get_drvdata(dev);
++	int err;
++	u32 val;
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-index ec63d104b404..e6b551bb43e7 100644
---- a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
-@@ -45,6 +45,21 @@
- / {
- 	model = "FriendlyArm NanoPi M1";
- 	compatible = "friendlyarm,nanopi-m1", "allwinner,sun8i-h3";
++	err = clk_prepare_enable(afc->clk);
++	if (err)
++		return err;
 +
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
++	val = FLEX_MR_OPMODE(afc->opmode),
++	writel(val, afc->base + FLEX_MR);
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
++	clk_disable_unprepare(afc->clk);
 +
-+&de {
-+	status = "okay";
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(atmel_flexcom_pm_ops, NULL,
++			 atmel_flexcom_resume);
++
+ static struct platform_driver atmel_flexcom_driver = {
+ 	.probe	= atmel_flexcom_probe,
+ 	.driver	= {
+ 		.name		= "atmel_flexcom",
++		.pm		= &atmel_flexcom_pm_ops,
+ 		.of_match_table	= atmel_flexcom_of_match,
+ 	},
  };
- 
- &ehci1 {
-@@ -55,6 +70,20 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &ohci1 {
- 	status = "okay";
- };
-@@ -62,3 +91,7 @@
- &ohci2 {
- 	status = "okay";
- };
-+
-+&tcon0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-index 17cdeae19c6f..586181c4ce8b 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
-@@ -62,6 +62,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -114,6 +125,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -125,12 +140,26 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
- 	status = "okay";
- };
- 
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -188,6 +217,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-index 9b47a0def740..cecf4af1b743 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -91,6 +102,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -99,12 +114,26 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
- 	status = "okay";
- };
- 
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -159,6 +188,10 @@
- 	};
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-index 6880268e8b87..ad1739e1d01d 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -90,6 +101,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -105,6 +120,20 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -147,6 +176,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-index 998b60f8d295..24ec7376f479 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -98,6 +109,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -121,12 +136,26 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
- 	status = "okay";
- };
- 
-+&mixer0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-@@ -177,6 +206,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
 -- 
-2.14.1
+2.11.0
