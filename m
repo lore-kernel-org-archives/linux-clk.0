@@ -1,46 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs1.siol.net ([213.250.19.134]:43663 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751652AbdITTiw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Sep 2017 15:38:52 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org
-Cc: Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, icenowy@aosc.io,
-        linux-sunxi@googlegroups.com
-Subject: [RFC PATCH 3/7] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
-Date: Wed, 20 Sep 2017 21:38:27 +0200
-Message-Id: <20170920193831.20268-4-jernej.skrabec@siol.net>
-In-Reply-To: <20170920193831.20268-1-jernej.skrabec@siol.net>
-References: <20170920193831.20268-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vinod.koul@intel.com>
+Date: Thu, 28 Sep 2017 15:01:04 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] NVIDIA Tegra AHB DMA controller driver
+Message-ID: <20170928093104.GC30097@localhost>
+References: <cover.1506380746.git.digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1506380746.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be set.
+On Tue, Sep 26, 2017 at 02:22:01AM +0300, Dmitry Osipenko wrote:
+> NVIDIA Tegra20/30 SoC's have AHB DMA controller. It has 4 DMA channels,
+> supports AHB <-> Memory and Memory <-> Memory transfers, slave / master
+> modes. This driver is primarily supposed to be used by gpu/host1x in a
+> master mode, performing 3D HW context stores.
+> 
+> Dmitry Osipenko (5):
+>   clk: tegra: Add AHB DMA clock entry
+>   clk: tegra: Bump SCLK clock rate to 216MHz on Tegra20
+>   dt-bindings: Add DT bindings for NVIDIA Tegra AHB DMA controller
+>   dmaengine: Add driver for NVIDIA Tegra AHB DMA controller
+>   ARM: dts: tegra: Add AHB DMA controller nodes
 
-Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+I don't think they are dependent, so consider sending them separately
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 7a222ff1ad0a..36224ba93f9d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
 -- 
-2.14.1
-
+~Vinod
