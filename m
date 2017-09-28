@@ -1,153 +1,125 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 08/13] clk: qcom: support for dynamic updating the PLL
-Date: Thu, 28 Sep 2017 23:20:45 +0530
-Message-Id: <1506621050-10129-9-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
-References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 28 Sep 2017 12:28:30 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
+Message-ID: <20170928102830.uuicirbjb5q64vwz@flea>
+References: <20170923001531.14285-1-icenowy@aosc.io>
+ <20170925101027.lghnnll4h6inreqm@flea.home>
+ <27EF78BD-6285-4D8D-AA65-8294D797E2FB@aosc.io>
+ <20170925102744.qixfwlheeimemhcf@flea.home>
+ <9b3aeb6cb155bb2f9a7cee438de82ccb@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="okv7m74fz5ndo6kz"
+In-Reply-To: <9b3aeb6cb155bb2f9a7cee438de82ccb@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the Alpha PLL’s support dynamic update in which the
-frequency can be changed dynamically without turning off the PLL.
 
-This dynamic update requires the following sequence
+--okv7m74fz5ndo6kz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1. Write the desired values to pll_l_val and pll_alpha_val
-2. Toggle pll_latch_input from low to high
-3. Wait for pll_ack_latch to transition from low to high
-   The new L and alpha values have been latched. It make
-   take some time for the PLL to fully settle with these
-   new values
-4. Pull pll_latch_input low
+Hi,
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 69 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 2 deletions(-)
+On Wed, Sep 27, 2017 at 11:51:30AM +0000, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-09-25 18:27=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > On Mon, Sep 25, 2017 at 10:12:09AM +0000, Icenowy Zheng wrote:
+> > > =E4=BA=8E 2017=E5=B9=B49=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=
+=8D=886:10:27, Maxime Ripard
+> > > <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
+> > > >Hi,
+> > > >
+> > > >On Sat, Sep 23, 2017 at 12:15:28AM +0000, Icenowy Zheng wrote:
+> > > >> This patchset imports simple DVFS support for Allwinner A64 SoC.
+> > > >>
+> > > >> As the thermal sensor driver is not yet implemented and some boards
+> > > >> have still no AXP PMIC support, now only two OPPs are present --
+> > > >> 648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
+> > > >>
+> > > >> PATCH 1 is a fix to the CCU driver of A64, and the remaining patch=
+es
+> > > >> set up the device tree bits of the DVFS on Pine64.
+> > > >
+> > > >How has this been tested?
+> > > >
+> > > >What tasks did you run, with what governor, etc...
+> > >=20
+> > > I only tested manual frequency switching between 648MHz and
+> > > 816MHz, and tested the PLL stuck issue by change the OPPs to
+> > > some random value.
+> >=20
+> > Ideally, we should test that it's actually reliable. Poorly chosen
+> > OPPs might lead to corrupt data that you might not get before a while.
+> >=20
+> > Please test using:
+> > https://linux-sunxi.org/Hardware_Reliability_Tests#Reliability_of_cpufr=
+eq_voltage.2Ffrequency_settings
+> >=20
+> > And post the report.
+>=20
+> ```
+> root@p64 [ cpuburn-arm@master ] # ./cpuburn-a53 &
+> [1] 2543
+> root@p64 [ cpuburn-arm@master ] # ./cpufreq-ljt-stress-test
+> Creating './whitenoise-1920x1080.jpg' ... done
+> CPU stress test, which is doing JPEG decoding by libjpeg-turbo
+> at different cpufreq operating points.
+>=20
+> Testing CPU 0
+>   816 MHz ............................................................ OK
+>   648 MHz ............................................................ OK
+>=20
+> Testing CPU 1
+>   816 MHz ............................................................ OK
+>   648 MHz ............................................................ OK
+>=20
+> Testing CPU 2
+>   816 MHz ............................................................ OK
+>   648 MHz ............................................................ OK
+>=20
+> Testing CPU 3
+>   816 MHz ............................................................ OK
+>   648 MHz ............................................................ OK
+>=20
+> Overall result : PASSED
+> ```
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 07030d3..6f2d165 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -31,7 +31,10 @@
- # define PLL_VOTE_FSM_ENA	BIT(20)
- # define PLL_FSM_ENA		BIT(20)
- # define PLL_VOTE_FSM_RESET	BIT(21)
-+# define PLL_UPDATE		BIT(22)
-+# define PLL_UPDATE_BYPASS	BIT(23)
- # define PLL_OFFLINE_ACK	BIT(28)
-+# define ALPHA_PLL_ACK_LATCH	BIT(29)
- # define PLL_ACTIVE_FLAG	BIT(30)
- # define PLL_LOCK_DET		BIT(31)
- 
-@@ -134,7 +137,8 @@ struct alpha_pll_props {
- 	u8 reg_offsets[PLL_MAX_REGS];
- 	u8 alpha_width;
- 
--#define HAVE_64BIT_CONFIG_CTL	BIT(0)
-+#define HAVE_64BIT_CONFIG_CTL		BIT(0)
-+#define SUPPORTS_DYNAMIC_UPDATE		BIT(1)
- 	u8 flags;
- 	struct alpha_pll_clk_ops ops;
- };
-@@ -181,6 +185,15 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- #define wait_for_pll_offline(pll) \
- 	wait_for_pll(pll, PLL_OFFLINE_ACK, 0, "offline")
- 
-+#define wait_for_pll_update(pll) \
-+	wait_for_pll(pll, PLL_UPDATE, 1, "update")
-+
-+#define wait_for_pll_update_ack_set(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 0, "update_ack_set")
-+
-+#define wait_for_pll_update_ack_clear(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 1, "update_ack_clear")
-+
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
- {
-@@ -461,6 +474,54 @@ static void alpha_pll_default_disable(struct clk_hw *hw)
- 	return alpha_pll_calc_rate(prate, l, a, alpha_width);
- }
- 
-+static int clk_alpha_pll_update_latch(struct clk_alpha_pll *pll)
-+{
-+	int ret;
-+	u32 mode, off = pll->offset;
-+
-+	regmap_read(pll->clkr.regmap, off, &mode);
-+
-+	/* Latch the input to the PLL */
-+	regmap_update_bits(pll->clkr.regmap, off, PLL_UPDATE, PLL_UPDATE);
-+
-+	/* Make sure PLL_UPDATE request goes through*/
-+	mb();
-+
-+	/* Wait for 2 reference cycle before checking ACK bit */
-+	udelay(1);
-+
-+	/*
-+	 * PLL will latch the new L, Alpha and freq control word.
-+	 * PLL will respond by raising PLL_ACK_LATCH output when new programming
-+	 * has been latched in and PLL is being updated. When
-+	 * UPDATE_LOGIC_BYPASS bit is not set, PLL_UPDATE will be cleared
-+	 * automatically by hardware when PLL_ACK_LATCH is asserted by PLL.
-+	 */
-+	if (mode & PLL_UPDATE_BYPASS) {
-+		ret = wait_for_pll_update_ack_set(pll);
-+		if (ret)
-+			return ret;
-+
-+		regmap_update_bits(pll->clkr.regmap, off, PLL_UPDATE, 0);
-+
-+		/* Make sure PLL_UPDATE request goes through*/
-+		mb();
-+	} else {
-+		ret = wait_for_pll_update(pll);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = wait_for_pll_update_ack_clear(pll);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for PLL output to stabilize */
-+	udelay(10);
-+
-+	return 0;
-+}
-+
- static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
- 				      unsigned long prate)
- {
-@@ -495,7 +556,11 @@ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
- 	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
- 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
- 
--	return 0;
-+	if (!clk_hw_is_enabled(hw) ||
-+	    !(pll_flags(type) & SUPPORTS_DYNAMIC_UPDATE))
-+		return 0;
-+
-+	return clk_alpha_pll_update_latch(pll);
- }
- 
- static long alpha_pll_default_round_rate(struct clk_hw *hw, unsigned long rate,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Great, thanks!
+
+Can you put that in your cover letter for the next version?
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--okv7m74fz5ndo6kz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIbBAEBAgAGBQJZzM7OAAoJEBx+YmzsjxAgVioP9R+3YZc4vlF8S5n8Mftfir0Z
+IDXLvnxTW6Wc2m6YY6PnjCqFgoYvtfeDYYbAkAVECi7gQFAEcmquPXO5l9tRzDsF
+PzKKfY5r2R4GgaESqFGGaj1RHQNwWYIp5ZypZUgrxE0dMnVSLht41dLIFD73dx41
+J4yGlVJVWjpp2dfvGFkNZfj02nwtHv5K9h3HXYPWVABcfetiVBSINm7+YaoaBI/H
+oIsjTxKwarpOjERf8F9WXv5Fp0mePyGJ4LDUaMbV3j+LaP6n+4M2UhmZvCX1LNry
+4ZgFwO1/3NJkZBVCI4vwyAU5GAWZOOn9gQPStYnRQfYWV3fRBqRNIhdUBDFnJ8Hp
+wdpO81NBvd2WJa1JFJNr6LE6c7bNbJl+EROPuzYuOY9SVufgKmWGiG5iXupT0Gp8
+03z0FMUCIR7azfaqOeG/X9ZsA8Tt3j+SNun3wdSF6b9jK4rzzFXP4XMR7EZHu/TC
+m+d6oJZpH3y0/khObn+mFU6098jRZudvZyhbnqp5fLMcrOPknAiEXY1z7/JCnuyr
+pklia5U2aIGxABdI7ixCkztUQ6FX2MbHzGXh7L14s07GSInRQJVdyGZ1IYcMC3Do
+rNL7KQF0jKeg+jSjuGNKGWNwKr1iDf7iEsXhm5ycEp6RG+dMnBlrXC25QUqt7yNb
+Les3DYaZz7LpmkXguFU=
+=9FAH
+-----END PGP SIGNATURE-----
+
+--okv7m74fz5ndo6kz--
