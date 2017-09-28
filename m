@@ -1,50 +1,77 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1505721917.25945.275.camel@linux.intel.com>
-Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Carlo
- Caione <carlo@caione.org>, alan@linux.intel.com
-Cc: Michael Turquette <mturquette@baylibre.com>, "open list:COMMON CLK
- FRAMEWORK" <linux-clk@vger.kernel.org>, Darren Hart <dvhart@infradead.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Linux Upstreaming Team
- <linux@endlessm.com>, Enric Balletbo Serra <eballetbo@gmail.com>, Carlo
- Caione <carlo@endlessm.com>
-Date: Mon, 18 Sep 2017 11:05:17 +0300
-In-Reply-To: <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
-References: <20170714082356.28117-1-carlo@caione.org>
-	 <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
-	 <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com>
-	 <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 07/13] clk: qcom: support for alpha mode configuration
+Date: Thu, 28 Sep 2017 23:20:44 +0530
+Message-Id: <1506621050-10129-8-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-09-07 at 16:51 -0500, Pierre-Louis Bossart wrote:
-> 
-> 
+The current configuration does not fully configure PLL alpha mode
+and values so this patch
 
-> > 
-> > Looks like the same code that was initially used as a reference for 
-> > support of PMC clocks in the clock framework, so now we have 2
-> > drivers 
-> > programming the same PMC hardware, not so good. We'd probably have
-> > to 
-> > move the atomisp driver to move to clk_get/prepare/enable instead
-> > of 
-> > the old vlv2_clck_get?
-> 
-> See attached an untested change to show the idea on moving to the clk 
-> API and get feedback (I am not a camera guy, just trying to help - 
-> compile-tested/checkpatch only).
-> This code *should* enable the same functionality using existing hooks
-> in 
-> the kernel (and handle the BYT/CHT clocking difference as a bonus).
-> I am sure Andy will have plenty of comments :-)
+1. Configures PLL_ALPHA_VAL_U for PLL which supports 40 bit alpha.
+2. Adds alpha enable and alpha mode configuration support.
 
-I have one comment: nice clean up!
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 6 ++++++
+ drivers/clk/qcom/clk-alpha-pll.h | 3 +++
+ 2 files changed, 9 insertions(+)
 
-AtomISP is a *horrible* mess.
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index b33d120..07030d3 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -198,6 +198,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 		regmap_write(regmap, off + pll_cfg_ctl_u(type),
+ 			     config->config_ctl_hi_val);
+ 
++	if (pll_alpha_width(type) > 32)
++		regmap_write(regmap, off + pll_alpha_u(type),
++			     config->alpha_hi);
++
+ 	val = config->main_output_mask;
+ 	val |= config->aux_output_mask;
+ 	val |= config->aux2_output_mask;
+@@ -205,6 +209,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	val |= config->pre_div_val;
+ 	val |= config->post_div_val;
+ 	val |= config->vco_val;
++	val |= config->alpha_en_mask;
++	val |= config->alpha_mode_mask;
+ 
+ 	mask = config->main_output_mask;
+ 	mask |= config->aux_output_mask;
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index b9caefc..17aa27c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -67,12 +67,15 @@ struct clk_alpha_pll_postdiv {
+ struct alpha_pll_config {
+ 	u32 l;
+ 	u32 alpha;
++	u32 alpha_hi;
+ 	u32 config_ctl_val;
+ 	u32 config_ctl_hi_val;
+ 	u32 main_output_mask;
+ 	u32 aux_output_mask;
+ 	u32 aux2_output_mask;
+ 	u32 early_output_mask;
++	u32 alpha_en_mask;
++	u32 alpha_mode_mask;
+ 	u32 pre_div_val;
+ 	u32 pre_div_mask;
+ 	u32 post_div_val;
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
