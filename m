@@ -1,67 +1,119 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
-Date: Wed, 27 Sep 2017 04:57:06 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:59737 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752357AbdI1OYU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Sep 2017 10:24:20 -0400
 MIME-Version: 1.0
-In-Reply-To: <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Thu, 28 Sep 2017 22:24:18 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: sunxi-ng: add mux and pll notifiers for A64 CPU
+ clock
+In-Reply-To: <20170928142050.gkbdqlwpfjmpdlg3@flea>
+References: <20170923001531.14285-1-icenowy@aosc.io>
+ <20170923001531.14285-2-icenowy@aosc.io>
+ <20170928102752.ceo54qccqakb4xyx@flea>
+ <975c0c884d9a83faad6141df474a93af@aosc.io>
+ <20170928142050.gkbdqlwpfjmpdlg3@flea>
+Message-ID: <bae0f40adef1ef1ffd3a15c32af7bf42@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.09.2017 17:50, Jon Hunter wrote:
+在 2017-09-28 22:20，Maxime Ripard 写道：
+> On Thu, Sep 28, 2017 at 10:42:39AM +0000, icenowy@aosc.io wrote:
+>> > On Sat, Sep 23, 2017 at 12:15:29AM +0000, Icenowy Zheng wrote:
+>> > > The A64 PLL_CPU clock has the same instability if some factor changed
+>> > > without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+>> > > H3.
+>> > >
+>> > > Add the mux and pll notifiers for A64 CPU clock to workaround the
+>> > > problem.
+>> > >
+>> > > Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+>> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > > ---
+>> > >  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28
+>> > > +++++++++++++++++++++++++++-
+>> > >  1 file changed, 27 insertions(+), 1 deletion(-)
+>> > >
+>> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> > > b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> > > index 2bb4cabf802f..b55fa69dd0c1 100644
+>> > > --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> > > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> > > @@ -879,11 +879,26 @@ static const struct sunxi_ccu_desc
+>> > > sun50i_a64_ccu_desc = {
+>> > >  	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+>> > >  };
+>> > >
+>> > > +static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
+>> > > +	.common	= &pll_cpux_clk.common,
+>> > > +	/* copy from pll_cpux_clk */
+>> > > +	.enable	= BIT(31),
+>> > > +	.lock	= BIT(28),
+>> > > +};
+>> > > +
+>> > > +static struct ccu_mux_nb sun50i_a64_cpu_nb = {
+>> > > +	.common		= &cpux_clk.common,
+>> > > +	.cm		= &cpux_clk.mux,
+>> > > +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
+>> > > +	.bypass_index	= 1, /* index of 24 MHz oscillator */
+>> > > +};
+>> > > +
+>> > >
+>> > >  static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+>> > >  {
+>> > >  	struct resource *res;
+>> > >  	void __iomem *reg;
+>> > >  	u32 val;
+>> > > +	int ret;
+>> > >
+>> > >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> > >  	reg = devm_ioremap_resource(&pdev->dev, res);
+>> > > @@ -897,7 +912,18 @@ static int sun50i_a64_ccu_probe(struct
+>> > > platform_device *pdev)
+>> > >
+>> > >  	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+>> > >
+>> > > -	return sunxi_ccu_probe(pdev->dev.of_node, reg,
+>> > > &sun50i_a64_ccu_desc);
+>> > > +	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+>> > > +	if (ret)
+>> > > +		return ret;
+>> > > +
+>> > > +	/* Gate then ungate PLL CPU after any rate changes */
+>> > > +	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
+>> > > +
+>> > > +	/* Reparent CPU during PLL CPU rate changes */
+>> > > +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+>> > > +				  &sun50i_a64_cpu_nb);
+>> > > +
+>> > > +	return 0;
+>> >
+>> > So this is the fourth user of the exact same code, can you turn that
+>> > into a shared function?
+>> 
+>> I think it's not so worthful to extract the code, as:
 > 
-> On 26/09/17 00:22, Dmitry Osipenko wrote:
->> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->> on Tegra20/30 SoC's.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>
->> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->> new file mode 100644
->> index 000000000000..2af9aa76ae11
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->> @@ -0,0 +1,23 @@
->> +* NVIDIA Tegra AHB DMA controller
->> +
->> +Required properties:
->> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->> +- reg:		Should contain registers base address and length.
->> +- interrupts:	Should contain one entry, DMA controller interrupt.
->> +- clocks:	Should contain one entry, DMA controller clock.
->> +- resets :	Should contain one entry, DMA controller reset.
->> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->> +		for the peripheral. For more details consult the Tegra TRM's
->> +		documentation, in particular AHB DMA channel control register
->> +		REQ_SEL field.
+> It does, because the order is important. If you do not register the
+> notifiers in the right order, you have a bug, and:
 > 
-> What about the TRIG_SEL field? Do we need to handle this here as well?
+>> - the notifier structs contains info of the clocks
 > 
+> this should be passed as a parameter anyway,
 
-Actually, DMA transfer trigger isn't related a hardware description. It's up to
-software to decide what trigger to select. So it shouldn't be in the binding.
+So the function only does these two registers?
 
-And I think the same applies to requester... any objections?
-
--- 
-Dmitry
+> 
+>> - A31 seems not to need the PLL notifier.
+> 
+> And you don't care about the ordering in that case, since there's just
+> one. If was talking about the H3, A64, R40 and A33 that all have that
+> code.
+> 
+> Maxime
