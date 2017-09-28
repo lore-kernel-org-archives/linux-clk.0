@@ -1,88 +1,84 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <69ea8dec-db7a-fcfa-6fa7-ea70de4c9ef4@gmail.com>
-Date: Wed, 27 Sep 2017 15:12:50 +0300
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net> <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 28 Sep 2017 18:04:18 +0200
+Message-ID: <CAPDyKFozYOX3P=pgHsWWV+2dsmwQVUc4d422Buf8+frChyPpig@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk/ux500: Improve a size determination in three functions
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27.09.2017 11:34, Jon Hunter wrote:
-> 
-> On 27/09/17 02:57, Dmitry Osipenko wrote:
->> On 26.09.2017 17:50, Jon Hunter wrote:
->>>
->>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>> on Tegra20/30 SoC's.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>>>  1 file changed, 23 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>> new file mode 100644
->>>> index 000000000000..2af9aa76ae11
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>> @@ -0,0 +1,23 @@
->>>> +* NVIDIA Tegra AHB DMA controller
->>>> +
->>>> +Required properties:
->>>> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->>>> +- reg:		Should contain registers base address and length.
->>>> +- interrupts:	Should contain one entry, DMA controller interrupt.
->>>> +- clocks:	Should contain one entry, DMA controller clock.
->>>> +- resets :	Should contain one entry, DMA controller reset.
->>>> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->>>> +		for the peripheral. For more details consult the Tegra TRM's
->>>> +		documentation, in particular AHB DMA channel control register
->>>> +		REQ_SEL field.
->>>
->>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>
->>
->> Actually, DMA transfer trigger isn't related a hardware description. It's up to
->> software to decide what trigger to select. So it shouldn't be in the binding.
-> 
-> I think it could be, if say a board wanted a GPIO to trigger a transfer.
-> 
+On 27 September 2017 at 20:47, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 20:30:53 +0200
+>
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-GPIO isn't a very good example, there is no "GPIO" trigger. To me all triggers
-are software-defined, so that software could create transfer chains.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
->> And I think the same applies to requester... any objections?
-> 
-> Well, the REQ_SEL should definitely be in the binding.
-> 
-
-Okay.
-
-> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
-> like we never bothered with it for the APB DMA and so maybe no ones uses
-> this.
-> 
-
--- 
-Dmitry
+> ---
+>  drivers/clk/ux500/clk-prcc.c    | 2 +-
+>  drivers/clk/ux500/clk-prcmu.c   | 2 +-
+>  drivers/clk/ux500/clk-sysctrl.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+> index 5ca07e6d1f64..7cfb59c9136d 100644
+> --- a/drivers/clk/ux500/clk-prcc.c
+> +++ b/drivers/clk/ux500/clk-prcc.c
+> @@ -107,7 +107,7 @@ static struct clk *clk_reg_prcc(const char *name,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
+> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+>         if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+>
+> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+> index c137934f23ab..9d1f2d4550ad 100644
+> --- a/drivers/clk/ux500/clk-prcmu.c
+> +++ b/drivers/clk/ux500/clk-prcmu.c
+> @@ -258,7 +258,7 @@ static struct clk *clk_reg_prcmu(const char *name,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
+> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+>         if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+>
+> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+> index e0a834c08a04..7c0403b733ae 100644
+> --- a/drivers/clk/ux500/clk-sysctrl.c
+> +++ b/drivers/clk/ux500/clk-sysctrl.c
+> @@ -139,7 +139,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
+> +       clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
+>         if (!clk)
+>                 return ERR_PTR(-ENOMEM);
+>
+> --
+> 2.14.2
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
