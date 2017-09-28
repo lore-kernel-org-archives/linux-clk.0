@@ -1,124 +1,98 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v1 01/10] clk: at91: pmc: Wait for clocks when resuming
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Thu, 28 Sep 2017 12:02:22 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 To: Romain Izard <romain.izard.pro@gmail.com>
-CC: Boris Brezillon <boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron
-	<jic23@kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu
-	<rainyfeeling@outlook.com>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
-	<thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
-	<stern@rowland.harvard.edu>, <linux-clk@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>, linux-mtd
-	<linux-mtd@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-2-romain.izard.pro@gmail.com>
- <14fb5261-bb03-a6bd-6653-2a2c655b04ee@microchip.com>
- <CAGkQfmPB8b38=hJrtuKJ-Hiqdfx9dt5SQ5R7EBL9cJV5_eRmXQ@mail.gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <5ffaec74-db4a-d285-1241-ba47e74fb0b8@microchip.com>
-Date: Fri, 22 Sep 2017 14:12:13 +0200
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v4 0/8] Various patches for SAMA5D2 backup mode
+Message-ID: <20170928100222.nnocjkyd5qkly6qx@piout.net>
+References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGkQfmPB8b38=hJrtuKJ-Hiqdfx9dt5SQ5R7EBL9cJV5_eRmXQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/09/2017 at 18:15, Romain Izard wrote:
-> 2017-09-13 14:15 GMT+02:00 Nicolas Ferre <nicolas.ferre@microchip.com>:
->> On 08/09/2017 at 17:35, Romain Izard wrote:
->>> Wait for the syncronization of all clocks when resuming, not only the
->>> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
->>> when interrupts are masked, which is the case in here.
->>>
->>> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
->>> ---
->>>  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->>>  1 file changed, 16 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
->>> index 775af473fe11..5c2b26de303e 100644
->>> --- a/drivers/clk/at91/pmc.c
->>> +++ b/drivers/clk/at91/pmc.c
->>> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->>>       return 0;
->>>  }
->>>
->>> +static bool pmc_ready(unsigned int mask)
->>> +{
->>> +     unsigned int status;
->>> +
->>> +     regmap_read(pmcreg, AT91_PMC_SR, &status);
->>> +
->>> +     return ((status & mask) == mask) ? 1 : 0;
->>> +}
->>> +
->>>  static void pmc_resume(void)
->>>  {
->>> -     int i, ret = 0;
->>> +     int i;
->>>       u32 tmp;
->>> +     u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->>>
->>>       regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->>>       if (pmc_cache.mckr != tmp)
->>> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->>>                            AT91_PMC_PCR_CMD);
->>>       }
->>>
->>> -     if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
->>> -             ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
->>> -                                            !(tmp & AT91_PMC_LOCKU),
->>> -                                            10, 5000);
->>> -             if (ret)
->>> -                     pr_crit("USB PLL didn't lock when resuming\n");
->>> -     }
->>> +     if (pmc_cache.uckr & AT91_PMC_UPLLEN)
->>> +             mask |= AT91_PMC_LOCKU;
->>> +
->>> +     while (!pmc_ready(mask))
->>> +             cpu_relax();
->>
->> Okay, but I would prefer to keep the timeout property in it. So we may
->> need to re-implement a timeout way-out here.
->>
-> 
-> We need to have a reference clock to measure the timeout delay. If we use
-> the kernel's timekeeping, it relies on the clocks that we are configuring in
-> this code. Moreover, my experience with the mainline code is that when
-> something goes wrong, nothing will work. No oops or panic will be reported,
-> the device will just stop working.
-> 
-> In my case, I had obvious failures (it just stopped working unless I removed
-> USB wakeup or activated the console during suspend) but also very rare
-> failures, that occurred in the bootloader. Those issues were detected when
-> testing repeated suspend cycles for a night: the memory controller would
-> never enter the self-refresh mode during the resume sequence.
-> 
-> This led me to question the bootloader's code first, and I set up 4 boards
-> with the backup prototype code on v4.9 to verify that it was stable on
-> suspend. I've reached 1.5 million sleep cycles over 3 weeks without
-> failure, so this hinted towards the difference between the prototype and the
-> backup code provided for v4.12 (which contained the patch that got in
-> v4.13). Once I integrated this patch, I've run the v4.12 code for 2 weeks
-> without issue as well.
-> 
-> In the end, I don't want to touch this code if I do not have to, as checking
-> that it does not regress is really cumbersome.
+Hi,
 
-The timeout was more for PLL like the one use for USB. I didn't want to
-block only for USB PLL failure (which is kind of hypothetical, I admit).
-Anyway, I understand your arguments and taking into account the
-extensive tests that you've run, I agree with your approach. I'm adding
-my Ack to the v2.
+On 28/09/2017 at 11:46:19 +0200, Romain Izard wrote:
+> While the core of the backup mode for SAMA5D2 has been integrated in
+> v4.13, it is far from complete. Individual controllers in the chip have
+> drivers that do not support the reset of the registers during suspend,
+> and they need to be adapted to handle it.
+> 
+> The first patch uses the clock wakeup code from the prototype backup
+> mode instead of the version integrated in the mainline, as the mainline
+> version is not stable. During a test loop with two-second backup
+> suspend, the mainline version will hang in less than one day, whereas
+> the prototype version has been running the same test for more than a
+> week without hanging.
+> 
+> While all these patches are provided in a series, the clock, mtd,
+> usb, pwm and mfd patch do not depend on each other.
+> 
+> Changes in v2:
+> * drop the IIO patch duplicating existing code
+> * determine the number of programmable clocks to save dynamically
+> * declare a required local variable in the tty/serial patch
+> 
+> Changes in v3:
+> * drop dev_printk changes for PMECC
+> * rework the resume code for PMECC
+> * improve comments on PMC clock handling
+> 
+> Changes in v4:
+> * fix a bug in the PMECC resume code
+> 
+> Romain Izard (8):
+>   clk: at91: pmc: Wait for clocks when resuming
+>   clk: at91: pmc: Save SCSR during suspend
+>   clk: at91: pmc: Support backup for programmable clocks
+>   mtd: nand: atmel: Avoid ECC errors when leaving backup mode
+>   ehci-atmel: Power down during suspend is normal
+>   pwm: atmel-tcb: Support backup mode
+>   atmel_flexcom: Support backup mode
+>   tty/serial: atmel: Prevent a warning on suspend
+> 
 
-Thanks for having take the time to describe your debugging session: it's
-valuable information for everybody.
+Really, you have to stop sending those independent patches as a series
+if you want to have a chance to see them being merged.
 
-Best regards,
+>  drivers/clk/at91/clk-programmable.c      |  2 +
+>  drivers/clk/at91/pmc.c                   | 63 ++++++++++++++++++++++++++-----
+>  drivers/clk/at91/pmc.h                   |  2 +
+>  drivers/mfd/atmel-flexcom.c              | 65 ++++++++++++++++++++++++--------
+>  drivers/mtd/nand/atmel/nand-controller.c |  3 ++
+>  drivers/mtd/nand/atmel/pmecc.c           | 17 +++++----
+>  drivers/mtd/nand/atmel/pmecc.h           |  1 +
+>  drivers/pwm/pwm-atmel-tcb.c              | 63 ++++++++++++++++++++++++++++++-
+>  drivers/tty/serial/atmel_serial.c        | 13 +++++++
+>  drivers/usb/host/ehci-atmel.c            |  3 +-
+>  10 files changed, 196 insertions(+), 36 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
+
 -- 
-Nicolas Ferre
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
