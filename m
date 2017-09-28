@@ -1,58 +1,76 @@
-Return-Path: <dvhart@infradead.org>
-Date: Fri, 22 Sep 2017 14:36:14 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Carlo Caione <carlo@caione.org>, alan@linux.intel.com,
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Upstreaming Team <linux@endlessm.com>,
-	Enric Balletbo Serra <eballetbo@gmail.com>,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
-Message-ID: <20170922213614.GA10927@fury>
-References: <20170714082356.28117-1-carlo@caione.org>
- <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
- <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com>
- <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
- <1505721917.25945.275.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1505721917.25945.275.camel@linux.intel.com>
+	Lee Jones <lee.jones@linaro.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v4 2/8] clk: at91: pmc: Save SCSR during suspend
+Date: Thu, 28 Sep 2017 11:46:21 +0200
+Message-Id: <20170928094627.31017-3-romain.izard.pro@gmail.com>
+In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 18, 2017 at 11:05:17AM +0300, Andy Shevchenko wrote:
-> On Thu, 2017-09-07 at 16:51 -0500, Pierre-Louis Bossart wrote:
-> > 
-> > 
-> 
-> > > 
-> > > Looks like the same code that was initially used as a reference for 
-> > > support of PMC clocks in the clock framework, so now we have 2
-> > > drivers 
-> > > programming the same PMC hardware, not so good. We'd probably have
-> > > to 
-> > > move the atomisp driver to move to clk_get/prepare/enable instead
-> > > of 
-> > > the old vlv2_clck_get?
-> > 
-> > See attached an untested change to show the idea on moving to the clk 
-> > API and get feedback (I am not a camera guy, just trying to help - 
-> > compile-tested/checkpatch only).
-> > This code *should* enable the same functionality using existing hooks
-> > in 
-> > the kernel (and handle the BYT/CHT clocking difference as a bonus).
-> > I am sure Andy will have plenty of comments :-)
-> 
-> I have one comment: nice clean up!
-> 
-> AtomISP is a *horrible* mess.
-> 
+The contents of the System Clock Status Register (SCSR) needs to be
+restored into the System Clock Enable Register (SCER).
 
-Pierre, will you be submitting this patch officially now that you have a
-tested-by?
+As the bootloader will restore some clocks by itself, the issue can be
+missed as only the USB controller, the LCD controller, the Image Sensor
+controller and the programmable clocks will be impacted.
 
+Fix the obvious typo in the suspend/resume code, as the IMR register
+does not need to be saved twice.
+
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/clk/at91/pmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 5c2b26de303e..07dc2861ad3f 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -86,7 +86,7 @@ static int pmc_suspend(void)
+ {
+ 	int i;
+ 
+-	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
++	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
+ 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
+ 	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
+ 	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
+@@ -129,7 +129,7 @@ static void pmc_resume(void)
+ 	if (pmc_cache.pllar != tmp)
+ 		pr_warn("PLLAR was not configured properly by the firmware\n");
+ 
+-	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
++	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
+ 	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
+ 	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
+ 	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.11.0
