@@ -1,67 +1,112 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v1 05/10] mtd: nand: atmel: Report PMECC failures as errors
-Date: Fri,  8 Sep 2017 17:35:59 +0200
-Message-Id: <20170908153604.28383-6-romain.izard.pro@gmail.com>
-In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH 09/13] clk: qcom: add flag for VCO operation
+Date: Thu, 28 Sep 2017 23:20:46 +0530
+Message-Id: <1506621050-10129-10-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-It is not normal for the PMECC to fail when trying to fix ECC errors.
-Report these cases as errors.
+Some of the Alpha PLL’s does not have VCO configuration so this
+patch adds the flag and does not perform VCO operation if this
+flag is set.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/mtd/nand/atmel/pmecc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-index 8d1208f38025..2a23f1ff945f 100644
---- a/drivers/mtd/nand/atmel/pmecc.c
-+++ b/drivers/mtd/nand/atmel/pmecc.c
-@@ -687,6 +687,8 @@ static int atmel_pmecc_err_location(struct atmel_pmecc_user *user)
- 	 * Number of roots does not match the degree of smu
- 	 * unable to correct error.
- 	 */
-+	dev_err(pmecc->dev,
-+		"PMECC: Impossible to calculate error location.\n");
- 	return -EBADMSG;
- }
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 6f2d165..bb35c60 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -139,6 +139,7 @@ struct alpha_pll_props {
  
-@@ -729,7 +731,7 @@ int atmel_pmecc_correct_sector(struct atmel_pmecc_user *user, int sector,
- 			ptr = ecc + byte - sectorsize;
- 			area = "ECC";
- 		} else {
--			dev_dbg(pmecc->dev,
-+			dev_err(pmecc->dev,
- 				"Invalid errpos value (%d, max is %d)\n",
- 				errpos, (sectorsize + eccbytes) * 8);
- 			return -EINVAL;
+ #define HAVE_64BIT_CONFIG_CTL		BIT(0)
+ #define SUPPORTS_DYNAMIC_UPDATE		BIT(1)
++#define SUPPORTS_VCO			BIT(2)
+ 	u8 flags;
+ 	struct alpha_pll_clk_ops ops;
+ };
+@@ -527,15 +528,17 @@ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	const struct pll_vco *vco;
+-	u8 type = pll->pll_type;
++	u8 type = pll->pll_type, flags = pll_flags(type);
+ 	u32 l, off = pll->offset, alpha_width = pll_alpha_width(type);
+ 	u64 a;
+ 
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+-	vco = alpha_pll_find_vco(pll, rate);
+-	if (!vco) {
+-		pr_err("alpha pll not in a valid vco range\n");
+-		return -EINVAL;
++	if (flags & SUPPORTS_VCO) {
++		vco = alpha_pll_find_vco(pll, rate);
++		if (!vco) {
++			pr_err("alpha pll not in a valid vco range\n");
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	regmap_write(pll->clkr.regmap, off + pll_l(type), l);
+@@ -549,15 +552,15 @@ static int alpha_pll_default_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	regmap_write(pll->clkr.regmap, off + pll_alpha(type), a);
+ 
+-	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
+-			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+-			   vco->val << PLL_VCO_SHIFT);
++	if (flags & SUPPORTS_VCO)
++		regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
++				   PLL_VCO_MASK << PLL_VCO_SHIFT,
++				   vco->val << PLL_VCO_SHIFT);
+ 
+ 	regmap_update_bits(pll->clkr.regmap, off + pll_user_ctl(type),
+ 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
+ 
+-	if (!clk_hw_is_enabled(hw) ||
+-	    !(pll_flags(type) & SUPPORTS_DYNAMIC_UPDATE))
++	if (!clk_hw_is_enabled(hw) || !(flags & SUPPORTS_DYNAMIC_UPDATE))
+ 		return 0;
+ 
+ 	return clk_alpha_pll_update_latch(pll);
+@@ -567,12 +570,13 @@ static long alpha_pll_default_round_rate(struct clk_hw *hw, unsigned long rate,
+ 					 unsigned long *prate)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+-	u32 l, alpha_width = pll_alpha_width(pll->pll_type);
++	u8 type = pll->pll_type;
++	u32 l, alpha_width = pll_alpha_width(type);
+ 	u64 a;
+ 	unsigned long min_freq, max_freq;
+ 
+ 	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
+-	if (alpha_pll_find_vco(pll, rate))
++	if (!(pll_flags(type) & SUPPORTS_VCO) || alpha_pll_find_vco(pll, rate))
+ 		return rate;
+ 
+ 	min_freq = pll->vco_table[0].min_freq;
+@@ -721,6 +725,7 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			[PLL_STATUS] = 0x24,
+ 		},
+ 		.alpha_width = 40,
++		.flags = SUPPORTS_VCO,
+ 		.ops = {
+ 			.enable = alpha_pll_default_enable,
+ 			.disable = alpha_pll_default_disable,
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
