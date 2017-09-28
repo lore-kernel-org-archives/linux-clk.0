@@ -1,66 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:45617 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752689AbdIFLm4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2017 07:42:56 -0400
-Subject: Re: [PATCH] clk: ti: dra7xx: Reset the mcasp3_ahclkx_mux clock value
-To: Keerthy <j-keerthy@ti.com>, <sboyd@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>
-References: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
-Date: Wed, 6 Sep 2017 14:42:31 +0300
-MIME-Version: 1.0
-In-Reply-To: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2 07/10] ARM: debug: Add Hurricane 2 UART2 debug addresses
+Date: Thu, 28 Sep 2017 16:14:59 -0700
+Message-Id: <20170928231502.27069-8-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BF
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Bu=
-siness ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Broadcom Hurricane 2 SoCs typically use their secondary UART for
+debug/console, provide a known good location for that.
 
-On 06/09/17 13:36, Keerthy wrote:
-> Reset the mcasp3_ahclkx_mux to abe_24m_fclk. This is needed
-> in case of kexec where the reset values might be wiped off.
->=20
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Jon Mason <jon.mason@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ arch/arm/Kconfig.debug | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Why not do this in DT with the assigned-clock-xyz properties available?
-
--Tero
-
-> ---
->   drivers/clk/ti/clk-7xx.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index 9fd6043..2c3a36c 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -312,7 +312,7 @@
->   int __init dra7xx_dt_clk_init(void)
->   {
->   	int rc;
-> -	struct clk *dpll_ck, *hdcp_ck;
-> +	struct clk *dpll_ck, *hdcp_ck, *mcasp3_ahclkx_ck, *abe_ck;
->  =20
->   	ti_dt_clocks_register(dra7xx_clks);
->  =20
-> @@ -338,5 +338,12 @@ int __init dra7xx_dt_clk_init(void)
->   	if (rc)
->   		pr_err("%s: failed to set dss_deshdcp_clk\n", __func__);
->  =20
-> +	mcasp3_ahclkx_ck =3D clk_get_sys(NULL, "mcasp3_ahclkx_mux");
-> +	abe_ck =3D clk_get_sys(NULL, "abe_24m_fclk");
-> +	rc =3D clk_set_parent(mcasp3_ahclkx_ck, abe_ck);
-> +	if (rc)
-> +		pr_err("%s: failed to set parent for mcasp3_ahclkx_mux\n",
-> +		       __func__);
-> +
->   	return rc;
->   }
->=20
-
-
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 6dcea8e8e941..0346805fe33c 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -169,6 +169,11 @@ choice
+ 		depends on ARCH_BCM_5301X || ARCH_BCM_NSP
+ 		select DEBUG_UART_8250
+ 
++	config DEBUG_BCM_HR2
++		bool "Kernel low-level debugging on Hurricane 2 UART2"
++		depends on ARCH_BCM_HR2
++		select DEBUG_UART_8250
++
+ 	config DEBUG_BCM_KONA_UART
+ 		bool "Kernel low-level debugging messages via BCM KONA UART"
+ 		depends on ARCH_BCM_MOBILE
+@@ -1508,6 +1513,7 @@ config DEBUG_UART_PHYS
+ 	default 0x11009000 if DEBUG_MT8135_UART3
+ 	default 0x16000000 if DEBUG_INTEGRATOR
+ 	default 0x18000300 if DEBUG_BCM_5301X
++	default 0x18000400 if DEBUG_BCM_HR2
+ 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+ 	default 0x18020000 if DEBUG_SIRFATLAS7_UART1
+ 	default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
+@@ -1623,6 +1629,7 @@ config DEBUG_UART_VIRT
+ 	default 0xf01fb000 if DEBUG_NOMADIK_UART
+ 	default 0xf0201000 if DEBUG_BCM2835 || DEBUG_BCM2836
+ 	default 0xf1000300 if DEBUG_BCM_5301X
++	default 0xf1000400 if DEBUG_BCM_HR2
+ 	default 0xf1002000 if DEBUG_MT8127_UART0
+ 	default 0xf1006000 if DEBUG_MT6589_UART0
+ 	default 0xf1009000 if DEBUG_MT8135_UART3
+@@ -1728,7 +1735,8 @@ config DEBUG_UART_8250_SHIFT
+ 	int "Register offset shift for the 8250 debug UART"
+ 	depends on DEBUG_LL_UART_8250 || DEBUG_UART_8250
+ 	default 0 if DEBUG_FOOTBRIDGE_COM1 || ARCH_IOP32X || DEBUG_BCM_5301X || \
+-		DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || DEBUG_OMAP7XXUART3
++		DEBUG_BCM_HR2 || DEBUG_OMAP7XXUART1 || DEBUG_OMAP7XXUART2 || \
++		DEBUG_OMAP7XXUART3
+ 	default 2
+ 
+ config DEBUG_UART_8250_WORD
+-- 
+2.14.1
