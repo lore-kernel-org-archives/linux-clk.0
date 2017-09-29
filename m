@@ -1,62 +1,60 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH 0/4] add support of clock driver on MediaTek MT7622
-Date: Wed, 20 Sep 2017 17:49:24 +0800
-Message-ID: <cover.1505890481.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 08/14] dt-bindings: display: sun4i: Add binding for A31 HDMI controller
+Date: Fri, 29 Sep 2017 16:23:00 +0800
+Message-Id: <20170929082306.16193-9-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+The HDMI controller in the A31 SoC is slightly different from the
+earlier version. In addition to the TMDS clock and DDC controls,
+this version now takes a second DDC clock input.
 
-Add clock driver required by each function driver on MT7622 SoC with
-adding all clocks exported from every hardware subsystem such as topckgen,
-apmixedsys, infracfg, pericfg , pciessys, ssusbsys, ethsys and audsys.
+Add a compatible string for it, and add the DDC clock input to the
+list of clocks required.
 
-Chen Zhong (2):
-  clk: mediatek: add the option for determining PLL source clock
-  clk: mediatek: add clocks dt-bindings required header for MT7622 SoC
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Sean Wang (2):
-  dt-bindings: clock: mediatek: document clk bindings for MediaTek
-    MT7622 SoC
-  clk: mediatek: add clock support for MT7622 SoC
-
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |   1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt      |  22 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,hifsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |   1 +
- .../bindings/arm/mediatek/mediatek,pciesys.txt     |  22 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |   1 +
- .../bindings/arm/mediatek/mediatek,sgmiisys.txt    |  22 +
- .../bindings/arm/mediatek/mediatek,ssusbsys.txt    |  22 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |   1 +
- drivers/clk/mediatek/Kconfig                       |  30 +
- drivers/clk/mediatek/Makefile                      |   4 +
- drivers/clk/mediatek/clk-mt7622-aud.c              | 195 ++++++
- drivers/clk/mediatek/clk-mt7622-eth.c              | 156 +++++
- drivers/clk/mediatek/clk-mt7622-hif.c              | 169 +++++
- drivers/clk/mediatek/clk-mt7622.c                  | 780 +++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h                     |   1 +
- drivers/clk/mediatek/clk-pll.c                     |   5 +-
- include/dt-bindings/clock/mt7622-clk.h             | 289 ++++++++
- 19 files changed, 1722 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
- create mode 100644 drivers/clk/mediatek/clk-mt7622-aud.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622-eth.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622-hif.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622.c
- create mode 100644 include/dt-bindings/clock/mt7622-clk.h
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 92441086caba..46df3b78ae9e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -41,14 +41,17 @@ CEC. It is one end of the pipeline.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun5i-a10s-hdmi
++    * allwinner,sun6i-a31-hdmi
+   - reg: base address and size of memory-mapped region
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the HDMI encoder
+     * ahb: the HDMI interface clock
+     * mod: the HDMI module clock
++    * ddc: the HDMI ddc clock (A31 only)
+     * pll-0: the first video PLL
+     * pll-1: the second video PLL
+   - clock-names: the clock names mentioned above
++  - resets: phandle to the reset control for the HDMI encoder (A31 only)
+   - dmas: phandles to the DMA channels used by the HDMI encoder
+     * ddc-tx: The channel for DDC transmission
+     * ddc-rx: The channel for DDC reception
 -- 
-2.7.4
+2.14.2
