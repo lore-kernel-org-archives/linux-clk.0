@@ -1,46 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:55:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH v5 5/7] clk: at91: clk-generated: make gclk determine
- audio_pll rate
-Message-ID: <20170901225520.GG21656@codeaurora.org>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
- <600ed1e3623477c8083c6c4fa16299e33f7b76a9.1502346448.git-series.quentin.schulz@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <600ed1e3623477c8083c6c4fa16299e33f7b76a9.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50817 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751035AbdI2HdH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Sep 2017 03:33:07 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 8/9] drivers: clk: samsung: Fix m2m scaler clock on
+ Exynos542x
+Date: Fri, 29 Sep 2017 09:32:53 +0200
+Message-id: <1506670374-15689-9-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+References: <1506670374-15689-1-git-send-email-m.szyprowski@samsung.com>
+        <CGME20170929073304eucas1p2825d0ccd64de3b39409b6767660b5543@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Quentin Schulz wrote:
-> This allows gclk to determine audio_pll rate and set the parent rate
-> accordingly.
-> 
-> However, there are multiple children clocks that could technically
-> change the rate of audio_pll (via gck). With the rate locking, the first
-> consumer to enable the clock will be the one definitely setting the rate
-> of the clock.
-> 
-> Since audio IPs are most likely to request the same rate, we enforce
-> that the only clks able to modify gck rate are those of audio IPs.
-> 
-> To remain consistent, we deny other clocks to be children of audio_pll.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Applied to clk-next
+TOP "aclk400_mscl" clock should be kept enabled all the time to allow
+proper access to power management control for MSC power domain and
+devices that are a part of it. This change is required for scaler to
+work properly after domain power on/off sequence.
 
+Fixes: 318fa46cc60d ("clk/samsung: exynos542x: mark some clocks as critical")
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 25601967d1cd..038701a2af4c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -998,7 +998,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+ 			GATE_BUS_TOP, 16, 0, 0),
+ 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
+-			GATE_BUS_TOP, 17, 0, 0),
++			GATE_BUS_TOP, 17, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
+ 			GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
