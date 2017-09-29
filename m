@@ -1,64 +1,85 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] clk: ti: dra7xx: Reset the mcasp3_ahclkx_mux clock value
-To: Tero Kristo <t-kristo@ti.com>, <sboyd@codeaurora.org>
-References: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
- <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <46878cd0-9f7c-dc34-e230-8c4a11bcb096@ti.com>
-Date: Wed, 6 Sep 2017 18:59:46 +0530
-MIME-Version: 1.0
-In-Reply-To: <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 09/14] regmap: add iopoll-like polling macro for regmap_field
+Date: Fri, 29 Sep 2017 16:23:01 +0800
+Message-Id: <20170929082306.16193-10-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds a macro regmap_field_read_poll_timeout that works
+similar to the readx_poll_timeout defined in linux/iopoll.h, except
+that this can also return the error value returned by a failed
+regmap_field_read.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ include/linux/regmap.h | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-On Wednesday 06 September 2017 05:12 PM, Tero Kristo wrote:
-> On 06/09/17 13:36, Keerthy wrote:
->> Reset the mcasp3_ahclkx_mux to abe_24m_fclk. This is needed
->> in case of kexec where the reset values might be wiped off.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> 
-> Why not do this in DT with the assigned-clock-xyz properties available?
-
-Works for me. I will send a v2 with your suggested-by.
-
-Thanks,
-Keerthy
-
-> 
-> -Tero
-> 
->> ---
->>   drivers/clk/ti/clk-7xx.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
->> index 9fd6043..2c3a36c 100644
->> --- a/drivers/clk/ti/clk-7xx.c
->> +++ b/drivers/clk/ti/clk-7xx.c
->> @@ -312,7 +312,7 @@
->>   int __init dra7xx_dt_clk_init(void)
->>   {
->>       int rc;
->> -    struct clk *dpll_ck, *hdcp_ck;
->> +    struct clk *dpll_ck, *hdcp_ck, *mcasp3_ahclkx_ck, *abe_ck;
->>         ti_dt_clocks_register(dra7xx_clks);
->>   @@ -338,5 +338,12 @@ int __init dra7xx_dt_clk_init(void)
->>       if (rc)
->>           pr_err("%s: failed to set dss_deshdcp_clk\n", __func__);
->>   +    mcasp3_ahclkx_ck = clk_get_sys(NULL, "mcasp3_ahclkx_mux");
->> +    abe_ck = clk_get_sys(NULL, "abe_24m_fclk");
->> +    rc = clk_set_parent(mcasp3_ahclkx_ck, abe_ck);
->> +    if (rc)
->> +        pr_err("%s: failed to set parent for mcasp3_ahclkx_mux\n",
->> +               __func__);
->> +
->>       return rc;
->>   }
->>
-> 
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 978abfbac617..93a4663d7acb 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -139,6 +139,45 @@ struct reg_sequence {
+ 	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
+ })
+ 
++/**
++ * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
++ *
++ * @field: Regmap field to read from
++ * @val: Unsigned integer variable to read the value into
++ * @cond: Break condition (usually involving @val)
++ * @sleep_us: Maximum time to sleep between reads in us (0
++ *            tight-loops).  Should be less than ~20ms since usleep_range
++ *            is used (see Documentation/timers/timers-howto.txt).
++ * @timeout_us: Timeout in us, 0 means never timeout
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_field_read
++ * error return value in case of a error read. In the two former cases,
++ * the last read value at @addr is stored in @val. Must not be called
++ * from atomic context if sleep_us or timeout_us are used.
++ *
++ * This is modelled after the readx_poll_timeout macros in linux/iopoll.h.
++ */
++#define regmap_field_read_poll_timeout(field, val, cond, sleep_us, timeout_us) \
++({ \
++	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
++	int pollret; \
++	might_sleep_if(sleep_us); \
++	for (;;) { \
++		pollret = regmap_field_read((field), &(val)); \
++		if (pollret) \
++			break; \
++		if (cond) \
++			break; \
++		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
++			pollret = regmap_field_read((field), &(val)); \
++			break; \
++		} \
++		if (sleep_us) \
++			usleep_range((sleep_us >> 2) + 1, sleep_us); \
++	} \
++	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
++})
++
+ #ifdef CONFIG_REGMAP
+ 
+ enum regmap_endian {
+-- 
+2.14.2
