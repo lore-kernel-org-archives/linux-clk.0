@@ -1,72 +1,116 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae
-	<inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <be61a74a-55bd-53cf-20c6-49d3f91d944a@samsung.com>
-Date: Tue, 26 Sep 2017 12:04:24 +0200
-MIME-version: 1.0
-In-reply-to: <150483237153.48525.1363518996437790191@resonance>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
-	<1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-	<150483237153.48525.1363518996437790191@resonance>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 13/14] ARM: dts: sun6i: Add device node for HDMI controller
+Date: Fri, 29 Sep 2017 16:23:05 +0800
+Message-Id: <20170929082306.16193-14-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael,
+Now that we support the HDMI controller on the A31 SoC, we can add it
+to the device tree.
 
-On 2017-09-08 02:59, Michael Turquette wrote:
-> Hi Marek,
->
-> Quoting Marek Szyprowski (2017-08-21 01:04:58)
->> Dear All,
->>
->> This patchset adds runtime PM support to common clock framework. This is an
->> attempt to implement support for clock controllers, which belongs to a power
->> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
->> us to solve various freeze/crash issues related to power management.
->>
->> The main idea behind this patchset is to keep clock's controller power domain
->> enabled every time when at least one of its clock is enabled or access to its
->> registers is being made. Clock controller driver (clock provider) can
->> supply a struct device pointer, which is the used by clock core for tracking and
->> managing clock's controller runtime pm state. Each clk_prepare() operation will
->> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
->> will do pm_runtime_put() at the end.
->>
->> This runtime PM feature has been tested with Exynos4412 (not included in this
->> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
->> respective power domains and need special handling during power on/off
->> procedures. Till now it wasn't handled at all, what caused various problems.
->>
->> Patches for clocks drivers change the way the clock provider is initialized.
->> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
->> infrastructure is being used. This is needed to let driver to use runtime PM
->> feature and integrate with generic power domains. The side-effect of this change
->> is a delay in clock provider registeration during system boot, so early
->> initialized drivers might get EPROBEDEFER error when requesting their clocks.
->> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
->> finally merged to v4.13-rc1 and now it is handled correctly.
->>
->> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13-rc1.
-> Patches look good to me. It's too late for the v4.14 PR, but I'll merge
-> this to clk-next after -rc1 drops.
+This adds a device node for the HDMI controller, and the of_graph nodes
+connecting it to the 2 TCONs.
 
-Gentle ping.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun6i-a31.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-v4.14-rc2 has been released yesterday. Is there a chance to get this 
-patchset merged
-to clk-next soon? It definitely needs some time for testing in 
-linux-next and now it
-is the best time for that...
-
-Best regards
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index 93209cda28db..48b2382a18a9 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -289,6 +289,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon0_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon0>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -331,6 +337,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -411,6 +423,49 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		hdmi: hdmi@01c16000 {
++			compatible = "allwinner,sun6i-a31-hdmi";
++			reg = <0x01c16000 0x1000>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_AHB1_HDMI>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_PLL_VIDEO0_2X>,
++				 <&ccu CLK_PLL_VIDEO1_2X>;
++			clock-names = "ahb", "mod", "ddc", "pll-0", "pll-1";
++			resets = <&ccu RST_AHB1_HDMI>;
++			reset-names = "ahb";
++			dma-names = "ddc-tx", "ddc-rx", "audio-tx";
++			dmas = <&dma 13>, <&dma 13>, <&dma 14>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_out_hdmi>;
++					};
++
++					hdmi_in_tcon1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		usb_otg: usb@01c19000 {
+ 			compatible = "allwinner,sun6i-a31-musb";
+ 			reg = <0x01c19000 0x0400>;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.14.2
