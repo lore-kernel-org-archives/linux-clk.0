@@ -1,118 +1,109 @@
-Return-Path: <Alexey.Brodkin@synopsys.com>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "robh@kernel.org" <robh@kernel.org>,
-	Vineet Gupta <Vineet.Gupta1@synopsys.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>
-Subject: Re: Setting CPU clock frequency on early boot
-Date: Wed, 6 Sep 2017 13:51:22 +0000
-Message-ID: <1504705881.3829.19.camel@synopsys.com>
-References: <1504625867.32565.34.camel@synopsys.com>
-	 <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
-	 <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
-In-Reply-To: <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 05/14] drm/sun4i: hdmi: Disable clks in bind function error path and unbind function
+Date: Fri, 29 Sep 2017 16:22:57 +0800
+Message-Id: <20170929082306.16193-6-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVmluZWV0LCBSb2IsDQoNCk9uIFR1ZSwgMjAxNy0wOS0wNSBhdCAxNjo0MCAtMDcwMCwgVmlu
-ZWV0IEd1cHRhIHdyb3RlOg0KPiBPbiAwOS8wNS8yMDE3IDAzOjA0IFBNLCBSb2IgSGVycmluZyB3
-cm90ZToNCj4gPiANCj4gPiBPbiBUdWUsIFNlcCA1LCAyMDE3IGF0IDEwOjM3IEFNLCBBbGV4ZXkg
-QnJvZGtpbg0KPiA+IDxBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+ID4g
-DQo+ID4gPiBIZWxsbywNCj4gPiA+IA0KPiA+ID4gSSdkIGxpa2UgdG8gZ2V0IHNvbWUgZmVlZGJh
-Y2sgb24gb3VyIGlkZWEgYXMgd2VsbCBhcyBjaGVjaw0KPiA+ID4gaWYgc29tZWJvZHkgZmFjZXMg
-c2ltaWxhciBzaXR1YXRpb25zIGFuZCBpZiBzbyB3aGF0IHdvdWxkIGJlIHRoZSBiZXN0DQo+ID4g
-PiB3YXkgdG8gaW1wbGVtZW50IHNvbWUgZ2VuZXJpYyBzb2x1dGlvbiB0aGF0IHN1aXRzIGV2ZXJ5
-b25lLg0KPiA+ID4gDQo+ID4gPiBTbyB0aGF0J3Mgb3VyIHByb2JsZW06DQo+ID4gPiAxLiBPbiBw
-b3dlci1vbiBoYXJkd2FyZSBtaWdodCBzdGFydCBjbG9ja2luZyBDUFUgd2l0aCBlaXRoZXINCj4g
-PiA+IMKgwqDCoMKgdG9vIGhpZ2ggZnJlcXVlbmN5IChzdWNoIHRoYXQgQ1BVIG1heSBnZXQgc3R1
-Y2sgYXQgc29tZSBwb2ludCkNCj4gPiA+IMKgwqDCoMKgb3IgdG9vIGxvdyBmcmVxdWVuY3kuDQo+
-ID4gPiANCj4gPiA+IMKgwqDCoMKgVGhhdCBhbGwgc291bmRzIHN0dXBpZCBidXQgbGV0IG1lIGVs
-YWJvcmF0ZSBhIGJpdCBoZXJlLg0KPiA+ID4gwqDCoMKgwqBJJ20gdGFsa2luZyBhYm91dCBGUEdB
-LWJhc2VkIGRldmJvYXJkcyBmaXJtd2FyZSBmb3Igd2hpY2gNCj4gPiA+IMKgwqDCoMKgKGhlcmUg
-SSBtZWFuIGp1c3QgaW1hZ2UgbG9hZGVkIGluIEZQR0Egd2l0aCBDUFUgaW1wbGVtZW50YXRpb24N
-Cj4gPiA+IMKgwqDCoMKgYnV0IG5vdCBzb21lIHNvZnR3YXJlIHlldCkgbWlnaHQgbm90IGJlIHN0
-YWJsZSBvciBiZSBldmVuIGV4cGVyaW1lbnRhbC4NCj4gPiA+IA0KPiA+ID4gwqDCoMKgwqBGb3Ig
-ZXhhbXBsZSB3ZSBtYXkgZGVhbCB3aXRoIGR1YWwtY29yZSBvciBxdWFkLWNvcmUgZGVzaWducy4N
-Cj4gPiA+IMKgwqDCoMKgRm9ybWVyIG1pZ2h0IGJlIE9LIHJ1bm5pbmcgQDEwME1IeiBhbmQgbGF0
-dGVyIGlzIG9ubHkgdXNhYmxlDQo+ID4gPiDCoMKgwqDCoEA3NU1IeiBhbmQgbG93ZXIuIFRoZSBz
-aW1wbGVzdCBzb2x1dGlvbiBtaWdodCBiZSB0byB1c2Ugc29tZSBzYWZlDQo+ID4gPiDCoMKgwqDC
-oHZhbHVlIGJlZm9yZSBzb21ldGhpbmcgbGlrZSBDUFVmcmVxIGtpY2tzIGluLiBCdXQgd2UgZG9u
-J3QgeWV0IGhhdmUNCj4gPiA+IMKgwqDCoMKgQ1BVZnJlcSBmb3IgQVJDICh3ZSBkbyBwbGFuIHRv
-IGdldCBpdCB3b3JraW5nIHNvbWV0aW1lIHNvb24pDQo+IA0KPiBCdXQgZXZlbiBpZiB3ZSBoYWQg
-Y3B1ZnJlcSBkcml2ZXIgZ29pbmcgLSBJIGRvbid0IHRoaW5rIGl0IHdvdWxkIGJlIHVzYWJsZSBm
-b3LCoA0KPiBkb2luZyBsYXJnZSBmcmVxIHN3aXRjaGVzLCBzaW5jZSBpbiBjdXJyZW50IGltcGxl
-bWVudGF0aW9ucyBvZiBTb0NzIChvciBmcGdhKSwgdGhlwqANCj4gY2xrL3BsbCBldGMgZHJpdmlu
-ZyBjb3JlIChhbmQgYWxsIHRpbWVycyBldGMpIGFyZSBub3QgZml4ZWQgbGlrZSBzYXkgQVJNLiBB
-bmQgYXPCoA0KPiBkaXNjdXNzZWQgYmVmb3JlIChhbmQgcG9pbnRlZCB0byBieSB0Z2x4KSwgdGlt
-ZXIgc3Vic3lzIGNhbid0IHRvbGVyYXRlIChvbsKgDQo+IHB1cnBvc2UpIHN1Y2ggbGFyZ2UgZHJp
-ZnRzLg0KDQpFc3NlbnRpYWxseSBjcHVmcmVxIG9ubHkgbWFrZXMgc2Vuc2UgZm9yICJjb21wYXRp
-YmxlIiBzeXN0ZW1zIGFuZCB1bmZvcnR1bmF0ZWx5DQptb3N0IG9mIG91ciBjdXJyZW50IGJvYXJk
-cyBhcmUgbm90IGNhcGFibGUgZHVlIHRvIG1pc3NpbmcgY29uc3RhbnQgW2RlY291cGxlZCBmcm9t
-DQpDUFUgZnJlcXVlbmN5XSBjbG9jayBzb3VyY2UuIEJ1dCBsb29raW5nIGZvcndhcmQgd2UgYXJl
-IHBsYW5uaW5nIHRvIGltcHJvdmUgb24gdGhhdA0Kc28gdGhhdCBob3BlZnVsbHkgZXZlbiBvdXIg
-RlBHQS1iYXNlZCBib2FyZHMgd2lsbCBiZSB1c2FibGUgd2l0aCBjcHVmcmVxLg0KDQo+ID4gPiB3
-aGljaA0KPiA+ID4gwqDCoMKgwqBtZWFucyBzaW1wbGUgY2hhbmdlIG9mIENQVSBmcmVxdWVuY3kg
-b25jZSB0aW1lLWtlZXBpbmcgaW5mcmFzdHJ1Y3R1cmUNCj4gPiA+IMKgwqDCoMKgd2FzIGJyb3Vn
-aHQtdXAgaXMgbm90IGFuIG9wdGlvbi4uLiBJLmUuIHdlJ2xsIGVuZCB1cCB3aXRoIHRoZSBzeXN0
-ZW0gcnVubmluZw0KPiA+ID4gwqDCoMKgwqBtdWNoIHNsb3dlciBjb21wYXJlZCB3aGF0IGNvdWxk
-IGhhdmUgYmVlbiBwb3NzaWJsZS4NCj4gPiA+IA0KPiA+ID4gMi4gVXAgdW50aWwgbm93IHdlIHVz
-ZWQgdG8gZG8gZGlydHkgaGFja3MgaW4gZWFybHkgcGxhdGZvcm0gaW5pdCBjb2RlLg0KPiA+ID4g
-wqDCoMKgwqBOYW1lbHkgKHNlZSBheHMxMDNfZWFybHlfaW5pdCgpIGluIGFyY2gvYXJjL3BsYXQt
-YXhzMTB4L2F4czEweC5jKToNCj4gPiA+IMKgwqDCoMKgwqAxKSBSZWFkIENQVSdzICJjbG9jay1m
-cmVxdWVuY3kiIGZyb20gLmR0YiAocmVtZW1iZXIgd2UncmUgb24gdmVyeSBlYXJseQ0KPiA+ID4g
-wqDCoMKgwqDCoMKgwqDCoGJvb3Qgc3RhZ2Ugc3RpbGwgc28gbm8gZXhwYW5kZWQgRGV2VHJlZSB5
-ZXQgZXhpc3RzKS4NCj4gPiA+IMKgwqDCoMKgwqAyKSBDaGVjayBob3cgbWFueSBjb3JlcyB3ZSBo
-YXZlIGFuZCB3aGljaCBmcmVxIGlzIHVzYWJsZQ0KPiA+ID4gwqDCoMKgwqDCoDMpIFVwZGF0ZSBQ
-TEwgc2V0dGluZ3MgcmlnaHQgaW4gcGxhY2UgaWYgbmV3IGZyZXEgIT0gZXhpc3RpbmcgaW4gUExM
-Lg0KPiA+ID4gDQo+ID4gPiDCoMKgwqDCoEV2ZW4gdGhvdWdoIGl0IGlzIHByb3ZlbiB0byB3b3Jr
-IGJ1dCB3aXRoIG1vcmUgcGxhdGZvcm1zIGluIHRoZSBwaXBlbGluZQ0KPiA+ID4gwqDCoMKgwqB3
-ZSdsbCBuZWVkIHRvIGNvcHktcGFzdGUgcHJldHR5IG11Y2ggdGhlIHNhbWUgc3R1ZmYgYWNyb3Nz
-IGFsbCBhZmZlY3RlZA0KPiA+ID4gwqDCoMKgwqBwbGF0cy4gV2hpY2ggaXMgbm90IG5pY2UuDQo+
-ID4gPiANCj4gPiA+IMKgwqDCoMKgTW9yZW92ZXIgYmFjayBpbiB0aGUgZGF5IHdlIGRpZG4ndCBo
-YXZlIGEgcHJvcGVyIGNsayBkcml2ZXIgZm9yIENQVSdzIFBMTC4NCj4gPiA+IMKgwqDCoMKgVGh1
-cyBhY3Rpbmcgb24gUExMIHJlZ2lzdGVycyByaWdodCBpbiBwbGFjZSB3YXMgdGhlIG9ubHkgdGhp
-bmcgd2Ugd2VyZSBhYmxlDQo+ID4gPiDCoMKgwqDCoHRvIGRvLiBOb3cgd2l0aCBpbnRyb2R1Y3Rp
-b24gb2Ygbm9ybWFsIGNsayBkcml2ZXINCj4gPiA+IMKgwqDCoMKgKHNlZSBkcml2ZXJzL2Nsay9h
-eHMxMHgvcGxsX2Nsb2NrLmMgaW4gbGludXgtbmV4dCkgd2UnZCBsaWtlIHRvIHV0aWxpemUNCj4g
-PiA+IMKgwqDCoMKgaXQgYW5kIGhhdmUgYSBjbGVhbmVyIGFuZCBtb3JlIHVuaXZlcnNhbCBzb2x1
-dGlvbiB0byB0aGUgcHJvYmxlbS4NCj4gPiA+IA0KPiA+ID4gwqDCoMKgwqBUaGF0J3MgaG93IGl0
-IGNvdWxkIGJlIGRvbmUgLSBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJs
-P3U9aHR0cC0zQV9fcGF0Y2h3b3JrLm96bGFicy5vcmdfcGF0Y2hfODAxMjQwXyZkPUR3SUNBZyZj
-PURQTDZfWF82SmtYRg0KPiA+ID4geDdBWFdxQjB0ZyZyPWMxNFlTLWNILQ0KPiA+ID4ga2RoVE9X
-ODlLb3pGaEJ0QkpnczF6WHNjWm9qRVpRMFRIcyZtPXd1VWNjZVk4Q3o1RWhWa2xXTEFnajdSelUz
-cnZwYW51anZRM3FUSkswR3cmcz1ONUlCanFfZUN5T2ZfR1JrWnNrenFHaGN6QlBUYnhMSldfTVVm
-YXVLdnVBJmU9DQo+ID4gPiDCoMKgwqDCoEJhc2ljYWxseSBpbiBhcmNoaXRlY3R1cmUncyB0aW1l
-X2luaXQoKSB3ZSBjaGVjayBpZiB0aGVyZSdzIGV4cGxpY2l0bHkNCj4gPiA+IMKgwqDCoMKgc3Bl
-Y2lmaWVkICJjbG9jay1mcmVxdWVuY3kiIHBhcmFtZXRlciBpbiBjcHUncyBub2RlIGluIERldmlj
-ZSBUcmVlIGFuZA0KPiA+ID4gwqDCoMKgwqBpZiB0aGVyZSdzIG9uZSB3ZSBzZXQgaXQgdmlhIGp1
-c3QgaW5zdGFudGlhdGVkIGNsayBkcml2ZXIuDQo+ID4gVGhlIHBhdGNoIGxvb2tzIGdlbmVyYWxs
-eSBva2F5LiBJJ2QgbW92ZSBhbGwgdGhlIGxvZ2ljIHRvIHRoZSBjbG9jaw0KPiA+IGRyaXZlciB1
-bmxlc3MgcGVyaGFwcyBob3cgdG8gc2V0IHRoZSBjcHUgZnJlcSBpcyBkZWZpbmVkIGJ5IHRoZQ0K
-PiA+IGFyY2hpdGVjdHVyZS4NCg0KWWVhaCwgdGhhdCdzIGFuIGludGVyZXN0aW5nIHF1ZXN0aW9u
-LiBXZSBtYXkgaW5kZWVkIG1vdmUgbW9yZSBzbWFydHMgdG8gdGhlIGNsb2NrIGRyaXZlcg0KYnV0
-Og0KwqAxLiBXZSdsbCBoYXZlIGR1cGxpY2F0ZSBjb2RlIGluIGRpZmZlcmVudCBjbG9jayBkcml2
-ZXJzLiBFdmVuIHRvZGF5IHRoYXQga2luZCBvZiBjbG9jaw0KwqAgwqAgc2V0dXAgaXMgYXBwbGlj
-YWJsZSB0byBBWFMxMHggYW5kIEhTREsgcGxhdGZvcm1zIChhbmQgdGhleSB1c2UgZGlmZmVyZW50
-IGNsb2NrIGRyaXZlcnMpLg0KDQrCoDIuIFByaW50IG91dCBvZiBDUFUgZnJlcXVlbmN5IHdoaWNo
-IGlzIHVzZWQgZHVyaW5nIGJvb3QgcHJvY2VzcyBmb3IgdXMgaXMgaW1wb3J0YW50IGFzIHdlbGwN
-CsKgIMKgIGVzcGVjaWFsbHkgZHVyaW5nIGJyaW5nLXVwIG9mIG5ldyBIVy4NCg0KwqAzLiBJZiB0
-aGVyZSdzIG5vIGRlZGljYXRlZCAiY2xvY2stZnJlcXVlbmN5IiBwYXJhbWV0ZXIgaW4gQ1BVIG5v
-ZGUgd2Ugd29uJ3QNCsKgIMKgIGNoYW5nZSBhbnl0aGluZyBzbyB0aGF0IG5vbi1hZmZlY3RlZCBw
-bGF0Zm9ybXMgd2lsbCBsaXZlIGFzIHRoZXkgdXNlZCB0by4NCg0KVGhhdCBzYWlkIElNSE8gcHJv
-cG9zZWQgaW1wbGVtZW50YXRpb24gaXMgd2hhdCB3ZSB3YW50IHRvIGtlcCBmb3Igbm93Lg0KDQo+
-IEFsc28gbm90ZSB0aGF0IHRoaXMgY29kZSBpcyB1c2luZyBhIG5ldyAvIGFkaG9jIERUIGJpbmRp
-bmcgY3B1LWZyZXEgaW4gY291IG5vZGUgdG/CoA0KPiBkbyB0aGUgb3ZlcnJpZGUgLSBpcyB0aGF0
-IGFjY2VwdGFibGUgPw0KDQpJIHRoaW5rIHdlJ2xsIHN3aXRjaCB0byBtb3JlIGNvbW1vbiAiY2xv
-Y2stZnJlcXVlbmN5IiBpbiB0aGUgbmV4dCByZXNwaW4uDQpJbmRlZWQgImNwdS1mcmVxIiBtaWdo
-dCBiZSBhIGJpdCBtaXNsZWFkaW5nLg0KDQpBbHNvIEZXSVcgb25lIE1JUFMgcGxhdGZvcm0gdXNl
-cyBzb21ldGhpbmcgc2ltaWxhcg0KKGV2ZW4gdGhvdWdoIHRoZWlyIHByb3BlcnR5IG5hbWUgaXMg
-bm90IHN0YW5kYXJkIGJ1dCAibWlwcy1ocHQtZnJlcXVlbmN5IiksDQpzZWXCoGh0dHA6Ly9lbGl4
-aXIuZnJlZS1lbGVjdHJvbnMuY29tL2xpbnV4L2xhdGVzdC9zb3VyY2UvYXJjaC9taXBzL2Jvb3Qv
-ZHRzL2JyY20vYmNtMzM2OC5kdHNpI0wxMA0KaHR0cDovL2VsaXhpci5mcmVlLWVsZWN0cm9ucy5j
-b20vbGludXgvbGF0ZXN0L3NvdXJjZS9hcmNoL21pcHMvYm1pcHMvc2V0dXAuYyNMMTQxLg0KDQot
-QWxleGV5
+The HDMI driver enables the bus and mod clocks in the bind function, but
+does not disable them if it then bails our due to any errors. Neither
+does it disable the clocks in the unbind function.
+
+Fix this by adding a proper error path to the bind function, and
+clk_disable_unprepare calls to the unbind function.
+
+Also rename the err_cleanup_connector label to err_cleanup_encoder,
+since it is the encoder that gets cleaned up.
+
+Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 9ea6cd5a1370..3cf1a6932fac 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -302,26 +302,29 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	hdmi->mod_clk = devm_clk_get(dev, "mod");
+ 	if (IS_ERR(hdmi->mod_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI mod clock\n");
+-		return PTR_ERR(hdmi->mod_clk);
++		ret = PTR_ERR(hdmi->mod_clk);
++		goto err_disable_bus_clk;
+ 	}
+ 	clk_prepare_enable(hdmi->mod_clk);
+ 
+ 	hdmi->pll0_clk = devm_clk_get(dev, "pll-0");
+ 	if (IS_ERR(hdmi->pll0_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI PLL 0 clock\n");
+-		return PTR_ERR(hdmi->pll0_clk);
++		ret = PTR_ERR(hdmi->pll0_clk);
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	hdmi->pll1_clk = devm_clk_get(dev, "pll-1");
+ 	if (IS_ERR(hdmi->pll1_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI PLL 1 clock\n");
+-		return PTR_ERR(hdmi->pll1_clk);
++		ret = PTR_ERR(hdmi->pll1_clk);
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	ret = sun4i_tmds_create(hdmi);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the TMDS clock\n");
+-		return ret;
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	writel(SUN4I_HDMI_CTRL_ENABLE, hdmi->base + SUN4I_HDMI_CTRL_REG);
+@@ -362,7 +365,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	ret = sun4i_hdmi_i2c_create(dev, hdmi);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the HDMI I2C adapter\n");
+-		return ret;
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	drm_encoder_helper_add(&hdmi->encoder,
+@@ -422,6 +425,10 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	drm_encoder_cleanup(&hdmi->encoder);
+ err_del_i2c_adapter:
+ 	i2c_del_adapter(hdmi->i2c);
++err_disable_mod_clk:
++	clk_disable_unprepare(hdmi->mod_clk);
++err_disable_bus_clk:
++	clk_disable_unprepare(hdmi->bus_clk);
+ 	return ret;
+ }
+ 
+@@ -434,6 +441,8 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
+ 	drm_connector_cleanup(&hdmi->connector);
+ 	drm_encoder_cleanup(&hdmi->encoder);
+ 	i2c_del_adapter(hdmi->i2c);
++	clk_disable_unprepare(hdmi->mod_clk);
++	clk_disable_unprepare(hdmi->bus_clk);
+ }
+ 
+ static const struct component_ops sun4i_hdmi_ops = {
+-- 
+2.14.2
