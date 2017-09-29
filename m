@@ -1,81 +1,68 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <1506343255.30138.29.camel@aj.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
- <1506343255.30138.29.camel@aj.id.au>
-From: Joel Stanley <joel@jms.id.au>
-Date: Wed, 27 Sep 2017 16:13:30 +1000
-Message-ID: <CACPK8Xd8RQ4s1xMsSuxHgQRiHS6vDtxVTAxu8Ba3J3it45MC5g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 29 Sep 2017 10:46:58 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 01/14] clk: sunxi-ng: sun6i: Export video PLLs
+Message-ID: <20170929084658.la46onmwcibicd4b@flea>
+References: <20170929082306.16193-1-wens@csie.org>
+ <20170929082306.16193-2-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pxhgzwx355vzrns3"
+In-Reply-To: <20170929082306.16193-2-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 25, 2017 at 10:40 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
-> On Thu, 2017-09-21 at 13:56 +0930, Joel Stanley wrote:
 
->> +     /*
->> +      * Memory controller (M-PLL) PLL. This clock is configured by the
->> +      * bootloader, and is exposed to Linux as a read-only clock rate.
->> +      */
->> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
->> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
->
-> IIRC the calculation in aspeed_calc_pll() is appropriate for the AST2500, but
-> not the AST2400.
+--pxhgzwx355vzrns3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah ha. I knew there was a reason why I created an ast2400_calc_pll. I
-will add it back in in the previous patch so we can use it here.
+On Fri, Sep 29, 2017 at 08:22:53AM +0000, Chen-Yu Tsai wrote:
+> The 2x outputs of the 2 video PLL clocks are directly used by the
+> HDMI controller block.
+>=20
+> Export them so they can be referenced in the device tree.
+>=20
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
->> +     /* Video Engine (ECLK) mux and clock divider */
->> +     hw = clk_hw_register_mux(NULL, "eclk_mux",
->> +                     eclk_parents, ARRAY_SIZE(eclk_parents), 0,
->> +                     scu_base + ASPEED_CLK_SELECTION, 2, 2,
->> +                     0, &aspeed_clk_lock);
->> +     aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
->> +     hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
->> +                     scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
->
-> On the AST2500 it looks like this should start at bit 28 for 3 bits, not bit
+Applied, thanks!
+Maxime
 
-Good catch. Fixed in v3.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> 20. Separately, I'm not sure how to interpret the AST2400 datasheet here -
-> maybe it's similar but with different wording ("clock slow down" rather than
-> "divisor"?).
->
->> +                     div_table,
->
-> This doesn't seem to be correct. There's the problem of 0b000 and 0b001 mapping
-> the same value of 2 for the AST2500, whose table then increments in steps of 1.
-> The AST2400 mapping on the otherhand is multiples of 2 starting at 2, with no
-> inconsistency for 0b000 vs 0b001.
+--pxhgzwx355vzrns3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yep, we do use a different table for ast2400 vs ast2500. See
-ast2400_div_table vs ast2500_div_table.
+-----BEGIN PGP SIGNATURE-----
 
->
->> +                     &aspeed_clk_lock);
->> +     aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
->> +
->> +     /* P-Bus (BCLK) clock divider */
->> +     hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
->> +                     scu_base + ASPEED_CLK_SELECTION, 0, 2, 0,
->
-> Bit 0 in SCU08 is a 1-bit field "CPU/AHB clock dynamic slow down enable". BCLK
-> is actually in SCU*D*8, but (perhaps confusingly) documented immediately below
-> SCU*0*8.
+iQIcBAEBAgAGBQJZzgiCAAoJEBx+YmzsjxAgQ7MP/0TSc03krtRgkkhKG/FU7TYH
+QrqlRF+fmCItse6NF02XQTMHjHzz9DD4xjbtOykSEAIu+wd3bjEF1UBORA81slgL
+j1SEbr4de2ic+UzR6aM6sl0/27jNC2lJhQR3nSEL+6TNkxh0tnLObo2NoBSRRExf
+H6EkD4dt0OYiA90LQ7OkoqiIcjmWMXryGMDbeFrxhrcHG+9j7ltfupfzz7a8nIYr
+lhXUUdoFH5+zzkU6GQoE2OhAHGHbRrerOWLnHu2HDGD5W6fRQU+EONdU31tGDYuZ
+cmqWosiGvC/F8Sa6DJ3rhC/cViPwr9VzHQ6bEah1i5MoB/ykP1Hbe0tzQvm5iblI
+JjQZuqqu9ryNQITyFm/fo0rXy1SiCi/YJs69fHj9dURxdtZopw4zdKAERblSiXKe
+qfpbTH6FNHH0yv1bpKz7WVOC3VFTaj69zEsK9xOmmNNgLbrPzMDmUAmWjBZmubk3
+hGe3DdFRL1ng3qrbklTQNbH7unw/ODfLpkgQ11zONhI6y0Q7rDjJAygT4gEkPamM
+qciNUra8kf8SLcoCxdH+N/gdL3FaFs6ktAw64w3mnwidkQmXXaZaXLfMsTHQU8IH
+LEdKH9pVUmUIW7XJyr9sTQb9HaM1+Dv8ERuM+db+OeKyYQi0ZiwKsGnSPQg/mFaQ
+nT9/YDRjhe0yptAdqNyw
+=lyjP
+-----END PGP SIGNATURE-----
 
-Good catch. Fixed in v3.
-
-Cheers,
-
-Joel
+--pxhgzwx355vzrns3--
