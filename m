@@ -1,44 +1,77 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Leo Yan <leo.yan@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] clk: hisilicon: Delete an error message for a failed memory
- allocation in hisi_register_clkgate_sep()
-Message-ID: <920f1461-2c2a-430f-28ef-18af18788889@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 22:05:59 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 11/14] drm/sun4i: hdmi: Add A31 specific DDC register definitions
+Date: Fri, 29 Sep 2017 16:23:03 +0800
+Message-Id: <20170929082306.16193-12-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 22:00:05 +0200
+The DDC block for the HDMI controller is different on the A31.
 
-Omit an extra message for a memory allocation failure in this function.
+This patch adds the register definitions.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/hisilicon/clkgate-separated.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
-index 7908bc3c9ec7..f028bcffe12c 100644
---- a/drivers/clk/hisilicon/clkgate-separated.c
-+++ b/drivers/clk/hisilicon/clkgate-separated.c
-@@ -105,10 +105,8 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
- 	struct clk_init_data init;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index b1124a8f9f05..da4ea9efc6fa 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -153,6 +153,37 @@
  
- 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
--	if (!sclk) {
--		pr_err("%s: fail to allocate separated gated clk\n", __func__);
-+	if (!sclk)
- 		return ERR_PTR(-ENOMEM);
--	}
+ #define SUN4I_HDMI_DDC_FIFO_SIZE	16
  
- 	init.name = name;
- 	init.ops = &clkgate_separated_ops;
++/* A31 specific */
++#define SUN6I_HDMI_DDC_CTRL_REG		0x500
++#define SUN6I_HDMI_DDC_CTRL_RESET		BIT(31)
++#define SUN6I_HDMI_DDC_CTRL_START_CMD		BIT(27)
++#define SUN6I_HDMI_DDC_CTRL_SDA_ENABLE		BIT(6)
++#define SUN6I_HDMI_DDC_CTRL_SCL_ENABLE		BIT(4)
++#define SUN6I_HDMI_DDC_CTRL_ENABLE		BIT(0)
++
++#define SUN6I_HDMI_DDC_CMD_REG		0x508
++#define SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count)	((count) << 16)
++/* command types in lower 3 bits are the same as sun4i */
++
++#define SUN6I_HDMI_DDC_ADDR_REG		0x50c
++#define SUN6I_HDMI_DDC_ADDR_SEGMENT(seg)	(((seg) & 0xff) << 24)
++#define SUN6I_HDMI_DDC_ADDR_EDDC(addr)		(((addr) & 0xff) << 16)
++#define SUN6I_HDMI_DDC_ADDR_OFFSET(off)		(((off) & 0xff) << 8)
++#define SUN6I_HDMI_DDC_ADDR_SLAVE(addr)		(((addr) & 0xff) << 1)
++
++#define SUN6I_HDMI_DDC_INT_STATUS_REG	0x514
++#define SUN6I_HDMI_DDC_INT_STATUS_TIMEOUT	BIT(8)
++/* lower 8 bits are the same as sun4i */
++
++#define SUN6I_HDMI_DDC_FIFO_CTRL_REG	0x518
++#define SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR		BIT(15)
++/* lower 9 bits are the same as sun4i */
++
++#define SUN6I_HDMI_DDC_CLK_REG		0x520
++/* DDC CLK bit fields are the same, but the formula is not */
++
++#define SUN6I_HDMI_DDC_FIFO_DATA_REG	0x580
++
+ enum sun4i_hdmi_pkt_type {
+ 	SUN4I_HDMI_PKT_AVI = 2,
+ 	SUN4I_HDMI_PKT_END = 15,
 -- 
-2.14.1
+2.14.2
