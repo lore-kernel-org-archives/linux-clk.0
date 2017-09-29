@@ -1,85 +1,93 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 08/13] regmap: add iopoll-like polling macro for regmap_field
-Date: Tue, 26 Sep 2017 14:59:14 +0800
-Message-Id: <20170926065919.24446-9-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 29 Sep 2017 12:19:16 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, LKML
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory
+ allocation in three functions
+Message-ID: <20170929091915.GL6290@tbergstrom-lnx.Nvidia.com>
+References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a macro regmap_field_read_poll_timeout that works
-similar to the readx_poll_timeout defined in linux/iopoll.h, except
-that this can also return the error value returned by a failed
-regmap_field_read.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- include/linux/regmap.h | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 978abfbac617..93a4663d7acb 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -139,6 +139,45 @@ struct reg_sequence {
- 	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
- })
- 
-+/**
-+ * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
-+ *
-+ * @field: Regmap field to read from
-+ * @val: Unsigned integer variable to read the value into
-+ * @cond: Break condition (usually involving @val)
-+ * @sleep_us: Maximum time to sleep between reads in us (0
-+ *            tight-loops).  Should be less than ~20ms since usleep_range
-+ *            is used (see Documentation/timers/timers-howto.txt).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_field_read
-+ * error return value in case of a error read. In the two former cases,
-+ * the last read value at @addr is stored in @val. Must not be called
-+ * from atomic context if sleep_us or timeout_us are used.
-+ *
-+ * This is modelled after the readx_poll_timeout macros in linux/iopoll.h.
-+ */
-+#define regmap_field_read_poll_timeout(field, val, cond, sleep_us, timeout_us) \
-+({ \
-+	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	int pollret; \
-+	might_sleep_if(sleep_us); \
-+	for (;;) { \
-+		pollret = regmap_field_read((field), &(val)); \
-+		if (pollret) \
-+			break; \
-+		if (cond) \
-+			break; \
-+		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-+			pollret = regmap_field_read((field), &(val)); \
-+			break; \
-+		} \
-+		if (sleep_us) \
-+			usleep_range((sleep_us >> 2) + 1, sleep_us); \
-+	} \
-+	pollret ?: ((cond) ? 0 : -ETIMEDOUT); \
-+})
-+
- #ifdef CONFIG_REGMAP
- 
- enum regmap_endian {
--- 
-2.14.1
+On Wed, Sep 27, 2017 at 06:53:10PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:40:34 +0200
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/clk/tegra/clk-audio-sync.c  | 4 +---
+>  drivers/clk/tegra/clk-divider.c     | 5 +----
+>  drivers/clk/tegra/clk-periph-gate.c | 4 +---
+>  3 files changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+> index 92d04ce2dee6..62a84c883dd4 100644
+> --- a/drivers/clk/tegra/clk-audio-sync.c
+> +++ b/drivers/clk/tegra/clk-audio-sync.c
+> @@ -62,10 +62,8 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+>  	struct clk *clk;
+>  
+>  	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
+> -	if (!sync) {
+> -		pr_err("%s: could not allocate sync source clk\n", __func__);
+> +	if (!sync)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	sync->rate = rate;
+>  	sync->max_rate = max_rate;
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee14773..5ee9423ccac2 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -156,11 +156,8 @@ struct clk *tegra_clk_register_divider(const char *name,
+>  	struct clk_init_data init;
+>  
+>  	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+> -	if (!divider) {
+> -		pr_err("%s: could not allocate fractional divider clk\n",
+> -		       __func__);
+> +	if (!divider)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	init.name = name;
+>  	init.ops = &tegra_clk_frac_div_ops;
+> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+> index 303ef32ee3f1..276cc4c59204 100644
+> --- a/drivers/clk/tegra/clk-periph-gate.c
+> +++ b/drivers/clk/tegra/clk-periph-gate.c
+> @@ -141,10 +141,8 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> -	if (!gate) {
+> -		pr_err("%s: could not allocate periph gate clk\n", __func__);
+> +	if (!gate)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	init.name = name;
+>  	init.flags = flags;
+> -- 
+> 2.14.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
