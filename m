@@ -1,104 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:25585 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755300AbdIGOrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Sep 2017 10:47:04 -0400
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de, broonie@kernel.org, lgirdwood@gmail.com,
-        patches.audio@intel.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-        harshapriya.n@intel.com,
-        Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
-        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Subject: [PATCH 1/6] ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
-Date: Thu,  7 Sep 2017 19:59:20 +0530
-Message-Id: <1504794565-19168-2-git-send-email-subhransu.s.prusty@intel.com>
-In-Reply-To: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
-References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 06/14] drm/sun4i: hdmi: create a regmap for later use
+Date: Fri, 29 Sep 2017 16:22:58 +0800
+Message-Id: <20170929082306.16193-7-wens@csie.org>
+In-Reply-To: <20170929082306.16193-1-wens@csie.org>
+References: <20170929082306.16193-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+The HDMI driver is written with readl/writel I/O to the registers.
+However, to support the A31 variant, which has a different layout
+for the DDC registers, it was recommended to use regfields to have
+a cleaner implementation. To use regfields, we need to create an
+underlying regmap.
 
-Set dma control ipc can be used to set the M/N divider, enable the clks. It
-takes different payload for different configuration. So modify the
-skl_dsp_set_dma_control API to take the size and node_id as argument.
+This patch only adds the regmap. It does not convert the existing
+driver accesses to use regmap.
 
-Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- sound/soc/intel/skylake/skl-messages.c | 23 ++++++++++++++---------
- sound/soc/intel/skylake/skl-topology.h |  4 ++--
- 2 files changed, 16 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  1 +
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
-index 89f70133c8e4..f637829833e6 100644
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -613,8 +613,10 @@ static void skl_setup_cpr_gateway_cfg(struct skl_sst *ctx,
- }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index 1457750988da..b95512ec8eb6 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -163,6 +163,7 @@ struct sun4i_hdmi {
+ 	struct device		*dev;
  
- #define DMA_CONTROL_ID 5
-+#define DMA_I2S_BLOB_SIZE 21
+ 	void __iomem		*base;
++	struct regmap		*regmap;
  
--int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+				u32 caps_size, u32 node_id)
+ 	/* Parent clocks */
+ 	struct clk		*bus_clk;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 3cf1a6932fac..5ab811cda00e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -22,6 +22,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regmap.h>
+ 
+ #include "sun4i_backend.h"
+ #include "sun4i_crtc.h"
+@@ -267,6 +268,13 @@ static const struct cec_pin_ops sun4i_hdmi_cec_pin_ops = {
+ };
+ #endif
+ 
++static const struct regmap_config sun4i_hdmi_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0x580,
++};
++
+ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 			   void *data)
  {
- 	struct skl_dma_control *dma_ctrl;
- 	struct skl_ipc_large_config_msg msg = {0};
-@@ -624,24 +626,27 @@ int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
- 	/*
- 	 * if blob size zero, then return
- 	 */
--	if (mconfig->formats_config.caps_size == 0)
-+	if (caps_size == 0)
- 		return 0;
+@@ -321,6 +329,13 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 		goto err_disable_mod_clk;
+ 	}
  
- 	msg.large_param_id = DMA_CONTROL_ID;
--	msg.param_data_size = sizeof(struct skl_dma_control) +
--				mconfig->formats_config.caps_size;
-+	msg.param_data_size = sizeof(struct skl_dma_control) + caps_size;
- 
- 	dma_ctrl = kzalloc(msg.param_data_size, GFP_KERNEL);
- 	if (dma_ctrl == NULL)
- 		return -ENOMEM;
- 
--	dma_ctrl->node_id = skl_get_node_id(ctx, mconfig);
-+	dma_ctrl->node_id = node_id;
- 
--	/* size in dwords */
--	dma_ctrl->config_length = mconfig->formats_config.caps_size / 4;
-+	/*
-+	 * NHLT blob may contain additional configs along with i2s blob.
-+	 * firmware expects only the i2s blob size as the config_length.
-+	 * So fix to i2s blob size.
-+	 * size in dwords.
-+	 */
-+	dma_ctrl->config_length = DMA_I2S_BLOB_SIZE;
- 
--	memcpy(dma_ctrl->config_data, mconfig->formats_config.caps,
--				mconfig->formats_config.caps_size);
-+	memcpy(dma_ctrl->config_data, caps, caps_size);
- 
- 	err = skl_ipc_set_large_config(&ctx->ipc, &msg, (u32 *)dma_ctrl);
- 
-diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
-index 2717db92036b..e11cc1fc0e43 100644
---- a/sound/soc/intel/skylake/skl-topology.h
-+++ b/sound/soc/intel/skylake/skl-topology.h
-@@ -455,8 +455,8 @@ static inline struct skl *get_skl_ctx(struct device *dev)
- 
- int skl_tplg_be_update_params(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params);
--int skl_dsp_set_dma_control(struct skl_sst *ctx,
--		struct skl_module_cfg *mconfig);
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+			u32 caps_size, u32 node_id);
- void skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params, int stream);
- int skl_tplg_init(struct snd_soc_platform *platform,
++	hdmi->regmap = devm_regmap_init_mmio(dev, hdmi->base,
++					     &sun4i_hdmi_regmap_config);
++	if (IS_ERR(hdmi->regmap)) {
++		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
++		return PTR_ERR(hdmi->regmap);
++	}
++
+ 	ret = sun4i_tmds_create(hdmi);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the TMDS clock\n");
 -- 
-1.9.1
-
+2.14.2
