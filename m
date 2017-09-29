@@ -1,5 +1,5 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:56:03 +0200
+Date: Fri, 29 Sep 2017 10:47:55 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Chen-Yu Tsai <wens@csie.org>
 Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
@@ -11,139 +11,34 @@ Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 03/13] drm/sun4i: tcon: Add support for demuxing TCON
- output on A31
-Message-ID: <20170926095603.c67y4rytydya7kjd@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-4-wens@csie.org>
+Subject: Re: [PATCH v3 02/14] clk: sunxi-ng: sun6i: Rename HDMI DDC clock to
+ avoid name collision
+Message-ID: <20170929084755.vsbqn4bq6z2n7c64@flea>
+References: <20170929082306.16193-1-wens@csie.org>
+ <20170929082306.16193-3-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fwfopzxho5wg6h5l"
-In-Reply-To: <20170926065919.24446-4-wens@csie.org>
+	protocol="application/pgp-signature"; boundary="xy6qbslaheqpye3t"
+In-Reply-To: <20170929082306.16193-3-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---fwfopzxho5wg6h5l
+--xy6qbslaheqpye3t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Sep 26, 2017 at 06:59:09AM +0000, Chen-Yu Tsai wrote:
-> On systems with 2 TCONs such as the A31, it is possible to demux the
-> output of the TCONs to one encoder.
+On Fri, Sep 29, 2017 at 08:22:54AM +0000, Chen-Yu Tsai wrote:
+> The HDMI DDC clock found in the CCU is the parent of the actual DDC
+> clock within the HDMI controller. That clock is also named "hdmi-ddc".
 >=20
-> Add support for this for the A31.
+> Rename the one in the CCU to "ddc". This makes more sense than renaming
+> the one in the HDMI controller to something else.
 >=20
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 61 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index e853dfe51389..770b843a6fa9 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -14,9 +14,12 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_encoder.h>
->  #include <drm/drm_modes.h>
->  #include <drm/drm_of.h>
-> =20
-> +#include <uapi/drm/drm_mode.h>
-> +
->  #include <linux/component.h>
->  #include <linux/ioport.h>
->  #include <linux/of_address.h>
-> @@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tc=
-on, bool enable)
->  }
->  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
-> =20
-> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
-> +{
-> +	struct sun4i_drv *drv =3D drm->dev_private;
-> +	struct sun4i_tcon *tcon;
-> +
-> +	list_for_each_entry(tcon, &drv->tcon_list, list)
-> +		if (tcon->id =3D=3D 0)
-> +			return tcon;
-> +
-> +	dev_warn(drm->dev,
-> +		 "TCON0 not found, display output muxing may not work\n");
-> +
-> +	return tcon;
-> +}
-> +
-> +static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
-> +{
-> +	struct sun4i_tcon *tcon =3D sun4i_get_first_tcon(encoder->dev);
-> +	int tcon_id =3D drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
-> +	u32 shift;
-> +
-> +	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
-> +			 encoder->name, encoder->crtc->name, tcon_id);
-> +
-> +	/* Only 2 TCONs */
-> +	if (tcon_id >=3D 2)
-> +		return -EINVAL;
-> +
-> +	switch (encoder->encoder_type) {
-> +	case DRM_MODE_ENCODER_TMDS:
-> +		/* HDMI */
-> +		shift =3D 8;
-> +		break;
-> +	case DRM_MODE_ENCODER_DSI:
-> +		/* No MIPI DSI on A31s */
-> +		if (of_device_is_compatible(tcon->dev->of_node,
-> +					    "allwinner,sun6i-a31s-tcon"))
 
-I'm not sure that test is needed.
-
-We won't end up in that case if we don't have a connected DSI block,
-which isn't going to be the case on the A31. And I guess we can tackle
-DSI later (when I'll send my patches...).
-
-> +			return -EINVAL;
-> +		shift =3D 0;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
-> +			   0x3 << shift, tcon_id << shift);
-> +
-> +	return 0;
-> +}
-> +
->  void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
->  			struct drm_encoder *encoder)
->  {
-> +	/* Get the device node of the display engine */
-> +	struct device_node *node =3D encoder->dev->dev->of_node;
->  	u32 val;
-> =20
-> +	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine")=
- ||
-> +	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine"=
-)) {
-> +		_sun6i_tcon_set_mux(encoder);
-> +		return;
-> +	}
-> +
-
-I'd really like to avoid mix and matching the structure defined
-behaviour and those of_device_is_compatible calls spread out
-everywhere.
-
-You can either add a flag or a function pointer.
-
+Applied, thanks!
 Maxime
 
 --=20
@@ -151,24 +46,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---fwfopzxho5wg6h5l
+--xy6qbslaheqpye3t
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZyiQzAAoJEBx+YmzsjxAgqMwP/3tZVN7F6Xj3iCLDqmrB1jUk
-hkXd4ZkpoZbU2o/HV0x4WgvkPaV4BKru89zxuefZO6OLsbK/Zt6RINy+JTL0jZss
-0LdJu3JZplnZulU4BBUMvmjIIYNdz2MupubhWYOxkYZ6DAa5UAT4z8P5PzojXOPm
-Rz+O5kQ6axk5mLE7tdYy0W2UZZX2JUnExDWqNekyxRNtLNWqAwxmOlPrsI0QmRK3
-z9AgcC3xDISn/R25dughBVUCQTMmJAAWY2lkZpjY7rehtJmrqCgGqKNxnryVGJfG
-k7RMZJYgli2tiTOTpm+J9sWLBn2G1IhOkwc6ETVmVvkocjm+AU/7fcfoCpTc0Rnm
-d7hXXE5iTgPbE7gXHD/3wm4KpF8vRvmzAx4SSqWgbp1clOWw+DuH+mwo6rVrFSo4
-kGmEGQPZCUWTYee3xBkz8mCh2ii6s+BYPdP7M8pYiqVZc6MS4P/q4cLENvF7WSdF
-5rU4VG3juMMN9kd/Lz8Excqk3O3DBKvZeg0wXIiWPsX3W+Q0XZesUcFoEdcHysBU
-ncfxxqWhBuCFBMg2kJ2OI4b+5tdLghrKSWueIWbIy28Yuh6h8hV/Ing8ISmFh6uG
-XNxXPid+Nnd8QTOuZjRByrxh9oSGa/WdYMZW9p3y7875Rnp/+BiwY8VG7eRv5NKY
-YcppixABuYLI24c/2+nD
-=P+kw
+iQIcBAEBAgAGBQJZzgi7AAoJEBx+YmzsjxAgjsoP+QH8P/BNG52QblxUFTms57VL
+7dq4YRnOfdJKUPPka8p+fFUN9kEOYmvor5+XNn78ep0RlYGmWUjOvY6Y8uKu7MY4
+KYmtokxQ7XA1OpPQ2gyXd6pIxkDXniujkBqBsDKZQy7ZOz81dDJxpkRKGpFky/IQ
+AgQSGHh4pWJww8lUY1Yzt1IxkAQy13zLUfyDPghBR2yGsd1a0UaYlO3u6jqq9+3k
++khyeUqO1aI4txyYqR38QZ/wAIZF/DRbX2L3gYgjSOKLnPM83g2+DXHQHlZyM0cN
+aY6EWibfEKczay4U5dceMwFbxj+DUBsYU3Aw6yZAcl11ZYleloFZVII4LR5Ei2o6
+jOmhOpSfS4v0IqEGTWL0++RMbhxCx3v09wZZyeS3nfgIySfCMla4NTPn8fPb8Yo7
+9c79r32mlsfaYFgpD6UnFDpjuF+13djd5DMn+k8AelHS9NwgLVIFEpwEsI9M6WjR
+dzJOHgTrRtaolfp5oo3JBjyhHKSbcvIw/Nb8vv3SBI8yYKVV/SOp9HenQVtTyx4g
+9OLZ27OWXb2Ay74HbCHfJFsJNN5ANtUTfUrd2NIef0PbPdc+OaEk0+NgKAMi+M0W
+p62C+TxQ+5z6FAFdk4yZX6QgnBcg/qWCH82PhE8/Rl/9QvkTjFz22npR3/GuHc2H
+TLXZSWHAF4Bt+YnA1yjb
+=TFeN
 -----END PGP SIGNATURE-----
 
---fwfopzxho5wg6h5l--
+--xy6qbslaheqpye3t--
