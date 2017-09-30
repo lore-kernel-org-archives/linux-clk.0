@@ -1,36 +1,28 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:60578 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750739AbdI0Ti6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Sep 2017 15:38:58 -0400
-To: linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] versatile clock: Adjustments for icst_clk_setup()
-Message-ID: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:38:44 +0200
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Delete an error message for a failed memory allocation in rockchip_clk_register_cpuclk()
+Date: Sat, 30 Sep 2017 12:43:09 +0200
+Message-ID: <3649654.h95jfH98gt@phil>
+In-Reply-To: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
+References: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:34:43 +0200
+Am Mittwoch, 27. September 2017, 11:44:30 CEST schrieb SF Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 11:38:17 +0200
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Two update suggestions were taken into account
-from static source code analysis.
+applied for 4.15 after shortening the patch subject a bit
 
-Markus Elfring (2):
-  Delete two error messages for a failed memory allocation
-  Improve a size determination
 
- drivers/clk/versatile/clk-icst.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
--- 
-2.14.2
-
+Thanks
+Heiko
