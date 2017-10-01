@@ -1,71 +1,42 @@
-Return-Path: <nicoleotsuka@gmail.com>
-Return-Path: <nicoleotsuka@gmail.com>
-Date: Fri, 20 Oct 2017 11:24:07 -0700
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, sboyd@codeaurora.org,
-	pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Message-ID: <20171020182406.GA12980@Asurada-Nvidia>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
- <20171019092919.GA7252@Asurada>
- <20171019094422.GI9005@ulmo>
- <20171019184223.GA7415@Asurada-Nvidia>
- <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
+In-Reply-To: <20170929225754.GO457@codeaurora.org>
+References: <20170924161919.24832-1-linus.walleij@linaro.org> <20170929225754.GO457@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 1 Oct 2017 16:53:53 +0200
+Message-ID: <CACRpkdZD9ApuYvatx9y4hVnHoRDBPFKrYvQnQemM8URZnVJ8NA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: clk-gpio: Make GPIO clock provider use
+ descriptors only
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 20, 2017 at 11:20:24AM +0100, Jon Hunter wrote:
-> 
-> On 19/10/17 19:42, Nicolin Chen wrote:
-> > On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
-> >>>> Below is the call trace of tegra210_init_pllu() function:
-> >>>>   start_kernel()
-> >>>>   -> time_init()
-> >>>>   --> of_clk_init()
-> >>>>   ---> tegra210_clock_init()
-> >>>>   ----> tegra210_pll_init()
-> >>>>   -----> tegra210_init_pllu()
-> > 
-> >> I'm wondering why we're not seeing a splat for this. Usually the kernel
-> >> will warn if you sleep during atomic context. Does this mean we're just
-> >> not hitting that case?
-> > 
-> > Yes.
-> > 
-> >> readx_poll_timeout() has a might_sleep_if(), and
-> >> therefore it should always cause the splat.
-> > 
-> > That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
-> > 
-> >> Any ideas why this has gone unnoticed for all this time?
-> > 
-> > We can see in the tegra210_init_pllu() function that it'll not call
-> > tegra210_enable_pllu() if pllu is already enabled (by bootloader).
-> 
-> I was thinking that same and so I clobbered the PLLU enable bit with
-> u-boot, however, then the kernel appears to hang on boot when enabling
-> the PLL. So although this is probably a separate issue, I am curious if
-> you have booted the mainline with the PLLU disabled?
+On Sat, Sep 30, 2017 at 12:57 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/24, Linus Walleij wrote:
 
-I am not sure if clearing the enable bit only would work. But the test
-below should be able to verify the situation -- setting the PLLU_BASE
-register to its reset value.
+>> I don't have GPIO clocks in my setups so this will obviously
+>> need some testing.
+>>
+>> I guess the public APIs in clk-provider.h could actually be
+>> removed, but I'm not certain if that is proper. Maybe there
+>> are plans for this driver to be used by other providers than the
+>> device tree.
+>
+> If nobody is using them it's fine to remove them. This falls into
+> another "basic clk type" that Mike and I don't really like to
+> keep around.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ea695c4..2279373 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2602,6 +2602,7 @@ static int tegra210_init_pllu(void)
- 	u32 reg;
- 	int err;
- 
-+	writel_relaxed(0x1011902, clk_base + PLLU_BASE);
-	tegra210_pllu_set_defaults(&pll_u_vco_params);
-	/* skip initialization when pllu is in hw controlled mode */
-	reg = readl_relaxed(clk_base + PLLU_BASE);
+I started to make a patch for it, removing the non-clk_hw* portions
+so that at least only the *hw* infix versions would be around.
+(I guess that is what you want to optimally keep around.)
+
+It became a bit complex since this driver itself is using the
+non-hw calls, and with not being able to test it I chickened out.
+
+But if you like the idea, I can make a second attempt (on top of
+these two patches), especially if someone volunteers to test it.
+
+Yours,
+Linus Walleij
