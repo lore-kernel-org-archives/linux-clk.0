@@ -1,218 +1,146 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de,
-	broonie@kernel.org,
-	lgirdwood@gmail.com,
-	patches.audio@intel.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	harshapriya.n@intel.com,
-	Naveen M <naveen.m@intel.com>,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Subject: [PATCH v2 7/7] ASoC: Intel: eve: Enable mclk and ssp sclk early
-Date: Mon, 18 Sep 2017 10:26:50 +0530
-Message-Id: <1505710610-17952-8-git-send-email-subhransu.s.prusty@intel.com>
-In-Reply-To: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
-References: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [RESEND RFC PATCH 0/7] sun8i H3 HDMI glue driver for DW HDMI
+To: =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@siol.net>
+Cc: maxime.ripard@free-electrons.com, wens@csie.org,
+        Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
+        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        icenowy@aosc.io, linux-sunxi@googlegroups.com,
+        linux-media@vger.kernel.org
+References: <20170920200124.20457-1-jernej.skrabec@siol.net>
+ <51c50157-6794-852b-f89d-647b9cf06ef2@ozlabs.ru>
+ <34246001.lKHNgTVc0h@jernej-laptop>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
+Message-ID: <ccaebb62-ad28-4905-5ebf-bcdc1e7ebf54@ozlabs.ru>
+Date: Sun, 1 Oct 2017 12:46:38 +1100
+MIME-Version: 1.0
+In-Reply-To: <34246001.lKHNgTVc0h@jernej-laptop>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Naveen M <naveen.m@intel.com>
+On 01/10/17 04:56, Jernej Škrabec wrote:
+> Hi,
+> 
+> Dne sobota, 30. september 2017 ob 13:58:03 CEST je Alexey Kardashevskiy 
+> napisal(a):
+>> On 21/09/17 06:01, Jernej Skrabec wrote:
+>>> [added media mailing list due to CEC question]
+>>>
+>>> This patch series adds a HDMI glue driver for Allwinner H3 SoC. For now,
+>>> only video and CEC functionality is supported. Audio needs more tweaks.
+>>>
+>>> Series is based on the H3 DE2 patch series available on mailing list:
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-August/522697.h
+>>> tml (ignore patches marked with [NOT FOR REVIEW NOW] tag)
+>>>
+>>> Patch 1 adds support for polling plug detection since custom PHY used here
+>>> doesn't support HPD interrupt.
+>>>
+>>> Patch 2 enables overflow workaround for v1.32a. This HDMI controller
+>>> exhibits same issues as HDMI controller used in iMX6 SoCs.
+>>>
+>>> Patch 3 adds CLK_SET_RATE_PARENT to hdmi clock.
+>>>
+>>> Patch 4 adds dt bindings documentation.
+>>>
+>>> Patch 5 adds actual H3 HDMI glue driver.
+>>>
+>>> Patch 6 and 7 add HDMI node to DT and enable it where needed.
+>>>
+>>> Allwinner used DW HDMI controller in a non standard way:
+>>> - register offsets obfuscation layer, which can fortunately be turned off
+>>> - register read lock, which has to be disabled by magic number
+>>> - custom PHY, which have to be initialized before DW HDMI controller
+>>> - non standard clocks
+>>> - no HPD interrupt
+>>>
+>>> Because of that, I have two questions:
+>>> - Since HPD have to be polled, is it enough just to enable poll mode? I'm
+>>>
+>>>   mainly concerned about invalidating CEC address here.
+>>>
+>>> - PHY has to be initialized before DW HDMI controller to disable offset
+>>>
+>>>   obfuscation and read lock among other things. This means that all clocks
+>>>   have to be enabled in glue driver. This poses a problem, since when
+>>>   using component model, dw-hdmi bridge uses drvdata for it's own private
+>>>   data and prevents glue layer to pass a pointer to unbind function,
+>>>   where clocks should be disabled. I noticed same issue in meson DW HDMI
+>>>   glue driver, where clocks are also not disabled when unbind callback is
+>>>   called. I noticed that when H3 SoC is shutdown, HDMI output is still
+>>>   enabled and lastest image is shown on monitor until it is unplugged
+>>>   from power supply. Is there any simple solution to this?
+>>>
+>>> Chen-Yu,
+>>> TL Lim was unable to obtain any answer from Allwinner about HDMI clocks. I
+>>> think it is safe to assume that divider in HDMI clock doesn't have any
+>>> effect.
+>>>
+>>> Branch based on linux-next from 1. September with integrated patches is
+>>> available here:
+>>> https://github.com/jernejsk/linux-1/tree/h3_hdmi_rfc
+>>
+>> Out of curiosity I tried this one and got:
+>>
+>>
+>>
+>> [    0.071711] sun4i-usb-phy 1c19400.phy: Couldn't request ID GPIO
+>> [    0.074809] sun8i-h3-pinctrl 1c20800.pinctrl: initialized sunXi PIO
+>> driver [    0.076167] sun8i-h3-r-pinctrl 1f02c00.pinctrl: initialized sunXi
+>> PIO driver [    0.148009] ------------[ cut here ]------------
+>> [    0.148035] WARNING: CPU: 0 PID: 1 at
+>> drivers/clk/sunxi-ng/ccu_common.c:41 ccu_nm_set_rate+0x1d0/0x274
+>> [    0.148046] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+>> 4.13.0-rc6-next-20170825-aik-aik #24
+>> [    0.148051] Hardware name: Allwinner sun8i Family
+>> [    0.148082] [<c010de6c>] (unwind_backtrace) from [<c010b260>]
+>> (show_stack+0x10/0x14)
+>> [    0.148101] [<c010b260>] (show_stack) from [<c077a464>]
+>> (dump_stack+0x84/0x98)
+>> [    0.148117] [<c077a464>] (dump_stack) from [<c011abe0>]
+>> (__warn+0xe0/0xfc) [    0.148132] [<c011abe0>] (__warn) from [<c011acac>]
+>> (warn_slowpath_null+0x20/0x28)
+>> [    0.148145] [<c011acac>] (warn_slowpath_null) from [<c03d1888>]
+>> (ccu_nm_set_rate+0x1d0/0x274)
+>> [    0.148161] [<c03d1888>] (ccu_nm_set_rate) from [<c03c78b4>]
+>> (clk_change_rate+0x19c/0x250)
+>> [    0.148175] [<c03c78b4>] (clk_change_rate) from [<c03c7b7c>]
+>> (clk_core_set_rate_nolock+0x68/0xb0)
+>> [    0.148187] [<c03c7b7c>] (clk_core_set_rate_nolock) from [<c03c8134>]
+>> (clk_set_rate+0x20/0x30)
+>> [    0.148202] [<c03c8134>] (clk_set_rate) from [<c03cc560>]
+>> (of_clk_set_defaults+0x200/0x364)
+>> [    0.148219] [<c03cc560>] (of_clk_set_defaults) from [<c045427c>]
+>> (platform_drv_probe+0x18/0xb0)
+>> [    0.148233] [<c045427c>] (platform_drv_probe) from [<c0452efc>]
+>> (driver_probe_device+0x234/0x2e8)
+>> [    0.148246] [<c0452efc>] (driver_probe_device) from [<c0453068>]
+>> (__driver_attach+0xb8/0xbc)
+>> [    0.148258] [<c0453068>] (__driver_attach) from [<c0451414[    1.336154]
+>> Unable to handle kernel NULL pointer dereference at virtual address 00000008
+>>
+> 
+> Patch for that is already merged upstream and can be found here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/
+> drivers/clk/sunxi-ng?id=62d212bdb022deeb875f92f6e376c799e3f35eca
 
-rt5663 needs mclk/sclk early to synchronize its internal clocks. Clocks
-are enabled in hw_params and disabled in platform_clk_control as the codec
-requires mclk/bclk need to turned ON before set_sysclk call for a
-successful clock synchronization.
+Lovely, it works, thanks!
 
-Signed-off-by: Naveen M <naveen.m@intel.com>
-Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
----
- sound/soc/intel/Kconfig                            |  1 +
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 97 ++++++++++++++++++++++
- 2 files changed, 98 insertions(+)
 
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index 6f05119e9df2..8a29c10d4f6b 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -259,6 +259,7 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
-         depends on X86_INTEL_LPSS && I2C && SPI
-         select SND_SOC_INTEL_SST
-         select SND_SOC_INTEL_SKYLAKE
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
-         select SND_SOC_RT5663
-         select SND_SOC_RT5514
-         select SND_SOC_RT5514_SPI
-diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-index 88ff54220007..ab7ae12da960 100644
---- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-@@ -30,6 +30,9 @@
- #include "../../codecs/rt5663.h"
- #include "../../codecs/hdac_hdmi.h"
- #include "../skylake/skl.h"
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- 
- #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
- #define KBL_REALTEK_DMIC_CODEC_DAI "rt5514-aif1"
-@@ -58,6 +61,8 @@ struct kbl_codec_private {
- 	struct snd_soc_jack kabylake_headset;
- 	struct list_head hdmi_pcm_list;
- 	struct snd_soc_jack kabylake_hdmi[2];
-+	struct clk *mclk;
-+	struct clk *sclk;
- };
- 
- enum {
-@@ -79,6 +84,19 @@ enum {
- 	SOC_DAPM_PIN_SWITCH("DMIC"),
- };
- 
-+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-+			struct snd_kcontrol *k, int  event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
-+
-+	clk_disable_unprepare(priv->mclk);
-+	clk_disable_unprepare(priv->sclk);
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-@@ -87,11 +105,14 @@ enum {
- 	SND_SOC_DAPM_MIC("DMIC", NULL),
- 	SND_SOC_DAPM_SPK("HDMI1", NULL),
- 	SND_SOC_DAPM_SPK("HDMI2", NULL),
-+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-+			platform_clock_control, SND_SOC_DAPM_POST_PMD),
- 
- };
- 
- static const struct snd_soc_dapm_route kabylake_map[] = {
- 	/* Headphones */
-+	{ "Headphone Jack", NULL, "Platform Clock" },
- 	{ "Headphone Jack", NULL, "HPOL" },
- 	{ "Headphone Jack", NULL, "HPOR" },
- 
-@@ -100,6 +121,7 @@ enum {
- 	{ "Right Spk", NULL, "Right BE_OUT" },
- 
- 	/* other jacks */
-+	{ "Headset Mic", NULL, "Platform Clock" },
- 	{ "IN1P", NULL, "Headset Mic" },
- 	{ "IN1N", NULL, "Headset Mic" },
- 
-@@ -324,13 +346,59 @@ static int kabylake_ssp_fixup(struct snd_soc_pcm_runtime *rtd,
- 	return 0;
- }
- 
-+static int kabylake_enable_ssp_clks(struct snd_soc_card *card)
-+{
-+
-+	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
-+	int ret;
-+
-+	/* Enable MCLK */
-+	ret = clk_set_rate(priv->mclk, 24000000);
-+	if (ret < 0) {
-+		dev_err(card->dev, "Can't set rate for mclk, err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(priv->mclk);
-+	if (ret < 0) {
-+		dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Enable SCLK */
-+	ret = clk_set_rate(priv->sclk, 3072000);
-+	if (ret < 0) {
-+		dev_err(card->dev, "Can't set rate for sclk, err: %d\n", ret);
-+		clk_disable_unprepare(priv->mclk);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(priv->sclk);
-+	if (ret < 0) {
-+		dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-+		clk_disable_unprepare(priv->mclk);
-+	}
-+
-+	return 0;
-+}
-+
- static int kabylake_rt5663_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params)
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	struct snd_soc_card *card = rtd->card;
- 	int ret;
- 
-+	/*
-+	 * MCLK/SCLK need to be ON early for a successful synchronization of
-+	 * codec internal clock. And the clocks are turned off during
-+	 * POST_PMD after the stream is stopped.
-+	 */
-+	ret = kabylake_enable_ssp_clks(card);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* use ASRC for internal clocks, as PLL rate isn't multiple of BCLK */
- 	rt5663_sel_asrc_clk_src(codec_dai->codec,
- 			RT5663_DA_STEREO_FILTER | RT5663_AD_STEREO_FILTER,
-@@ -647,6 +715,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- {
- 	struct kbl_codec_private *ctx;
- 	struct skl_machine_pdata *pdata;
-+	int ret = 0;
- 
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
-@@ -662,6 +731,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- 		dmic_constraints = pdata->dmic_num == 2 ?
- 			&constraints_dmic_2ch : &constraints_dmic_channels;
- 
-+	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
-+	if (IS_ERR(ctx->mclk)) {
-+		ret = PTR_ERR(ctx->mclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_mclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
-+	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
-+	if (IS_ERR(ctx->sclk)) {
-+		ret = PTR_ERR(ctx->sclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_card(&pdev->dev, &kabylake_audio_card);
- }
- 
+>> and a bit later:
+>>
+>> [    1.995572] Rebooting in 10 seconds..
+> 
+> I'm not sure about that one. Kernel config issue?
+
+
+
+Yup, I did not have CMA enabled.
+
+
+
+
 -- 
-1.9.1
+Alexey
