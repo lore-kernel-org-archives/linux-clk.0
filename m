@@ -1,114 +1,40 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 02/10] clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
-Date: Fri, 27 Oct 2017 23:06:50 +0800
-Message-Id: <20171027150658.18509-3-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 2 Oct 2017 14:56:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sudeep.holla@arm.com, hanjun.guo@linaro.org,
+	lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, will.deacon@arm.com,
+	catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+	mturquette@baylibre.com, viresh.kumar@linaro.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	jhugo@codeaurora.org, wangxiongfeng2@huawei.com,
+	Jonathan.Zhang@cavium.com, ahs3@redhat.com
+Subject: Re: [PATCH v2 5/6] arm64: Fixup users of topology_physical_package_id
+Message-ID: <20171002215621.GS457@codeaurora.org>
+References: <20170919184751.25110-1-jeremy.linton@arm.com>
+ <20170919184751.25110-6-jeremy.linton@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170919184751.25110-6-jeremy.linton@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H3 features a DE2 CCU like the one on A83T, however the
-parent of the clocks is the DE module clock, not the PLL_DE clock.
+On 09/19, Jeremy Linton wrote:
+> There are a few arm64 specific users (cpufreq, psci, etc) which really
+> want the cluster rather than the topology_physical_package_id(). Lets
+> convert those users to topology_cod_id(). That way when we start
+> differentiating the socket/cluster they will continue to behave correctly.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
 
-Add support for it.
+For:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 47 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+>  drivers/clk/clk-mb86s7x.c        | 2 +-
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 5cc9d9952121..2db5d4e00ea7 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -41,6 +41,8 @@ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
- 
- static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
- 		   CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
-+		   CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
- 		   CLK_SET_RATE_PARENT);
- 
-@@ -65,6 +67,20 @@ static struct ccu_common *sun8i_a83t_de2_clks[] = {
- 	&wb_div_a83_clk.common,
- };
- 
-+static struct ccu_common *sun8i_h3_de2_clks[] = {
-+	&mixer0_clk.common,
-+	&mixer1_clk.common,
-+	&wb_clk.common,
-+
-+	&bus_mixer0_clk.common,
-+	&bus_mixer1_clk.common,
-+	&bus_wb_clk.common,
-+
-+	&mixer0_div_clk.common,
-+	&mixer1_div_clk.common,
-+	&wb_div_clk.common,
-+};
-+
- static struct ccu_common *sun8i_v3s_de2_clks[] = {
- 	&mixer0_clk.common,
- 	&wb_clk.common,
-@@ -93,6 +109,23 @@ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
-+static struct clk_hw_onecell_data sun8i_h3_de2_hw_clks = {
-+	.hws	= {
-+		[CLK_MIXER0]		= &mixer0_clk.common.hw,
-+		[CLK_MIXER1]		= &mixer1_clk.common.hw,
-+		[CLK_WB]		= &wb_clk.common.hw,
-+
-+		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
-+		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
-+		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
-+
-+		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
-+		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
-+		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
-+	},
-+	.num	= CLK_NUMBER,
-+};
-+
- static struct clk_hw_onecell_data sun8i_v3s_de2_hw_clks = {
- 	.hws	= {
- 		[CLK_MIXER0]		= &mixer0_clk.common.hw,
-@@ -133,6 +166,16 @@ static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
- };
- 
-+static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
-+	.ccu_clks	= sun8i_h3_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_h3_de2_clks),
-+
-+	.hw_clks	= &sun8i_h3_de2_hw_clks,
-+
-+	.resets		= sun8i_a83t_de2_resets,
-+	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
-+};
-+
- static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
- 	.ccu_clks	= sun8i_a83t_de2_clks,
- 	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
-@@ -238,6 +281,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
- 		.data = &sun8i_a83t_de2_clk_desc,
- 	},
- 	{
-+		.compatible = "allwinner,sun8i-h3-de2-clk",
-+		.data = &sun8i_h3_de2_clk_desc,
-+	},
-+	{
- 		.compatible = "allwinner,sun8i-v3s-de2-clk",
- 		.data = &sun8i_v3s_de2_clk_desc,
- 	},
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+
 -- 
-2.13.6
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
