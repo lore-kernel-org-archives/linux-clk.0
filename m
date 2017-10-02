@@ -1,77 +1,62 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 20 Oct 2017 13:38:57 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
-	mturquette@baylibre.com, pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Message-ID: <20171020113857.GA8628@ulmo>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 2 Oct 2017 14:39:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 2/5] clk: aspeed: Register core clocks
+Message-ID: <20171002213958.GR457@codeaurora.org>
+References: <20170921042641.7326-1-joel@jms.id.au>
+ <20170921042641.7326-3-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-In-Reply-To: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170921042641.7326-3-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 09/21, Joel Stanley wrote:
+> @@ -112,9 +115,137 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
+>  	/* 31: reserved */
+>  };
+>  
+> +static const struct clk_div_table ast2400_div_table[] = {
+> +	{ 0x0, 2 },
+> +	{ 0x1, 4 },
+> +	{ 0x2, 6 },
+> +	{ 0x3, 8 },
+> +	{ 0x4, 10 },
+> +	{ 0x5, 12 },
+> +	{ 0x6, 14 },
+> +	{ 0x7, 16 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct clk_div_table ast2500_div_table[] = {
+> +	{ 0x0, 4 },
+> +	{ 0x1, 8 },
+> +	{ 0x2, 12 },
+> +	{ 0x3, 16 },
+> +	{ 0x4, 20 },
+> +	{ 0x5, 24 },
+> +	{ 0x6, 28 },
+> +	{ 0x7, 32 },
+> +	{ 0 }
+> +};
+> +
+> +static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+> +{
+> +	unsigned int mult, div;
+> +
+> +	if (val & BIT(20)) {
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+#define for these BIT() things please. Or a comment, but #define
+is probably better. Just improves readability.
 
-On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
-> Below is the call trace of tegra210_init_pllu() function:
->   start_kernel()
->   -> time_init()
->   --> of_clk_init()
->   ---> tegra210_clock_init()
->   ----> tegra210_pll_init()
->   -----> tegra210_init_pllu()
->=20
-> Because the preemption is disabled in the start_kernel before calling
-> time_init, tegra210_init_pllu is actually in an atomic context while
-> it includes a readl_relaxed_poll_timeout that might sleep.
->=20
-> So this patch just changes this readl_relaxed_poll_timeout() to its
-> atomic version.
->=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
-> Changelog
-> v2:
->  * Corrected a typo in the commit log
->  * Added Peter's Acked-by.
->=20
->  drivers/clk/tegra/clk-tegra210.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnp4E4ACgkQ3SOs138+
-s6EAUA//Uf5PEt/fopIegHAJu7He2iVriXbOacqocWsCA+a5ej9QddUNEG2emQ1L
-OYt3lRh7mOgtnWzLBejnUmbsM5lFfCvMxBvQrbMGdY17iSZ9yg8YDDG/DCxJd9xL
-5jVK1OdG6G/OG9Mv/VUAWysLPs4ugyQrezEp1yH8YCI9eDx+ucdpAIhzylILFk7R
-EN6TVjS76r3tVeYRhM45Q3ykGCnqG6BxsTGecDGX3Y5d6xMFfHbUkBosaDLgT+E5
-qxnXNCZ6eVqBFBFS5JFCSWGg5r1MKHPuy2KGIXpA/MSrHyUKmhQAulY55qXHNOZ/
-sV9z2ZwpB+vpQb6/3d4GyUMAxNTBDO6Z11jVLtUqwPoeREutY87ri701OYuO4p+7
-4/8XtOl08ZTmivJDHX7a4BQgIob4lIYN+hfz9LSL8WhXiO8rlf3ZzZhHfG31U1Ll
-DwDl2Z0Vf8Px05gYOVlIt2+s9udhxpU3duvUYRFkTOJ6J0MDVbqu8Exw/zUNUgFz
-Mws/1K25MtSMMqwWxbTZF+32fVD8iLTFicQPfhiJY7s0cCD9uxoJrs5TIcXZUZCz
-zVCl41KBUNHn4ioUbNxO5t3A+Gy6IpTr3/6sTNCmXr49ZLm6b2BvO5y4ceiXyCqx
-57D71fp49mDKfYHbwNQVo+Dq1n8I+geAOGuLVv3QodC09zgn74k=
-=8n1M
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
