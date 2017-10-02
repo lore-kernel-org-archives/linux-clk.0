@@ -1,77 +1,109 @@
-Return-Path: <julia.lawall@lip6.fr>
-Date: Tue, 17 Oct 2017 16:42:19 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Bhumika Goyal <bhumirks@gmail.com>
-cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
-    sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] CLK: SPEAr: make structure field and function argument
- as const
-In-Reply-To: <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
-Message-ID: <alpine.DEB.2.20.1710171641400.5035@hadrien>
-References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com> <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+To: julia.lawall@lip6.fr,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: keescook@chromium.org,
+	Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] clk: tegra30: make tegra_clk_pll_params __ro_after_init
+Date: Tue,  3 Oct 2017 01:42:08 +0530
+Message-Id: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+These structures are only passed to the functions tegra_clk_register_pll,
+tegra_clk_register_pll{e/u} or tegra_periph_clk_init during the init
+phase. These functions modify the structures only during the init phase
+and after that the structures are never modified. Therefore, make them
+__ro_after_init.
 
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra30.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-On Tue, 17 Oct 2017, Bhumika Goyal wrote:
-
-> Make the masks field of clk_aux structure const as it do not modify the
-> fields of the aux_clk_masks structure it points to.
->
-> Make the struct aux_clk_masks *aux argument of the function
-> clk_register_aux as const as the argument is only stored in the masks
-> field of a clk_aux structure which is now made const.
->
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
-> ---
->  drivers/clk/spear/clk-aux-synth.c | 2 +-
->  drivers/clk/spear/clk.h           | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
-> index f271c35..8bea5df 100644
-> --- a/drivers/clk/spear/clk-aux-synth.c
-> +++ b/drivers/clk/spear/clk-aux-synth.c
-> @@ -136,7 +136,7 @@ static int clk_aux_set_rate(struct clk_hw *hw, unsigned long drate,
->
->  struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
->  		const char *parent_name, unsigned long flags, void __iomem *reg,
-> -		struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
-> +	        const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
->  		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk)
->  {
->  	struct clk_aux *aux;
-> diff --git a/drivers/clk/spear/clk.h b/drivers/clk/spear/clk.h
-> index 9834944..b9d28b3 100644
-> --- a/drivers/clk/spear/clk.h
-> +++ b/drivers/clk/spear/clk.h
-> @@ -49,7 +49,7 @@ struct aux_rate_tbl {
->  struct clk_aux {
->  	struct			clk_hw hw;
->  	void __iomem		*reg;
-> -	struct aux_clk_masks	*masks;
-> +        const struct aux_clk_masks *masks;
-
-There are spaces before const here.
-
-julia
-
->  	struct aux_rate_tbl	*rtbl;
->  	u8			rtbl_cnt;
->  	spinlock_t		*lock;
-> @@ -112,7 +112,7 @@ typedef unsigned long (*clk_calc_rate)(struct clk_hw *hw, unsigned long prate,
->  /* clk register routines */
->  struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
->  		const char *parent_name, unsigned long flags, void __iomem *reg,
-> -		struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
-> +		const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
->  		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk);
->  struct clk *clk_register_frac(const char *name, const char *parent_name,
->  		unsigned long flags, void __iomem *reg,
-> --
-> 1.9.1
->
->
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a2d163f..1ce7d76 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -359,7 +359,7 @@
+ };
+ 
+ /* PLL parameters */
+-static struct tegra_clk_pll_params pll_c_params = {
++static struct tegra_clk_pll_params pll_c_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -388,7 +388,7 @@
+ 	.override_divp_shift = 15,
+ };
+ 
+-static struct tegra_clk_pll_params pll_m_params = {
++static struct tegra_clk_pll_params pll_m_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -409,7 +409,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_FIXED,
+ };
+ 
+-static struct tegra_clk_pll_params pll_p_params = {
++static struct tegra_clk_pll_params pll_p_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -444,7 +444,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_d_params = {
++static struct tegra_clk_pll_params pll_d_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -461,7 +461,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_d2_params = {
++static struct tegra_clk_pll_params pll_d2_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -478,7 +478,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_u_params = {
++static struct tegra_clk_pll_params pll_u_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+ 	.cf_min = 1000000,
+@@ -496,7 +496,7 @@
+ 		 TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_x_params = {
++static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
+ 	.input_min = 2000000,
+ 	.input_max = 31000000,
+ 	.cf_min = 1000000,
+@@ -513,7 +513,7 @@
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
+ };
+ 
+-static struct tegra_clk_pll_params pll_e_params = {
++static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
+ 	.input_min = 12000000,
+ 	.input_max = 216000000,
+ 	.cf_min = 12000000,
+-- 
+1.9.1
