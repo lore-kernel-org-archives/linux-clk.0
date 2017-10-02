@@ -1,78 +1,44 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 19 Oct 2017 11:44:22 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
-	mturquette@baylibre.com, pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Message-ID: <20171019094422.GI9005@ulmo>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
- <20171019092919.GA7252@Asurada>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38910 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbdJBRkv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 13:40:51 -0400
+Date: Mon, 2 Oct 2017 19:40:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4] clk: samsung: Instantiate Exynos4412 ISP clocks only
+ when available
+Message-ID: <20171002174047.erucrnbh4dtvkjib@kozik-lap>
+References: <20171002104759.25944-1-m.szyprowski@samsung.com>
+ <CGME20171002104824eucas1p1de6466888524f3f3f097086b1e2388ff@eucas1p1.samsung.com>
+ <20171002104759.25944-2-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o7gdRJTuwFmWapyH"
-In-Reply-To: <20171019092919.GA7252@Asurada>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171002104759.25944-2-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, Oct 02, 2017 at 12:47:56PM +0200, Marek Szyprowski wrote:
+> Some additional registers for the ISP (Camera subsystem) clocks are
+> partially located in the SOC area, which belongs to ISP power domain.
+> Istatiate those clocks only when provided clock registers resource
+> covers those registers. This is a preparation for adding a separate
+> clock driver for ISP clocks, which will be intergated with power
+> domain using runtime PM feature.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 31 ++++++++++++++++++++++++-------
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+> 
 
---o7gdRJTuwFmWapyH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Thu, Oct 19, 2017 at 02:29:20AM -0700, Nicolin Chen wrote:
-> On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
-> > Below is the call trace of tegra210_init_pllu() function:
-> >   start_kernel()
-> >   -> time_init()
-> >   --> of_clk_init()
-> >   ---> tegra210_clock_init()
-> >   ----> tegra210_pll_init()
-> >   -----> tegra210_init_pllu()
-> >=20
-> > Because the preemption is disabled in the start_kernel before calling
-> > time_init, tegra210_init_pllu is actually in an atomic context while
-> > it includes a readl_relaxed_poll_timeout that might sleep.
-> >=20
-> > So this patch just changes this readl_relaxed_poll_timeout() to its
-> > atomic version.
-> >=20
-> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
->=20
-> Thierry, can you also take a look at this one? I sent a month ago. Thanks.
+Best regards,
+Krzysztof
 
-I'm wondering why we're not seeing a splat for this. Usually the kernel
-will warn if you sleep during atomic context. Does this mean we're just
-not hitting that case? readx_poll_timeout() has a might_sleep_if(), and
-therefore it should always cause the splat.
-
-Any ideas why this has gone unnoticed for all this time?
-
-Thierry
-
---o7gdRJTuwFmWapyH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoc/YACgkQ3SOs138+
-s6GYBBAArS9B7UkWWtCLw/lv625C3fklYG8Cuk5tyXtd6APNjl9mXewlWUqYDshp
-LkdpAfFKeVcFSBVhi0pZISbv9lQxNXil7daZm57qil2G/LZZfAL5rsnPV2g0nvtR
-WWjIcmXPIVuTaQlfFuSFkt/xJtnB9I2K9HPmDeiKrmADld25ZaFnydNXr9uTmAzh
-jHAQz3yslxDP2thOuZrXxRAxdJb263fi3JdAoNF0GI4foAEdoaz+VxCnBBc4wSP1
-ye+HWhKoQEPEGoZGkvTN26wV9tkaTXagPi9Khgh9R18mA/WbWttFgTXc3xLq9SeU
-JFkp45aTv0oHPpSACbeErlMVMKCGKX+yPNjev+gj0MHePAZf8/y/dI7EDghz9Efu
-osbLC713zUGH6f/zFmlarr0OL1ItMn8KxteMRAonQzDoj7rXplmKba32qiTUyFX7
-p4ZH8ofDk7gu4sbXqzJpWJ1OBniyb3G7IBpYip5umf1HiEZ0cpcztleTVTQfJw1j
-SLDCCMgjdELoYH7UE51crw5x6znYSrkxMvV0h+uudrFpm/6P2CwkLrEA8x2emeYk
-UzUkfknbKVqEtbwOfrUlg39xmyUZKrgGtWs0gyUVPthsGIld/N6lWK+K+E+vWQjP
-9wGuBXdjJl35vZui5QrJhMzjlE8etROtJgFuK7dG2ZynFy3ptvw=
-=xRkw
------END PGP SIGNATURE-----
-
---o7gdRJTuwFmWapyH--
