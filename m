@@ -1,52 +1,100 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 4 Oct 2017 14:21:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>, Sergej Sawazki <ce3a@gmx.de>,
-	Jyri Sarha <jsarha@ti.com>
-Subject: Re: [PATCH 1/2] clk: clk-gpio: Make GPIO clock provider use
- descriptors only
-Message-ID: <20171004212150.GY457@codeaurora.org>
-References: <20170924161919.24832-1-linus.walleij@linaro.org>
- <20170929225754.GO457@codeaurora.org>
- <CACRpkdZD9ApuYvatx9y4hVnHoRDBPFKrYvQnQemM8URZnVJ8NA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:14112
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751079AbdJBKcs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Oct 2017 06:32:48 -0400
+From: Adriana Reus <adriana.reus@nxp.com>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+Cc: anson.huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Adriana Reus <adriana.reus@nxp.com>
+Subject: [PATCH RESEND 2/2] clk: imx: imx7d: Remove ARM_M0 clock
+Date: Mon,  2 Oct 2017 13:32:11 +0300
+Message-Id: <1506940331-16742-3-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
+References: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdZD9ApuYvatx9y4hVnHoRDBPFKrYvQnQemM8URZnVJ8NA@mail.gmail.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, Linus Walleij wrote:
-> On Sat, Sep 30, 2017 at 12:57 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 09/24, Linus Walleij wrote:
-> 
-> >> I don't have GPIO clocks in my setups so this will obviously
-> >> need some testing.
-> >>
-> >> I guess the public APIs in clk-provider.h could actually be
-> >> removed, but I'm not certain if that is proper. Maybe there
-> >> are plans for this driver to be used by other providers than the
-> >> device tree.
-> >
-> > If nobody is using them it's fine to remove them. This falls into
-> > another "basic clk type" that Mike and I don't really like to
-> > keep around.
-> 
-> I started to make a patch for it, removing the non-clk_hw* portions
-> so that at least only the *hw* infix versions would be around.
-> (I guess that is what you want to optimally keep around.)
-> 
-> It became a bit complex since this driver itself is using the
-> non-hw calls, and with not being able to test it I chickened out.
-> 
-> But if you like the idea, I can make a second attempt (on top of
-> these two patches), especially if someone volunteers to test it.
+IMX7d does not have an M0 Core and this particular
+clock doesn't seem connected to anything else.
+Remove this entry from the CCM driver.
 
-I don't know if anyone is going to test it. We have only a
-handful of users in mainline. I'll just merge these patches and
-you can remove the non-clk_hw portions later if you're
-interested.
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 9 ---------
+ include/dt-bindings/clock/imx7d-clock.h | 8 ++++----
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 0ac9b30..80dc211 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -54,11 +54,6 @@ static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
+ 	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
+ 	"pll_usb_main_clk", };
+ 
+-static const char *arm_m0_sel[] = { "osc", "pll_sys_main_120m_clk",
+-	"pll_enet_125m_clk", "pll_sys_pfd2_135m_clk",
+-	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
+-	"pll_usb_main_clk", };
+-
+ static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
+ 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
+ 	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
+@@ -510,7 +505,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_SRC] = imx_clk_mux2("arm_a7_src", base + 0x8000, 24, 3, arm_a7_sel, ARRAY_SIZE(arm_a7_sel));
+ 	clks[IMX7D_ARM_M4_ROOT_SRC] = imx_clk_mux2("arm_m4_src", base + 0x8080, 24, 3, arm_m4_sel, ARRAY_SIZE(arm_m4_sel));
+-	clks[IMX7D_ARM_M0_ROOT_SRC] = imx_clk_mux2("arm_m0_src", base + 0x8100, 24, 3, arm_m0_sel, ARRAY_SIZE(arm_m0_sel));
+ 	clks[IMX7D_MAIN_AXI_ROOT_SRC] = imx_clk_mux2("axi_src", base + 0x8800, 24, 3, axi_sel, ARRAY_SIZE(axi_sel));
+ 	clks[IMX7D_DISP_AXI_ROOT_SRC] = imx_clk_mux2("disp_axi_src", base + 0x8880, 24, 3, disp_axi_sel, ARRAY_SIZE(disp_axi_sel));
+ 	clks[IMX7D_ENET_AXI_ROOT_SRC] = imx_clk_mux2("enet_axi_src", base + 0x8900, 24, 3, enet_axi_sel, ARRAY_SIZE(enet_axi_sel));
+@@ -582,7 +576,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_CG] = imx_clk_gate3("arm_a7_cg", "arm_a7_src", base + 0x8000, 28);
+ 	clks[IMX7D_ARM_M4_ROOT_CG] = imx_clk_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
+-	clks[IMX7D_ARM_M0_ROOT_CG] = imx_clk_gate3("arm_m0_cg", "arm_m0_src", base + 0x8100, 28);
+ 	clks[IMX7D_MAIN_AXI_ROOT_CG] = imx_clk_gate3("axi_cg", "axi_src", base + 0x8800, 28);
+ 	clks[IMX7D_DISP_AXI_ROOT_CG] = imx_clk_gate3("disp_axi_cg", "disp_axi_src", base + 0x8880, 28);
+ 	clks[IMX7D_ENET_AXI_ROOT_CG] = imx_clk_gate3("enet_axi_cg", "enet_axi_src", base + 0x8900, 28);
+@@ -721,7 +714,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_DIV] = imx_clk_divider2("arm_a7_div", "arm_a7_cg", base + 0x8000, 0, 3);
+ 	clks[IMX7D_ARM_M4_ROOT_DIV] = imx_clk_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
+-	clks[IMX7D_ARM_M0_ROOT_DIV] = imx_clk_divider2("arm_m0_div", "arm_m0_cg", base + 0x8100, 0, 3);
+ 	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
+ 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
+ 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+@@ -793,7 +785,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
+ 	clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
+-	clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk", "arm_m0_div", base + 0x4020, 0);
+ 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index de62a83..e2f99ae 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -80,10 +80,10 @@
+ #define IMX7D_ARM_M4_ROOT_SRC		67
+ #define IMX7D_ARM_M4_ROOT_CG		68
+ #define IMX7D_ARM_M4_ROOT_DIV		69
+-#define IMX7D_ARM_M0_ROOT_CLK		70
+-#define IMX7D_ARM_M0_ROOT_SRC		71
+-#define IMX7D_ARM_M0_ROOT_CG		72
+-#define IMX7D_ARM_M0_ROOT_DIV		73
++#define IMX7D_ARM_M0_ROOT_CLK		70	/* unused */
++#define IMX7D_ARM_M0_ROOT_SRC		71	/* unused */
++#define IMX7D_ARM_M0_ROOT_CG		72	/* unused */
++#define IMX7D_ARM_M0_ROOT_DIV		73	/* unused */
+ #define IMX7D_MAIN_AXI_ROOT_CLK		74
+ #define IMX7D_MAIN_AXI_ROOT_SRC		75
+ #define IMX7D_MAIN_AXI_ROOT_CG		76
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
