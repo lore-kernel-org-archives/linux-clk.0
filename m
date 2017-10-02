@@ -1,101 +1,84 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 6/9] clk: sunxi-ng: sun4i: Use sigma-delta modulation for audio PLL
-Date: Thu, 12 Oct 2017 16:37:02 +0800
-Message-Id: <20171012083705.24409-7-wens@csie.org>
-In-Reply-To: <20171012083705.24409-1-wens@csie.org>
-References: <20171012083705.24409-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32857 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751773AbdJBRgf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 13:36:35 -0400
+Date: Mon, 2 Oct 2017 19:36:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
+Message-ID: <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
+References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
+ <20171002104759.25944-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171002104759.25944-1-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The audio blocks require specific clock rates. Until now we were using
-the closest clock rate possible with integer N-M factors. This resulted
-in audio playback being slightly slower than it should be.
+On Mon, Oct 02, 2017 at 12:47:55PM +0200, Marek Szyprowski wrote:
+> Hi!
+> 
+> Exynos4412 ISP clock controller is located in the SOC area, which belongs
+> to ISP power domain. This was not properly handled by the current
+> Exynos4-clk driver. This patchset instantiates a separate clock driver
+> for those clocks, updates all clients of ISP clocks and ensures that
+> the driver is properly integrated in ISP power domin using runtime PM
+> feature of the clock framework.
+> 
+> This finally solves all the mysterious freezes in accessing ISP clocks
+> when ISP power domain is disabled.
+> 
+> The last patch breaks support for old dtbs. It can be applied when all
+> boards are updated. Exynos4412 ISP subsystem is only used by Trats2
+> boards, for which kernel is updated always together with the dtb file,
+> so the last patch can be applied to the next kernel release after merging
+> the DTS patch.
 
-The vendor kernel gets around this (for newer SoCs) by using sigma-delta
-modulation to generate a fractional-N factor. As the PLL hardware is
-identical in most chips, we can back port the settings from the newer
-SoC, in this case the H3, onto the A10 and A20.
+I am fine with this approach. However I see that third patch (dts)
+depends on previous so it will also wait one cycle. arm-soc folks for
+some time do not accept code mixed with dts.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+Unless you can split dts into two patches: adding new clock controller
+and removing old. In such case the new clock could be applied in
+parallel to clk code changes.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-index a48fde191c0a..ffa5dac221e4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-@@ -28,6 +28,7 @@
- #include "ccu_nkmp.h"
- #include "ccu_nm.h"
- #include "ccu_phase.h"
-+#include "ccu_sdm.h"
- 
- #include "ccu-sun4i-a10.h"
- 
-@@ -51,16 +52,29 @@ static struct ccu_nkmp pll_core_clk = {
-  * the base (2x, 4x and 8x), and one variable divider (the one true
-  * pll audio).
-  *
-- * We don't have any need for the variable divider for now, so we just
-- * hardcode it to match with the clock names.
-+ * With sigma-delta modulation for fractional-N on the audio PLL,
-+ * we have to use specific dividers. This means the variable divider
-+ * can no longer be used, as the audio codec requests the exact clock
-+ * rates we support through this mechanism. So we now hard code the
-+ * variable divider to 1. This means the clock rates will no longer
-+ * match the clock names.
-  */
- #define SUN4I_PLL_AUDIO_REG	0x008
-+
-+static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-+	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
-+	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
-+};
-+
- static struct ccu_nm pll_audio_base_clk = {
- 	.enable		= BIT(31),
- 	.n		= _SUNXI_CCU_MULT_OFFSET(8, 7, 0),
- 	.m		= _SUNXI_CCU_DIV_OFFSET(0, 5, 0),
-+	.sdm		= _SUNXI_CCU_SDM(pll_audio_sdm_table, 0,
-+					 0x00c, BIT(31)),
- 	.common		= {
- 		.reg		= 0x008,
-+		.features	= CCU_FEATURE_SIGMA_DELTA_MOD,
- 		.hw.init	= CLK_HW_INIT("pll-audio-base",
- 					      "hosc",
- 					      &ccu_nm_ops,
-@@ -1021,9 +1035,9 @@ static struct ccu_common *sun4i_sun7i_ccu_clks[] = {
- 	&out_b_clk.common
- };
- 
--/* Post-divider for pll-audio is hardcoded to 4 */
-+/* Post-divider for pll-audio is hardcoded to 1 */
- static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-+			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
- 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-@@ -1420,10 +1434,10 @@ static void __init sun4i_ccu_init(struct device_node *node,
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN4I_PLL_AUDIO_REG);
- 	val &= ~GENMASK(29, 26);
--	writel(val | (4 << 26), reg + SUN4I_PLL_AUDIO_REG);
-+	writel(val | (1 << 26), reg + SUN4I_PLL_AUDIO_REG);
- 
- 	/*
- 	 * Use the peripheral PLL6 as the AHB parent, instead of CPU /
--- 
-2.14.2
+Best regards,
+Krzysztof
+
+
+> 
+> This patchset requires clocks runtime PM support ("Add runtime PM support
+> for clocks (on Exynos SoC example)" v9 patchset), which I hope to be
+> merged soon to clk-next.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (4):
+>   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
+>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
+>   ARM: dts: exynos: Add Exynos4412 ISP clock controller
+>   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
+> 
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |  27 ++++
+>  arch/arm/boot/dts/exynos4412.dtsi                  |  71 ++++----
+>  drivers/clk/samsung/Makefile                       |   1 +
+>  drivers/clk/samsung/clk-exynos4.c                  |  66 +-------
+>  drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
+>  include/dt-bindings/clock/exynos4.h                |  65 ++++----
+>  6 files changed, 287 insertions(+), 122 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
+> 
+> -- 
+> 2.14.2
+> 
