@@ -1,51 +1,37 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	andy.gross@linaro.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/2] arm64: dts: msm8996: Add the rpm clock controller node
-Date: Tue, 10 Oct 2017 14:27:14 +0530
-Message-Id: <1507625834-30499-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
-References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170929101918.h7lfefk3bjj2lf74@flea>
+References: <20170929082306.16193-1-wens@csie.org> <20170929082306.16193-4-wens@csie.org>
+ <20170929101918.h7lfefk3bjj2lf74@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 2 Oct 2017 21:03:06 +0800
+Message-ID: <CAGb2v67V-5vxoa1H7FtOYO7kfnuiN+kXeCZEK=E-uLQkJR+wvg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/14] drm/sun4i: tcon: Add variant callback for TCON
+ output muxing
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the rpm clock controller node for msm8996 devices
+On Fri, Sep 29, 2017 at 6:19 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Fri, Sep 29, 2017 at 08:22:55AM +0000, Chen-Yu Tsai wrote:
+>>  static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
+>> -     .has_unknown_mux = true,
+>> -     .has_channel_1  = true,
+>> +     .has_unknown_mux        = true,
+>> +     .has_channel_1          = true,
+>> +     .set_mux                = sun5i_a13_tcon_set_mux,
+>
+> I guess we could even retire has_unknown_mux now, since it provides
+> the same information than if set_mux is set or to NULL.
 
-Cc: Andy Gross <andy.gross@linaro.org> 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+I'll drop them in the same patch in v4.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 887b61c..97464d2 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -289,6 +290,11 @@
- 			compatible = "qcom,rpm-msm8996";
- 			qcom,glink-channels = "rpm_requests";
- 
-+			rpmcc: qcom,rpmcc {
-+				compatible = "qcom,rpmcc-msm8996";
-+				#clock-cells = <1>;
-+			};
-+
- 			pm8994-regulators {
- 				compatible = "qcom,rpm-pm8994-regulators";
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+ChenYu
