@@ -1,192 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55239 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759901AbdJQJGl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:41 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 01/23] drm/sun4i: Implement endpoint parsing using kfifo
-Date: Tue, 17 Oct 2017 11:06:08 +0200
-Message-Id: <4ecb323e787918208f6a5d9f0ebba12c62583c98.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+        Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+ <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
+Date: Mon, 2 Oct 2017 11:05:11 -0600
+MIME-Version: 1.0
+In-Reply-To: <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The commit da82b8785eeb ("drm/sun4i: add components in breadth first
-traversal order") implemented a breadth first traversal of our device tree
-nodes graph. However, it was relying on the kernel linked lists, and those
-are not really safe for addition.
+On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
+> On 29.09.2017 22:30, Stephen Warren wrote:
+>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
+>>>
+>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>>
+>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>>>> on Tegra20/30 SoC's.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> ---
+>>>>>>    .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
+>>>>>> ++++++++++++++++++++++
+>>>>>>    1 file changed, 23 insertions(+)
+>>>>>>    create mode 100644
+>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..2af9aa76ae11
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>> @@ -0,0 +1,23 @@
+>>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
+>>>>>> +- reg:        Should contain registers base address and length.
+>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
+>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
+>>>>>> +- resets :    Should contain one entry, DMA controller reset.
+>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select value
+>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
+>>>>>> +        documentation, in particular AHB DMA channel control register
+>>>>>> +        REQ_SEL field.
+>>>>>
+>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>>>
+>>>>
+>>>> Actually, DMA transfer trigger isn't related a hardware description. It's up to
+>>>> software to decide what trigger to select. So it shouldn't be in the binding.
+>>>
+>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+>>>
+>>>> And I think the same applies to requester... any objections?
+>>>
+>>> Well, the REQ_SEL should definitely be in the binding.
+>>>
+>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+>>> like we never bothered with it for the APB DMA and so maybe no ones uses
+>>> this.
+>>
+>> I don't think TRIG_SEL should be in the binding, at least at present. While
+>> TRIG_SEL certainly is something used to configure the transfer, I believe the
+>> semantics of the current DMA binding only cover DMA transfers that are initiated
+>> when SW desires, rather than being a combination of after SW programs the
+>> transfer plus some other HW event. So, we always use a default/hard-coded
+>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
+>> certainly no known use-case that requires a non-default TRIG_SEL value at
+>> present. We could add an extra #dma-cells value later if we find a use for it,
+>> and the semantics of that use-case make sense to add it to the DMA specifier,
+>> rather than some other separate higher-level property/driver/...
+> 
+> Thank you for the comment. If we'd want to extend the binding further with the
+> trigger, how to differentiate trigger from the requester in a case of a single
+> #data-cell?
+> 
+> Of course realistically a chance that the further extension would be needed is
+> very-very low, so we may defer the efforts to solve that question and for now
+> make driver aware of the potential #dma-cells extension.
 
-Indeed, in a single pipeline stage, your first stage (ie, the mixer or
-fronted) will be queued, and it will be the final iteration of that list as
-far as list_for_each_entry_safe is concerned. Then, during that final
-iteration, we'll queue another element (the TCON or the backend) that
-list_for_each_entry_safe will not account for, and we will leave the loop
-without having iterated over all the elements. And since we won't have
-built our components list properly, the DRM driver will be left
-non-functional.
+The request selector cell isn't optional, so is always present. If we 
+later add an optional trig_sel cell, we'll either have:
 
-We can instead use a kfifo to queue and enqueue components in-order, as was
-the original intention. This also has the benefit of removing any dynamic
-allocation, making the error handling path simpler too. The only thing
-we're losing is the ability to tell whether an element has already been
-queued, but that was only needed to remove spurious logs, and therefore
-purely cosmetic.
+#dma-cells=<1>: req_sel
 
-This means that this commit effectively reverses e8afb7b67fba ("drm/sun4i:
-don't add components that are already in the queue").
+or:
 
-Fixes: da82b8785eeb ("drm/sun4i: add components in breadth first traversal order")
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 71 +++++---------------------------
- 1 file changed, 13 insertions(+), 58 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index b5879d4620d8..a27efad9bc76 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/component.h>
-+#include <linux/kfifo.h>
- #include <linux/of_graph.h>
- #include <linux/of_reserved_mem.h>
- 
-@@ -222,29 +223,15 @@ static int compare_of(struct device *dev, void *data)
-  * matching system handles this for us.
-  */
- struct endpoint_list {
--	struct device_node *node;
--	struct list_head list;
-+	DECLARE_KFIFO(fifo, struct device_node *, 16);
- };
- 
--static bool node_is_in_list(struct list_head *endpoints,
--			    struct device_node *node)
--{
--	struct endpoint_list *endpoint;
--
--	list_for_each_entry(endpoint, endpoints, list)
--		if (endpoint->node == node)
--			return true;
--
--	return false;
--}
--
- static int sun4i_drv_add_endpoints(struct device *dev,
--				   struct list_head *endpoints,
-+				   struct endpoint_list *list,
- 				   struct component_match **match,
- 				   struct device_node *node)
- {
- 	struct device_node *port, *ep, *remote;
--	struct endpoint_list *endpoint;
- 	int count = 0;
- 
- 	/*
-@@ -304,19 +291,7 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 			}
- 		}
- 
--		/* skip downstream node if it is already in the queue */
--		if (node_is_in_list(endpoints, remote))
--			continue;
--
--		/* Add downstream nodes to the queue */
--		endpoint = kzalloc(sizeof(*endpoint), GFP_KERNEL);
--		if (!endpoint) {
--			of_node_put(remote);
--			return -ENOMEM;
--		}
--
--		endpoint->node = remote;
--		list_add_tail(&endpoint->list, endpoints);
-+		kfifo_put(&list->fifo, remote);
- 	}
- 
- 	return count;
-@@ -325,10 +300,11 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- static int sun4i_drv_probe(struct platform_device *pdev)
- {
- 	struct component_match *match = NULL;
--	struct device_node *np = pdev->dev.of_node;
--	struct endpoint_list *endpoint, *endpoint_temp;
-+	struct device_node *np = pdev->dev.of_node, *endpoint;
-+	struct endpoint_list list;
- 	int i, ret, count = 0;
--	LIST_HEAD(endpoints);
-+
-+	INIT_KFIFO(list.fifo);
- 
- 	for (i = 0;; i++) {
- 		struct device_node *pipeline = of_parse_phandle(np,
-@@ -337,31 +313,19 @@ static int sun4i_drv_probe(struct platform_device *pdev)
- 		if (!pipeline)
- 			break;
- 
--		endpoint = kzalloc(sizeof(*endpoint), GFP_KERNEL);
--		if (!endpoint) {
--			ret = -ENOMEM;
--			goto err_free_endpoints;
--		}
--
--		endpoint->node = pipeline;
--		list_add_tail(&endpoint->list, &endpoints);
-+		kfifo_put(&list.fifo, pipeline);
- 	}
- 
--	list_for_each_entry_safe(endpoint, endpoint_temp, &endpoints, list) {
-+	while (kfifo_get(&list.fifo, &endpoint)) {
- 		/* process this endpoint */
--		ret = sun4i_drv_add_endpoints(&pdev->dev, &endpoints, &match,
--					      endpoint->node);
-+		ret = sun4i_drv_add_endpoints(&pdev->dev, &list, &match,
-+					      endpoint);
- 
- 		/* sun4i_drv_add_endpoints can fail to allocate memory */
- 		if (ret < 0)
--			goto err_free_endpoints;
-+			return ret;
- 
- 		count += ret;
--
--		/* delete and cleanup the current entry */
--		list_del(&endpoint->list);
--		of_node_put(endpoint->node);
--		kfree(endpoint);
- 	}
- 
- 	if (count)
-@@ -370,15 +334,6 @@ static int sun4i_drv_probe(struct platform_device *pdev)
- 						       match);
- 	else
- 		return 0;
--
--err_free_endpoints:
--	list_for_each_entry_safe(endpoint, endpoint_temp, &endpoints, list) {
--		list_del(&endpoint->list);
--		of_node_put(endpoint->node);
--		kfree(endpoint);
--	}
--
--	return ret;
- }
- 
- static int sun4i_drv_remove(struct platform_device *pdev)
--- 
-git-series 0.9.1
+#dma-cells=<2>: req_sel, trig_sel
