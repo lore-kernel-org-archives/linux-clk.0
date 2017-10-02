@@ -1,152 +1,203 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren
- <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
- <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
- <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
- <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d2ae09b5-7645-c79c-efcf-69b26adbfc19@gmail.com>
-Date: Tue, 3 Oct 2017 15:07:17 +0300
-MIME-Version: 1.0
-In-Reply-To: <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33738 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751062AbdJBKsa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 06:48:30 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4/4] clk: samsung: Remove obsolete code for Exynos4412 ISP
+ clocks
+Date: Mon, 02 Oct 2017 12:47:59 +0200
+Message-id: <20171002104759.25944-5-m.szyprowski@samsung.com>
+In-reply-to: <20171002104759.25944-1-m.szyprowski@samsung.com>
+References: <20171002104759.25944-1-m.szyprowski@samsung.com>
+        <CGME20171002104826eucas1p17b7ea22d3984f1dea0e3efb45733d728@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03.10.2017 13:32, Jon Hunter wrote:
-> 
-> 
-> On 03/10/17 00:02, Dmitry Osipenko wrote:
->> On 02.10.2017 20:05, Stephen Warren wrote:
->>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
->>>> On 29.09.2017 22:30, Stephen Warren wrote:
->>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>>>>
->>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>>>
->>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>>>>> on Tegra20/30 SoC's.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>> ---
->>>>>>>>>    .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>>>>>> ++++++++++++++++++++++
->>>>>>>>>    1 file changed, 23 insertions(+)
->>>>>>>>>    create mode 100644
->>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>
->>>>>>>>> diff --git
->>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> new file mode 100644
->>>>>>>>> index 000000000000..2af9aa76ae11
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> @@ -0,0 +1,23 @@
->>>>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>>>> +
->>>>>>>>> +Required properties:
->>>>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>>>>>> +- reg:        Should contain registers base address and length.
->>>>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>>>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select
->>>>>>>>> value
->>>>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>>>>>> +        documentation, in particular AHB DMA channel control register
->>>>>>>>> +        REQ_SEL field.
->>>>>>>>
->>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>>>>
->>>>>>>
->>>>>>> Actually, DMA transfer trigger isn't related a hardware description. It's
->>>>>>> up to
->>>>>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>>>>
->>>>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>>>>
->>>>>>> And I think the same applies to requester... any objections?
->>>>>>
->>>>>> Well, the REQ_SEL should definitely be in the binding.
->>>>>>
->>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->>>>>> like we never bothered with it for the APB DMA and so maybe no ones uses
->>>>>> this.
->>>>>
->>>>> I don't think TRIG_SEL should be in the binding, at least at present. While
->>>>> TRIG_SEL certainly is something used to configure the transfer, I believe the
->>>>> semantics of the current DMA binding only cover DMA transfers that are initiated
->>>>> when SW desires, rather than being a combination of after SW programs the
->>>>> transfer plus some other HW event. So, we always use a default/hard-coded
->>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
->>>>> certainly no known use-case that requires a non-default TRIG_SEL value at
->>>>> present. We could add an extra #dma-cells value later if we find a use for it,
->>>>> and the semantics of that use-case make sense to add it to the DMA specifier,
->>>>> rather than some other separate higher-level property/driver/...
->>>>
->>>> Thank you for the comment. If we'd want to extend the binding further with the
->>>> trigger, how to differentiate trigger from the requester in a case of a single
->>>> #data-cell?
->>>>
->>>> Of course realistically a chance that the further extension would be needed is
->>>> very-very low, so we may defer the efforts to solve that question and for now
->>>> make driver aware of the potential #dma-cells extension.
->>>
->>> The request selector cell isn't optional, so is always present. If we later add
->>> an optional trig_sel cell, we'll either have:
->>>
->>> #dma-cells=<1>: req_sel
->>>
->>> or:
->>>
->>> #dma-cells=<2>: req_sel, trig_sel
->>
->> Why request sel. couldn't be optional? Could you please elaborate a bit more?
->>
->> I think possible options are:
->>
->> #dma-cells=<1>: req_sel
->> #dma-cells=<1>: trig_sel
-> 
-> With the above, how would you know that it is the req_sel or trig_sel
-> that is specified?
-> 
->> #dma-cells=<2>: req_sel, trig_sel
->>
->> The only difference between request and trigger is that trigger issues the whole
->> transfer, while request only a single burst. Isn't it possible to have a case in
->> HW for the "trigger-only" option? If not or it's a rareness, then I agree that
->> REQ_SEL must be mandatory.
-> 
-> I think that what Stephen is proposing is that for now we go with
-> '#dma-cells=<1>' and if we ever need to support the trigger cell we
-> could add support for '#dma-cells=<2>'. So with this proposal the
-> 'req_sel' would always be required for both '#dma-cells=<1>' and
-> '#dma-cells=<2>'. Even if the req_sel is not actually used but the
-> 'trig_sel' is, the user would have to set 'req_sel' to some pre-defined
-> value (eg. -1) where we know to ignore it.
-> 
+Exynos4412 ISP clock are provided by separate Exynos4412 ISP clock
+driver, so support for them in Exynos4-clk driver can be removed.
 
-Okay, I see now. Thank you for the clarification, but then we should have that
-pre-defined value declared in the binding?
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c   | 81 -------------------------------------
+ include/dt-bindings/clock/exynos4.h | 30 --------------
+ 2 files changed, 111 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index bdd68247e054..69649dc6a9cf 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -123,10 +123,6 @@
+ #define CLKOUT_CMU_CPU		0x14a00
+ #define PWR_CTRL1		0x15020
+ #define E4X12_PWR_CTRL2		0x15024
+-#define E4X12_DIV_ISP0		0x18300
+-#define E4X12_DIV_ISP1		0x18304
+-#define E4X12_GATE_ISP0		0x18800
+-#define E4X12_GATE_ISP1		0x18804
+ 
+ /* Below definitions are used for PWR_CTRL settings */
+ #define PWR_CTRL1_CORE2_DOWN_RATIO(x)		(((x) & 0x7) << 28)
+@@ -827,18 +823,6 @@ static const struct samsung_div_clock exynos4x12_div_clks[] __initconst = {
+ 	DIV(0, "div_c2c_aclk", "div_c2c", DIV_DMC1, 12, 3),
+ };
+ 
+-static struct samsung_div_clock exynos4x12_isp_div_clks[] = {
+-	DIV_F(CLK_DIV_ISP0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3,
+-						CLK_GET_RATE_NOCACHE, 0),
+-	DIV_F(CLK_DIV_ISP1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3,
+-						CLK_GET_RATE_NOCACHE, 0),
+-	DIV(0, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
+-	DIV_F(CLK_DIV_MCUISP0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1,
+-						4, 3, CLK_GET_RATE_NOCACHE, 0),
+-	DIV_F(CLK_DIV_MCUISP1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
+-						8, 3, CLK_GET_RATE_NOCACHE, 0),
+-};
+-
+ /* list of gate clocks supported in all exynos4 soc's */
+ static const struct samsung_gate_clock exynos4_gate_clks[] __initconst = {
+ 	/*
+@@ -1141,61 +1125,6 @@ static const struct samsung_gate_clock exynos4x12_gate_clks[] __initconst = {
+ 		0),
+ };
+ 
+-static struct samsung_gate_clock exynos4x12_isp_gate_clks[] = {
+-	GATE(CLK_FIMC_ISP, "isp", "aclk200", E4X12_GATE_ISP0, 0,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_FIMC_DRC, "drc", "aclk200", E4X12_GATE_ISP0, 1,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_FIMC_FD, "fd", "aclk200", E4X12_GATE_ISP0, 2,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_FIMC_LITE0, "lite0", "aclk200", E4X12_GATE_ISP0, 3,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_FIMC_LITE1, "lite1", "aclk200", E4X12_GATE_ISP0, 4,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_MCUISP, "mcuisp", "aclk200", E4X12_GATE_ISP0, 5,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_GICISP, "gicisp", "aclk200", E4X12_GATE_ISP0, 7,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_ISP, "smmu_isp", "aclk200", E4X12_GATE_ISP0, 8,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_DRC, "smmu_drc", "aclk200", E4X12_GATE_ISP0, 9,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_FD, "smmu_fd", "aclk200", E4X12_GATE_ISP0, 10,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_LITE0, "smmu_lite0", "aclk200", E4X12_GATE_ISP0, 11,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_LITE1, "smmu_lite1", "aclk200", E4X12_GATE_ISP0, 12,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_PPMUISPMX, "ppmuispmx", "aclk200", E4X12_GATE_ISP0, 20,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_PPMUISPX, "ppmuispx", "aclk200", E4X12_GATE_ISP0, 21,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_MCUCTL_ISP, "mcuctl_isp", "aclk200", E4X12_GATE_ISP0, 23,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_MPWM_ISP, "mpwm_isp", "aclk200", E4X12_GATE_ISP0, 24,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_I2C0_ISP, "i2c0_isp", "aclk200", E4X12_GATE_ISP0, 25,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_I2C1_ISP, "i2c1_isp", "aclk200", E4X12_GATE_ISP0, 26,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_MTCADC_ISP, "mtcadc_isp", "aclk200", E4X12_GATE_ISP0, 27,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_PWM_ISP, "pwm_isp", "aclk200", E4X12_GATE_ISP0, 28,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_WDT_ISP, "wdt_isp", "aclk200", E4X12_GATE_ISP0, 30,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_UART_ISP, "uart_isp", "aclk200", E4X12_GATE_ISP0, 31,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_ASYNCAXIM, "asyncaxim", "aclk200", E4X12_GATE_ISP1, 0,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SMMU_ISPCX, "smmu_ispcx", "aclk200", E4X12_GATE_ISP1, 4,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SPI0_ISP, "spi0_isp", "aclk200", E4X12_GATE_ISP1, 12,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-	GATE(CLK_SPI1_ISP, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+-			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+-};
+-
+ static const struct samsung_clock_alias exynos4_aliases[] __initconst = {
+ 	ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
+ 	ALIAS(CLK_ARM_CLK, NULL, "armclk"),
+@@ -1528,8 +1457,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			e4210_armclk_d, ARRAY_SIZE(e4210_armclk_d),
+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+ 	} else {
+-		struct resource res;
+-
+ 		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
+ 			ARRAY_SIZE(exynos4x12_mux_clks));
+ 		samsung_clk_register_div(ctx, exynos4x12_div_clks,
+@@ -1542,14 +1469,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			exynos4x12_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+ 
+-		of_address_to_resource(np, 0, &res);
+-		if (resource_size(&res) > 0x18000) {
+-			samsung_clk_register_div(ctx, exynos4x12_isp_div_clks,
+-				ARRAY_SIZE(exynos4x12_isp_div_clks));
+-			samsung_clk_register_gate(ctx, exynos4x12_isp_gate_clks,
+-				ARRAY_SIZE(exynos4x12_isp_gate_clks));
+-		}
+-
+ 		if (of_machine_is_compatible("samsung,exynos4412")) {
+ 			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+ 				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
+diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+index bf44a7c5eccc..5106943a1fd0 100644
+--- a/include/dt-bindings/clock/exynos4.h
++++ b/include/dt-bindings/clock/exynos4.h
+@@ -190,32 +190,6 @@
+ #define CLK_MIPI_HSI		349 /* Exynos4210 only */
+ #define CLK_PIXELASYNCM0	351
+ #define CLK_PIXELASYNCM1	352
+-#define CLK_FIMC_LITE0		353 /* Exynos4x12 only */
+-#define CLK_FIMC_LITE1		354 /* Exynos4x12 only */
+-#define CLK_PPMUISPX		355 /* Exynos4x12 only */
+-#define CLK_PPMUISPMX		356 /* Exynos4x12 only */
+-#define CLK_FIMC_ISP		357 /* Exynos4x12 only */
+-#define CLK_FIMC_DRC		358 /* Exynos4x12 only */
+-#define CLK_FIMC_FD		359 /* Exynos4x12 only */
+-#define CLK_MCUISP		360 /* Exynos4x12 only */
+-#define CLK_GICISP		361 /* Exynos4x12 only */
+-#define CLK_SMMU_ISP		362 /* Exynos4x12 only */
+-#define CLK_SMMU_DRC		363 /* Exynos4x12 only */
+-#define CLK_SMMU_FD		364 /* Exynos4x12 only */
+-#define CLK_SMMU_LITE0		365 /* Exynos4x12 only */
+-#define CLK_SMMU_LITE1		366 /* Exynos4x12 only */
+-#define CLK_MCUCTL_ISP		367 /* Exynos4x12 only */
+-#define CLK_MPWM_ISP		368 /* Exynos4x12 only */
+-#define CLK_I2C0_ISP		369 /* Exynos4x12 only */
+-#define CLK_I2C1_ISP		370 /* Exynos4x12 only */
+-#define CLK_MTCADC_ISP		371 /* Exynos4x12 only */
+-#define CLK_PWM_ISP		372 /* Exynos4x12 only */
+-#define CLK_WDT_ISP		373 /* Exynos4x12 only */
+-#define CLK_UART_ISP		374 /* Exynos4x12 only */
+-#define CLK_ASYNCAXIM		375 /* Exynos4x12 only */
+-#define CLK_SMMU_ISPCX		376 /* Exynos4x12 only */
+-#define CLK_SPI0_ISP		377 /* Exynos4x12 only */
+-#define CLK_SPI1_ISP		378 /* Exynos4x12 only */
+ #define CLK_PWM_ISP_SCLK	379 /* Exynos4x12 only */
+ #define CLK_SPI0_ISP_SCLK	380 /* Exynos4x12 only */
+ #define CLK_SPI1_ISP_SCLK	381 /* Exynos4x12 only */
+@@ -257,10 +231,6 @@
+ #define CLK_PPMUACP		415
+ 
+ /* div clocks */
+-#define CLK_DIV_ISP0		450 /* Exynos4x12 only */
+-#define CLK_DIV_ISP1		451 /* Exynos4x12 only */
+-#define CLK_DIV_MCUISP0		452 /* Exynos4x12 only */
+-#define CLK_DIV_MCUISP1		453 /* Exynos4x12 only */
+ #define CLK_DIV_ACLK200		454 /* Exynos4x12 only */
+ #define CLK_DIV_ACLK400_MCUISP	455 /* Exynos4x12 only */
+ #define CLK_DIV_ACP		456
+-- 
+2.14.2
+
