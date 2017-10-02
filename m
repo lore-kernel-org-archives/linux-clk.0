@@ -1,49 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 24 Oct 2017 06:54:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	mturquette@baylibre.com, emilio@elopez.com.ar, wens@csie.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: fix build warning
-Message-ID: <20171024135448.GE15990@codeaurora.org>
-References: <20171019190948.5754-1-clabbe.montjoie@gmail.com>
- <20171020072904.kfmx65lbqd3uw2qh@flea>
- <20171024083628.GC15990@codeaurora.org>
- <20171024100702.GA14721@Red>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:14112
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750986AbdJBKcr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Oct 2017 06:32:47 -0400
+From: Adriana Reus <adriana.reus@nxp.com>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+Cc: anson.huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Adriana Reus <adriana.reus@nxp.com>
+Subject: [PATCH RESEND 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
+Date: Mon,  2 Oct 2017 13:32:10 +0300
+Message-Id: <1506940331-16742-2-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
+References: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171024100702.GA14721@Red>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/24, Corentin Labbe wrote:
-> On Tue, Oct 24, 2017 at 01:36:28AM -0700, Stephen Boyd wrote:
-> > On 10/20, Maxime Ripard wrote:
-> > > Hi Stephen, Mike,
-> > > 
-> > > On Thu, Oct 19, 2017 at 09:09:48PM +0200, Corentin Labbe wrote:
-> > > > This patch fix the following build warning:
-> > > > drivers/clk/sunxi/clk-factors.c:279:14: warning: variable 'name' set but not used [-Wunused-but-set-variable]
-> > > > 
-> > > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> > > 
-> > > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > 
-> > > Can you apply that patch directly? This is the only fix that we're
-> > > supposed to have for 4.14.
-> > > 
-> > 
-> > Fixes tag? And this is a new warning from the v4.14 merge window?
-> > I suppose it only removes code so that's a plus side for merging
-> > into fixes.
-> > 
-> 
-> Will do it.
+The parent of OCRAM_CLK should be axi_main_root_clk
+and not axi_post_div.
 
-Does this mean you'll resend? Just telling me commit id would be
-sufficient.
+before:
 
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            ocram_clk           0       0       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
+
+after:
+
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
+              ocram_clk         0       0       332307692       0 0
+
+Reference Doc: i.MX 7D Reference Manual - Chap 5, p 516
+(https://www.nxp.com/docs/en/reference-manual/IMX7DRM.pdf)
+
+Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 2305699..0ac9b30 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -797,7 +797,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+-	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
++	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
+ 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+ 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
