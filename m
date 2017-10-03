@@ -10,35 +10,47 @@ To: Thierry Reding <thierry.reding@gmail.com>,
 Cc: linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] clk: tegra: Correct parent of the APBDMA clock
-Date: Wed,  4 Oct 2017 02:02:39 +0300
-Message-Id: <da467b22849ad62417d9a26a8166eef6d7f71a59.1507070638.git.digetx@gmail.com>
+Subject: [PATCH v2 3/4] clk: tegra20: Use common definition of APBDMA clock gate
+Date: Wed,  4 Oct 2017 02:02:40 +0300
+Message-Id: <92864d5a0b181866153a1cf28425640f3bbe1b17.1507070638.git.digetx@gmail.com>
 In-Reply-To: <cover.1507070638.git.digetx@gmail.com>
 References: <cover.1507070638.git.digetx@gmail.com>
 In-Reply-To: <cover.1507070638.git.digetx@gmail.com>
 References: <cover.1507070638.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-APBDMA represents a clock gate to the APB DMA controller, the actual
-clock source for the controller is PCLK.
+The APBDMA clock is defined in the common clock gates table that is used
+by Tegra30+. Tegra20 can use it too, let's remove the custom definition
+and use the common one.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra20.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 0bce2bc55f0d..870776e4a82b 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -824,7 +824,7 @@ static struct tegra_periph_init_data gate_clks[] = {
- 	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
- 	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
- 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
--	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
-+	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
- 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
- 	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
- 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 42740aad8791..87511b8892cd 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -523,6 +523,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 
+ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_ahbdma] = { .dt_id = TEGRA20_CLK_AHBDMA, .present = true },
++	[tegra_clk_apbdma] = { .dt_id = TEGRA20_CLK_APBDMA, .present = true },
+ 	[tegra_clk_spdif_out] = { .dt_id = TEGRA20_CLK_SPDIF_OUT, .present = true },
+ 	[tegra_clk_spdif_in] = { .dt_id = TEGRA20_CLK_SPDIF_IN, .present = true },
+ 	[tegra_clk_sdmmc1] = { .dt_id = TEGRA20_CLK_SDMMC1, .present = true },
+@@ -807,11 +808,6 @@ static void __init tegra20_periph_clk_init(void)
+ 				    clk_base, 0, 3, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+-	/* apbdma */
+-	clk = tegra_clk_register_periph_gate("apbdma", "pclk", 0, clk_base,
+-				    0, 34, periph_clk_enb_refcnt);
+-	clks[TEGRA20_CLK_APBDMA] = clk;
+-
+ 	/* emc */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
 -- 
 2.14.1
