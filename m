@@ -1,52 +1,49 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 01/27] clk: ti: clkctrl: fix error messages to print out node name properly
-Date: Mon, 30 Oct 2017 15:04:19 +0200
-Message-ID: <1509368685-29112-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38612 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751115AbdJCTcj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 15:32:39 -0400
+Date: Tue, 3 Oct 2017 21:32:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: Add a separate driver for Exynos4412
+ ISP clocks
+Message-ID: <20171003193234.kqex4kwa57sjegcr@kozik-lap>
+References: <20171002180007.asan73h53nfot6nr@kozik-lap>
+ <CGME20171003061657eucas1p27badb05b29f1130e598aeb2fa2aef92f@eucas1p2.samsung.com>
+ <20171003061644.2597-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171003061644.2597-1-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Current node name does not convey any information, as it is always "clk".
-Instead, print out the full node path, which will tell us better where
-something went wrong.
+On Tue, Oct 03, 2017 at 08:16:44AM +0200, Marek Szyprowski wrote:
+> Some registers for the Exynos 4412 ISP (Camera subsystem) clocks are
+> partially located in the SOC area, which belongs to ISP power domain.
+> Because those registers are also located in a different memory region
+> than the main clock controller, support for them can be provided by
+> a separate clock controller. This in turn allows to almost seamlessly
+> make it aware of the power domain using recently introduced runtime
+> PM support for clocks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |  27 ++++
+>  drivers/clk/samsung/Makefile                       |   1 +
+>  drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
+>  include/dt-bindings/clock/exynos4.h                |  35 ++++
+>  4 files changed, 242 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
+> 
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clkctrl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 53e71d0..2db7d40 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -351,8 +351,8 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
- 	if (ti_clk_parse_divider_data((int *)div_data->dividers,
- 				      div_data->max_div, 0, 0,
- 				      &div->width, &div->table)) {
--		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
--		       node->name, offset, data->bit);
-+		pr_err("%s: Data parsing for %pOF:%04x:%d failed\n", __func__,
-+		       node, offset, data->bit);
- 		kfree(div);
- 		return;
- 	}
-@@ -428,7 +428,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 	}
- 
- 	if (!data->addr) {
--		pr_err("%s not found from clkctrl data.\n", node->name);
-+		pr_err("%pOF not found from clkctrl data.\n", node);
- 		return;
- 	}
- 
--- 
-1.9.1
+Best regards,
+Krzysztof
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
