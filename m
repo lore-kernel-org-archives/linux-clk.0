@@ -1,32 +1,69 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Add git repository to Renesas clock driver section
-Date: Wed,  4 Oct 2017 13:34:24 +0200
-Message-Id: <1507116864-17219-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 3 Oct 2017 16:41:07 -0500
+From: Rob Herring <robh@kernel.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 6/7] dt-bindings: clock: Document qcom,apcs binding
+Message-ID: <20171003214107.4xvk5motoedpnjbr@rob-hp-laptop>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
+ <20170921164940.20343-7-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170921164940.20343-7-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Sep 21, 2017 at 07:49:39PM +0300, Georgi Djakov wrote:
+> Add device-tree binding documentation for the Qualcom APCS clock
+> controller. This clock controller is a mux and half-integer divider
+> and provides the clock for the application CPU.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,apcs.txt        | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,apcs.txt b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> new file mode 100644
+> index 000000000000..8083bcc33ebe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> @@ -0,0 +1,27 @@
+> +Qualcomm APCS Clock Controller Binding
+> +--------------------------------------
+> +The APCS hardware block provides a combined mux and half-integer divider
+> +functionality. It is used for a main CPU clock mux on MSM8916 platforms.
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +
+> +		"qcom,msm8916-apcs-clk"
+> +
+> +- clocks : shall be the phandle to the main input CPU PLL clock
+> +
+> +- #clock-cells : must be set to <0>
+> +
+> +Example:
+> +
+> +	apcs: mailbox@b011000 {
+> +		compatible = "qcom,msm8916-apcs-kpss-global";
+> +		reg = <0xb011000 0x1000>;
+> +		#mbox-cells = <1>;
+> +
+> +		apcs_clk: apcs_clk {
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 61d77c8037a1faf9..d23f4fba728d091a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11476,6 +11476,7 @@ F:	include/linux/rpmsg/
- RENESAS CLOCK DRIVERS
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- L:	linux-renesas-soc@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
- S:	Supported
- F:	drivers/clk/renesas/
- 
--- 
-2.7.4
+Don't use '_' in node names. This can be just "clock".
+
+Otherwise,
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+> +			compatible = "qcom,msm8916-apcs-clk";
+> +			clocks = <&a53pll>;
+> +			#clock-cells = <0>;
+> +		};
+> +	};
