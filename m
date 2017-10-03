@@ -1,33 +1,183 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59761 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753967AbdJIKe1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2017 06:34:27 -0400
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
-Date: Mon, 09 Oct 2017 12:34:20 +0200
-MIME-version: 1.0
-In-reply-to: <20171002104759.25944-1-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
-        <20171002104759.25944-1-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Warren
+	<swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "Laxman
+ Dewangan" <ldewangan@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+ <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
+ <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
+ <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
+Date: Tue, 3 Oct 2017 11:32:25 +0100
+MIME-Version: 1.0
+In-Reply-To: <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02/2017 12:47 PM, Marek Szyprowski wrote:
-> Patch summary:
-> 
-> Marek Szyprowski (4):
->   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
->   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
->   ARM: dts: exynos: Add Exynos4412 ISP clock controller
->   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
 
-I have applied whole series, with v2 of patch 2/4, thanks.
+
+On 03/10/17 00:02, Dmitry Osipenko wrote:
+> On 02.10.2017 20:05, Stephen Warren wrote:
+>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
+>>> On 29.09.2017 22:30, Stephen Warren wrote:
+>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
+>>>>>
+>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>>>>
+>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that pres=
+ents
+>>>>>>>> on Tegra20/30 SoC's.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>> ---
+>>>>>>>> =C2=A0=C2=A0 .../bindings/dma/nvidia,tegra20-ahbdma.txt=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 23
+>>>>>>>> ++++++++++++++++++++++
+>>>>>>>> =C2=A0=C2=A0 1 file changed, 23 insertions(+)
+>>>>>>>> =C2=A0=C2=A0 create mode 100644
+>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>>
+>>>>>>>> diff --git
+>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>> new file mode 100644
+>>>>>>>> index 000000000000..2af9aa76ae11
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.=
+txt
+>>>>>>>> @@ -0,0 +1,23 @@
+>>>>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>>>>> +
+>>>>>>>> +Required properties:
+>>>>>>>> +- compatible:=C2=A0=C2=A0=C2=A0 Must be "nvidia,tegra20-ahbdma"
+>>>>>>>> +- reg:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Should contain r=
+egisters base address and length.
+>>>>>>>> +- interrupts:=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA con=
+troller interrupt.
+>>>>>>>> +- clocks:=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA control=
+ler clock.
+>>>>>>>> +- resets :=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA contro=
+ller reset.
+>>>>>>>> +- #dma-cells:=C2=A0=C2=A0=C2=A0 Should be <1>. The cell represent=
+s DMA request select
+>>>>>>>> value
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for the peripheral. Fo=
+r more details consult the Tegra TRM's
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 documentation, in part=
+icular AHB DMA channel control register
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 REQ_SEL field.
+>>>>>>>
+>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as we=
+ll?
+>>>>>>>
+>>>>>>
+>>>>>> Actually, DMA transfer trigger isn't related a hardware description.=
+ It's
+>>>>>> up to
+>>>>>> software to decide what trigger to select. So it shouldn't be in the=
+ binding.
+>>>>>
+>>>>> I think it could be, if say a board wanted a GPIO to trigger a transf=
+er.
+>>>>>
+>>>>>> And I think the same applies to requester... any objections?
+>>>>>
+>>>>> Well, the REQ_SEL should definitely be in the binding.
+>>>>>
+>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+>>>>> like we never bothered with it for the APB DMA and so maybe no ones u=
+ses
+>>>>> this.
+>>>>
+>>>> I don't think TRIG_SEL should be in the binding, at least at present. =
+While
+>>>> TRIG_SEL certainly is something used to configure the transfer, I beli=
+eve the
+>>>> semantics of the current DMA binding only cover DMA transfers that are=
+ initiated
+>>>> when SW desires, rather than being a combination of after SW programs =
+the
+>>>> transfer plus some other HW event. So, we always use a default/hard-co=
+ded
+>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. T=
+here's
+>>>> certainly no known use-case that requires a non-default TRIG_SEL value=
+ at
+>>>> present. We could add an extra #dma-cells value later if we find a use=
+ for it,
+>>>> and the semantics of that use-case make sense to add it to the DMA spe=
+cifier,
+>>>> rather than some other separate higher-level property/driver/...
+>>>
+>>> Thank you for the comment. If we'd want to extend the binding further w=
+ith the
+>>> trigger, how to differentiate trigger from the requester in a case of a=
+ single
+>>> #data-cell?
+>>>
+>>> Of course realistically a chance that the further extension would be ne=
+eded is
+>>> very-very low, so we may defer the efforts to solve that question and f=
+or now
+>>> make driver aware of the potential #dma-cells extension.
+>>
+>> The request selector cell isn't optional, so is always present. If we la=
+ter add
+>> an optional trig_sel cell, we'll either have:
+>>
+>> #dma-cells=3D<1>: req_sel
+>>
+>> or:
+>>
+>> #dma-cells=3D<2>: req_sel, trig_sel
+>=20
+> Why request sel. couldn't be optional? Could you please elaborate a bit m=
+ore?
+>=20
+> I think possible options are:
+>=20
+> #dma-cells=3D<1>: req_sel
+> #dma-cells=3D<1>: trig_sel
+
+With the above, how would you know that it is the req_sel or trig_sel
+that is specified?
+
+> #dma-cells=3D<2>: req_sel, trig_sel
+>=20
+> The only difference between request and trigger is that trigger issues th=
+e whole
+> transfer, while request only a single burst. Isn't it possible to have a =
+case in
+> HW for the "trigger-only" option? If not or it's a rareness, then I agree=
+ that
+> REQ_SEL must be mandatory.
+
+I think that what Stephen is proposing is that for now we go with
+'#dma-cells=3D<1>' and if we ever need to support the trigger cell we
+could add support for '#dma-cells=3D<2>'. So with this proposal the
+'req_sel' would always be required for both '#dma-cells=3D<1>' and
+'#dma-cells=3D<2>'. Even if the req_sel is not actually used but the
+'trig_sel' is, the user would have to set 'req_sel' to some pre-defined
+value (eg. -1) where we know to ignore it.
+
+Cheers
+Jon
+
+--=20
+nvpublic
