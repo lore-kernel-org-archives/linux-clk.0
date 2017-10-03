@@ -1,217 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40594 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756825AbdJQJ5N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:57:13 -0400
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+To: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter
+ <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Vinod Koul <vinod.koul@intel.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+ <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
+ <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
+ <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+ <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
+ <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
+ <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
+ <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
+ <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
+ <ecf50d7b-59d2-7b98-5d45-e95922e495bf@wwwdotorg.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <93be2eb5-617a-f681-0a55-c2bbef46d08b@gmail.com>
+Date: Tue, 3 Oct 2017 20:04:09 +0300
 MIME-Version: 1.0
-In-Reply-To: <faa3a4d511039af1d116270dfef3a8b60ca3591e.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
- <faa3a4d511039af1d116270dfef3a8b60ca3591e.1508231063.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 Oct 2017 17:56:47 +0800
-Message-ID: <CAGb2v679FWRRiTfS5jReFqiAEEiqAg13wUPHOYdT_=gebh25tg@mail.gmail.com>
-Subject: Re: [PATCH 06/23] drm/sun4i: tcon: Don't rely on encoders to set the
- TCON mode
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <ecf50d7b-59d2-7b98-5d45-e95922e495bf@wwwdotorg.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Just like we did for the TCON enable and disable, for historical reasons we
-> used to rely on the encoders calling the TCON mode_set function, while the
-> CRTC has a callback for that.
->
-> Let's implement it in order to reduce the boilerplate code.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_crtc.c          | 10 +++++++-
->  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c  |  1 +-
->  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c      |  7 +-----
->  drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c |  1 +-
->  drivers/gpu/drm/sun4i/sun4i_rgb.c           | 15 +-----------
->  drivers/gpu/drm/sun4i/sun4i_tcon.c          | 31 +++++++++++++++++-----
->  drivers/gpu/drm/sun4i/sun4i_tcon.h          | 11 ++------
->  drivers/gpu/drm/sun4i/sun4i_tv.c            |  6 +----
->  8 files changed, 37 insertions(+), 45 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> index e86baa3746af..5decae0069d0 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-> @@ -115,11 +115,21 @@ static void sun4i_crtc_atomic_enable(struct drm_crtc *crtc,
->         sun4i_tcon_set_status(scrtc->tcon, encoder, true);
->  }
->
-> +static void sun4i_crtc_mode_set_nofb(struct drm_crtc *crtc)
-> +{
-> +       struct drm_display_mode *mode = &crtc->state->adjusted_mode;
-> +       struct drm_encoder *encoder = sun4i_crtc_get_encoder(crtc);
-> +       struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
-> +
-> +       sun4i_tcon_mode_set(scrtc->tcon, encoder, mode);
-> +}
-> +
->  static const struct drm_crtc_helper_funcs sun4i_crtc_helper_funcs = {
->         .atomic_begin   = sun4i_crtc_atomic_begin,
->         .atomic_flush   = sun4i_crtc_atomic_flush,
->         .atomic_enable  = sun4i_crtc_atomic_enable,
->         .atomic_disable = sun4i_crtc_atomic_disable,
-> +       .mode_set_nofb  = sun4i_crtc_mode_set_nofb,
->  };
->
->  static int sun4i_crtc_enable_vblank(struct drm_crtc *crtc)
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> index 04f85b1cf922..e826da34e919 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> @@ -13,7 +13,6 @@
->  #include <linux/clk-provider.h>
->  #include <linux/regmap.h>
->
-> -#include "sun4i_tcon.h"
->  #include "sun4i_hdmi.h"
->
->  struct sun4i_ddc {
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> index 482bf03d55c1..d2eb0a60e568 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> @@ -30,7 +30,6 @@
->  #include "sun4i_crtc.h"
->  #include "sun4i_drv.h"
->  #include "sun4i_hdmi.h"
-> -#include "sun4i_tcon.h"
->
->  static inline struct sun4i_hdmi *
->  drm_encoder_to_sun4i_hdmi(struct drm_encoder *encoder)
-> @@ -120,15 +119,9 @@ static void sun4i_hdmi_mode_set(struct drm_encoder *encoder,
->                                 struct drm_display_mode *adjusted_mode)
->  {
->         struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
-> -       struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
-> -       struct sun4i_tcon *tcon = crtc->tcon;
->         unsigned int x, y;
->         u32 val;
->
-> -       sun4i_tcon1_mode_set(tcon, mode);
-> -       sun4i_tcon_set_mux(tcon, 1, encoder);
-> -
-> -       clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
->         clk_set_rate(hdmi->mod_clk, mode->crtc_clock * 1000);
->         clk_set_rate(hdmi->tmds_clk, mode->crtc_clock * 1000);
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-> index 1b6b37aefc38..dc332ea56f6c 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-> @@ -12,7 +12,6 @@
->
->  #include <linux/clk-provider.h>
->
-> -#include "sun4i_tcon.h"
->  #include "sun4i_hdmi.h"
->
->  struct sun4i_tmds {
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> index a7f297ed40c1..832f8f9bc47f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> @@ -153,22 +153,7 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
->         }
->  }
->
-> -static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
-> -                                      struct drm_display_mode *mode,
-> -                                      struct drm_display_mode *adjusted_mode)
-> -{
-> -       struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
-> -       struct sun4i_tcon *tcon = rgb->tcon;
-> -
-> -       sun4i_tcon0_mode_set(tcon, mode);
-> -       sun4i_tcon_set_mux(tcon, 0, encoder);
-> -
-> -       /* FIXME: This seems to be board specific */
-> -       clk_set_phase(tcon->dclk, 120);
-> -}
-> -
->  static struct drm_encoder_helper_funcs sun4i_rgb_enc_helper_funcs = {
-> -       .mode_set       = sun4i_rgb_encoder_mode_set,
->         .disable        = sun4i_rgb_encoder_disable,
->         .enable         = sun4i_rgb_encoder_enable,
->  };
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 964cf22a1ced..7ecd4f7c8411 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -139,7 +139,6 @@ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
->         DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s: %d\n",
->                          encoder->name, encoder->crtc->name, ret);
->  }
-> -EXPORT_SYMBOL(sun4i_tcon_set_mux);
->
->  static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
->                                     int channel)
-> @@ -159,8 +158,8 @@ static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
->         return delay;
->  }
->
-> -void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-> -                         struct drm_display_mode *mode)
-> +static void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-> +                                struct drm_display_mode *mode)
+On 03.10.2017 18:38, Stephen Warren wrote:
+> On 10/03/2017 04:32 AM, Jon Hunter wrote:
+>>
+>>
+>> On 03/10/17 00:02, Dmitry Osipenko wrote:
+>>> On 02.10.2017 20:05, Stephen Warren wrote:
+>>>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
+>>>>> On 29.09.2017 22:30, Stephen Warren wrote:
+>>>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
+>>>>>>>
+>>>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
+>>>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
+>>>>>>>>>
+>>>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
+>>>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+>>>>>>>>>> on Tegra20/30 SoC's.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>>>> ---
+>>>>>>>>>>     .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
+>>>>>>>>>> ++++++++++++++++++++++
+>>>>>>>>>>     1 file changed, 23 insertions(+)
+>>>>>>>>>>     create mode 100644
+>>>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>>>>
+>>>>>>>>>> diff --git
+>>>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>>>> new file mode 100644
+>>>>>>>>>> index 000000000000..2af9aa76ae11
+>>>>>>>>>> --- /dev/null
+>>>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+>>>>>>>>>> @@ -0,0 +1,23 @@
+>>>>>>>>>> +* NVIDIA Tegra AHB DMA controller
+>>>>>>>>>> +
+>>>>>>>>>> +Required properties:
+>>>>>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
+>>>>>>>>>> +- reg:        Should contain registers base address and length.
+>>>>>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
+>>>>>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
+>>>>>>>>>> +- resets :    Should contain one entry, DMA controller reset.
+>>>>>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select
+>>>>>>>>>> value
+>>>>>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
+>>>>>>>>>> +        documentation, in particular AHB DMA channel control register
+>>>>>>>>>> +        REQ_SEL field.
+>>>>>>>>>
+>>>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Actually, DMA transfer trigger isn't related a hardware description. It's
+>>>>>>>> up to
+>>>>>>>> software to decide what trigger to select. So it shouldn't be in the
+>>>>>>>> binding.
+>>>>>>>
+>>>>>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
+>>>>>>>
+>>>>>>>> And I think the same applies to requester... any objections?
+>>>>>>>
+>>>>>>> Well, the REQ_SEL should definitely be in the binding.
+>>>>>>>
+>>>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+>>>>>>> like we never bothered with it for the APB DMA and so maybe no ones uses
+>>>>>>> this.
+>>>>>>
+>>>>>> I don't think TRIG_SEL should be in the binding, at least at present. While
+>>>>>> TRIG_SEL certainly is something used to configure the transfer, I believe the
+>>>>>> semantics of the current DMA binding only cover DMA transfers that are
+>>>>>> initiated
+>>>>>> when SW desires, rather than being a combination of after SW programs the
+>>>>>> transfer plus some other HW event. So, we always use a default/hard-coded
+>>>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
+>>>>>> certainly no known use-case that requires a non-default TRIG_SEL value at
+>>>>>> present. We could add an extra #dma-cells value later if we find a use for
+>>>>>> it,
+>>>>>> and the semantics of that use-case make sense to add it to the DMA specifier,
+>>>>>> rather than some other separate higher-level property/driver/...
+>>>>>
+>>>>> Thank you for the comment. If we'd want to extend the binding further with the
+>>>>> trigger, how to differentiate trigger from the requester in a case of a single
+>>>>> #data-cell?
+>>>>>
+>>>>> Of course realistically a chance that the further extension would be needed is
+>>>>> very-very low, so we may defer the efforts to solve that question and for now
+>>>>> make driver aware of the potential #dma-cells extension.
+>>>>
+>>>> The request selector cell isn't optional, so is always present. If we later add
+>>>> an optional trig_sel cell, we'll either have:
+>>>>
+>>>> #dma-cells=<1>: req_sel
+>>>>
+>>>> or:
+>>>>
+>>>> #dma-cells=<2>: req_sel, trig_sel
+>>>
+>>> Why request sel. couldn't be optional? Could you please elaborate a bit more?
+> 
+> The documentation currently says it's mandatory, and DT bindings must be evolved
+> in a backwards-compatible fashion.
+> 
+>>> I think possible options are:
+>>>
+>>> #dma-cells=<1>: req_sel
+>>> #dma-cells=<1>: trig_sel
+>>
+>> With the above, how would you know that it is the req_sel or trig_sel
+>> that is specified?
+> 
+> Also, if req_sel were optional, then it'd be impossible to distinguish between
+> those cases, so we can't design a binding like that. In general, when adding
+> extra optional cells to an #xxx-cells style binding, then whenever cell N is
+> present, all cells before cell N must be present even if optional.
 
-This doesn't have const...
-
->  {
->         unsigned int bp, hsync, vsync;
->         u8 clk_delay;
-> @@ -233,10 +232,9 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
->         /* Enable the output on the pins */
->         regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0);
->  }
-> -EXPORT_SYMBOL(sun4i_tcon0_mode_set);
->
-> -void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-> -                         struct drm_display_mode *mode)
-> +static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-> +                                const struct drm_display_mode *mode)
->  {
->         unsigned int bp, hsync, vsync, vtotal;
->         u8 clk_delay;
-> @@ -324,7 +322,26 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
->                            SUN4I_TCON_GCTL_IOMAP_MASK,
->                            SUN4I_TCON_GCTL_IOMAP_TCON1);
->  }
-> -EXPORT_SYMBOL(sun4i_tcon1_mode_set);
-> +
-> +void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
-> +                        const struct drm_encoder *encoder,
-> +                        const struct drm_display_mode *mode)
-
-But this does...
-
-> +{
-> +       switch (encoder->encoder_type) {
-> +       case DRM_MODE_ENCODER_NONE:
-> +               sun4i_tcon0_mode_set(tcon, mode);
-
-So you're likely to get some warning about dropping const here.
-
-Otherwise,
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+I've checked how extending of #dma-cells looks like and it is indeed a good
+variant since it preserves backward compatibility. Thank you and Jon for the
+comments and suggestions, I'll send out v2 soon.
