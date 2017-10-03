@@ -1,77 +1,44 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 25 Oct 2017 21:13:26 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 6/7] dt-bindings: clock: Document qcom,apcs binding
-Message-ID: <20171026041326.GJ1575@tuxbook>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-7-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170921164940.20343-7-georgi.djakov@linaro.org>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/4] clk: tegra: Correct parent of the APBDMA clock
+Date: Wed,  4 Oct 2017 02:02:39 +0300
+Message-Id: <da467b22849ad62417d9a26a8166eef6d7f71a59.1507070638.git.digetx@gmail.com>
+In-Reply-To: <cover.1507070638.git.digetx@gmail.com>
+References: <cover.1507070638.git.digetx@gmail.com>
+In-Reply-To: <cover.1507070638.git.digetx@gmail.com>
+References: <cover.1507070638.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
+APBDMA represents a clock gate to the APB DMA controller, the actual
+clock source for the controller is PCLK.
 
-> Add device-tree binding documentation for the Qualcom APCS clock
-> controller. This clock controller is a mux and half-integer divider
-> and provides the clock for the application CPU.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,apcs.txt        | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,apcs.txt b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> new file mode 100644
-> index 000000000000..8083bcc33ebe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> @@ -0,0 +1,27 @@
-> +Qualcomm APCS Clock Controller Binding
-> +--------------------------------------
-> +The APCS hardware block provides a combined mux and half-integer divider
-> +functionality. It is used for a main CPU clock mux on MSM8916 platforms.
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +		"qcom,msm8916-apcs-clk"
-> +
-> +- clocks : shall be the phandle to the main input CPU PLL clock
-> +
-> +- #clock-cells : must be set to <0>
-> +
-> +Example:
-> +
-> +	apcs: mailbox@b011000 {
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This node describes the "apcs kpss global"-block.
-
-> +		compatible = "qcom,msm8916-apcs-kpss-global";
-> +		reg = <0xb011000 0x1000>;
-> +		#mbox-cells = <1>;
-> +
-> +		apcs_clk: apcs_clk {
-
-This node describes that your implementation is split in two different
-drivers.
-
-In other words, I think you should add the two clock properties to the
-apcs node, rather than adding a subnode. I also think you can make the
-mailbox driver implement the clock given the 8916 compatible.
-
-> +			compatible = "qcom,msm8916-apcs-clk";
-> +			clocks = <&a53pll>;
-> +			#clock-cells = <0>;
-> +		};
-> +	};
-
-Regards,
-Bjorn
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 0bce2bc55f0d..870776e4a82b 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -824,7 +824,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+ 	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+ 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+-	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
++	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
+ 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+ 	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
+ 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+-- 
+2.14.1
