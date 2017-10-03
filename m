@@ -1,213 +1,59 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 4/5] clk: aspeed: Register gated clocks
-Date: Mon, 30 Oct 2017 16:32:49 +1030
-Message-Id: <20171030060250.701-5-joel@jms.id.au>
-In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
-References: <20171030060250.701-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51427 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbdJCKAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:34 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 7/9] clk: samsung: Rework clkdev alias handling in S3C2443
+ driver
+Date: Tue, 03 Oct 2017 12:00:14 +0200
+Message-id: <20171003100016.32029-8-m.szyprowski@samsung.com>
+In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
+References: <20171003100016.32029-1-m.szyprowski@samsung.com>
+        <CGME20171003100031eucas1p29f34d4e1878d839a7af9ea05ba15ece9@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The majority of the clocks in the system are gates paired with a reset
-controller that holds the IP in reset.
+S3C2443 SoCs still uses old, non-dt CPUfreq driver, which requires clkdev
+aliases to get access to proper clocks. Create those aliases using
+samsung_clk_register_alias() function instead of using *_A clock macros,
+which will be removed soon.
 
-This borrows from clk_hw_register_gate, but registers two 'gates', one
-to control the clock enable register and the other to control the reset
-IP. This allows us to enforce the ordering:
-
- 1. Place IP in reset
- 2. Enable clock
- 3. Delay
- 4. Release reset
-
-There are some gates that do not have an associated reset; these are
-handled by using -1 as the index for the reset.
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-v5:
-  - Add Andrew's Reviewed-by
-v4:
- - Drop useless 'disable clock' comment
- - Drop CLK_IS_BASIC flag
- - Fix 'there are a number of clocks...' comment
- - Pass device to clk registration functions
- - Check for errors when registering clk_hws
-v3:
- - Remove gates offset as gates are now at the start of the list
----
- drivers/clk/clk-aspeed.c | 131 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
+ drivers/clk/samsung/clk-s3c2443.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 8bf3f3767560..df5bc57a6ee2 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -211,6 +211,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
- 	.calc_pll = aspeed_ast2400_calc_pll,
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index abb935c42916..45166033f638 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -117,8 +117,8 @@ struct samsung_mux_clock s3c2443_common_muxes[] __initdata = {
+ 	MUX(0, "epllref", epllref_p, CLKSRC, 7, 2),
+ 	MUX(ESYSCLK, "esysclk", esysclk_p, CLKSRC, 6, 1),
+ 	MUX(0, "mpllref", mpllref_p, CLKSRC, 3, 1),
+-	MUX_A(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1, "msysclk"),
+-	MUX_A(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1, "armclk"),
++	MUX(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1),
++	MUX(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1),
+ 	MUX(0, "mux_i2s0", i2s0_p, CLKSRC, 14, 2),
  };
  
-+static int aspeed_clk_enable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 rst = BIT(gate->reset_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Put IP in reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-+
-+		/* Delay 100us */
-+		udelay(100);
-+	}
-+
-+	/* Enable clock */
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Delay 10ms */
-+		/* TODO: can we sleep here? */
-+		msleep(10);
-+
-+		/* Take IP out of reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
-+	}
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void aspeed_clk_disable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+}
-+
-+static int aspeed_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 reg;
-+
-+	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-+
-+	return (reg & clk) ? 0 : 1;
-+}
-+
-+static const struct clk_ops aspeed_clk_gate_ops = {
-+	.enable = aspeed_clk_enable,
-+	.disable = aspeed_clk_disable,
-+	.is_enabled = aspeed_clk_is_enabled,
-+};
-+
-+static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		struct regmap *map, u8 clock_idx, u8 reset_idx,
-+		u8 clk_gate_flags, spinlock_t *lock)
-+{
-+	struct aspeed_clk_gate *gate;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &aspeed_clk_gate_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->map = map;
-+	gate->clock_idx = clock_idx;
-+	gate->reset_idx = reset_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
- static int aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
-@@ -218,6 +319,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
-+	int i;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -290,6 +392,35 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/*
-+	 * TODO: There are a number of clocks that not included in this driver
-+	 * as more information is required:
-+	 *   D2-PLL
-+	 *   D-PLL
-+	 *   YCLK
-+	 *   RGMII
-+	 *   RMII
-+	 *   UART[1..5] clock source mux
-+	 *   Video Engine (ECLK) mux and clock divider
-+	 */
-+
-+	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
-+		const struct aspeed_gate_data *gd = &aspeed_gates[i];
-+
-+		hw = aspeed_clk_hw_register_gate(dev,
-+				gd->name,
-+				gd->parent_name,
-+				gd->flags,
-+				map,
-+				gd->clock_idx,
-+				gd->reset_idx,
-+				CLK_GATE_SET_TO_DISABLE,
-+				&aspeed_clk_lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+		aspeed_clk_data->hws[i] = hw;
-+	}
-+
- 	return 0;
+@@ -189,6 +189,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
  };
  
+ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
++	ALIAS(MSYSCLK, NULL, "msysclk"),
++	ALIAS(ARMCLK, NULL, "armclk"),
+ 	ALIAS(HCLK, NULL, "hclk"),
+ 	ALIAS(HCLK_SSMC, NULL, "nand"),
+ 	ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
 -- 
-2.14.1
+2.14.2
+
