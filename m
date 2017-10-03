@@ -1,36 +1,86 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 04/10] dt-bindings: Document Broadcom Hurricane 2 clocks
-Date: Thu, 12 Oct 2017 11:30:42 -0700
-Message-Id: <20171012183042.3045-1-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-5-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com> <20170928231502.27069-5-f.fainelli@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44535 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbdJCKAf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:35 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 8/9] clk: samsung: Add explicit MPLL and EPLL clkdev aliases
+ in S3C2443 driver
+Date: Tue, 03 Oct 2017 12:00:15 +0200
+Message-id: <20171003100016.32029-9-m.szyprowski@samsung.com>
+In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
+References: <20171003100016.32029-1-m.szyprowski@samsung.com>
+        <CGME20171003100031eucas1p142552d25c13db986a50951c988073223@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 28 Sep 2017 16:14:56 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Add a Device Tree binding document for the Broadcom Hurricane 2 SoC
-> which is an iProc based system.
-> 
-> Acked-by: Jon Mason <jon.mason@broadcom.com>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
+S3C2443 platform still use non-dt based lookup in some of its drivers to
+get MPLL and EPLL clocks. Till now it worked only because PLL() macro
+implicitely created aliases for all instatiated clocks. This feature will
+be removed, so explicitely create aliases for MPLL and EPLL clocks.
 
-Applied to devicetree/next, thanks!
---
-Florian
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-s3c2443.c   | 10 ++++++----
+ include/dt-bindings/clock/s3c2443.h |  2 ++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index 45166033f638..d94b85a42356 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -191,6 +191,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
+ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+ 	ALIAS(MSYSCLK, NULL, "msysclk"),
+ 	ALIAS(ARMCLK, NULL, "armclk"),
++	ALIAS(MPLL, NULL, "mpll"),
++	ALIAS(EPLL, NULL, "epll"),
+ 	ALIAS(HCLK, NULL, "hclk"),
+ 	ALIAS(HCLK_SSMC, NULL, "nand"),
+ 	ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
+@@ -223,9 +225,9 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+ /* S3C2416 specific clocks */
+ 
+ static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
+-	[mpll] = PLL(pll_6552_s3c2416, 0, "mpll", "mpllref",
++	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
+ 						LOCKCON0, MPLLCON, NULL),
+-	[epll] = PLL(pll_6553, 0, "epll", "epllref",
++	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
+ 						LOCKCON1, EPLLCON, NULL),
+ };
+ 
+@@ -277,9 +279,9 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
+ /* S3C2443 specific clocks */
+ 
+ static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
+-	[mpll] = PLL(pll_3000, 0, "mpll", "mpllref",
++	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
+ 						LOCKCON0, MPLLCON, NULL),
+-	[epll] = PLL(pll_2126, 0, "epll", "epllref",
++	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
+ 						LOCKCON1, EPLLCON, NULL),
+ };
+ 
+diff --git a/include/dt-bindings/clock/s3c2443.h b/include/dt-bindings/clock/s3c2443.h
+index 37e66b054d64..f3ba68a25ecb 100644
+--- a/include/dt-bindings/clock/s3c2443.h
++++ b/include/dt-bindings/clock/s3c2443.h
+@@ -26,6 +26,8 @@
+ #define ARMCLK			4
+ #define HCLK			5
+ #define PCLK			6
++#define MPLL			7
++#define EPLL			8
+ 
+ /* Special clocks */
+ #define SCLK_HSSPI0		16
+-- 
+2.14.2
+
