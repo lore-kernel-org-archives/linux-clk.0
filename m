@@ -1,99 +1,64 @@
-Return-Path: <sre@kernel.org>
-Date: Mon, 30 Oct 2017 21:45:03 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-omap@vger.kernel.org,
-	tony@atomide.com
-Subject: Re: [PATCH 01/27] clk: ti: clkctrl: fix error messages to print out
- node name properly
-Message-ID: <20171030204503.767jcweqm2mn237w@earth>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
- <1509368685-29112-2-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m2rj2gqqvm6ztmw4"
-In-Reply-To: <1509368685-29112-2-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39489 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750767AbdJCGDI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 02:03:08 -0400
+Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <ec302c3d-c120-320a-dd58-4d26a9294907@samsung.com>
+Date: Tue, 03 Oct 2017 08:03:02 +0200
+MIME-version: 1.0
+In-reply-to: <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
+        <20171002104759.25944-1-m.szyprowski@samsung.com>
+        <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Krzysztof,
 
---m2rj2gqqvm6ztmw4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2017-10-02 19:36, Krzysztof Kozlowski wrote:
+> On Mon, Oct 02, 2017 at 12:47:55PM +0200, Marek Szyprowski wrote:
+>> Exynos4412 ISP clock controller is located in the SOC area, which belongs
+>> to ISP power domain. This was not properly handled by the current
+>> Exynos4-clk driver. This patchset instantiates a separate clock driver
+>> for those clocks, updates all clients of ISP clocks and ensures that
+>> the driver is properly integrated in ISP power domin using runtime PM
+>> feature of the clock framework.
+>>
+>> This finally solves all the mysterious freezes in accessing ISP clocks
+>> when ISP power domain is disabled.
+>>
+>> The last patch breaks support for old dtbs. It can be applied when all
+>> boards are updated. Exynos4412 ISP subsystem is only used by Trats2
+>> boards, for which kernel is updated always together with the dtb file,
+>> so the last patch can be applied to the next kernel release after merging
+>> the DTS patch.
+> I am fine with this approach. However I see that third patch (dts)
+> depends on previous so it will also wait one cycle. arm-soc folks for
+> some time do not accept code mixed with dts.
+>
+> Unless you can split dts into two patches: adding new clock controller
+> and removing old. In such case the new clock could be applied in
+> parallel to clk code changes.
 
-Hi,
+DTS patch cannot be split into two patches without breaking ISP support,
+because adding a new clock controller requires changes in the clients and
+register resource size of the old one, so either old or new one has to be
+fully defined. If arm-soc cannot pull mixed branches, then I'm okay with
+postponing DTS changes by one release.
 
-On Mon, Oct 30, 2017 at 03:04:19PM +0200, Tero Kristo wrote:
-> Current node name does not convey any information, as it is always "clk".
-> Instead, print out the full node path, which will tell us better where
-> something went wrong.
->=20
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
+ > ...
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
--- Sebastian
-
->  drivers/clk/ti/clkctrl.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> index 53e71d0..2db7d40 100644
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -351,8 +351,8 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct =
-of_phandle_args *clkspec,
->  	if (ti_clk_parse_divider_data((int *)div_data->dividers,
->  				      div_data->max_div, 0, 0,
->  				      &div->width, &div->table)) {
-> -		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
-> -		       node->name, offset, data->bit);
-> +		pr_err("%s: Data parsing for %pOF:%04x:%d failed\n", __func__,
-> +		       node, offset, data->bit);
->  		kfree(div);
->  		return;
->  	}
-> @@ -428,7 +428,7 @@ static void __init _ti_omap4_clkctrl_setup(struct dev=
-ice_node *node)
->  	}
-> =20
->  	if (!data->addr) {
-> -		pr_err("%s not found from clkctrl data.\n", node->name);
-> +		pr_err("%pOF not found from clkctrl data.\n", node);
->  		return;
->  	}
-> =20
-> --=20
-> 1.9.1
->=20
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/=
-Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---m2rj2gqqvm6ztmw4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAln3j0sACgkQ2O7X88g7
-+pqQzg//fce/diZEsEfq7hI76IpG6g1Y3mybbH1+p1R1rito8uAbuWyBxcZzXIav
-xVDe8gTh1GD1X7JunzQvgwMoaTKe0PtkCpJMe63xBGzeVpzbRojuSOGKTHskIhQb
-DoKePsDRIE+SoGLAbWKfjMIOqiY8hb3sGDi4OMmTOq6YbOx06KmcY65mF4HJDFvk
-Sw1Tc4M4qC4Od+fXIU3BgsdMrZzyEvDyZPMmuNuZuumyjmCd6itPg++PGpnC/qQe
-YwynG+UjEw3yTxRFTPUB2ZJ8G1+3m0CkpHitUbG5Ue/2SR8t5Ro+Njomt8cuN8fa
-TUz965FhWFG6344d6v65W2/eEHfdBhLeBWoOQAd701CbVwjms/Q+FnFOYcMd8Z5D
-2uHF72tFq0noyz3a/QmATzEpFhauy5893Cszvsw5rPPVFKIDbjAybB9CMwH3dIsy
-/3zHYfi56TIWTHe9b8VAhao1ESjS1rDg2upcXnjuVTZQrezQM2J0K6vLfFK+mnrn
-2ONEf/zzm3tSTevisxmT4jRGgxdk+SbvqO5pySEh0sN8t4CnVHDHaUCTvi3r7haV
-45xrRIwPqkL2pROSkutGO89jqlRhdEY3rja5lvZfOs1Ctanfp7zACGzzI80P68oY
-WJU/Acwonv9B92232Sd1BDzD28a8LcxZ+dBiIEkuCvgjMPvGpzs=
-=+9A8
------END PGP SIGNATURE-----
-
---m2rj2gqqvm6ztmw4--
