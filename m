@@ -1,64 +1,47 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.15-rc1
-To: Thierry Reding <thierry.reding@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <20171020121412.10527-1-thierry.reding@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6f5cfeeb-cdff-b390-4c09-77e460a9f793@nvidia.com>
-Date: Fri, 20 Oct 2017 17:00:29 +0100
-MIME-Version: 1.0
-In-Reply-To: <20171020121412.10527-1-thierry.reding@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44531 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751484AbdJCKAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:34 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 5/9] clk: samsung: Drop useless alias in Exynos5420 clk
+ driver
+Date: Tue, 03 Oct 2017 12:00:12 +0200
+Message-id: <20171003100016.32029-6-m.szyprowski@samsung.com>
+In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
+References: <20171003100016.32029-1-m.szyprowski@samsung.com>
+        <CGME20171003100030eucas1p2be91ffc5db49f33cbc289175e72dd586@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Thierry,
+Drop clkdev alias for "mout_aclk400_mscl" clock. It was not used at all
+and it was probably committed by accident.
 
-On 20/10/17 13:14, Thierry Reding wrote:
-> Hi Michael, Stephen,
-> 
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
-> 
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
-> 
-> for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
-> 
->   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
-> 
-> Note that this pulls in parts from two other tags that are going to go
-> in via the ARM SoC tree. Those are needed to a couple of resolve build
-> dependencies.
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.15-rc1
-> 
-> This contains cleanups and minor fixes for the Tegra clock driver.
-> 
-> ----------------------------------------------------------------
-> Bhumika Goyal (1):
->       clk: tegra: Make tegra_clk_pll_params __ro_after_init
-> 
-> Dmitry Osipenko (4):
->       clk: tegra: Add AHB DMA clock entry
->       clk: tegra: Correct parent of the APBDMA clock
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I noticed that -next is not currently booting on most Tegra boards and
-it appears that the above commit has exposed a problem where pclk can
-get turned off incorrectly. I have discussed with Peter and he has
-identified a simple fix. I have ran out of time today, but can send a
-patch on Monday. Can we sort this out next week and re-send this pull
-request?
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 038701a2af4c..45d34f601e9e 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -600,8 +600,7 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+ 				TOP_SPARE2, 4, 1),
+ 
+ 	MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
+-	MUX_A(0, "mout_aclk400_mscl", mout_group1_p,
+-				SRC_TOP0, 4, 2, "aclk400_mscl"),
++	MUX(0, "mout_aclk400_mscl", mout_group1_p, SRC_TOP0, 4, 2),
+ 	MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
+ 	MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
+ 
 -- 
-nvpublic
+2.14.2
+
