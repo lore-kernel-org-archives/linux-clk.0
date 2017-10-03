@@ -1,53 +1,175 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:33737 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750790AbdJIHWz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Oct 2017 03:22:55 -0400
-Date: Mon, 09 Oct 2017 15:22:50 +0800
-In-Reply-To: <20171009071809.jte47cd2mt4iv6y7@flea.lan>
-References: <20171006063333.12345-1-icenowy@aosc.io> <20171009071809.jte47cd2mt4iv6y7@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH 0/2] Add a regmap to Allwinner R40 CCU to export GMAC register
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <14505033-D960-4287-92F2-554E2EDDFC59@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 5/5] clk: aspeed: Add reset controller
+Date: Tue,  3 Oct 2017 17:25:40 +1030
+Message-Id: <20171003065540.11722-6-joel@jms.id.au>
+In-Reply-To: <20171003065540.11722-1-joel@jms.id.au>
+References: <20171003065540.11722-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
+There are some resets that are not associated with gates. These are
+represented by a reset controller.
 
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-于 2017年10月9日 GMT+08:00 下午3:18:09, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Fri, Oct 06, 2017 at 06:33:31AM +0000, Icenowy Zheng wrote:
->> In the CCU of the Allwinner R40 SoC, there's a GMAC configuration
->register,
->> which is intended to be accessed by the dwmac-sun8i driver. On SoCs
->already
->> supported by the driver the register is placed in the syscon rather
->than
->> the CCU.
->> 
->> As CCU is a critical part of the SoC, so write to it should be
->strictly
->> limited. A regmap with restricted write permission is created by the
->R40
->> CCU driver, and can be get with dev_get_regmap. In order to tie the
->regmap
->> to the CCU device, the R40 CCU is now a platform driver, so a
->platform
->> device is created for it (and then tied with the regmap).
->> 
->> The first patch does the conversion of the driver to a platform
->driver,
->> and the second patch adds the regmap.
->
->I'd like to see first what you want to do with it.
+---
+v3:
+  - Add named initalisers for the reset defines
+  - Add define for ADC
+---
+ drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h | 10 ++++
+ 2 files changed, 91 insertions(+), 1 deletion(-)
 
-Export the GMAC configuration register to dwmac-sun8i.
-
->
->Maxime
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index a424b056e767..de491dc7f955 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -292,6 +293,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.is_enabled = aspeed_clk_is_enabled,
+ };
+ 
++/**
++ * struct aspeed_reset - Aspeed reset controller
++ * @map: regmap to access the containing system controller
++ * @rcdev: reset controller device
++ */
++struct aspeed_reset {
++	struct regmap			*map;
++	struct reset_controller_dev	rcdev;
++};
++
++#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++
++static const u8 aspeed_resets[] = {
++	[ASPEED_RESET_XDMA]	= 25,
++	[ASPEED_RESET_MCTP]	= 24,
++	[ASPEED_RESET_ADC]	= 23,
++	[ASPEED_RESET_JTAG_MASTER] = 22,
++	[ASPEED_RESET_MIC]	= 18,
++	[ASPEED_RESET_PWM]	=  9,
++	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_I2C]	=  2,
++	[ASPEED_RESET_AHB]	=  1,
++};
++
++static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++}
++
++static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++}
++
++static int aspeed_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 val, rst = BIT(aspeed_resets[id]);
++	int ret;
++
++	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return !!(val & rst);
++}
++
++static const struct reset_control_ops aspeed_reset_ops = {
++	.assert = aspeed_reset_assert,
++	.deassert = aspeed_reset_deassert,
++	.status = aspeed_reset_status,
++};
++
+ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+@@ -333,10 +396,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+ 	struct device *dev = &pdev->dev;
++	struct aspeed_reset *ar;
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
+-	int i;
++	int i, ret;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -344,6 +408,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
+ 
++	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
++	if (!ar)
++		return -ENOMEM;
++
++	ar->map = map;
++	ar->rcdev.owner = THIS_MODULE;
++	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
++	ar->rcdev.ops = &aspeed_reset_ops;
++	ar->rcdev.of_node = dev->of_node;
++
++	ret = devm_reset_controller_register(dev, &ar->rcdev);
++	if (ret) {
++		dev_err(dev, "could not register reset controller\n");
++		return ret;
++	}
++
+ 	/* SoC generations share common layouts but have different divisors */
+ 	soc_data = of_device_get_match_data(dev);
+ 	if (!soc_data) {
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index 4a99421d77c8..8e19646d8025 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -39,4 +39,14 @@
+ 
+ #define ASPEED_NUM_CLKS			35
+ 
++#define ASPEED_RESET_XDMA		0
++#define ASPEED_RESET_MCTP		1
++#define ASPEED_RESET_ADC		2
++#define ASPEED_RESET_JTAG_MASTER	3
++#define ASPEED_RESET_MIC		4
++#define ASPEED_RESET_PWM		5
++#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_I2C		7
++#define ASPEED_RESET_AHB		8
++
+ #endif
+-- 
+2.14.1
