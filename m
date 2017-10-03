@@ -1,91 +1,81 @@
-MIME-Version: 1.0
-In-Reply-To: <20171020223452.GD1165@minitux>
-References: <20170908171830.13813-1-georgi.djakov@linaro.org>
-	<20170908171830.13813-2-georgi.djakov@linaro.org>
-	<a7cf55ba-0475-d74c-f759-a24e58ccde47@linaro.org>
-	<20171020223452.GD1165@minitux>
-Date: Sun, 22 Oct 2017 19:58:30 -0700
-Message-ID: <CAEG3pNAbf3hLchrYK+s9RwZ3zF3srkqdbvqPSBMOoGV65TguLQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] interconnect: Add generic on-chip interconnect API
-From: Michael Turquette <mturquette@baylibre.com>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Rob Herring <robh+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
-	"Sweeney, Sean" <seansw@qti.qualcomm.com>, "Dai, David" <davidai@quicinc.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, lorenzo.pieralisi@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51425 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbdJCKAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:34 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4/9] clk: samsung: Remove clkdev alias support in Exynos5250
+ clk driver
+Date: Tue, 03 Oct 2017 12:00:11 +0200
+Message-id: <20171003100016.32029-5-m.szyprowski@samsung.com>
+In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
+References: <20171003100016.32029-1-m.szyprowski@samsung.com>
+        <CGME20171003100030eucas1p1b47a46931ca138eb92d4950f44f6f737@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+All Exynos5250 boards have been fully converted to device-tree and use
+generic dt-based CPUfreq driver, so there is no need to create any clkdev
+aliases for the clocks. Drop all the code related to aliases handling.
 
-On Fri, Oct 20, 2017 at 3:34 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Fri 20 Oct 07:43 PDT 2017, Georgi Djakov wrote:
->
->> Hi,
->>
->> On 09/08/2017 08:18 PM, Georgi Djakov wrote:
->> > This patch introduce a new API to get requirements and configure the
->> > interconnect buses across the entire chipset to fit with the current demand.
->> >
->> > The API is using a consumer/provider-based model, where the providers are
->> > the interconnect buses and the consumers could be various drivers.
->> > The consumers request interconnect resources (path) between endpoints and
->> > set the desired constraints on this data flow path. The providers receive
->> > requests from consumers and aggregate these requests for all master-slave
->> > pairs on that path. Then the providers configure each participating in the
->> > topology node according to the requested data flow path, physical links and
->> > constraints. The topology could be complicated and multi-tiered and is SoC
->> > specific.
->> >
->> > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> > ---
->> >  Documentation/interconnect/interconnect.rst |  93 +++++++
->> >  drivers/Kconfig                             |   2 +
->> >  drivers/Makefile                            |   1 +
->> >  drivers/interconnect/Kconfig                |  10 +
->> >  drivers/interconnect/Makefile               |   1 +
->> >  drivers/interconnect/interconnect.c         | 382 ++++++++++++++++++++++++++++
->> >  include/linux/interconnect-consumer.h       |  73 ++++++
->> >  include/linux/interconnect-provider.h       | 119 +++++++++
->> >  8 files changed, 681 insertions(+)
->> >  create mode 100644 Documentation/interconnect/interconnect.rst
->> >  create mode 100644 drivers/interconnect/Kconfig
->> >  create mode 100644 drivers/interconnect/Makefile
->> >  create mode 100644 drivers/interconnect/interconnect.c
->> >  create mode 100644 include/linux/interconnect-consumer.h
->> >  create mode 100644 include/linux/interconnect-provider.h
->>
->> Any comments on this patch?
->>
->
-> Sorry, I still haven't found the time to do a proper review of this yet.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5250.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Same.
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 27a227d6620c..9b073c98a891 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -293,14 +293,14 @@ static const struct samsung_mux_clock exynos5250_mux_clks[] __initconst = {
+ 	/*
+ 	 * CMU_CPU
+ 	 */
+-	MUX_FA(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+-					CLK_SET_RATE_PARENT, 0, "mout_apll"),
+-	MUX_A(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
++	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
++					CLK_SET_RATE_PARENT, 0),
++	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 
+ 	/*
+ 	 * CMU_CORE
+ 	 */
+-	MUX_A(0, "mout_mpll", mout_mpll_p, SRC_CORE1, 8, 1, "mout_mpll"),
++	MUX(0, "mout_mpll", mout_mpll_p, SRC_CORE1, 8, 1),
+ 
+ 	/*
+ 	 * CMU_TOP
+@@ -391,7 +391,7 @@ static const struct samsung_div_clock exynos5250_div_clks[] __initconst = {
+ 	 */
+ 	DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
+ 	DIV(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3),
+-	DIV_A(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3, "armclk"),
++	DIV(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3),
+ 
+ 	/*
+ 	 * CMU_TOP
+@@ -743,10 +743,10 @@ static const struct samsung_pll_rate_table apll_24mhz_tbl[] __initconst = {
+ };
+ 
+ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
+-	[apll] = PLL_A(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll",
+-		APLL_LOCK, APLL_CON0, "fout_apll", NULL),
+-	[mpll] = PLL_A(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll",
+-		MPLL_LOCK, MPLL_CON0, "fout_mpll", NULL),
++	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
++		APLL_CON0, NULL),
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
++		MPLL_CON0, NULL),
+ 	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
+ 	[gpll] = PLL(pll_35xx, CLK_FOUT_GPLL, "fout_gpll", "fin_pll", GPLL_LOCK,
+-- 
+2.14.2
 
->
->> I am planning to change the prefix that is used for naming for example
->> the functions from "interconnect_" to something shorter like icbus_.
->>
->
-> This isn't implementing a bus; if you feel that just ic_ is too short I
-> would suggest naming things inter_. (But keep the full name in the file
-> names)
-
-Not trying to bikeshed too much, but how about icc_ for "interconnect
-controller"? No idea if that is a hash collision with other in-kernel
-apis.
-
-Just "ic_" looks to me like "integrated circuit".
-
-Regards,
-Mike
-
->
-> Regards,
-> Bjorn
