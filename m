@@ -1,50 +1,210 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 19/23] arm: dts: sun8i: a83t: Add LVDS pins group
-Date: Tue, 17 Oct 2017 11:06:26 +0200
-Message-Id: <4125c6191f39c67963e018a84441551cc1815620.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 4/5] clk: aspeed: Register gated clocks
+Date: Tue,  3 Oct 2017 17:25:39 +1030
+Message-Id: <20171003065540.11722-5-joel@jms.id.au>
+In-Reply-To: <20171003065540.11722-1-joel@jms.id.au>
+References: <20171003065540.11722-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T has an LVDS bus that can be connected to a panel or a bridge. Add
-the pinctrl group for it.
+The majority of the clocks in the system are gates paired with a reset
+controller that holds the IP in reset.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This borrows from clk_hw_register_gate, but registers two 'gates', one
+to control the clock enable register and the other to control the reset
+IP. This allows us to enforce the ordering:
+
+ 1. Place IP in reset
+ 2. Enable clock
+ 3. Delay
+ 4. Release reset
+
+There are some gates that do not have an associated reset; these are
+handled by using -1 as the index for the reset.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+v4:
+ - Drop useless 'disable clock' comment
+ - Drop CLK_IS_BASIC flag
+ - Fix 'there are a number of clocks...' comment
+ - Pass device to clk registration functions
+ - Check for errors when registering clk_hws
+v3:
+ - Remove gates offset as gates are now at the start of the list
+---
+ drivers/clk/clk-aspeed.c | 130 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index ef07a58859c7..6f1221556587 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -414,6 +414,12 @@
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index adb295292189..a424b056e767 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -228,6 +228,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
+ 	.calc_pll = aspeed_ast2400_calc_pll,
+ };
  
-+			lcd_lvds_pins: lcd-lvds-pins {
-+				pins = "PD18", "PD19", "PD20", "PD21", "PD22",
-+				       "PD23", "PD24", "PD25", "PD26", "PD27";
-+				function = "lvds0";
-+			};
++static int aspeed_clk_enable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++	u32 rst = BIT(gate->reset_idx);
 +
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0", "PF1", "PF2",
- 				       "PF3", "PF4", "PF5";
++	spin_lock_irqsave(gate->lock, flags);
++
++	if (gate->reset_idx >= 0) {
++		/* Put IP in reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
++
++		/* Delay 100us */
++		udelay(100);
++	}
++
++	/* Enable clock */
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
++
++	if (gate->reset_idx >= 0) {
++		/* Delay 10ms */
++		/* TODO: can we sleep here? */
++		msleep(10);
++
++		/* Take IP out of reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
++	}
++
++	spin_unlock_irqrestore(gate->lock, flags);
++
++	return 0;
++}
++
++static void aspeed_clk_disable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++
++	spin_lock_irqsave(gate->lock, flags);
++
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
++
++	spin_unlock_irqrestore(gate->lock, flags);
++}
++
++static int aspeed_clk_is_enabled(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	u32 clk = BIT(gate->clock_idx);
++	u32 reg;
++
++	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
++
++	return (reg & clk) ? 0 : 1;
++}
++
++static const struct clk_ops aspeed_clk_gate_ops = {
++	.enable = aspeed_clk_enable,
++	.disable = aspeed_clk_disable,
++	.is_enabled = aspeed_clk_is_enabled,
++};
++
++static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		struct regmap *map, u8 clock_idx, u8 reset_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	struct aspeed_clk_gate *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &aspeed_clk_gate_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->map = map;
++	gate->clock_idx = clock_idx;
++	gate->reset_idx = reset_idx;
++	gate->flags = clk_gate_flags;
++	gate->lock = lock;
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
+ static int aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+@@ -235,6 +336,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
++	int i;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -323,6 +425,34 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hw);
+ 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
+ 
++	/*
++	 * TODO: There are a number of clocks that not included in this driver
++	 * as more information is required:
++	 *   D2-PLL
++	 *   D-PLL
++	 *   YCLK
++	 *   RGMII
++	 *   RMII
++	 *   UART[1..5] clock source mux
++	 */
++
++	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
++		const struct aspeed_gate_data *gd = &aspeed_gates[i];
++
++		hw = aspeed_clk_hw_register_gate(dev,
++				gd->name,
++				gd->parent_name,
++				gd->flags,
++				map,
++				gd->clock_idx,
++				gd->reset_idx,
++				CLK_GATE_SET_TO_DISABLE,
++				&aspeed_clk_lock);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++		aspeed_clk_data->hws[i] = hw;
++	}
++
+ 	return 0;
+ };
+ 
 -- 
-git-series 0.9.1
+2.14.1
