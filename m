@@ -1,104 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:49359 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751470AbdJFGeO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Oct 2017 02:34:14 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/2] clk: sunxi-ng: r40: rewrite init code to a platform driver
-Date: Fri,  6 Oct 2017 14:33:32 +0800
-Message-Id: <20171006063333.12345-2-icenowy@aosc.io>
-In-Reply-To: <20171006063333.12345-1-icenowy@aosc.io>
-References: <20171006063333.12345-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <20171002213742.GQ457@codeaurora.org>
+References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-5-joel@jms.id.au>
+ <20171002213742.GQ457@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 3 Oct 2017 15:17:17 +0930
+Message-ID: <CACPK8XdrqmBC8M+=NDUVhYKPafw-Qc8fRikV+xJ84FyzG6BfxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clk: aspeed: Register gated clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-As we need to register a regmap on the R40 CCU, there needs to be a
-device structure bound to the CCU device node.
+On Tue, Oct 3, 2017 at 7:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/21, Joel Stanley wrote:
+>> The majority of the clocks in the system are gates paired with a reset
+>> controller that holds the IP in reset.
+>>
+>> This borrows from clk_hw_register_gate, but registers two 'gates', one
+>> to control the clock enable register and the other to control the reset
+>> IP. This allows us to enforce the ordering:
+>>
+>>  1. Place IP in reset
+>>  2. Enable clock
+>>  3. Delay
+>>  4. Release reset
+>>
+>> There are some gates that do not have an associated reset; these are
+>> handled by using -1 as the index for the reset.
+>
+> Half of these aren't clks, but reset bits? Perhaps you should
+> register power domains for these things and then have the power
+> domain assert the reset, enable the clock, delay, and then
+> release the reset in the poweron callback. Then device drivers
+> don't have to be aware of the ordering, and you can keep
+> enforcing the ordering in one place, but we don't have to make
+> fake gates and shoehorn the sequence into the clk framework.
 
-Rewrite the R40 CCU driver initial code to make it a proper platform
-driver, thus we will have a platform device bound to it.
+I had a look. We've got 24 gates being registered, and half are just
+gate+reset pairs, while the other half are both. Some of them have
+clocks with divisors upstream of the gate, so in those cases we do
+care what the rate is. For the others they are simply bringing the IP
+online.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 37 ++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+Note that we don't have drivers for all of the peripherals, so things
+may change once those drivers are written.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 933f2e68f42a..bb94e2c44e86 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -12,6 +12,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
- #include <linux/of_address.h>
- 
- #include "ccu_common.h"
-@@ -1250,17 +1251,17 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
- 	.bypass_index	= 1, /* index of 24 MHz oscillator */
- };
- 
--static void __init sun8i_r40_ccu_setup(struct device_node *node)
-+static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- {
-+	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
- 
--	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
--	if (IS_ERR(reg)) {
--		pr_err("%s: Could not map the clock registers\n",
--		       of_node_full_name(node));
--		return;
--	}
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reg = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
- 
- 	/* Force the PLL-Audio-1x divider to 4 */
- 	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
-@@ -1277,7 +1278,9 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
- 	val &= ~GENMASK(25, 20);
- 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
- 
--	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
-+	if (ret)
-+		return ret;
- 
- 	/* Gate then ungate PLL CPU after any rate changes */
- 	ccu_pll_notifier_register(&sun8i_r40_pll_cpu_nb);
-@@ -1285,6 +1288,20 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
- 	/* Reparent CPU during PLL CPU rate changes */
- 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
- 				  &sun8i_r40_cpu_nb);
-+
-+	return 0;
- }
--CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
--	       sun8i_r40_ccu_setup);
-+
-+static const struct of_device_id sun8i_r40_ccu_ids[] = {
-+	{ .compatible = "allwinner,sun8i-r40-ccu" },
-+	{ }
-+};
-+
-+static struct platform_driver sun8i_r40_ccu_driver = {
-+	.probe	= sun8i_r40_ccu_probe,
-+	.driver	= {
-+		.name	= "sun8i-r40-ccu",
-+		.of_match_table	= sun8i_r40_ccu_ids,
-+	},
-+};
-+builtin_platform_driver(sun8i_r40_ccu_driver);
--- 
-2.13.6
+I hadn't looked into the power domain stuff - when I brought this up
+on the list recently Philip suggested that this should be contained in
+a clk driver, so that's the direction we went:
 
+ http://www.spinics.net/lists/linux-clk/msg18733.html
+
+Cheers,
+
+Joel
