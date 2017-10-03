@@ -1,111 +1,234 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 1/4] dt-bindings: display: rcar-du: Document R8A774[35] DU
-Date: Mon, 16 Oct 2017 12:31:29 +0300
-Message-ID: <4307810.tuXz3FVuBl@avalon>
-In-Reply-To: <1507908142-13142-2-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507908142-13142-2-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 3/5] clk: aspeed: Add platform driver and register PLLs
+Date: Tue,  3 Oct 2017 17:25:38 +1030
+Message-Id: <20171003065540.11722-4-joel@jms.id.au>
+In-Reply-To: <20171003065540.11722-1-joel@jms.id.au>
+References: <20171003065540.11722-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
+This registers a platform driver to set up all of the non-core clocks.
 
-Thank you for the patch.
+The clocks that have configurable rates are now registered.
 
-On Friday, 13 October 2017 18:22:19 EEST Fabrizio Castro wrote:
-> Add device tree bindings for r8a7743 and r8a7745 DUs.
-> r8a7743 DU is similar to the one from r8a7791, r8a7745 DU is similar
-> to the one from r8a7794.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++++---------
->  1 file changed, 17 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
-> b/Documentation/devicetree/bindings/display/renesas,du.txt index
-> 4bbd1e9..c520226 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -3,6 +3,8 @@
->  Required Properties:
-> 
->    - compatible: must be one of the following.
-> +    - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
-> +    - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
->      - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
->      - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
->      - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
-> @@ -27,10 +29,10 @@ Required Properties:
->    - clock-names: Name of the clocks. This property is model-dependent.
->      - R8A7779 uses a single functional clock. The clock doesn't need to be
->        named.
-> -    - R8A779[0123456] use one functional clock per channel and one clock
-> per
-> -      LVDS encoder (if available). The functional clocks must be named
-> "du.x"
-> -      with "x" being the channel numerical index. The LVDS clocks must be
-> -      named "lvds.x" with "x" being the LVDS encoder numerical index.
-> +    - R8A779[0123456] and R8A774[35] use one functional clock per channel
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-How about "All other DU instances use one functional clock..." ? I expect more 
-entries to the added in the future, it would be nice not to have to modify 
-this paragraph.
+--
+v4:
+ - Add eclk div table to fix ast2500 calculation
+ - Add defines to document the BIT() macros
+ - Pass dev where we can when registering clocks
+ - Check for errors when registering clk_hws
+v3:
+ - Fix bclk and eclk calculation
+ - Seperate out ast2400 and ast25000 for pll calculation
 
-> and 
-> +      one clock per LVDS encoder (if available). The functional clocks must
-> be
-> +      named "du.x" with "x" being the channel numerical index. The LVDS
-> clocks
-> +      must be named "lvds.x" with "x" being the LVDS encoder numerical
-> index.
-> - In addition to the functional and encoder clocks, all DU versions also
-> support externally supplied pixel clocks. Those clocks are optional. When
-> supplied they must be named "dclkin.x" with "x" being the input
-> @@ -49,16 +51,18 @@ bindings specified
-> in Documentation/devicetree/bindings/graph.txt. The following table lists
-> for each supported model the port number corresponding to each DU output.
-> 
-> -		Port 0		Port1		Port2		Port3
-> +                      Port0          Port1          Port2          Port3
->  ---------------------------------------------------------------------------
-> -- - R8A7779 (H1)	DPAD 0		DPAD 1		-		-
-> - R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
-> - R8A7791 (M2-W)	DPAD		LVDS 0		-		-
-> - R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
-> - R8A7793 (M2-N)	DPAD		LVDS 0		-		-
-> - R8A7794 (E2)	DPAD 0		DPAD 1		-		-
-> - R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
-> - R8A7796 (M3-W)	DPAD		HDMI		LVDS		-
-> + R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              -
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/clk-aspeed.c | 163 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 163 insertions(+)
 
-When there's a single DPAD the table mentions "DPAD" instead of "DPAD 0". 
-There's no specific reason for that other than a historical one, but to keep 
-entries consistent I would either keep doing so, or rename DPAD to DPAD 0 in 
-all existing entries. What would you prefer ?
-
-If you're fine with these changes there's no need to submit a new version, I 
-can fix when applying the patch to my tree.
-
-> + R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              -
-> + R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              -
-> + R8A7790 (R-Car H2)   DPAD           LVDS 0         LVDS 1         -
-> + R8A7791 (R-Car M2-W) DPAD           LVDS 0         -              -
-> + R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              -
-> + R8A7793 (R-Car M2-N) DPAD           LVDS 0         -              -
-> + R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
-> + R8A7795 (R-Car H3)   DPAD           HDMI 0         HDMI 1         LVDS
-> + R8A7796 (R-Car M3-W) DPAD           HDMI           LVDS           -
-> 
-> 
->  Example: R8A7795 (R-Car H3) ES2.0 DU
-
-
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index d39cf51a5114..adb295292189 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -114,6 +116,32 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
+ 
++static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
++
++static const struct clk_div_table ast2500_eclk_div_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 2 },
++	{ 0x2, 3 },
++	{ 0x3, 4 },
++	{ 0x4, 5 },
++	{ 0x5, 6 },
++	{ 0x6, 7 },
++	{ 0x7, 8 },
++	{ 0 }
++};
++
++static const struct clk_div_table ast2500_mac_div_table[] = {
++	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
+ static const struct clk_div_table ast2400_div_table[] = {
+ 	{ 0x0, 2 },
+ 	{ 0x1, 4 },
+@@ -179,6 +207,141 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
+ 			mult, div);
+ }
+ 
++struct aspeed_clk_soc_data {
++	const struct clk_div_table *div_table;
++	const struct clk_div_table *mac_div_table;
++	const struct clk_div_table *eclk_div_table;
++	struct clk_hw *(*calc_pll)(const char *name, u32 val);
++};
++
++static const struct aspeed_clk_soc_data ast2500_data = {
++	.div_table = ast2500_div_table,
++	.mac_div_table = ast2500_mac_div_table,
++	.eclk_div_table = ast2500_eclk_div_table,
++	.calc_pll = aspeed_ast2500_calc_pll,
++};
++
++static const struct aspeed_clk_soc_data ast2400_data = {
++	.div_table = ast2400_div_table,
++	.mac_div_table = ast2400_div_table,
++	.eclk_div_table = ast2400_div_table,
++	.calc_pll = aspeed_ast2400_calc_pll,
++};
++
++static int aspeed_clk_probe(struct platform_device *pdev)
++{
++	const struct aspeed_clk_soc_data *soc_data;
++	struct device *dev = &pdev->dev;
++	struct regmap *map;
++	struct clk_hw *hw;
++	u32 val, rate;
++
++	map = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "no syscon regmap\n");
++		return PTR_ERR(map);
++	}
++
++	/* SoC generations share common layouts but have different divisors */
++	soc_data = of_device_get_match_data(dev);
++	if (!soc_data) {
++		dev_err(dev, "no match data for platform\n");
++		return -EINVAL;
++	}
++
++	/* UART clock div13 setting */
++	regmap_read(map, ASPEED_MISC_CTRL, &val);
++	if (val & UART_DIV13_EN)
++		rate = 24000000 / 13;
++	else
++		rate = 24000000;
++	/* TODO: Find the parent data for the uart clock */
++	hw = clk_hw_register_fixed_rate(dev, "uart", NULL, 0, rate);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
++
++	/*
++	 * Memory controller (M-PLL) PLL. This clock is configured by the
++	 * bootloader, and is exposed to Linux as a read-only clock rate.
++	 */
++	regmap_read(map, ASPEED_MPLL_PARAM, &val);
++	hw = soc_data->calc_pll("mpll", val);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	hw;
++
++	/* SD/SDIO clock divider (TODO: There's a gate too) */
++	hw = clk_hw_register_divider_table(dev, "sdio", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
++
++	/* MAC AHB bus clock divider */
++	hw = clk_hw_register_divider_table(dev, "mac", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
++			soc_data->mac_div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
++
++	/* LPC Host (LHCLK) clock divider */
++	hw = clk_hw_register_divider_table(dev, "lhclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
++
++	/* Video Engine (ECLK) mux and clock divider */
++	hw = clk_hw_register_mux(dev, "eclk_mux",
++			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
++			scu_base + ASPEED_CLK_SELECTION, 2, 2,
++			0, &aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
++	hw = clk_hw_register_divider_table(dev, "eclk", "eclk_mux", 0,
++			scu_base + ASPEED_CLK_SELECTION, 28, 3, 0,
++			soc_data->eclk_div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
++
++	/* P-Bus (BCLK) clock divider */
++	hw = clk_hw_register_divider_table(dev, "bclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
++
++	return 0;
++};
++
++static const struct of_device_id aspeed_clk_dt_ids[] = {
++	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
++	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
++	{ }
++};
++
++static struct platform_driver aspeed_clk_driver = {
++	.probe  = aspeed_clk_probe,
++	.driver = {
++		.name = "aspeed-clk",
++		.of_match_table = aspeed_clk_dt_ids,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(aspeed_clk_driver);
++
+ static void __init aspeed_ast2400_cc(struct regmap *map)
+ {
+ 	struct clk_hw *hw;
 -- 
-Regards,
-
-Laurent Pinchart
+2.14.1
