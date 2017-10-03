@@ -1,73 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 09/10] arm64: allwinner: a64: add DE2 CCU for A64 SoC
-Date: Fri, 27 Oct 2017 23:06:57 +0800
-Message-Id: <20171027150658.18509-10-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Tegra DMA clocks addition / correction
+Date: Wed,  4 Oct 2017 02:02:37 +0300
+Message-Id: <cover.1507070638.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A64 SoC features a DE2 CCU like the one in H5, but needs to claim a
-section of SRAM (SRAM C) to be accessed.
+This patchset is factored out from the AHB DMA driver 'introduction' series
+as per drivers/dma/ subsystem maintainer request.
 
-Adds the device tree nodes for the SRAM controller and the DE2 CCU.
+Change log:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+v2:
+	- Added patch that corrects parent of the APB DMA clock gate in the
+	  'common' clock gate definition.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 062040ec2fed..03a46da0f0fa 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -130,6 +130,40 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			allwinner,sram = <&de2_sram>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun50i-a64-sram-controller";
-+			reg = <0x01c00000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_c: sram@18000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00018000 0x28000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00018000 0x28000>;
-+
-+				de2_sram: sram-section@0 {
-+					compatible = "allwinner,sun50i-a64-sram-c";
-+					reg = <0x0000 0x28000>;
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
+	- Added patch that makes Tegra20 to utilize the 'common' APB DMA
+	  clock gate definition.
+
+Dmitry Osipenko (4):
+  clk: tegra: Add AHB DMA clock entry
+  clk: tegra: Correct parent of the APBDMA clock
+  clk: tegra20: Use common definition of APBDMA clock gate
+  clk: tegra20: Bump SCLK clock rate to 216MHz
+
+ drivers/clk/tegra/clk-id.h           | 1 +
+ drivers/clk/tegra/clk-tegra-periph.c | 3 ++-
+ drivers/clk/tegra/clk-tegra20.c      | 9 +++------
+ drivers/clk/tegra/clk-tegra30.c      | 1 +
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
 -- 
-2.13.6
+2.14.1
