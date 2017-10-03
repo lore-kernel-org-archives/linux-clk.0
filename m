@@ -1,104 +1,61 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 7/9] clk: sunxi-ng: sun5i: Use sigma-delta modulation for audio PLL
-Date: Thu, 12 Oct 2017 16:37:03 +0800
-Message-Id: <20171012083705.24409-8-wens@csie.org>
-In-Reply-To: <20171012083705.24409-1-wens@csie.org>
-References: <20171012083705.24409-1-wens@csie.org>
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <20171002212435.GP457@codeaurora.org>
+References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
+ <20171002212435.GP457@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 3 Oct 2017 15:18:00 +0930
+Message-ID: <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The audio blocks require specific clock rates. Until now we were using
-the closest clock rate possible with integer N-M factors. This resulted
-in audio playback being slightly slower than it should be.
+On Tue, Oct 3, 2017 at 6:54 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/21, Joel Stanley wrote:
+>> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+>> +     /*
+>> +      * Memory controller (M-PLL) PLL. This clock is configured by the
+>> +      * bootloader, and is exposed to Linux as a read-only clock rate.
+>> +      */
+>> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
+>> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
+>> +
+>> +     /* SD/SDIO clock divider (TODO: There's a gate too) */
+>> +     hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
+>
+> Please pass your dev pointer here from the platform device.
+>
+>> +                     scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
+>> +                     div_table,
+>> +                     &aspeed_clk_lock);
+>
+> And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
+> construct the dividers and muxes directly instead of using the
+> basic type registration APIs.
 
-The vendor kernel gets around this (for newer SoCs) by using sigma-delta
-modulation to generate a fractional-N factor. As the PLL hardware is
-identical in most chips, we can back port the settings from the newer
-SoC, in this case the H3, onto the sun5i family.
+Do you think that devm_ is overkill, given we will never unload this driver?
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun5i.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+Can you explain why you suggest to construct the structures directly
+instead of using the APIs?
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
-index 2f385a57cd91..fa2c2dd77102 100644
---- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-@@ -26,6 +26,7 @@
- #include "ccu_nkmp.h"
- #include "ccu_nm.h"
- #include "ccu_phase.h"
-+#include "ccu_sdm.h"
- 
- #include "ccu-sun5i.h"
- 
-@@ -49,11 +50,20 @@ static struct ccu_nkmp pll_core_clk = {
-  * the base (2x, 4x and 8x), and one variable divider (the one true
-  * pll audio).
-  *
-- * We don't have any need for the variable divider for now, so we just
-- * hardcode it to match with the clock names
-+ * With sigma-delta modulation for fractional-N on the audio PLL,
-+ * we have to use specific dividers. This means the variable divider
-+ * can no longer be used, as the audio codec requests the exact clock
-+ * rates we support through this mechanism. So we now hard code the
-+ * variable divider to 1. This means the clock rates will no longer
-+ * match the clock names.
-  */
- #define SUN5I_PLL_AUDIO_REG	0x008
- 
-+static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-+	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
-+	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
-+};
-+
- static struct ccu_nm pll_audio_base_clk = {
- 	.enable		= BIT(31),
- 	.n		= _SUNXI_CCU_MULT_OFFSET(8, 7, 0),
-@@ -63,8 +73,11 @@ static struct ccu_nm pll_audio_base_clk = {
- 	 * offset
- 	 */
- 	.m		= _SUNXI_CCU_DIV_OFFSET(0, 5, 0),
-+	.sdm		= _SUNXI_CCU_SDM(pll_audio_sdm_table, 0,
-+					 0x00c, BIT(31)),
- 	.common		= {
- 		.reg		= 0x008,
-+		.features	= CCU_FEATURE_SIGMA_DELTA_MOD,
- 		.hw.init	= CLK_HW_INIT("pll-audio-base",
- 					      "hosc",
- 					      &ccu_nm_ops,
-@@ -597,9 +610,9 @@ static struct ccu_common *sun5i_a10s_ccu_clks[] = {
- 	&iep_clk.common,
- };
- 
--/* We hardcode the divider to 4 for now */
-+/* We hardcode the divider to 1 for now */
- static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-+			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
- 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-@@ -980,10 +993,10 @@ static void __init sun5i_ccu_init(struct device_node *node,
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN5I_PLL_AUDIO_REG);
- 	val &= ~GENMASK(29, 26);
--	writel(val | (3 << 26), reg + SUN5I_PLL_AUDIO_REG);
-+	writel(val | (0 << 26), reg + SUN5I_PLL_AUDIO_REG);
- 
- 	/*
- 	 * Use the peripheral PLL as the AHB parent, instead of CPU /
--- 
-2.14.2
+I had a read of the basic type registration functions, and the
+relevant failure paths are memory allocation failures. If we're out of
+memory that early in boot then things have gone pretty bad.
+
+I can add checks for null and bail out; I don't think there's value in
+freeing the allocated memory: if a system can't load it's clock driver
+then it's super hosed.
+
+Thanks for the review. I fixed all of the other things you mentioned.
+
+Cheers,
+
+Joel
