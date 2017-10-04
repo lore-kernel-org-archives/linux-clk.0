@@ -1,65 +1,68 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	liuwei@actions-semi.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/3] Add clock driver for Actions S900 SoC
-Date: Wed,  1 Nov 2017 01:24:20 +0530
-Message-Id: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36935 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbdJDPE6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 11:04:58 -0400
+MIME-Version: 1.0
+Reply-To: cwchoi00@gmail.com
+In-Reply-To: <20171003100016.32029-8-m.szyprowski@samsung.com>
+References: <CGME20171003100031eucas1p29f34d4e1878d839a7af9ea05ba15ece9@eucas1p2.samsung.com>
+ <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-8-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Thu, 5 Oct 2017 00:04:16 +0900
+Message-ID: <CAGTfZH1iDS_t3B_LpKija4qq6wO8eB5HpJodiUfR8C_DshPNPQ@mail.gmail.com>
+Subject: Re: [PATCH 7/9] clk: samsung: Rework clkdev alias handling in S3C2443 driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds clock driver for Actions Semi OWL series
-S900 SoC with relevant clock bindings and device tree data.
+On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> S3C2443 SoCs still uses old, non-dt CPUfreq driver, which requires clkdev
+> aliases to get access to proper clocks. Create those aliases using
+> samsung_clk_register_alias() function instead of using *_A clock macros,
+> which will be removed soon.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2443.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index abb935c42916..45166033f638 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -117,8 +117,8 @@ struct samsung_mux_clock s3c2443_common_muxes[] __initdata = {
+>         MUX(0, "epllref", epllref_p, CLKSRC, 7, 2),
+>         MUX(ESYSCLK, "esysclk", esysclk_p, CLKSRC, 6, 1),
+>         MUX(0, "mpllref", mpllref_p, CLKSRC, 3, 1),
+> -       MUX_A(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1, "msysclk"),
+> -       MUX_A(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1, "armclk"),
+> +       MUX(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1),
+> +       MUX(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1),
+>         MUX(0, "mux_i2s0", i2s0_p, CLKSRC, 14, 2),
+>  };
+>
+> @@ -189,6 +189,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
+>  };
+>
+>  struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+> +       ALIAS(MSYSCLK, NULL, "msysclk"),
+> +       ALIAS(ARMCLK, NULL, "armclk"),
+>         ALIAS(HCLK, NULL, "hclk"),
+>         ALIAS(HCLK_SSMC, NULL, "nand"),
+>         ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
 
-This series also addresses the review comments from previous
-submission happened last year.
-
-https://patchwork.kernel.org/patch/9254471/
-
-Driver has been validated on Bubblegum-96 board.
-
-Thanks,
-Mani
-
-Manivannan Sadhasivam (3):
-  arm64: dts: actions: add s900 clock controller nodes
-  clk: owl: add clock driver for Actions S900 SoC
-  Documentation: add Actions S900 clock bindings
-
- .../bindings/clock/actions,s900-clock.txt          |  47 ++
- MAINTAINERS                                        |   5 +
- arch/arm64/boot/dts/actions/s900.dtsi              |  19 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/owl/Makefile                           |   2 +
- drivers/clk/owl/clk-factor.c                       | 270 ++++++++++
- drivers/clk/owl/clk-pll.c                          | 346 ++++++++++++
- drivers/clk/owl/clk-s900.c                         | 587 +++++++++++++++++++++
- drivers/clk/owl/clk.c                              | 318 +++++++++++
- drivers/clk/owl/clk.h                              | 301 +++++++++++
- include/dt-bindings/clock/actions,s900-clock.h     | 141 +++++
- 11 files changed, 2037 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
- create mode 100644 drivers/clk/owl/Makefile
- create mode 100644 drivers/clk/owl/clk-factor.c
- create mode 100644 drivers/clk/owl/clk-pll.c
- create mode 100644 drivers/clk/owl/clk-s900.c
- create mode 100644 drivers/clk/owl/clk.c
- create mode 100644 drivers/clk/owl/clk.h
- create mode 100644 include/dt-bindings/clock/actions,s900-clock.h
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-2.7.4
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
