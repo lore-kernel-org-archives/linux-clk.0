@@ -1,190 +1,104 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v6 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-Date: Fri, 27 Oct 2017 11:48:47 +0200
-Message-Id: <20171027094848.28365-6-o.rempel@pengutronix.de>
-In-Reply-To: <20171027094848.28365-1-o.rempel@pengutronix.de>
-References: <20171027094848.28365-1-o.rempel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:35648 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752409AbdJDPip (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 11:38:45 -0400
+MIME-Version: 1.0
+Reply-To: cwchoi00@gmail.com
+In-Reply-To: <20171003100016.32029-9-m.szyprowski@samsung.com>
+References: <CGME20171003100031eucas1p142552d25c13db986a50951c988073223@eucas1p1.samsung.com>
+ <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-9-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Thu, 5 Oct 2017 00:38:03 +0900
+Message-ID: <CAGTfZH2V-t4a7Dds0nZiuDCcinbM7JrARkZo=AkoYVFXdTf0Gw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] clk: samsung: Add explicit MPLL and EPLL clkdev
+ aliases in S3C2443 driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
-about state changes. In this case internal state of PMIC must be
-preconfigured for upcomming state change.
-It works fine with the current regulator framework, except with the
-power-off case.
+Hi,
 
-This patch is providing an optional pm_power_off_prepare handler
-which will configure standby state of the PMIC to disable all power lines.
+On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> S3C2443 platform still use non-dt based lookup in some of its drivers to
+> get MPLL and EPLL clocks. Till now it worked only because PLL() macro
+> implicitely created aliases for all instatiated clocks. This feature will
+> be removed, so explicitely create aliases for MPLL and EPLL clocks.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2443.c   | 10 ++++++----
+>  include/dt-bindings/clock/s3c2443.h |  2 ++
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 45166033f638..d94b85a42356 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -191,6 +191,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
+>  struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+>         ALIAS(MSYSCLK, NULL, "msysclk"),
+>         ALIAS(ARMCLK, NULL, "armclk"),
+> +       ALIAS(MPLL, NULL, "mpll"),
+> +       ALIAS(EPLL, NULL, "epll"),
+>         ALIAS(HCLK, NULL, "hclk"),
+>         ALIAS(HCLK_SSMC, NULL, "nand"),
+>         ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
+> @@ -223,9 +225,9 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
+>  /* S3C2416 specific clocks */
+>
+>  static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
+> -       [mpll] = PLL(pll_6552_s3c2416, 0, "mpll", "mpllref",
+> +       [mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
+>                                                 LOCKCON0, MPLLCON, NULL),
+> -       [epll] = PLL(pll_6553, 0, "epll", "epllref",
+> +       [epll] = PLL(pll_6553, EPLL, "epll", "epllref",
+>                                                 LOCKCON1, EPLLCON, NULL),
+>  };
+>
+> @@ -277,9 +279,9 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
+>  /* S3C2443 specific clocks */
+>
+>  static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
+> -       [mpll] = PLL(pll_3000, 0, "mpll", "mpllref",
+> +       [mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
+>                                                 LOCKCON0, MPLLCON, NULL),
+> -       [epll] = PLL(pll_2126, 0, "epll", "epllref",
+> +       [epll] = PLL(pll_2126, EPLL, "epll", "epllref",
+>                                                 LOCKCON1, EPLLCON, NULL),
+>  };
+>
+> diff --git a/include/dt-bindings/clock/s3c2443.h b/include/dt-bindings/clock/s3c2443.h
+> index 37e66b054d64..f3ba68a25ecb 100644
+> --- a/include/dt-bindings/clock/s3c2443.h
+> +++ b/include/dt-bindings/clock/s3c2443.h
+> @@ -26,6 +26,8 @@
+>  #define ARMCLK                 4
+>  #define HCLK                   5
+>  #define PCLK                   6
+> +#define MPLL                   7
+> +#define EPLL                   8
+>
+>  /* Special clocks */
+>  #define SCLK_HSSPI0            16
 
-In my power consumption test on RIoTBoard, I got the following results:
-power off without this patch:	320 mA
-power off with this patch:	2   mA
-suspend to ram:			40  mA
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+When using PLL() macro, pll uses the 'name' as for both 'name' and 'alias'.
+The patch9 removes the registration of PLL's alias in the
+_samsung_clk_register_pll().
+So, this patch looks good to me for patch9.
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 63922a2167e5..f6c276ed91d8 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/pfuze100.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
-+#include <linux/kallsyms.h>
- #include <linux/regmap.h>
- 
- #define PFUZE_NUMREGS		128
-@@ -42,11 +43,17 @@
- 
- #define PFUZE100_COINVOL	0x1a
- #define PFUZE100_SW1ABVOL	0x20
-+#define PFUZE100_SW1ABMODE	0x23
- #define PFUZE100_SW1CVOL	0x2e
-+#define PFUZE100_SW1CMODE	0x31
- #define PFUZE100_SW2VOL		0x35
-+#define PFUZE100_SW2MODE	0x38
- #define PFUZE100_SW3AVOL	0x3c
-+#define PFUZE100_SW3AMODE	0x3f
- #define PFUZE100_SW3BVOL	0x43
-+#define PFUZE100_SW3BMODE	0x46
- #define PFUZE100_SW4VOL		0x4a
-+#define PFUZE100_SW4MODE	0x4d
- #define PFUZE100_SWBSTCON1	0x66
- #define PFUZE100_VREFDDRCON	0x6a
- #define PFUZE100_VSNVSVOL	0x6b
-@@ -57,6 +64,13 @@
- #define PFUZE100_VGEN5VOL	0x70
- #define PFUZE100_VGEN6VOL	0x71
- 
-+#define PFUZE100_SWxMODE_MASK	0xf
-+#define PFUZE100_SWxMODE_APS_APS	0x8
-+#define PFUZE100_SWxMODE_APS_OFF	0x4
-+
-+#define PFUZE100_VGENxLPWR	BIT(6)
-+#define PFUZE100_VGENxSTBY	BIT(5)
-+
- enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
- 
- struct pfuze_regulator {
-@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
- }
- #endif
- 
-+static struct pfuze_chip *syspm_pfuze_chip;
-+
-+static void pfuze_power_off_prepare(void)
-+{
-+	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
-+
-+	/* Switch from default mode: APS/APS to APS/Off */
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+}
-+
-+static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
-+{
-+	if (pfuze_chip->chip_id != PFUZE100) {
-+		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
-+		return -ENODEV;
-+	}
-+
-+	if (pm_power_off_prepare) {
-+		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
-+		return -EBUSY;
-+	}
-+
-+	if (syspm_pfuze_chip) {
-+		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-+		return -EBUSY;
-+	}
-+
-+	syspm_pfuze_chip = pfuze_chip;
-+	pm_power_off_prepare = pfuze_power_off_prepare;
-+
-+	return 0;
-+}
-+
- static int pfuze_identify(struct pfuze_chip *pfuze_chip)
- {
- 	unsigned int value;
-@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	if (of_property_read_bool(client->dev.of_node,
-+				  "fsl,pmic-stby-poweroff"))
-+		return pfuze_power_off_prepare_init(pfuze_chip);
-+
-+	return 0;
-+}
-+
-+static int pfuze100_regulator_remove(struct i2c_client *client)
-+{
-+	if (syspm_pfuze_chip) {
-+		syspm_pfuze_chip = NULL;
-+		pm_power_off_prepare = NULL;
-+	}
-+
- 	return 0;
- }
- 
-@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
- 		.of_match_table = pfuze_dt_ids,
- 	},
- 	.probe = pfuze100_regulator_probe,
-+	.remove = pfuze100_regulator_remove,
- };
- module_i2c_driver(pfuze_driver);
- 
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.11.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
