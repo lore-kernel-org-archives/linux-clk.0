@@ -1,70 +1,146 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 18 Oct 2017 09:18:16 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Bhumika Goyal <bhumirks@gmail.com>, vireshk@kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] CLK: SPEAr: make structure field and function
- argument as const
-Message-ID: <20171018034816.GE27082@vireshk-i7>
-References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com>
- <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
- <alpine.DEB.2.20.1710171641400.5035@hadrien>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:34294 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752103AbdJDN3h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 09:29:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.20.1710171641400.5035@hadrien>
+Reply-To: cwchoi00@gmail.com
+In-Reply-To: <20171003100016.32029-3-m.szyprowski@samsung.com>
+References: <CGME20171003100029eucas1p1e141119212369955ea3017b6aee183dc@eucas1p1.samsung.com>
+ <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-3-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Wed, 4 Oct 2017 22:28:56 +0900
+Message-ID: <CAGTfZH3m1HtX77xWU3n58SjoGwZ4FbcGLJTg1PiPmbXLg12ELw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] clk: samsung: Remove clkdev alias support in Exynos4
+ clk driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17-10-17, 16:42, Julia Lawall wrote:
-> 
-> 
-> On Tue, 17 Oct 2017, Bhumika Goyal wrote:
-> 
-> > Make the masks field of clk_aux structure const as it do not modify the
-> > fields of the aux_clk_masks structure it points to.
-> >
-> > Make the struct aux_clk_masks *aux argument of the function
-> > clk_register_aux as const as the argument is only stored in the masks
-> > field of a clk_aux structure which is now made const.
-> >
-> > Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
-> > ---
-> >  drivers/clk/spear/clk-aux-synth.c | 2 +-
-> >  drivers/clk/spear/clk.h           | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
-> > index f271c35..8bea5df 100644
-> > --- a/drivers/clk/spear/clk-aux-synth.c
-> > +++ b/drivers/clk/spear/clk-aux-synth.c
-> > @@ -136,7 +136,7 @@ static int clk_aux_set_rate(struct clk_hw *hw, unsigned long drate,
-> >
-> >  struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
-> >  		const char *parent_name, unsigned long flags, void __iomem *reg,
-> > -		struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
-> > +	        const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
-> >  		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk)
-> >  {
-> >  	struct clk_aux *aux;
-> > diff --git a/drivers/clk/spear/clk.h b/drivers/clk/spear/clk.h
-> > index 9834944..b9d28b3 100644
-> > --- a/drivers/clk/spear/clk.h
-> > +++ b/drivers/clk/spear/clk.h
-> > @@ -49,7 +49,7 @@ struct aux_rate_tbl {
-> >  struct clk_aux {
-> >  	struct			clk_hw hw;
-> >  	void __iomem		*reg;
-> > -	struct aux_clk_masks	*masks;
-> > +        const struct aux_clk_masks *masks;
-> 
-> There are spaces before const here.
+Hi,
 
-Fix that and add my:
+On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> All Exynos4 boards have been fully converted to device-tree and use generic
+> dt-based CPUfreq driver, so there is no need to create any clkdev aliases
+> for the clocks. Drop all the code related to aliases handling.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 47 +++++++++------------------------------
+>  1 file changed, 10 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 9a51ce9a658f..3fbfd9ed82b7 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -535,9 +535,8 @@ static const struct samsung_fixed_factor_clock exynos4x12_fixed_factor_clks[] __
+>
+>  /* list of mux clocks supported in all exynos4 soc's */
+>  static const struct samsung_mux_clock exynos4_mux_clks[] __initconst = {
+> -       MUX_FA(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> -                       CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0,
+> -                       "mout_apll"),
+> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> +                       CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+>         MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+>         MUX(0, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+>         MUX(0, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+> @@ -838,11 +837,6 @@ static const struct samsung_div_clock exynos4x12_div_clks[] __initconst = {
+>
+>  /* list of gate clocks supported in all exynos4 soc's */
+>  static const struct samsung_gate_clock exynos4_gate_clks[] __initconst = {
+> -       /*
+> -        * After all Exynos4 based platforms are migrated to use device tree,
+> -        * the device name and clock alias names specified below for some
+> -        * of the clocks can be removed.
+> -        */
+>         GATE(CLK_PPMULEFT, "ppmuleft", "aclk200", GATE_IP_LEFTBUS, 1, 0, 0),
+>         GATE(CLK_PPMURIGHT, "ppmuright", "aclk200", GATE_IP_RIGHTBUS, 1, 0, 0),
+>         GATE(CLK_SCLK_HDMI, "sclk_hdmi", "mout_hdmi", SRC_MASK_TV, 0, 0, 0),
+> @@ -1190,20 +1184,6 @@ static const struct samsung_gate_clock exynos4x12_gate_clks[] __initconst = {
+>                 0),
+>  };
+>
+> -static const struct samsung_clock_alias exynos4_aliases[] __initconst = {
+> -       ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
+> -       ALIAS(CLK_ARM_CLK, NULL, "armclk"),
+> -       ALIAS(CLK_SCLK_APLL, NULL, "mout_apll"),
+> -};
+> -
+> -static const struct samsung_clock_alias exynos4210_aliases[] __initconst = {
+> -       ALIAS(CLK_SCLK_MPLL, NULL, "mout_mpll"),
+> -};
+> -
+> -static const struct samsung_clock_alias exynos4x12_aliases[] __initconst = {
+> -       ALIAS(CLK_MOUT_MPLL_USER_C, NULL, "mout_mpll"),
+> -};
+> -
+>  /*
+>   * The parent of the fin_pll clock is selected by the XOM[0] bit. This bit
+>   * resides in chipid register space, outside of the clock controller memory
+> @@ -1340,14 +1320,14 @@ static const struct samsung_pll_rate_table exynos4x12_vpll_rates[] __initconst =
+>  };
+>
+>  static struct samsung_pll_clock exynos4210_plls[nr_plls] __initdata = {
+> -       [apll] = PLL_A(pll_4508, CLK_FOUT_APLL, "fout_apll", "fin_pll",
+> -               APLL_LOCK, APLL_CON0, "fout_apll", NULL),
+> -       [mpll] = PLL_A(pll_4508, CLK_FOUT_MPLL, "fout_mpll", "fin_pll",
+> -               E4210_MPLL_LOCK, E4210_MPLL_CON0, "fout_mpll", NULL),
+> -       [epll] = PLL_A(pll_4600, CLK_FOUT_EPLL, "fout_epll", "fin_pll",
+> -               EPLL_LOCK, EPLL_CON0, "fout_epll", NULL),
+> -       [vpll] = PLL_A(pll_4650c, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
+> -               VPLL_LOCK, VPLL_CON0, "fout_vpll", NULL),
+> +       [apll] = PLL(pll_4508, CLK_FOUT_APLL, "fout_apll", "fin_pll",
+> +               APLL_LOCK, APLL_CON0, NULL),
+> +       [mpll] = PLL(pll_4508, CLK_FOUT_MPLL, "fout_mpll", "fin_pll",
+> +               E4210_MPLL_LOCK, E4210_MPLL_CON0, NULL),
+> +       [epll] = PLL(pll_4600, CLK_FOUT_EPLL, "fout_epll", "fin_pll",
+> +               EPLL_LOCK, EPLL_CON0, NULL),
+> +       [vpll] = PLL(pll_4650c, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
+> +               VPLL_LOCK, VPLL_CON0, NULL),
+>  };
+>
+>  static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+> @@ -1494,8 +1474,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                         ARRAY_SIZE(exynos4210_div_clks));
+>                 samsung_clk_register_gate(ctx, exynos4210_gate_clks,
+>                         ARRAY_SIZE(exynos4210_gate_clks));
+> -               samsung_clk_register_alias(ctx, exynos4210_aliases,
+> -                       ARRAY_SIZE(exynos4210_aliases));
+>                 samsung_clk_register_fixed_factor(ctx,
+>                         exynos4210_fixed_factor_clks,
+>                         ARRAY_SIZE(exynos4210_fixed_factor_clks));
+> @@ -1510,8 +1488,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                         ARRAY_SIZE(exynos4x12_div_clks));
+>                 samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
+>                         ARRAY_SIZE(exynos4x12_gate_clks));
+> -               samsung_clk_register_alias(ctx, exynos4x12_aliases,
+> -                       ARRAY_SIZE(exynos4x12_aliases));
+>                 samsung_clk_register_fixed_factor(ctx,
+>                         exynos4x12_fixed_factor_clks,
+>                         ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+> @@ -1521,9 +1497,6 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                         CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+>         }
+>
+> -       samsung_clk_register_alias(ctx, exynos4_aliases,
+> -                       ARRAY_SIZE(exynos4_aliases));
+> -
+>         if (soc == EXYNOS4X12)
+>                 exynos4x12_core_down_clock();
+>         exynos4_clk_sleep_init();
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
--- 
-viresh
+
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
