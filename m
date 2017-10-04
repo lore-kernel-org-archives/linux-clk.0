@@ -1,47 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44140 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbdJKJdX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2017 05:33:23 -0400
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-id: <c1462299-45d3-4838-797a-a4cadc09bdbb@samsung.com>
-Date: Wed, 11 Oct 2017 11:33:12 +0200
-MIME-version: 1.0
-In-reply-to: <76fcaecf-7c38-a1a6-b4b1-47e6966f8b34@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
-        <20171002104759.25944-1-m.szyprowski@samsung.com>
-        <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
-        <CAJKOXPd5_tV_VenxOL-H_z+ej0QR7X8F3DBZ=Mneu_9pe+h4QQ@mail.gmail.com>
-        <76fcaecf-7c38-a1a6-b4b1-47e6966f8b34@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 4 Oct 2017 09:18:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND] clk: samsung: exynos4: Enable VPLL and EPLL
+ clocks for suspend/resume cycle
+Message-ID: <20171004161858.GV457@codeaurora.org>
+References: <CGME20170919100345eucas1p1391a495dab09faecdc2acf9635e4c42d@eucas1p1.samsung.com>
+ <1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
+ <bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
+ <2073050f-70c3-f007-64e4-275ddabdc473@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2073050f-70c3-f007-64e4-275ddabdc473@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/09/2017 12:58 PM, Sylwester Nawrocki wrote:
-> On 10/09/2017 12:49 PM, Krzysztof Kozlowski wrote:
->> On Mon, Oct 9, 2017 at 12:34 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>> On 10/02/2017 12:47 PM, Marek Szyprowski wrote:
->>>> Patch summary:
->>>>
->>>> Marek Szyprowski (4):
->>>>   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
->>>>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
->>>>   ARM: dts: exynos: Add Exynos4412 ISP clock controller
->>>>   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
->>> I have applied whole series, with v2 of patch 2/4, thanks.
->> You mean you applied 1/4 and 2/4 for now, right? 3/4 will go through
->> my tree in release after this and 4/4 even later?
-> Ah yes, sorry, just noticed that. Indeed I've taken only first two 
-> patches, the third is for dts and the last one will be applied after 
-> some time as you say.
+On 10/04, Marek Szyprowski wrote:
+> Hi All,
+> 
+> On 2017-09-19 12:28, Sylwester Nawrocki wrote:
+> >On 09/19/2017 12:01 PM, Marek Szyprowski wrote:
+> >>Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
+> >>PLL36XX clocks") added enable/disable operations to PLL clocks.
+> >>Prior that
+> >>VPLL and EPPL clocks were always enabled because the enable bit
+> >>was never
+> >>touched. Those clocks have to be enabled during suspend/resume cycle,
+> >>because otherwise board fails to enter sleep mode. This patch
+> >>enables them
+> >>unconditionally before entering system suspend state. System restore
+> >>function will set them to the previous state saved in the register cache
+> >>done before that unconditional enable.
+> >>
+> >>Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation
+> >>for PLL36XX clocks")
+> >>CC: stable@vger.kernel.org # v4.13
+> >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> >>Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >
+> >Stephen, Mike, could you please apply this patch directly?
+> 
+> Gentle ping.
+> 
+> Any chance to have this patch merged as a fix to v4.14-rcX?
+> 
 
-For the record, I have dropped these 2 patches as there is now
-posted v3 addressing review comments.
+Sure. I thought this was an old regression for pre-v4.14 rcs
+though. Sounds like it's causing more pain though, so I'll pick
+it into fixes.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
