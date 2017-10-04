@@ -1,85 +1,77 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v4.15-rc1
-Date: Fri, 20 Oct 2017 14:14:12 +0200
-Message-Id: <20171020121412.10527-1-thierry.reding@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 4 Oct 2017 14:18:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
+Message-ID: <20171004211820.GX457@codeaurora.org>
+References: <20170921042641.7326-1-joel@jms.id.au>
+ <20170921042641.7326-4-joel@jms.id.au>
+ <20171002212435.GP457@codeaurora.org>
+ <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael, Stephen,
+On 10/03, Joel Stanley wrote:
+> On Tue, Oct 3, 2017 at 6:54 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 09/21, Joel Stanley wrote:
+> >> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+> >> +     /*
+> >> +      * Memory controller (M-PLL) PLL. This clock is configured by the
+> >> +      * bootloader, and is exposed to Linux as a read-only clock rate.
+> >> +      */
+> >> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
+> >> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
+> >> +
+> >> +     /* SD/SDIO clock divider (TODO: There's a gate too) */
+> >> +     hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
+> >
+> > Please pass your dev pointer here from the platform device.
+> >
+> >> +                     scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
+> >> +                     div_table,
+> >> +                     &aspeed_clk_lock);
+> >
+> > And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
+> > construct the dividers and muxes directly instead of using the
+> > basic type registration APIs.
+> 
+> Do you think that devm_ is overkill, given we will never unload this driver?
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+Is probe defer going to happen? Even if unload can't happen,
+probe defer is a concern unless that is also ruled out.
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+> 
+> Can you explain why you suggest to construct the structures directly
+> instead of using the APIs?
 
-are available in the git repository at:
+There aren't devm APIs for some of these basic clk type
+registration functions.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
+> 
+> I had a read of the basic type registration functions, and the
+> relevant failure paths are memory allocation failures. If we're out of
+> memory that early in boot then things have gone pretty bad.
+> 
+> I can add checks for null and bail out; I don't think there's value in
+> freeing the allocated memory: if a system can't load it's clock driver
+> then it's super hosed.
 
-for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
+If we can't proceed without this driver because it's super hosed,
+then perhaps we need to panic the system on errors here. Should
+be simple enough to add some error checks and goto panic("Things
+are super hosed").
 
-  clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
-
-Note that this pulls in parts from two other tags that are going to go
-in via the ARM SoC tree. Those are needed to a couple of resolve build
-dependencies.
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-clk: tegra: Changes for v4.15-rc1
-
-This contains cleanups and minor fixes for the Tegra clock driver.
-
-----------------------------------------------------------------
-Bhumika Goyal (1):
-      clk: tegra: Make tegra_clk_pll_params __ro_after_init
-
-Dmitry Osipenko (4):
-      clk: tegra: Add AHB DMA clock entry
-      clk: tegra: Correct parent of the APBDMA clock
-      clk: tegra: Use common definition of APBDMA clock gate
-      clk: tegra: Bump SCLK clock rate to 216 MHz
-
-Michał Mirosław (1):
-      clk: tegra: Fix cclk_lp divisor register
-
-Nicolin Chen (2):
-      clk: tegra: dfll: Fix drvdata overwriting issue
-      clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init()
-
-Thierry Reding (6):
-      dt-bindings: clock: tegra: Add sor1_out clock
-      Merge branch 'for-4.15/dt-bindings' into for-4.15/clk
-      Merge branch 'for-4.15/firmware' into for-4.15/clk
-      clk: tegra: Add peripheral clock registration helper
-      clk: tegra: Use tegra_clk_register_periph_data()
-      clk: tegra: Fix sor1_out clock implementation
-
-Timo Alho (2):
-      firmware: tegra: Propagate error code to caller
-      clk: tegra: Check BPMP response return code
-
- drivers/clk/tegra/clk-bpmp.c               | 15 ++++++---
- drivers/clk/tegra/clk-dfll.c               | 10 +++---
- drivers/clk/tegra/clk-dfll.h               |  2 +-
- drivers/clk/tegra/clk-id.h                 |  1 +
- drivers/clk/tegra/clk-periph.c             |  8 +++++
- drivers/clk/tegra/clk-tegra-periph.c       | 24 ++------------
- drivers/clk/tegra/clk-tegra114.c           |  4 +--
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++----
- drivers/clk/tegra/clk-tegra20.c            | 13 +++-----
- drivers/clk/tegra/clk-tegra210.c           | 51 ++++++++++++++++++++++++++++--
- drivers/clk/tegra/clk-tegra30.c            | 23 +++++++-------
- drivers/clk/tegra/clk.h                    |  3 ++
- drivers/firmware/tegra/bpmp.c              | 22 +++++++++----
- include/dt-bindings/clock/tegra210-car.h   |  1 +
- include/soc/tegra/bpmp.h                   |  1 +
- 15 files changed, 119 insertions(+), 71 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
