@@ -1,55 +1,132 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 RESEND] clk: samsung: exynos4: Enable VPLL and EPLL
- clocks for suspend/resume cycle
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo
-	Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <2073050f-70c3-f007-64e4-275ddabdc473@samsung.com>
-Date: Wed, 04 Oct 2017 08:08:57 +0200
-MIME-version: 1.0
-In-reply-to: <bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170919100345eucas1p1391a495dab09faecdc2acf9635e4c42d@eucas1p1.samsung.com>
-	<1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
-	<bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Opera <montvid@gmail.com>,
+	John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] RESEND: clk: Avoid sending high rates to downstream clocks during set_rate
+Date: Wed,  4 Oct 2017 04:30:06 +0200
+Message-Id: <20171004023006.31763-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi All,
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-On 2017-09-19 12:28, Sylwester Nawrocki wrote:
-> On 09/19/2017 12:01 PM, Marek Szyprowski wrote:
->> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
->> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior 
->> that
->> VPLL and EPPL clocks were always enabled because the enable bit was 
->> never
->> touched. Those clocks have to be enabled during suspend/resume cycle,
->> because otherwise board fails to enter sleep mode. This patch enables 
->> them
->> unconditionally before entering system suspend state. System restore
->> function will set them to the previous state saved in the register cache
->> done before that unconditional enable.
->>
->> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for 
->> PLL36XX clocks")
->> CC: stable@vger.kernel.org # v4.13
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> Stephen, Mike, could you please apply this patch directly?
+If a clock is on and we call clk_set_rate() on it we may get into
+a situation where the clock temporarily increases in rate
+dramatically while we walk the tree and call .set_rate() ops. For
+example, consider a case where a PLL feeds into a divider.
+Initially the divider is set to divide by 1 and the PLL is
+running fairly slow (100MHz). The downstream consumer of the
+divider output can only handle rates =< 400 MHz, but the divider
+can only choose between divisors of 1 and 4.
 
-Gentle ping.
+ +-----+   +----------------+
+ | PLL |-->| div 1 or div 4 |---> consumer device
+ +-----+   +----------------+
 
-Any chance to have this patch merged as a fix to v4.14-rcX?
+To achieve a rate of 400MHz on the output of the divider, we
+would have to set the rate of the PLL to 1.6 GHz and then divide
+it by 4. The current code would set the PLL to 1.6GHz first while
+the divider is still set to 1, thus causing the downstream
+consumer of the clock to receive a few clock cycles of 1.6GHz
+clock (far beyond it's maximum acceptable rate). We should be
+changing the divider first before increasing the PLL rate to
+avoid this problem.
 
- > ...
+Therefore, set the rate of any child clocks that are increasing
+in rate from their current rate so that they can increase their
+dividers if necessary. We assume that there isn't such a thing as
+minimum rate requirements.
 
-Best regards
+Cc: Opera <montvid@gmail.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+Stephen: just wanted to check what's up with this patch.
+When I apply it on my kernel I get graphics on the Nexus7,
+when I don't, I don't.
+
+OpenWRT has started to carry the patch in their tree I noticed.
+I found it in John Stultz patch stack.
+
+Is there some similar patch floating in some other series, is
+it fundamentally wrong or something else?
+
+Just wanted to reboot the discussion so we know where this is
+standing.
+---
+ drivers/clk/clk.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c8d83acda006..324e4fa11802 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1468,12 +1468,12 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+  * walk down a subtree and set the new rates notifying the rate
+  * change on the way
+  */
+-static void clk_change_rate(struct clk_core *core)
++static void
++clk_change_rate(struct clk_core *core, unsigned long best_parent_rate)
+ {
+ 	struct clk_core *child;
+ 	struct hlist_node *tmp;
+ 	unsigned long old_rate;
+-	unsigned long best_parent_rate = 0;
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
+ 	struct clk_core *parent = NULL;
+@@ -1525,6 +1525,7 @@ static void clk_change_rate(struct clk_core *core)
+ 	trace_clk_set_rate_complete(core, core->new_rate);
+ 
+ 	core->rate = clk_recalc(core, best_parent_rate);
++	core->rate = core->new_rate;
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+ 		unsigned long flags;
+@@ -1552,12 +1553,13 @@ static void clk_change_rate(struct clk_core *core)
+ 		/* Skip children who will be reparented to another clock */
+ 		if (child->new_parent && child->new_parent != core)
+ 			continue;
+-		clk_change_rate(child);
++		if (child->new_rate != child->rate)
++			clk_change_rate(child, core->new_rate);
+ 	}
+ 
+-	/* handle the new child who might not be in core->children yet */
+-	if (core->new_child)
+-		clk_change_rate(core->new_child);
++	/* handle the new child who might not be in clk->children yet */
++	if (core->new_child && core->new_child->new_rate != core->new_child->rate)
++		clk_change_rate(core->new_child, core->new_rate);
+ }
+ 
+ static int clk_core_set_rate_nolock(struct clk_core *core,
+@@ -1565,6 +1567,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ {
+ 	struct clk_core *top, *fail_clk;
+ 	unsigned long rate = req_rate;
++	unsigned long parent_rate;
+ 
+ 	if (!core)
+ 		return 0;
+@@ -1590,8 +1593,13 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 		return -EBUSY;
+ 	}
+ 
++	if (top->parent)
++		parent_rate = top->parent->rate;
++	else
++		parent_rate = 0;
++
+ 	/* change the rates */
+-	clk_change_rate(top);
++	clk_change_rate(top, parent_rate);
+ 
+ 	core->req_rate = req_rate;
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.13.5
