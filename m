@@ -1,86 +1,32 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 25/27] dt-bindings: clk: add dm816 clkctrl definitions
-Date: Mon, 30 Oct 2017 15:04:43 +0200
-Message-ID: <1509368685-29112-26-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] MAINTAINERS: Add git repository to Renesas clock driver section
+Date: Wed,  4 Oct 2017 13:34:24 +0200
+Message-Id: <1507116864-17219-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Contains offsets for all dm816 clkctrl main and optional clocks.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/dm816.h | 53 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 include/dt-bindings/clock/dm816.h
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/dm816.h b/include/dt-bindings/clock/dm816.h
-new file mode 100644
-index 0000000..69e8a36
---- /dev/null
-+++ b/include/dt-bindings/clock/dm816.h
-@@ -0,0 +1,53 @@
-+/*
-+ * Copyright 2017 Texas Instruments, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __DT_BINDINGS_CLK_DM816_H
-+#define __DT_BINDINGS_CLK_DM816_H
-+
-+#define DM816_CLKCTRL_OFFSET	0x0
-+#define DM816_CLKCTRL_INDEX(offset)	((offset) - DM816_CLKCTRL_OFFSET)
-+
-+/* default clocks */
-+#define DM816_USB_OTG_HS_CLKCTRL	DM816_CLKCTRL_INDEX(0x58)
-+
-+/* alwon clocks */
-+#define DM816_UART1_CLKCTRL	DM816_CLKCTRL_INDEX(0x150)
-+#define DM816_UART2_CLKCTRL	DM816_CLKCTRL_INDEX(0x154)
-+#define DM816_UART3_CLKCTRL	DM816_CLKCTRL_INDEX(0x158)
-+#define DM816_GPIO1_CLKCTRL	DM816_CLKCTRL_INDEX(0x15c)
-+#define DM816_GPIO2_CLKCTRL	DM816_CLKCTRL_INDEX(0x160)
-+#define DM816_I2C1_CLKCTRL	DM816_CLKCTRL_INDEX(0x164)
-+#define DM816_I2C2_CLKCTRL	DM816_CLKCTRL_INDEX(0x168)
-+#define DM816_TIMER1_CLKCTRL	DM816_CLKCTRL_INDEX(0x170)
-+#define DM816_TIMER2_CLKCTRL	DM816_CLKCTRL_INDEX(0x174)
-+#define DM816_TIMER3_CLKCTRL	DM816_CLKCTRL_INDEX(0x178)
-+#define DM816_TIMER4_CLKCTRL	DM816_CLKCTRL_INDEX(0x17c)
-+#define DM816_TIMER5_CLKCTRL	DM816_CLKCTRL_INDEX(0x180)
-+#define DM816_TIMER6_CLKCTRL	DM816_CLKCTRL_INDEX(0x184)
-+#define DM816_TIMER7_CLKCTRL	DM816_CLKCTRL_INDEX(0x188)
-+#define DM816_WD_TIMER_CLKCTRL	DM816_CLKCTRL_INDEX(0x18c)
-+#define DM816_MCSPI1_CLKCTRL	DM816_CLKCTRL_INDEX(0x190)
-+#define DM816_MAILBOX_CLKCTRL	DM816_CLKCTRL_INDEX(0x194)
-+#define DM816_SPINBOX_CLKCTRL	DM816_CLKCTRL_INDEX(0x198)
-+#define DM816_MMC1_CLKCTRL	DM816_CLKCTRL_INDEX(0x1b0)
-+#define DM816_GPMC_CLKCTRL	DM816_CLKCTRL_INDEX(0x1d0)
-+#define DM816_DAVINCI_MDIO_CLKCTRL	DM816_CLKCTRL_INDEX(0x1d4)
-+#define DM816_EMAC1_CLKCTRL	DM816_CLKCTRL_INDEX(0x1d8)
-+#define DM816_MPU_CLKCTRL	DM816_CLKCTRL_INDEX(0x1dc)
-+#define DM816_RTC_CLKCTRL	DM816_CLKCTRL_INDEX(0x1f0)
-+#define DM816_TPCC_CLKCTRL	DM816_CLKCTRL_INDEX(0x1f4)
-+#define DM816_TPTC0_CLKCTRL	DM816_CLKCTRL_INDEX(0x1f8)
-+#define DM816_TPTC1_CLKCTRL	DM816_CLKCTRL_INDEX(0x1fc)
-+#define DM816_TPTC2_CLKCTRL	DM816_CLKCTRL_INDEX(0x200)
-+#define DM816_TPTC3_CLKCTRL	DM816_CLKCTRL_INDEX(0x204)
-+
-+#endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 61d77c8037a1faf9..d23f4fba728d091a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11476,6 +11476,7 @@ F:	include/linux/rpmsg/
+ RENESAS CLOCK DRIVERS
+ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ L:	linux-renesas-soc@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
+ S:	Supported
+ F:	drivers/clk/renesas/
+ 
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
