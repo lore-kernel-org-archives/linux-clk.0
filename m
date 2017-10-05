@@ -1,50 +1,65 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3] clk: qcom: Elaborate on "active" clocks in the RPM clock bindings
-Date: Fri, 13 Oct 2017 13:26:35 +0200
-Message-Id: <20171013112635.32296-1-linus.walleij@linaro.org>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
+CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 0/4] add support of clock driver on MediaTek MT7622
+Date: Thu, 5 Oct 2017 11:50:21 +0800
+Message-ID: <cover.1507174350.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The concept of "active" clocks is just explained in a bried comment in the
-device driver, let's explain it a bit more in the device tree bindings
-so everyone understands this.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Cc: devicetree@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Collect Rob's ACK.
-ChangeLog v1->v2:
-- Reword slighty in accordance with Stephens feedback.
----
- Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes since v1:
+- fix up the makefile target for clk-mt7622-aud.o
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index a7235e9e1c97..32c6e9ce64c3 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -16,6 +16,14 @@ Required properties :
- 
- - #clock-cells : shall contain 1
- 
-+The clock enumerators are defined in <dt-bindings/clock/qcom,rpmcc.h>
-+and come in pairs: FOO_CLK followed by FOO_A_CLK. The latter clock
-+is an "active" clock, which means that the consumer only care that the
-+clock is available when the apps CPU subsystem is active, i.e. not
-+suspended or in deep idle. If it is important that the clock keeps running
-+during system suspend, you need to specify the non-active clock, the one
-+not containing *_A_* in the enumerator name.
-+
- Example:
- 	smd {
- 		compatible = "qcom,smd";
+Add clock driver required by each function driver on MT7622 SoC with
+adding all clocks exported from every hardware subsystem such as topckgen,
+apmixedsys, infracfg, pericfg , pciessys, ssusbsys, ethsys and audsys.
+
+Chen Zhong (2):
+  clk: mediatek: add the option for determining PLL source clock
+  clk: mediatek: add clocks dt-bindings required header for MT7622 SoC
+
+Sean Wang (2):
+  dt-bindings: clock: mediatek: document clk bindings for MediaTek
+    MT7622 SoC
+  clk: mediatek: add clock support for MT7622 SoC
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |   1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  22 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |   1 +
+ .../bindings/arm/mediatek/mediatek,pciesys.txt     |  22 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |   1 +
+ .../bindings/arm/mediatek/mediatek,sgmiisys.txt    |  22 +
+ .../bindings/arm/mediatek/mediatek,ssusbsys.txt    |  22 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |   1 +
+ drivers/clk/mediatek/Kconfig                       |  30 +
+ drivers/clk/mediatek/Makefile                      |   4 +
+ drivers/clk/mediatek/clk-mt7622-aud.c              | 195 ++++++
+ drivers/clk/mediatek/clk-mt7622-eth.c              | 156 +++++
+ drivers/clk/mediatek/clk-mt7622-hif.c              | 169 +++++
+ drivers/clk/mediatek/clk-mt7622.c                  | 780 +++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h                     |   1 +
+ drivers/clk/mediatek/clk-pll.c                     |   5 +-
+ include/dt-bindings/clock/mt7622-clk.h             | 289 ++++++++
+ 19 files changed, 1722 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+ create mode 100644 drivers/clk/mediatek/clk-mt7622-aud.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7622-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7622-hif.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7622.c
+ create mode 100644 include/dt-bindings/clock/mt7622-clk.h
+
 -- 
-2.13.5
+2.7.4
