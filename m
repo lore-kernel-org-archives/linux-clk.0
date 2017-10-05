@@ -1,60 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51468 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932281AbdJ0PKJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:10:09 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 08/10] dt-bindings: add binding for A64 DE2 CCU SRAM
-Date: Fri, 27 Oct 2017 23:06:56 +0800
-Message-Id: <20171027150658.18509-9-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <20171004211820.GX457@codeaurora.org>
+References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
+ <20171002212435.GP457@codeaurora.org> <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
+ <20171004211820.GX457@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Thu, 5 Oct 2017 15:52:50 +0930
+Message-ID: <CACPK8XdzDatTXng-YR9qqYNqxzQPSaf87+2B==YEnC+ffGkPTw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-A64's Display Engine 2.0 needs a section of SRAM (SRAM C) to be claimed,
-otherwise the whole DE2 memory zone cannot be accessed (kept to all 0).
+On Thu, Oct 5, 2017 at 6:48 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/03, Joel Stanley wrote:
+>> On Tue, Oct 3, 2017 at 6:54 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 09/21, Joel Stanley wrote:
+>> >> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
+>> >> +     /*
+>> >> +      * Memory controller (M-PLL) PLL. This clock is configured by the
+>> >> +      * bootloader, and is exposed to Linux as a read-only clock rate.
+>> >> +      */
+>> >> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
+>> >> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
+>> >> +
+>> >> +     /* SD/SDIO clock divider (TODO: There's a gate too) */
+>> >> +     hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
+>> >
+>> > Please pass your dev pointer here from the platform device.
+>> >
+>> >> +                     scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
+>> >> +                     div_table,
+>> >> +                     &aspeed_clk_lock);
+>> >
+>> > And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
+>> > construct the dividers and muxes directly instead of using the
+>> > basic type registration APIs.
+>>
+>> Do you think that devm_ is overkill, given we will never unload this driver?
+>
+> Is probe defer going to happen? Even if unload can't happen,
+> probe defer is a concern unless that is also ruled out.
 
-Add binding for this, in order to make the DE2 CCU able to claim the
-SRAM and enable access to the DE2 clock and reset registers.
+As I understand it, I will only get an EPROBE_DEFER if I'm requesting
+something from another driver?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Adds description of the situation when the SRAM is not claimed.
+If that's the case then we can rule that out.
 
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+>>
+>> Can you explain why you suggest to construct the structures directly
+>> instead of using the APIs?
+>
+> There aren't devm APIs for some of these basic clk type
+> registration functions.
+>
+>>
+>> I had a read of the basic type registration functions, and the
+>> relevant failure paths are memory allocation failures. If we're out of
+>> memory that early in boot then things have gone pretty bad.
+>>
+>> I can add checks for null and bail out; I don't think there's value in
+>> freeing the allocated memory: if a system can't load it's clock driver
+>> then it's super hosed.
+>
+> If we can't proceed without this driver because it's super hosed,
+> then perhaps we need to panic the system on errors here. Should
+> be simple enough to add some error checks and goto panic("Things
+> are super hosed").
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index f2fa87c4765c..a7d558a2b9b2 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-de2-clk"
- 		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
-@@ -18,6 +19,10 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
- 
-+Additional required properties for "allwinner,sun50i-a64-de2-clk" :
-+- allwinner,sram: See Documentation/devicetree/bindings/sram/sunxi-sram.txt,
-+		  should be the SRAM C section on A64 SoC.
-+
- Example:
- de2_clocks: clock@1000000 {
- 	compatible = "allwinner,sun8i-h3-de2-clk";
--- 
-2.13.6
+Okay. I added checks in v4. Does that look ok you you?
 
+Cheers,
+
+Joel
