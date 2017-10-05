@@ -1,119 +1,137 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46843 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751259AbdJXCMU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2017 22:12:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
-From: Jonathan Liu <net147@gmail.com>
-Date: Tue, 24 Oct 2017 13:12:18 +1100
-Message-ID: <CANwerB0qxAhXbzAd0iheP4W+AXkbdsqOvrXdurPkHG8Y5bWSJA@mail.gmail.com>
-Subject: Re: [14/23] drm/sun4i: Create minimal multipliers and dividers
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Priit Laes <plaes@plaes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>,
-        linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        icenowy@aosc.io
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-fbdev@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [RFC PATCH] clk: move of_clk_get_parent_count() declaration to <linux/__clk.h>
+Date: Thu,  5 Oct 2017 10:25:51 +0900
+Message-Id: <1507166751-2012-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+The clock consumer, drivers/video/fbdev/simplefb.c, includes
+<linux/clk-provider.h> just for calling of_clk_get_parent_count().
+This is ugly.
 
-On 17 October 2017 at 20:06, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The various outputs the TCON can provide have different constraints on the
-> dotclock divider. Let's make them configurable by the various mode_set
-> functions.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_dotclock.c | 10 +++++++---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c     |  2 ++
->  drivers/gpu/drm/sun4i/sun4i_tcon.h     |  2 ++
->  3 files changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> index d401156490f3..023f39bda633 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
-> @@ -17,8 +17,9 @@
->  #include "sun4i_dotclock.h"
->
->  struct sun4i_dclk {
-> -       struct clk_hw   hw;
-> -       struct regmap   *regmap;
-> +       struct clk_hw           hw;
-> +       struct regmap           *regmap;
-> +       struct sun4i_tcon       *tcon;
->  };
->
->  static inline struct sun4i_dclk *hw_to_dclk(struct clk_hw *hw)
-> @@ -73,11 +74,13 @@ static unsigned long sun4i_dclk_recalc_rate(struct clk_hw *hw,
->  static long sun4i_dclk_round_rate(struct clk_hw *hw, unsigned long rate,
->                                   unsigned long *parent_rate)
->  {
-> +       struct sun4i_dclk *dclk = hw_to_dclk(hw);
-> +       struct sun4i_tcon *tcon = dclk->tcon;
->         unsigned long best_parent = 0;
->         u8 best_div = 1;
->         int i;
->
-> -       for (i = 6; i <= 127; i++) {
-> +       for (i = tcon->dclk_min_div; i <= tcon->dclk_max_div; i++) {
->                 unsigned long ideal = rate * i;
->                 unsigned long rounded;
->
-> @@ -167,6 +170,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
->         dclk = devm_kzalloc(dev, sizeof(*dclk), GFP_KERNEL);
->         if (!dclk)
->                 return -ENOMEM;
-> +       dclk->tcon = tcon;
->
->         init.name = clk_name;
->         init.ops = &sun4i_dclk_ops;
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index f69bcdf11cb8..3efa1ab045cd 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -177,6 +177,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
->         u8 clk_delay;
->         u32 val = 0;
->
-> +       tcon->dclk_min_div = 6;
-> +       tcon->dclk_max_div = 127;
->         sun4i_tcon0_mode_set_common(tcon, mode);
->
->         /* Adjust clock delay */
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> index f61bf6d83b4a..4141fbd97ddf 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> @@ -169,6 +169,8 @@ struct sun4i_tcon {
->
->         /* Pixel clock */
->         struct clk                      *dclk;
-> +       u8                              dclk_max_div;
-> +       u8                              dclk_min_div;
->
->         /* Reset control */
->         struct reset_control            *lcd_rst;
+Looking at simplefb_clocks_get(), of_clk_get_parent_count() seems
+useful for clock consumers as well as for clock providers.
 
-I have 4.3" RGB LCD enabled on sun7i-a20-olinuxino-lime and hdmi
-disabled. After applying this patch the LCD no longer turns on.
-If I add some debug statements to sun4i_dclk_recalc_rate, it shows
-tcon->dclk_min_div and tcon->dclk_max_div are both 0.
+Unfortunately, we do not have a good home for declarations shared
+between consumers and providers.
 
-Regards,
-Jonathan
+Create a new header <linux/__clk.h>, and move it over to it.  This
+header must be included via <linux/clk.h> or <linux/clk-provider.h>
+(this is why it is prefixed with double-underscore).  Add #error
+so the build terminates if it is included directly.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/video/fbdev/simplefb.c |  1 -
+ include/linux/__clk.h          | 31 +++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h   |  7 ++-----
+ include/linux/clk.h            |  2 ++
+ 4 files changed, 35 insertions(+), 6 deletions(-)
+ create mode 100644 include/linux/__clk.h
+
+diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+index a3c44ec..17f0aec 100644
+--- a/drivers/video/fbdev/simplefb.c
++++ b/drivers/video/fbdev/simplefb.c
+@@ -27,7 +27,6 @@
+ #include <linux/platform_data/simplefb.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/parser.h>
+diff --git a/include/linux/__clk.h b/include/linux/__clk.h
+new file mode 100644
+index 0000000..a8b86bf
+--- /dev/null
++++ b/include/linux/__clk.h
+@@ -0,0 +1,31 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __LINUX___CLK_H
++#define __LINUX___CLK_H
++
++/* This header contains stuff shared between consumers and providers. */
++
++#if !defined(__LINUX_CLK_H) && !defined(__LINUX_CLK_PROVIDER_H)
++#error "Please don't include <linux/__clk.h> directly, include <linux/clk.h> or <linux/clk-provider.h> instead."
++#endif
++
++struct device_node;
++
++#if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
++
++unsigned int of_clk_get_parent_count(struct device_node *np);
++
++#else
++
++static inline unsigned int of_clk_get_parent_count(struct device_node *np)
++{
++	return 0;
++}
++
++#endif
++
++#endif /* __LINUX___CLK_H */
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 5100ec1..cd9bca1 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -14,6 +14,8 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ 
++#include "__clk.h"
++
+ #ifdef CONFIG_COMMON_CLK
+ 
+ /*
+@@ -823,7 +825,6 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
+ struct clk_hw *of_clk_hw_onecell_get(struct of_phandle_args *clkspec,
+ 				     void *data);
+-unsigned int of_clk_get_parent_count(struct device_node *np);
+ int of_clk_parent_fill(struct device_node *np, const char **parents,
+ 		       unsigned int size);
+ const char *of_clk_get_parent_name(struct device_node *np, int index);
+@@ -868,10 +869,6 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
+-static inline unsigned int of_clk_get_parent_count(struct device_node *np)
+-{
+-	return 0;
+-}
+ static inline int of_clk_parent_fill(struct device_node *np,
+ 				     const char **parents, unsigned int size)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 12c96d9..83d24cb 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -16,6 +16,8 @@
+ #include <linux/kernel.h>
+ #include <linux/notifier.h>
+ 
++#include "__clk.h"
++
+ struct device;
+ struct clk;
+ struct device_node;
+-- 
+2.7.4
