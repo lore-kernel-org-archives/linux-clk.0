@@ -1,59 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:35940 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752085AbdJDOd3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 10:33:29 -0400
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
+CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Chen Zhong <chen.zhong@mediatek.com>, Sean
+ Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 2/4] clk: mediatek: add the option for determining PLL source clock
+Date: Thu, 5 Oct 2017 11:50:23 +0800
+Message-ID: <b90d46284cb527d1412352606912f5e8d18b3e53.1507174799.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1507174799.git.sean.wang@mediatek.com>
+References: <cover.1507174799.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <20171003100016.32029-6-m.szyprowski@samsung.com>
-References: <CGME20171003100030eucas1p2be91ffc5db49f33cbc289175e72dd586@eucas1p2.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-6-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Wed, 4 Oct 2017 23:32:47 +0900
-Message-ID: <CAGTfZH3T-p_6vRfGd=Rn=NQZXyUOT8Tsb4qDtQ4saHNZXnQPKw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] clk: samsung: Drop useless alias in Exynos5420 clk driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Drop clkdev alias for "mout_aclk400_mscl" clock. It was not used at all
-> and it was probably committed by accident.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 038701a2af4c..45d34f601e9e 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -600,8 +600,7 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->                                 TOP_SPARE2, 4, 1),
->
->         MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
-> -       MUX_A(0, "mout_aclk400_mscl", mout_group1_p,
-> -                               SRC_TOP0, 4, 2, "aclk400_mscl"),
-> +       MUX(0, "mout_aclk400_mscl", mout_group1_p, SRC_TOP0, 4, 2),
->         MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
->         MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
->
+From: Chen Zhong <chen.zhong@mediatek.com>
 
-Also, 'aclk400_mscl' is used as a duplicate on gate clock's name.
-Looks good to me.
+Since the previous setup always sets the PLL using crystal 26MHz, this
+doesn't always happen in every MediaTek platform. So the patch added
+flexibility for assigning extra member for determining the PLL source
+clock.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mtk.h | 1 +
+ drivers/clk/mediatek/clk-pll.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f5d6b70..210ce8e8 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -216,6 +216,7 @@ struct mtk_pll_data {
+ 	uint32_t pcw_reg;
+ 	int pcw_shift;
+ 	const struct mtk_pll_div_table *div_table;
++	const char *parent_name;
+ };
+ 
+ void mtk_clk_register_plls(struct device_node *node,
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index a409142..7598477 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -303,7 +303,10 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 	init.name = data->name;
+ 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
+ 	init.ops = &mtk_pll_ops;
+-	init.parent_names = &parent_name;
++	if (data->parent_name)
++		init.parent_names = &data->parent_name;
++	else
++		init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+ 	clk = clk_register(NULL, &pll->hw);
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
