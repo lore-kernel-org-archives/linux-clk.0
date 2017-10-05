@@ -1,97 +1,229 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v6 0/9] Mediatek MT2712 clock and scpsys support 
-Date: Mon, 23 Oct 2017 12:10:31 +0800
-Message-ID: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
+CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>, Chen
+ Zhong <chen.zhong@mediatek.com>
+Subject: [PATCH v2 1/4] dt-bindings: clock: mediatek: document clk bindings for MediaTek MT7622 SoC
+Date: Thu, 5 Oct 2017 11:50:22 +0800
+Message-ID: <cac2312d51a2a30e066f79214dc0b71acea7732d.1507174799.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1507174799.git.sean.wang@mediatek.com>
+References: <cover.1507174799.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on v4.14-rc1 and composed of
-clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+From: Sean Wang <sean.wang@mediatek.com>
 
-changes since v5:
-- Refine bus protection with proper variable name
-  and better implementation for the if statement.
+This patch adds the binding documentation for apmixedsys, ethsys, hifsys,
+infracfg, pericfg, topckgen and audsys for MT7622.
 
-changes since v4:
-- Refine scpsys and infracfg for bus protection by passing 
-  a boolean flag to determine the register update method
+Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+ .../bindings/arm/mediatek/mediatek,pciesys.txt     | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+ .../bindings/arm/mediatek/mediatek,sgmiisys.txt    | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,ssusbsys.txt    | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+ 10 files changed, 94 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
 
-changes since v3:
-- Rebase to v4.14-rc1.
-
-changes since v2:
-- ensure the clocks used by clocksource driver are registered
-  before clocksource init() by using CLK_OF_DECLARE()
-- correct the frequency of clk32k/clkrtc_ext/clkrtc_int
-
-changes since v1:
-- Rebase to v4.13-next-soc.
-- Refine scpsys and infracfg for bus protection.
-
-Weiyi Lu (9):
-  dt-bindings: ARM: Mediatek: Document bindings for MT2712
-  clk: mediatek: Add dt-bindings for MT2712 clocks
-  clk: mediatek: Add MT2712 clock support
-  arm: dts: mt2712: Add clock controller device nodes
-  dt-bindings: soc: add MT2712 power dt-bindings
-  soc: mediatek: extend bus protection API
-  soc: mediatek: add dependent clock jpgdec/audio for scpsys
-  soc: mediatek: add MT2712 scpsys support
-  arm: dts: Add power controller device node of MT2712
-
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
- .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  131 ++
- drivers/clk/mediatek/Kconfig                       |   50 +
- drivers/clk/mediatek/Makefile                      |    8 +
- drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
- drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
- drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
- drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 +
- drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
- drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
- drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
- drivers/clk/mediatek/clk-mt2712.c                  | 1435 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h                     |    2 +
- drivers/clk/mediatek/clk-pll.c                     |   13 +-
- drivers/soc/mediatek/mtk-infracfg.c                |   26 +-
- drivers/soc/mediatek/mtk-scpsys.c                  |  140 +-
- include/dt-bindings/clock/mt2712-clk.h             |  427 ++++++
- include/dt-bindings/power/mt2712-power.h           |   26 +
- include/linux/soc/mediatek/infracfg.h              |    7 +-
- 31 files changed, 2993 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
- create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712.c
- create mode 100644 include/dt-bindings/clock/mt2712-clk.h
- create mode 100644 include/dt-bindings/power/mt2712-power.h
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index cd977db..84669a58 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt6797-apmixedsys"
++	- "mediatek,mt7622-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+new file mode 100644
+index 0000000..9b8f578
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -0,0 +1,22 @@
++MediaTek AUDSYS controller
++============================
++
++The MediaTek AUDSYS controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt7622-audsys", "syscon"
++- #clock-cells: Must be 1
++
++The AUDSYS controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++audsys: audsys@11220000 {
++	compatible = "mediatek,mt7622-audsys", "syscon";
++	reg = <0 0x11220000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+index 768f3a5..7aa3fa1 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be:
+ 	- "mediatek,mt2701-ethsys", "syscon"
++	- "mediatek,mt7622-ethsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The ethsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+index beed7b5..f5629d6 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ 
+ - compatible: Should be:
+ 	- "mediatek,mt2701-hifsys", "syscon"
++	- "mediatek,mt7622-hifsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The hifsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index 58d58e2..56d85b8 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt6797-infracfg", "syscon"
++	- "mediatek,mt7622-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+new file mode 100644
+index 0000000..d5d5f12
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+@@ -0,0 +1,22 @@
++MediaTek PCIESYS controller
++============================
++
++The MediaTek PCIESYS controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt7622-pciesys", "syscon"
++- #clock-cells: Must be 1
++
++The PCIESYS controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++pciesys: pciesys@1a100800 {
++	compatible = "mediatek,mt7622-pciesys", "syscon";
++	reg = <0 0x1a100800 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+index e494366..26c395c 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-pericfg", "syscon"
++	- "mediatek,mt7622-pericfg", "syscon"
+ 	- "mediatek,mt8135-pericfg", "syscon"
+ 	- "mediatek,mt8173-pericfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+new file mode 100644
+index 0000000..d113b8e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+@@ -0,0 +1,22 @@
++MediaTek SGMIISYS controller
++============================
++
++The MediaTek SGMIISYS controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt7622-sgmiisys", "syscon"
++- #clock-cells: Must be 1
++
++The SGMIISYS controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++sgmiisys: sgmiisys@1b128000 {
++	compatible = "mediatek,mt7622-sgmiisys", "syscon";
++	reg = <0 0x1b128000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+new file mode 100644
+index 0000000..00760019
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+@@ -0,0 +1,22 @@
++MediaTek SSUSBSYS controller
++============================
++
++The MediaTek SSUSBSYS controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt7622-ssusbsys", "syscon"
++- #clock-cells: Must be 1
++
++The SSUSBSYS controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++ssusbsys: ssusbsys@1a000000 {
++	compatible = "mediatek,mt7622-ssusbsys", "syscon";
++	reg = <0 0x1a000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index ec93ecb..368b18c 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt6797-topckgen"
++	- "mediatek,mt7622-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
+ - #clock-cells: Must be 1
+-- 
+2.7.4
