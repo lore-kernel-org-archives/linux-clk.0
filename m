@@ -1,91 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51376 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752503AbdJ0PJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:09:33 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 05/10] ARM: sun8i: h3/h5: add DE2 CCU device node for H3
-Date: Fri, 27 Oct 2017 23:06:53 +0800
-Message-Id: <20171027150658.18509-6-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 5 Oct 2017 15:33:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
+ DMA controller
+Message-ID: <20171005203355.5lftjytx5f6rhe2d@rob-hp-laptop>
+References: <cover.1506380746.git.digetx@gmail.com>
+ <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DE2 in H3/H5 has a clock control unit in it, and the behavior is
-slightly different between H3 and H5.
+On Tue, Sep 26, 2017 at 02:22:04AM +0300, Dmitry Osipenko wrote:
+> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
+> on Tegra20/30 SoC's.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+> new file mode 100644
+> index 000000000000..2af9aa76ae11
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
+> @@ -0,0 +1,23 @@
+> +* NVIDIA Tegra AHB DMA controller
+> +
+> +Required properties:
+> +- compatible:	Must be "nvidia,tegra20-ahbdma"
+> +- reg:		Should contain registers base address and length.
+> +- interrupts:	Should contain one entry, DMA controller interrupt.
+> +- clocks:	Should contain one entry, DMA controller clock.
+> +- resets :	Should contain one entry, DMA controller reset.
+> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
+> +		for the peripheral. For more details consult the Tegra TRM's
+> +		documentation, in particular AHB DMA channel control register
+> +		REQ_SEL field.
+> +
+> +Example:
+> +
+> +ahbdma: ahbdma@60008000  {
 
-Add the common parts in H3/H5 DTSI, and add the compatible string in H3
-DTSI.
+Use standard node names. dma-controller in this case.
 
-The compatible string of H5 DE2 CCU will be added in a separated patch.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Use H3 DE2 CCU compatible as it's discovered that H3 and A83T DE2 CCU are
-  not equal.
-
- arch/arm/boot/dts/sun8i-h3.dtsi    |  4 ++++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 14 ++++++++++++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index b36f9f423c39..8495deecedad 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -85,6 +85,10 @@
- 	compatible = "allwinner,sun8i-h3-ccu";
- };
- 
-+&display_clocks {
-+	compatible = "allwinner,sun8i-h3-de2-clk";
-+};
-+
- &mmc0 {
- 	compatible = "allwinner,sun7i-a20-mmc";
- 	clocks = <&ccu CLK_BUS_MMC0>,
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index d7a71e726a9f..367319d22116 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -40,9 +40,11 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-h3-ccu.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun8i-h3-ccu.h>
- #include <dt-bindings/reset/sun8i-r-ccu.h>
- 
-@@ -85,6 +87,18 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			/* compatible is in per SoC .dtsi file */
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-h3-system-controller",
- 				"syscon";
--- 
-2.13.6
-
+> +	compatible = "nvidia,tegra20-ahbdma";
+> +	reg = <0x60008000 0x2000>;
+> +	interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
+> +	resets = <&tegra_car 33>;
+> +	#dma-cells = <1>;
+> +};
+> -- 
+> 2.14.1
+> 
