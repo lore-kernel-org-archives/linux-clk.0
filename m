@@ -1,43 +1,35 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1508136134.20464.49.camel@mtksdaap41>
-Subject: Re: [PATCH v4 0/9] Mediatek MT2712 clock and scpsys support
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date: Mon, 16 Oct 2017 14:42:14 +0800
-In-Reply-To: <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-         <20171012224540.GE18706@codeaurora.org>
-         <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: uniphier: fix DAPLL2 clock rate of Pro5
+Date: Thu,  5 Oct 2017 11:32:59 +0900
+Message-Id: <1507170779-26688-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-10-13 at 16:50 +0200, Matthias Brugger wrote:
-> 
-> On 10/13/2017 12:45 AM, Stephen Boyd wrote:
-> > On 09/19, Weiyi Lu wrote:
-> >> This series is based on v4.14-rc1 and composed of
-> >> clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
-> > 
-> > What's the merge plan? Can I apply the clk ones to clk tree and
-> > ignore the rest?
-> > 
-> 
-> Yes, please do so. I'll take scpsys, which depends on the clock patches.
-> 
-> Regards,
-> Matthias
+The parent of DAPLL2 should be DAPLL1.  Fix the clock connection.
 
-Hi Stephen & Matthias,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I will start to separate this patch set into three series
-(clk/scpsys/dts) when I send the next version.
+ drivers/clk/uniphier/clk-uniphier-sys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index 0e396f3..bffe095 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -123,7 +123,7 @@ const struct uniphier_clk_data uniphier_sld8_sys_clk_data[] = {
+ const struct uniphier_clk_data uniphier_pro5_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 120, 1),		/* 2400 MHz */
+ 	UNIPHIER_CLK_FACTOR("dapll1", -1, "ref", 128, 1),	/* 2560 MHz */
+-	UNIPHIER_CLK_FACTOR("dapll2", -1, "ref", 144, 125),	/* 2949.12 MHz */
++	UNIPHIER_CLK_FACTOR("dapll2", -1, "dapll1", 144, 125),	/* 2949.12 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "dapll2", 1, 40),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
+ 	UNIPHIER_PRO5_SYS_CLK_NAND(2),
+-- 
+2.7.4
