@@ -1,41 +1,104 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:52555 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbdJBSAl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 14:00:41 -0400
-Date: Mon, 2 Oct 2017 20:00:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 4/4] clk: samsung: Remove obsolete code for Exynos4412
- ISP clocks
-Message-ID: <20171002180037.negsvbgcues4k7wk@kozik-lap>
-References: <20171002104759.25944-1-m.szyprowski@samsung.com>
- <CGME20171002104826eucas1p17b7ea22d3984f1dea0e3efb45733d728@eucas1p1.samsung.com>
- <20171002104759.25944-5-m.szyprowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20171002104759.25944-5-m.szyprowski@samsung.com>
+Received: from hermes.aosc.io ([199.195.250.187]:49359 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751470AbdJFGeO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Oct 2017 02:34:14 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/2] clk: sunxi-ng: r40: rewrite init code to a platform driver
+Date: Fri,  6 Oct 2017 14:33:32 +0800
+Message-Id: <20171006063333.12345-2-icenowy@aosc.io>
+In-Reply-To: <20171006063333.12345-1-icenowy@aosc.io>
+References: <20171006063333.12345-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 02, 2017 at 12:47:59PM +0200, Marek Szyprowski wrote:
-> Exynos4412 ISP clock are provided by separate Exynos4412 ISP clock
-> driver, so support for them in Exynos4-clk driver can be removed.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c   | 81 -------------------------------------
->  include/dt-bindings/clock/exynos4.h | 30 --------------
->  2 files changed, 111 deletions(-)
-> 
+As we need to register a regmap on the R40 CCU, there needs to be a
+device structure bound to the CCU device node.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Rewrite the R40 CCU driver initial code to make it a proper platform
+driver, thus we will have a platform device bound to it.
 
-Best regards,
-Krzysztof
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 37 ++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 933f2e68f42a..bb94e2c44e86 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -12,6 +12,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/platform_device.h>
+ #include <linux/of_address.h>
+ 
+ #include "ccu_common.h"
+@@ -1250,17 +1251,17 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+ 	.bypass_index	= 1, /* index of 24 MHz oscillator */
+ };
+ 
+-static void __init sun8i_r40_ccu_setup(struct device_node *node)
++static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ {
++	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
+ 
+-	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+-	if (IS_ERR(reg)) {
+-		pr_err("%s: Could not map the clock registers\n",
+-		       of_node_full_name(node));
+-		return;
+-	}
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
+ 
+ 	/* Force the PLL-Audio-1x divider to 4 */
+ 	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+@@ -1277,7 +1278,9 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
+ 	val &= ~GENMASK(25, 20);
+ 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
+ 
+-	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
++	if (ret)
++		return ret;
+ 
+ 	/* Gate then ungate PLL CPU after any rate changes */
+ 	ccu_pll_notifier_register(&sun8i_r40_pll_cpu_nb);
+@@ -1285,6 +1288,20 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
+ 	/* Reparent CPU during PLL CPU rate changes */
+ 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
+ 				  &sun8i_r40_cpu_nb);
++
++	return 0;
+ }
+-CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
+-	       sun8i_r40_ccu_setup);
++
++static const struct of_device_id sun8i_r40_ccu_ids[] = {
++	{ .compatible = "allwinner,sun8i-r40-ccu" },
++	{ }
++};
++
++static struct platform_driver sun8i_r40_ccu_driver = {
++	.probe	= sun8i_r40_ccu_probe,
++	.driver	= {
++		.name	= "sun8i-r40-ccu",
++		.of_match_table	= sun8i_r40_ccu_ids,
++	},
++};
++builtin_platform_driver(sun8i_r40_ccu_driver);
+-- 
+2.13.6
 
