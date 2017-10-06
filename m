@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: exynos5433: mark PM functions as __maybe_unused
-Date: Tue, 10 Oct 2017 11:15:12 +0200
-Message-Id: <20171010091522.2286344-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.14-rc3
+Date: Fri,  6 Oct 2017 16:18:01 -0700
+Message-Id: <20171006231801.32714-1-sboyd@codeaurora.org>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The suspend/resume functions are referenced conditionally, causing
-a harmless warning when CONFIG_PM is disabled:
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
-drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 
-This marks both as __maybe_unused to shut up the warning.
+are available in the Git repository at:
 
-Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/samsung/clk-exynos5433.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index cd9337613dd8..db270908037a 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5450,7 +5450,7 @@ struct exynos5433_cmu_data {
- 	struct samsung_clk_provider ctx;
- };
- 
--static int exynos5433_cmu_suspend(struct device *dev)
-+static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
- {
- 	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
- 	int i;
-@@ -5473,7 +5473,7 @@ static int exynos5433_cmu_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int exynos5433_cmu_resume(struct device *dev)
-+static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
- {
- 	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
- 	int i;
+for you to fetch changes up to 5dcbeca615ef12047a5f4097b91030cbf995b1d2:
+
+  clk: samsung: exynos4: Enable VPLL and EPLL clocks for suspend/resume cycle (2017-10-04 09:19:13 -0700)
+
+----------------------------------------------------------------
+ - Build fix to export the clk_bulk_prepare() symbol
+
+ - Suspend fix for Samsung Exynos SoCs where we need to keep clks on
+   across suspend
+
+ - Two critical clk markings for clks that shouldn't ever turn off on
+   Rockchip SoCs
+
+ - A fix for a copy-paste mistake on Rockchip rk3128 causing some clks to
+   touch the same bit and trample over one another
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      clk: Export clk_bulk_prepare()
+
+Elaine Zhang (3):
+      clk: rockchip: add pclk_pmu as critical clock on rk3128
+      clk: rockchip: fix up rk3128 pvtm and mipi_24m gate regs error
+      clk: rockchip: add sclk_timer5 as critical clock on rk3128
+
+Marek Szyprowski (1):
+      clk: samsung: exynos4: Enable VPLL and EPLL clocks for suspend/resume cycle
+
+Stephen Boyd (1):
+      Merge tag 'v4.14-rockchip-clkfixes-1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
+
+ drivers/clk/clk-bulk.c            |  1 +
+ drivers/clk/rockchip/clk-rk3128.c | 12 +++++++-----
+ drivers/clk/samsung/clk-exynos4.c | 15 +++++++++++++++
+ 3 files changed, 23 insertions(+), 5 deletions(-)
+
 -- 
-2.9.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
