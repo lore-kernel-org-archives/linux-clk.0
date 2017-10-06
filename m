@@ -1,59 +1,39 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 6 Oct 2017 13:06:33 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.14-rc3
-Date: Fri,  6 Oct 2017 16:18:01 -0700
-Message-Id: <20171006231801.32714-1-sboyd@codeaurora.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	"maintainer:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
+Message-ID: <20171006200633.GI457@codeaurora.org>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
+ <20170928231502.27069-6-f.fainelli@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170928231502.27069-6-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+On 09/28, Florian Fainelli wrote:
+> Add support for the Broadcom Hurricane 2 SoC clock controller. We can
+> re-use the existing iProc clock library since the SoC's architecture is
+> largely the same as its predecessors. For now, we just initialize the
+> iProc ARM PLL.
+> 
+> Acked-by: Jon Mason <jon.mason@broadcom.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 5dcbeca615ef12047a5f4097b91030cbf995b1d2:
-
-  clk: samsung: exynos4: Enable VPLL and EPLL clocks for suspend/resume cycle (2017-10-04 09:19:13 -0700)
-
-----------------------------------------------------------------
- - Build fix to export the clk_bulk_prepare() symbol
-
- - Suspend fix for Samsung Exynos SoCs where we need to keep clks on
-   across suspend
-
- - Two critical clk markings for clks that shouldn't ever turn off on
-   Rockchip SoCs
-
- - A fix for a copy-paste mistake on Rockchip rk3128 causing some clks to
-   touch the same bit and trample over one another
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      clk: Export clk_bulk_prepare()
-
-Elaine Zhang (3):
-      clk: rockchip: add pclk_pmu as critical clock on rk3128
-      clk: rockchip: fix up rk3128 pvtm and mipi_24m gate regs error
-      clk: rockchip: add sclk_timer5 as critical clock on rk3128
-
-Marek Szyprowski (1):
-      clk: samsung: exynos4: Enable VPLL and EPLL clocks for suspend/resume cycle
-
-Stephen Boyd (1):
-      Merge tag 'v4.14-rockchip-clkfixes-1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
-
- drivers/clk/clk-bulk.c            |  1 +
- drivers/clk/rockchip/clk-rk3128.c | 12 +++++++-----
- drivers/clk/samsung/clk-exynos4.c | 15 +++++++++++++++
- 3 files changed, 23 insertions(+), 5 deletions(-)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
