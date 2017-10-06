@@ -1,49 +1,57 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>
-CC: Dmitry Osipenko <digetx@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] clk: tegra: Mark APB clock as critical
-Date: Mon, 23 Oct 2017 12:12:52 +0100
-Message-ID: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
-Return-Path: jonathanh@nvidia.com
+Return-Path: <gregkh@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Jose Abreu <joabreu@synopsys.com>,
+	Carlos Palminha <palminha@synopsys.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.9 021/104] clk/axs10x: Clear init field in driver probe
+Date: Fri,  6 Oct 2017 10:50:59 +0200
+Message-Id: <20171006083843.870474139@linuxfoundation.org>
+In-Reply-To: <20171006083840.743659740@linuxfoundation.org>
+References: <20171006083840.743659740@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
-fixed the parent clock for APBDMA, but the consequence of this that
-after probing the APBDMA device, the APB Clock (or PCLK) is now
-disabled. Disabling the APB clock causes accesses to any other device
-on the APB to hang and prevent Tegra from booting.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
-to prevent the clock being disabled if unused on boot. However, even
-if it is used, it still needs to be always kept enabled and so update
-the flag for the APB clock to be "CLK_IS_CRITICAL".
+------------------
 
-Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-Suggested-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+[ Upstream commit 6205406cf6f282d622f31de25036e6d1ab3a2ff5 ]
+
+Init field must be cleared in driver probe as this structure is not
+dinamically allocated. If not, wrong flags can be passed to core.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: Carlos Palminha <palminha@synopsys.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Fixes: 923587aafc2c ("clk/axs10x: Add I2S PLL clock driver")
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Link: lkml.kernel.org/r/040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/axs10x/i2s_pll_clock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index 4f6fd307cb70..10047107c1dc 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
- 				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
- 				   &sysrate_lock);
- 	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
--				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-+				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
- 				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
- 	*dt_clk = clk;
- }
--- 
-2.7.4
+--- a/drivers/clk/axs10x/i2s_pll_clock.c
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct plat
+ 	if (IS_ERR(pll_clk->base))
+ 		return PTR_ERR(pll_clk->base);
+ 
++	memset(&init, 0, sizeof(init));
+ 	clk_name = node->name;
+ 	init.name = clk_name;
+ 	init.ops = &i2s_pll_ops;
