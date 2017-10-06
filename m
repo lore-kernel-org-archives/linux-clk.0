@@ -1,34 +1,95 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20171013112635.32296-1-linus.walleij@linaro.org>
-References: <20171013112635.32296-1-linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 30 Oct 2017 15:19:44 +0100
-Message-ID: <CACRpkdbFK-faa174j-DL8pk9PyuY2FrYexhis4MkOkh5Csywkw@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: qcom: Elaborate on "active" clocks in the RPM
- clock bindings
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:49375 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751567AbdJFGeU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Oct 2017 02:34:20 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/2] clk: sunxi-ng: r40: export a regmap to access the GMAC register
+Date: Fri,  6 Oct 2017 14:33:33 +0800
+Message-Id: <20171006063333.12345-3-icenowy@aosc.io>
+In-Reply-To: <20171006063333.12345-1-icenowy@aosc.io>
+References: <20171006063333.12345-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 1:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
+the syscon part, in the CCU of R40 SoC.
 
-> The concept of "active" clocks is just explained in a bried comment in the
-> device driver, let's explain it a bit more in the device tree bindings
-> so everyone understands this.
->
-> Cc: devicetree@vger.kernel.org
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v2->v3:
-> - Collect Rob's ACK.
-> ChangeLog v1->v2:
-> - Reword slighty in accordance with Stephens feedback.
+Export a regmap of the CCU.
 
-Gentle ping on this patch.
+Read access is not restricted to all registers, but only the GMAC
+register is allowed to be written.
 
-Yours,
-Linus Walleij
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index bb94e2c44e86..df752bf77ff1 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
++#include <linux/regmap.h>
+ 
+ #include "ccu_common.h"
+ #include "ccu_reset.h"
+@@ -1251,9 +1252,35 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+ 	.bypass_index	= 1, /* index of 24 MHz oscillator */
+ };
+ 
++/*
++ * Add a regmap for the GMAC driver (dwmac-sun8i) to access the
++ * GMAC configuration register.
++ * Only this register is allowed to be written, in order to
++ * prevent overriding critical clock configuration.
++ */
++
++#define SUN8I_R40_GMAC_CFG_REG 0x164
++static bool sun8i_r40_ccu_regmap_writeable_reg(struct device *dev,
++					       unsigned int reg)
++{
++	if (reg == SUN8I_R40_GMAC_CFG_REG)
++		return true;
++	return false;
++}
++
++static struct regmap_config sun8i_r40_ccu_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0x320, /* PLL_LOCK_CTRL_REG */
++
++	.writeable_reg	= sun8i_r40_ccu_regmap_writeable_reg,
++};
++
+ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
++	struct regmap *regmap;
+ 	void __iomem *reg;
+ 	u32 val;
+ 	int ret;
+@@ -1278,6 +1305,11 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ 	val &= ~GENMASK(25, 20);
+ 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
+ 
++	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
++				       &sun8i_r40_ccu_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
+ 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
+ 	if (ret)
+ 		return ret;
+-- 
+2.13.6
+
