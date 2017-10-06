@@ -1,44 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 06/10] arm64: allwinner: h5: add compatible string for DE2 CCU
-Date: Fri, 27 Oct 2017 23:06:54 +0800
-Message-Id: <20171027150658.18509-7-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 6 Oct 2017 10:37:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	"maintainer:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 02/10] dt-bindings: Add documentation for Broadcom
+ Hurricane 2 SoCs
+Message-ID: <20171006153753.sp4rwplvxqi33b3l@rob-hp-laptop>
+References: <20170928231502.27069-1-f.fainelli@gmail.com>
+ <20170928231502.27069-3-f.fainelli@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170928231502.27069-3-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DE2 CCU on Allwinner H5 SoC has a slightly different behavior than
-the one on H3, so the compatible string is not set in the common DTSI
-file.
+On Thu, Sep 28, 2017 at 04:14:54PM -0700, Florian Fainelli wrote:
+> Add binding documentation for the Broadcom Hurricane 2 SoCs used in
+> switching control planes.
+> 
+> Acked-by: Jon Mason <jon.mason@broadcom.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
 
-Add the compatible string of H5 DE2 CCU in H5 DTSI file.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index d9a720bff05d..e237c05cfdb4 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -98,6 +98,10 @@
- 	compatible = "allwinner,sun50i-h5-ccu";
- };
- 
-+&display_clocks {
-+	compatible = "allwinner,sun50i-h5-de2-clk";
-+};
-+
- &mmc0 {
- 	compatible = "allwinner,sun50i-h5-mmc",
- 		     "allwinner,sun50i-a64-mmc";
--- 
-2.13.6
+Acked-by: Rob Herring <robh@kernel.org>
