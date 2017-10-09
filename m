@@ -1,75 +1,41 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/4] drm: rcar-du: Add R8A7743 support
-Date: Fri, 13 Oct 2017 16:22:20 +0100
-Message-Id: <1507908142-13142-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751257AbdJIKt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Oct 2017 06:49:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
+References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
+ <20171002104759.25944-1-m.szyprowski@samsung.com> <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 9 Oct 2017 12:49:53 +0200
+Message-ID: <CAJKOXPd5_tV_VenxOL-H_z+ej0QR7X8F3DBZ=Mneu_9pe+h4QQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the R8A7743 DU (which is very similar to the R8A7791 DU);
-it has 1 DPAD (RGB) output and 1 LVDS output.
+On Mon, Oct 9, 2017 at 12:34 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 10/02/2017 12:47 PM, Marek Szyprowski wrote:
+>> Patch summary:
+>>
+>> Marek Szyprowski (4):
+>>   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
+>>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
+>>   ARM: dts: exynos: Add Exynos4412 ISP clock controller
+>>   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
+>
+> I have applied whole series, with v2 of patch 2/4, thanks.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+You mean you applied 1/4 and 2/4 for now, right? 3/4 will go through
+my tree in release after this and 4/4 even later?
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d2f29e6..3db5e8d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -34,6 +34,27 @@
-  * Device Information
-  */
- 
-+static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
-+	.gen = 2,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+	.num_crtcs = 2,
-+	.routes = {
-+		/*
-+		 * R8A7743 has one RGB output and one LVDS output
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(1) | BIT(0),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 1,
-+		},
-+	},
-+	.num_lvds = 1,
-+};
-+
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.gen = 2,
- 	.features = 0,
-@@ -207,6 +228,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- };
- 
- static const struct of_device_id rcar_du_of_table[] = {
-+	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
- 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
- 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
--- 
-2.7.4
+BR,
+Krzysztof
