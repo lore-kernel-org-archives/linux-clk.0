@@ -1,62 +1,125 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/10] [RFC] clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Mon, 16 Oct 2017 15:55:13 +0200
-Message-Id: <1508162116-5043-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <broonie@sirena.co.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Cc: Subhransu S. Prusty <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, harshapriya.n@intel.com, tiwai@suse.de, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, patches.audio@intel.com, broonie@kernel.org, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, linux-clk@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments" to the asoc tree
+In-Reply-To: <1504794565-19168-2-git-send-email-subhransu.s.prusty@intel.com>
+Message-Id: <E1e1VXu-0001gE-KI@debutante>
+Date: Mon, 09 Oct 2017 11:44:26 +0100
 List-ID: <linux-clk.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own "always true" callback.
+The patch
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+   ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index de534896f596168c..99699b715d7cf2de 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -481,11 +481,6 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5514830dffb2332c034c20db3b264ba1f94de1d8 Mon Sep 17 00:00:00 2001
+From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Date: Mon, 18 Sep 2017 10:26:44 +0530
+Subject: [PATCH] ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API
+ arguments
+
+Set dma control ipc can be used to set the M/N divider, enable the clks. It
+takes different payload for different configuration. So modify the
+skl_dsp_set_dma_control API to take the size and node_id as argument.
+
+Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/skylake/skl-messages.c | 23 ++++++++++++++---------
+ sound/soc/intel/skylake/skl-topology.h |  4 ++--
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
+index 89f70133c8e4..f637829833e6 100644
+--- a/sound/soc/intel/skylake/skl-messages.c
++++ b/sound/soc/intel/skylake/skl-messages.c
+@@ -613,8 +613,10 @@ static void skl_setup_cpr_gateway_cfg(struct skl_sst *ctx,
  }
  
--static bool cpg_mssr_active_wakeup(struct device *dev)
--{
--	return true;
--}
--
- static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 					  const unsigned int *core_pm_clks,
- 					  unsigned int num_core_pm_clks)
-@@ -505,8 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ #define DMA_CONTROL_ID 5
++#define DMA_I2S_BLOB_SIZE 21
  
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
--	genpd->flags = GENPD_FLAG_PM_CLK;
--	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+-int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
++int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
++				u32 caps_size, u32 node_id)
+ {
+ 	struct skl_dma_control *dma_ctrl;
+ 	struct skl_ipc_large_config_msg msg = {0};
+@@ -624,24 +626,27 @@ int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
+ 	/*
+ 	 * if blob size zero, then return
+ 	 */
+-	if (mconfig->formats_config.caps_size == 0)
++	if (caps_size == 0)
+ 		return 0;
+ 
+ 	msg.large_param_id = DMA_CONTROL_ID;
+-	msg.param_data_size = sizeof(struct skl_dma_control) +
+-				mconfig->formats_config.caps_size;
++	msg.param_data_size = sizeof(struct skl_dma_control) + caps_size;
+ 
+ 	dma_ctrl = kzalloc(msg.param_data_size, GFP_KERNEL);
+ 	if (dma_ctrl == NULL)
+ 		return -ENOMEM;
+ 
+-	dma_ctrl->node_id = skl_get_node_id(ctx, mconfig);
++	dma_ctrl->node_id = node_id;
+ 
+-	/* size in dwords */
+-	dma_ctrl->config_length = mconfig->formats_config.caps_size / 4;
++	/*
++	 * NHLT blob may contain additional configs along with i2s blob.
++	 * firmware expects only the i2s blob size as the config_length.
++	 * So fix to i2s blob size.
++	 * size in dwords.
++	 */
++	dma_ctrl->config_length = DMA_I2S_BLOB_SIZE;
+ 
+-	memcpy(dma_ctrl->config_data, mconfig->formats_config.caps,
+-				mconfig->formats_config.caps_size);
++	memcpy(dma_ctrl->config_data, caps, caps_size);
+ 
+ 	err = skl_ipc_set_large_config(&ctx->ipc, &msg, (u32 *)dma_ctrl);
+ 
+diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
+index 2717db92036b..e11cc1fc0e43 100644
+--- a/sound/soc/intel/skylake/skl-topology.h
++++ b/sound/soc/intel/skylake/skl-topology.h
+@@ -455,8 +455,8 @@ static inline struct skl *get_skl_ctx(struct device *dev)
+ 
+ int skl_tplg_be_update_params(struct snd_soc_dai *dai,
+ 	struct skl_pipe_params *params);
+-int skl_dsp_set_dma_control(struct skl_sst *ctx,
+-		struct skl_module_cfg *mconfig);
++int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
++			u32 caps_size, u32 node_id);
+ void skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai,
+ 	struct skl_pipe_params *params, int stream);
+ int skl_tplg_init(struct snd_soc_platform *platform,
 -- 
-2.7.4
+2.14.1
