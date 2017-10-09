@@ -1,41 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751257AbdJIKt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Oct 2017 06:49:56 -0400
+Return-Path: <vinod.koul@intel.com>
+Date: Mon, 9 Oct 2017 14:43:42 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+Cc: alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+	lgirdwood@gmail.com, patches.audio@intel.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, harshapriya.n@intel.com
+Subject: Re: [PATCH v2 0/7] ASoC: Intel: Skylake: Add a clk driver to enable
+ ssp clks early
+Message-ID: <20171009091342.GR30097@localhost>
+References: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
- <20171002104759.25944-1-m.szyprowski@samsung.com> <cdea0207-adea-d9e3-f95a-64188bd4bcca@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 9 Oct 2017 12:49:53 +0200
-Message-ID: <CAJKOXPd5_tV_VenxOL-H_z+ej0QR7X8F3DBZ=Mneu_9pe+h4QQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 9, 2017 at 12:34 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 10/02/2017 12:47 PM, Marek Szyprowski wrote:
->> Patch summary:
->>
->> Marek Szyprowski (4):
->>   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
->>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
->>   ARM: dts: exynos: Add Exynos4412 ISP clock controller
->>   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
->
-> I have applied whole series, with v2 of patch 2/4, thanks.
+On Mon, Sep 18, 2017 at 10:26:43AM +0530, Subhransu S. Prusty wrote:
+> For certain platforms clocks (mclk/sclk/fs) are required to be up before
+> the stream start.  Example: some codecs needs the mclk/sclk/fs to  be
+> enabled early for a successful clock synchronization. Some patforms
+> require clock to be enabled at boot and be always ON
+> 
+> By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+> these clocks can be enabled early after the firmware is downloaded.
+> 
+> With this series, a virtual clock driver is created which provides
+> interface to send the required IPCs from machine driver to enable the
+> clocks. NHLT is parsed during probe and the clock information is populated.
+> The pointer to blob is cached and sent along with the set_dma_control IPC
+> structure during the clk prepare/unprepare callback. Clocks are created for
+> a ssp if the nhlt table has endpoint configuration for that particular ssp.
+> Skylake driver creates a platform driver with the clock information and
+> register the clk ops callback.
+> 
+> kabylake machine driver uses the clock interface to enable the clocks early
+> as it is required by the rt5663 driver for clock synchronization.
+> 
+> set_dma_control API can be used with different payload configuration.
+> Modify the arguments to take configurable parameters.
 
-You mean you applied 1/4 and 2/4 for now, right? 3/4 will go through
-my tree in release after this and 4/4 even later?
+All:
+Acked-By: Vinod Koul <vinod.koul@intel.com>
 
-BR,
-Krzysztof
+
+> 
+> v1 -> v2
+> 	- Register parent clocks with skylake device.
+> 	  With the patch "clk: Add support for runtime PM" soon to be merged
+> 	  will help DSP to stay active on call to clock enable.
+> 	  Reference: (https://patchwork.kernel.org/patch/9911741/)
+> 
+> 	- Fix the machine driver to enable clocks early for headphone
+> 	  playback path as well to fix a pop noise issue
+> 
+> 	- Include the eve machine driver changes as well
+> 
+> Harsha Priya (1):
+>   ASoC: Intel: kbl: Enable mclk and ssp sclk early
+> 
+> Jaikrishna Nemallapudi (5):
+>   ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
+>   ASoC: Intel: Skylake: Parse nhlt to populate clock information
+>   ASoC: Intel: Skylake: Prepare DMA control IPC to enable/disable clock
+>   ASoC: Intel: Skylake: Register clock device and ops
+>   ASoC: Intel: Skylake: Add ssp clock driver
+> 
+> Naveen M (1):
+>   ASoC: Intel: eve: Enable mclk and ssp sclk early
+> 
+>  sound/soc/intel/Kconfig                            |   9 +
+>  sound/soc/intel/boards/kbl_rt5663_max98927.c       |  98 ++++++-
+>  .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  97 +++++++
+>  sound/soc/intel/skylake/Makefile                   |   5 +
+>  sound/soc/intel/skylake/skl-i2s.h                  |  56 ++++
+>  sound/soc/intel/skylake/skl-messages.c             | 109 +++++++-
+>  sound/soc/intel/skylake/skl-nhlt.c                 | 148 +++++++++++
+>  sound/soc/intel/skylake/skl-ssp-clk.c              | 288 +++++++++++++++++++++
+>  sound/soc/intel/skylake/skl-ssp-clk.h              | 124 +++++++++
+>  sound/soc/intel/skylake/skl-topology.h             |   4 +-
+>  sound/soc/intel/skylake/skl.c                      | 235 +++++++++++++++++
+>  sound/soc/intel/skylake/skl.h                      |  12 +
+>  12 files changed, 1173 insertions(+), 12 deletions(-)
+>  create mode 100644 sound/soc/intel/skylake/skl-i2s.h
+>  create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
+>  create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.h
+> 
+> -- 
+> 1.9.1
+> 
+
+-- 
+~Vinod
