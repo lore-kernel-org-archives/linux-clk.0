@@ -1,112 +1,51 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 09/23] drm/panel: lvds: Add support for the power-supply
- property
-Date: Tue, 17 Oct 2017 11:06:16 +0200
-Message-Id: <6f688742088e5e873f8d392956e06e783667aa96.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>,
- Mylene Josserand <mylene.josserand@free-electrons.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	andy.gross@linaro.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 2/2] arm64: dts: msm8996: Add the rpm clock controller node
+Date: Tue, 10 Oct 2017 14:27:14 +0530
+Message-Id: <1507625834-30499-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-A significant number of panels need to power up a regulator in order to
-operate properly. Add support for the power-supply property to enable and
-disable such a regulator whenever needed.
+Add the rpm clock controller node for msm8996 devices
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Andy Gross <andy.gross@linaro.org> 
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/gpu/drm/panel/panel-lvds.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
-index e2d57c01200b..57e38a9e7ab4 100644
---- a/drivers/gpu/drm/panel/panel-lvds.c
-+++ b/drivers/gpu/drm/panel/panel-lvds.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 887b61c..97464d2 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
  
- #include <drm/drmP.h>
-@@ -39,6 +40,7 @@ struct panel_lvds {
- 	bool data_mirror;
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -289,6 +290,11 @@
+ 			compatible = "qcom,rpm-msm8996";
+ 			qcom,glink-channels = "rpm_requests";
  
- 	struct backlight_device *backlight;
-+	struct regulator *supply;
- 
- 	struct gpio_desc *enable_gpio;
- 	struct gpio_desc *reset_gpio;
-@@ -69,6 +71,9 @@ static int panel_lvds_unprepare(struct drm_panel *panel)
- 	if (lvds->enable_gpio)
- 		gpiod_set_value_cansleep(lvds->enable_gpio, 0);
- 
-+	if (lvds->supply)
-+		regulator_disable(lvds->supply);
++			rpmcc: qcom,rpmcc {
++				compatible = "qcom,rpmcc-msm8996";
++				#clock-cells = <1>;
++			};
 +
- 	return 0;
- }
+ 			pm8994-regulators {
+ 				compatible = "qcom,rpm-pm8994-regulators";
  
-@@ -76,6 +81,17 @@ static int panel_lvds_prepare(struct drm_panel *panel)
- {
- 	struct panel_lvds *lvds = to_panel_lvds(panel);
- 
-+	if (lvds->supply) {
-+		int err;
-+
-+		err = regulator_enable(lvds->supply);
-+		if (err < 0) {
-+			dev_err(lvds->dev, "failed to enable supply: %d\n",
-+				err);
-+			return err;
-+		}
-+	}
-+
- 	if (lvds->enable_gpio)
- 		gpiod_set_value_cansleep(lvds->enable_gpio, 1);
- 
-@@ -196,6 +212,13 @@ static int panel_lvds_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	lvds->supply = devm_regulator_get_optional(lvds->dev, "power");
-+	if (IS_ERR(lvds->supply)) {
-+		ret = PTR_ERR(lvds->supply);
-+		dev_err(lvds->dev, "failed to request regulator: %d\n", ret);
-+		return ret;
-+	}
-+
- 	/* Get GPIOs and backlight controller. */
- 	lvds->enable_gpio = devm_gpiod_get_optional(lvds->dev, "enable",
- 						     GPIOD_OUT_LOW);
 -- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
