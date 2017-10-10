@@ -1,94 +1,68 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 02/27] clk: ti: clkctrl: add support for clkdm init for clkctrl clocks
-Date: Mon, 30 Oct 2017 15:04:20 +0200
-Message-ID: <1509368685-29112-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <59DC9428.4090203@samsung.com>
+Date: Tue, 10 Oct 2017 18:34:32 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos5433: mark PM functions as
+ __maybe_unused
+In-reply-to: <20171010091522.2286344-1-arnd@arndb.de>
+References: <CGME20171010091531epcas3p352520667820f068219330b307df69df2@epcas3p3.samsung.com>
+	<20171010091522.2286344-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clkctrl clocks now support clockdomain init also. This will be needed
-so that hwmod core can drop the support for clockdomain handling.
+Hi Arnd,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clkctrl.c | 22 ++++++++++++++++++++++
- drivers/clk/ti/clock.h   |  1 +
- 2 files changed, 23 insertions(+)
+On 2017년 10월 10일 18:15, Arnd Bergmann wrote:
+> The suspend/resume functions are referenced conditionally, causing
+> a harmless warning when CONFIG_PM is disabled:
+> 
+> drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
+> drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
+> 
+> This marks both as __maybe_unused to shut up the warning.
+> 
+> Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index cd9337613dd8..db270908037a 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -5450,7 +5450,7 @@ struct exynos5433_cmu_data {
+>  	struct samsung_clk_provider ctx;
+>  };
+>  
+> -static int exynos5433_cmu_suspend(struct device *dev)
+> +static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
+>  {
+>  	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+>  	int i;
+> @@ -5473,7 +5473,7 @@ static int exynos5433_cmu_suspend(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int exynos5433_cmu_resume(struct device *dev)
+> +static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+>  {
+>  	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+>  	int i;
+> 
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 2db7d40..284ba449 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -46,6 +46,7 @@
- struct omap_clkctrl_provider {
- 	void __iomem *base;
- 	struct list_head clocks;
-+	char *clkdm_name;
- };
- 
- struct omap_clkctrl_clk {
-@@ -208,6 +209,7 @@ static int _omap4_clkctrl_clk_is_enabled(struct clk_hw *hw)
- 	.enable		= _omap4_clkctrl_clk_enable,
- 	.disable	= _omap4_clkctrl_clk_disable,
- 	.is_enabled	= _omap4_clkctrl_clk_is_enabled,
-+	.init		= omap2_init_clk_clkdm,
- };
- 
- static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
-@@ -438,6 +440,21 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 
- 	provider->base = of_iomap(node, 0);
- 
-+	provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
-+				       GFP_KERNEL);
-+	if (!provider->clkdm_name) {
-+		kfree(provider);
-+		return;
-+	}
-+
-+	/*
-+	 * Create default clkdm name, replace _cm from end of parent node
-+	 * name with _clkdm
-+	 */
-+	strcpy(provider->clkdm_name, node->parent->name);
-+	provider->clkdm_name[strlen(provider->clkdm_name) - 2] = 0;
-+	strcat(provider->clkdm_name, "clkdm");
-+
- 	INIT_LIST_HEAD(&provider->clocks);
- 
- 	/* Generate clocks */
-@@ -460,6 +477,11 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		if (reg_data->flags & CLKF_NO_IDLEST)
- 			hw->flags |= NO_IDLEST;
- 
-+		if (reg_data->clkdm_name)
-+			hw->clkdm_name = reg_data->clkdm_name;
-+		else
-+			hw->clkdm_name = provider->clkdm_name;
-+
- 		init.parent_names = &reg_data->parent;
- 		init.num_parents = 1;
- 		init.flags = 0;
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 561dbe9..169241f 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -221,6 +221,7 @@ struct omap_clkctrl_reg_data {
- 	const struct omap_clkctrl_bit_data *bit_data;
- 	u16 flags;
- 	const char *parent;
-+	const char *clkdm_name;
- };
- 
- struct omap_clkctrl_data {
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
