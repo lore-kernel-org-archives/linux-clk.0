@@ -1,54 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51239 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751298AbdJ0PHu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:07:50 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 00/10] Allwinner H3/H5/A64(DE2) SimpleFB support
-Date: Fri, 27 Oct 2017 23:06:48 +0800
-Message-Id: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	andy.gross@linaro.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 0/2] clk: qcom: Add RPM clocks for msm8996
+Date: Tue, 10 Oct 2017 14:27:12 +0530
+Message-Id: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds support for the SimpleFB on Allwinner SoCs with
-"Display Engine 2.0".
+Add support for RPM clocks on msm8996 platforms
 
-PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+Rajendra Nayak (2):
+  clk: qcom: clk-smd-rpm: add msm8996 rpmclks
+  arm64: dts: msm8996: Add the rpm clock controller node
 
-PATCH 4 adds the pipeline strings for DE2 SimpleFB.
-
-PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-for H3/H5 SoCs.
-
-PATCH 8 to 10 are for Allwinner A64 SoC to enable SimpleFB.
-
-Icenowy Zheng (10):
-  dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
-  clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
-  clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
-  dt-bindings: simplefb-sunxi: add pipelines for DE2
-  ARM: sun8i: h3/h5: add DE2 CCU device node for H3
-  arm64: allwinner: h5: add compatible string for DE2 CCU
-  ARM: sunxi: h3/h5: add simplefb nodes
-  dt-bindings: add binding for A64 DE2 CCU SRAM
-  arm64: allwinner: a64: add DE2 CCU for A64 SoC
-  arm64: allwinner: a64: add simplefb for A64 SoC
-
- .../devicetree/bindings/clock/sun8i-de2.txt        | 10 +++-
- .../bindings/display/simple-framebuffer-sunxi.txt  |  4 ++
- arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 ++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 ++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 ++++++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 ++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 53 +++++++++++++++++-
- 7 files changed, 178 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  6 ++
+ drivers/clk/qcom/clk-smd-rpm.c                     | 82 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             | 14 ++++
+ include/linux/soc/qcom/smd-rpm.h                   |  4 ++
+ 5 files changed, 107 insertions(+)
 
 -- 
-2.13.6
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
