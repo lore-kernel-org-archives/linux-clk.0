@@ -1,92 +1,58 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 1/4] dt-bindings: display: rcar-du: Document R8A774[35] DU
-Date: Fri, 13 Oct 2017 16:22:19 +0100
-Message-Id: <1507908142-13142-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: exynos5433: mark PM functions as __maybe_unused
+Date: Tue, 10 Oct 2017 11:15:12 +0200
+Message-Id: <20171010091522.2286344-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for r8a7743 and r8a7745 DUs.
-r8a7743 DU is similar to the one from r8a7791, r8a7745 DU is similar
-to the one from r8a7794.
+The suspend/resume functions are referenced conditionally, causing
+a harmless warning when CONFIG_PM is disabled:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
+drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
+
+This marks both as __maybe_unused to shut up the warning.
+
+Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++++++----------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 4bbd1e9..c520226 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -3,6 +3,8 @@
- Required Properties:
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index cd9337613dd8..db270908037a 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5450,7 +5450,7 @@ struct exynos5433_cmu_data {
+ 	struct samsung_clk_provider ctx;
+ };
  
-   - compatible: must be one of the following.
-+    - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
-+    - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
-     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
-     - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
-     - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
-@@ -27,10 +29,10 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - R8A779[0123456] use one functional clock per channel and one clock per
--      LVDS encoder (if available). The functional clocks must be named "du.x"
--      with "x" being the channel numerical index. The LVDS clocks must be
--      named "lvds.x" with "x" being the LVDS encoder numerical index.
-+    - R8A779[0123456] and R8A774[35] use one functional clock per channel and
-+      one clock per LVDS encoder (if available). The functional clocks must be
-+      named "du.x" with "x" being the channel numerical index. The LVDS clocks
-+      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
-     - In addition to the functional and encoder clocks, all DU versions also
-       support externally supplied pixel clocks. Those clocks are optional.
-       When supplied they must be named "dclkin.x" with "x" being the input
-@@ -49,16 +51,18 @@ bindings specified in Documentation/devicetree/bindings/graph.txt.
- The following table lists for each supported model the port number
- corresponding to each DU output.
+-static int exynos5433_cmu_suspend(struct device *dev)
++static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
+ {
+ 	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+ 	int i;
+@@ -5473,7 +5473,7 @@ static int exynos5433_cmu_suspend(struct device *dev)
+ 	return 0;
+ }
  
--		Port 0		Port1		Port2		Port3
-+                      Port0          Port1          Port2          Port3
- -----------------------------------------------------------------------------
-- R8A7779 (H1)	DPAD 0		DPAD 1		-		-
-- R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
-- R8A7791 (M2-W)	DPAD		LVDS 0		-		-
-- R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
-- R8A7793 (M2-N)	DPAD		LVDS 0		-		-
-- R8A7794 (E2)	DPAD 0		DPAD 1		-		-
-- R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
-- R8A7796 (M3-W)	DPAD		HDMI		LVDS		-
-+ R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              -
-+ R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              -
-+ R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              -
-+ R8A7790 (R-Car H2)   DPAD           LVDS 0         LVDS 1         -
-+ R8A7791 (R-Car M2-W) DPAD           LVDS 0         -              -
-+ R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              -
-+ R8A7793 (R-Car M2-N) DPAD           LVDS 0         -              -
-+ R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
-+ R8A7795 (R-Car H3)   DPAD           HDMI 0         HDMI 1         LVDS
-+ R8A7796 (R-Car M3-W) DPAD           HDMI           LVDS           -
- 
- 
- Example: R8A7795 (R-Car H3) ES2.0 DU
+-static int exynos5433_cmu_resume(struct device *dev)
++static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+ {
+ 	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+ 	int i;
 -- 
-2.7.4
+2.9.0
