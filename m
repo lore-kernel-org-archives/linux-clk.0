@@ -1,354 +1,229 @@
-Return-Path: <andrew@aj.id.au>
-Message-ID: <1507185388.5452.61.camel@aj.id.au>
-Subject: Re: [PATCH v4 1/5] clk: Add clock driver for ASPEED BMC SoCs
-From: Andrew Jeffery <andrew@aj.id.au>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Benjamin Herrenschmidt
-	 <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Rick Altherr
-	 <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
-	 <arnd@arndb.de>
-Date: Thu, 05 Oct 2017 17:06:28 +1030
-In-Reply-To: <20171003065540.11722-2-joel@jms.id.au>
-References: <20171003065540.11722-1-joel@jms.id.au>
-	 <20171003065540.11722-2-joel@jms.id.au>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-TI+DgXgoc5INzHwxtrxo"
-Mime-Version: 1.0
+Return-Path: <hao5781286@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <511e01ae-6083-13c8-a486-40e01bf753be@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com> <20161017120705.3726-2-wenpan@hisilicon.com>
+ <5893354.6MrIxqzRoI@wuerfel> <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+ <582C2785.2010804@hisilicon.com> <114569cb-79ab-a46d-8582-6169f182a32c@hisilicon.com>
+ <511e01ae-6083-13c8-a486-40e01bf753be@hisilicon.com>
+From: Hao Zhang <hao5781286@gmail.com>
+Date: Wed, 11 Oct 2017 13:35:30 +0800
+Message-ID: <CAJeuY78eZqOo3vaGBC-NKZr1nexm9SA0Rmc5vVxqn9K5vQqp9w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: Marty Plummer <netz.kernel@gmail.com>, Wei Xu <xuwei5@hisilicon.com>,
+	wenpan <wenpan@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"howell.yang@hisilicon.com" <howell.yang@hisilicon.com>,
+	"jalen.hsu@hisilicon.com" <jalen.hsu@hisilicon.com>,
+	"lvkuanliang@hisilicon.com" <lvkuanliang@hisilicon.com>,
+	"suwenping@hisilicon.com" <suwenping@hisilicon.com>, "raojun@hisilicon.com" <raojun@hisilicon.com>,
+	"kevin.lixu@hisilicon.com" <kevin.lixu@hisilicon.com>, "qinxiaojun@huawei.com" <qinxiaojun@huawei.com>
+Content-Type: multipart/alternative; boundary="f40304379aa0b8334c055b3ecab2"
 List-ID: <linux-clk.vger.kernel.org>
 
-
---=-TI+DgXgoc5INzHwxtrxo
+--f40304379aa0b8334c055b3ecab2
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2017-10-03 at 17:25 +1030, Joel Stanley wrote:
-> This adds the stub of a driver for the ASPEED SoCs. The clocks are
-> defined and the static registration is set up.
->=C2=A0
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+Hi all,
+Is there any one working on hi3520dv200 or hi3520dv300?
 
-With respect to use of the Aspeed hardware,
+2016=E5=B9=B411=E6=9C=8818=E6=97=A5=E6=98=9F=E6=9C=9F=E4=BA=94=EF=BC=8CJian=
+cheng Xue <xuejiancheng@hisilicon.com> =E5=86=99=E9=81=93=EF=BC=9A
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Hi Marty,
+>
+> On 2016/11/17 11:03, Jiancheng Xue wrote:
+> > Hi Wei=EF=BC=8C
+> >
+> > On 2016/11/16 17:31, Wei Xu wrote:
+> >> Hi Pan,
+> >>
+> >> On 2016/11/16 8:56, wenpan wrote:
+> >>> Hi Marty=EF=BC=8C
+> >>> Does this confict with your patch=EF=BC=9F If not=EF=BC=8CI hope this=
+ could be merged
+> first.  Besides could you tell me the link to your related patch?
+> >>
+> >> This is the link: https://patchwork.kernel.org/patch/9334743/
+> >>
+>
+> Could you give your comments on this patch?
+> If you have any objections to it, please let us know.
+>
+> >
+> > Thank you for offering this.If I want to give some comments on Marty's
+> patch,
+> > what should I do?
+> >
+> > For Marty's patch, I think there's no need to add specific config item
+> ARCH_HIxxxx
+> > for every chipset. Some existing chipsets depend on ARCH_HISI directly
+> like Hi3519
+> > and Hi3798CV200. If some options like ARM_GIC is removed from ARCH_HISI=
+,
+> this kind
+> > of chipsets will must choose other place to select it. I suggest we
+> should keep selecting
+> > ARM_GIC under ARCH_HISI as Pan's patch do.
+> >
+> > The code may be like this:
+> >
+> > config ARCH_HISI
+> >       bool "Hisilicon SoC Support"
+> > -     depends on ARCH_MULTI_V7
+> > +     depends on ARCH_MULTI_V5 || ARCH_MULTI_V6 || ARCH_MULTI_V7
+> >       select ARM_AMBA
+> > -     select ARM_GIC
+> > +     select ARM_GIC if ARCH_MULTI_V7
+> > +     select ARM_VIC if ARCH_MULTI_V5 || depends on ARCH_MULTI_V6
+> >       select ARM_TIMER_SP804
+> >       select POWER_RESET
+> >       select POWER_RESET_HISI
+> >       select POWER_SUPPLY
+> >
+>
+> What's your opinion about this?
+>
+> Best Regards,
+> Jiancheng
+>
+> >>> On 2016/10/17 21:48, Arnd Bergmann wrote:
+> >>>> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
+> >>>>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
+> >>>>>
+> >>>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com <javascript:;>>
+> >>>>>
+> >>>>
+> >>>> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
+> >>>> patches for Hi3520, which I think is closely related to this one.
+> >>>> Please try to work together so the patches don't conflict. It should
+> >>>> be fairly straightforward since you are basically doing the same
+> >>>> change here.
+> >>>>
+> >
+> >
+> >
+> > .
+> >
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org <javascript:;>
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-> ---
-> v3:
-> =C2=A0- use named initlisers for aspeed_gates table
-> =C2=A0- fix clocks typo
-> =C2=A0- Move ASPEED_NUM_CLKS to the bottom of the list
-> =C2=A0- Put gates at the start of the list, so we can use them to initali=
-se
-> =C2=A0=C2=A0=C2=A0the aspeed_gates table
-> =C2=A0- Add ASPEED_CLK_SELECTION_2
-> =C2=A0- Set parent of network MAC gates
-> ---
-> =C2=A0drivers/clk/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0|=C2=A0=C2=A012 +++
-> =C2=A0drivers/clk/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A0=C2=A01 +
-> =C2=A0drivers/clk/clk-aspeed.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 148 +++++++++=
-++++++++++++++++++++++
-> =C2=A0include/dt-bindings/clock/aspeed-clock.h |=C2=A0=C2=A042 +++++++++
-> =C2=A04 files changed, 203 insertions(+)
-> =C2=A0create mode 100644 drivers/clk/clk-aspeed.c
-> =C2=A0create mode 100644 include/dt-bindings/clock/aspeed-clock.h
->=C2=A0
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 1c4e1aa6767e..9abe063ef8d2 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -142,6 +142,18 @@ config COMMON_CLK_GEMINI
-> =C2=A0	=C2=A0=C2=A0This driver supports the SoC clocks on the Cortina Sys=
-tems Gemini
-> =C2=A0	=C2=A0=C2=A0platform, also known as SL3516 or CS3516.
-> =C2=A0
-> +config COMMON_CLK_ASPEED
-> +	bool "Clock driver for Aspeed BMC SoCs"
-> +	depends on ARCH_ASPEED || COMPILE_TEST
-> +	default ARCH_ASPEED
-> +	select MFD_SYSCON
-> +	select RESET_CONTROLLER
-> +	---help---
-> +	=C2=A0=C2=A0This driver supports the SoC clocks on the Aspeed BMC platf=
-orms.
-> +
-> +	=C2=A0=C2=A0The G4 and G5 series, including the ast2400 and ast2500, ar=
-e supported
-> +	=C2=A0=C2=A0by this driver.
-> +
-> =C2=A0config COMMON_CLK_S2MPS11
-> =C2=A0	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
-> =C2=A0	depends on MFD_SEC_CORE || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index c99f363826f0..575c68919d9b 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -26,6 +26,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+=3D clk-clps711x.o
-> =C2=A0obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+=3D clk-cs2000-cp.o
-> =C2=A0obj-$(CONFIG_ARCH_EFM32)		+=3D clk-efm32gg.o
-> =C2=A0obj-$(CONFIG_COMMON_CLK_GEMINI)		+=3D clk-gemini.o
-> +obj-$(CONFIG_COMMON_CLK_ASPEED)		+=3D clk-aspeed.o
-> =C2=A0obj-$(CONFIG_ARCH_HIGHBANK)		+=3D clk-highbank.o
-> =C2=A0obj-$(CONFIG_CLK_HSDK)			+=3D clk-hsdk-pll.o
-> =C2=A0obj-$(CONFIG_COMMON_CLK_MAX77686)	+=3D clk-max77686.o
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> new file mode 100644
-> index 000000000000..a45eb351bb05
-> --- /dev/null
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -0,0 +1,148 @@
-> +/*
-> + * Copyright 2017 IBM Corporation
-> + *
-> + * Joel Stanley <joel@jms.id.au>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the License, or (at your option) any later version.
-> + */
-> +
-> +#define pr_fmt(fmt) "clk-aspeed: " fmt
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_address.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <dt-bindings/clock/aspeed-clock.h>
-> +
-> +#define ASPEED_STRAP		0x70
-> +
-> +/* Keeps track of all clocks */
-> +static struct clk_hw_onecell_data *aspeed_clk_data;
-> +
-> +static void __iomem *scu_base;
-> +
-> +/**
-> + * struct aspeed_gate_data - Aspeed gated clocks
-> + * @clock_idx: bit used to gate this clock in the clock register
-> + * @reset_idx: bit used to reset this IP in the reset register. -1 if no
-> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0reset is required when enabling the clock
-> + * @name: the clock name
-> + * @parent_name: the name of the parent clock
-> + * @flags: standard clock framework flags
-> + */
-> +struct aspeed_gate_data {
-> +	u8		clock_idx;
-> +	s8		reset_idx;
-> +	const char	*name;
-> +	const char	*parent_name;
-> +	unsigned long	flags;
-> +};
-> +
-> +/**
-> + * struct aspeed_clk_gate - Aspeed specific clk_gate structure
-> + * @hw:		handle between common and hardware-specific interfaces
-> + * @reg:	register controlling gate
-> + * @clock_idx:	bit used to gate this clock in the clock register
-> + * @reset_idx:	bit used to reset this IP in the reset register. -1 if no
-> + *		reset is required when enabling the clock
-> + * @flags:	hardware-specific flags
-> + * @lock:	register lock
-> + *
-> + * Some of the clocks in the Aspeed SoC must be put in reset before enab=
-ling.
-> + * This modified version of clk_gate allows an optional reset bit to be
-> + * specified.
-> + */
-> +struct aspeed_clk_gate {
-> +	struct clk_hw	hw;
-> +	struct regmap	*map;
-> +	u8		clock_idx;
-> +	s8		reset_idx;
-> +	u8		flags;
-> +	spinlock_t	*lock;
-> +};
-> +
-> +#define to_aspeed_clk_gate(_hw) container_of(_hw, struct aspeed_clk_gate=
-, hw)
-> +
-> +/* TODO: ask Aspeed about the actual parent data */
-> +static const struct aspeed_gate_data aspeed_gates[] __initconst =3D {
-> +	/*				=C2=A0clk rst=C2=A0=C2=A0=C2=A0name			parent	flags */
-> +	[ASPEED_CLK_GATE_ECLK] =3D	{=C2=A0=C2=A00, -1, "eclk-gate",		"eclk",	0 =
-}, /* Video Engine */
-> +	[ASPEED_CLK_GATE_GCLK] =3D	{=C2=A0=C2=A01,=C2=A0=C2=A07, "gclk-gate",		=
-NULL,	0 }, /* 2D engine */
-> +	[ASPEED_CLK_GATE_MCLK] =3D	{=C2=A0=C2=A02, -1, "mclk-gate",		"mpll",	CL=
-K_IS_CRITICAL }, /* SDRAM */
-> +	[ASPEED_CLK_GATE_VCLK] =3D	{=C2=A0=C2=A03,=C2=A0=C2=A06, "vclk-gate",		=
-NULL,	0 }, /* Video Capture */
-> +	[ASPEED_CLK_GATE_BCLK] =3D	{=C2=A0=C2=A04, 10, "bclk-gate",		"bclk",	0 =
-}, /* PCIe/PCI */
-> +	[ASPEED_CLK_GATE_DCLK] =3D	{=C2=A0=C2=A05, -1, "dclk-gate",		NULL,	0 },=
- /* DAC */
-> +	[ASPEED_CLK_GATE_REFCLK] =3D	{=C2=A0=C2=A06, -1, "refclk-gate",	"clkin"=
-, CLK_IS_CRITICAL },
-> +	[ASPEED_CLK_GATE_USBPORT2CLK] =3D	{=C2=A0=C2=A07,=C2=A0=C2=A03, "usb-po=
-rt2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
-> +	[ASPEED_CLK_GATE_LCLK] =3D	{=C2=A0=C2=A08,=C2=A0=C2=A05, "lclk-gate",		=
-NULL,	0 }, /* LPC */
-> +	[ASPEED_CLK_GATE_USBUHCICLK] =3D	{=C2=A0=C2=A09, 15, "usb-uhci-gate",	N=
-ULL,	0 }, /* USB1.1 (requires port 2 enabled) */
-> +	[ASPEED_CLK_GATE_D1CLK] =3D	{ 10, 13, "d1clk-gate",		NULL,	0 }, /* GFX =
-CRT */
-> +	[ASPEED_CLK_GATE_YCLK] =3D	{ 13,=C2=A0=C2=A04, "yclk-gate",		NULL,	0 },=
- /* HAC */
-> +	[ASPEED_CLK_GATE_USBPORT1CLK] =3D { 14, 14, "usb-port1-gate",	NULL,	0 }=
-, /* USB2 hub/USB2 host port 1/USB1.1 dev */
-> +	[ASPEED_CLK_GATE_UART1CLK] =3D	{ 15, -1, "uart1clk-gate",	"uart",	0 }, =
-/* UART1 */
-> +	[ASPEED_CLK_GATE_UART2CLK] =3D	{ 16, -1, "uart2clk-gate",	"uart",	0 }, =
-/* UART2 */
-> +	[ASPEED_CLK_GATE_UART5CLK] =3D	{ 17, -1, "uart5clk-gate",	"uart",	0 }, =
-/* UART5 */
-> +	[ASPEED_CLK_GATE_ESPICLK] =3D	{ 19, -1, "espiclk-gate",	NULL,	0 }, /* e=
-SPI */
-> +	[ASPEED_CLK_GATE_MAC1CLK] =3D	{ 20, 11, "mac1clk-gate",	"mac",	0 }, /* =
-MAC1 */
-> +	[ASPEED_CLK_GATE_MAC2CLK] =3D	{ 21, 12, "mac2clk-gate",	"mac",	0 }, /* =
-MAC2 */
-> +	[ASPEED_CLK_GATE_RSACLK] =3D	{ 24, -1, "rsaclk-gate",	NULL,	0 }, /* RSA=
- */
-> +	[ASPEED_CLK_GATE_UART3CLK] =3D	{ 25, -1, "uart3clk-gate",	"uart",	0 }, =
-/* UART3 */
-> +	[ASPEED_CLK_GATE_UART4CLK] =3D	{ 26, -1, "uart4clk-gate",	"uart",	0 }, =
-/* UART4 */
-> +	[ASPEED_CLK_GATE_SDCLKCLK] =3D	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* S=
-DIO/SD */
-> +	[ASPEED_CLK_GATE_LHCCLK] =3D	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* =
-LPC master/LPC+ */
-> +};
-> +
-> +static void __init aspeed_cc_init(struct device_node *np)
-> +{
-> +	struct regmap *map;
-> +	u32 val;
-> +	int ret;
-> +	int i;
-> +
-> +	scu_base =3D of_iomap(np, 0);
-> +	if (IS_ERR(scu_base))
-> +		return;
-> +
-> +	aspeed_clk_data =3D kzalloc(sizeof(*aspeed_clk_data) +
-> +			sizeof(*aspeed_clk_data->hws) * ASPEED_NUM_CLKS,
-> +			GFP_KERNEL);
-> +	if (!aspeed_clk_data)
-> +		return;
-> +
-> +	/*
-> +	=C2=A0* This way all clocks fetched before the platform device probes,
-> +	=C2=A0* except those we assign here for early use, will be deferred.
-> +	=C2=A0*/
-> +	for (i =3D 0; i < ASPEED_NUM_CLKS; i++)
-> +		aspeed_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
-> +
-> +	map =3D syscon_node_to_regmap(np);
-> +	if (IS_ERR(map)) {
-> +		pr_err("no syscon regmap\n");
-> +		return;
-> +	}
-> +	/*
-> +	=C2=A0* We check that the regmap works on this very first access,
-> +	=C2=A0* but as this is an MMIO-backed regmap, subsequent regmap
-> +	=C2=A0* access is not going to fail and we skip error checks from
-> +	=C2=A0* this point.
-> +	=C2=A0*/
-> +	ret =3D regmap_read(map, ASPEED_STRAP, &val);
-> +	if (ret) {
-> +		pr_err("failed to read strapping register\n");
-> +		return;
-> +	}
-> +
-> +	aspeed_clk_data->num =3D ASPEED_NUM_CLKS;
-> +	ret =3D of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_da=
-ta);
-> +	if (ret)
-> +		pr_err("failed to add DT provider: %d\n", ret);
-> +};
-> +CLK_OF_DECLARE_DRIVER(aspeed_cc_g5, "aspeed,ast2500-scu", aspeed_cc_init=
-);
-> +CLK_OF_DECLARE_DRIVER(aspeed_cc_g4, "aspeed,ast2400-scu", aspeed_cc_init=
-);
-> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindin=
-gs/clock/aspeed-clock.h
-> new file mode 100644
-> index 000000000000..4a99421d77c8
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/aspeed-clock.h
-> @@ -0,0 +1,42 @@
-> +#ifndef DT_BINDINGS_ASPEED_CLOCK_H
-> +#define DT_BINDINGS_ASPEED_CLOCK_H
-> +
-> +#define ASPEED_CLK_GATE_ECLK		0
-> +#define ASPEED_CLK_GATE_GCLK		1
-> +#define ASPEED_CLK_GATE_MCLK		2
-> +#define ASPEED_CLK_GATE_VCLK		3
-> +#define ASPEED_CLK_GATE_BCLK		4
-> +#define ASPEED_CLK_GATE_DCLK		5
-> +#define ASPEED_CLK_GATE_REFCLK		6
-> +#define ASPEED_CLK_GATE_USBPORT2CLK	7
-> +#define ASPEED_CLK_GATE_LCLK		8
-> +#define ASPEED_CLK_GATE_USBUHCICLK	9
-> +#define ASPEED_CLK_GATE_D1CLK		10
-> +#define ASPEED_CLK_GATE_YCLK		11
-> +#define ASPEED_CLK_GATE_USBPORT1CLK	12
-> +#define ASPEED_CLK_GATE_UART1CLK	13
-> +#define ASPEED_CLK_GATE_UART2CLK	14
-> +#define ASPEED_CLK_GATE_UART5CLK	15
-> +#define ASPEED_CLK_GATE_ESPICLK		16
-> +#define ASPEED_CLK_GATE_MAC1CLK		17
-> +#define ASPEED_CLK_GATE_MAC2CLK		18
-> +#define ASPEED_CLK_GATE_RSACLK		19
-> +#define ASPEED_CLK_GATE_UART3CLK	20
-> +#define ASPEED_CLK_GATE_UART4CLK	21
-> +#define ASPEED_CLK_GATE_SDCLKCLK	22
-> +#define ASPEED_CLK_GATE_LHCCLK		23
-> +#define ASPEED_CLK_HPLL			24
-> +#define ASPEED_CLK_AHB			25
-> +#define ASPEED_CLK_APB			26
-> +#define ASPEED_CLK_UART			27
-> +#define ASPEED_CLK_SDIO			28
-> +#define ASPEED_CLK_ECLK			29
-> +#define ASPEED_CLK_ECLK_MUX		30
-> +#define ASPEED_CLK_LHCLK		31
-> +#define ASPEED_CLK_MAC			32
-> +#define ASPEED_CLK_BCLK			33
-> +#define ASPEED_CLK_MPLL			34
-> +
-> +#define ASPEED_NUM_CLKS			35
-> +
-> +#endif
---=-TI+DgXgoc5INzHwxtrxo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--f40304379aa0b8334c055b3ecab2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNATURE-----
+Hi all,<div>Is there any one working on hi3520dv200 or hi3520dv300? <br><br=
+>2016=E5=B9=B411=E6=9C=8818=E6=97=A5=E6=98=9F=E6=9C=9F=E4=BA=94=EF=BC=8CJia=
+ncheng Xue &lt;<a href=3D"mailto:xuejiancheng@hisilicon.com">xuejiancheng@h=
+isilicon.com</a>&gt; =E5=86=99=E9=81=93=EF=BC=9A<br><blockquote class=3D"gm=
+ail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-le=
+ft:1ex">Hi Marty,<br>
+<br>
+On 2016/11/17 11:03, Jiancheng Xue wrote:<br>
+&gt; Hi Wei=EF=BC=8C<br>
+&gt;<br>
+&gt; On 2016/11/16 17:31, Wei Xu wrote:<br>
+&gt;&gt; Hi Pan,<br>
+&gt;&gt;<br>
+&gt;&gt; On 2016/11/16 8:56, wenpan wrote:<br>
+&gt;&gt;&gt; Hi Marty=EF=BC=8C<br>
+&gt;&gt;&gt; Does this confict with your patch=EF=BC=9F If not=EF=BC=8CI ho=
+pe this could be merged first.=C2=A0 Besides could you tell me the link to =
+your related patch?<br>
+&gt;&gt;<br>
+&gt;&gt; This is the link: <a href=3D"https://patchwork.kernel.org/patch/93=
+34743/" target=3D"_blank">https://patchwork.kernel.org/<wbr>patch/9334743/<=
+/a><br>
+&gt;&gt;<br>
+<br>
+Could you give your comments on this patch?<br>
+If you have any objections to it, please let us know.<br>
+<br>
+&gt;<br>
+&gt; Thank you for offering this.If I want to give some comments on Marty&#=
+39;s patch,<br>
+&gt; what should I do?<br>
+&gt;<br>
+&gt; For Marty&#39;s patch, I think there&#39;s no need to add specific con=
+fig item ARCH_HIxxxx<br>
+&gt; for every chipset. Some existing chipsets depend on ARCH_HISI directly=
+ like Hi3519<br>
+&gt; and Hi3798CV200. If some options like ARM_GIC is removed from ARCH_HIS=
+I, this kind<br>
+&gt; of chipsets will must choose other place to select it. I suggest we sh=
+ould keep selecting<br>
+&gt; ARM_GIC under ARCH_HISI as Pan&#39;s patch do.<br>
+&gt;<br>
+&gt; The code may be like this:<br>
+&gt;<br>
+&gt; config ARCH_HISI<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0bool &quot;Hisilicon SoC Support&quot;<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0depends on ARCH_MULTI_V7<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0depends on ARCH_MULTI_V5 || ARCH_MULTI_V6 || ARCH=
+_MULTI_V7<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0select ARM_AMBA<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0select ARM_GIC<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0select ARM_GIC if ARCH_MULTI_V7<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0select ARM_VIC if ARCH_MULTI_V5 || depends on ARC=
+H_MULTI_V6<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0select ARM_TIMER_SP804<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0select POWER_RESET<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0select POWER_RESET_HISI<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0select POWER_SUPPLY<br>
+&gt;<br>
+<br>
+What&#39;s your opinion about this?<br>
+<br>
+Best Regards,<br>
+Jiancheng<br>
+<br>
+&gt;&gt;&gt; On 2016/10/17 21:48, Arnd Bergmann wrote:<br>
+&gt;&gt;&gt;&gt; On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:=
+<br>
+&gt;&gt;&gt;&gt;&gt; Add support for some HiSilicon SoCs which depend on AR=
+CH_MULTI_V5.<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt; Signed-off-by: Pan Wen &lt;<a href=3D"javascript:;" on=
+click=3D"_e(event, &#39;cvml&#39;, &#39;wenpan@hisilicon.com&#39;)">wenpan@=
+hisilicon.com</a>&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; Looks ok. I&#39;ve added Marty Plummer to Cc, he was recen=
+tly proposing<br>
+&gt;&gt;&gt;&gt; patches for Hi3520, which I think is closely related to th=
+is one.<br>
+&gt;&gt;&gt;&gt; Please try to work together so the patches don&#39;t confl=
+ict. It should<br>
+&gt;&gt;&gt;&gt; be fairly straightforward since you are basically doing th=
+e same<br>
+&gt;&gt;&gt;&gt; change here.<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt; .<br>
+&gt;<br>
+<br>
+--<br>
+To unsubscribe from this list: send the line &quot;unsubscribe devicetree&q=
+uot; in<br>
+the body of a message to <a href=3D"javascript:;" onclick=3D"_e(event, &#39=
+;cvml&#39;, &#39;majordomo@vger.kernel.org&#39;)">majordomo@vger.kernel.org=
+</a><br>
+More majordomo info at=C2=A0 <a href=3D"http://vger.kernel.org/majordomo-in=
+fo.html" target=3D"_blank">http://vger.kernel.org/<wbr>majordomo-info.html<=
+/a><br>
+</blockquote></div>
 
-iQIcBAABCgAGBQJZ1dLtAAoJEJ0dnzgO5LT5RjwQAITk2RyyhKAwVAozJvPpl7e5
-H2kyJr5veBbkex1H0vgmLTue/FvR7UO7lQG/csgDvE36662yl0pwlZaLGAmHmILE
-zIKM/x0Yl7N60hVRIVbGEQzl+3Qt9gtH5vn5OtjqGS7dJDg6Gs15k3aXtA3whN+E
-sGa8oKtuS9WwntMBPn04Jh4iCuBTUcy6Z8rEBZA6GGJiXlYmKSgOg+E1uxgqRjjT
-voqxC18dNg+6tm1jXlsD4Tgo+bR+qO45riCcgq7xVxer5wLecbPJ5tmD9aWaeoAn
-bRjRDv5FffWN5XhQgFvw5CI/rhFKa+90xHPvQ++9tQ73rxES8A08Y3o7iv84SS9H
-jDUKkXE/dNiOyL8x0Wc1gbox4szyZYoi3u2ga9ec9oPTVvH7Y1+jg3vyxzdI1NIb
-wBvVcPR+vwy3/yeWr1Btn8d2rD+vuUoC/bsv6GKJzzRaE6JiyOY2cH1wJ/d8QKws
-0eJFra4O5VdiAjZ83Mm7YzptnvfhTT3+Yf26gJTzI8RrcMUQJfH9+5DiNQmGIZKi
-H95AGoJLVNVZAj6VbhujS2Bu9RwwQWOzP/xqqEeDNcE2k6nejk2hjuMOfSrGK/dG
-WhAJ6L3iDYKdtN+b+uIg0Gneb0tT2jR9HnQT3VKkzltwX695lo3T+d+MxRuESfiV
-T+PO/zNyPoAWofzXoMBc
-=HKZq
------END PGP SIGNATURE-----
-
---=-TI+DgXgoc5INzHwxtrxo--
+--f40304379aa0b8334c055b3ecab2--
