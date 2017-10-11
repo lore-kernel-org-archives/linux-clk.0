@@ -1,37 +1,29 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:41192 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751802AbdJQL6Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 07:58:16 -0400
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 10 Oct 2017 22:43:47 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, andy.gross@linaro.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: msm8996: Add the rpm clock controller
+ node
+Message-ID: <20171011054347.GG1165@minitux>
+References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+ <1507625834-30499-3-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <a2ddf46b633cf7bf658b03df95a6a30bffceddb1.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
- <a2ddf46b633cf7bf658b03df95a6a30bffceddb1.1508231063.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 Oct 2017 19:57:51 +0800
-Message-ID: <CAGb2v667SSag=M=PG0yRXc7qESUKBSUDJLHt5o4U7dhKaE9A3w@mail.gmail.com>
-Subject: Re: [PATCH 18/23] arm: dts: sun8i: a83t: Enable the PWM
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1507625834-30499-3-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A83T has the same PWM block than the H3. Add it to our DT.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Tue 10 Oct 01:57 PDT 2017, Rajendra Nayak wrote:
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Add the rpm clock controller node for msm8996 devices
+> 
+> Cc: Andy Gross <andy.gross@linaro.org> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
