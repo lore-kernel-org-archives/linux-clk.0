@@ -1,29 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 25 Oct 2017 02:23:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
-	mturquette@baylibre.com, devicetree@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, paul@crapouillou.net,
-	malat@debian.org, dom.peklo@gmail.com
-Subject: Re: [RFC 2/4] clk: Add Ingenic X1000 CGU driver
-Message-ID: <20171025092330.GD30645@codeaurora.org>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-3-prasannatsmkumar@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170927151527.25570-3-prasannatsmkumar@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 06/10] ARM: dts: Add Broadcom Hurricane 2 DTS include file
+Date: Thu, 12 Oct 2017 11:30:53 -0700
+Message-Id: <20171012183053.3143-1-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-7-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com> <20170928231502.27069-7-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, PrasannaKumar Muralidharan wrote:
-> Add support for the clocks provided by CGU in Ingenic X1000 SoC.
+On Thu, 28 Sep 2017 16:14:58 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Describe the Broadcom Hurricane 2 SoC comprised of a Cortex-A9 CPU
+> complex along with standard iProc peripherals:
 > 
-> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> * timers
+> * SPI controller
+> * NAND controller
+> * a single AMAC (Ethernet MAC controller)
+> * dual PCIe controllers
+> 
+> The design is largely similar to existing iProc-based SoCs such as
+> Northstar Plus.
+> 
+> Acked-by: Jon Mason <jon.mason@broadcom.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied to devicetree/next, thanks!
+--
+Florian
