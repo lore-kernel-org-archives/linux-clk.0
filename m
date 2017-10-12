@@ -1,85 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51510 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932327AbdJ0PKc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:10:32 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 10/10] arm64: allwinner: a64: add simplefb for A64 SoC
-Date: Fri, 27 Oct 2017 23:06:58 +0800
-Message-Id: <20171027150658.18509-11-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 08/10] dt-bindings: Add Ubiquiti Networks vendor prefix
+Date: Thu, 12 Oct 2017 11:31:17 -0700
+Message-Id: <20171012183117.3253-1-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-9-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com> <20170928231502.27069-9-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A64 SoC features two display pipelines, one has a LCD output, the
-other has a HDMI output.
+On Thu, 28 Sep 2017 16:15:00 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Use the stock ticker: UBNT as the vendor prefix for Ubiquiti Networks.
+> 
+> Acked-by: Jon Mason <jon.mason@broadcom.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
 
-Add support for simplefb for these pipelines on A64 SoC.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 03a46da0f0fa..65ffd94441a1 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -42,9 +42,11 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
- 
- / {
-@@ -52,6 +54,35 @@
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-+	chosen {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer-lcd {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer0-lcd0";
-+			clocks = <&display_clocks CLK_BUS_MIXER0>,
-+				 <&ccu CLK_BUS_TCON0>, <&ccu CLK_BUS_TCON0>,
-+				 <&display_clocks CLK_MIXER0>,
-+				 <&ccu CLK_TCON0>;
-+			status = "disabled";
-+		};
-+
-+		framebuffer-hdmi {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer1-lcd1-hdmi";
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&ccu CLK_BUS_TCON1>, <&ccu CLK_BUS_HDMI>,
-+				 <&display_clocks CLK_MIXER1>,
-+				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>,
-+				 <&ccu CLK_HDMI_DDC>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.13.6
-
+Applied to devicetree/next, thanks!
+--
+Florian
