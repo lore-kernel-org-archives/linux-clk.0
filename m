@@ -1,69 +1,52 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 3 Oct 2017 16:41:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 6/7] dt-bindings: clock: Document qcom,apcs binding
-Message-ID: <20171003214107.4xvk5motoedpnjbr@rob-hp-laptop>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-7-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170921164940.20343-7-georgi.djakov@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rz: clk-rz is meant for RZ/A1
+Date: Thu, 12 Oct 2017 11:37:48 +0200
+Message-Id: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 07:49:39PM +0300, Georgi Djakov wrote:
-> Add device-tree binding documentation for the Qualcom APCS clock
-> controller. This clock controller is a mux and half-integer divider
-> and provides the clock for the application CPU.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,apcs.txt        | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,apcs.txt b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> new file mode 100644
-> index 000000000000..8083bcc33ebe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
-> @@ -0,0 +1,27 @@
-> +Qualcomm APCS Clock Controller Binding
-> +--------------------------------------
-> +The APCS hardware block provides a combined mux and half-integer divider
-> +functionality. It is used for a main CPU clock mux on MSM8916 platforms.
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +		"qcom,msm8916-apcs-clk"
-> +
-> +- clocks : shall be the phandle to the main input CPU PLL clock
-> +
-> +- #clock-cells : must be set to <0>
-> +
-> +Example:
-> +
-> +	apcs: mailbox@b011000 {
-> +		compatible = "qcom,msm8916-apcs-kpss-global";
-> +		reg = <0xb011000 0x1000>;
-> +		#mbox-cells = <1>;
-> +
-> +		apcs_clk: apcs_clk {
+The RZ family of Renesas SoCs has several different subfamilies (RZ/A,
+RZ/G, RZ/N, and RZ/T).  Clarify that the renesas,rz-cpg-clocks DT
+bindings and clk-rz driver apply to RZ/A1 only.
 
-Don't use '_' in node names. This can be just "clock".
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.15.
 
-Otherwise,
+ Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt | 4 ++--
+ drivers/clk/renesas/clk-rz.c                                      | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-> +			compatible = "qcom,msm8916-apcs-clk";
-> +			clocks = <&a53pll>;
-> +			#clock-cells = <0>;
-> +		};
-> +	};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+index bb5d942075fbf0bf..8ff3e2774ed8d1d0 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+@@ -1,6 +1,6 @@
+-* Renesas RZ Clock Pulse Generator (CPG)
++* Renesas RZ/A1 Clock Pulse Generator (CPG)
+ 
+-The CPG generates core clocks for the RZ SoCs. It includes the PLL, variable
++The CPG generates core clocks for the RZ/A1 SoCs. It includes the PLL, variable
+ CPU and GPU clocks, and several fixed ratio dividers.
+ The CPG also provides a Clock Domain for SoC devices, in combination with the
+ CPG Module Stop (MSTP) Clocks.
+diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+index 5adb934326d1f5be..127c58135c8fec76 100644
+--- a/drivers/clk/renesas/clk-rz.c
++++ b/drivers/clk/renesas/clk-rz.c
+@@ -1,5 +1,5 @@
+ /*
+- * rz Core CPG Clocks
++ * RZ/A1 Core CPG Clocks
+  *
+  * Copyright (C) 2013 Ideas On Board SPRL
+  * Copyright (C) 2014 Wolfram Sang, Sang Engineering <wsa@sang-engineering.com>
+-- 
+2.7.4
