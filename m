@@ -1,51 +1,38 @@
-Return-Path: <clabbe.montjoie@gmail.com>
-Return-Path: <clabbe.montjoie@gmail.com>
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: emilio@elopez.com.ar,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v2] clk: sunxi: fix build warning
-Date: Tue, 24 Oct 2017 19:06:16 +0200
-Message-Id: <20171024170616.24889-1-clabbe.montjoie@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 05/10] clk: bcm: Add Broadcom Hurricane 2 clock support
+Date: Thu, 12 Oct 2017 11:31:47 -0700
+Message-Id: <20171012183147.3473-1-f.fainelli@gmail.com>
+In-Reply-To: <20170928231502.27069-6-f.fainelli@gmail.com>
+References: <20170928231502.27069-1-f.fainelli@gmail.com> <20170928231502.27069-6-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch fix the following build warning:
-drivers/clk/sunxi/clk-factors.c:279:14: warning: variable 'name' set but not used [-Wunused-but-set-variable]
+On Thu, 28 Sep 2017 16:14:57 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Add support for the Broadcom Hurricane 2 SoC clock controller. We can
+> re-use the existing iProc clock library since the SoC's architecture is
+> largely the same as its predecessors. For now, we just initialize the
+> iProc ARM PLL.
+> 
+> Acked-by: Jon Mason <jon.mason@broadcom.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
 
-Fixes: 4cbeaebb8af1 ("clk: sunxi: factors: Add unregister function")
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
-Changes since v1:
-- added Ack and fixes tags
-
- drivers/clk/sunxi/clk-factors.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index dfe5e3e32d28..856fef65433b 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -276,13 +276,11 @@ void sunxi_factors_unregister(struct device_node *node, struct clk *clk)
- {
- 	struct clk_hw *hw = __clk_get_hw(clk);
- 	struct clk_factors *factors;
--	const char *name;
- 
- 	if (!hw)
- 		return;
- 
- 	factors = to_clk_factors(hw);
--	name = clk_hw_get_name(hw);
- 
- 	of_clk_del_provider(node);
- 	/* TODO: The composite clock stuff will leak a bit here. */
--- 
-2.13.6
+Applied to drivers/next, thanks!
+--
+Florian
