@@ -1,60 +1,47 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/10] [RFC] ARM: shmobile: pm-rmobile: Use GENPD_FLAG_ACTIVE_WAKEUP
-Date: Mon, 16 Oct 2017 15:55:11 +0200
-Message-Id: <1508162116-5043-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 2/9] clk: sunxi-ng: nm: Check if requested rate is supported by fractional clock
+Date: Thu, 12 Oct 2017 16:36:58 +0800
+Message-Id: <20171012083705.24409-3-wens@csie.org>
+In-Reply-To: <20171012083705.24409-1-wens@csie.org>
+References: <20171012083705.24409-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
-remove the driver's own "always true" callback.
+The round_rate callback for N-M-factor style clocks does not check if
+the requested clock rate is supported by the fractional clock mode.
+While this doesn't affect usage in practice, since the clock rates
+are also supported through N-M factors, it does not match the set_rate
+code.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This must not be applied before "PM / Domain: Enable genpd users to
-specify default active wakeup behavior" has landed upstream, hence the
-"RFC".
----
- arch/arm/mach-shmobile/pm-rmobile.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Add a check to the round_rate callback so it matches the set_rate
+callback.
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 3a4ed4c33a68e51e..e348bcfe389da51b 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -120,18 +120,12 @@ static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
- 	return __rmobile_pd_power_up(to_rmobile_pd(genpd), true);
- }
+Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_nm.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a32158e8f2e3..84a5e7f17f6f 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -99,6 +99,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nm *nm = hw_to_ccu_nm(hw);
+ 	struct _ccu_nm _nm;
  
--static bool rmobile_pd_active_wakeup(struct device *dev)
--{
--	return true;
--}
--
- static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- {
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
- 	struct dev_power_governor *gov = rmobile_pd->gov;
- 
--	genpd->flags |= GENPD_FLAG_PM_CLK;
--	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
-+	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
- 	genpd->attach_dev		= cpg_mstp_attach_dev;
++	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate))
++		return rate;
++
+ 	_nm.min_n = nm->n.min ?: 1;
+ 	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
 -- 
-2.7.4
+2.14.2
