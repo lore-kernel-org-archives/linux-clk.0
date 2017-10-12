@@ -1,48 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 24 Oct 2017 07:15:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	broonie@kernel.org, mturquette@baylibre.com,
-	alsa-devel@alsa-project.org, tiwai@suse.de, lgirdwood@gmail.com,
-	patches.audio@intel.com, linux-clk@vger.kernel.org,
-	harshapriya.n@intel.com,
-	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Subject: Re: [PATCH 5/6] ASoC: Intel: Skylake: Add ssp clock driver
-Message-ID: <20171024141517.GF15990@codeaurora.org>
-References: <1504794565-19168-6-git-send-email-subhransu.s.prusty@intel.com>
- <20170907164642.GX3053@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170907164642.GX3053@localhost>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 0/9] clk: sunxi-ng: Use sigma-delta modulation for audio PLL
+Date: Thu, 12 Oct 2017 16:36:56 +0800
+Message-Id: <20171012083705.24409-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/07, Vinod Koul wrote:
-> On Thu, Sep 07, 2017 at 07:59:24PM +0530, Subhransu S. Prusty wrote:
-> > From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-> > 
-> > For certain platforms it is required to start the clocks (mclk/sclk/fs)
-> > before the stream start. Example: for few chrome systems, codec needs the
-> > mclk/sclk to be enabled early for a successful clock synchronization and
-> > for few IVI platforms, clock need to be enabled at boot and should be ON
-> > always.
-> > 
-> > This patch creates virtual clock driver, which allows the machine driver to
-> > use the clock interface to send IPCs to DSP to enable/disable the clocks.
-> 
-> Mark, Michael, Stephen,
-> 
-> So this one adds a 'virtual' clock driver for audio clocks (mclk, bclk...)
-> and we have DSP configuring them.  The SW (driver) sends messages to DSP for
-> controlling these clocks, that is why we decided to keep this in ASoC, do
-> let us know if that is okay.
-> 
+Hi everyone,
 
-I know there's a v2 and I'm replying here but this is fine from
-clk perspective. I tend to think of it as a "remote" driver
-instead where the clk control is done by a non-linux processor or
-"remote" processor, in this case the DSP. I'll ack v2.
+This series adds support for fractional-N synthesis using sigma-delta
+modulation in the audio PLL to get the exact required clock rate.
+This fixes the speed and pitch change when audio is played back on
+sunxi platforms, due to the slightly inaccurate audio clock.
+
+I've done this for all platforms I can test at the moment. A83T is left
+out for now as the the clock unit's design is slightly different. I
+was unable to work on the A33, as my board is very unstable, plus A33
+audio playback seems to be broken at the moment. There might be some
+issue with the DAPM routes.
+
+Patch 1 fixes an error with the audio PLL's post-divider bit field
+offset.
+
+Patch 2 adds a check for fractional mode clock rates in the N-M clock's
+round_rate callback. This is mostly for aesthetics to have both
+round_rate and set_rate code paths look the same. In practice the N-M
+factors can also generate the fractional mode clock rates directly.
+
+Patch 3 adds a table based sigma-delta modulation clock type. This is
+implemented much like the fractional mode clocks, as a helper library
+to be integrated into the various factor clocks where needed. As there
+is no explanation on how to calculate the parameters for SDM, the table
+based approach allows us to copy existing parameters from the vendor
+kernel.
+
+Patch 4 hooks the SDM clock type helpers into the N-M factors clock
+type. The audio PLLs on most of our are of this type.
+
+Patches 5 ~ 9 convert the audio PLL to using SDM on various SoCs. The
+changes are the same, accounting for minor variances between SoCs:
+
+    - audio PLL post-divider now forced to 1.
+
+    - pll-audio-1x fixed-factor-clock divider now set to 1, matching
+      the hardware setting from above.
+
+    - SDM parameter table added.
+
+    - SDM parameters added to pll-audio-base clock.
+
+Please have a look.
+
+ChenYu
+
+Chen-Yu Tsai (9):
+  clk: sunxi-ng: sun5i: Fix bit offset of audio PLL post-divider
+  clk: sunxi-ng: nm: Check if requested rate is supported by fractional
+    clock
+  clk: sunxi-ng: Add sigma-delta modulation support
+  clk: sunxi-ng: nm: Add support for sigma-delta modulation
+  clk: sunxi-ng: sun8i: h3: Use sigma-delta modulation for audio PLL
+  clk: sunxi-ng: sun4i: Use sigma-delta modulation for audio PLL
+  clk: sunxi-ng: sun5i: Use sigma-delta modulation for audio PLL
+  clk: sunxi-ng: sun6i: Use sigma-delta modulation for audio PLL
+  clk: sunxi-ng: sun8i: a23: Use sigma-delta modulation for audio PLL
+
+ drivers/clk/sunxi-ng/Makefile        |   1 +
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c |  26 ++++--
+ drivers/clk/sunxi-ng/ccu-sun5i.c     |  27 ++++--
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c |  38 ++++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c |  38 ++++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c  |  38 ++++++---
+ drivers/clk/sunxi-ng/ccu_common.h    |   1 +
+ drivers/clk/sunxi-ng/ccu_nm.c        |  25 +++++-
+ drivers/clk/sunxi-ng/ccu_nm.h        |  25 ++++++
+ drivers/clk/sunxi-ng/ccu_sdm.c       | 158 +++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_sdm.h       |  80 ++++++++++++++++++
+ 11 files changed, 404 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.2
