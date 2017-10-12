@@ -1,24 +1,53 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 12 Oct 2017 14:01:05 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chris Brandt <chris.brandt@renesas.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: rz: clk-rz is meant for RZ/A1
-Message-ID: <20171012120105.jwgf6brveumg2kku@verge.net.au>
-References: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20171012132935.3508-1-p.zabel@pengutronix.de>
+References: <20171012132935.3508-1-p.zabel@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 12 Oct 2017 10:39:40 -0300
+Message-ID: <CAOMZO5Ba_urRnH+WgR1DPerOa6YQo56V2rdJ5nAZE+r4Zhk=jQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: clk-imx6ul: allow lcdif_pre_sel to change
+ parent rate
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 12, 2017 at 11:37:48AM +0200, Geert Uytterhoeven wrote:
-> The RZ family of Renesas SoCs has several different subfamilies (RZ/A,
-> RZ/G, RZ/N, and RZ/T).  Clarify that the renesas,rz-cpg-clocks DT
-> bindings and clk-rz driver apply to RZ/A1 only.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Oct 12, 2017 at 10:29 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Allowing the lcdif_pre_sel to propagate rate changes to its parent PLL
+> allows more fine grained control over the LCDIF pixel clock rate.
+>
+> For example, the Innovision AT043TN24 LCD panel described in the
+> imx6ul-14x14-evk device tree requires a 9 MHz pixel clock.
+> Before this patch, the lcdif_pre_sel clock rate is fixed, and just
+> setting the lcdif_pred and lcdif_podf dividers only allows to get as
+> close as about 8.44 MHz:
+>
+>     pll3                                  1            1   480000000 0 0
+>        pll3_bypass                        1            1   480000000 0 0
+>           pll3_usb_otg                    1            1   480000000 0 0
+>              pll3_pfd1_540m               1            1   540000000 0 0
+>                 lcdif_pre_sel             1            1   540000000 0 0
+>                    lcdif_pred             1            1    67500000 0 0
+>                       lcdif_podf           1            1     8437500 0 0
+>                          lcdif_pix           1            1     8437500 0 0
+>
+> Once lcdif_pre_sel is allowed to propagate rate requests to its parent,
+> the actual pixel clock matches the requested value:
+>
+>     pll3                                  1            1   480000000 0 0
+>        pll3_bypass                        1            1   480000000 0 0
+>           pll3_usb_otg                    1            1   480000000 0 0
+>              pll3_pfd1_540m               1            1   288000000 0 0
+>                 lcdif_pre_sel             1            1   288000000 0 0
+>                    lcdif_pred             1            1    36000000 0 0
+>                       lcdif_podf           1            1     9000000 0 0
+>                          lcdif_pix           1            1     9000000 0 0
+>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Yes, much better precision now, thanks:
+
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
