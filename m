@@ -1,85 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51419 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbdJCKAc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:32 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/9] clk: samsung: Remove support for obsolete Exynos4212
- CPU clock
-Date: Tue, 03 Oct 2017 12:00:08 +0200
-Message-id: <20171003100016.32029-2-m.szyprowski@samsung.com>
-In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
-References: <20171003100016.32029-1-m.szyprowski@samsung.com>
-        <CGME20171003100029eucas1p2c706e911f316a58f35be7c443824f07c@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 12 Oct 2017 15:51:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <ce3a@gmx.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rabeeh Khoury <rabeeh@solid-run.com>
+Subject: Re: [PATCH v2] clk: si5351: Do not enable parent clocks on probe
+Message-ID: <20171012225100.GF18706@codeaurora.org>
+References: <1501007531-5521-1-git-send-email-ce3a@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1501007531-5521-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Support for Exynos 4212 SoC has been removed by commit bca9085e0ae9 ("ARM:
-dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
-to keep dead code.
+On 07/25, Sergej Sawazki wrote:
+> The si5351 driver should not prepare or enable other clocks in the tree on
+> probe. Let the clients decide when to prepare or enable the clocks.
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+> ---
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c | 33 ++++-----------------------------
- 1 file changed, 4 insertions(+), 29 deletions(-)
+Is this patch still needed? I was expecting Sebastian to review
+and I found it in the bottom of my patch pile.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index e40b77583c47..9a51ce9a658f 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1401,24 +1401,6 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
- 	{  0 },
- };
- 
--static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
--	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
--	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
--	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
--	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
--	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
--	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
--	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
--	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
--	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
--	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
--	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
--	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
--	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
--	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
--	{  0 },
--};
--
- #define E4412_CPU_DIV1(cores, hpm, copy)				\
- 		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
- 
-@@ -1533,17 +1515,10 @@ static void __init exynos4_clk_init(struct device_node *np,
- 		samsung_clk_register_fixed_factor(ctx,
- 			exynos4x12_fixed_factor_clks,
- 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
--		if (of_machine_is_compatible("samsung,exynos4412")) {
--			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
--				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
--				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
--				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
--		} else {
--			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
--				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
--				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
--				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
--		}
-+		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+			mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+			e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
-+			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
- 	}
- 
- 	samsung_clk_register_alias(ctx, exynos4_aliases,
 -- 
-2.14.2
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
