@@ -1,63 +1,37 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 25 Oct 2017 22:49:11 +0200
-Message-ID: <CAPDyKFoUn18uAmSpOmCcjopNxunnNma4Cv2F9C2k+tE=xcuYMw@mail.gmail.com>
-Subject: Re: [PATCH 00/10] PM / Domain: renesas: Fix active wakeup behavior
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	architt@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 0/3] clk: qcom: msm8996: handle mmagic gdscs and clocks
+Date: Thu, 12 Oct 2017 12:28:46 +0530
+Message-Id: <1507791529-24353-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16 October 2017 at 15:55, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->         Hi all,
->
-> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
-> used as a wakeup source, it must be kept active during system suspend.
->
-> Currently this is handled in device-specific drivers by explicitly
-> increasing the use count of the module clock when the device is
-> configured as a wakeup source.  However, the proper way to prevent the
-> device from being stopped is to inform this requirement to the genpd
-> core.  Hence this series does that, so the workarounds can be removed.
->
-> This patch series consist of 4 parts:
->   1. Patches 1-3 fix the clk-renesas-mstp, clk-renesas-cpg-mssr, and
->      rcar-sysc Clock and/or PM Domain drivers by providing
->      gpd_dev_ops.active_wakeup() callbacks,
+With no bus driver to handle the mmagic bus clocks and gdscs on msm8996,
+its best to just turn them all ON at gdsc/clk driver probe and leave
+them ON thereafter. This should unblock a lot of multimedia support on
+msm8996 which rely on these to be ON and have no way to control them at
+this point. Once we do have better noc/bus management drivers in place
+we can avoid leaving these ON always and turn them ON/OFF as needed.
 
-As we spoked about at ELC yesterday, I think the genpd specific
-callback for dealing with this is not really the proper solution.
+Rajendra Nayak (3):
+  clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
+  clk: qcom: Register the gdscs before the clocks
+  clk: qcom: mmcc-msm8996: leave all mmagic gdscs and clocks always    
+    enabled
 
-Instead I think this should be treated as a generic problem. In
-principle I think we need a way for drivers to inform the
-middle-layer/genpd about wakeup requirements during system-wide PM.
+ drivers/clk/qcom/common.c       | 32 ++++++++++++++++----------------
+ drivers/clk/qcom/gdsc.c         |  8 ++++++++
+ drivers/clk/qcom/gdsc.h         |  1 +
+ drivers/clk/qcom/mmcc-msm8996.c | 22 +++++++++++-----------
+ 4 files changed, 36 insertions(+), 27 deletions(-)
 
-Allow me to post a patch showing what I had in mind, then we can see
-what you think about it.
-
->
->   2. Patch 4 adds a new GENPD_FLAG_ACTIVE_WAKEUP flag, to avoid various
->      PM Domain drivers that need similar behavior having to provide
->      their own identical .active_wakeup() callbacks,
-
-This makes sense, however I think it's sufficient to make genpd check
-the flag, rather than assigning and using the ->active_wakeup()
-callback.
-
-That would then make it possible to remove the callback altogether.
-Can you do that instead?
-
-[...]
-
-Kind regards
-Uffe
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
