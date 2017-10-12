@@ -1,61 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:53735 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751501AbdJPK3b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2017 06:29:31 -0400
-Subject: Re: [PATCH v4 0/9] Mediatek MT2712 clock and scpsys support
-To: Weiyi Lu <weiyi.lu@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
- <20171012224540.GE18706@codeaurora.org>
- <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
- <1508136134.20464.49.camel@mtksdaap41>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <4b2b1a94-2a0e-4c5e-030e-d35edb3ac2f1@gmail.com>
-Date: Mon, 16 Oct 2017 12:29:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <1508136134.20464.49.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 5/9] clk: sunxi-ng: sun8i: h3: Use sigma-delta modulation for audio PLL
+Date: Thu, 12 Oct 2017 16:37:01 +0800
+Message-Id: <20171012083705.24409-6-wens@csie.org>
+In-Reply-To: <20171012083705.24409-1-wens@csie.org>
+References: <20171012083705.24409-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The audio blocks require specific clock rates. Until now we were using
+the closest clock rate possible with integer N-M factors. This resulted
+in audio playback being slightly slower than it should be.
 
+The vendor kernel gets around this (for newer SoCs) by using sigma-delta
+modulation to generate a fractional-N factor. This patch copies the
+parameters for the H3.
 
-On 10/16/2017 08:42 AM, Weiyi Lu wrote:
-> On Fri, 2017-10-13 at 16:50 +0200, Matthias Brugger wrote:
->>
->> On 10/13/2017 12:45 AM, Stephen Boyd wrote:
->>> On 09/19, Weiyi Lu wrote:
->>>> This series is based on v4.14-rc1 and composed of
->>>> clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
->>>
->>> What's the merge plan? Can I apply the clk ones to clk tree and
->>> ignore the rest?
->>>
->>
->> Yes, please do so. I'll take scpsys, which depends on the clock patches.
->>
->> Regards,
->> Matthias
-> 
-> Hi Stephen & Matthias,
-> 
-> I will start to separate this patch set into three series
-> (clk/scpsys/dts) when I send the next version.
-> 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 38 ++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-There are no comments on the clk patches, so no need to resend them, if Stephen 
-is ok with taking patch 1,2,3.
-
-If you want you can split out patch 4 and 9, but for me it's ok if they go 
-together with the scpsys driver. When scpsys is ready I will take them all 
-through my tree.
-
-Regards,
-Matthias
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 543c46d0e045..29bc0566b776 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -26,6 +26,7 @@
+ #include "ccu_nkmp.h"
+ #include "ccu_nm.h"
+ #include "ccu_phase.h"
++#include "ccu_sdm.h"
+ 
+ #include "ccu-sun8i-h3.h"
+ 
+@@ -44,18 +45,29 @@ static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpux_clk, "pll-cpux",
+  * the base (2x, 4x and 8x), and one variable divider (the one true
+  * pll audio).
+  *
+- * We don't have any need for the variable divider for now, so we just
+- * hardcode it to match with the clock names
++ * With sigma-delta modulation for fractional-N on the audio PLL,
++ * we have to use specific dividers. This means the variable divider
++ * can no longer be used, as the audio codec requests the exact clock
++ * rates we support through this mechanism. So we now hard code the
++ * variable divider to 1. This means the clock rates will no longer
++ * match the clock names.
+  */
+ #define SUN8I_H3_PLL_AUDIO_REG	0x008
+ 
+-static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+-				   "osc24M", 0x008,
+-				   8, 7,	/* N */
+-				   0, 5,	/* M */
+-				   BIT(31),	/* gate */
+-				   BIT(28),	/* lock */
+-				   CLK_SET_RATE_UNGATE);
++static struct ccu_sdm_setting pll_audio_sdm_table[] = {
++	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
++	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
++};
++
++static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
++				       "osc24M", 0x008,
++				       8, 7,	/* N */
++				       0, 5,	/* M */
++				       pll_audio_sdm_table, BIT(24),
++				       0x284, BIT(31),
++				       BIT(31),	/* gate */
++				       BIT(28),	/* lock */
++				       CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+ 					"osc24M", 0x0010,
+@@ -707,9 +719,9 @@ static struct ccu_common *sun50i_h5_ccu_clks[] = {
+ 	&gpu_clk.common,
+ };
+ 
+-/* We hardcode the divider to 4 for now */
++/* We hardcode the divider to 1 for now */
+ static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
+-			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
++			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
+ 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
+@@ -1129,10 +1141,10 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
+ 		return;
+ 	}
+ 
+-	/* Force the PLL-Audio-1x divider to 4 */
++	/* Force the PLL-Audio-1x divider to 1 */
+ 	val = readl(reg + SUN8I_H3_PLL_AUDIO_REG);
+ 	val &= ~GENMASK(19, 16);
+-	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
++	writel(val | (0 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
+ 
+ 	sunxi_ccu_probe(node, reg, desc);
+ 
+-- 
+2.14.2
