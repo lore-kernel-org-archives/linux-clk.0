@@ -1,48 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44528 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbdJCKAe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:34 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/9] clk: samsung: Remove double assignment to CLK_ARM_CLK
- id in Exynos4 driver
-Date: Tue, 03 Oct 2017 12:00:10 +0200
-Message-id: <20171003100016.32029-4-m.szyprowski@samsung.com>
-In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
-References: <20171003100016.32029-1-m.szyprowski@samsung.com>
-        <CGME20171003100030eucas1p1a20ef57eada2009d1c83804b475fd1b6@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 9/9] clk: sunxi-ng: sun8i: a23: Use sigma-delta modulation for audio PLL
+Date: Thu, 12 Oct 2017 16:37:05 +0800
+Message-Id: <20171012083705.24409-10-wens@csie.org>
+In-Reply-To: <20171012083705.24409-1-wens@csie.org>
+References: <20171012083705.24409-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_ARM_CLK ("armclk") clock is provided by cpu-clk subdriver, which is
-instantiated after creating all divider clocks from exynos4_div_clks
-array. There is no point assigning this id to "div_core2" clock and later
-overwrite with proper "armcpu" clock by cpu-clk subdriver.
+The audio blocks require specific clock rates. Until now we were using
+the closest clock rate possible with integer N-M factors. This resulted
+in audio playback being slightly slower than it should be.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The vendor kernel gets around this (for newer SoCs) by using sigma-delta
+modulation to generate a fractional-N factor. As the PLL hardware is
+identical in most chips, we can back port the settings from the newer
+SoC, in this case the H3, onto the A23.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/samsung/clk-exynos4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 38 ++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 3fbfd9ed82b7..3bd2d84b2a17 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -721,7 +721,7 @@ static const struct samsung_div_clock exynos4_div_clks[] __initconst = {
- 	DIV(0, "div_periph", "div_core2", DIV_CPU0, 12, 3),
- 	DIV(0, "div_atb", "mout_core", DIV_CPU0, 16, 3),
- 	DIV(0, "div_pclk_dbg", "div_atb", DIV_CPU0, 20, 3),
--	DIV(CLK_ARM_CLK, "div_core2", "div_core", DIV_CPU0, 28, 3),
-+	DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
- 	DIV(0, "div_copy", "mout_hpm", DIV_CPU1, 0, 3),
- 	DIV(0, "div_hpm", "div_copy", DIV_CPU1, 4, 3),
- 	DIV(0, "div_clkout_cpu", "mout_clkout_cpu", CLKOUT_CMU_CPU, 8, 6),
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index d93b452f0df9..a4fa2945f230 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -26,6 +26,7 @@
+ #include "ccu_nkmp.h"
+ #include "ccu_nm.h"
+ #include "ccu_phase.h"
++#include "ccu_sdm.h"
+ 
+ #include "ccu-sun8i-a23-a33.h"
+ 
+@@ -52,18 +53,29 @@ static struct ccu_nkmp pll_cpux_clk = {
+  * the base (2x, 4x and 8x), and one variable divider (the one true
+  * pll audio).
+  *
+- * We don't have any need for the variable divider for now, so we just
+- * hardcode it to match with the clock names
++ * With sigma-delta modulation for fractional-N on the audio PLL,
++ * we have to use specific dividers. This means the variable divider
++ * can no longer be used, as the audio codec requests the exact clock
++ * rates we support through this mechanism. So we now hard code the
++ * variable divider to 1. This means the clock rates will no longer
++ * match the clock names.
+  */
+ #define SUN8I_A23_PLL_AUDIO_REG	0x008
+ 
+-static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+-				   "osc24M", 0x008,
+-				   8, 7,		/* N */
+-				   0, 5,		/* M */
+-				   BIT(31),		/* gate */
+-				   BIT(28),		/* lock */
+-				   CLK_SET_RATE_UNGATE);
++static struct ccu_sdm_setting pll_audio_sdm_table[] = {
++	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
++	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
++};
++
++static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
++				       "osc24M", 0x008,
++				       8, 7,	/* N */
++				       0, 5,	/* M */
++				       pll_audio_sdm_table, BIT(24),
++				       0x284, BIT(31),
++				       BIT(31),	/* gate */
++				       BIT(28),	/* lock */
++				       CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+ 					"osc24M", 0x010,
+@@ -538,9 +550,9 @@ static struct ccu_common *sun8i_a23_ccu_clks[] = {
+ 	&ats_clk.common,
+ };
+ 
+-/* We hardcode the divider to 4 for now */
++/* We hardcode the divider to 1 for now */
+ static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
+-			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
++			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
+ 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
+@@ -720,10 +732,10 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
+ 		return;
+ 	}
+ 
+-	/* Force the PLL-Audio-1x divider to 4 */
++	/* Force the PLL-Audio-1x divider to 1 */
+ 	val = readl(reg + SUN8I_A23_PLL_AUDIO_REG);
+ 	val &= ~GENMASK(19, 16);
+-	writel(val | (3 << 16), reg + SUN8I_A23_PLL_AUDIO_REG);
++	writel(val | (0 << 16), reg + SUN8I_A23_PLL_AUDIO_REG);
+ 
+ 	/* Force PLL-MIPI to MIPI mode */
+ 	val = readl(reg + SUN8I_A23_PLL_MIPI_REG);
 -- 
 2.14.2
-
