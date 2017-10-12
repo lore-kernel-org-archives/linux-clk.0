@@ -1,371 +1,135 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:56589 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754060AbdJPPev (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2017 11:34:51 -0400
-Received: by mail-wm0-f49.google.com with SMTP id l68so4586507wmd.5
-        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2017 08:34:50 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: meson: gxbb: Add VPU and VAPB clocks data
-Date: Mon, 16 Oct 2017 17:34:45 +0200
-Message-Id: <1508168085-19032-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-References: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	architt@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 3/3] clk: qcom: mmcc-msm8996: leave all mmagic gdscs and clocks always enabled
+Date: Thu, 12 Oct 2017 12:28:49 +0530
+Message-Id: <1507791529-24353-4-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1507791529-24353-1-git-send-email-rnayak@codeaurora.org>
+References: <1507791529-24353-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Amlogic Meson GX SoCs needs these two clocks to power up the
-VPU power domain.
+There's no bus infrastructure today to handle all the mmagic bus
+clocks and GDSCs needed by all the multimedia blocks in msm8996, like
+mdss, video, camera and gpu. Mark all these clocks with a CLK_IS_CRITICAL
+and GDSCs with a ALWAYS_ON flag for now so they are left always enabled.
+This patch should be reverted at some point when we do have a bus driver
+to manage these clocks and GDSCs.
 
-These two clocks are similar to the MALI clocks by having a glitch-free
-mux and two similar clocks with gate, divider and muxes.
-
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/clk/meson/gxbb.c | 292 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 292 insertions(+)
+ drivers/clk/qcom/mmcc-msm8996.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index b2d1e8e..a713744 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1131,6 +1131,253 @@ static struct clk_gate gxbb_sd_emmc_c_clk0 = {
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 352394d..3ba37f3 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -1229,7 +1229,7 @@ enum {
+ 			.name = "mmss_mmagic_ahb_clk",
+ 			.parent_names = (const char *[]){ "ahb_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
  	},
- };
- 
-+/* VPU Clock */
-+
-+static u32 mux_table_vpu[] = {0, 1, 2, 3};
-+static const char * const gxbb_vpu_parent_names[] = {
-+	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
-+};
-+
-+static struct clk_mux gxbb_vpu_0_sel = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 9,
-+	.lock = &clk_lock,
-+	.table = mux_table_vpu,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vpu_0_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 9:10 selects from 4 possible parents:
-+		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
-+		 */
-+		.parent_names = gxbb_vpu_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_vpu_parent_names),
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_divider gxbb_vpu_0_div = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.shift = 0,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vpu_0_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "vpu_0_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_gate gxbb_vpu_0 = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vpu_0",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "vpu_0_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_mux gxbb_vpu_1_sel = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 25,
-+	.lock = &clk_lock,
-+	.table = mux_table_vpu,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vpu_1_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 25:26 selects from 4 possible parents:
-+		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
-+		 */
-+		.parent_names = gxbb_vpu_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_vpu_parent_names),
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_divider gxbb_vpu_1_div = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.shift = 16,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vpu_1_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "vpu_1_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_gate gxbb_vpu_1 = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vpu_1",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "vpu_1_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_mux gxbb_vpu = {
-+	.reg = (void *)HHI_VPU_CLK_CNTL,
-+	.mask = 1,
-+	.shift = 31,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vpu",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bit 31 selects from 2 possible parents:
-+		 * vpu_0 or vpu_1
-+		 */
-+		.parent_names = (const char *[]){ "vpu_0", "vpu_1" },
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+/* VAPB Clock */
-+
-+static u32 mux_table_vapb[] = {0, 1, 2, 3};
-+static const char * const gxbb_vapb_parent_names[] = {
-+	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
-+};
-+
-+static struct clk_mux gxbb_vapb_0_sel = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 9,
-+	.lock = &clk_lock,
-+	.table = mux_table_vapb,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vapb_0_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 9:10 selects from 4 possible parents:
-+		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
-+		 */
-+		.parent_names = gxbb_vapb_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_vapb_parent_names),
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_divider gxbb_vapb_0_div = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.shift = 0,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vapb_0_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "vapb_0_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_gate gxbb_vapb_0 = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vapb_0",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "vapb_0_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_mux gxbb_vapb_1_sel = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 25,
-+	.lock = &clk_lock,
-+	.table = mux_table_vapb,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vapb_1_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 25:26 selects from 4 possible parents:
-+		 * fclk_div4, fclk_div3, fclk_div5, fclk_div7,
-+		 */
-+		.parent_names = gxbb_vapb_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_vapb_parent_names),
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_divider gxbb_vapb_1_div = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.shift = 16,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vapb_1_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "vapb_1_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_gate gxbb_vapb_1 = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vapb_1",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "vapb_1_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_mux gxbb_vapb_sel = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.mask = 1,
-+	.shift = 31,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vapb_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bit 31 selects from 2 possible parents:
-+		 * vapb_0 or vapb_1
-+		 */
-+		.parent_names = (const char *[]){ "vapb_0", "vapb_1" },
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_gate gxbb_vapb = {
-+	.reg = (void *)HHI_VAPBCLK_CNTL,
-+	.bit_idx = 30,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vapb",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "vapb_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -1349,6 +1596,21 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
- 		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
- 		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
-+		[CLKID_VPU_0_SEL]	    = &gxbb_vpu_0_sel.hw,
-+		[CLKID_VPU_0_DIV]	    = &gxbb_vpu_0_div.hw,
-+		[CLKID_VPU_0]		    = &gxbb_vpu_0.hw,
-+		[CLKID_VPU_1_SEL]	    = &gxbb_vpu_1_sel.hw,
-+		[CLKID_VPU_1_DIV]	    = &gxbb_vpu_1_div.hw,
-+		[CLKID_VPU_1]		    = &gxbb_vpu_1.hw,
-+		[CLKID_VPU]		    = &gxbb_vpu.hw,
-+		[CLKID_VAPB_0_SEL]	    = &gxbb_vapb_0_sel.hw,
-+		[CLKID_VAPB_0_DIV]	    = &gxbb_vapb_0_div.hw,
-+		[CLKID_VAPB_0]		    = &gxbb_vapb_0.hw,
-+		[CLKID_VAPB_1_SEL]	    = &gxbb_vapb_1_sel.hw,
-+		[CLKID_VAPB_1_DIV]	    = &gxbb_vapb_1_div.hw,
-+		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
-+		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
-+		[CLKID_VAPB]		    = &gxbb_vapb.hw,
- 		[NR_CLKS]		    = NULL,
+@@ -1244,7 +1244,7 @@ enum {
+ 			.name = "mmss_mmagic_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "ahb_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
  	},
- 	.num = NR_CLKS,
-@@ -1481,6 +1743,21 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
- 		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
- 		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
-+		[CLKID_VPU_0_SEL]	    = &gxbb_vpu_0_sel.hw,
-+		[CLKID_VPU_0_DIV]	    = &gxbb_vpu_0_div.hw,
-+		[CLKID_VPU_0]		    = &gxbb_vpu_0.hw,
-+		[CLKID_VPU_1_SEL]	    = &gxbb_vpu_1_sel.hw,
-+		[CLKID_VPU_1_DIV]	    = &gxbb_vpu_1_div.hw,
-+		[CLKID_VPU_1]		    = &gxbb_vpu_1.hw,
-+		[CLKID_VPU]		    = &gxbb_vpu.hw,
-+		[CLKID_VAPB_0_SEL]	    = &gxbb_vapb_0_sel.hw,
-+		[CLKID_VAPB_0_DIV]	    = &gxbb_vapb_0_div.hw,
-+		[CLKID_VAPB_0]		    = &gxbb_vapb_0.hw,
-+		[CLKID_VAPB_1_SEL]	    = &gxbb_vapb_1_sel.hw,
-+		[CLKID_VAPB_1_DIV]	    = &gxbb_vapb_1_div.hw,
-+		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
-+		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
-+		[CLKID_VAPB]		    = &gxbb_vapb.hw,
- 		[NR_CLKS]		    = NULL,
+@@ -1303,7 +1303,7 @@ enum {
+ 			.name = "mmagic_camss_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
  	},
- 	.num = NR_CLKS,
-@@ -1600,6 +1877,11 @@ static struct clk_gate *const gxbb_clk_gates[] = {
- 	&gxbb_sd_emmc_a_clk0,
- 	&gxbb_sd_emmc_b_clk0,
- 	&gxbb_sd_emmc_c_clk0,
-+	&gxbb_vpu_0,
-+	&gxbb_vpu_1,
-+	&gxbb_vapb_0,
-+	&gxbb_vapb_1,
-+	&gxbb_vapb,
+@@ -1318,7 +1318,7 @@ enum {
+ 			.name = "mmagic_camss_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1423,7 +1423,7 @@ enum {
+ 			.name = "mmagic_mdss_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1438,7 +1438,7 @@ enum {
+ 			.name = "mmagic_mdss_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1513,7 +1513,7 @@ enum {
+ 			.name = "mmagic_video_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1528,7 +1528,7 @@ enum {
+ 			.name = "mmagic_video_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2903,7 +2903,7 @@ enum {
+ 		.name = "mmagic_video",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
  };
  
- static struct clk_mux *const gxbb_clk_muxes[] = {
-@@ -1615,6 +1897,12 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_sd_emmc_a_clk0_sel,
- 	&gxbb_sd_emmc_b_clk0_sel,
- 	&gxbb_sd_emmc_c_clk0_sel,
-+	&gxbb_vpu_0_sel,
-+	&gxbb_vpu_1_sel,
-+	&gxbb_vpu,
-+	&gxbb_vapb_0_sel,
-+	&gxbb_vapb_1_sel,
-+	&gxbb_vapb_sel,
+ static struct gdsc mmagic_mdss_gdsc = {
+@@ -2913,7 +2913,7 @@ enum {
+ 		.name = "mmagic_mdss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
  };
  
- static struct clk_divider *const gxbb_clk_dividers[] = {
-@@ -1627,6 +1915,10 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
- 	&gxbb_sd_emmc_a_clk0_div,
- 	&gxbb_sd_emmc_b_clk0_div,
- 	&gxbb_sd_emmc_c_clk0_div,
-+	&gxbb_vpu_0_div,
-+	&gxbb_vpu_1_div,
-+	&gxbb_vapb_0_div,
-+	&gxbb_vapb_1_div,
+ static struct gdsc mmagic_camss_gdsc = {
+@@ -2923,7 +2923,7 @@ enum {
+ 		.name = "mmagic_camss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
  };
  
- static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+ static struct gdsc venus_gdsc = {
 -- 
-2.7.4
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
