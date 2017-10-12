@@ -1,151 +1,123 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 15/27] dt-bindings: clk: add omap5 clkctrl definitions
-Date: Mon, 30 Oct 2017 15:04:33 +0200
-Message-ID: <1509368685-29112-16-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 4/9] clk: sunxi-ng: nm: Add support for sigma-delta modulation
+Date: Thu, 12 Oct 2017 16:37:00 +0800
+Message-Id: <20171012083705.24409-5-wens@csie.org>
+In-Reply-To: <20171012083705.24409-1-wens@csie.org>
+References: <20171012083705.24409-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Contains offsets for all omap5 clkctrl main and optional clocks.
+Some of the N-M-style clocks, namely the PLLs, support sigma-delta
+modulation to do fractional-N frequency synthesis. This is used in
+the audio PLL to generate the exact frequency the audio blocks need.
+These frequencies can not be generated with integer N-M factors.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- include/dt-bindings/clock/omap5.h | 118 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
- create mode 100644 include/dt-bindings/clock/omap5.h
+ drivers/clk/sunxi-ng/ccu_nm.c | 22 +++++++++++++++++++++-
+ drivers/clk/sunxi-ng/ccu_nm.h | 25 +++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/omap5.h b/include/dt-bindings/clock/omap5.h
-new file mode 100644
-index 0000000..f51821a
---- /dev/null
-+++ b/include/dt-bindings/clock/omap5.h
-@@ -0,0 +1,118 @@
-+/*
-+ * Copyright 2017 Texas Instruments, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __DT_BINDINGS_CLK_OMAP5_H
-+#define __DT_BINDINGS_CLK_OMAP5_H
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 84a5e7f17f6f..7620aa973a6e 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -90,6 +90,14 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
+ 	if (!m)
+ 		m++;
+ 
++	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm)) {
++		unsigned long rate =
++			ccu_sdm_helper_read_rate(&nm->common, &nm->sdm,
++						 m, n);
++		if (rate)
++			return rate;
++	}
 +
-+#define OMAP5_CLKCTRL_OFFSET	0x20
-+#define OMAP5_CLKCTRL_INDEX(offset)	((offset) - OMAP5_CLKCTRL_OFFSET)
+ 	return parent_rate * n / m;
+ }
+ 
+@@ -102,6 +110,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate))
+ 		return rate;
+ 
++	if (ccu_sdm_helper_has_rate(&nm->common, &nm->sdm, rate))
++		return rate;
 +
-+/* mpu clocks */
-+#define OMAP5_MPU_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
+ 	_nm.min_n = nm->n.min ?: 1;
+ 	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+@@ -143,7 +154,16 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+-	ccu_nm_find_best(parent_rate, rate, &_nm);
++	if (ccu_sdm_helper_has_rate(&nm->common, &nm->sdm, rate)) {
++		ccu_sdm_helper_enable(&nm->common, &nm->sdm, rate);
 +
-+/* dsp clocks */
-+#define OMAP5_MMU_DSP_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
++		/* Sigma delta modulation requires specific N and M factors */
++		ccu_sdm_helper_get_factors(&nm->common, &nm->sdm, rate,
++					   &_nm.m, &_nm.n);
++	} else {
++		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
++		ccu_nm_find_best(parent_rate, rate, &_nm);
++	}
+ 
+ 	spin_lock_irqsave(nm->common.lock, flags);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index e87fd186da78..c623b0c7a23c 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -20,6 +20,7 @@
+ #include "ccu_div.h"
+ #include "ccu_frac.h"
+ #include "ccu_mult.h"
++#include "ccu_sdm.h"
+ 
+ /*
+  * struct ccu_nm - Definition of an N-M clock
+@@ -33,10 +34,34 @@ struct ccu_nm {
+ 	struct ccu_mult_internal	n;
+ 	struct ccu_div_internal		m;
+ 	struct ccu_frac_internal	frac;
++	struct ccu_sdm_internal		sdm;
+ 
+ 	struct ccu_common	common;
+ };
+ 
++#define SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(_struct, _name, _parent, _reg,	\
++					_nshift, _nwidth,		\
++					_mshift, _mwidth,		\
++					_sdm_table, _sdm_en,		\
++					_sdm_reg, _sdm_reg_en,		\
++					_gate, _lock, _flags)		\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.sdm		= _SUNXI_CCU_SDM(_sdm_table, _sdm_en,	\
++						 _sdm_reg, _sdm_reg_en),\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_SIGMA_DELTA_MOD,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
 +
-+/* abe clocks */
-+#define OMAP5_L4_ABE_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+#define OMAP5_MCPDM_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+#define OMAP5_DMIC_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x38)
-+#define OMAP5_MCBSP1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x48)
-+#define OMAP5_MCBSP2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x50)
-+#define OMAP5_MCBSP3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x58)
-+#define OMAP5_TIMER5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x68)
-+#define OMAP5_TIMER6_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x70)
-+#define OMAP5_TIMER7_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x78)
-+#define OMAP5_TIMER8_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x80)
-+
-+/* l3main1 clocks */
-+#define OMAP5_L3_MAIN_1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+
-+/* l3main2 clocks */
-+#define OMAP5_L3_MAIN_2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+
-+/* ipu clocks */
-+#define OMAP5_MMU_IPU_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+
-+/* dma clocks */
-+#define OMAP5_DMA_SYSTEM_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+
-+/* emif clocks */
-+#define OMAP5_DMM_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+#define OMAP5_EMIF1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+#define OMAP5_EMIF2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x38)
-+
-+/* l4cfg clocks */
-+#define OMAP5_L4_CFG_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+#define OMAP5_SPINLOCK_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
-+#define OMAP5_MAILBOX_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+
-+/* l3instr clocks */
-+#define OMAP5_L3_MAIN_3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+#define OMAP5_L3_INSTR_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
-+
-+/* l4per clocks */
-+#define OMAP5_TIMER10_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
-+#define OMAP5_TIMER11_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+#define OMAP5_TIMER2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x38)
-+#define OMAP5_TIMER3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x40)
-+#define OMAP5_TIMER4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x48)
-+#define OMAP5_TIMER9_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x50)
-+#define OMAP5_GPIO2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x60)
-+#define OMAP5_GPIO3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x68)
-+#define OMAP5_GPIO4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x70)
-+#define OMAP5_GPIO5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x78)
-+#define OMAP5_GPIO6_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x80)
-+#define OMAP5_I2C1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xa0)
-+#define OMAP5_I2C2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xa8)
-+#define OMAP5_I2C3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xb0)
-+#define OMAP5_I2C4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xb8)
-+#define OMAP5_L4_PER_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xc0)
-+#define OMAP5_MCSPI1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xf0)
-+#define OMAP5_MCSPI2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xf8)
-+#define OMAP5_MCSPI3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x100)
-+#define OMAP5_MCSPI4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x108)
-+#define OMAP5_GPIO7_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x110)
-+#define OMAP5_GPIO8_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x118)
-+#define OMAP5_MMC3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x120)
-+#define OMAP5_MMC4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x128)
-+#define OMAP5_UART1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x140)
-+#define OMAP5_UART2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x148)
-+#define OMAP5_UART3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x150)
-+#define OMAP5_UART4_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x158)
-+#define OMAP5_MMC5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x160)
-+#define OMAP5_I2C5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x168)
-+#define OMAP5_UART5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x170)
-+#define OMAP5_UART6_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x178)
-+
-+/* dss clocks */
-+#define OMAP5_DSS_CORE_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+
-+/* l3init clocks */
-+#define OMAP5_MMC1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
-+#define OMAP5_MMC2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+#define OMAP5_USB_HOST_HS_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x58)
-+#define OMAP5_USB_TLL_HS_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x68)
-+#define OMAP5_SATA_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x88)
-+#define OMAP5_OCP2SCP1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xe0)
-+#define OMAP5_OCP2SCP3_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xe8)
-+#define OMAP5_USB_OTG_SS_CLKCTRL	OMAP5_CLKCTRL_INDEX(0xf0)
-+
-+/* wkupaon clocks */
-+#define OMAP5_L4_WKUP_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
-+#define OMAP5_WD_TIMER2_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
-+#define OMAP5_GPIO1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x38)
-+#define OMAP5_TIMER1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x40)
-+#define OMAP5_COUNTER_32K_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x50)
-+#define OMAP5_KBD_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x78)
-+
-+#endif
+ #define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 					 _nshift, _nwidth,		\
+ 					 _mshift, _mwidth,		\
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.14.2
