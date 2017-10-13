@@ -1,49 +1,75 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Fri, 27 Oct 2017 11:48:45 +0200
-Message-Id: <20171027094848.28365-4-o.rempel@pengutronix.de>
-In-Reply-To: <20171027094848.28365-1-o.rempel@pengutronix.de>
-References: <20171027094848.28365-1-o.rempel@pengutronix.de>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/4] drm: rcar-du: Add R8A7743 support
+Date: Fri, 13 Oct 2017 16:22:20 +0100
+Message-Id: <1507908142-13142-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export pm_power_off_prepare. It is needed to implement power off on
-Freescale/NXP iMX6 based boards with external power management
-integrated circuit (PMIC).
+Add support for the R8A7743 DU (which is very similar to the R8A7791 DU);
+it has 1 DPAD (RGB) output and 1 LVDS output.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- kernel/reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index bd30a973fe94..a6903bf772c7 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -49,6 +49,7 @@ int reboot_force;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index d2f29e6..3db5e8d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -34,6 +34,27 @@
+  * Device Information
   */
  
- void (*pm_power_off_prepare)(void);
-+EXPORT_SYMBOL(pm_power_off_prepare);
++static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
++	.gen = 2,
++	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
++		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
++	.num_crtcs = 2,
++	.routes = {
++		/*
++		 * R8A7743 has one RGB output and one LVDS output
++		 */
++		[RCAR_DU_OUTPUT_DPAD0] = {
++			.possible_crtcs = BIT(1) | BIT(0),
++			.port = 0,
++		},
++		[RCAR_DU_OUTPUT_LVDS0] = {
++			.possible_crtcs = BIT(0),
++			.port = 1,
++		},
++	},
++	.num_lvds = 1,
++};
++
+ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+ 	.gen = 2,
+ 	.features = 0,
+@@ -207,6 +228,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+ };
  
- /**
-  *	emergency_restart - reboot the system
+ static const struct of_device_id rcar_du_of_table[] = {
++	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+ 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+ 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+ 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
 -- 
-2.11.0
+2.7.4
