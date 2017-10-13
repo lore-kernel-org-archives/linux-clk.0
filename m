@@ -1,190 +1,476 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2 v3] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
-Date: Fri, 13 Oct 2017 13:59:17 +0200
-Message-Id: <20171013115917.9318-2-linus.walleij@linaro.org>
-In-Reply-To: <20171013115917.9318-1-linus.walleij@linaro.org>
-References: <20171013115917.9318-1-linus.walleij@linaro.org>
+Return-Path: <tirupath@codeaurora.org>
+Subject: Re: [PATCH V5] clk: qcom: Add spmi_pmic clock divider support
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+ andy.gross@linaro.org, david.brown@linaro.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+References: <1505817286-12445-1-git-send-email-tirupath@codeaurora.org>
+From: Tirupathi Reddy T <tirupath@codeaurora.org>
+Message-ID: <9d5af4da-4c6e-74c8-cf0e-4a480e817707@codeaurora.org>
+Date: Fri, 13 Oct 2017 09:46:17 +0530
+MIME-Version: 1.0
+In-Reply-To: <1505817286-12445-1-git-send-email-tirupath@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The RPM clocks were missing for MSM8660/APQ8060. For this to be
-completed we need to add a special fixed rate RPM clock that is used
-for the PLL4 on these SoCs. The rest of the clocks are pretty
-similar to the other supported platforms.
+Hi Stephen,
 
-The "active" clock pattern is mirrored in all the clocks. I guess
-that the PLL4 that clocks the LPASS is actually never used as
-"active only" since the low-power audio subsystem should be left
-on when the CPU goes to idle, so that it can be used as a stand-alone
-MP3 player type of device.
+Could you please pick the patch ?  All the comments given on older patch 
+sets were addressed and the patch is Acked-by Rob Herring.
 
-The PLL4 seems to be enabled only on behalf of the booting LPASS
-Hexagon - which will cast its own vote once its booted - and as
-such we only configure the active state (meaning both states will
-have same configuration). The result is that PLL4 will be on
-from prepare() to unprepare() regardless of what the application
-CPU does.
+Thanks
+Tirupathi
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Skip the "active" state on the special, fixed PLL4 clock, just
-  like the vendor tree does.
-- Move defines around a bit in the sort order that Bjorn wants
-  them.
-- Make the plain "pxo" parent of the fixed PLL4 clock, not
-  "pxo_board"
-ChangeLog v1->v2:
-- Add the small hunk to the clk_rpm_handoff() function that just
-  skip over this for the fixed PLL4 clock. This accidentally
-  ended up in another patch.
----
- drivers/clk/qcom/clk-rpm.c | 93 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index df3e5fe8442a..c60f61b10c7f 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -56,6 +56,18 @@
- 		},							      \
- 	}
- 
-+#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
-+	static struct clk_rpm _platform##_##_name = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rate = (r),						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_fixed_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "pxo" },	      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
-+
- #define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
- 	static struct clk_rpm _platform##_##_active;			      \
- 	static struct clk_rpm _platform##_##_name = {			      \
-@@ -143,6 +155,13 @@ static int clk_rpm_handoff(struct clk_rpm *r)
- 	int ret;
- 	u32 value = INT_MAX;
- 
-+	/*
-+	 * The vendor tree simply reads the status for this
-+	 * RPM clock.
-+	 */
-+	if (r->rpm_clk_id == QCOM_RPM_PLL_4)
-+		return 0;
-+
- 	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
- 			     r->rpm_clk_id, &value, 1);
- 	if (ret)
-@@ -269,6 +288,32 @@ static void clk_rpm_unprepare(struct clk_hw *hw)
- 	mutex_unlock(&rpm_clk_lock);
- }
- 
-+static int clk_rpm_fixed_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	u32 value = 1;
-+	int ret;
-+
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (!ret)
-+		r->enabled = true;
-+
-+	return ret;
-+}
-+
-+static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	u32 value = 0;
-+	int ret;
-+
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (!ret)
-+		r->enabled = false;
-+}
-+
- static int clk_rpm_set_rate(struct clk_hw *hw,
- 			    unsigned long rate, unsigned long parent_rate)
- {
-@@ -333,6 +378,13 @@ static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
- 	return r->rate;
- }
- 
-+static const struct clk_ops clk_rpm_fixed_ops = {
-+	.prepare	= clk_rpm_fixed_prepare,
-+	.unprepare	= clk_rpm_fixed_unprepare,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
-+};
-+
- static const struct clk_ops clk_rpm_ops = {
- 	.prepare	= clk_rpm_prepare,
- 	.unprepare	= clk_rpm_unprepare,
-@@ -348,6 +400,45 @@ static const struct clk_ops clk_rpm_branch_ops = {
- 	.recalc_rate	= clk_rpm_recalc_rate,
- };
- 
-+/* MSM8660/APQ8060 */
-+DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
-+DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-+DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
-+
-+static struct clk_rpm *msm8660_clks[] = {
-+	[RPM_APPS_FABRIC_CLK] = &msm8660_afab_clk,
-+	[RPM_APPS_FABRIC_A_CLK] = &msm8660_afab_a_clk,
-+	[RPM_SYS_FABRIC_CLK] = &msm8660_sfab_clk,
-+	[RPM_SYS_FABRIC_A_CLK] = &msm8660_sfab_a_clk,
-+	[RPM_MM_FABRIC_CLK] = &msm8660_mmfab_clk,
-+	[RPM_MM_FABRIC_A_CLK] = &msm8660_mmfab_a_clk,
-+	[RPM_DAYTONA_FABRIC_CLK] = &msm8660_daytona_clk,
-+	[RPM_DAYTONA_FABRIC_A_CLK] = &msm8660_daytona_a_clk,
-+	[RPM_SFPB_CLK] = &msm8660_sfpb_clk,
-+	[RPM_SFPB_A_CLK] = &msm8660_sfpb_a_clk,
-+	[RPM_CFPB_CLK] = &msm8660_cfpb_clk,
-+	[RPM_CFPB_A_CLK] = &msm8660_cfpb_a_clk,
-+	[RPM_MMFPB_CLK] = &msm8660_mmfpb_clk,
-+	[RPM_MMFPB_A_CLK] = &msm8660_mmfpb_a_clk,
-+	[RPM_SMI_CLK] = &msm8660_smi_clk,
-+	[RPM_SMI_A_CLK] = &msm8660_smi_a_clk,
-+	[RPM_EBI1_CLK] = &msm8660_ebi1_clk,
-+	[RPM_EBI1_A_CLK] = &msm8660_ebi1_a_clk,
-+	[RPM_PLL4_CLK] = &msm8660_pll4_clk,
-+};
-+
-+static const struct rpm_clk_desc rpm_clk_msm8660 = {
-+	.clks = msm8660_clks,
-+	.num_clks = ARRAY_SIZE(msm8660_clks),
-+};
-+
- /* apq8064 */
- DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
- DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-@@ -386,6 +477,8 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
- };
- 
- static const struct of_device_id rpm_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
-+	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
- 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
- 	{ }
- };
--- 
-2.13.5
+On 9/19/2017 4:04 PM, Tirupathi Reddy wrote:
+> Clkdiv module provides a clock output on the PMIC with CXO as
+> the source. This clock can be routed through PMIC GPIOs. Add
+> a device driver to configure this clkdiv module.
+>
+> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+> ---
+>   .../bindings/clock/clk-spmi-pmic-div.txt           |  56 ++++
+>   drivers/clk/qcom/Kconfig                           |   9 +
+>   drivers/clk/qcom/Makefile                          |   1 +
+>   drivers/clk/qcom/clk-spmi-pmic-div.c               | 343 +++++++++++++++++++++
+>   4 files changed, 409 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>   create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+> new file mode 100644
+> index 0000000..e37a136
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+> @@ -0,0 +1,56 @@
+> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
+> +
+> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
+> +These clocks are typically wired through alternate functions on
+> +gpio pins.
+> +
+> +=======================
+> +Properties
+> +=======================
+> +
+> +- compatible
+> +	Usage:      required
+> +	Value type: <string>
+> +	Definition: must be one of:
+> +		    "qcom,spmi-clkdiv"
+> +		    "qcom,pm8998-clkdiv"
+> +
+> +- reg
+> +	Usage:      required
+> +	Value type: <prop-encoded-array>
+> +	Definition: Addresses and sizes for the memory of this CLKDIV
+> +		    peripheral.
+> +
+> +- clocks:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: reference to the xo clock.
+> +
+> +- clock-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "xo".
+> +
+> +- clock-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: shall contain 1.
+> +
+> +=======
+> +Example
+> +=======
+> +
+> +pm8998_clk_divs: qcom,clock@5b00 {
+> +	compatible = "qcom,pm8998-clkdiv";
+> +	reg = <0x5b00>;
+> +	#clock-cells = <1>;
+> +	clocks = <&xo_board>;
+> +	clock-names = "xo";
+> +
+> +	assigned-clocks = <&pm8998_clk_divs 1>,
+> +			  <&pm8998_clk_divs 2>,
+> +			  <&pm8998_clk_divs 3>;
+> +	assigned-clock-rates = <9600000>,
+> +			       <9600000>,
+> +			       <9600000>;
+> +};
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 9f6c278..dd5b18e 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -196,3 +196,12 @@ config MSM_MMCC_8996
+>   	  Support for the multimedia clock controller on msm8996 devices.
+>   	  Say Y if you want to support multimedia devices such as display,
+>   	  graphics, video encode/decode, camera, etc.
+> +
+> +config SPMI_PMIC_CLKDIV
+> +	tristate "spmi pmic clkdiv driver"
+> +	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+> +	help
+> +	  This driver supports the clkdiv functionality on the Qualcomm
+> +	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+> +	  clkdiv outputs on the PMIC. These clocks are typically wired
+> +	  through alternate functions on gpio pins.
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 3f3aff2..4d4c62b 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -33,3 +33,4 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+>   obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+>   obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+>   obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+> +obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+> diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> new file mode 100644
+> index 0000000..af343ad
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> @@ -0,0 +1,343 @@
+> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/log2.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +
+> +#define REG_DIV_CTL1			0x43
+> +#define DIV_CTL1_DIV_FACTOR_MASK	GENMASK(2, 0)
+> +
+> +#define REG_EN_CTL			0x46
+> +#define REG_EN_MASK			BIT(7)
+> +
+> +#define ENABLE_DELAY_NS(cxo_ns, div)	((2 + 3 * div) * cxo_ns)
+> +#define DISABLE_DELAY_NS(cxo_ns, div)	((3 * div) * cxo_ns)
+> +
+> +#define CLK_SPMI_PMIC_DIV_OFFSET	1
+> +
+> +#define CLKDIV_XO_DIV_1_0		0
+> +#define CLKDIV_XO_DIV_1			1
+> +#define CLKDIV_XO_DIV_2			2
+> +#define CLKDIV_XO_DIV_4			3
+> +#define CLKDIV_XO_DIV_8			4
+> +#define CLKDIV_XO_DIV_16		5
+> +#define CLKDIV_XO_DIV_32		6
+> +#define CLKDIV_XO_DIV_64		7
+> +#define CLKDIV_MAX_ALLOWED		8
+> +
+> +struct clkdiv {
+> +	struct regmap		*regmap;
+> +	u16			base;
+> +	spinlock_t		lock;
+> +
+> +	/* clock properties */
+> +	struct clk_hw		hw;
+> +	unsigned int		div_factor;
+> +	unsigned int		cxo_period_ns;
+> +};
+> +
+> +static inline struct clkdiv *to_clkdiv(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct clkdiv, hw);
+> +}
+> +
+> +static inline unsigned int div_factor_to_div(unsigned int div_factor)
+> +{
+> +	if (div_factor == CLKDIV_XO_DIV_1_0)
+> +		return 1;
+> +
+> +	return 1 << (div_factor - CLK_SPMI_PMIC_DIV_OFFSET);
+> +}
+> +
+> +static inline unsigned int div_to_div_factor(unsigned int div)
+> +{
+> +	return min(ilog2(div) + CLK_SPMI_PMIC_DIV_OFFSET,
+> +		   CLKDIV_MAX_ALLOWED - 1);
+> +}
+> +
+> +static bool is_spmi_pmic_clkdiv_enabled(struct clkdiv *clkdiv)
+> +{
+> +	unsigned int val = 0;
+> +
+> +	regmap_read(clkdiv->regmap, clkdiv->base + REG_EN_CTL,
+> +			 &val);
+> +	return (val & REG_EN_MASK) ? true : false;
+> +}
+> +
+> +static int spmi_pmic_clkdiv_set_enable_state(struct clkdiv *clkdiv,
+> +			bool enable_state)
+> +{
+> +	int rc;
+> +
+> +	rc = regmap_update_bits(clkdiv->regmap, clkdiv->base + REG_EN_CTL,
+> +				REG_EN_MASK,
+> +				(enable_state == true) ? REG_EN_MASK : 0);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (enable_state == true)
+> +		ndelay(ENABLE_DELAY_NS(clkdiv->cxo_period_ns,
+> +				div_factor_to_div(clkdiv->div_factor)));
+> +	else
+> +		ndelay(DISABLE_DELAY_NS(clkdiv->cxo_period_ns,
+> +				div_factor_to_div(clkdiv->div_factor)));
+> +
+> +	return rc;
+> +}
+> +
+> +static int spmi_pmic_clkdiv_config_freq_div(struct clkdiv *clkdiv,
+> +			unsigned int div)
+> +{
+> +	unsigned int div_factor;
+> +	unsigned long flags;
+> +	bool enabled;
+> +	int rc;
+> +
+> +	div_factor = div_to_div_factor(div);
+> +
+> +	spin_lock_irqsave(&clkdiv->lock, flags);
+> +
+> +	enabled = is_spmi_pmic_clkdiv_enabled(clkdiv);
+> +	if (enabled) {
+> +		rc = spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+> +		if (rc)
+> +			goto fail;
+> +	}
+> +
+> +	rc = regmap_update_bits(clkdiv->regmap,
+> +				clkdiv->base + REG_DIV_CTL1,
+> +				DIV_CTL1_DIV_FACTOR_MASK, div_factor);
+> +	if (rc)
+> +		goto fail;
+> +
+> +	clkdiv->div_factor = div_factor;
+> +
+> +	if (enabled)
+> +		rc = spmi_pmic_clkdiv_set_enable_state(clkdiv, true);
+> +
+> +fail:
+> +	spin_unlock_irqrestore(&clkdiv->lock, flags);
+> +	return rc;
+> +}
+> +
+> +static int clk_spmi_pmic_div_enable(struct clk_hw *hw)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +	unsigned long flags;
+> +	int rc;
+> +
+> +	spin_lock_irqsave(&clkdiv->lock, flags);
+> +	rc = spmi_pmic_clkdiv_set_enable_state(clkdiv, true);
+> +	spin_unlock_irqrestore(&clkdiv->lock, flags);
+> +
+> +	return rc;
+> +}
+> +
+> +static void clk_spmi_pmic_div_disable(struct clk_hw *hw)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&clkdiv->lock, flags);
+> +	spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+> +	spin_unlock_irqrestore(&clkdiv->lock, flags);
+> +}
+> +
+> +static long clk_spmi_pmic_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			unsigned long *parent_rate)
+> +{
+> +	unsigned long new_rate;
+> +	unsigned int div, div_factor;
+> +
+> +	div = DIV_ROUND_UP(*parent_rate, rate);
+> +	div_factor = div_to_div_factor(div);
+> +	new_rate = *parent_rate / div_factor_to_div(div_factor);
+> +
+> +	return new_rate;
+> +}
+> +
+> +static unsigned long clk_spmi_pmic_div_recalc_rate(struct clk_hw *hw,
+> +			unsigned long parent_rate)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +	unsigned long rate;
+> +
+> +	rate = parent_rate / div_factor_to_div(clkdiv->div_factor);
+> +
+> +	return rate;
+> +}
+> +
+> +static int clk_spmi_pmic_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			unsigned long parent_rate)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +
+> +	return spmi_pmic_clkdiv_config_freq_div(clkdiv, parent_rate / rate);
+> +}
+> +
+> +static const struct clk_ops clk_spmi_pmic_div_ops = {
+> +	.enable = clk_spmi_pmic_div_enable,
+> +	.disable = clk_spmi_pmic_div_disable,
+> +	.set_rate = clk_spmi_pmic_div_set_rate,
+> +	.recalc_rate = clk_spmi_pmic_div_recalc_rate,
+> +	.round_rate = clk_spmi_pmic_div_round_rate,
+> +};
+> +
+> +struct spmi_pmic_div_clk_cc {
+> +	struct clk_hw	**div_clks;
+> +	int		nclks;
+> +};
+> +
+> +#define SPMI_PMIC_CLKDIV_MIN_INDEX	1
+> +
+> +static struct clk_hw *spmi_pmic_div_clk_hw_get(struct of_phandle_args *clkspec,
+> +				      void *data)
+> +{
+> +	struct spmi_pmic_div_clk_cc *clk_cc = data;
+> +	unsigned int idx = (clkspec->args[0] - SPMI_PMIC_CLKDIV_MIN_INDEX);
+> +
+> +	if (idx < 0 || idx >= clk_cc->nclks) {
+> +		pr_err("%s: index value %u is invalid; allowed range: [%d, %d]\n",
+> +		       __func__, clkspec->args[0], SPMI_PMIC_CLKDIV_MIN_INDEX,
+> +		       clk_cc->nclks);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return clk_cc->div_clks[idx];
+> +}
+> +
+> +#define SPMI_PMIC_DIV_CLK_SIZE		0x100
+> +
+> +static const struct of_device_id spmi_pmic_clkdiv_match_table[] = {
+> +	{
+> +		.compatible = "qcom,spmi-clkdiv",
+> +		.data =  (void *)(uintptr_t)1,		/* Generic */
+> +	},
+> +	{
+> +		.compatible = "qcom,pm8998-clkdiv",
+> +		.data =  (void *)(uintptr_t)3,		/* 3 div_clks */
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, spmi_pmic_clkdiv_match_table);
+> +
+> +static int spmi_pmic_clkdiv_probe(struct platform_device *pdev)
+> +{
+> +	struct spmi_pmic_div_clk_cc *clk_cc;
+> +	struct clk_init_data init = {};
+> +	struct clkdiv *clkdiv;
+> +	struct clk *cxo;
+> +	struct regmap *regmap;
+> +	struct device *dev = &pdev->dev;
+> +	const char *parent_name;
+> +	int nclks, i, rc, cxo_hz;
+> +	u32 start;
+> +
+> +	rc = of_property_read_u32(dev->of_node, "reg", &start);
+> +	if (rc < 0) {
+> +		dev_err(dev, "reg property reading failed\n");
+> +		return rc;
+> +	}
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap) {
+> +		dev_err(dev, "Couldn't get parent's regmap\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	nclks = (uintptr_t)of_match_node(spmi_pmic_clkdiv_match_table,
+> +					 dev->of_node)->data;
+> +
+> +	clkdiv = devm_kcalloc(dev, nclks, sizeof(*clkdiv), GFP_KERNEL);
+> +	if (!clkdiv)
+> +		return -ENOMEM;
+> +
+> +	clk_cc = devm_kzalloc(&pdev->dev, sizeof(*clk_cc), GFP_KERNEL);
+> +	if (!clk_cc)
+> +		return -ENOMEM;
+> +
+> +	clk_cc->div_clks = devm_kcalloc(&pdev->dev, nclks,
+> +					sizeof(*clk_cc->div_clks), GFP_KERNEL);
+> +	if (!clk_cc->div_clks)
+> +		return -ENOMEM;
+> +
+> +	cxo = clk_get(dev, "xo");
+> +	if (IS_ERR(cxo)) {
+> +		rc = PTR_ERR(cxo);
+> +		if (rc != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to get xo clock");
+> +		return rc;
+> +	}
+> +	cxo_hz = clk_get_rate(cxo);
+> +	clk_put(cxo);
+> +
+> +	parent_name = of_clk_get_parent_name(dev->of_node, 0);
+> +	if (!parent_name) {
+> +		dev_err(dev, "missing parent clock\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = parent_name ? 1 : 0;
+> +	init.ops = &clk_spmi_pmic_div_ops;
+> +	init.flags = 0;
+> +
+> +	for (i = 0; i < nclks; i++) {
+> +		spin_lock_init(&clkdiv[i].lock);
+> +		clkdiv[i].base = start + i * SPMI_PMIC_DIV_CLK_SIZE;
+> +		clkdiv[i].regmap = regmap;
+> +		clkdiv[i].cxo_period_ns = NSEC_PER_SEC / cxo_hz;
+> +		init.name = kasprintf(GFP_KERNEL, "div_clk%d", i + 1);
+> +		clkdiv[i].hw.init = &init;
+> +		rc = devm_clk_hw_register(dev, &clkdiv[i].hw);
+> +		kfree(init.name); /* clock framework made a copy of the name */
+> +		if (rc)
+> +			return rc;
+> +
+> +		clk_cc->div_clks[i] = &clkdiv[i].hw;
+> +	}
+> +
+> +	clk_cc->nclks = nclks;
+> +	rc = of_clk_add_hw_provider(pdev->dev.of_node, spmi_pmic_div_clk_hw_get,
+> +				    clk_cc);
+> +	return rc;
+> +}
+> +
+> +static int spmi_pmic_clkdiv_remove(struct platform_device *pdev)
+> +{
+> +	of_clk_del_provider(pdev->dev.of_node);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver spmi_pmic_clkdiv_driver = {
+> +	.driver		= {
+> +		.name	= "qcom,spmi-pmic-clkdiv",
+> +		.of_match_table = spmi_pmic_clkdiv_match_table,
+> +	},
+> +	.probe		= spmi_pmic_clkdiv_probe,
+> +	.remove		= spmi_pmic_clkdiv_remove,
+> +};
+> +module_platform_driver(spmi_pmic_clkdiv_driver);
+> +
+> +MODULE_DESCRIPTION("QCOM SPMI PMIC clkdiv driver");
+> +MODULE_LICENSE("GPL v2");
