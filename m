@@ -1,106 +1,92 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 03/27] clk: ti: add support for clkctrl aliases
-Date: Mon, 30 Oct 2017 15:04:21 +0200
-Message-ID: <1509368685-29112-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 1/4] dt-bindings: display: rcar-du: Document R8A774[35] DU
+Date: Fri, 13 Oct 2017 16:22:19 +0100
+Message-Id: <1507908142-13142-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-hwmod core still depends on certain clocks being found by name, so we
-need to add support for adding clkctrl clock aliases. This patch can
-be reverted when no longer needed by hwmod core code.
+Add device tree bindings for r8a7743 and r8a7745 DUs.
+r8a7743 DU is similar to the one from r8a7791, r8a7745 DU is similar
+to the one from r8a7794.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/ti/clk.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 55 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/display/renesas,du.txt     | 30 ++++++++++++----------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index e5a1c82..10a7045 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -108,18 +108,70 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 	struct device_node *node;
- 	struct clk *clk;
- 	struct of_phandle_args clkspec;
-+	char buf[64];
-+	char *ptr;
-+	char *tags[2];
-+	int i;
-+	int num_args;
-+	int ret;
-+	static bool clkctrl_nodes_missing;
-+	static bool has_clkctrl_data;
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index 4bbd1e9..c520226 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -3,6 +3,8 @@
+ Required Properties:
  
- 	for (c = oclks; c->node_name != NULL; c++) {
--		node = of_find_node_by_name(NULL, c->node_name);
-+		strcpy(buf, c->node_name);
-+		ptr = buf;
-+		for (i = 0; i < 2; i++)
-+			tags[i] = NULL;
-+		num_args = 0;
-+		while (*ptr) {
-+			if (*ptr == ':') {
-+				if (num_args >= 2) {
-+					pr_warn("Bad number of tags on %s\n",
-+						c->node_name);
-+					return;
-+				}
-+				tags[num_args++] = ptr + 1;
-+				*ptr = 0;
-+			}
-+			ptr++;
-+		}
-+
-+		if (num_args && clkctrl_nodes_missing)
-+			continue;
-+
-+		node = of_find_node_by_name(NULL, buf);
-+		if (num_args)
-+			node = of_find_node_by_name(node, "clk");
- 		clkspec.np = node;
-+		clkspec.args_count = num_args;
-+		for (i = 0; i < num_args; i++) {
-+			ret = kstrtoint(tags[i], i ? 10 : 16, clkspec.args + i);
-+			if (ret) {
-+				pr_warn("Bad tag in %s at %d: %s\n",
-+					c->node_name, i, tags[i]);
-+				return;
-+			}
-+		}
- 		clk = of_clk_get_from_provider(&clkspec);
+   - compatible: must be one of the following.
++    - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
++    - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
+     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
+     - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
+     - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
+@@ -27,10 +29,10 @@ Required Properties:
+   - clock-names: Name of the clocks. This property is model-dependent.
+     - R8A7779 uses a single functional clock. The clock doesn't need to be
+       named.
+-    - R8A779[0123456] use one functional clock per channel and one clock per
+-      LVDS encoder (if available). The functional clocks must be named "du.x"
+-      with "x" being the channel numerical index. The LVDS clocks must be
+-      named "lvds.x" with "x" being the LVDS encoder numerical index.
++    - R8A779[0123456] and R8A774[35] use one functional clock per channel and
++      one clock per LVDS encoder (if available). The functional clocks must be
++      named "du.x" with "x" being the channel numerical index. The LVDS clocks
++      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
+     - In addition to the functional and encoder clocks, all DU versions also
+       support externally supplied pixel clocks. Those clocks are optional.
+       When supplied they must be named "dclkin.x" with "x" being the input
+@@ -49,16 +51,18 @@ bindings specified in Documentation/devicetree/bindings/graph.txt.
+ The following table lists for each supported model the port number
+ corresponding to each DU output.
  
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
- 			clkdev_add(&c->lk);
- 		} else {
--			pr_warn("failed to lookup clock node %s\n",
--				c->node_name);
-+			if (num_args && !has_clkctrl_data) {
-+				if (of_find_compatible_node(NULL, NULL,
-+							    "ti,clkctrl")) {
-+					has_clkctrl_data = true;
-+				} else {
-+					clkctrl_nodes_missing = true;
-+
-+					pr_warn("missing clkctrl nodes, please update your dts.\n");
-+					continue;
-+				}
-+			}
-+
-+			pr_warn("failed to lookup clock node %s, ret=%ld\n",
-+				c->node_name, PTR_ERR(clk));
- 		}
- 	}
- }
+-		Port 0		Port1		Port2		Port3
++                      Port0          Port1          Port2          Port3
+ -----------------------------------------------------------------------------
+- R8A7779 (H1)	DPAD 0		DPAD 1		-		-
+- R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
+- R8A7791 (M2-W)	DPAD		LVDS 0		-		-
+- R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
+- R8A7793 (M2-N)	DPAD		LVDS 0		-		-
+- R8A7794 (E2)	DPAD 0		DPAD 1		-		-
+- R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
+- R8A7796 (M3-W)	DPAD		HDMI		LVDS		-
++ R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              -
++ R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              -
++ R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              -
++ R8A7790 (R-Car H2)   DPAD           LVDS 0         LVDS 1         -
++ R8A7791 (R-Car M2-W) DPAD           LVDS 0         -              -
++ R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              -
++ R8A7793 (R-Car M2-N) DPAD           LVDS 0         -              -
++ R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
++ R8A7795 (R-Car H3)   DPAD           HDMI 0         HDMI 1         LVDS
++ R8A7796 (R-Car M3-W) DPAD           HDMI           LVDS           -
+ 
+ 
+ Example: R8A7795 (R-Car H3) ES2.0 DU
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
