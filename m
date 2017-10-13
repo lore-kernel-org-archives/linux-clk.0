@@ -1,107 +1,76 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 5/9] clk: sunxi-ng: sun8i: h3: Use sigma-delta modulation for audio PLL
-Date: Thu, 12 Oct 2017 16:37:01 +0800
-Message-Id: <20171012083705.24409-6-wens@csie.org>
-In-Reply-To: <20171012083705.24409-1-wens@csie.org>
-References: <20171012083705.24409-1-wens@csie.org>
+Return-Path: <s.nawrocki@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
+	<mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, linux-samsung-soc
+	<linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for 4.15
+Message-id: <965b1a13-72a9-76a1-d5f5-5276944761cd@samsung.com>
+Date: Fri, 13 Oct 2017 14:27:00 +0200
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+References: <CGME20171013122704epcas2p205fdf3238de4a42ae773eb8a2c4b790d@epcas2p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The audio blocks require specific clock rates. Until now we were using
-the closest clock rate possible with integer N-M factors. This resulted
-in audio playback being slightly slower than it should be.
+Hi Stephen, Mike,
 
-The vendor kernel gets around this (for newer SoCs) by using sigma-delta
-modulation to generate a fractional-N factor. This patch copies the
-parameters for the H3.
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 38 ++++++++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 543c46d0e045..29bc0566b776 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -26,6 +26,7 @@
- #include "ccu_nkmp.h"
- #include "ccu_nm.h"
- #include "ccu_phase.h"
-+#include "ccu_sdm.h"
- 
- #include "ccu-sun8i-h3.h"
- 
-@@ -44,18 +45,29 @@ static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpux_clk, "pll-cpux",
-  * the base (2x, 4x and 8x), and one variable divider (the one true
-  * pll audio).
-  *
-- * We don't have any need for the variable divider for now, so we just
-- * hardcode it to match with the clock names
-+ * With sigma-delta modulation for fractional-N on the audio PLL,
-+ * we have to use specific dividers. This means the variable divider
-+ * can no longer be used, as the audio codec requests the exact clock
-+ * rates we support through this mechanism. So we now hard code the
-+ * variable divider to 1. This means the clock rates will no longer
-+ * match the clock names.
-  */
- #define SUN8I_H3_PLL_AUDIO_REG	0x008
- 
--static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
--				   "osc24M", 0x008,
--				   8, 7,	/* N */
--				   0, 5,	/* M */
--				   BIT(31),	/* gate */
--				   BIT(28),	/* lock */
--				   CLK_SET_RATE_UNGATE);
-+static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-+	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
-+	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
-+};
-+
-+static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
-+				       "osc24M", 0x008,
-+				       8, 7,	/* N */
-+				       0, 5,	/* M */
-+				       pll_audio_sdm_table, BIT(24),
-+				       0x284, BIT(31),
-+				       BIT(31),	/* gate */
-+				       BIT(28),	/* lock */
-+				       CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
- 					"osc24M", 0x0010,
-@@ -707,9 +719,9 @@ static struct ccu_common *sun50i_h5_ccu_clks[] = {
- 	&gpu_clk.common,
- };
- 
--/* We hardcode the divider to 4 for now */
-+/* We hardcode the divider to 1 for now */
- static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-+			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
- 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-@@ -1129,10 +1141,10 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN8I_H3_PLL_AUDIO_REG);
- 	val &= ~GENMASK(19, 16);
--	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
-+	writel(val | (0 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
- 
- 	sunxi_ccu_probe(node, reg, desc);
- 
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-samsung
+
+for you to fetch changes up to a4f21e9ceb5c81f5b297cabb98dac0b5c03bd4dc:
+
+  clk: samsung: Remove obsolete clkdev alias support (2017-10-09 11:34:03 +0200)
+
+----------------------------------------------------------------
+clk/samsung updates for v4.15
+
+Overall clk/samsung clean up and fixes. Removed remaining unused code
+after removal of exynos4212 SoC support; dropped internal data structure
+fields and related code for registering clkdev lookup entry for each
+possible clock object, clkdev aliases could still be defined if needed
+in a separate table; other minor fixes of the clock tree definitions.
+
+----------------------------------------------------------------
+Andrzej Pietrasiewicz (1):
+      clk: samsung: Fix m2m scaler clock on Exynos542x
+
+Marek Szyprowski (11):
+      clk: samsung: Properly propagate flags in __PLL macro
+      clk: samsung: Remove support for Exynos4212 SoCs in Exynos CLKOUT driver
+      clk: samsung: Remove support for obsolete Exynos4212 CPU clock
+      clk: samsung: Remove clkdev alias support in Exynos4 clk driver
+      clk: samsung: Remove double assignment of CLK_ARM_CLK in Exynos4 driver
+      clk: samsung: Remove clkdev alias support in Exynos5250 clk driver
+      clk: samsung: Drop useless alias in Exynos5420 clk driver
+      clk: samsung: Rework clkdev alias handling in Exynos5440 driver
+      clk: samsung: Rework clkdev alias handling in S3C2443 driver
+      clk: samsung: Add explicit MPLL, EPLL clkdev aliases in S3C2443 driver
+      clk: samsung: Remove obsolete clkdev alias support
+
+Markus Elfring (1):
+      clk: samsung: Delete a memory allocation error message in clk-cpu.c
+
+ drivers/clk/samsung/clk-cpu.c           |  2 -
+ drivers/clk/samsung/clk-exynos-clkout.c |  2 -
+ drivers/clk/samsung/clk-exynos4.c       | 82 ++++++-----------------------
+ drivers/clk/samsung/clk-exynos5250.c    | 18 +++----
+ drivers/clk/samsung/clk-exynos5420.c    |  5 +-
+ drivers/clk/samsung/clk-exynos5440.c    | 12 ++++-
+ drivers/clk/samsung/clk-pll.c           |  9 ----
+ drivers/clk/samsung/clk-s3c2443.c       | 16 +++---
+ drivers/clk/samsung/clk.c               | 33 ++----------
+ drivers/clk/samsung/clk.h               | 73 +++++--------------------
+ include/dt-bindings/clock/s3c2443.h     |  2 +
+ 11 files changed, 64 insertions(+), 190 deletions(-)
+
+
 -- 
-2.14.2
+Thanks,
+Sylwester
