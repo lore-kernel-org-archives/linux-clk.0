@@ -1,58 +1,40 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v5 7/9] soc: mediatek: add dependent clock jpgdec/audio for scpsys
-Date: Thu, 19 Oct 2017 10:48:48 +0800
-Message-ID: <1508381330-3700-8-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: uniphier: fix clock data for PXs3
+Date: Fri, 13 Oct 2017 21:54:46 +0900
+Message-Id: <1507899286-1953-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-There are dependent clock jpgdec/audio in scpsys on MT2712,
-and will exist three dependent clocks on MT2712 VDEC.
+Fix reg offsets of USB clocks.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Fixes: 736de651a836 ("clk: uniphier: add PXs3 clock data")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index ebee3e9..a4ece75 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -84,6 +84,8 @@ enum clk_id {
- 	CLK_ETHIF,
- 	CLK_VDEC,
- 	CLK_HIFSEL,
-+	CLK_JPGDEC,
-+	CLK_AUDIO,
- 	CLK_MAX,
- };
- 
-@@ -96,10 +98,12 @@ enum clk_id {
- 	"ethif",
- 	"vdec",
- 	"hif_sel",
-+	"jpgdec",
-+	"audio",
- 	NULL,
- };
- 
--#define MAX_CLKS	2
-+#define MAX_CLKS	3
- 
- struct scp_domain_data {
- 	const char *name;
+ drivers/clk/uniphier/clk-uniphier-sys.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index acdba08..bea1327 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -312,9 +312,9 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
+ 	UNIPHIER_LD20_SYS_CLK_SD,
+ 	UNIPHIER_LD11_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
+-	UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x2104, 4),	/* =GIO0 */
+-	UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x2104, 5),	/* =GIO1 */
+-	UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x2104, 6),	/* =GIO1-1 */
++	UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x210c, 4),	/* =GIO0 */
++	UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x210c, 5),	/* =GIO1 */
++	UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x210c, 6),	/* =GIO1-1 */
+ 	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 16),
+ 	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 18),
+ 	UNIPHIER_CLK_GATE("usb30-phy2", 18, NULL, 0x210c, 20),
 -- 
-1.9.1
+2.7.4
