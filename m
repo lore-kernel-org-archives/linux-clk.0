@@ -1,38 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54485 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752146AbdJTIky (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Oct 2017 04:40:54 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r68so1298382wmr.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Oct 2017 01:40:54 -0700 (PDT)
-Subject: Re: [PATCH 0/2] clk: meson: gxbb: Add VPU and VAPB clocks
-To: jbrunet@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <1c908eb9-a7ea-b083-d52a-e017f4ca997f@baylibre.com>
-Date: Fri, 20 Oct 2017 10:40:52 +0200
+Return-Path: <xuwei5@hisilicon.com>
+Subject: Re: [PATCH 0/2] Add support for Hi6220 coresight
+To: Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
+ <20170901013301.GN21656@codeaurora.org> <20171007121802.GC23080@leoy-linaro>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Li Pengcheng
+	<lipengcheng8@huawei.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <59E07FDE.40307@hisilicon.com>
+Date: Fri, 13 Oct 2017 09:57:02 +0100
 MIME-Version: 1.0
-In-Reply-To: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171007121802.GC23080@leoy-linaro>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16/10/2017 17:34, Neil Armstrong wrote:
-> This patchset adds the VPU and VAPB clocks used to feed the Amlogic Meson
-> GX SoC Video Processing Unit and it's power domain.
-> 
-> Neil Armstrong (2):
->   clk: meson: gxbb: Add VPU and VAPB clockids
->   clk: meson: gxbb: Add VPU and VAPB clocks data
-> 
->  drivers/clk/meson/gxbb.c              | 292 ++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/gxbb.h              |   6 +-
->  include/dt-bindings/clock/gxbb-clkc.h |  11 ++
->  3 files changed, 308 insertions(+), 1 deletion(-)
-> 
+Hi Leo,
 
-Applied to next/headers and next/drivers with removal of CLK_IGNORE_UNUSED for muxes and dividers.
+On 2017/10/7 13:18, Leo Yan wrote:
+> Hi Stephen, Wei,
+> 
+> On Thu, Aug 31, 2017 at 06:33:01PM -0700, Stephen Boyd wrote:
+>> On 09/01, Leo Yan wrote:
+>>> This patch series adds support for coresight on Hi6220; the first patch
+>>> is to fix coresight PLL so can avoid system hang after we enable
+>>> coresight, the second patch is to add DT binding according to coresight
+>>> topology.
+>>>
+>>> The patch has been tested on Hikey; By using OpenCSD snapshot mode, it
+>>> can successfully decode ETF and ETB trace data.
+>>>
+>>
+>> I can take the first one and second one goes through arm-soc?
+> 
+> Could you pick these two patches for Hi6220 coresight enabling for
+> this merge window? Or need me resend these two patches?
 
-Neil
+Applied patch 2 into hisilicon dt tree with slight fix.
+Thanks!
+
+BR,
+Wei
+
+> 
+> Thanks,
+> Leo Yan
+> 
+> .
+> 
