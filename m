@@ -1,28 +1,34 @@
-Return-Path: <arndbergmann@gmail.com>
+Return-Path: <sergej@taudac.com>
+Subject: Re: [RFC PATCH v1] clk: si5351: Rename internal plls to avoid name
+ collisions
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ Rabeeh Khoury <rabeeh@solid-run.com>
+References: <1501017662-9239-1-git-send-email-sergej@taudac.com>
+ <20171012225135.GG18706@codeaurora.org>
+From: Sergej Sawazki <sergej@taudac.com>
+Message-ID: <cc9554f5-4843-4f8e-7cb5-814b151605d3@taudac.com>
+Date: Sat, 14 Oct 2017 11:12:57 +0200
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20171005172207.GD457@codeaurora.org>
-References: <20171005121301.584338-1-arnd@arndb.de> <20171005172207.GD457@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 5 Oct 2017 22:31:02 +0200
-Message-ID: <CAK8P3a0Cyr-+pRecB4Exe1F7Cz6ijisNjoyRWisLjAU_utH2Hw@mail.gmail.com>
-Subject: Re: [PATCH] clk: export clk_bulk_prepare
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Jeremy McNicoll <jeremymc@redhat.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171012225135.GG18706@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 5, 2017 at 7:22 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/05, Arnd Bergmann wrote:
->> The ARM allmodconfig build fails in linux-next, since one
->
-> Which version of linux-next? I merged a patch for this already
-> and pushed it out a day or two ago.
+Am 13.10.2017 um 00:51 schrieb Stephen Boyd:
+> On 07/25, Sergej Sawazki wrote:
+>> This drivers probe fails due to a clock name collision if a clock named
+>> 'plla' or 'pllb' is already registered when registering this drivers
+>> internal plls.
+>>
+>> Fix it by renaming internal plls to avoid name collisions.
 
-I used the latest linux-next, which unfortunately is a few days old by now,
-just ignore my patch then.
+> 
+> Is this needed still? I was expecting Sebastian to review.
+> 
 
-      Arnd
+Yes, it is still needed. Can't use the driver on raspberry pi due to a
+name collision -- clock names "plla, pllb, plls, plld, pllh" already
+used.
+
+Sergej
