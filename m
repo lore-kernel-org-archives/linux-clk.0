@@ -1,69 +1,126 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Mon, 16 Oct 2017 17:15:18 +0200
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 10/10] [RFC] sh_eth: Remove obsolete explicit clock
+ handling for WoL
+Message-ID: <20171016151518.GE19910@bigcity.dyn.berto.se>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20170527200008.GM12920@tuxbook>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-3-linus.walleij@linaro.org> <20170527200008.GM12920@tuxbook>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 13 Oct 2017 13:50:08 +0200
-Message-ID: <CACRpkdZvWeN8qwW_S8V-owJ0HJt5npFz7GHAYzcA_ke6agXAVA@mail.gmail.com>
-Subject: Re: [PATCH 3/5 v2] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 10:00 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
+Hi Geert,
 
->> The "active" clock pattern is mirrored in all the clocks. I guess
->> that the PLL4 that clocks the LPASS is actually never used as
->> "active only" since the low-power audio subsystem should be left
->> on when the system suspends, so it can be used as a stand-alone
->> MP3 player type of device.
->>
->> As we do not have firmware for the LPASS we will probably only use
->> this clock when the system is up and running (not suspended) for now,
->> so that will be using the "active" clock.
->>
->
-> Note that "active" vs "sleep" is not related to the Linux suspend state,
-> but rather the CPU idle state; at the bottom of the CPU idle path the
-> RPM will react and reconfigure resources to their sleep state (if one is
-> configured) and then reconfigured based on the active state before
-> returning from the idle.
->
-> The PLL4 seems to be enabled only on behalf of the booting LPASS Hexagon
-> - which will cast its own vote once its booted - and as such we only
-> configure the active state (meaning both states will have same
-> configuration).  The result is that PLL4 will be on from prepare() to
-> unprepare() regardless of what the application CPU does.
+On 2017-10-16 15:55:16 +0200, Geert Uytterhoeven wrote:
+> Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+> suspend" and "clk: renesas: mstp: Keep wakeup sources active during
+> system suspend", this workaround is no longer needed.  Hence remove all
+> explicit clock handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-OK I copy/pasted some of this into my commit message and cut
-the "active" clock from PLL4.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
->> +#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)           \
->
-> Is there a reason why you don't use DEFINE_CLK_RPM_PXO_BRANCH() for
-> PLL4?
+> ---
+> This must not be applied before the dependency has landed upstream,
+> hence the "RFC"!
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c | 18 +++---------------
+>  1 file changed, 3 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index d2e88a30f57bb4c5..8ea4d0cc325baeca 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -40,7 +40,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/ethtool.h>
+>  #include <linux/if_vlan.h>
+> -#include <linux/clk.h>
+>  #include <linux/sh_eth.h>
+>  #include <linux/of_mdio.h>
+>  
+> @@ -2293,7 +2292,7 @@ static void sh_eth_get_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+>  	wol->supported = 0;
+>  	wol->wolopts = 0;
+>  
+> -	if (mdp->cd->magic && mdp->clk) {
+> +	if (mdp->cd->magic) {
+>  		wol->supported = WAKE_MAGIC;
+>  		wol->wolopts = mdp->wol_enabled ? WAKE_MAGIC : 0;
+>  	}
+> @@ -2303,7 +2302,7 @@ static int sh_eth_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+>  {
+>  	struct sh_eth_private *mdp = netdev_priv(ndev);
+>  
+> -	if (!mdp->cd->magic || !mdp->clk || wol->wolopts & ~WAKE_MAGIC)
+> +	if (!mdp->cd->magic || wol->wolopts & ~WAKE_MAGIC)
+>  		return -EOPNOTSUPP;
+>  
+>  	mdp->wol_enabled = !!(wol->wolopts & WAKE_MAGIC);
+> @@ -3144,11 +3143,6 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+>  		goto out_release;
+>  	}
+>  
+> -	/* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
+> -	mdp->clk = devm_clk_get(&pdev->dev, NULL);
+> -	if (IS_ERR(mdp->clk))
+> -		mdp->clk = NULL;
+> -
+>  	ndev->base_addr = res->start;
+>  
+>  	spin_lock_init(&mdp->lock);
+> @@ -3251,7 +3245,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto out_napi_del;
+>  
+> -	if (mdp->cd->magic && mdp->clk)
+> +	if (mdp->cd->magic)
+>  		device_set_wakeup_capable(&pdev->dev, 1);
+>  
+>  	/* print device information */
+> @@ -3305,9 +3299,6 @@ static int sh_eth_wol_setup(struct net_device *ndev)
+>  	/* Enable MagicPacket */
+>  	sh_eth_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
+>  
+> -	/* Increased clock usage so device won't be suspended */
+> -	clk_enable(mdp->clk);
+> -
+>  	return enable_irq_wake(ndev->irq);
+>  }
+>  
+> @@ -3333,9 +3324,6 @@ static int sh_eth_wol_restore(struct net_device *ndev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Restore clock usage count */
+> -	clk_disable(mdp->clk);
+> -
+>  	return disable_irq_wake(ndev->irq);
+>  }
+>  
+> -- 
+> 2.7.4
+> 
 
-So it is (I think as concluded from the other mail) a pretty hardwired
-PLL that can only be turned on and off.
-
-#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)
-
-This macro presupposes an _active variant, so it's not really
-working :/
-
-Nothing in the driver is using this macro however, it seems like
-it was defined for some missing piece.
-
-How do you feel about if I simply update that macro and
-cut the _active version then?
-
-Or should I create a new DEFINE_CLK_RPM_PXO_BRANCH_FIXED()?
-
-Yours,
-Linus Walleij
+-- 
+Regards,
+Niklas Söderlund
