@@ -1,64 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39489 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750767AbdJCGDI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 02:03:08 -0400
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <ec302c3d-c120-320a-dd58-4d26a9294907@samsung.com>
-Date: Tue, 03 Oct 2017 08:03:02 +0200
-MIME-version: 1.0
-In-reply-to: <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
-        <20171002104759.25944-1-m.szyprowski@samsung.com>
-        <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 4/4] drm: rcar-du: Add R8A7745 support
+Date: Mon, 16 Oct 2017 15:36:40 +0300
+Message-ID: <2922323.urz8JTfWKj@avalon>
+In-Reply-To: <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com> <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+Hi Fabrizio,
 
-On 2017-10-02 19:36, Krzysztof Kozlowski wrote:
-> On Mon, Oct 02, 2017 at 12:47:55PM +0200, Marek Szyprowski wrote:
->> Exynos4412 ISP clock controller is located in the SOC area, which belongs
->> to ISP power domain. This was not properly handled by the current
->> Exynos4-clk driver. This patchset instantiates a separate clock driver
->> for those clocks, updates all clients of ISP clocks and ensures that
->> the driver is properly integrated in ISP power domin using runtime PM
->> feature of the clock framework.
->>
->> This finally solves all the mysterious freezes in accessing ISP clocks
->> when ISP power domain is disabled.
->>
->> The last patch breaks support for old dtbs. It can be applied when all
->> boards are updated. Exynos4412 ISP subsystem is only used by Trats2
->> boards, for which kernel is updated always together with the dtb file,
->> so the last patch can be applied to the next kernel release after merging
->> the DTS patch.
-> I am fine with this approach. However I see that third patch (dts)
-> depends on previous so it will also wait one cycle. arm-soc folks for
-> some time do not accept code mixed with dts.
->
-> Unless you can split dts into two patches: adding new clock controller
-> and removing old. In such case the new clock could be applied in
-> parallel to clk code changes.
+Thank you for the patch.
 
-DTS patch cannot be split into two patches without breaking ISP support,
-because adding a new clock controller requires changes in the clients and
-register resource size of the old one, so either old or new one has to be
-fully defined. If arm-soc cannot pull mixed branches, then I'm okay with
-postponing DTS changes by one release.
+On Friday, 13 October 2017 18:22:22 EEST Fabrizio Castro wrote:
+> Add support for the R8A7745 DU (which is very similar to the R8A7794 DU);
+> it has 2 RGB outputs.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
- > ...
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Best regards
+and taken in my tree.
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 3db5e8d..faa5b32 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -55,6 +55,27 @@ static const struct rcar_du_device_info
+> rzg1_du_r8a7743_info = { .num_lvds = 1,
+>  };
+> 
+> +static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+> +	.gen = 2,
+> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +	.num_crtcs = 2,
+> +	.routes = {
+> +		/*
+> +		 * R8A7745 has two RGB outputs
+> +		 */
+> +		[RCAR_DU_OUTPUT_DPAD0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.port = 0,
+> +		},
+> +		[RCAR_DU_OUTPUT_DPAD1] = {
+> +			.possible_crtcs = BIT(1),
+> +			.port = 1,
+> +		},
+> +	},
+> +	.num_lvds = 0,
+> +};
+> +
+>  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+>  	.gen = 2,
+>  	.features = 0,
+> @@ -229,6 +250,7 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7796_info = {
+> 
+>  static const struct of_device_id rcar_du_of_table[] = {
+>  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+> +	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+>  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+>  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+>  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Regards,
 
+Laurent Pinchart
