@@ -1,155 +1,171 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 17/23] arm: dts: sun8i: a83t: Add display pipeline
-Date: Tue, 17 Oct 2017 11:06:24 +0200
-Message-Id: <d83c9cb9a88677c97272e2b8c08d8f15a33391b7.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>,
- Mylene Josserand <mylene.josserand@free-electrons.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 3/5] clk: renesas: div6: Restore clock state during resume
+Date: Mon, 16 Oct 2017 10:36:52 +0200
+Message-Id: <1508143014-11795-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The display pipeline on the A83T is mainly composed of the mixers and
-TCONs, plus various encoders.
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register an (optional) notifier to restore the
+DIV6 clock state during system resume.
 
-Let's add the mixers and TCONs to the DTSI.
+As DIV6 clocks can be picky w.r.t. modifying multiple register fields at
+once, restore is not implemented by blindly restoring the register
+value, but by using the existing cpg_div6_clock_{en,dis}able() helpers.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Note that this does not yet support DIV6 clocks with multiple parents,
+which do not exist on R-Car Gen3 SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 80 ++++++++++++++++++++++++++++++++-
- 1 file changed, 80 insertions(+)
+v3:
+  - Drop RFC state,
+  - Add Tested-by,
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index ce6e887c8938..57feeb6fee8b 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -151,6 +151,12 @@
- 		};
- 	};
+v2:
+  - New.
+---
+ drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++++++++++++++++++++++--
+ drivers/clk/renesas/clk-div6.h         |  3 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.c |  3 ++-
+ 3 files changed, 40 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 3e0040c0ac87a14b..151336d2ba59e689 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -14,8 +14,10 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/notifier.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-a83t-display-engine";
-+		allwinner,pipelines = <&mixer0>;
-+		status = "disabled";
-+	};
-+
- 	memory {
- 		reg = <0x40000000 0x80000000>;
- 		device_type = "memory";
-@@ -162,6 +168,46 @@
- 		#size-cells = <1>;
- 		ranges;
+ #include "clk-div6.h"
+@@ -32,6 +34,7 @@
+  * @src_shift: Shift to access the register bits to select the parent clock
+  * @src_width: Number of register bits to select the parent clock (may be 0)
+  * @parents: Array to map from valid parent clocks indices to hardware indices
++ * @nb: Notifier block to save/restore clock state for system resume
+  */
+ struct div6_clock {
+ 	struct clk_hw hw;
+@@ -40,6 +43,7 @@ struct div6_clock {
+ 	u32 src_shift;
+ 	u32 src_width;
+ 	u8 *parents;
++	struct notifier_block nb;
+ };
  
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun8i-a83t-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_PLL_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-a83t-de2-mixer";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&display_clocks 0>,
-+				 <&display_clocks 6>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks 0>;
-+			assigned-clocks = <&display_clocks 6>;
-+			assigned-clock-rates = <150000000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
-@@ -177,6 +223,40 @@
- 			#dma-cells = <1>;
- 		};
+ #define to_div6_clock(_hw) container_of(_hw, struct div6_clock, hw)
+@@ -176,6 +180,29 @@ static const struct clk_ops cpg_div6_clock_ops = {
+ 	.set_rate = cpg_div6_clock_set_rate,
+ };
  
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun8i-a83t-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-+			clock-names = "ahb", "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
-+			reset-names = "lcd", "lvds";
-+			status = "disabled";
++static int cpg_div6_clock_notifier_call(struct notifier_block *nb,
++					unsigned long action, void *data)
++{
++	struct div6_clock *clock = container_of(nb, struct div6_clock, nb);
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++	switch (action) {
++	case PM_EVENT_RESUME:
++		/*
++		 * TODO: This does not yet support DIV6 clocks with multiple
++		 * parents, as the parent selection bits are not restored.
++		 * Fortunately so far such DIV6 clocks are found only on
++		 * R/SH-Mobile SoCs, while the resume functionality is only
++		 * needed on R-Car Gen3.
++		 */
++		if (__clk_get_enable_count(clock->hw.clk))
++			cpg_div6_clock_enable(&clock->hw);
++		else
++			cpg_div6_clock_disable(&clock->hw);
++		return NOTIFY_OK;
++	}
 +
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
++	return NOTIFY_DONE;
++}
+ 
+ /**
+  * cpg_div6_register - Register a DIV6 clock
+@@ -183,11 +210,13 @@ static const struct clk_ops cpg_div6_clock_ops = {
+  * @num_parents: Number of parent clocks of the DIV6 clock (1, 4, or 8)
+  * @parent_names: Array containing the names of the parent clocks
+  * @reg: Mapped register used to control the DIV6 clock
++ * @notifiers: Optional notifier chain to save/restore state for system resume
+  */
+ struct clk * __init cpg_div6_register(const char *name,
+ 				      unsigned int num_parents,
+ 				      const char **parent_names,
+-				      void __iomem *reg)
++				      void __iomem *reg,
++				      struct raw_notifier_head *notifiers)
+ {
+ 	unsigned int valid_parents;
+ 	struct clk_init_data init;
+@@ -258,6 +287,11 @@ struct clk * __init cpg_div6_register(const char *name,
+ 	if (IS_ERR(clk))
+ 		goto free_parents;
+ 
++	if (notifiers) {
++		clock->nb.notifier_call = cpg_div6_clock_notifier_call;
++		raw_notifier_chain_register(notifiers, &clock->nb);
++	}
 +
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun8i-a83t-mmc",
- 				     "allwinner,sun7i-a20-mmc";
+ 	return clk;
+ 
+ free_parents:
+@@ -301,7 +335,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	for (i = 0; i < num_parents; i++)
+ 		parent_names[i] = of_clk_get_parent_name(np, i);
+ 
+-	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
++	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg, NULL);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
+ 		       __func__, np->name, PTR_ERR(clk));
+diff --git a/drivers/clk/renesas/clk-div6.h b/drivers/clk/renesas/clk-div6.h
+index 567b31d2bfa5269c..da4807299dda735b 100644
+--- a/drivers/clk/renesas/clk-div6.h
++++ b/drivers/clk/renesas/clk-div6.h
+@@ -2,6 +2,7 @@
+ #define __RENESAS_CLK_DIV6_H__
+ 
+ struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
+-			      const char **parent_names, void __iomem *reg);
++			      const char **parent_names, void __iomem *reg,
++			      struct raw_notifier_head *notifiers);
+ 
+ #endif
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 485dce00a562d919..e3d03ffea4bc2fd6 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -303,7 +303,8 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 
+ 		if (core->type == CLK_TYPE_DIV6P1) {
+ 			clk = cpg_div6_register(core->name, 1, &parent_name,
+-						priv->base + core->offset);
++						priv->base + core->offset,
++						&priv->notifiers);
+ 		} else {
+ 			clk = clk_register_fixed_factor(NULL, core->name,
+ 							parent_name, 0,
 -- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
