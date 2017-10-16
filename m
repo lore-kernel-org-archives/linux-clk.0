@@ -1,210 +1,87 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 4/5] clk: aspeed: Register gated clocks
-Date: Tue,  3 Oct 2017 17:25:39 +1030
-Message-Id: <20171003065540.11722-5-joel@jms.id.au>
-In-Reply-To: <20171003065540.11722-1-joel@jms.id.au>
-References: <20171003065540.11722-1-joel@jms.id.au>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Mon, 16 Oct 2017 17:14:08 +0200
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock
+ handling for WoL
+Message-ID: <20171016151408.GD19910@bigcity.dyn.berto.se>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The majority of the clocks in the system are gates paired with a reset
-controller that holds the IP in reset.
+Hi Geert,
 
-This borrows from clk_hw_register_gate, but registers two 'gates', one
-to control the clock enable register and the other to control the reset
-IP. This allows us to enforce the ordering:
+On 2017-10-16 15:55:15 +0200, Geert Uytterhoeven wrote:
+> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+> suspend", this workaround is no longer needed.  Hence remove all
+> explicit clock handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- 1. Place IP in reset
- 2. Enable clock
- 3. Delay
- 4. Release reset
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-There are some gates that do not have an associated reset; these are
-handled by using -1 as the index for the reset.
+> ---
+> This must not be applied before the dependency has landed upstream,
+> hence the "RFC"!
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index fdf30bfa403bf416..11ffccca11d56df5 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -2218,9 +2218,6 @@ static int ravb_wol_setup(struct net_device *ndev)
+>  	/* Enable MagicPacket */
+>  	ravb_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
+>  
+> -	/* Increased clock usage so device won't be suspended */
+> -	clk_enable(priv->clk);
+> -
+>  	return enable_irq_wake(priv->emac_irq);
+>  }
+>  
+> @@ -2239,9 +2236,6 @@ static int ravb_wol_restore(struct net_device *ndev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Restore clock usage count */
+> -	clk_disable(priv->clk);
+> -
+>  	return disable_irq_wake(priv->emac_irq);
+>  }
+>  
+> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
+>  		 *       this clock dance should be removed.
+>  		 */
+>  		clk_disable(priv->clk);
+> -		clk_disable(priv->clk);
+> -		clk_enable(priv->clk);
+>  		clk_enable(priv->clk);
+>  
+>  		/* Set reset mode to rearm the WoL logic */
+> -- 
+> 2.7.4
+> 
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-
----
-v4:
- - Drop useless 'disable clock' comment
- - Drop CLK_IS_BASIC flag
- - Fix 'there are a number of clocks...' comment
- - Pass device to clk registration functions
- - Check for errors when registering clk_hws
-v3:
- - Remove gates offset as gates are now at the start of the list
----
- drivers/clk/clk-aspeed.c | 130 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 130 insertions(+)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index adb295292189..a424b056e767 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -228,6 +228,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
- 	.calc_pll = aspeed_ast2400_calc_pll,
- };
- 
-+static int aspeed_clk_enable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 rst = BIT(gate->reset_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Put IP in reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-+
-+		/* Delay 100us */
-+		udelay(100);
-+	}
-+
-+	/* Enable clock */
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Delay 10ms */
-+		/* TODO: can we sleep here? */
-+		msleep(10);
-+
-+		/* Take IP out of reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
-+	}
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void aspeed_clk_disable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+}
-+
-+static int aspeed_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 reg;
-+
-+	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-+
-+	return (reg & clk) ? 0 : 1;
-+}
-+
-+static const struct clk_ops aspeed_clk_gate_ops = {
-+	.enable = aspeed_clk_enable,
-+	.disable = aspeed_clk_disable,
-+	.is_enabled = aspeed_clk_is_enabled,
-+};
-+
-+static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		struct regmap *map, u8 clock_idx, u8 reset_idx,
-+		u8 clk_gate_flags, spinlock_t *lock)
-+{
-+	struct aspeed_clk_gate *gate;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &aspeed_clk_gate_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->map = map;
-+	gate->clock_idx = clock_idx;
-+	gate->reset_idx = reset_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
- static int aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
-@@ -235,6 +336,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
-+	int i;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -323,6 +425,34 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/*
-+	 * TODO: There are a number of clocks that not included in this driver
-+	 * as more information is required:
-+	 *   D2-PLL
-+	 *   D-PLL
-+	 *   YCLK
-+	 *   RGMII
-+	 *   RMII
-+	 *   UART[1..5] clock source mux
-+	 */
-+
-+	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
-+		const struct aspeed_gate_data *gd = &aspeed_gates[i];
-+
-+		hw = aspeed_clk_hw_register_gate(dev,
-+				gd->name,
-+				gd->parent_name,
-+				gd->flags,
-+				map,
-+				gd->clock_idx,
-+				gd->reset_idx,
-+				CLK_GATE_SET_TO_DISABLE,
-+				&aspeed_clk_lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+		aspeed_clk_data->hws[i] = hw;
-+	}
-+
- 	return 0;
- };
- 
 -- 
-2.14.1
+Regards,
+Niklas Söderlund
