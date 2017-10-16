@@ -1,130 +1,62 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Thu, 19 Oct 2017 10:51:29 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <jonathanh@nvidia.com>,
-	<thierry.reding@gmail.com>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <pgaikwad@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: dfll: Fix drvdata overwriting issue
-Message-ID: <20171019075129.GO27164@tbergstrom-lnx.Nvidia.com>
-References: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 08/10] [RFC] soc: renesas: rcar-sysc: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Mon, 16 Oct 2017 15:55:14 +0200
+Message-Id: <1508162116-5043-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 12, 2017 at 04:09:59PM -0700, Nicolin Chen wrote:
-> Both tegra124-dfll and clk-dfll are using platform_set_drvdata
-> to set drvdata of the exact same pdev while they use different
-> pointers for the drvdata. Once the drvdata has been overwritten
-> by tegra124-dfll, clk-dfll will never get its td pointer as it
-> expects.
-> 
-> Since tegra124-dfll merely needs its soc pointer in its remove
-> function, this patch fixes the bug by removing the overwriting
-> in the tegra124-dfll file and letting the tegra_dfll_unregister
-> return an soc pointer for it.
-> 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own "always true" callback.
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This must not be applied before "PM / Domain: Enable genpd users to
+specify default active wakeup behavior" has landed upstream, hence the
+"RFC".
+---
+ drivers/soc/renesas/rcar-sysc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> ---
-> 
-> As I don't have a T124 platform, I can't verify it on a board.
-> If someone could provide a Tested-by, it would be very helpful.
-> The test could be a simple system suspend/resume that activates
-> runtime_suspend/resume() where a platform_get_drvdata() would
-> be called. -- Nicolin
-> 
->  drivers/clk/tegra/clk-dfll.c               | 10 +++++-----
->  drivers/clk/tegra/clk-dfll.h               |  2 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++++-------
->  3 files changed, 11 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 2c44aeb..0a7deee 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1728,10 +1728,10 @@ EXPORT_SYMBOL(tegra_dfll_register);
->   * @pdev: DFLL platform_device *
->   *
->   * Unbind this driver from the DFLL hardware device represented by
-> - * @pdev. The DFLL must be disabled for this to succeed. Returns 0
-> - * upon success or -EBUSY if the DFLL is still active.
-> + * @pdev. The DFLL must be disabled for this to succeed. Returns a
-> + * soc pointer upon success or -EBUSY if the DFLL is still active.
->   */
-> -int tegra_dfll_unregister(struct platform_device *pdev)
-> +struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev)
->  {
->  	struct tegra_dfll *td = platform_get_drvdata(pdev);
->  
-> @@ -1739,7 +1739,7 @@ int tegra_dfll_unregister(struct platform_device *pdev)
->  	if (td->mode != DFLL_DISABLED) {
->  		dev_err(&pdev->dev,
->  			"must disable DFLL before removing driver\n");
-> -		return -EBUSY;
-> +		return ERR_PTR(-EBUSY);
->  	}
->  
->  	debugfs_remove_recursive(td->debugfs_dir);
-> @@ -1753,6 +1753,6 @@ int tegra_dfll_unregister(struct platform_device *pdev)
->  
->  	reset_control_assert(td->dvco_rst);
->  
-> -	return 0;
-> +	return td->soc;
->  }
->  EXPORT_SYMBOL(tegra_dfll_unregister);
-> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-> index ed2ad88..83352c8 100644
-> --- a/drivers/clk/tegra/clk-dfll.h
-> +++ b/drivers/clk/tegra/clk-dfll.h
-> @@ -43,7 +43,7 @@ struct tegra_dfll_soc_data {
->  
->  int tegra_dfll_register(struct platform_device *pdev,
->  			struct tegra_dfll_soc_data *soc);
-> -int tegra_dfll_unregister(struct platform_device *pdev);
-> +struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
->  int tegra_dfll_runtime_suspend(struct device *dev);
->  int tegra_dfll_runtime_resume(struct device *dev);
->  
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index ad1c1cc..269d359 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -125,19 +125,17 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	platform_set_drvdata(pdev, soc);
-> -
->  	return 0;
->  }
->  
->  static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
->  {
-> -	struct tegra_dfll_soc_data *soc = platform_get_drvdata(pdev);
-> -	int err;
-> +	struct tegra_dfll_soc_data *soc;
->  
-> -	err = tegra_dfll_unregister(pdev);
-> -	if (err < 0)
-> -		dev_err(&pdev->dev, "failed to unregister DFLL: %d\n", err);
-> +	soc = tegra_dfll_unregister(pdev);
-> +	if (IS_ERR(soc))
-> +		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
-> +			PTR_ERR(soc));
->  
->  	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
->  
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index beb8b483a62abaca..ac4df1c43b2fbdbe 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -194,11 +194,6 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+ 
+ static bool has_cpg_mstp;
+ 
+-static bool rcar_sysc_pd_active_wakeup(struct device *dev)
+-{
+-	return true;
+-}
+-
+ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ {
+ 	struct generic_pm_domain *genpd = &pd->genpd;
+@@ -229,8 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 
+ 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
+ 		/* Enable Clock Domain for I/O devices */
+-		genpd->flags |= GENPD_FLAG_PM_CLK;
+-		genpd->dev_ops.active_wakeup = rcar_sysc_pd_active_wakeup;
++		genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 		if (has_cpg_mstp) {
+ 			genpd->attach_dev = cpg_mstp_attach_dev;
+ 			genpd->detach_dev = cpg_mstp_detach_dev;
+-- 
+2.7.4
