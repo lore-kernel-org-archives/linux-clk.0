@@ -1,75 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:46253 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbdJIHUD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Oct 2017 03:20:03 -0400
-Date: Mon, 9 Oct 2017 09:18:09 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/2] Add a regmap to Allwinner R40 CCU to export GMAC
- register
-Message-ID: <20171009071809.jte47cd2mt4iv6y7@flea.lan>
-References: <20171006063333.12345-1-icenowy@aosc.io>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1508136134.20464.49.camel@mtksdaap41>
+Subject: Re: [PATCH v4 0/9] Mediatek MT2712 clock and scpsys support
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date: Mon, 16 Oct 2017 14:42:14 +0800
+In-Reply-To: <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
+References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+         <20171012224540.GE18706@codeaurora.org>
+         <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ua2gcv3fsvd5brqe"
-In-Reply-To: <20171006063333.12345-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, 2017-10-13 at 16:50 +0200, Matthias Brugger wrote:
+> 
+> On 10/13/2017 12:45 AM, Stephen Boyd wrote:
+> > On 09/19, Weiyi Lu wrote:
+> >> This series is based on v4.14-rc1 and composed of
+> >> clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+> > 
+> > What's the merge plan? Can I apply the clk ones to clk tree and
+> > ignore the rest?
+> > 
+> 
+> Yes, please do so. I'll take scpsys, which depends on the clock patches.
+> 
+> Regards,
+> Matthias
 
---ua2gcv3fsvd5brqe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen & Matthias,
 
-On Fri, Oct 06, 2017 at 06:33:31AM +0000, Icenowy Zheng wrote:
-> In the CCU of the Allwinner R40 SoC, there's a GMAC configuration registe=
-r,
-> which is intended to be accessed by the dwmac-sun8i driver. On SoCs alrea=
-dy
-> supported by the driver the register is placed in the syscon rather than
-> the CCU.
->=20
-> As CCU is a critical part of the SoC, so write to it should be strictly
-> limited. A regmap with restricted write permission is created by the R40
-> CCU driver, and can be get with dev_get_regmap. In order to tie the regmap
-> to the CCU device, the R40 CCU is now a platform driver, so a platform
-> device is created for it (and then tied with the regmap).
->=20
-> The first patch does the conversion of the driver to a platform driver,
-> and the second patch adds the regmap.
-
-I'd like to see first what you want to do with it.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---ua2gcv3fsvd5brqe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZ2yKxAAoJEBx+YmzsjxAggY8QAJTxfteH2Eu2EC43Tpb92512
-cNZXeh9xkg+1GkmxoBbFhHudH7Je629DawbT8ReYckMbDxFnSvIwirtqGT01kt9p
-j3Kjf1Qt42PAtd1l12nydeX+Zi3ZQ/kzad4hwvjDq6xoS6tW00LWRG2yBg8V4EXY
-QZnQ+RaiQT4XGK7QVo6ROKAo+AQRVkorV9HKsqFYObx13Hf/7aTcGdhrZuJBzz4H
-wWs69ryfdUK6fng7nrAjVsDyKSQFWttcpze8dCDceDrEeXfbyLQq/vcQV1/u5xDj
-XLzZy5k8Z9iy1kYMlv99/TohBCVzfZH1TFAEKVpLQA7KGjiWyjhRZ6y5Rv1idLe4
-he9+3O6uSAvIIL74eLQ3ST9GekGWloKQFjryNIke9IXzxVQ/9yWflZRmY4782eqv
-Oh2K/j4sQA2Tc8QkwqwizCRMHUinBvgQ8CSJsb7buPdXZC2HHoeEe5y94rOhIIrV
-5NUu2xnxV3Bdq2jGsOiav/nbyuLxZhEYU9Vf+xOPeiBQKM3CTmiQeAkyBv5yUqf8
-3zre7tv0MxM272lUOCnCxzlydlWNAiJqWdbMW8Dw1z5LUhYgT9jxnhyE2easeVxV
-s3mdvucHmSsfzF3JHvLM40/k8aVij/bEEsO0cdnqwIyYEsPTR1flGBHjlsqcHDSf
-fbu05AZ+BJylGARRmIeP
-=UHcK
------END PGP SIGNATURE-----
-
---ua2gcv3fsvd5brqe--
+I will start to separate this patch set into three series
+(clk/scpsys/dts) when I send the next version.
