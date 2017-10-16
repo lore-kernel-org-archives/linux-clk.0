@@ -1,234 +1,62 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 3/5] clk: aspeed: Add platform driver and register PLLs
-Date: Tue,  3 Oct 2017 17:25:38 +1030
-Message-Id: <20171003065540.11722-4-joel@jms.id.au>
-In-Reply-To: <20171003065540.11722-1-joel@jms.id.au>
-References: <20171003065540.11722-1-joel@jms.id.au>
+	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 07/10] [RFC] clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP
+Date: Mon, 16 Oct 2017 15:55:13 +0200
+Message-Id: <1508162116-5043-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers a platform driver to set up all of the non-core clocks.
+Set the newly introduced GENPD_FLAG_ACTIVE_WAKEUP, which allows to
+remove the driver's own "always true" callback.
 
-The clocks that have configurable rates are now registered.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-
---
-v4:
- - Add eclk div table to fix ast2500 calculation
- - Add defines to document the BIT() macros
- - Pass dev where we can when registering clocks
- - Check for errors when registering clk_hws
-v3:
- - Fix bclk and eclk calculation
- - Seperate out ast2400 and ast25000 for pll calculation
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-aspeed.c | 163 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 163 insertions(+)
+This must not be applied before "PM / Domain: Enable genpd users to
+specify default active wakeup behavior" has landed upstream, hence the
+"RFC".
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index d39cf51a5114..adb295292189 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -14,6 +14,8 @@
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -114,6 +116,32 @@ static const struct aspeed_gate_data aspeed_gates[] __initconst = {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-+static const char * const eclk_parents[] = {"d1pll", "hpll", "mpll"};
-+
-+static const struct clk_div_table ast2500_eclk_div_table[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 2 },
-+	{ 0x2, 3 },
-+	{ 0x3, 4 },
-+	{ 0x4, 5 },
-+	{ 0x5, 6 },
-+	{ 0x6, 7 },
-+	{ 0x7, 8 },
-+	{ 0 }
-+};
-+
-+static const struct clk_div_table ast2500_mac_div_table[] = {
-+	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
- static const struct clk_div_table ast2400_div_table[] = {
- 	{ 0x0, 2 },
- 	{ 0x1, 4 },
-@@ -179,6 +207,141 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
- 			mult, div);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index de534896f596168c..99699b715d7cf2de 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -481,11 +481,6 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 		pm_clk_destroy(dev);
  }
  
-+struct aspeed_clk_soc_data {
-+	const struct clk_div_table *div_table;
-+	const struct clk_div_table *mac_div_table;
-+	const struct clk_div_table *eclk_div_table;
-+	struct clk_hw *(*calc_pll)(const char *name, u32 val);
-+};
-+
-+static const struct aspeed_clk_soc_data ast2500_data = {
-+	.div_table = ast2500_div_table,
-+	.mac_div_table = ast2500_mac_div_table,
-+	.eclk_div_table = ast2500_eclk_div_table,
-+	.calc_pll = aspeed_ast2500_calc_pll,
-+};
-+
-+static const struct aspeed_clk_soc_data ast2400_data = {
-+	.div_table = ast2400_div_table,
-+	.mac_div_table = ast2400_div_table,
-+	.eclk_div_table = ast2400_div_table,
-+	.calc_pll = aspeed_ast2400_calc_pll,
-+};
-+
-+static int aspeed_clk_probe(struct platform_device *pdev)
-+{
-+	const struct aspeed_clk_soc_data *soc_data;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	struct clk_hw *hw;
-+	u32 val, rate;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "no syscon regmap\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	/* SoC generations share common layouts but have different divisors */
-+	soc_data = of_device_get_match_data(dev);
-+	if (!soc_data) {
-+		dev_err(dev, "no match data for platform\n");
-+		return -EINVAL;
-+	}
-+
-+	/* UART clock div13 setting */
-+	regmap_read(map, ASPEED_MISC_CTRL, &val);
-+	if (val & UART_DIV13_EN)
-+		rate = 24000000 / 13;
-+	else
-+		rate = 24000000;
-+	/* TODO: Find the parent data for the uart clock */
-+	hw = clk_hw_register_fixed_rate(dev, "uart", NULL, 0, rate);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
-+
-+	/*
-+	 * Memory controller (M-PLL) PLL. This clock is configured by the
-+	 * bootloader, and is exposed to Linux as a read-only clock rate.
-+	 */
-+	regmap_read(map, ASPEED_MPLL_PARAM, &val);
-+	hw = soc_data->calc_pll("mpll", val);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	hw;
-+
-+	/* SD/SDIO clock divider (TODO: There's a gate too) */
-+	hw = clk_hw_register_divider_table(dev, "sdio", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
-+
-+	/* MAC AHB bus clock divider */
-+	hw = clk_hw_register_divider_table(dev, "mac", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
-+			soc_data->mac_div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
-+
-+	/* LPC Host (LHCLK) clock divider */
-+	hw = clk_hw_register_divider_table(dev, "lhclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
-+
-+	/* Video Engine (ECLK) mux and clock divider */
-+	hw = clk_hw_register_mux(dev, "eclk_mux",
-+			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
-+			scu_base + ASPEED_CLK_SELECTION, 2, 2,
-+			0, &aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-+	hw = clk_hw_register_divider_table(dev, "eclk", "eclk_mux", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 28, 3, 0,
-+			soc_data->eclk_div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-+
-+	/* P-Bus (BCLK) clock divider */
-+	hw = clk_hw_register_divider_table(dev, "bclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
-+
-+	return 0;
-+};
-+
-+static const struct of_device_id aspeed_clk_dt_ids[] = {
-+	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
-+	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
-+	{ }
-+};
-+
-+static struct platform_driver aspeed_clk_driver = {
-+	.probe  = aspeed_clk_probe,
-+	.driver = {
-+		.name = "aspeed-clk",
-+		.of_match_table = aspeed_clk_dt_ids,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(aspeed_clk_driver);
-+
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
+-static bool cpg_mssr_active_wakeup(struct device *dev)
+-{
+-	return true;
+-}
+-
+ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 					  const unsigned int *core_pm_clks,
+ 					  unsigned int num_core_pm_clks)
+@@ -505,8 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 
+ 	genpd = &pd->genpd;
+ 	genpd->name = np->name;
+-	genpd->flags = GENPD_FLAG_PM_CLK;
+-	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
++	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
+ 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
 -- 
-2.14.1
+2.7.4
