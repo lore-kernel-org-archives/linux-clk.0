@@ -1,114 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55316 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759902AbdJQJGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:47 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 16/23] drm/sun4i: Add A83T support
-Date: Tue, 17 Oct 2017 11:06:23 +0200
-Message-Id: <cfa06492ecb6bfba965e1074604525a4e939c5c1.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/5] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
+Date: Mon, 16 Oct 2017 10:36:53 +0200
+Message-Id: <1508143014-11795-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+References: <1508143014-11795-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the A83T display pipeline.
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register a notifier to save/restore SDHI clock
+registers during system suspend/resume.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This is implemented using the cpg_simple_notifier abstraction, which can
+be reused for others clocks that just need to save/restore a single
+register.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
- drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
- drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 1 +
- drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
- 4 files changed, 10 insertions(+)
+v3:
+  - Drop RFC state,
+  - Add Tested-by,
+  - Rebased,
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 46df3b78ae9e..c0fa233ec1fc 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -90,6 +90,7 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-a83t-tcon
-    * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-@@ -209,6 +210,7 @@ supported.
+v2:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 63 +++++++++++++++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 139985257003bfad..267b5629e3bdb173 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -19,6 +19,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
  
- Required properties:
-   - compatible: value must be one of:
-+    * allwinner,sun8i-a83t-de2-mixer
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-@@ -236,6 +238,7 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-a83t-display-engine
-     * allwinner,sun8i-v3s-display-engine
+@@ -29,6 +30,36 @@
+ #define CPG_PLL2CR		0x002c
+ #define CPG_PLL4CR		0x01f4
  
-   - allwinner,pipelines: list of phandle to the display engine
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index a27efad9bc76..439f116bb3b5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -189,6 +189,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-a83t-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
++struct cpg_simple_notifier {
++	struct notifier_block nb;
++	void __iomem *reg;
++	u32 saved;
++};
++
++static int cpg_simple_notifier_call(struct notifier_block *nb,
++				    unsigned long action, void *data)
++{
++	struct cpg_simple_notifier *csn =
++		container_of(nb, struct cpg_simple_notifier, nb);
++
++	switch (action) {
++	case PM_EVENT_SUSPEND:
++		csn->saved = readl(csn->reg);
++		return NOTIFY_OK;
++
++	case PM_EVENT_RESUME:
++		writel(csn->saved, csn->reg);
++		return NOTIFY_OK;
++	}
++	return NOTIFY_DONE;
++}
++
++static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
++					 struct cpg_simple_notifier *csn)
++{
++	csn->nb.notifier_call = cpg_simple_notifier_call;
++	raw_notifier_chain_register(notifiers, &csn->nb);
++}
+ 
+ /*
+  * SDn Clock
+@@ -55,8 +86,8 @@ struct sd_div_table {
+ 
+ struct sd_clock {
+ 	struct clk_hw hw;
+-	void __iomem *reg;
+ 	const struct sd_div_table *div_table;
++	struct cpg_simple_notifier csn;
+ 	unsigned int div_num;
+ 	unsigned int div_min;
+ 	unsigned int div_max;
+@@ -97,12 +128,12 @@ static const struct sd_div_table cpg_sd_div_table[] = {
+ static int cpg_sd_clock_enable(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
+-	u32 val = readl(clock->reg);
++	u32 val = readl(clock->csn.reg);
+ 
+ 	val &= ~(CPG_SD_STP_MASK);
+ 	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
+ 
+-	writel(val, clock->reg);
++	writel(val, clock->csn.reg);
+ 
+ 	return 0;
+ }
+@@ -111,14 +142,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
+ 
+-	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
++	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
  }
  
-@@ -347,6 +348,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
- 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-+	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 6a20a467ee6d..eb3c8bad4977 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1063,6 +1063,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-a83t-tcon", .data = &sun8i_v3s_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 86c6c24b5105..c6030ce130d3 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -385,6 +385,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
  
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer",
-+		.data = &sun8i_v3s_mixer_cfg,
-+	},
-+	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
+-	return !(readl(clock->reg) & CPG_SD_STP_MASK);
++	return !(readl(clock->csn.reg) & CPG_SD_STP_MASK);
+ }
+ 
+ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+@@ -170,10 +201,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	clock->cur_div_idx = i;
+ 
+-	val = readl(clock->reg);
++	val = readl(clock->csn.reg);
+ 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+ 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	writel(val, clock->reg);
++	writel(val, clock->csn.reg);
+ 
+ 	return 0;
+ }
+@@ -188,8 +219,8 @@ static const struct clk_ops cpg_sd_clock_ops = {
+ };
+ 
+ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+-					       void __iomem *base,
+-					       const char *parent_name)
++	void __iomem *base, const char *parent_name,
++	struct raw_notifier_head *notifiers)
+ {
+ 	struct clk_init_data init;
+ 	struct sd_clock *clock;
+@@ -207,12 +238,12 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+-	clock->reg = base + core->offset;
++	clock->csn.reg = base + core->offset;
+ 	clock->hw.init = &init;
+ 	clock->div_table = cpg_sd_div_table;
+ 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+ 
+-	sd_fc = readl(clock->reg) & CPG_SD_FC_MASK;
++	sd_fc = readl(clock->csn.reg) & CPG_SD_FC_MASK;
+ 	for (i = 0; i < clock->div_num; i++)
+ 		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
+ 			break;
+@@ -233,8 +264,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 
+ 	clk = clk_register(NULL, &clock->hw);
+ 	if (IS_ERR(clk))
+-		kfree(clock);
++		goto free_clock;
++
++	cpg_simple_notifier_register(notifiers, &clock->csn);
++	return clk;
+ 
++free_clock:
++	kfree(clock);
+ 	return clk;
+ }
+ 
+@@ -332,7 +368,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_SD:
+-		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
++		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
++					   notifiers);
+ 
+ 	case CLK_TYPE_GEN3_R:
+ 		if (cpg_quirks & RCKCR_CKSEL) {
 -- 
-git-series 0.9.1
+2.7.4
