@@ -1,59 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51427 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbdJCKAe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:34 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 7/9] clk: samsung: Rework clkdev alias handling in S3C2443
- driver
-Date: Tue, 03 Oct 2017 12:00:14 +0200
-Message-id: <20171003100016.32029-8-m.szyprowski@samsung.com>
-In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
-References: <20171003100016.32029-1-m.szyprowski@samsung.com>
-        <CGME20171003100031eucas1p29f34d4e1878d839a7af9ea05ba15ece9@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 10/10] [RFC] sh_eth: Remove obsolete explicit clock
+ handling for WoL
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+ Magnus Damm <magnus.damm@gmail.com>, "Rafael J . Wysocki"
+ <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+ <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <3a3fafd0-5421-5dda-35af-173f6764098b@cogentembedded.com>
+Date: Mon, 16 Oct 2017 22:24:35 +0300
+MIME-Version: 1.0
+In-Reply-To: <1508162116-5043-11-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-S3C2443 SoCs still uses old, non-dt CPUfreq driver, which requires clkdev
-aliases to get access to proper clocks. Create those aliases using
-samsung_clk_register_alias() function instead of using *_A clock macros,
-which will be removed soon.
+Hello!
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-s3c2443.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
 
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index abb935c42916..45166033f638 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -117,8 +117,8 @@ struct samsung_mux_clock s3c2443_common_muxes[] __initdata = {
- 	MUX(0, "epllref", epllref_p, CLKSRC, 7, 2),
- 	MUX(ESYSCLK, "esysclk", esysclk_p, CLKSRC, 6, 1),
- 	MUX(0, "mpllref", mpllref_p, CLKSRC, 3, 1),
--	MUX_A(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1, "msysclk"),
--	MUX_A(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1, "armclk"),
-+	MUX(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1),
-+	MUX(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1),
- 	MUX(0, "mux_i2s0", i2s0_p, CLKSRC, 14, 2),
- };
- 
-@@ -189,6 +189,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
- };
- 
- struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
-+	ALIAS(MSYSCLK, NULL, "msysclk"),
-+	ALIAS(ARMCLK, NULL, "armclk"),
- 	ALIAS(HCLK, NULL, "hclk"),
- 	ALIAS(HCLK_SSMC, NULL, "nand"),
- 	ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
--- 
-2.14.2
+> Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
 
+    It's called Ether (or GEther) in all the manuals I have. Never saw SH-ETH, 
+I think it's Nobuhiro's invention... :-)
+
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
+> suspend" and "clk: renesas: mstp: Keep wakeup sources active during
+> system suspend", this workaround is no longer needed.  Hence remove all
+> explicit clock handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
+
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+MBR, Sergei
