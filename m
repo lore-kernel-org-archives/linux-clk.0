@@ -1,68 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36935 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752310AbdJDPE6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 11:04:58 -0400
-MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <20171003100016.32029-8-m.szyprowski@samsung.com>
-References: <CGME20171003100031eucas1p29f34d4e1878d839a7af9ea05ba15ece9@eucas1p2.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-8-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Thu, 5 Oct 2017 00:04:16 +0900
-Message-ID: <CAGTfZH1iDS_t3B_LpKija4qq6wO8eB5HpJodiUfR8C_DshPNPQ@mail.gmail.com>
-Subject: Re: [PATCH 7/9] clk: samsung: Rework clkdev alias handling in S3C2443 driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 04/10] PM / Domain: Allow genpd users to specify default active wakeup behavior
+Date: Mon, 16 Oct 2017 15:55:10 +0200
+Message-Id: <1508162116-5043-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> S3C2443 SoCs still uses old, non-dt CPUfreq driver, which requires clkdev
-> aliases to get access to proper clocks. Create those aliases using
-> samsung_clk_register_alias() function instead of using *_A clock macros,
-> which will be removed soon.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s3c2443.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-> index abb935c42916..45166033f638 100644
-> --- a/drivers/clk/samsung/clk-s3c2443.c
-> +++ b/drivers/clk/samsung/clk-s3c2443.c
-> @@ -117,8 +117,8 @@ struct samsung_mux_clock s3c2443_common_muxes[] __initdata = {
->         MUX(0, "epllref", epllref_p, CLKSRC, 7, 2),
->         MUX(ESYSCLK, "esysclk", esysclk_p, CLKSRC, 6, 1),
->         MUX(0, "mpllref", mpllref_p, CLKSRC, 3, 1),
-> -       MUX_A(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1, "msysclk"),
-> -       MUX_A(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1, "armclk"),
-> +       MUX(MSYSCLK, "msysclk", msysclk_p, CLKSRC, 4, 1),
-> +       MUX(ARMCLK, "armclk", armclk_p, CLKDIV0, 13, 1),
->         MUX(0, "mux_i2s0", i2s0_p, CLKSRC, 14, 2),
->  };
->
-> @@ -189,6 +189,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
->  };
->
->  struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
-> +       ALIAS(MSYSCLK, NULL, "msysclk"),
-> +       ALIAS(ARMCLK, NULL, "armclk"),
->         ALIAS(HCLK, NULL, "hclk"),
->         ALIAS(HCLK_SSMC, NULL, "nand"),
->         ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
+It is quite common for PM Domains to require slave devices to be kept
+active during system suspend if they are to be used as wakeup sources.
+To enable this, currently each PM Domain or driver has to provide its
+own gpd_dev_ops.active_wakeup() callback.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
+If specified, a default callback that always returns true will be
+installed in gpd_dev_ops.active_wakeup().
 
+PM Domains that need more fine-grained controls can still provide their
+own callbacks, as before.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/base/power/domain.c | 8 ++++++++
+ include/linux/pm_domain.h   | 7 ++++---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index e8ca5e2cf1e51e5a..d9670e7752e92994 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1168,6 +1168,11 @@ static void pm_genpd_complete(struct device *dev)
+ 	genpd_unlock(genpd);
+ }
+ 
++static bool pm_genpd_active_wakeup_true(struct device *dev)
++{
++	return true;
++}
++
+ /**
+  * genpd_syscore_switch - Switch power during system core suspend or resume.
+  * @dev: Device that normally is marked as "always on" to switch power for.
+@@ -1214,6 +1219,7 @@ EXPORT_SYMBOL_GPL(pm_genpd_syscore_poweron);
+ #define pm_genpd_poweroff_noirq		NULL
+ #define pm_genpd_restore_noirq		NULL
+ #define pm_genpd_complete		NULL
++#define pm_genpd_active_wakeup_true	NULL
+ 
+ #endif /* CONFIG_PM_SLEEP */
+ 
+@@ -1587,6 +1593,8 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+ 		genpd->dev_ops.stop = pm_clk_suspend;
+ 		genpd->dev_ops.start = pm_clk_resume;
+ 	}
++	if (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
++		genpd->dev_ops.active_wakeup = pm_genpd_active_wakeup_true;
+ 
+ 	/* Always-on domains must be powered on at initialization. */
+ 	if (genpd_is_always_on(genpd) && !genpd_status_on(genpd))
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 84f423d5633ee996..a6688efb29ee5406 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -18,9 +18,10 @@
+ #include <linux/spinlock.h>
+ 
+ /* Defines used for the flags field in the struct generic_pm_domain */
+-#define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
+-#define GENPD_FLAG_IRQ_SAFE	(1U << 1) /* PM domain operates in atomic */
+-#define GENPD_FLAG_ALWAYS_ON	(1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
++#define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
++#define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
++#define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
+ 
+ enum gpd_status {
+ 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
