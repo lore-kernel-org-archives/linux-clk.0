@@ -1,51 +1,61 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:53735 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751501AbdJPK3b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2017 06:29:31 -0400
+Subject: Re: [PATCH v4 0/9] Mediatek MT2712 clock and scpsys support
+To: Weiyi Lu <weiyi.lu@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com
+References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+ <20171012224540.GE18706@codeaurora.org>
+ <ac7940d1-e23d-add2-b4b6-bd7cf66fea34@gmail.com>
+ <1508136134.20464.49.camel@mtksdaap41>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <4b2b1a94-2a0e-4c5e-030e-d35edb3ac2f1@gmail.com>
+Date: Mon, 16 Oct 2017 12:29:25 +0200
 MIME-Version: 1.0
-In-Reply-To: <20171013115917.9318-2-linus.walleij@linaro.org>
-References: <20171013115917.9318-1-linus.walleij@linaro.org> <20171013115917.9318-2-linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 30 Oct 2017 15:21:04 +0100
-Message-ID: <CACRpkdbPjLb6aXa180az27gRyhei8m6ze=aeAvXtpS3mgy0D9Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v3] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1508136134.20464.49.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 13, 2017 at 1:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> The RPM clocks were missing for MSM8660/APQ8060. For this to be
-> completed we need to add a special fixed rate RPM clock that is used
-> for the PLL4 on these SoCs. The rest of the clocks are pretty
-> similar to the other supported platforms.
->
-> The "active" clock pattern is mirrored in all the clocks. I guess
-> that the PLL4 that clocks the LPASS is actually never used as
-> "active only" since the low-power audio subsystem should be left
-> on when the CPU goes to idle, so that it can be used as a stand-alone
-> MP3 player type of device.
->
-> The PLL4 seems to be enabled only on behalf of the booting LPASS
-> Hexagon - which will cast its own vote once its booted - and as
-> such we only configure the active state (meaning both states will
-> have same configuration). The result is that PLL4 will be on
-> from prepare() to unprepare() regardless of what the application
-> CPU does.
->
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v2->v3:
-> - Skip the "active" state on the special, fixed PLL4 clock, just
->   like the vendor tree does.
-> - Move defines around a bit in the sort order that Bjorn wants
->   them.
-> - Make the plain "pxo" parent of the fixed PLL4 clock, not
->   "pxo_board"
-> ChangeLog v1->v2:
-> - Add the small hunk to the clk_rpm_handoff() function that just
->   skip over this for the fixed PLL4 clock. This accidentally
->   ended up in another patch.
 
-Gentle ping on this patch.
+On 10/16/2017 08:42 AM, Weiyi Lu wrote:
+> On Fri, 2017-10-13 at 16:50 +0200, Matthias Brugger wrote:
+>>
+>> On 10/13/2017 12:45 AM, Stephen Boyd wrote:
+>>> On 09/19, Weiyi Lu wrote:
+>>>> This series is based on v4.14-rc1 and composed of
+>>>> clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+>>>
+>>> What's the merge plan? Can I apply the clk ones to clk tree and
+>>> ignore the rest?
+>>>
+>>
+>> Yes, please do so. I'll take scpsys, which depends on the clock patches.
+>>
+>> Regards,
+>> Matthias
+> 
+> Hi Stephen & Matthias,
+> 
+> I will start to separate this patch set into three series
+> (clk/scpsys/dts) when I send the next version.
+> 
 
-Yours,
-Linus Walleij
+There are no comments on the clk patches, so no need to resend them, if Stephen 
+is ok with taking patch 1,2,3.
+
+If you want you can split out patch 4 and 9, but for me it's ok if they go 
+together with the scpsys driver. When scpsys is ready I will take them all 
+through my tree.
+
+Regards,
+Matthias
