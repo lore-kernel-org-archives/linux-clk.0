@@ -1,72 +1,44 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
+Return-Path: <hanetzer@startmail.com>
+From: "Marty E. Plummer" <hanetzer@startmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	afaerber@suse.de,
 	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	xuejiancheng@hisilicon.com,
+	zhangfei.gao@linaro.org,
+	wnpan@hisilicon.com,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	liuwei@actions-semi.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
-Date: Wed,  1 Nov 2017 01:24:21 +0530
-Message-Id: <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+	xuwei5@hisilicon.com,
+	linux@armlinux.org.uk,
+	"Marty E. Plummer" <hanetzer@startmail.com>
+Subject: [PATCH v2 0/3] Add support for Hisilicon Hi3521A SoC
+Date: Tue, 17 Oct 2017 17:38:51 -0500
+Message-Id: <20171017223854.6980-1-hanetzer@startmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock controller nodes for Actions Semi s900 SoC
+Patched up with suggestions from Rob Herring, resend.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Marty E. Plummer (3):
+  clk: hisilicon: add CRG driver Hi3521A SoC
+  arm: hisi: enable Hi3521A SoC
+  arm: dts: add Hi3521A dts
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 11406f6..c099ef1 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -5,6 +5,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/actions,s900-clock.h>
- 
- / {
- 	compatible = "actions,s900";
-@@ -88,6 +89,24 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
-+
-+	diff_24M: diff_24M {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		#clock-cells = <0>;
-+	};
-+
-+	clock: clock-controller@e0160000 {
-+		compatible = "actions,s900-clock";
-+		reg = <0 0xe0160000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
+ arch/arm/boot/dts/Makefile                |   2 +
+ arch/arm/boot/dts/hi3521a-rs-dm290e.dts   |  41 ++++
+ arch/arm/boot/dts/hi3521a.dtsi            | 308 ++++++++++++++++++++++++++++++
+ arch/arm/mach-hisi/Kconfig                |   6 +
+ drivers/clk/hisilicon/Kconfig             |   7 +
+ drivers/clk/hisilicon/Makefile            |   1 +
+ drivers/clk/hisilicon/crg-hi3521a.c       | 196 +++++++++++++++++++
+ include/dt-bindings/clock/hi3521a-clock.h |  23 +++
+ 8 files changed, 584 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+ create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
+ create mode 100644 drivers/clk/hisilicon/crg-hi3521a.c
+ create mode 100644 include/dt-bindings/clock/hi3521a-clock.h
+
 -- 
-2.7.4
+2.14.2
