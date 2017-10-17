@@ -1,56 +1,36 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling
- for WoL
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
- Magnus Damm <magnus.damm@gmail.com>, "Rafael J . Wysocki"
- <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>, linux-clk@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
- <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
-Date: Mon, 16 Oct 2017 23:17:17 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40658 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933428AbdJQKBu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 06:01:50 -0400
 MIME-Version: 1.0
-In-Reply-To: <1508162116-5043-10-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <89bee8042b5fa50c8c3dbf52cc0c14b34beef9df.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+ <89bee8042b5fa50c8c3dbf52cc0c14b34beef9df.1508231063.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 17 Oct 2017 18:01:25 +0800
+Message-ID: <CAGb2v67OFb6-Bk7TOsGhf1iKBE19nX2uXenpmSvugTO_UcWz9g@mail.gmail.com>
+Subject: Re: [PATCH 08/23] dt-bindings: panel: lvds: Document power-supply property
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
+On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The power-supply property is used be a vast majority of panels, including
+                                    ^^^ typo
 
-> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
-> is manually kept running during system suspend, to make sure the device
-> stays active.
-> 
-> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
-> suspend", this workaround is no longer needed.  Hence remove all
-> explicit clock handling to keep the device active.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index fdf30bfa403bf416..11ffccca11d56df5 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-[...]
-> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device *dev)
->   		 *       this clock dance should be removed.
->   		 */
->   		clk_disable(priv->clk);
-> -		clk_disable(priv->clk);
-> -		clk_enable(priv->clk);
->   		clk_enable(priv->clk);
-
-    I thought the entire clock dance could be removed now? Not yet?
-
-[...]
-
-MBR, Sergei
+ChenYu
