@@ -1,20 +1,31 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Romain Perier <romain.perier@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, philipp.tomsich@theobroma-systems.com, klaus.goger@theobroma-systems.com, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
-Date: Sat, 14 Oct 2017 21:27:25 +0200
-Message-ID: <1912374.Z4ZSI3ogOp@phil>
-In-Reply-To: <20170904085119.25981-2-romain.perier@collabora.com>
-References: <20170904085119.25981-1-romain.perier@collabora.com> <20170904085119.25981-2-romain.perier@collabora.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 17 Oct 2017 15:28:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chris Brandt <chris.brandt@renesas.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rz: clk-rz is meant for RZ/A1
+Message-ID: <20171017202844.apawmkyofxl2rxar@rob-hp-laptop>
+References: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1507801068-12024-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 4. September 2017, 10:51:16 CEST schrieb Romain Perier:
-> Signed-off-by: Romain Perier <romain.perier@collabora.com>
+On Thu, Oct 12, 2017 at 11:37:48AM +0200, Geert Uytterhoeven wrote:
+> The RZ family of Renesas SoCs has several different subfamilies (RZ/A,
+> RZ/G, RZ/N, and RZ/T).  Clarify that the renesas,rz-cpg-clocks DT
+> bindings and clk-rz driver apply to RZ/A1 only.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v4.15.
+> 
+>  Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt | 4 ++--
+>  drivers/clk/renesas/clk-rz.c                                      | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-applied for 4.15
-
-Thanks
-Heiko
+Acked-by: Rob Herring <robh@kernel.org>
