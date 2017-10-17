@@ -1,248 +1,217 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 2/5] clk: aspeed: Register core clocks
-Date: Mon, 30 Oct 2017 16:32:47 +1030
-Message-Id: <20171030060250.701-3-joel@jms.id.au>
-In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
-References: <20171030060250.701-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40594 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756825AbdJQJ5N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:57:13 -0400
+MIME-Version: 1.0
+In-Reply-To: <faa3a4d511039af1d116270dfef3a8b60ca3591e.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+ <faa3a4d511039af1d116270dfef3a8b60ca3591e.1508231063.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 17 Oct 2017 17:56:47 +0800
+Message-ID: <CAGb2v679FWRRiTfS5jReFqiAEEiqAg13wUPHOYdT_=gebh25tg@mail.gmail.com>
+Subject: Re: [PATCH 06/23] drm/sun4i: tcon: Don't rely on encoders to set the
+ TCON mode
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers the core clocks; those which are required to calculate
-the rate of the timer peripheral so the system can load a clocksource
-driver.
+On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Just like we did for the TCON enable and disable, for historical reasons we
+> used to rely on the encoders calling the TCON mode_set function, while the
+> CRTC has a callback for that.
+>
+> Let's implement it in order to reduce the boilerplate code.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c          | 10 +++++++-
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c  |  1 +-
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c      |  7 +-----
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c |  1 +-
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c           | 15 +-----------
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c          | 31 +++++++++++++++++-----
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h          | 11 ++------
+>  drivers/gpu/drm/sun4i/sun4i_tv.c            |  6 +----
+>  8 files changed, 37 insertions(+), 45 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> index e86baa3746af..5decae0069d0 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> @@ -115,11 +115,21 @@ static void sun4i_crtc_atomic_enable(struct drm_crtc *crtc,
+>         sun4i_tcon_set_status(scrtc->tcon, encoder, true);
+>  }
+>
+> +static void sun4i_crtc_mode_set_nofb(struct drm_crtc *crtc)
+> +{
+> +       struct drm_display_mode *mode = &crtc->state->adjusted_mode;
+> +       struct drm_encoder *encoder = sun4i_crtc_get_encoder(crtc);
+> +       struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
+> +
+> +       sun4i_tcon_mode_set(scrtc->tcon, encoder, mode);
+> +}
+> +
+>  static const struct drm_crtc_helper_funcs sun4i_crtc_helper_funcs = {
+>         .atomic_begin   = sun4i_crtc_atomic_begin,
+>         .atomic_flush   = sun4i_crtc_atomic_flush,
+>         .atomic_enable  = sun4i_crtc_atomic_enable,
+>         .atomic_disable = sun4i_crtc_atomic_disable,
+> +       .mode_set_nofb  = sun4i_crtc_mode_set_nofb,
+>  };
+>
+>  static int sun4i_crtc_enable_vblank(struct drm_crtc *crtc)
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> index 04f85b1cf922..e826da34e919 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/regmap.h>
+>
+> -#include "sun4i_tcon.h"
+>  #include "sun4i_hdmi.h"
+>
+>  struct sun4i_ddc {
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> index 482bf03d55c1..d2eb0a60e568 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -30,7 +30,6 @@
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_drv.h"
+>  #include "sun4i_hdmi.h"
+> -#include "sun4i_tcon.h"
+>
+>  static inline struct sun4i_hdmi *
+>  drm_encoder_to_sun4i_hdmi(struct drm_encoder *encoder)
+> @@ -120,15 +119,9 @@ static void sun4i_hdmi_mode_set(struct drm_encoder *encoder,
+>                                 struct drm_display_mode *adjusted_mode)
+>  {
+>         struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
+> -       struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
+> -       struct sun4i_tcon *tcon = crtc->tcon;
+>         unsigned int x, y;
+>         u32 val;
+>
+> -       sun4i_tcon1_mode_set(tcon, mode);
+> -       sun4i_tcon_set_mux(tcon, 1, encoder);
+> -
+> -       clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
+>         clk_set_rate(hdmi->mod_clk, mode->crtc_clock * 1000);
+>         clk_set_rate(hdmi->tmds_clk, mode->crtc_clock * 1000);
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+> index 1b6b37aefc38..dc332ea56f6c 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+> @@ -12,7 +12,6 @@
+>
+>  #include <linux/clk-provider.h>
+>
+> -#include "sun4i_tcon.h"
+>  #include "sun4i_hdmi.h"
+>
+>  struct sun4i_tmds {
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> index a7f297ed40c1..832f8f9bc47f 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> @@ -153,22 +153,7 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+>         }
+>  }
+>
+> -static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
+> -                                      struct drm_display_mode *mode,
+> -                                      struct drm_display_mode *adjusted_mode)
+> -{
+> -       struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
+> -       struct sun4i_tcon *tcon = rgb->tcon;
+> -
+> -       sun4i_tcon0_mode_set(tcon, mode);
+> -       sun4i_tcon_set_mux(tcon, 0, encoder);
+> -
+> -       /* FIXME: This seems to be board specific */
+> -       clk_set_phase(tcon->dclk, 120);
+> -}
+> -
+>  static struct drm_encoder_helper_funcs sun4i_rgb_enc_helper_funcs = {
+> -       .mode_set       = sun4i_rgb_encoder_mode_set,
+>         .disable        = sun4i_rgb_encoder_disable,
+>         .enable         = sun4i_rgb_encoder_enable,
+>  };
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 964cf22a1ced..7ecd4f7c8411 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -139,7 +139,6 @@ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+>         DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s: %d\n",
+>                          encoder->name, encoder->crtc->name, ret);
+>  }
+> -EXPORT_SYMBOL(sun4i_tcon_set_mux);
+>
+>  static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
+>                                     int channel)
+> @@ -159,8 +158,8 @@ static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
+>         return delay;
+>  }
+>
+> -void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+> -                         struct drm_display_mode *mode)
+> +static void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+> +                                struct drm_display_mode *mode)
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+This doesn't have const...
 
----
-v5:
-  - Add Andrew's Reviewed-by
-v4:
-  - Add defines to document the BIT() macros
-v3:
-  - Fix ast2400 ahb calculation
-  - Remove incorrect 'this is wrong' comment
-  - Separate out clkin calc to be per platform
-  - Support 48MHz clkin on ast2400
----
- drivers/clk/clk-aspeed.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 177 insertions(+)
+>  {
+>         unsigned int bp, hsync, vsync;
+>         u8 clk_delay;
+> @@ -233,10 +232,9 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+>         /* Enable the output on the pins */
+>         regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0);
+>  }
+> -EXPORT_SYMBOL(sun4i_tcon0_mode_set);
+>
+> -void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+> -                         struct drm_display_mode *mode)
+> +static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+> +                                const struct drm_display_mode *mode)
+>  {
+>         unsigned int bp, hsync, vsync, vtotal;
+>         u8 clk_delay;
+> @@ -324,7 +322,26 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+>                            SUN4I_TCON_GCTL_IOMAP_MASK,
+>                            SUN4I_TCON_GCTL_IOMAP_TCON1);
+>  }
+> -EXPORT_SYMBOL(sun4i_tcon1_mode_set);
+> +
+> +void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
+> +                        const struct drm_encoder *encoder,
+> +                        const struct drm_display_mode *mode)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 388a98f4ca41..a8da411326e9 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -20,7 +20,23 @@
- 
- #include <dt-bindings/clock/aspeed-clock.h>
- 
-+#define ASPEED_RESET_CTRL	0x04
-+#define ASPEED_CLK_SELECTION	0x08
-+#define ASPEED_CLK_STOP_CTRL	0x0c
-+#define ASPEED_MPLL_PARAM	0x20
-+#define ASPEED_HPLL_PARAM	0x24
-+#define  AST2500_HPLL_BYPASS_EN	BIT(20)
-+#define  AST2400_HPLL_STRAPPED	BIT(18)
-+#define  AST2400_HPLL_BYPASS_EN	BIT(17)
-+#define ASPEED_MISC_CTRL	0x2c
-+#define  UART_DIV13_EN		BIT(12)
- #define ASPEED_STRAP		0x70
-+#define  CLKIN_25MHZ_EN		BIT(23)
-+#define  AST2400_CLK_SOURCE_SEL	BIT(18)
-+#define ASPEED_CLK_SELECTION_2	0xd8
-+
-+/* Globally visible clocks */
-+static DEFINE_SPINLOCK(aspeed_clk_lock);
- 
- /* Keeps track of all clocks */
- static struct clk_hw_onecell_data *aspeed_clk_data;
-@@ -98,6 +114,160 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-+static const struct clk_div_table ast2400_div_table[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
-+static const struct clk_div_table ast2500_div_table[] = {
-+	{ 0x0, 4 },
-+	{ 0x1, 8 },
-+	{ 0x2, 12 },
-+	{ 0x3, 16 },
-+	{ 0x4, 20 },
-+	{ 0x5, 24 },
-+	{ 0x6, 28 },
-+	{ 0x7, 32 },
-+	{ 0 }
-+};
-+
-+static struct clk_hw *aspeed_ast2400_calc_pll(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & AST2400_HPLL_BYPASS_EN) {
-+		/* Pass through mode */
-+		mult = div = 1;
-+	} else {
-+		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
-+		u32 n = (val >> 5) & 0x3f;
-+		u32 od = (val >> 4) & 0x1;
-+		u32 d = val & 0xf;
-+
-+		mult = (2 - od) * (n + 2);
-+		div = d + 1;
-+	}
-+	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-+			mult, div);
-+};
-+
-+static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & AST2500_HPLL_BYPASS_EN) {
-+		/* Pass through mode */
-+		mult = div = 1;
-+	} else {
-+		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
-+		u32 p = (val >> 13) & 0x3f;
-+		u32 m = (val >> 5) & 0xff;
-+		u32 n = val & 0x1f;
-+
-+		mult = (m + 1) / (n + 1);
-+		div = p + 1;
-+	}
-+
-+	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-+			mult, div);
-+}
-+
-+static void __init aspeed_ast2400_cc(struct regmap *map)
-+{
-+	struct clk_hw *hw;
-+	u32 val, freq, div;
-+
-+	/*
-+	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
-+	 * strapping
-+	 */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	if (val & CLKIN_25MHZ_EN)
-+		freq = 25000000;
-+	else if (val & AST2400_CLK_SOURCE_SEL)
-+		freq = 48000000;
-+	else
-+		freq = 24000000;
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-+	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+
-+	/*
-+	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-+	 * and we assume that it is enabled
-+	 */
-+	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-+	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
-+
-+	/*
-+	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
-+	 *   00: Select CPU:AHB = 1:1
-+	 *   01: Select CPU:AHB = 2:1
-+	 *   10: Select CPU:AHB = 4:1
-+	 *   11: Select CPU:AHB = 3:1
-+	 */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	val = (val >> 10) & 0x3;
-+	div = val + 1;
-+	if (div == 3)
-+		div = 4;
-+	else if (div == 4)
-+		div = 3;
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-+
-+	/* APB clock clock selection register SCU08 (aka PCLK) */
-+	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
-+			ast2400_div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-+}
-+
-+static void __init aspeed_ast2500_cc(struct regmap *map)
-+{
-+	struct clk_hw *hw;
-+	u32 val, freq, div;
-+
-+	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	if (val & CLKIN_25MHZ_EN)
-+		freq = 25000000;
-+	else
-+		freq = 24000000;
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-+	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+
-+	/*
-+	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-+	 * and we assume that it is enabled
-+	 */
-+	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2500_calc_pll("hpll", val);
-+
-+	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	val = (val >> 9) & 0x7;
-+	WARN(val == 0, "strapping is zero: cannot determine ahb clock");
-+	div = 2 * (val + 1);
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-+
-+	/* APB clock clock selection register SCU08 (aka PCLK) */
-+	regmap_read(map, ASPEED_CLK_SELECTION, &val);
-+	val = (val >> 23) & 0x7;
-+	div = 4 * (val + 1);
-+	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-+};
-+
- static void __init aspeed_cc_init(struct device_node *np)
- {
- 	struct regmap *map;
-@@ -139,6 +309,13 @@ static void __init aspeed_cc_init(struct device_node *np)
- 		return;
- 	}
- 
-+	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
-+		aspeed_ast2400_cc(map);
-+	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
-+		aspeed_ast2500_cc(map);
-+	else
-+		pr_err("unknown platform, failed to add clocks\n");
-+
- 	aspeed_clk_data->num = ASPEED_NUM_CLKS;
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
- 	if (ret)
--- 
-2.14.1
+But this does...
+
+> +{
+> +       switch (encoder->encoder_type) {
+> +       case DRM_MODE_ENCODER_NONE:
+> +               sun4i_tcon0_mode_set(tcon, mode);
+
+So you're likely to get some warning about dropping const here.
+
+Otherwise,
+
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
