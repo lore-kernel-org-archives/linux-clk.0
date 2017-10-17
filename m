@@ -1,91 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:49242 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751390AbdJ1RgO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Oct 2017 13:36:14 -0400
-MIME-Version: 1.0
-In-Reply-To: <20171012231709.GH18706@codeaurora.org>
-References: <1507166751-2012-1-git-send-email-yamada.masahiro@socionext.com> <20171012231709.GH18706@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 29 Oct 2017 02:35:29 +0900
-Message-ID: <CAK7LNATuSGfQwL1sP9Z9qtkWgnO5agfPbYjs5m6EkOvexTzzZA@mail.gmail.com>
-Subject: Re: [RFC PATCH] clk: move of_clk_get_parent_count() declaration to <linux/__clk.h>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        linux-fbdev@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: [PATCH 14/23] drm/sun4i: Create minimal multipliers and dividers
+Date: Tue, 17 Oct 2017 11:06:21 +0200
+Message-Id: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+The various outputs the TCON can provide have different constraints on the
+dotclock divider. Let's make them configurable by the various mode_set
+functions.
 
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c | 10 +++++++---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c     |  2 ++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h     |  2 ++
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
-2017-10-13 8:17 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 10/05, Masahiro Yamada wrote:
->> The clock consumer, drivers/video/fbdev/simplefb.c, includes
->> <linux/clk-provider.h> just for calling of_clk_get_parent_count().
->> This is ugly.
->>
->> Looking at simplefb_clocks_get(), of_clk_get_parent_count() seems
->> useful for clock consumers as well as for clock providers.
->>
->> Unfortunately, we do not have a good home for declarations shared
->> between consumers and providers.
->>
->> Create a new header <linux/__clk.h>, and move it over to it.  This
->> header must be included via <linux/clk.h> or <linux/clk-provider.h>
->> (this is why it is prefixed with double-underscore).  Add #error
->> so the build terminates if it is included directly.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->
-> How about we add a get_all_the_clks_for_the_device() sort of API
-> that uses the bulk clk code but also allocates the array by
-> reading the number of clks from DT? Please think of a better name
-> of course. We can figure out how to handle non-DT platforms if we
-> need to. With clkdev we could probably handle it with some sort
-> of lookup table search given a device name. Don't add that part
-> until we have a user though. I assume simplefb is all DT
-> platforms?
-
-of_reset_control_array_get() is implemented like that.
-
-It gets all the resets specified in DT, and automatically
-allocates the array of necessary number of pointers.
-
-clk-bulk and reset-array were implemented in a different way.
-
-
-
-> Either way, it looks like what we really want here is a way to
-> get every clk for a device and not look at the details.
-
-Yes.  This is helpful for generic drivers.
-
-
->  USB has a
-> similar case, which I think Shawn Guo/Dong Aisheng was trying to
-> add an OF based bulk clk_get() API called of_clk_bulk_get()
-> for[1]. If this get all clks API works there too then we should
-> use it. If it can be non-DT specific, even better.
->
-> [1] http://lkml.kernel.org/r/1506415441-4435-1-git-send-email-aisheng.dong@nxp.com
-
-OK, we can implement it based on Shawn/Dong's work.
-
-My concern is clk-bulk.c still needs to include #<linux/clk-provider.h>,
-but it is a bit odd since clk-bulk.c is a helper for clk consumers.
-
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+index d401156490f3..023f39bda633 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
++++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+@@ -17,8 +17,9 @@
+ #include "sun4i_dotclock.h"
+ 
+ struct sun4i_dclk {
+-	struct clk_hw	hw;
+-	struct regmap	*regmap;
++	struct clk_hw		hw;
++	struct regmap		*regmap;
++	struct sun4i_tcon	*tcon;
+ };
+ 
+ static inline struct sun4i_dclk *hw_to_dclk(struct clk_hw *hw)
+@@ -73,11 +74,13 @@ static unsigned long sun4i_dclk_recalc_rate(struct clk_hw *hw,
+ static long sun4i_dclk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long *parent_rate)
+ {
++	struct sun4i_dclk *dclk = hw_to_dclk(hw);
++	struct sun4i_tcon *tcon = dclk->tcon;
+ 	unsigned long best_parent = 0;
+ 	u8 best_div = 1;
+ 	int i;
+ 
+-	for (i = 6; i <= 127; i++) {
++	for (i = tcon->dclk_min_div; i <= tcon->dclk_max_div; i++) {
+ 		unsigned long ideal = rate * i;
+ 		unsigned long rounded;
+ 
+@@ -167,6 +170,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
+ 	dclk = devm_kzalloc(dev, sizeof(*dclk), GFP_KERNEL);
+ 	if (!dclk)
+ 		return -ENOMEM;
++	dclk->tcon = tcon;
+ 
+ 	init.name = clk_name;
+ 	init.ops = &sun4i_dclk_ops;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index f69bcdf11cb8..3efa1ab045cd 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -177,6 +177,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 val = 0;
+ 
++	tcon->dclk_min_div = 6;
++	tcon->dclk_max_div = 127;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+ 
+ 	/* Adjust clock delay */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index f61bf6d83b4a..4141fbd97ddf 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -169,6 +169,8 @@ struct sun4i_tcon {
+ 
+ 	/* Pixel clock */
+ 	struct clk			*dclk;
++	u8				dclk_max_div;
++	u8				dclk_min_div;
+ 
+ 	/* Reset control */
+ 	struct reset_control		*lcd_rst;
 -- 
-Best Regards
-Masahiro Yamada
+git-series 0.9.1
