@@ -1,36 +1,77 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 6 Oct 2017 10:39:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	"maintainer:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 08/10] dt-bindings: Add Ubiquiti Networks vendor prefix
-Message-ID: <20171006153937.5vstbj5zp5eemc4r@rob-hp-laptop>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
- <20170928231502.27069-9-f.fainelli@gmail.com>
+Return-Path: <julia.lawall@lip6.fr>
+Date: Tue, 17 Oct 2017 16:42:19 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Bhumika Goyal <bhumirks@gmail.com>
+cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
+    sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+    linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] CLK: SPEAr: make structure field and function argument
+ as const
+In-Reply-To: <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
+Message-ID: <alpine.DEB.2.20.1710171641400.5035@hadrien>
+References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com> <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170928231502.27069-9-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 28, 2017 at 04:15:00PM -0700, Florian Fainelli wrote:
-> Use the stock ticker: UBNT as the vendor prefix for Ubiquiti Networks.
-> 
-> Acked-by: Jon Mason <jon.mason@broadcom.com>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+On Tue, 17 Oct 2017, Bhumika Goyal wrote:
+
+> Make the masks field of clk_aux structure const as it do not modify the
+> fields of the aux_clk_masks structure it points to.
+>
+> Make the struct aux_clk_masks *aux argument of the function
+> clk_register_aux as const as the argument is only stored in the masks
+> field of a clk_aux structure which is now made const.
+>
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> ---
+>  drivers/clk/spear/clk-aux-synth.c | 2 +-
+>  drivers/clk/spear/clk.h           | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
+> index f271c35..8bea5df 100644
+> --- a/drivers/clk/spear/clk-aux-synth.c
+> +++ b/drivers/clk/spear/clk-aux-synth.c
+> @@ -136,7 +136,7 @@ static int clk_aux_set_rate(struct clk_hw *hw, unsigned long drate,
+>
+>  struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
+>  		const char *parent_name, unsigned long flags, void __iomem *reg,
+> -		struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
+> +	        const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
+>  		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk)
+>  {
+>  	struct clk_aux *aux;
+> diff --git a/drivers/clk/spear/clk.h b/drivers/clk/spear/clk.h
+> index 9834944..b9d28b3 100644
+> --- a/drivers/clk/spear/clk.h
+> +++ b/drivers/clk/spear/clk.h
+> @@ -49,7 +49,7 @@ struct aux_rate_tbl {
+>  struct clk_aux {
+>  	struct			clk_hw hw;
+>  	void __iomem		*reg;
+> -	struct aux_clk_masks	*masks;
+> +        const struct aux_clk_masks *masks;
+
+There are spaces before const here.
+
+julia
+
+>  	struct aux_rate_tbl	*rtbl;
+>  	u8			rtbl_cnt;
+>  	spinlock_t		*lock;
+> @@ -112,7 +112,7 @@ typedef unsigned long (*clk_calc_rate)(struct clk_hw *hw, unsigned long prate,
+>  /* clk register routines */
+>  struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
+>  		const char *parent_name, unsigned long flags, void __iomem *reg,
+> -		struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
+> +		const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
+>  		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk);
+>  struct clk *clk_register_frac(const char *name, const char *parent_name,
+>  		unsigned long flags, void __iomem *reg,
+> --
+> 1.9.1
+>
+>
