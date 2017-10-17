@@ -1,95 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:49375 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751567AbdJFGeU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Oct 2017 02:34:20 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/2] clk: sunxi-ng: r40: export a regmap to access the GMAC register
-Date: Fri,  6 Oct 2017 14:33:33 +0800
-Message-Id: <20171006063333.12345-3-icenowy@aosc.io>
-In-Reply-To: <20171006063333.12345-1-icenowy@aosc.io>
-References: <20171006063333.12345-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: [PATCH 22/23] arm: dts: sun8i: a711: Enable USB OTG
+Date: Tue, 17 Oct 2017 11:06:29 +0200
+Message-Id: <95434e5704d3cf721f011de76526575222e58bd6.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
-the syscon part, in the CCU of R40 SoC.
-
-Export a regmap of the CCU.
-
-Read access is not restricted to all registers, but only the GMAC
-register is allowed to be written.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index bb94e2c44e86..df752bf77ff1 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -14,6 +14,7 @@
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
-+#include <linux/regmap.h>
- 
- #include "ccu_common.h"
- #include "ccu_reset.h"
-@@ -1251,9 +1252,35 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
- 	.bypass_index	= 1, /* index of 24 MHz oscillator */
+diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+index 98dc0c22160b..e4d08bff3158 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -337,7 +337,14 @@
+ 	status = "okay";
  };
  
-+/*
-+ * Add a regmap for the GMAC driver (dwmac-sun8i) to access the
-+ * GMAC configuration register.
-+ * Only this register is allowed to be written, in order to
-+ * prevent overriding critical clock configuration.
-+ */
-+
-+#define SUN8I_R40_GMAC_CFG_REG 0x164
-+static bool sun8i_r40_ccu_regmap_writeable_reg(struct device *dev,
-+					       unsigned int reg)
-+{
-+	if (reg == SUN8I_R40_GMAC_CFG_REG)
-+		return true;
-+	return false;
-+}
-+
-+static struct regmap_config sun8i_r40_ccu_regmap_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+	.max_register	= 0x320, /* PLL_LOCK_CTRL_REG */
-+
-+	.writeable_reg	= sun8i_r40_ccu_regmap_writeable_reg,
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
 +};
 +
- static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-+	struct regmap *regmap;
- 	void __iomem *reg;
- 	u32 val;
- 	int ret;
-@@ -1278,6 +1305,11 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- 	val &= ~GENMASK(25, 20);
- 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
- 
-+	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
-+				       &sun8i_r40_ccu_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
- 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
- 	if (ret)
- 		return ret;
+ &usbphy {
++	usb0_id_det-gpios = <&pio 7 11 GPIO_ACTIVE_HIGH>; /* PH11 */
++	usb0_vbus-supply = <&reg_drivevbus>;
+ 	usb1_vbus_supply = <&reg_vmain>;
+ 	usb2_vbus_supply = <&reg_vmain>;
+ 	status = "okay";
 -- 
-2.13.6
-
+git-series 0.9.1
