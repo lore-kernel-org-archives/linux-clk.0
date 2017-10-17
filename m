@@ -1,36 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40658 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933428AbdJQKBu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 06:01:50 -0400
-MIME-Version: 1.0
-In-Reply-To: <89bee8042b5fa50c8c3dbf52cc0c14b34beef9df.1508231063.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 07/23] drm/sun4i: tcon: Move out the tcon0 common setup
+Date: Tue, 17 Oct 2017 11:06:14 +0200
+Message-Id: <03df3b0c8a1823b39a2ae0b190722f3623e76894.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
- <89bee8042b5fa50c8c3dbf52cc0c14b34beef9df.1508231063.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 Oct 2017 18:01:25 +0800
-Message-ID: <CAGb2v67OFb6-Bk7TOsGhf1iKBE19nX2uXenpmSvugTO_UcWz9g@mail.gmail.com>
-Subject: Re: [PATCH 08/23] dt-bindings: panel: lvds: Document power-supply property
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mylene Josserand <mylene.josserand@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The power-supply property is used be a vast majority of panels, including
-                                    ^^^ typo
+Some channel0 setup has to be done, no matter what the output interface is
+(RGB, CPU, LVDS). Move that code into a common function in order to avoid
+duplication.
 
-ChenYu
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 7ecd4f7c8411..f69bcdf11cb8 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -158,15 +158,26 @@ static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
+ 	return delay;
+ }
+ 
+-static void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+-				 struct drm_display_mode *mode)
++static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
++					const struct drm_display_mode *mode)
++{
++	/* Configure the dot clock */
++	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
++
++	/* Set the resolution */
++	regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
++		     SUN4I_TCON0_BASIC0_X(mode->crtc_hdisplay) |
++		     SUN4I_TCON0_BASIC0_Y(mode->crtc_vdisplay));
++}
++
++static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
++				     const struct drm_display_mode *mode)
+ {
+ 	unsigned int bp, hsync, vsync;
+ 	u8 clk_delay;
+ 	u32 val = 0;
+ 
+-	/* Configure the dot clock */
+-	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
++	sun4i_tcon0_mode_set_common(tcon, mode);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
+@@ -174,11 +185,6 @@ static void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+ 			   SUN4I_TCON0_CTL_CLK_DELAY_MASK,
+ 			   SUN4I_TCON0_CTL_CLK_DELAY(clk_delay));
+ 
+-	/* Set the resolution */
+-	regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
+-		     SUN4I_TCON0_BASIC0_X(mode->crtc_hdisplay) |
+-		     SUN4I_TCON0_BASIC0_Y(mode->crtc_vdisplay));
+-
+ 	/*
+ 	 * This is called a backporch in the register documentation,
+ 	 * but it really is the back porch + hsync
+@@ -329,7 +335,7 @@ void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
+ {
+ 	switch (encoder->encoder_type) {
+ 	case DRM_MODE_ENCODER_NONE:
+-		sun4i_tcon0_mode_set(tcon, mode);
++		sun4i_tcon0_mode_set_rgb(tcon, mode);
+ 		sun4i_tcon_set_mux(tcon, 0, encoder);
+ 		break;
+ 	case DRM_MODE_ENCODER_TVDAC:
+-- 
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
