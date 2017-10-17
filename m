@@ -1,199 +1,114 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33736 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751015AbdJBKs3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 06:48:29 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: exynos: Add Exynos4412 ISP clock controller
-Date: Mon, 02 Oct 2017 12:47:58 +0200
-Message-id: <20171002104759.25944-4-m.szyprowski@samsung.com>
-In-reply-to: <20171002104759.25944-1-m.szyprowski@samsung.com>
-References: <20171002104759.25944-1-m.szyprowski@samsung.com>
-        <CGME20171002104826eucas1p15c0d0d9038e5b1119fd244ecab502d35@eucas1p1.samsung.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:55316 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759902AbdJQJGr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:47 -0400
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: [PATCH 16/23] drm/sun4i: Add A83T support
+Date: Tue, 17 Oct 2017 11:06:23 +0200
+Message-Id: <cfa06492ecb6bfba965e1074604525a4e939c5c1.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos4412 ISP clock controller is located in the SOC area, which belongs
-to ISP power domain. This patch instantiates a separate clock driver
-for those clocks, updates all clients of ISP clocks and ensures that the
-driver is properly integrated in ISP power domin.
+Add support for the A83T display pipeline.
 
-This finally solves all the mysterious freezes in accessing ISP clocks
-when ISP power domain is disabled.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm/boot/dts/exynos4412.dtsi | 71 ++++++++++++++++++++++++---------------
- 1 file changed, 44 insertions(+), 27 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+ drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 1 +
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
+ 4 files changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 7ff03a7e8fb9..2a2f1e596672 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -191,10 +191,19 @@
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 46df3b78ae9e..c0fa233ec1fc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -90,6 +90,7 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-a83t-tcon
+    * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+@@ -209,6 +210,7 @@ supported.
  
- 	clock: clock-controller@10030000 {
- 		compatible = "samsung,exynos4412-clock";
--		reg = <0x10030000 0x20000>;
-+		reg = <0x10030000 0x18000>;
- 		#clock-cells = <1>;
- 	};
+ Required properties:
+   - compatible: value must be one of:
++    * allwinner,sun8i-a83t-de2-mixer
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -236,6 +238,7 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-a83t-display-engine
+     * allwinner,sun8i-v3s-display-engine
  
-+	isp_clock: clock-controller@10048000 {
-+		compatible = "samsung,exynos4412-isp-clock";
-+		reg = <0x10048000 0x1000>;
-+		#clock-cells = <1>;
-+		power-domains = <&pd_isp>;
-+		clocks = <&clock CLK_ACLK200>, <&clock CLK_ACLK400_MCUISP>;
-+		clock-names = "aclk200", "aclk400_mcuisp";
-+	};
-+
- 	mct@10050000 {
- 		compatible = "samsung,exynos4412-mct";
- 		reg = <0x10050000 0x800>;
-@@ -257,7 +266,7 @@
- 			reg = <0x12390000 0x1000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_isp>;
--			clocks = <&clock CLK_FIMC_LITE0>;
-+			clocks = <&isp_clock CLK_ISP_FIMC_LITE0>;
- 			clock-names = "flite";
- 			iommus = <&sysmmu_fimc_lite0>;
- 			status = "disabled";
-@@ -268,7 +277,7 @@
- 			reg = <0x123A0000 0x1000>;
- 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_isp>;
--			clocks = <&clock CLK_FIMC_LITE1>;
-+			clocks = <&isp_clock CLK_ISP_FIMC_LITE1>;
- 			clock-names = "flite";
- 			iommus = <&sysmmu_fimc_lite1>;
- 			status = "disabled";
-@@ -280,29 +289,35 @@
- 			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
- 			power-domains = <&pd_isp>;
--			clocks = <&clock CLK_FIMC_LITE0>,
--				 <&clock CLK_FIMC_LITE1>, <&clock CLK_PPMUISPX>,
--				 <&clock CLK_PPMUISPMX>,
-+			clocks = <&isp_clock CLK_ISP_FIMC_LITE0>,
-+				 <&isp_clock CLK_ISP_FIMC_LITE1>,
-+				 <&isp_clock CLK_ISP_PPMUISPX>,
-+				 <&isp_clock CLK_ISP_PPMUISPMX>,
-+				 <&isp_clock CLK_ISP_FIMC_ISP>,
-+				 <&isp_clock CLK_ISP_FIMC_DRC>,
-+				 <&isp_clock CLK_ISP_FIMC_FD>,
-+				 <&isp_clock CLK_ISP_MCUISP>,
-+				 <&isp_clock CLK_ISP_GICISP>,
-+				 <&isp_clock CLK_ISP_MCUCTL_ISP>,
-+				 <&isp_clock CLK_ISP_PWM_ISP>,
-+				 <&isp_clock CLK_ISP_DIV_ISP0>,
-+				 <&isp_clock CLK_ISP_DIV_ISP1>,
-+				 <&isp_clock CLK_ISP_DIV_MCUISP0>,
-+				 <&isp_clock CLK_ISP_DIV_MCUISP1>,
- 				 <&clock CLK_MOUT_MPLL_USER_T>,
--				 <&clock CLK_FIMC_ISP>, <&clock CLK_FIMC_DRC>,
--				 <&clock CLK_FIMC_FD>, <&clock CLK_MCUISP>,
--				 <&clock CLK_GICISP>, <&clock CLK_MCUCTL_ISP>,
--				 <&clock CLK_PWM_ISP>,
--				 <&clock CLK_DIV_ISP0>, <&clock CLK_DIV_ISP1>,
--				 <&clock CLK_DIV_MCUISP0>,
--				 <&clock CLK_DIV_MCUISP1>,
--				 <&clock CLK_UART_ISP_SCLK>,
--				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
-+				 <&clock CLK_ACLK200>,
- 				 <&clock CLK_ACLK400_MCUISP>,
--				 <&clock CLK_DIV_ACLK400_MCUISP>;
-+				 <&clock CLK_DIV_ACLK200>,
-+				 <&clock CLK_DIV_ACLK400_MCUISP>,
-+				 <&clock CLK_UART_ISP_SCLK>;
- 			clock-names = "lite0", "lite1", "ppmuispx",
--				      "ppmuispmx", "mpll", "isp",
-+				      "ppmuispmx", "isp",
- 				      "drc", "fd", "mcuisp",
- 				      "gicisp", "mcuctl_isp", "pwm_isp",
- 				      "ispdiv0", "ispdiv1", "mcuispdiv0",
--				      "mcuispdiv1", "uart", "aclk200",
--				      "div_aclk200", "aclk400mcuisp",
--				      "div_aclk400mcuisp";
-+				      "mcuispdiv1", "mpll", "aclk200",
-+				      "aclk400mcuisp", "div_aclk200",
-+				      "div_aclk400mcuisp", "uart";
- 			iommus = <&sysmmu_fimc_isp>, <&sysmmu_fimc_drc>,
- 				 <&sysmmu_fimc_fd>, <&sysmmu_fimc_mcuctl>;
- 			iommu-names = "isp", "drc", "fd", "mcuctl";
-@@ -318,7 +333,7 @@
- 			i2c1_isp: i2c-isp@12140000 {
- 				compatible = "samsung,exynos4212-i2c-isp";
- 				reg = <0x12140000 0x100>;
--				clocks = <&clock CLK_I2C1_ISP>;
-+				clocks = <&isp_clock CLK_ISP_I2C1_ISP>;
- 				clock-names = "i2c_isp";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -355,7 +370,7 @@
- 		interrupts = <16 2>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu";
--		clocks = <&clock CLK_SMMU_ISP>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_ISP>;
- 		#iommu-cells = <0>;
- 	};
+   - allwinner,pipelines: list of phandle to the display engine
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index a27efad9bc76..439f116bb3b5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -189,6 +189,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-a83t-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+ }
  
-@@ -366,7 +381,7 @@
- 		interrupts = <16 3>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu";
--		clocks = <&clock CLK_SMMU_DRC>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_DRC>;
- 		#iommu-cells = <0>;
- 	};
+@@ -347,6 +348,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
++	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ }
+ };
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 6a20a467ee6d..eb3c8bad4977 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1063,6 +1063,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-a83t-tcon", .data = &sun8i_v3s_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 86c6c24b5105..c6030ce130d3 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -385,6 +385,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
  
-@@ -377,7 +392,7 @@
- 		interrupts = <16 4>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu";
--		clocks = <&clock CLK_SMMU_FD>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_FD>;
- 		#iommu-cells = <0>;
- 	};
- 
-@@ -388,7 +403,7 @@
- 		interrupts = <16 5>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu";
--		clocks = <&clock CLK_SMMU_ISPCX>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_ISPCX>;
- 		#iommu-cells = <0>;
- 	};
- 
-@@ -399,7 +414,8 @@
- 		interrupts = <16 0>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu", "master";
--		clocks = <&clock CLK_SMMU_LITE0>, <&clock CLK_FIMC_LITE0>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_LITE0>,
-+			 <&isp_clock CLK_ISP_FIMC_LITE0>;
- 		#iommu-cells = <0>;
- 	};
- 
-@@ -410,7 +426,8 @@
- 		interrupts = <16 1>;
- 		power-domains = <&pd_isp>;
- 		clock-names = "sysmmu", "master";
--		clocks = <&clock CLK_SMMU_LITE1>, <&clock CLK_FIMC_LITE1>;
-+		clocks = <&isp_clock CLK_ISP_SMMU_LITE1>,
-+			 <&isp_clock CLK_ISP_FIMC_LITE1>;
- 		#iommu-cells = <0>;
- 	};
- 
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
++		.compatible = "allwinner,sun8i-a83t-de2-mixer",
++		.data = &sun8i_v3s_mixer_cfg,
++	},
++	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
+ 	},
 -- 
-2.14.2
-
+git-series 0.9.1
