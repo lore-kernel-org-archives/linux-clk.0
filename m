@@ -1,64 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 31 Oct 2017 14:51:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.15, part 2
-Message-ID: <20171031215141.GF30645@codeaurora.org>
-References: <CGME20171016102923epcas1p445d71065cec89b9f62b9f02a5446c2dc@epcas1p4.samsung.com>
- <148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 09/23] drm/panel: lvds: Add support for the power-supply
+ property
+Date: Tue, 17 Oct 2017 11:06:16 +0200
+Message-Id: <6f688742088e5e873f8d392956e06e783667aa96.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mylene Josserand <mylene.josserand@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, Sylwester Nawrocki wrote:
-> Hi Stephen, Mike,
-> 
-> This change set is based off of your clk-pm-runtime branch, I needed to
-> do it that way as there were dependencies on the newly added clk runtime
-> PM feature.  In this tag there is also a fix commit related to changes 
-> introduced in the clk-pm-runtime branch. There will be a merge conflict, 
-> you can find the conflict resolution hint below. 
-> 
-> The following changes since commit ae432a9b314e07d486acfadc4df2f922721e6757:
-> 
->   clk: samsung: exynos-audss: Add support for runtime PM (2017-09-07 15:26:01 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-exynos-pm
+A significant number of panels need to power up a regulator in order to
+operate properly. Add support for the power-supply property to enable and
+disable such a regulator whenever needed.
 
-Did you change keys recently? My older version of gnupg chokes on
-your signature which is slightly concerning. The other PR didn't
-have problems.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/panel/panel-lvds.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-> 
-> for you to fetch changes up to 7679eb20353dc74e47fbc97b2d77fd4f88a77c0f:
-> 
->   clk: samsung: Add a separate driver for Exynos4412 ISP clocks (2017-10-16 11:25:50 +0200)
-> 
-> ----------------------------------------------------------------
-> clk/samsung updates for v4.15, part 2
-> 
->  - An addition of separate driver for the Exynos 4412 ISP CMU, needed
->    to model and properly handle the clock controller's dependencies
->    on the ISP power domain.
-
-I find it sad that you opted to break the clk node up into two
-nodes and clk providers purely to satisfy the requirement that
-runtime PM be used with struct devices instead of solving the
-problem of multiple power domains for a single struct device and
-how that would work with runtime PM.
-
-Anyway, who am I to stand in the way of progress! I'll pull this
-into clk-next.
-
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index e2d57c01200b..57e38a9e7ab4 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+ #include <drm/drmP.h>
+@@ -39,6 +40,7 @@ struct panel_lvds {
+ 	bool data_mirror;
+ 
+ 	struct backlight_device *backlight;
++	struct regulator *supply;
+ 
+ 	struct gpio_desc *enable_gpio;
+ 	struct gpio_desc *reset_gpio;
+@@ -69,6 +71,9 @@ static int panel_lvds_unprepare(struct drm_panel *panel)
+ 	if (lvds->enable_gpio)
+ 		gpiod_set_value_cansleep(lvds->enable_gpio, 0);
+ 
++	if (lvds->supply)
++		regulator_disable(lvds->supply);
++
+ 	return 0;
+ }
+ 
+@@ -76,6 +81,17 @@ static int panel_lvds_prepare(struct drm_panel *panel)
+ {
+ 	struct panel_lvds *lvds = to_panel_lvds(panel);
+ 
++	if (lvds->supply) {
++		int err;
++
++		err = regulator_enable(lvds->supply);
++		if (err < 0) {
++			dev_err(lvds->dev, "failed to enable supply: %d\n",
++				err);
++			return err;
++		}
++	}
++
+ 	if (lvds->enable_gpio)
+ 		gpiod_set_value_cansleep(lvds->enable_gpio, 1);
+ 
+@@ -196,6 +212,13 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	lvds->supply = devm_regulator_get_optional(lvds->dev, "power");
++	if (IS_ERR(lvds->supply)) {
++		ret = PTR_ERR(lvds->supply);
++		dev_err(lvds->dev, "failed to request regulator: %d\n", ret);
++		return ret;
++	}
++
+ 	/* Get GPIOs and backlight controller. */
+ 	lvds->enable_gpio = devm_gpiod_get_optional(lvds->dev, "enable",
+ 						     GPIOD_OUT_LOW);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
