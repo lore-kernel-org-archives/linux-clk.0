@@ -1,29 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56426 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbdJCK3q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:29:46 -0400
-Subject: Re: [PATCH] clk: samsung: Properly propagate flags in __PLL macro
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <281d54d4-6156-312e-63a3-ec879ec5beb4@samsung.com>
-Date: Tue, 03 Oct 2017 12:29:39 +0200
-MIME-version: 1.0
-In-reply-to: <1505399897-4840-1-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20170914143824eucas1p1e811c6c4c32a2253aebad9a27d4182d5@eucas1p1.samsung.com>
-        <1505399897-4840-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 03/23] drm/sun4i: tcon: Make tcon_set_mux mode argument const
+Date: Tue, 17 Oct 2017 11:06:10 +0200
+Message-Id: <b0cce5a43fc3b56953d21a54fc3c14672f755f42.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mylene Josserand <mylene.josserand@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/14/2017 04:38 PM, Marek Szyprowski wrote:
-> All users of __PLL macro already provide flags parameter, so don't
-> overwrite it unconditionally with CLK_GET_RATE_NOCACHE.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The drm_display_mode pointer can be mark const, so let's do it.
 
-Patch applied, thanks.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 +++---
+ drivers/gpu/drm/sun4i/sun4i_tcon.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 68751b999877..54e1796d2953 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -134,7 +134,7 @@ static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+ }
+ 
+ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+-			struct drm_encoder *encoder)
++			const struct drm_encoder *encoder)
+ {
+ 	int ret = -ENOTSUPP;
+ 
+@@ -783,7 +783,7 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
+ 
+ /* platform specific TCON muxing callbacks */
+ static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
+-				  struct drm_encoder *encoder)
++				  const struct drm_encoder *encoder)
+ {
+ 	u32 val;
+ 
+@@ -799,7 +799,7 @@ static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
+ }
+ 
+ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
+-			      struct drm_encoder *encoder)
++			      const struct drm_encoder *encoder)
+ {
+ 	struct sun4i_tcon *tcon0 = sun4i_get_tcon0(encoder->dev);
+ 	u32 shift;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index d9e1357cc8ae..d81c6e20efe6 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -152,7 +152,7 @@ struct sun4i_tcon_quirks {
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ 
+ 	/* callback to handle tcon muxing options */
+-	int	(*set_mux)(struct sun4i_tcon *, struct drm_encoder *);
++	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
+ };
+ 
+ struct sun4i_tcon {
+-- 
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
