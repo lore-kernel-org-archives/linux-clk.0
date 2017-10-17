@@ -1,61 +1,39 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 17 Oct 2017 13:12:49 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, jonathanh@nvidia.com,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, keescook@chromium.org
-Subject: Re: [PATCH] clk: tegra30: make tegra_clk_pll_params __ro_after_init
-Message-ID: <20171017111249.GA32653@ulmo>
-References: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40784 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756579AbdJQKPq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 06:15:46 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-In-Reply-To: <1506975128-16514-1-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+ <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 17 Oct 2017 18:15:20 +0800
+Message-ID: <CAGb2v67i9mNh8Y+Yxw8c9Q8x_Eg=ztyBW2F+HKcAXih-RjP=tQ@mail.gmail.com>
+Subject: Re: [PATCH 14/23] drm/sun4i: Create minimal multipliers and dividers
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The various outputs the TCON can provide have different constraints on the
+> dotclock divider. Let's make them configurable by the various mode_set
+> functions.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 03, 2017 at 01:42:08AM +0530, Bhumika Goyal wrote:
-> These structures are only passed to the functions tegra_clk_register_pll,
-> tegra_clk_register_pll{e/u} or tegra_periph_clk_init during the init
-> phase. These functions modify the structures only during the init phase
-> and after that the structures are never modified. Therefore, make them
-> __ro_after_init.
->=20
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra30.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnl5a4ACgkQ3SOs138+
-s6Hk/w/+N84Uj4xl9gBsCxlx2RkILST1b4kNGRa/d4TMw/cKnrmjUD06poP2uC7L
-4HI07Lj5nzKTniEF87Vtfxa1675PVDRSP5WG0nbYBZlbnsj903lP1dSGzA2u+Gfx
-TxaH/7FzVza0xrKU5lVqPULxXTKGWndPhC1CwxVGAAFyH9+fvgFH088Ghem3ci3b
-dWISCT2mBtyrEan2Bi3oU5dySLkH/mCy9yVdO/rmPx2tFDSL7BLyKhvlmkgpyXVH
-thqFJRnJ2f6uBMgt5HX/pB071nbcDZdS4hjJuVUzp4tnNwNJpZGQL3yZYqNHbysV
-9WxNGk5VcwE4Lk/wVpdZcZ6C9MiLgqvyvrR/d7MdsRjWRiLR2R5C9/Js9ft2p0Kk
-tqhVwqHz9QLijy3HQGJCqMhr8KmxfGubNmoC8udJek/4MIsCL95sXiNUQEu60sWC
-XYlGHu9NLT9lg6JejB9/RrrcttBeZLkQMPR4sEn67RmJXKjDOzX+EjxNRQfDjQfH
-V8E2aNfh81syBNAWzxSkTsx1xj+SNOetG3YiIOtCUam/HcOMCdlhfHtc0gDhfgAn
-pjuKNyJBhF9jd3y72tZ+y9oEGGodMCtmCxiu78fgIY8O9k9PABKPvfa77v/2V09L
-IBZrsdyWwpT7BRumvc8fhx0lB1kmRXmPDM+bJv7enZ+jI0B1ECo=
-=C8rt
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
