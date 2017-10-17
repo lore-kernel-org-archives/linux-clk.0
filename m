@@ -1,132 +1,192 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 20 Oct 2017 09:43:24 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:55239 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759901AbdJQJGl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:41 -0400
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock changes for 4.15
-Message-ID: <20171020074324.y5ykvzhst3uq6kbz@flea>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jn73jf6ydh3ivsr5"
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: [PATCH 01/23] drm/sun4i: Implement endpoint parsing using kfifo
+Date: Tue, 17 Oct 2017 11:06:08 +0200
+Message-Id: <4ecb323e787918208f6a5d9f0ebba12c62583c98.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The commit da82b8785eeb ("drm/sun4i: add components in breadth first
+traversal order") implemented a breadth first traversal of our device tree
+nodes graph. However, it was relying on the kernel linked lists, and those
+are not really safe for addition.
 
---jn73jf6ydh3ivsr5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Indeed, in a single pipeline stage, your first stage (ie, the mixer or
+fronted) will be queued, and it will be the final iteration of that list as
+far as list_for_each_entry_safe is concerned. Then, during that final
+iteration, we'll queue another element (the TCON or the backend) that
+list_for_each_entry_safe will not account for, and we will leave the loop
+without having iterated over all the elements. And since we won't have
+built our components list properly, the DRM driver will be left
+non-functional.
 
-Hi Mike, Stephen,
+We can instead use a kfifo to queue and enqueue components in-order, as was
+the original intention. This also has the benefit of removing any dynamic
+allocation, making the error handling path simpler too. The only thing
+we're losing is the ability to tell whether an element has already been
+queued, but that was only needed to remove spurious logs, and therefore
+purely cosmetic.
 
-Please pull the following changes for the next merge window.
+This means that this commit effectively reverses e8afb7b67fba ("drm/sun4i:
+don't add components that are already in the queue").
 
-Thanks!
-Maxime
+Fixes: da82b8785eeb ("drm/sun4i: add components in breadth first traversal order")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 71 +++++---------------------------
+ 1 file changed, 13 insertions(+), 58 deletions(-)
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
-
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-for-4.15
-
-for you to fetch changes up to 4328a2186e5120cfd34c4f04c6e4b7e74fb8b7b4:
-
-  clk: sunxi-ng: sun4i: Export video PLLs (2017-10-17 19:32:16 +0200)
-
-----------------------------------------------------------------
-Allwinner clock changes for 4.15
-
-The most notable changes are:
-  - Addition of sigma/delta modulation for the audio PLLs on the newer SoCs
-  - A83t Display clocks supports
-
-There's also a bunch of minor fixes that didn't have any impact on current
-features provided by the kernel.
-
-----------------------------------------------------------------
-Alexander Syring (1):
-      clk: sunxi-ng: Fix missing CLK_SET_RATE_PARENT in ccu-sun4i-a10.c
-
-Chen-Yu Tsai (12):
-      clk: sunxi-ng: Implement reset control status readback
-      clk: sunxi-ng: sun6i: Export video PLLs
-      clk: sunxi-ng: sun6i: Rename HDMI DDC clock to avoid name collision
-      clk: sunxi-ng: sun5i: Fix bit offset of audio PLL post-divider
-      clk: sunxi-ng: nm: Check if requested rate is supported by fractional=
- clock
-      clk: sunxi-ng: Add sigma-delta modulation support
-      clk: sunxi-ng: nm: Add support for sigma-delta modulation
-      clk: sunxi-ng: sun8i: h3: Use sigma-delta modulation for audio PLL
-      clk: sunxi-ng: sun4i: Use sigma-delta modulation for audio PLL
-      clk: sunxi-ng: sun5i: Use sigma-delta modulation for audio PLL
-      clk: sunxi-ng: sun6i: Use sigma-delta modulation for audio PLL
-      clk: sunxi-ng: sun8i: a23: Use sigma-delta modulation for audio PLL
-
-Icenowy Zheng (2):
-      clk: sunxi-ng: add CLK_SET_RATE_UNGATE to all H3 PLLs
-      clk: sunxi-ng: add CLK_SET_RATE_PARENT flag to H3 GPU clock
-
-Jonathan Liu (1):
-      clk: sunxi-ng: sun4i: Export video PLLs
-
-Maxime Ripard (1):
-      clk: sunxi-ng: Add A83T display clocks
-
-Ondrej Jirman (1):
-      clk: sunxi-ng: a83t: Fix invalid csi-mclk mux offset
-
- drivers/clk/sunxi-ng/Makefile             |   1 +
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c      |  28 ++++--
- drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   4 +-
- drivers/clk/sunxi-ng/ccu-sun5i.c          |  27 +++--
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c      |  40 +++++---
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h      |   8 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c      |  38 ++++---
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c     |   2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c      |  21 ++--
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c       |  56 ++++++-----
- drivers/clk/sunxi-ng/ccu_common.h         |   1 +
- drivers/clk/sunxi-ng/ccu_nm.c             |  25 ++++-
- drivers/clk/sunxi-ng/ccu_nm.h             |  25 +++++
- drivers/clk/sunxi-ng/ccu_reset.c          |  14 +++
- drivers/clk/sunxi-ng/ccu_sdm.c            | 158 ++++++++++++++++++++++++++=
-++++
- drivers/clk/sunxi-ng/ccu_sdm.h            |  80 +++++++++++++++
- include/dt-bindings/clock/sun4i-a10-ccu.h |   2 +
- include/dt-bindings/clock/sun6i-a31-ccu.h |   4 +
- 18 files changed, 457 insertions(+), 77 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.h
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---jn73jf6ydh3ivsr5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZ6akcAAoJEBx+YmzsjxAgKjcP/jffBoZPHBatdqiEdRaNVIRj
-ERT7OTxZD4gKbMkpDTUm2rWBjhAAn9ag5gR7zzZRWdXRi0eNFI3WaUnM+qEq7VMZ
-FEXeV0Epk0A+bD208TWhe/hFsRLrabr/zT4skLGDe5vscli1oRsnY0ktunWgwHrd
-N+x3TIHlFIuWSEO8qGO2OMHeEixgUHuW9/UNnI//qa69uxJHRlUe1totgn3udjqY
-p2Ksdh9DBDBvdZZlpfIqP9WQW9ALp8gAOyApHpaEL83uIAGB3CsnTpFO2QYsrBxK
-wWClAJ2Um5zympPc0uLQF3X57bhufSV29jwdzsc74o16z4E3OlkROwrlh86A80Jg
-ldZnqwgo8NEQmNAiTgKM0en24X1kjrzmnsy1mLpaWVO21TuEFPisGyE4hhmVhatr
-qDp11AznxJ6l+U4xrXGobqK7ZYVjhIPwmoJCvSqEm1gsKQ+u1H7/VQjzqQaqNc6Z
-YnUPqfvtZA954b0sXT+hdrasIfmwxuWSGZB/zXuEP4xjfzPfEZmZW3oORQ6htSQk
-3xkkleSJMlTI4rZzRkazVe6JIXv6yX4QZuj/UTDMt6JEJKQWlQC4+1CCEbCyDu/V
-Xx9LefopAbGotGWDrytlinSLgLOdU/8IVsviX/59f4VCYEs5PBxiENr0QIJKoROX
-g7YkclpFAm4iMuIOj6Ef
-=QMDv
------END PGP SIGNATURE-----
-
---jn73jf6ydh3ivsr5--
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index b5879d4620d8..a27efad9bc76 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/component.h>
++#include <linux/kfifo.h>
+ #include <linux/of_graph.h>
+ #include <linux/of_reserved_mem.h>
+ 
+@@ -222,29 +223,15 @@ static int compare_of(struct device *dev, void *data)
+  * matching system handles this for us.
+  */
+ struct endpoint_list {
+-	struct device_node *node;
+-	struct list_head list;
++	DECLARE_KFIFO(fifo, struct device_node *, 16);
+ };
+ 
+-static bool node_is_in_list(struct list_head *endpoints,
+-			    struct device_node *node)
+-{
+-	struct endpoint_list *endpoint;
+-
+-	list_for_each_entry(endpoint, endpoints, list)
+-		if (endpoint->node == node)
+-			return true;
+-
+-	return false;
+-}
+-
+ static int sun4i_drv_add_endpoints(struct device *dev,
+-				   struct list_head *endpoints,
++				   struct endpoint_list *list,
+ 				   struct component_match **match,
+ 				   struct device_node *node)
+ {
+ 	struct device_node *port, *ep, *remote;
+-	struct endpoint_list *endpoint;
+ 	int count = 0;
+ 
+ 	/*
+@@ -304,19 +291,7 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 			}
+ 		}
+ 
+-		/* skip downstream node if it is already in the queue */
+-		if (node_is_in_list(endpoints, remote))
+-			continue;
+-
+-		/* Add downstream nodes to the queue */
+-		endpoint = kzalloc(sizeof(*endpoint), GFP_KERNEL);
+-		if (!endpoint) {
+-			of_node_put(remote);
+-			return -ENOMEM;
+-		}
+-
+-		endpoint->node = remote;
+-		list_add_tail(&endpoint->list, endpoints);
++		kfifo_put(&list->fifo, remote);
+ 	}
+ 
+ 	return count;
+@@ -325,10 +300,11 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ static int sun4i_drv_probe(struct platform_device *pdev)
+ {
+ 	struct component_match *match = NULL;
+-	struct device_node *np = pdev->dev.of_node;
+-	struct endpoint_list *endpoint, *endpoint_temp;
++	struct device_node *np = pdev->dev.of_node, *endpoint;
++	struct endpoint_list list;
+ 	int i, ret, count = 0;
+-	LIST_HEAD(endpoints);
++
++	INIT_KFIFO(list.fifo);
+ 
+ 	for (i = 0;; i++) {
+ 		struct device_node *pipeline = of_parse_phandle(np,
+@@ -337,31 +313,19 @@ static int sun4i_drv_probe(struct platform_device *pdev)
+ 		if (!pipeline)
+ 			break;
+ 
+-		endpoint = kzalloc(sizeof(*endpoint), GFP_KERNEL);
+-		if (!endpoint) {
+-			ret = -ENOMEM;
+-			goto err_free_endpoints;
+-		}
+-
+-		endpoint->node = pipeline;
+-		list_add_tail(&endpoint->list, &endpoints);
++		kfifo_put(&list.fifo, pipeline);
+ 	}
+ 
+-	list_for_each_entry_safe(endpoint, endpoint_temp, &endpoints, list) {
++	while (kfifo_get(&list.fifo, &endpoint)) {
+ 		/* process this endpoint */
+-		ret = sun4i_drv_add_endpoints(&pdev->dev, &endpoints, &match,
+-					      endpoint->node);
++		ret = sun4i_drv_add_endpoints(&pdev->dev, &list, &match,
++					      endpoint);
+ 
+ 		/* sun4i_drv_add_endpoints can fail to allocate memory */
+ 		if (ret < 0)
+-			goto err_free_endpoints;
++			return ret;
+ 
+ 		count += ret;
+-
+-		/* delete and cleanup the current entry */
+-		list_del(&endpoint->list);
+-		of_node_put(endpoint->node);
+-		kfree(endpoint);
+ 	}
+ 
+ 	if (count)
+@@ -370,15 +334,6 @@ static int sun4i_drv_probe(struct platform_device *pdev)
+ 						       match);
+ 	else
+ 		return 0;
+-
+-err_free_endpoints:
+-	list_for_each_entry_safe(endpoint, endpoint_temp, &endpoints, list) {
+-		list_del(&endpoint->list);
+-		of_node_put(endpoint->node);
+-		kfree(endpoint);
+-	}
+-
+-	return ret;
+ }
+ 
+ static int sun4i_drv_remove(struct platform_device *pdev)
+-- 
+git-series 0.9.1
