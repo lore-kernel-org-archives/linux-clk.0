@@ -1,179 +1,277 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	andy.gross@linaro.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
-Date: Tue, 10 Oct 2017 14:27:13 +0530
-Message-Id: <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
-References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 06/23] drm/sun4i: tcon: Don't rely on encoders to set the TCON
+ mode
+Date: Tue, 17 Oct 2017 11:06:13 +0200
+Message-Id: <faa3a4d511039af1d116270dfef3a8b60ca3591e.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mylene Josserand <mylene.josserand@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all RPM controlled clocks on msm8996 platform
+Just like we did for the TCON enable and disable, for historical reasons we
+used to rely on the encoders calling the TCON mode_set function, while the
+CRTC has a callback for that.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-[srini: Fixed various issues with offsets and made names specific to msm8996]
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Let's implement it in order to reduce the boilerplate code.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 82 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             | 14 ++++
- include/linux/soc/qcom/smd-rpm.h                   |  4 ++
- 4 files changed, 101 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_crtc.c          | 10 +++++++-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c  |  1 +-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c      |  7 +-----
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c |  1 +-
+ drivers/gpu/drm/sun4i/sun4i_rgb.c           | 15 +-----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.c          | 31 +++++++++++++++++-----
+ drivers/gpu/drm/sun4i/sun4i_tcon.h          | 11 ++------
+ drivers/gpu/drm/sun4i/sun4i_tv.c            |  6 +----
+ 8 files changed, 37 insertions(+), 45 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index a7235e9..a7e4a86 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -13,6 +13,7 @@ Required properties :
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+index e86baa3746af..5decae0069d0 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+@@ -115,11 +115,21 @@ static void sun4i_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	sun4i_tcon_set_status(scrtc->tcon, encoder, true);
+ }
  
- - #clock-cells : shall contain 1
- 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index cc03d55..c26d900 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -530,9 +530,91 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
- 	.clks = msm8974_clks,
- 	.num_clks = ARRAY_SIZE(msm8974_clks),
++static void sun4i_crtc_mode_set_nofb(struct drm_crtc *crtc)
++{
++	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
++	struct drm_encoder *encoder = sun4i_crtc_get_encoder(crtc);
++	struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
++
++	sun4i_tcon_mode_set(scrtc->tcon, encoder, mode);
++}
++
+ static const struct drm_crtc_helper_funcs sun4i_crtc_helper_funcs = {
+ 	.atomic_begin	= sun4i_crtc_atomic_begin,
+ 	.atomic_flush	= sun4i_crtc_atomic_flush,
+ 	.atomic_enable	= sun4i_crtc_atomic_enable,
+ 	.atomic_disable	= sun4i_crtc_atomic_disable,
++	.mode_set_nofb	= sun4i_crtc_mode_set_nofb,
  };
-+
-+/* msm8996 */
-+DEFINE_CLK_SMD_RPM(msm8996, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8996, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8996, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8996, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8996, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-+		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8996, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8996, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre1_noc_clk, aggre1_noc_a_clk,
-+			  QCOM_SMD_RPM_AGGR_CLK, 1, 1000);
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8996, aggre2_noc_clk, aggre2_noc_a_clk,
-+			  QCOM_SMD_RPM_AGGR_CLK, 2, 1000);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8996, qdss_clk, qdss_a_clk,
-+			QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, bb_clk1, bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, bb_clk2, bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, rf_clk2, rf_clk2_a, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, ln_bb_clk, ln_bb_a_clk, 8);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, div_clk1, div_clk1_a, 0xb);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, div_clk2, div_clk2_a, 0xc);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8996, div_clk3, div_clk3_a, 0xd);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8996, bb_clk1_pin, bb_clk1_a_pin, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8996, bb_clk2_pin, bb_clk2_a_pin, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8996, rf_clk1_pin, rf_clk1_a_pin, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8996, rf_clk2_pin, rf_clk2_a_pin, 5);
-+
-+static struct clk_smd_rpm *msm8996_clks[] = {
-+	[RPM_SMD_PCNOC_CLK] = &msm8996_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK] = &msm8996_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK] = &msm8996_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8996_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &msm8996_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &msm8996_cnoc_a_clk,
-+	[RPM_SMD_BIMC_CLK] = &msm8996_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &msm8996_bimc_a_clk,
-+	[RPM_SMD_MMAXI_CLK] = &msm8996_mmssnoc_axi_rpm_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8996_mmssnoc_axi_rpm_a_clk,
-+	[RPM_SMD_IPA_CLK] = &msm8996_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8996_ipa_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8996_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8996_ce1_a_clk,
-+	[RPM_SMD_AGGR1_NOC_CLK] = &msm8996_aggre1_noc_clk,
-+	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8996_aggre1_noc_a_clk,
-+	[RPM_SMD_AGGR2_NOC_CLK] = &msm8996_aggre2_noc_clk,
-+	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8996_aggre2_noc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8996_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8996_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1] = &msm8996_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A] = &msm8996_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2] = &msm8996_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A] = &msm8996_bb_clk2_a,
-+	[RPM_SMD_RF_CLK1] = &msm8996_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8996_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2] = &msm8996_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A] = &msm8996_rf_clk2_a,
-+	[RPM_SMD_LN_BB_CLK] = &msm8996_ln_bb_clk,
-+	[RPM_SMD_LN_BB_A_CLK] = &msm8996_ln_bb_a_clk,
-+	[RPM_SMD_DIV_CLK1] = &msm8996_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1] = &msm8996_div_clk1_a,
-+	[RPM_SMD_DIV_CLK2] = &msm8996_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2] = &msm8996_div_clk2_a,
-+	[RPM_SMD_DIV_CLK3] = &msm8996_div_clk3,
-+	[RPM_SMD_DIV_A_CLK3] = &msm8996_div_clk3_a,
-+	[RPM_SMD_BB_CLK1_PIN] = &msm8996_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN] = &msm8996_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN] = &msm8996_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN] = &msm8996_bb_clk2_a_pin,
-+	[RPM_SMD_RF_CLK1_PIN] = &msm8996_rf_clk1_pin,
-+	[RPM_SMD_RF_CLK1_A_PIN] = &msm8996_rf_clk1_a_pin,
-+	[RPM_SMD_RF_CLK2_PIN] = &msm8996_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN] = &msm8996_rf_clk2_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8996 = {
-+	.clks = msm8996_clks,
-+	.num_clks = ARRAY_SIZE(msm8996_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
-+	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
- 	{ }
+ 
+ static int sun4i_crtc_enable_vblank(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+index 04f85b1cf922..e826da34e919 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+@@ -13,7 +13,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ 
+-#include "sun4i_tcon.h"
+ #include "sun4i_hdmi.h"
+ 
+ struct sun4i_ddc {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 482bf03d55c1..d2eb0a60e568 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -30,7 +30,6 @@
+ #include "sun4i_crtc.h"
+ #include "sun4i_drv.h"
+ #include "sun4i_hdmi.h"
+-#include "sun4i_tcon.h"
+ 
+ static inline struct sun4i_hdmi *
+ drm_encoder_to_sun4i_hdmi(struct drm_encoder *encoder)
+@@ -120,15 +119,9 @@ static void sun4i_hdmi_mode_set(struct drm_encoder *encoder,
+ 				struct drm_display_mode *adjusted_mode)
+ {
+ 	struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
+-	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
+-	struct sun4i_tcon *tcon = crtc->tcon;
+ 	unsigned int x, y;
+ 	u32 val;
+ 
+-	sun4i_tcon1_mode_set(tcon, mode);
+-	sun4i_tcon_set_mux(tcon, 1, encoder);
+-
+-	clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
+ 	clk_set_rate(hdmi->mod_clk, mode->crtc_clock * 1000);
+ 	clk_set_rate(hdmi->tmds_clk, mode->crtc_clock * 1000);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index 1b6b37aefc38..dc332ea56f6c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -12,7 +12,6 @@
+ 
+ #include <linux/clk-provider.h>
+ 
+-#include "sun4i_tcon.h"
+ #include "sun4i_hdmi.h"
+ 
+ struct sun4i_tmds {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index a7f297ed40c1..832f8f9bc47f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -153,22 +153,7 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+ 	}
+ }
+ 
+-static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
+-				       struct drm_display_mode *mode,
+-				       struct drm_display_mode *adjusted_mode)
+-{
+-	struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
+-	struct sun4i_tcon *tcon = rgb->tcon;
+-
+-	sun4i_tcon0_mode_set(tcon, mode);
+-	sun4i_tcon_set_mux(tcon, 0, encoder);
+-
+-	/* FIXME: This seems to be board specific */
+-	clk_set_phase(tcon->dclk, 120);
+-}
+-
+ static struct drm_encoder_helper_funcs sun4i_rgb_enc_helper_funcs = {
+-	.mode_set	= sun4i_rgb_encoder_mode_set,
+ 	.disable	= sun4i_rgb_encoder_disable,
+ 	.enable		= sun4i_rgb_encoder_enable,
  };
- MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 96b63c0..eb5ef66 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -101,5 +101,19 @@
- #define RPM_SMD_CXO_A1_A_PIN			59
- #define RPM_SMD_CXO_A2_PIN			60
- #define RPM_SMD_CXO_A2_A_PIN			61
-+#define RPM_SMD_AGGR1_NOC_CLK			62
-+#define RPM_SMD_AGGR1_NOC_A_CLK			63
-+#define RPM_SMD_AGGR2_NOC_CLK			64
-+#define RPM_SMD_AGGR2_NOC_A_CLK			65
-+#define RPM_SMD_MMAXI_CLK			66
-+#define RPM_SMD_MMAXI_A_CLK			67
-+#define RPM_SMD_IPA_CLK				68
-+#define RPM_SMD_IPA_A_CLK			69
-+#define RPM_SMD_CE1_CLK				70
-+#define RPM_SMD_CE1_A_CLK			71
-+#define RPM_SMD_DIV_CLK3			72
-+#define RPM_SMD_DIV_A_CLK3			73
-+#define RPM_SMD_LN_BB_CLK			74
-+#define RPM_SMD_LN_BB_A_CLK			75
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 964cf22a1ced..7ecd4f7c8411 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -139,7 +139,6 @@ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+ 	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s: %d\n",
+ 			 encoder->name, encoder->crtc->name, ret);
+ }
+-EXPORT_SYMBOL(sun4i_tcon_set_mux);
  
- #endif
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index 2a53dca..ebdabd6 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -26,6 +26,10 @@
- #define QCOM_SMD_RPM_SMPB	0x62706d73
- #define QCOM_SMD_RPM_SPDM	0x63707362
- #define QCOM_SMD_RPM_VSA	0x00617376
-+#define QCOM_SMD_RPM_MMAXI_CLK	0x69786d6d
-+#define QCOM_SMD_RPM_IPA_CLK	0x617069
-+#define QCOM_SMD_RPM_CE_CLK	0x6563
-+#define QCOM_SMD_RPM_AGGR_CLK	0x72676761
+ static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
+ 				    int channel)
+@@ -159,8 +158,8 @@ static int sun4i_tcon_get_clk_delay(const struct drm_display_mode *mode,
+ 	return delay;
+ }
  
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
+-void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+-			  struct drm_display_mode *mode)
++static void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
++				 struct drm_display_mode *mode)
+ {
+ 	unsigned int bp, hsync, vsync;
+ 	u8 clk_delay;
+@@ -233,10 +232,9 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+ 	/* Enable the output on the pins */
+ 	regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0);
+ }
+-EXPORT_SYMBOL(sun4i_tcon0_mode_set);
+ 
+-void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+-			  struct drm_display_mode *mode)
++static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
++				 const struct drm_display_mode *mode)
+ {
+ 	unsigned int bp, hsync, vsync, vtotal;
+ 	u8 clk_delay;
+@@ -324,7 +322,26 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 			   SUN4I_TCON_GCTL_IOMAP_MASK,
+ 			   SUN4I_TCON_GCTL_IOMAP_TCON1);
+ }
+-EXPORT_SYMBOL(sun4i_tcon1_mode_set);
++
++void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
++			 const struct drm_encoder *encoder,
++			 const struct drm_display_mode *mode)
++{
++	switch (encoder->encoder_type) {
++	case DRM_MODE_ENCODER_NONE:
++		sun4i_tcon0_mode_set(tcon, mode);
++		sun4i_tcon_set_mux(tcon, 0, encoder);
++		break;
++	case DRM_MODE_ENCODER_TVDAC:
++	case DRM_MODE_ENCODER_TMDS:
++		sun4i_tcon1_mode_set(tcon, mode);
++		sun4i_tcon_set_mux(tcon, 1, encoder);
++		break;
++	default:
++		DRM_DEBUG_DRIVER("Unknown encoder type, doing nothing...\n");
++	}
++}
++EXPORT_SYMBOL(sun4i_tcon_mode_set);
+ 
+ static void sun4i_tcon_finish_page_flip(struct drm_device *dev,
+ 					struct sun4i_crtc *scrtc)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index 03f983927baa..f61bf6d83b4a 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -191,15 +191,10 @@ struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node);
+ struct drm_panel *sun4i_tcon_find_panel(struct device_node *node);
+ 
+ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
++void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
++			 const struct drm_encoder *encoder,
++			 const struct drm_display_mode *mode);
+ void sun4i_tcon_set_status(struct sun4i_tcon *crtc,
+ 			   const struct drm_encoder *encoder, bool enable);
+ 
+-/* Mode Related Controls */
+-void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+-			struct drm_encoder *encoder);
+-void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+-			  struct drm_display_mode *mode);
+-void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+-			  struct drm_display_mode *mode);
+-
+ #endif /* __SUN4I_TCON_H__ */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index 2e27ff9fc58f..b070d522ed8d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -24,7 +24,6 @@
+ 
+ #include "sun4i_crtc.h"
+ #include "sun4i_drv.h"
+-#include "sun4i_tcon.h"
+ #include "sunxi_engine.h"
+ 
+ #define SUN4I_TVE_EN_REG		0x000
+@@ -374,13 +373,8 @@ static void sun4i_tv_mode_set(struct drm_encoder *encoder,
+ 			      struct drm_display_mode *adjusted_mode)
+ {
+ 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
+-	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
+-	struct sun4i_tcon *tcon = crtc->tcon;
+ 	const struct tv_mode *tv_mode = sun4i_tv_find_tv_by_mode(mode);
+ 
+-	sun4i_tcon1_mode_set(tcon, mode);
+-	sun4i_tcon_set_mux(tcon, 1, encoder);
+-
+ 	/* Enable and map the DAC to the output */
+ 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
+ 			   SUN4I_TVE_EN_DAC_MAP_MASK,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
