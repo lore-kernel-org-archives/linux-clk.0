@@ -1,66 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51289 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751290AbdJ0PIw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:08:52 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 01/10] dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
-Date: Fri, 27 Oct 2017 23:06:49 +0800
-Message-Id: <20171027150658.18509-2-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock updates for 4.15 round 1
+Date: Tue, 17 Oct 2017 19:43:31 +0200
+Message-ID: <14384670.j3hM3TuojQ@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The DE2 CCU is different on A83T and H3 -- the parent of the clocks on
-A83T is PLL_DE but on H3 it's the DE module clock. This is not noticed
-when I develop the DE2 CCU driver.
+Hi Mike, Stephen,
 
-Fix the binding by using different compatibles for A83T and H3, adding
-notes for the PLL_DE usage on A83T, and change the binding example's
-compatible from A83T to H3 (as it specifies the DE module clock).
+please find below the (tiny) first round of Rockchip clock changes for 4.15.
+Right now there isn't any more in the pipeline, but who knows that may
+change yet.
 
-Fixes: ed74f8a8a679 ("dt-bindings: add binding for the Allwinner DE2 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Please pull.
+Thanks
+Heiko
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index 631d27cd89d6..f2fa87c4765c 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -4,13 +4,14 @@ Allwinner Display Engine 2.0 Clock Control Binding
- Required properties :
- - compatible: must contain one of the following compatibles:
- 		- "allwinner,sun8i-a83t-de2-clk"
-+		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
- - clocks: phandle to the clocks feeding the display engine subsystem.
- 	  Three are needed:
--  - "mod": the display engine module clock
-+  - "mod": the display engine module clock (on A83T it's the DE PLL)
-   - "bus": the bus clock for the whole display engine subsystem
- - clock-names: Must contain the clock names described just above
- - resets: phandle to the reset control for the display engine subsystem.
-@@ -19,7 +20,7 @@ Required properties :
- 
- Example:
- de2_clocks: clock@1000000 {
--	compatible = "allwinner,sun8i-a83t-de2-clk";
-+	compatible = "allwinner,sun8i-h3-de2-clk";
- 	reg = <0x01000000 0x100000>;
- 	clocks = <&ccu CLK_BUS_DE>,
- 		 <&ccu CLK_DE>;
--- 
-2.13.6
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.15-rockchip-clk-1
+
+for you to fetch changes up to 47e3ec0e4dae1714cc76596e38d16913f0e574e2:
+
+  clk: rockchip: use new cif/vdpu clock ids on rk3188 (2017-10-14 21:32:11 +0200)
+
+----------------------------------------------------------------
+Some new clock ids for rk3188 and rk3368 as well as removal of a
+superfluous memory allocation error message.
+
+----------------------------------------------------------------
+Heiko Stuebner (3):
+      clk: rockchip: add more rk3188 graphics clock ids
+      Merge branch 'v4.15-shared/clkids' into v4.15-clk/next
+      clk: rockchip: use new cif/vdpu clock ids on rk3188
+
+Markus Elfring (1):
+      clk: rockchip: Remove superfluous error message in rockchip_clk_register_cpuclk()
+
+Romain Perier (2):
+      clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
+      clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
+
+ drivers/clk/rockchip/clk-cpu.c                |  2 --
+ drivers/clk/rockchip/clk-rk3188.c             | 12 ++++++------
+ drivers/clk/rockchip/clk-rk3368.c             |  2 +-
+ include/dt-bindings/clock/rk3188-cru-common.h |  9 +++++++--
+ include/dt-bindings/clock/rk3368-cru.h        |  1 +
+ 5 files changed, 15 insertions(+), 11 deletions(-)
