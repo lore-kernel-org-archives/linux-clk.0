@@ -1,82 +1,37 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40840 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933321AbdJQKfK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 06:35:10 -0400
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <20171004211820.GX457@codeaurora.org>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
- <20171002212435.GP457@codeaurora.org> <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
- <20171004211820.GX457@codeaurora.org>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 5 Oct 2017 15:52:50 +0930
-Message-ID: <CACPK8XdzDatTXng-YR9qqYNqxzQPSaf87+2B==YEnC+ffGkPTw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <cfa06492ecb6bfba965e1074604525a4e939c5c1.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+ <cfa06492ecb6bfba965e1074604525a4e939c5c1.1508231063.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 17 Oct 2017 18:34:44 +0800
+Message-ID: <CAGb2v65E1xEh2gX6zfL6=GLq5+otOzstT0OYqi_A+RpOn8XgJA@mail.gmail.com>
+Subject: Re: [PATCH 16/23] drm/sun4i: Add A83T support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
 Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 5, 2017 at 6:48 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/03, Joel Stanley wrote:
->> On Tue, Oct 3, 2017 at 6:54 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 09/21, Joel Stanley wrote:
->> >> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
->> >> +     /*
->> >> +      * Memory controller (M-PLL) PLL. This clock is configured by the
->> >> +      * bootloader, and is exposed to Linux as a read-only clock rate.
->> >> +      */
->> >> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
->> >> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
->> >> +
->> >> +     /* SD/SDIO clock divider (TODO: There's a gate too) */
->> >> +     hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
->> >
->> > Please pass your dev pointer here from the platform device.
->> >
->> >> +                     scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
->> >> +                     div_table,
->> >> +                     &aspeed_clk_lock);
->> >
->> > And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
->> > construct the dividers and muxes directly instead of using the
->> > basic type registration APIs.
->>
->> Do you think that devm_ is overkill, given we will never unload this driver?
+On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add support for the A83T display pipeline.
 >
-> Is probe defer going to happen? Even if unload can't happen,
-> probe defer is a concern unless that is also ruled out.
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-As I understand it, I will only get an EPROBE_DEFER if I'm requesting
-something from another driver?
-
-If that's the case then we can rule that out.
-
->>
->> Can you explain why you suggest to construct the structures directly
->> instead of using the APIs?
->
-> There aren't devm APIs for some of these basic clk type
-> registration functions.
->
->>
->> I had a read of the basic type registration functions, and the
->> relevant failure paths are memory allocation failures. If we're out of
->> memory that early in boot then things have gone pretty bad.
->>
->> I can add checks for null and bail out; I don't think there's value in
->> freeing the allocated memory: if a system can't load it's clock driver
->> then it's super hosed.
->
-> If we can't proceed without this driver because it's super hosed,
-> then perhaps we need to panic the system on errors here. Should
-> be simple enough to add some error checks and goto panic("Things
-> are super hosed").
-
-Okay. I added checks in v4. Does that look ok you you?
-
-Cheers,
-
-Joel
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
