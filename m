@@ -11,9 +11,9 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Quentin Schulz <quentin.schulz@free-electrons.com>,
         Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 10/23] clk: sunxi-ng: Add A83T display clocks
-Date: Tue, 17 Oct 2017 11:06:17 +0200
-Message-Id: <19afdfb5c4fea9c3b49e951cea1a184d3eec40b1.1508231063.git-series.maxime.ripard@free-electrons.com>
+Subject: [PATCH 20/23] arm: dts: sun8i: a83t: Add the PWM pin group
+Date: Tue, 17 Oct 2017 11:06:27 +0200
+Message-Id: <6347546cd95cce11268effb14ed03f5e9ac382e5.1508231063.git-series.maxime.ripard@free-electrons.com>
 In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
@@ -21,66 +21,29 @@ References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-serie
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Unfortunately, the A83t display clocks are not children of the de clock,
-since that clocks doesn't exist at all on the A83t.
+The A83T has a PWM that can be output from the SoC. Let's add a pinctrl
+group for it.
 
-For now, they are orphans, so let's move them to their true, existing,
-parent.
-
-Fixes: 763c5bd045b1 ("clk: sunxi-ng: add support for DE2 CCU")
 Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 5cdaf52669e4..5cc9d9952121 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -41,11 +41,16 @@ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 6f1221556587..1986e8341e33 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -445,6 +445,11 @@
+ 				bias-pull-up;
+ 			};
  
- static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
- 		   CLK_SET_RATE_PARENT);
--static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
--		   CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
- 		   CLK_SET_RATE_PARENT);
- 
-+static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0, 4,
-+		   CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
-+		   CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
-+		   CLK_SET_RATE_PARENT);
++			pwm_pin: pwm-pin {
++				pins = "PD28";
++				function = "pwm";
++			};
 +
- static struct ccu_common *sun8i_a83t_de2_clks[] = {
- 	&mixer0_clk.common,
- 	&mixer1_clk.common,
-@@ -55,9 +60,9 @@ static struct ccu_common *sun8i_a83t_de2_clks[] = {
- 	&bus_mixer1_clk.common,
- 	&bus_wb_clk.common,
- 
--	&mixer0_div_clk.common,
--	&mixer1_div_clk.common,
--	&wb_div_clk.common,
-+	&mixer0_div_a83_clk.common,
-+	&mixer1_div_a83_clk.common,
-+	&wb_div_a83_clk.common,
- };
- 
- static struct ccu_common *sun8i_v3s_de2_clks[] = {
-@@ -81,9 +86,9 @@ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
- 		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
- 		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
- 
--		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
--		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
--		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
-+		[CLK_MIXER0_DIV]	= &mixer0_div_a83_clk.common.hw,
-+		[CLK_MIXER1_DIV]	= &mixer1_div_a83_clk.common.hw,
-+		[CLK_WB_DIV]		= &wb_div_a83_clk.common.hw,
- 	},
- 	.num	= CLK_NUMBER,
- };
+ 			spdif_tx_pin: spdif-tx-pin {
+ 				pins = "PE18";
+ 				function = "spdif";
 -- 
 git-series 0.9.1
