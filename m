@@ -1,133 +1,86 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 5 Oct 2017 09:22:49 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Wenyou Yang
- <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard
- Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian
- Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
- Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
- <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
- Alan Stern <stern@rowland.harvard.edu>, Ludovic Desroches
- <ludovic.desroches@microchip.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-usb@vger.kernel.org
-Subject: Re: [PATCH v4 4/8] mtd: nand: atmel: Avoid ECC errors when leaving
- backup mode
-Message-ID: <20171005092249.103518f8@bbrezillon>
-In-Reply-To: <20170928094627.31017-5-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-	<20170928094627.31017-5-romain.izard.pro@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: [PATCH 10/23] clk: sunxi-ng: Add A83T display clocks
+Date: Tue, 17 Oct 2017 11:06:17 +0200
+Message-Id: <19afdfb5c4fea9c3b49e951cea1a184d3eec40b1.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 28 Sep 2017 11:46:23 +0200
-Romain Izard <romain.izard.pro@gmail.com> wrote:
+Unfortunately, the A83t display clocks are not children of the de clock,
+since that clocks doesn't exist at all on the A83t.
 
-> During backup mode, the contents of all registers will be cleared as the
-> SoC will be completely powered down. For a product that boots on NAND
-> Flash memory, the bootloader will obviously use the related controller
-> to read the Flash and correct any detected error in the memory, before
-> handling back control to the kernel's resuming entry point.
-> 
-> But it does not clean the NAND controller registers after use and on its
-> side the kernel driver expects the error locator to be powered down and
-> in a clean state. Add a resume hook for the PMECC error locator, and
-> reset its registers.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+For now, they are orphans, so let's move them to their true, existing,
+parent.
 
-Applied.
+Fixes: 763c5bd045b1 ("clk: sunxi-ng: add support for DE2 CCU")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Thanks,
-
-Boris
-
-> ---
-> Changes in v3:
-> * keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
->   reset the controller after the bootloader has left it enabled.
-> 
-> Changes in v4:
-> * export atmel_pmecc_reset instead of atmel_pmecc_resume
-> * use the correct pointer in atmel_nand_controller_resume
-> 
->  drivers/mtd/nand/atmel/nand-controller.c |  3 +++
->  drivers/mtd/nand/atmel/pmecc.c           | 17 +++++++++--------
->  drivers/mtd/nand/atmel/pmecc.h           |  1 +
->  3 files changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
-> index f25eca79f4e5..8afcff9a66ea 100644
-> --- a/drivers/mtd/nand/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/atmel/nand-controller.c
-> @@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
->  	struct atmel_nand_controller *nc = dev_get_drvdata(dev);
->  	struct atmel_nand *nand;
->  
-> +	if (nc->pmecc)
-> +		atmel_pmecc_reset(nc->pmecc);
-> +
->  	list_for_each_entry(nand, &nc->chips, node) {
->  		int i;
->  
-> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-> index 146af8218314..0a3f12141c45 100644
-> --- a/drivers/mtd/nand/atmel/pmecc.c
-> +++ b/drivers/mtd/nand/atmel/pmecc.c
-> @@ -765,6 +765,13 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
->  }
->  EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
->  
-> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
-> +{
-> +	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +}
-> +EXPORT_SYMBOL_GPL(atmel_pmecc_reset);
-> +
->  int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
->  {
->  	struct atmel_pmecc *pmecc = user->pmecc;
-> @@ -797,10 +804,7 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
->  
->  void atmel_pmecc_disable(struct atmel_pmecc_user *user)
->  {
-> -	struct atmel_pmecc *pmecc = user->pmecc;
-> -
-> -	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> -	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +	atmel_pmecc_reset(user->pmecc);
->  	mutex_unlock(&user->pmecc->lock);
->  }
->  EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
-> @@ -855,10 +859,7 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
->  
->  	/* Disable all interrupts before registering the PMECC handler. */
->  	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
-> -
-> -	/* Reset the ECC engine */
-> -	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> -	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-> +	atmel_pmecc_reset(pmecc);
->  
->  	return pmecc;
->  }
-> diff --git a/drivers/mtd/nand/atmel/pmecc.h b/drivers/mtd/nand/atmel/pmecc.h
-> index a8ddbfca2ea5..817e0dd9fd15 100644
-> --- a/drivers/mtd/nand/atmel/pmecc.h
-> +++ b/drivers/mtd/nand/atmel/pmecc.h
-> @@ -61,6 +61,7 @@ atmel_pmecc_create_user(struct atmel_pmecc *pmecc,
->  			struct atmel_pmecc_user_req *req);
->  void atmel_pmecc_destroy_user(struct atmel_pmecc_user *user);
->  
-> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc);
->  int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op);
->  void atmel_pmecc_disable(struct atmel_pmecc_user *user);
->  int atmel_pmecc_wait_rdy(struct atmel_pmecc_user *user);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index 5cdaf52669e4..5cc9d9952121 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -41,11 +41,16 @@ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+ 
+ static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+ 		   CLK_SET_RATE_PARENT);
+-static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
+-		   CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
+ 
++static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
++		   CLK_SET_RATE_PARENT);
++
+ static struct ccu_common *sun8i_a83t_de2_clks[] = {
+ 	&mixer0_clk.common,
+ 	&mixer1_clk.common,
+@@ -55,9 +60,9 @@ static struct ccu_common *sun8i_a83t_de2_clks[] = {
+ 	&bus_mixer1_clk.common,
+ 	&bus_wb_clk.common,
+ 
+-	&mixer0_div_clk.common,
+-	&mixer1_div_clk.common,
+-	&wb_div_clk.common,
++	&mixer0_div_a83_clk.common,
++	&mixer1_div_a83_clk.common,
++	&wb_div_a83_clk.common,
+ };
+ 
+ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+@@ -81,9 +86,9 @@ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+ 		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
+ 		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
+ 
+-		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
+-		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
+-		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++		[CLK_MIXER0_DIV]	= &mixer0_div_a83_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer1_div_a83_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_a83_clk.common.hw,
+ 	},
+ 	.num	= CLK_NUMBER,
+ };
+-- 
+git-series 0.9.1
