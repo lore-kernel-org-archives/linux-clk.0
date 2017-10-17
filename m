@@ -1,115 +1,448 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42005 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:55335 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935923AbdJQOeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 10:34:37 -0400
-Date: Tue, 17 Oct 2017 16:34:35 +0200
+        with ESMTP id S1759913AbdJQJGp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:45 -0400
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Quentin Schulz <quentin.schulz@free-electrons.com>,
         Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH 02/23] drm/sun4i: Realign Makefile padding and reorder it
-Message-ID: <20171017143435.5vj4obbxcnodgcu7@flea.lan>
+Subject: [PATCH 11/23] drm/sun4i: Rename layers to UI planes
+Date: Tue, 17 Oct 2017 11:06:18 +0200
+Message-Id: <a1d1a106d6db266305f86b1e2626105cb8b88d0a.1508231063.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
- <9410b284ec97453fa692537dffaaa4fb4833347c.1508231063.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v649B-M7ya=XmH0+hHgYUHDMxWjAH1vuq+iKOOqgU13eCg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tpfqufvrn2h67hvm"
-In-Reply-To: <CAGb2v649B-M7ya=XmH0+hHgYUHDMxWjAH1vuq+iKOOqgU13eCg@mail.gmail.com>
+In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The currently supported planes for DE2 are actually only UI planes, and the
+VI planes will differ both in terms of code and features.
 
---tpfqufvrn2h67hvm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It will make sense to support them in a separate file, so let's make sure
+we don't create a confusing file name.
 
-On Tue, Oct 17, 2017 at 05:14:47PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Some options were not padded as they should, and the order in the Makef=
-ile
-> > was chaotic. Fix that.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/Makefile | 28 ++++++++++++++--------------
-> >  1 file changed, 14 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Mak=
-efile
-> > index 43c753cafc88..af18b70ba5ed 100644
-> > --- a/drivers/gpu/drm/sun4i/Makefile
-> > +++ b/drivers/gpu/drm/sun4i/Makefile
-> > @@ -1,24 +1,24 @@
-> > -sun4i-drm-y +=3D sun4i_drv.o
-> > -sun4i-drm-y +=3D sun4i_framebuffer.o
-> > +sun4i-backend-y                        +=3D sun4i_backend.o sun4i_laye=
-r.o
-> >
-> > -sun4i-drm-hdmi-y +=3D sun4i_hdmi_enc.o
-> > -sun4i-drm-hdmi-y +=3D sun4i_hdmi_i2c.o
-> > -sun4i-drm-hdmi-y +=3D sun4i_hdmi_ddc_clk.o
-> > -sun4i-drm-hdmi-y +=3D sun4i_hdmi_tmds_clk.o
-> > +sun4i-drm-y                    +=3D sun4i_drv.o
-> > +sun4i-drm-y                    +=3D sun4i_framebuffer.o
-> >
-> > -sun4i-tcon-y +=3D sun4i_tcon.o
-> > -sun4i-tcon-y +=3D sun4i_rgb.o
-> > -sun4i-tcon-y +=3D sun4i_dotclock.o
-> > -sun4i-tcon-y +=3D sun4i_crtc.o
-> > +sun4i-drm-hdmi-y               +=3D sun4i_hdmi_enc.o
-> > +sun4i-drm-hdmi-y               +=3D sun4i_hdmi_i2c.o
-> > +sun4i-drm-hdmi-y               +=3D sun4i_hdmi_ddc_clk.o
-> > +sun4i-drm-hdmi-y               +=3D sun4i_hdmi_tmds_clk.o
-> >
-> > -sun4i-backend-y +=3D sun4i_backend.o sun4i_layer.o
-> > +sun4i-tcon-y                   +=3D sun4i_tcon.o
-> > +sun4i-tcon-y                   +=3D sun4i_rgb.o
-> > +sun4i-tcon-y                   +=3D sun4i_dotclock.o
-> > +sun4i-tcon-y                   +=3D sun4i_crtc.o
->=20
-> I don't know if you wanted to sort the file names as well.
-> This would be a good time to do it.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/Makefile      |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_layer.c | 134 +-----------------------------
+ drivers/gpu/drm/sun4i/sun8i_layer.h |  36 +--------
+ drivers/gpu/drm/sun4i/sun8i_mixer.c |   4 +-
+ drivers/gpu/drm/sun4i/sun8i_ui.c    | 134 +++++++++++++++++++++++++++++-
+ drivers/gpu/drm/sun4i/sun8i_ui.h    |  36 ++++++++-
+ 6 files changed, 173 insertions(+), 173 deletions(-)
+ delete mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
+ delete mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_ui.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_ui.h
 
-Fixed while applying, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---tpfqufvrn2h67hvm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZ5hT7AAoJEBx+YmzsjxAgTO0P/iRVZVyWxnaMdGrd/wUlPQ9D
-GLy8+msW4Rm7BQ1HBL0I+4hS7aNwnna30FxEIiszW87zAr+8rZw0/lKInePCQYBZ
-lYYV5qifH9MghXKbbcyla+jnOn18yKoN4osa6YeR1pUbuDQZOiSmfERCgKHY9QLI
-FfdIqYCRrbAq7hW6+KXPGvkiGxyTAr8u0cKKzFSbEp9cctR/Ikxv7rnqesUUuU6S
-oiwM+piArwawvaVlKmBoKQ/emupruR9kjB9dLoW5W4mWzdoI1/98BOKfuVzAEcG1
-J0EwEfWOvoVPH6lfy80tlcYngbauKK+SfqgHfo02mMmyrDywOI/miDEeE3WpKinE
-Qlg3fQzOmdV23lmzq/ZwPwDrH0XUfAqAQEso0UgbXhtowmgnyUZ2JMDWv7JLDVGz
-wexuE+dabAqBW23tgqde3anu39NsV1RVmclD/FSLVQjnOWMEpVHNPVSBWbfLnTOh
-M0t/+xBWqfZy64IFMfwAMscEKMRom+aAGMv7sVdy1gO62H/mUv1lIjSJpCX4acFm
-d6NAd7vH5NgTm8abPbkcZ76O4jX0/QhA2hQ32QwvIsgOOdzSdGx0qhljIYK4GYKI
-tbOP+bNJ24NUcVMtj33jdm3fzl9VoeLdnbdvxmzkBieuQPot9on6IG0PZJCg+3mL
-ZD9dJoS3GdvOaLeeraWf
-=OGmH
------END PGP SIGNATURE-----
-
---tpfqufvrn2h67hvm--
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index af18b70ba5ed..cfba2c07519c 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -13,7 +13,7 @@ sun4i-tcon-y			+= sun4i_rgb.o
+ sun4i-tcon-y			+= sun4i_dotclock.o
+ sun4i-tcon-y			+= sun4i_crtc.o
+ 
+-sun8i-mixer-y			+= sun8i_mixer.o sun8i_layer.o
++sun8i-mixer-y			+= sun8i_mixer.o sun8i_ui.o
+ 
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
+diff --git a/drivers/gpu/drm/sun4i/sun8i_layer.c b/drivers/gpu/drm/sun4i/sun8i_layer.c
+deleted file mode 100644
+index 23810ff72684..000000000000
+--- a/drivers/gpu/drm/sun4i/sun8i_layer.c
++++ /dev/null
+@@ -1,134 +0,0 @@
+-/*
+- * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
+- *
+- * Based on sun4i_layer.h, which is:
+- *   Copyright (C) 2015 Free Electrons
+- *   Copyright (C) 2015 NextThing Co
+- *
+- *   Maxime Ripard <maxime.ripard@free-electrons.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation; either version 2 of
+- * the License, or (at your option) any later version.
+- */
+-
+-#include <drm/drm_atomic_helper.h>
+-#include <drm/drm_plane_helper.h>
+-#include <drm/drmP.h>
+-
+-#include "sun8i_layer.h"
+-#include "sun8i_mixer.h"
+-
+-struct sun8i_plane_desc {
+-	       enum drm_plane_type     type;
+-	       const uint32_t          *formats;
+-	       uint32_t                nformats;
+-};
+-
+-static void sun8i_mixer_layer_atomic_disable(struct drm_plane *plane,
+-					       struct drm_plane_state *old_state)
+-{
+-	struct sun8i_layer *layer = plane_to_sun8i_layer(plane);
+-	struct sun8i_mixer *mixer = layer->mixer;
+-
+-	sun8i_mixer_layer_enable(mixer, layer->id, false);
+-}
+-
+-static void sun8i_mixer_layer_atomic_update(struct drm_plane *plane,
+-					      struct drm_plane_state *old_state)
+-{
+-	struct sun8i_layer *layer = plane_to_sun8i_layer(plane);
+-	struct sun8i_mixer *mixer = layer->mixer;
+-
+-	sun8i_mixer_update_layer_coord(mixer, layer->id, plane);
+-	sun8i_mixer_update_layer_formats(mixer, layer->id, plane);
+-	sun8i_mixer_update_layer_buffer(mixer, layer->id, plane);
+-	sun8i_mixer_layer_enable(mixer, layer->id, true);
+-}
+-
+-static struct drm_plane_helper_funcs sun8i_mixer_layer_helper_funcs = {
+-	.atomic_disable	= sun8i_mixer_layer_atomic_disable,
+-	.atomic_update	= sun8i_mixer_layer_atomic_update,
+-};
+-
+-static const struct drm_plane_funcs sun8i_mixer_layer_funcs = {
+-	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
+-	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
+-	.destroy		= drm_plane_cleanup,
+-	.disable_plane		= drm_atomic_helper_disable_plane,
+-	.reset			= drm_atomic_helper_plane_reset,
+-	.update_plane		= drm_atomic_helper_update_plane,
+-};
+-
+-static const uint32_t sun8i_mixer_layer_formats[] = {
+-	DRM_FORMAT_RGB888,
+-	DRM_FORMAT_ARGB8888,
+-	DRM_FORMAT_XRGB8888,
+-};
+-
+-static const struct sun8i_plane_desc sun8i_mixer_planes[] = {
+-	{
+-		.type = DRM_PLANE_TYPE_PRIMARY,
+-		.formats = sun8i_mixer_layer_formats,
+-		.nformats = ARRAY_SIZE(sun8i_mixer_layer_formats),
+-	},
+-};
+-
+-static struct sun8i_layer *sun8i_layer_init_one(struct drm_device *drm,
+-						struct sun8i_mixer *mixer,
+-						const struct sun8i_plane_desc *plane)
+-{
+-	struct sun8i_layer *layer;
+-	int ret;
+-
+-	layer = devm_kzalloc(drm->dev, sizeof(*layer), GFP_KERNEL);
+-	if (!layer)
+-		return ERR_PTR(-ENOMEM);
+-
+-	/* possible crtcs are set later */
+-	ret = drm_universal_plane_init(drm, &layer->plane, 0,
+-				       &sun8i_mixer_layer_funcs,
+-				       plane->formats, plane->nformats,
+-				       NULL, plane->type, NULL);
+-	if (ret) {
+-		dev_err(drm->dev, "Couldn't initialize layer\n");
+-		return ERR_PTR(ret);
+-	}
+-
+-	drm_plane_helper_add(&layer->plane,
+-			     &sun8i_mixer_layer_helper_funcs);
+-	layer->mixer = mixer;
+-
+-	return layer;
+-}
+-
+-struct drm_plane **sun8i_layers_init(struct drm_device *drm,
+-				     struct sunxi_engine *engine)
+-{
+-	struct drm_plane **planes;
+-	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
+-	int i;
+-
+-	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun8i_mixer_planes) + 1,
+-			      sizeof(*planes), GFP_KERNEL);
+-	if (!planes)
+-		return ERR_PTR(-ENOMEM);
+-
+-	for (i = 0; i < ARRAY_SIZE(sun8i_mixer_planes); i++) {
+-		const struct sun8i_plane_desc *plane = &sun8i_mixer_planes[i];
+-		struct sun8i_layer *layer;
+-
+-		layer = sun8i_layer_init_one(drm, mixer, plane);
+-		if (IS_ERR(layer)) {
+-			dev_err(drm->dev, "Couldn't initialize %s plane\n",
+-				i ? "overlay" : "primary");
+-			return ERR_CAST(layer);
+-		};
+-
+-		layer->id = i;
+-		planes[i] = &layer->plane;
+-	};
+-
+-	return planes;
+-}
+diff --git a/drivers/gpu/drm/sun4i/sun8i_layer.h b/drivers/gpu/drm/sun4i/sun8i_layer.h
+deleted file mode 100644
+index e5eccd27cff0..000000000000
+--- a/drivers/gpu/drm/sun4i/sun8i_layer.h
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/*
+- * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
+- *
+- * Based on sun4i_layer.h, which is:
+- *   Copyright (C) 2015 Free Electrons
+- *   Copyright (C) 2015 NextThing Co
+- *
+- *   Maxime Ripard <maxime.ripard@free-electrons.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation; either version 2 of
+- * the License, or (at your option) any later version.
+- */
+-
+-#ifndef _SUN8I_LAYER_H_
+-#define _SUN8I_LAYER_H_
+-
+-struct sunxi_engine;
+-
+-struct sun8i_layer {
+-	struct drm_plane	plane;
+-	struct sun4i_drv	*drv;
+-	struct sun8i_mixer	*mixer;
+-	int			id;
+-};
+-
+-static inline struct sun8i_layer *
+-plane_to_sun8i_layer(struct drm_plane *plane)
+-{
+-	return container_of(plane, struct sun8i_layer, plane);
+-}
+-
+-struct drm_plane **sun8i_layers_init(struct drm_device *drm,
+-				     struct sunxi_engine *engine);
+-#endif /* _SUN8I_LAYER_H_ */
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index cb193c5f1686..1955b2a36ac5 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -26,7 +26,7 @@
+ 
+ #include "sun4i_drv.h"
+ #include "sun8i_mixer.h"
+-#include "sun8i_layer.h"
++#include "sun8i_ui.h"
+ #include "sunxi_engine.h"
+ 
+ static void sun8i_mixer_commit(struct sunxi_engine *engine)
+@@ -228,7 +228,7 @@ int sun8i_mixer_update_layer_buffer(struct sun8i_mixer *mixer,
+ 
+ static const struct sunxi_engine_ops sun8i_engine_ops = {
+ 	.commit		= sun8i_mixer_commit,
+-	.layers_init	= sun8i_layers_init,
++	.layers_init	= sun8i_ui_init,
+ };
+ 
+ static struct regmap_config sun8i_mixer_regmap_config = {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui.c b/drivers/gpu/drm/sun4i/sun8i_ui.c
+new file mode 100644
+index 000000000000..077099ef565a
+--- /dev/null
++++ b/drivers/gpu/drm/sun4i/sun8i_ui.c
+@@ -0,0 +1,134 @@
++/*
++ * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
++ *
++ * Based on sun4i_layer.h, which is:
++ *   Copyright (C) 2015 Free Electrons
++ *   Copyright (C) 2015 NextThing Co
++ *
++ *   Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_plane_helper.h>
++#include <drm/drmP.h>
++
++#include "sun8i_ui.h"
++#include "sun8i_mixer.h"
++
++struct sun8i_plane_desc {
++	       enum drm_plane_type     type;
++	       const uint32_t          *formats;
++	       uint32_t                nformats;
++};
++
++static void sun8i_mixer_ui_atomic_disable(struct drm_plane *plane,
++					  struct drm_plane_state *old_state)
++{
++	struct sun8i_ui *ui = plane_to_sun8i_ui(plane);
++	struct sun8i_mixer *mixer = ui->mixer;
++
++	sun8i_mixer_layer_enable(mixer, ui->id, false);
++}
++
++static void sun8i_mixer_ui_atomic_update(struct drm_plane *plane,
++					 struct drm_plane_state *old_state)
++{
++	struct sun8i_ui *ui = plane_to_sun8i_ui(plane);
++	struct sun8i_mixer *mixer = ui->mixer;
++
++	sun8i_mixer_update_layer_coord(mixer, ui->id, plane);
++	sun8i_mixer_update_layer_formats(mixer, ui->id, plane);
++	sun8i_mixer_update_layer_buffer(mixer, ui->id, plane);
++	sun8i_mixer_layer_enable(mixer, ui->id, true);
++}
++
++static struct drm_plane_helper_funcs sun8i_mixer_ui_helper_funcs = {
++	.atomic_disable	= sun8i_mixer_ui_atomic_disable,
++	.atomic_update	= sun8i_mixer_ui_atomic_update,
++};
++
++static const struct drm_plane_funcs sun8i_mixer_ui_funcs = {
++	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
++	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
++	.destroy		= drm_plane_cleanup,
++	.disable_plane		= drm_atomic_helper_disable_plane,
++	.reset			= drm_atomic_helper_plane_reset,
++	.update_plane		= drm_atomic_helper_update_plane,
++};
++
++static const uint32_t sun8i_mixer_ui_formats[] = {
++	DRM_FORMAT_RGB888,
++	DRM_FORMAT_ARGB8888,
++	DRM_FORMAT_XRGB8888,
++};
++
++static const struct sun8i_plane_desc sun8i_mixer_planes[] = {
++	{
++		.type = DRM_PLANE_TYPE_PRIMARY,
++		.formats = sun8i_mixer_ui_formats,
++		.nformats = ARRAY_SIZE(sun8i_mixer_ui_formats),
++	},
++};
++
++static struct sun8i_ui *sun8i_ui_init_one(struct drm_device *drm,
++					  struct sun8i_mixer *mixer,
++					  const struct sun8i_plane_desc *plane)
++{
++	struct sun8i_ui *ui;
++	int ret;
++
++	ui = devm_kzalloc(drm->dev, sizeof(*ui), GFP_KERNEL);
++	if (!ui)
++		return ERR_PTR(-ENOMEM);
++
++	/* possible crtcs are set later */
++	ret = drm_universal_plane_init(drm, &ui->plane, 0,
++				       &sun8i_mixer_ui_funcs,
++				       plane->formats, plane->nformats,
++				       NULL, plane->type, NULL);
++	if (ret) {
++		dev_err(drm->dev, "Couldn't initialize ui\n");
++		return ERR_PTR(ret);
++	}
++
++	drm_plane_helper_add(&ui->plane,
++			     &sun8i_mixer_ui_helper_funcs);
++	ui->mixer = mixer;
++
++	return ui;
++}
++
++struct drm_plane **sun8i_ui_init(struct drm_device *drm,
++				 struct sunxi_engine *engine)
++{
++	struct drm_plane **planes;
++	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
++	int i;
++
++	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun8i_mixer_planes) + 1,
++			      sizeof(*planes), GFP_KERNEL);
++	if (!planes)
++		return ERR_PTR(-ENOMEM);
++
++	for (i = 0; i < ARRAY_SIZE(sun8i_mixer_planes); i++) {
++		const struct sun8i_plane_desc *plane = &sun8i_mixer_planes[i];
++		struct sun8i_ui *ui;
++
++		ui = sun8i_ui_init_one(drm, mixer, plane);
++		if (IS_ERR(ui)) {
++			dev_err(drm->dev, "Couldn't initialize %s plane\n",
++				i ? "overlay" : "primary");
++			return ERR_CAST(ui);
++		};
++
++		ui->id = i;
++		planes[i] = &ui->plane;
++	};
++
++	return planes;
++}
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui.h b/drivers/gpu/drm/sun4i/sun8i_ui.h
+new file mode 100644
+index 000000000000..17dfc92ccc9f
+--- /dev/null
++++ b/drivers/gpu/drm/sun4i/sun8i_ui.h
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
++ *
++ * Based on sun4i_layer.h, which is:
++ *   Copyright (C) 2015 Free Electrons
++ *   Copyright (C) 2015 NextThing Co
++ *
++ *   Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ */
++
++#ifndef _SUN8I_UI_H_
++#define _SUN8I_UI_H_
++
++struct sunxi_engine;
++
++struct sun8i_ui {
++	struct drm_plane	plane;
++	struct sun4i_drv	*drv;
++	struct sun8i_mixer	*mixer;
++	int			id;
++};
++
++static inline struct sun8i_ui *
++plane_to_sun8i_ui(struct drm_plane *plane)
++{
++	return container_of(plane, struct sun8i_ui, plane);
++}
++
++struct drm_plane **sun8i_ui_init(struct drm_device *drm,
++				 struct sunxi_engine *engine);
++#endif /* _SUN8I_UI_H_ */
+-- 
+git-series 0.9.1
