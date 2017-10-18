@@ -1,86 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44535 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbdJCKAf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Oct 2017 06:00:35 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 8/9] clk: samsung: Add explicit MPLL and EPLL clkdev aliases
- in S3C2443 driver
-Date: Tue, 03 Oct 2017 12:00:15 +0200
-Message-id: <20171003100016.32029-9-m.szyprowski@samsung.com>
-In-reply-to: <20171003100016.32029-1-m.szyprowski@samsung.com>
-References: <20171003100016.32029-1-m.szyprowski@samsung.com>
-        <CGME20171003100031eucas1p142552d25c13db986a50951c988073223@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 18 Oct 2017 09:17:54 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] CLK: SPEAr: make aux_clk_masks structures const
+Message-ID: <20171018034754.GD27082@vireshk-i7>
+References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com>
+ <1508251114-7042-3-git-send-email-bhumirks@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1508251114-7042-3-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-S3C2443 platform still use non-dt based lookup in some of its drivers to
-get MPLL and EPLL clocks. Till now it worked only because PLL() macro
-implicitely created aliases for all instatiated clocks. This feature will
-be removed, so explicitely create aliases for MPLL and EPLL clocks.
+On 17-10-17, 16:38, Bhumika Goyal wrote:
+> Make these const as they are either stored in the masks 'const' field
+> of a clk_aux structure or passed to the function clk_register_aux 
+> having the argument as const.
+> 
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> ---
+>  drivers/clk/spear/clk-aux-synth.c   | 2 +-
+>  drivers/clk/spear/spear1310_clock.c | 2 +-
+>  drivers/clk/spear/spear1340_clock.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
+> index 8bea5df..2f145e3 100644
+> --- a/drivers/clk/spear/clk-aux-synth.c
+> +++ b/drivers/clk/spear/clk-aux-synth.c
+> @@ -29,7 +29,7 @@
+>  
+>  #define to_clk_aux(_hw) container_of(_hw, struct clk_aux, hw)
+>  
+> -static struct aux_clk_masks default_aux_masks = {
+> +static const  struct aux_clk_masks default_aux_masks = {
+>  	.eq_sel_mask = AUX_EQ_SEL_MASK,
+>  	.eq_sel_shift = AUX_EQ_SEL_SHIFT,
+>  	.eq1_mask = AUX_EQ1_SEL,
+> diff --git a/drivers/clk/spear/spear1310_clock.c b/drivers/clk/spear/spear1310_clock.c
+> index 2f86e3f..591248c 100644
+> --- a/drivers/clk/spear/spear1310_clock.c
+> +++ b/drivers/clk/spear/spear1310_clock.c
+> @@ -284,7 +284,7 @@
+>  };
+>  
+>  /* i2s prescaler1 masks */
+> -static struct aux_clk_masks i2s_prs1_masks = {
+> +static const struct aux_clk_masks i2s_prs1_masks = {
+>  	.eq_sel_mask = AUX_EQ_SEL_MASK,
+>  	.eq_sel_shift = SPEAR1310_I2S_PRS1_EQ_SEL_SHIFT,
+>  	.eq1_mask = AUX_EQ1_SEL,
+> diff --git a/drivers/clk/spear/spear1340_clock.c b/drivers/clk/spear/spear1340_clock.c
+> index cbb19a9..e5bc8c8 100644
+> --- a/drivers/clk/spear/spear1340_clock.c
+> +++ b/drivers/clk/spear/spear1340_clock.c
+> @@ -323,7 +323,7 @@
+>  };
+>  
+>  /* i2s prescaler1 masks */
+> -static struct aux_clk_masks i2s_prs1_masks = {
+> +static const struct aux_clk_masks i2s_prs1_masks = {
+>  	.eq_sel_mask = AUX_EQ_SEL_MASK,
+>  	.eq_sel_shift = SPEAR1340_I2S_PRS1_EQ_SEL_SHIFT,
+>  	.eq1_mask = AUX_EQ1_SEL,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-s3c2443.c   | 10 ++++++----
- include/dt-bindings/clock/s3c2443.h |  2 ++
- 2 files changed, 8 insertions(+), 4 deletions(-)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index 45166033f638..d94b85a42356 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -191,6 +191,8 @@ struct samsung_gate_clock s3c2443_common_gates[] __initdata = {
- struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
- 	ALIAS(MSYSCLK, NULL, "msysclk"),
- 	ALIAS(ARMCLK, NULL, "armclk"),
-+	ALIAS(MPLL, NULL, "mpll"),
-+	ALIAS(EPLL, NULL, "epll"),
- 	ALIAS(HCLK, NULL, "hclk"),
- 	ALIAS(HCLK_SSMC, NULL, "nand"),
- 	ALIAS(PCLK_UART0, "s3c2440-uart.0", "uart"),
-@@ -223,9 +225,9 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
- /* S3C2416 specific clocks */
- 
- static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
--	[mpll] = PLL(pll_6552_s3c2416, 0, "mpll", "mpllref",
-+	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
- 						LOCKCON0, MPLLCON, NULL),
--	[epll] = PLL(pll_6553, 0, "epll", "epllref",
-+	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
- 						LOCKCON1, EPLLCON, NULL),
- };
- 
-@@ -277,9 +279,9 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
- /* S3C2443 specific clocks */
- 
- static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
--	[mpll] = PLL(pll_3000, 0, "mpll", "mpllref",
-+	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
- 						LOCKCON0, MPLLCON, NULL),
--	[epll] = PLL(pll_2126, 0, "epll", "epllref",
-+	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
- 						LOCKCON1, EPLLCON, NULL),
- };
- 
-diff --git a/include/dt-bindings/clock/s3c2443.h b/include/dt-bindings/clock/s3c2443.h
-index 37e66b054d64..f3ba68a25ecb 100644
---- a/include/dt-bindings/clock/s3c2443.h
-+++ b/include/dt-bindings/clock/s3c2443.h
-@@ -26,6 +26,8 @@
- #define ARMCLK			4
- #define HCLK			5
- #define PCLK			6
-+#define MPLL			7
-+#define EPLL			8
- 
- /* Special clocks */
- #define SCLK_HSSPI0		16
 -- 
-2.14.2
-
+viresh
