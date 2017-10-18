@@ -1,75 +1,107 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 19 Oct 2017 10:23:10 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	jonathanh@nvidia.com, sboyd@codeaurora.org, mturquette@baylibre.com,
-	pgaikwad@nvidia.com
-Subject: Re: [PATCH] clk: tegra: dfll: Fix drvdata overwriting issue
-Message-ID: <20171019082310.GC4459@ulmo>
-References: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eddie.linux-mips.org ([148.251.95.138]:37238 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933777AbdJRKR0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2017 06:17:26 -0400
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23992361AbdJRKRW2Viw- (ORCPT <rfc822;linux-clk@vger.kernel.org>
+        + 1 other); Wed, 18 Oct 2017 12:17:22 +0200
+Date: Wed, 18 Oct 2017 12:17:21 +0200
+From: Ladislav Michl <ladis@linux-mips.org>
+To: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] clk: ti: omap36xx: optimize sprz319 advisory 2.1
+Message-ID: <20171018101721.vqmokklnu76awr53@lenoch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eHhjakXzOLJAF9wJ"
-In-Reply-To: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Shrink code size of omap36xx specific quirk by almost 100 bytes.
 
---eHhjakXzOLJAF9wJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+gcc-5.4.0
+   text	   data	    bss	    dec	    hex	filename
+   4326     168       0    4494    118e dpll3xxx.o-orig
+   4234	    168	      0	   4402	   1132	dpll3xxx.o
 
-On Thu, Oct 12, 2017 at 04:09:59PM -0700, Nicolin Chen wrote:
-> Both tegra124-dfll and clk-dfll are using platform_set_drvdata
-> to set drvdata of the exact same pdev while they use different
-> pointers for the drvdata. Once the drvdata has been overwritten
-> by tegra124-dfll, clk-dfll will never get its td pointer as it
-> expects.
->=20
-> Since tegra124-dfll merely needs its soc pointer in its remove
-> function, this patch fixes the bug by removing the overwriting
-> in the tegra124-dfll file and letting the tegra_dfll_unregister
-> return an soc pointer for it.
->=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->=20
-> As I don't have a T124 platform, I can't verify it on a board.
-> If someone could provide a Tested-by, it would be very helpful.
-> The test could be a simple system suspend/resume that activates
-> runtime_suspend/resume() where a platform_get_drvdata() would
-> be called. -- Nicolin
->=20
->  drivers/clk/tegra/clk-dfll.c               | 10 +++++-----
->  drivers/clk/tegra/clk-dfll.h               |  2 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++++-------
->  3 files changed, 11 insertions(+), 13 deletions(-)
+gcc-6.3.0
+   text	   data	    bss	    dec	    hex	filename
+   4286	    168	      0	   4454	   1166	dpll3xxx.o-orig
+   4190	    168	      0	   4358	   1106	dpll3xxx.o
 
-Applied, thanks.
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+---
+ drivers/clk/ti/dpll3xxx.c | 43 +++++++++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-Thierry
+diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+index 4534de2ef455..63f70e829f2b 100644
+--- a/drivers/clk/ti/dpll3xxx.c
++++ b/drivers/clk/ti/dpll3xxx.c
+@@ -844,9 +844,14 @@ static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
+ 				     unsigned long parent_rate)
+ {
+ 	struct omap3_dpll5_settings {
+-		unsigned int rate, m, n;
++		unsigned int rate;
++		unsigned short m, n;
+ 	};
+ 
++	int i;
++	struct dpll_data *dd;
++	struct clk_hw_omap *clk;
++	const struct omap3_dpll5_settings *p;
+ 	static const struct omap3_dpll5_settings precomputed[] = {
+ 		/*
+ 		 * From DM3730 errata advisory 2.1, table 35 and 36.
+@@ -861,29 +866,23 @@ static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
+ 		{ 38400000,  25,  0 + 1 }
+ 	};
+ 
+-	const struct omap3_dpll5_settings *d;
+-	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+-	struct dpll_data *dd;
+-	unsigned int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(precomputed); ++i) {
+-		if (parent_rate == precomputed[i].rate)
+-			break;
++	for (i = 0; i < ARRAY_SIZE(precomputed); i++) {
++		p = precomputed + i;
++		if (parent_rate == p->rate) {
++			clk = to_clk_hw_omap(hw);
++			dd = clk->dpll_data;
++			/* Update the M, N and rounded rate values */
++			dd->last_rounded_m = p->m;
++			dd->last_rounded_n = p->n;
++			dd->last_rounded_rate =
++				div_u64((u64)parent_rate * p->m, p->n);
++			omap3_noncore_dpll_program(clk, 0);
++
++			return true;
++		}
+ 	}
+ 
+-	if (i == ARRAY_SIZE(precomputed))
+-		return false;
+-
+-	d = &precomputed[i];
+-
+-	/* Update the M, N and rounded rate values and program the DPLL. */
+-	dd = clk->dpll_data;
+-	dd->last_rounded_m = d->m;
+-	dd->last_rounded_n = d->n;
+-	dd->last_rounded_rate = div_u64((u64)parent_rate * d->m, d->n);
+-	omap3_noncore_dpll_program(clk, 0);
+-
+-	return true;
++	return false;
+ }
+ 
+ /**
+-- 
+2.11.0
 
---eHhjakXzOLJAF9wJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoYO4ACgkQ3SOs138+
-s6GazA/+OmV373+YFeBixNv1qvdheW2czQVb52IwKoiBLLPaa5qgD2udrabKfWTi
-391b94iDR+coqjGURAsRCKPIJdhrYORdrqYvE7VNi8b1BXrrTWNsR0oQr5F3T0Su
-U3uCc51EmMmpARvEkR3/33FLIIdBTkSOHHF/71bWd2c5v9NL+Uni2RFAPeqLPJq0
-Bq5QjpE2B/SCKB/wdZ9Uaf5VjCIW+ViRodrzW6V3HMGUbiR2rsnwcCi169U0/706
-WwVwqshEAu7blP4sLbd/1Fxk34yh22luObv0IFlUI5H47Gog8HXLCarwtUaUAxzg
-MPfV1BxA50G0XdazmJp/BFj99hchqU7cqadHm4rGZ7lO+ZueahuQdHDZ1eBki92H
-sxaJn99Nmi81yfYRO7JeOmLeNRjA1KcfnPrBos+gGEDxuihg6M0sdg0oKJp3hOFr
-AoduSABWmC5xQTvM/jhFGoA3+1mKjAMueFTWSmp0flRKYZUfkV78WrY80cjzGP5K
-Jwsda/0YFPFQgaNsoR25EiweUX67a/nUktDma2JwepPLUbh/nHNxF5/t/EIchE1t
-Pwewf95tZJxlYZz1nZRrThgi10ANzJX+HZMoyv61EURSBWGMtdde/XtKbs0kWoRq
-HKAhfROz9w8/yVNlaxho+6iM1Vr9cDGsR3Qa5d4ctm1ZtiAJjJc=
-=yQYP
------END PGP SIGNATURE-----
-
---eHhjakXzOLJAF9wJ--
