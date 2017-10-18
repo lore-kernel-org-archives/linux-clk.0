@@ -1,228 +1,266 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v6 6/9] soc: mediatek: extend bus protection API
-Date: Mon, 23 Oct 2017 12:10:37 +0800
-Message-ID: <1508731840-4231-7-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <hermit.wangheming@hisilicon.com>, <shawn.guo@linaro.org>,
+        <project-aspen-dev@linaro.org>,
+        tianshuliang <tianshuliang@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 1/3] clk: hisilicon: add hisi phase clock support
+Date: Wed, 18 Oct 2017 07:00:27 -0400
+Message-ID: <1508324429-6012-2-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-MT2712 add "set/clear" bus control register to each control register set
-instead of providing only one "enable" control register, we could avoid
-the read-modify-write racing by declaring "bus_prot_reg_update" as "false"
-in scp_soc_data or declaring as "true" to use the legacy update method.
-By improving the mtk-infracfg bus protection implementation to
-support set/clear bus protection control method by IC configuration.
+From: tianshuliang <tianshuliang@hisilicon.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Add a phase clock type for HiSilicon SoCs,which supports
+clk_set_phase operation.
+
+Signed-off-by: tianshuliang <tianshuliang@hisilicon.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
- drivers/soc/mediatek/mtk-infracfg.c   | 26 ++++++++++++++++++++++----
- drivers/soc/mediatek/mtk-scpsys.c     | 28 ++++++++++++++++++++--------
- include/linux/soc/mediatek/infracfg.h |  7 ++++---
- 3 files changed, 46 insertions(+), 15 deletions(-)
+ drivers/clk/hisilicon/Makefile         |   2 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c | 117 +++++++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c            |  45 +++++++++++++
+ drivers/clk/hisilicon/clk.h            |  22 +++++++
+ 4 files changed, 185 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/hisilicon/clk-hisi-phase.c
 
-diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-index dba3055..8c310de 100644
---- a/drivers/soc/mediatek/mtk-infracfg.c
-+++ b/drivers/soc/mediatek/mtk-infracfg.c
-@@ -19,23 +19,33 @@
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 1e4c3dd..7189f07 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -2,7 +2,7 @@
+ # Hisilicon Clock specific Makefile
+ #
  
- #define INFRA_TOPAXI_PROTECTEN		0x0220
- #define INFRA_TOPAXI_PROTECTSTA1	0x0228
-+#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
-+#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
+-obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
++obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
  
- /**
-  * mtk_infracfg_set_bus_protection - enable bus protection
-  * @regmap: The infracfg regmap
-  * @mask: The mask containing the protection bits to be enabled.
-+ * @reg_update: The boolean flag determines to set the protection bits
-+ *              by regmap_update_bits with enable register(PROTECTEN) or
-+ *              by regmap_write with set register(PROTECTEN_SET).
-  *
-  * This function enables the bus protection bits for disabled power
-  * domains so that the system does not hang when some unit accesses the
-  * bus while in power down.
-  */
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-+		bool reg_update)
- {
- 	unsigned long expired;
- 	u32 val;
- 	int ret;
- 
--	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, mask);
-+	if (reg_update)
-+		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask,
-+				mask);
-+	else
-+		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
- 
- 	expired = jiffies + HZ;
- 
-@@ -59,16 +69,24 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-  * mtk_infracfg_clear_bus_protection - disable bus protection
-  * @regmap: The infracfg regmap
-  * @mask: The mask containing the protection bits to be disabled.
-+ * @reg_update: The boolean flag determines to clear the protection bits
-+ *              by regmap_update_bits with enable register(PROTECTEN) or
-+ *              by regmap_write with clear register(PROTECTEN_CLR).
-  *
-  * This function disables the bus protection bits previously enabled with
-  * mtk_infracfg_set_bus_protection.
-  */
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+diff --git a/drivers/clk/hisilicon/clk-hisi-phase.c b/drivers/clk/hisilicon/clk-hisi-phase.c
+new file mode 100644
+index 0000000..436f0a1
+--- /dev/null
++++ b/drivers/clk/hisilicon/clk-hisi-phase.c
+@@ -0,0 +1,117 @@
++/*
++ * Copyright (c) 2017 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Simple HiSilicon phase clock implementation.
++ */
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include "clk.h"
 +
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-+		bool reg_update)
- {
- 	unsigned long expired;
- 	int ret;
- 
--	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
-+	if (reg_update)
-+		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
-+	else
-+		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
- 
- 	expired = jiffies + HZ;
- 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index e1ce8b1..ba552de 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -134,6 +134,7 @@ struct scp {
- 	void __iomem *base;
- 	struct regmap *infracfg;
- 	struct scp_ctrl_reg ctrl_reg;
-+	bool bus_prot_reg_update;
- };
- 
- struct scp_subdomain {
-@@ -147,6 +148,7 @@ struct scp_soc_data {
- 	const struct scp_subdomain *subdomains;
- 	int num_subdomains;
- 	const struct scp_ctrl_reg regs;
-+	bool bus_prot_reg_update;
- };
- 
- static int scpsys_domain_is_on(struct scp_domain *scpd)
-@@ -254,7 +256,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+				scpd->data->bus_prot_mask,
-+				scp->bus_prot_reg_update);
- 		if (ret)
- 			goto err_pwr_ack;
- 	}
-@@ -289,7 +292,8 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+				scpd->data->bus_prot_mask,
-+				scp->bus_prot_reg_update);
- 		if (ret)
- 			goto out;
- 	}
-@@ -382,7 +386,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
- 
- static struct scp *init_scp(struct platform_device *pdev,
- 			const struct scp_domain_data *scp_domain_data, int num,
--			const struct scp_ctrl_reg *scp_ctrl_reg)
-+			const struct scp_ctrl_reg *scp_ctrl_reg,
-+			bool bus_prot_reg_update)
- {
- 	struct genpd_onecell_data *pd_data;
- 	struct resource *res;
-@@ -397,6 +402,8 @@ static struct scp *init_scp(struct platform_device *pdev,
- 	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
- 	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
- 
-+	scp->bus_prot_reg_update = bus_prot_reg_update;
++struct clk_hisi_phase {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u32		*phase_values;
++	u32		*phase_regs;
++	u8		phase_num;
++	u32		mask;
++	u8		shift;
++	u8		flags;
++	spinlock_t	*lock;
++};
++#define to_clk_hisi_phase(_hw) container_of(_hw, struct clk_hisi_phase, hw)
 +
- 	scp->dev = &pdev->dev;
++static u32 hisi_clk_get_phase_reg(struct clk_hisi_phase *phase, int degrees)
++{
++	int i;
++
++	for (i = 0; i < phase->phase_num; i++)
++		if (phase->phase_values[i] == degrees)
++			return phase->phase_regs[i];
++
++	return -EINVAL;
++}
++
++static int hisi_clk_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct clk_hisi_phase *phase = to_clk_hisi_phase(hw);
++	u32 val, phase_reg;
++	unsigned long flags = 0;
++
++	phase_reg = hisi_clk_get_phase_reg(phase, degrees);
++	if (phase_reg < 0)
++		return phase_reg;
++
++	if (phase->lock)
++		spin_lock_irqsave(phase->lock, flags);
++	else
++		__acquire(phase->lock);
++
++	val = clk_readl(phase->reg);
++	val &= ~(phase->mask << phase->shift);
++	val |= phase_reg << phase->shift;
++	clk_writel(val, phase->reg);
++
++	if (phase->lock)
++		spin_unlock_irqrestore(phase->lock, flags);
++	else
++		__release(phase->lock);
++
++	return 0;
++}
++
++const struct clk_ops clk_phase_ops = {
++	.set_phase = hisi_clk_set_phase,
++};
++
++void clk_unregister_hisi_phase(struct clk *clk)
++{
++	struct clk_hisi_phase *phase;
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	phase = to_clk_hisi_phase(hw);
++	clk_unregister(clk);
++}
++EXPORT_SYMBOL_GPL(clk_unregister_hisi_phase);
++
++struct clk *clk_register_hisi_phase(struct device *dev,
++		const struct hisi_phase_clock *clks,
++		void __iomem *base, spinlock_t *lock)
++{
++	struct clk_hisi_phase *phase;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	phase = devm_kzalloc(dev, sizeof(struct clk_hisi_phase), GFP_KERNEL);
++	if (!phase)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = clks->name;
++	init.ops = &clk_phase_ops;
++	init.flags = clks->flags | CLK_IS_BASIC;
++	init.parent_names = clks->parent_names ? &clks->parent_names : NULL;
++	init.num_parents = clks->parent_names ? 1 : 0;
++
++	phase->reg = base + clks->offset;
++	phase->shift = clks->shift;
++	phase->mask = BIT(clks->width) - 1;
++	phase->lock = lock;
++	phase->phase_values = clks->phase_values;
++	phase->phase_regs = clks->phase_regs;
++	phase->phase_num = clks->phase_num;
++	phase->hw.init = &init;
++
++	clk = clk_register(NULL, &phase->hw);
++	return clk;
++}
++EXPORT_SYMBOL_GPL(clk_register_hisi_phase);
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index b73c1df..e3adfad 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -197,6 +197,51 @@ int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -816,7 +823,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.regs = {
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
--	}
-+	},
-+	.bus_prot_reg_update = true,
++int hisi_clk_register_phase(struct device *dev,
++			const struct hisi_phase_clock *clks,
++			int nums, struct hisi_clock_data *data)
++{
++	int i;
++	struct clk *clk;
++	void __iomem *base = data->base;
++
++	for (i = 0; i < nums; i++) {
++		clk =	clk_register_hisi_phase(dev,
++				&clks[i], base, &hisi_clk_lock);
++
++		if (IS_ERR(clk)) {
++			pr_err("%s: failed to register clock %s\n",
++			       __func__, clks[i].name);
++			goto err;
++		}
++
++		data->clk_data.clks[clks[i].id] = clk;
++	}
++	return 0;
++
++err:
++	while (i--)
++		clk_unregister_hisi_phase(data->clk_data.clks[clks[i].id]);
++
++	return PTR_ERR(clk);
++}
++EXPORT_SYMBOL_GPL(hisi_clk_register_phase);
++
++void hisi_clk_unregister_phase(const struct hisi_phase_clock *clks,
++				int nums, struct hisi_clock_data *data)
++{
++	struct clk **clocks = data->clk_data.clks;
++	int i, id;
++
++	for (i = 0; i < nums; i++) {
++		id = clks[i].id;
++
++		if (clocks[id])
++			clk_unregister_hisi_phase(clocks[id]);
++	}
++}
++EXPORT_SYMBOL_GPL(hisi_clk_unregister_phase);
++
+ int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 				      int nums, struct hisi_clock_data *data)
+ {
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 4e1d1af..bc18730 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -68,6 +68,19 @@ struct hisi_mux_clock {
+ 	const char		*alias;
  };
  
- static const struct scp_soc_data mt6797_data = {
-@@ -827,7 +835,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.regs = {
- 		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
--	}
-+	},
-+	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt7622_data = {
-@@ -836,7 +845,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.regs = {
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
--	}
-+	},
-+	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt8173_data = {
-@@ -847,7 +857,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.regs = {
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
--	}
-+	},
-+	.bus_prot_reg_update = true,
- };
- 
- /*
-@@ -884,7 +895,8 @@ static int scpsys_probe(struct platform_device *pdev)
- 	match = of_match_device(of_scpsys_match_tbl, &pdev->dev);
- 	soc = (const struct scp_soc_data *)match->data;
- 
--	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs);
-+	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
-+			soc->bus_prot_reg_update);
- 	if (IS_ERR(scp))
- 		return PTR_ERR(scp);
- 
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index a0182ec..67baca2 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -27,7 +27,8 @@
- #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
- 						 BIT(7) | BIT(8))
- 
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
--
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-+		bool reg_update);
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-+		bool reg_update);
- #endif /* __SOC_MEDIATEK_INFRACFG_H */
++struct hisi_phase_clock {
++	unsigned int    id;
++	const char      *name;
++	const char      *parent_names;
++	unsigned long   flags;
++	unsigned long   offset;
++	u8		shift;
++	u8		width;
++	u32		*phase_values;
++	u32		*phase_regs;
++	u8		phase_num;
++};
++
+ struct hisi_divider_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+@@ -120,6 +133,15 @@ int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
+ 				int, struct hisi_clock_data *);
+ int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+ 				struct hisi_clock_data *);
++struct clk *clk_register_hisi_phase(struct device *dev,
++				const struct hisi_phase_clock *clks,
++				void __iomem *base, spinlock_t *lock);
++void clk_unregister_hisi_phase(struct clk *clk);
++int hisi_clk_register_phase(struct device *dev,
++				const struct hisi_phase_clock *clks,
++				int nums, struct hisi_clock_data *data);
++void hisi_clk_unregister_phase(const struct hisi_phase_clock *clks,
++				int nums, struct hisi_clock_data *data);
+ int hisi_clk_register_divider(const struct hisi_divider_clock *,
+ 				int, struct hisi_clock_data *);
+ int hisi_clk_register_gate(const struct hisi_gate_clock *,
 -- 
-1.9.1
+2.7.4
