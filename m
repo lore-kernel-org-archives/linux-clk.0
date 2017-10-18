@@ -1,125 +1,40 @@
-Return-Path: <broonie@sirena.co.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Cc: Subhransu S. Prusty <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, harshapriya.n@intel.com, tiwai@suse.de, mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com, patches.audio@intel.com, broonie@kernel.org, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, linux-clk@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments" to the asoc tree
-In-Reply-To: <1504794565-19168-2-git-send-email-subhransu.s.prusty@intel.com>
-Message-Id: <E1e1VXu-0001gE-KI@debutante>
-Date: Mon, 09 Oct 2017 11:44:26 +0100
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <hermit.wangheming@hisilicon.com>, <shawn.guo@linaro.org>,
+        <project-aspen-dev@linaro.org>,
+        Younian Wang <wangyounian@hisilicon.com>
+Subject: [PATCH 3/3] clk: hisilicon: correct ir clock rate for hi3798cv200 SoC
+Date: Wed, 18 Oct 2017 07:00:29 -0400
+Message-ID: <1508324429-6012-4-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+From: Younian Wang <wangyounian@hisilicon.com>
 
-   ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
+Correct ir clock rate for hi3798cv200 SoC.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5514830dffb2332c034c20db3b264ba1f94de1d8 Mon Sep 17 00:00:00 2001
-From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Date: Mon, 18 Sep 2017 10:26:44 +0530
-Subject: [PATCH] ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API
- arguments
-
-Set dma control ipc can be used to set the M/N divider, enable the clks. It
-takes different payload for different configuration. So modify the
-skl_dsp_set_dma_control API to take the size and node_id as argument.
-
-Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Younian Wang <wangyounian@hisilicon.com>
 ---
- sound/soc/intel/skylake/skl-messages.c | 23 ++++++++++++++---------
- sound/soc/intel/skylake/skl-topology.h |  4 ++--
- 2 files changed, 16 insertions(+), 11 deletions(-)
+ drivers/clk/hisilicon/crg-hi3798cv200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
-index 89f70133c8e4..f637829833e6 100644
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -613,8 +613,10 @@ static void skl_setup_cpr_gateway_cfg(struct skl_sst *ctx,
- }
+diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
+index 25d750c..61bd941 100644
+--- a/drivers/clk/hisilicon/crg-hi3798cv200.c
++++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
+@@ -258,7 +258,7 @@ static const struct hisi_crg_funcs hi3798cv200_crg_funcs = {
+ #define HI3798CV200_SYSCTRL_NR_CLKS 16
  
- #define DMA_CONTROL_ID 5
-+#define DMA_I2S_BLOB_SIZE 21
- 
--int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+				u32 caps_size, u32 node_id)
- {
- 	struct skl_dma_control *dma_ctrl;
- 	struct skl_ipc_large_config_msg msg = {0};
-@@ -624,24 +626,27 @@ int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
- 	/*
- 	 * if blob size zero, then return
- 	 */
--	if (mconfig->formats_config.caps_size == 0)
-+	if (caps_size == 0)
- 		return 0;
- 
- 	msg.large_param_id = DMA_CONTROL_ID;
--	msg.param_data_size = sizeof(struct skl_dma_control) +
--				mconfig->formats_config.caps_size;
-+	msg.param_data_size = sizeof(struct skl_dma_control) + caps_size;
- 
- 	dma_ctrl = kzalloc(msg.param_data_size, GFP_KERNEL);
- 	if (dma_ctrl == NULL)
- 		return -ENOMEM;
- 
--	dma_ctrl->node_id = skl_get_node_id(ctx, mconfig);
-+	dma_ctrl->node_id = node_id;
- 
--	/* size in dwords */
--	dma_ctrl->config_length = mconfig->formats_config.caps_size / 4;
-+	/*
-+	 * NHLT blob may contain additional configs along with i2s blob.
-+	 * firmware expects only the i2s blob size as the config_length.
-+	 * So fix to i2s blob size.
-+	 * size in dwords.
-+	 */
-+	dma_ctrl->config_length = DMA_I2S_BLOB_SIZE;
- 
--	memcpy(dma_ctrl->config_data, mconfig->formats_config.caps,
--				mconfig->formats_config.caps_size);
-+	memcpy(dma_ctrl->config_data, caps, caps_size);
- 
- 	err = skl_ipc_set_large_config(&ctx->ipc, &msg, (u32 *)dma_ctrl);
- 
-diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
-index 2717db92036b..e11cc1fc0e43 100644
---- a/sound/soc/intel/skylake/skl-topology.h
-+++ b/sound/soc/intel/skylake/skl-topology.h
-@@ -455,8 +455,8 @@ static inline struct skl *get_skl_ctx(struct device *dev)
- 
- int skl_tplg_be_update_params(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params);
--int skl_dsp_set_dma_control(struct skl_sst *ctx,
--		struct skl_module_cfg *mconfig);
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+			u32 caps_size, u32 node_id);
- void skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params, int stream);
- int skl_tplg_init(struct snd_soc_platform *platform,
+ static const struct hisi_gate_clock hi3798cv200_sysctrl_gate_clks[] = {
+-	{ HISTB_IR_CLK, "clk_ir", "100m",
++	{ HISTB_IR_CLK, "clk_ir", "24m",
+ 		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
+ 	{ HISTB_TIMER01_CLK, "clk_timer01", "24m",
+ 		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
 -- 
-2.14.1
+2.7.4
