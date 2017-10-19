@@ -1,39 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751696AbdJDMyT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Oct 2017 08:54:19 -0400
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Thu, 19 Oct 2017 02:29:20 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: thierry.reding@gmail.com, sboyd@codeaurora.org, pdeschrijver@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20171019092919.GA7252@Asurada>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171003100016.32029-2-m.szyprowski@samsung.com>
-References: <CGME20171003100029eucas1p2c706e911f316a58f35be7c443824f07c@eucas1p2.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-2-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 4 Oct 2017 14:54:16 +0200
-Message-ID: <CAJKOXPejmE6xZGL19ms_xZH61Ey7pg8+n7x=V9rtx6-8o+PLYA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: samsung: Remove support for obsolete Exynos4212
- CPU clock
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 12:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Support for Exynos 4212 SoC has been removed by commit bca9085e0ae9 ("ARM:
-> dts: exynos: remove Exynos4212 support (dead code)"), so there is no need
-> to keep dead code.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 33 ++++-----------------------------
->  1 file changed, 4 insertions(+), 29 deletions(-)
->
+On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
+> Below is the call trace of tegra210_init_pllu() function:
+>   start_kernel()
+>   -> time_init()
+>   --> of_clk_init()
+>   ---> tegra210_clock_init()
+>   ----> tegra210_pll_init()
+>   -----> tegra210_init_pllu()
+> 
+> Because the preemption is disabled in the start_kernel before calling
+> time_init, tegra210_init_pllu is actually in an atomic context while
+> it includes a readl_relaxed_poll_timeout that might sleep.
+> 
+> So this patch just changes this readl_relaxed_poll_timeout() to its
+> atomic version.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Thierry, can you also take a look at this one? I sent a month ago. Thanks.
