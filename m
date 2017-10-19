@@ -1,417 +1,130 @@
-Return-Path: <hanetzer@startmail.com>
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	xuejiancheng@hisilicon.com,
-	zhangfei.gao@linaro.org,
-	wnpan@hisilicon.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	xuwei5@hisilicon.com,
-	linux@armlinux.org.uk,
-	"Marty E. Plummer" <hanetzer@startmail.com>
-Subject: [PATCH v2 3/3] arm: dts: add Hi3521A dts
-Date: Tue, 17 Oct 2017 17:38:54 -0500
-Message-Id: <20171017223854.6980-4-hanetzer@startmail.com>
-In-Reply-To: <20171017223854.6980-1-hanetzer@startmail.com>
-References: <20171017223854.6980-1-hanetzer@startmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 19 Oct 2017 10:51:29 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <jonathanh@nvidia.com>,
+	<thierry.reding@gmail.com>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <pgaikwad@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: dfll: Fix drvdata overwriting issue
+Message-ID: <20171019075129.GO27164@tbergstrom-lnx.Nvidia.com>
+References: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
-marketed under the name Samsung SDR-B74301N
+On Thu, Oct 12, 2017 at 04:09:59PM -0700, Nicolin Chen wrote:
+> Both tegra124-dfll and clk-dfll are using platform_set_drvdata
+> to set drvdata of the exact same pdev while they use different
+> pointers for the drvdata. Once the drvdata has been overwritten
+> by tegra124-dfll, clk-dfll will never get its td pointer as it
+> expects.
+> 
+> Since tegra124-dfll merely needs its soc pointer in its remove
+> function, this patch fixes the bug by removing the overwriting
+> in the tegra124-dfll file and letting the tegra_dfll_unregister
+> return an soc pointer for it.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
----
-Chages in v2:
-  - Use SPDX tag and GPL-2.0+
-  - Add memory addresses to some nodes
-  - Add arm arch timer
-  - Add more specific compatible strings to a few nodes.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
- arch/arm/boot/dts/Makefile              |   2 +
- arch/arm/boot/dts/hi3521a-rs-dm290e.dts |  41 +++++
- arch/arm/boot/dts/hi3521a.dtsi          | 308 ++++++++++++++++++++++++++++++++
- 3 files changed, 351 insertions(+)
- create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
- create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index faf46abaa4a2..e7b9b5dde20f 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -189,6 +189,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
- 	gemini-sq201.dtb \
- 	gemini-wbd111.dtb \
- 	gemini-wbd222.dtb
-+dtb-$(CONFIG_ARCH_HI3521A) += \
-+	hi3521a-rs-dm290e.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += \
- 	hi3620-hi4511.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += \
-diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-new file mode 100644
-index 000000000000..3634fe96399e
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
-@@ -0,0 +1,41 @@
-+/*
-+ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-+ *
-+ * SPDX-License-Identifier:     GPL-2.0+
-+ */
-+
-+/dts-v1/;
-+#include "hi3521a.dtsi"
-+
-+/ {
-+	model = "RaySharp RS-DM-290E DVR Board";
-+	compatible = "raysharp,rs-dm-290e", "hisilicon,hi3521a";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+	};
-+
-+	memory@800000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0xf00000>;
-+	};
-+};
-+
-+&hi_sfc {
-+	status = "okay";
-+	spi-nor@0 {
-+		compatible = "mxicy,mx25l25635e","jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <104000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dual_timer0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/hi3521a.dtsi b/arch/arm/boot/dts/hi3521a.dtsi
-new file mode 100644
-index 000000000000..49111272fd76
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3521a.dtsi
-@@ -0,0 +1,308 @@
-+/*
-+ * Copyright (C) 2017 Marty Plummer <hanetzer@startmail.com>
-+ *
-+ * SPDX-License-Identifier:     GPL-2.0+
-+ */
-+
-+#include <dt-bindings/clock/hi3521a-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	chosen { };
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <1 13 0xf08>,
-+			     <1 14 0xf08>,
-+			     <1 11 0xf08>,
-+			     <1 10 0xf08>;
-+	};
-+
-+	clk_3m: clk_3m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <3000000>;
-+	};
-+
-+	soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		hi_sfc: spi-nor-controller@10000000 {
-+			compatible = "hisilicon,hi3521a-spi-nor", "hisilicon,fmc-spi-nor";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x10000000 0x10000>, <0x14000000 0x1000000>;
-+			reg-names = "control", "memory";
-+			clocks = <&crg HI3521A_FMC_CLK>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@10301000 {
-+			compatible = "arm,pl390";
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-+		};
-+
-+		dmac: dma-controller@10060000 {
-+			compatible = "arm,pl080", "arm,primecell";
-+			reg = <0x10060000 0x1000>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		dual_timer0: timer@12000000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12000000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer1: timer@12010000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12010000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer2: timer@12020000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12020000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		dual_timer3: timer@12030000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12030000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-name = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		crg: clock-reset-controller@12040000 {
-+			compatible = "hisilicon,hi3521a-crg";
-+			#clock-cells = <1>;
-+			#reset-cells = <2>;
-+			reg = <0x12040000 0x10000>;
-+		};
-+
-+		wdt0: watchdog@12070000 {
-+			compatible = "arm,sp805", "arm,primecell";
-+			arm,primecell-periphid = <0x00141805>;
-+			reg = <0x12070000 0x1000>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+		};
-+
-+		uart0: serial@12080000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12080000 0x1000>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART0_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@12090000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12090000 0x1000>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART1_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@120a0000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x120a0000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3521A_UART2_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disabled";
-+		};
-+
-+		gpio0: gpio@12150000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12150000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio1: gpio@12160000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12160000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio2: gpio@12170000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12170000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio3: gpio@12180000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12180000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio4: gpio@12190000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12190000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio5: gpio@121a0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121a0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio6: gpio@121b0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121b0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio7: gpio@121c0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121c0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio8: gpio@121d0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121d0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio9: gpio@121e0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121e0000 0x1000>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio10: gpio@121f0000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x121f0000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio11: gpio@12200000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12200000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio12: gpio@12210000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12210000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		gpio13: gpio@12220000 {
-+			compatible = "arm,pl061", "arm,primecell";
-+			reg = <0x12220000 0x1000>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			status = "disabled";
-+		};
-+	};
-+};
--- 
-2.14.2
+> ---
+> 
+> As I don't have a T124 platform, I can't verify it on a board.
+> If someone could provide a Tested-by, it would be very helpful.
+> The test could be a simple system suspend/resume that activates
+> runtime_suspend/resume() where a platform_get_drvdata() would
+> be called. -- Nicolin
+> 
+>  drivers/clk/tegra/clk-dfll.c               | 10 +++++-----
+>  drivers/clk/tegra/clk-dfll.h               |  2 +-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++++-------
+>  3 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 2c44aeb..0a7deee 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1728,10 +1728,10 @@ EXPORT_SYMBOL(tegra_dfll_register);
+>   * @pdev: DFLL platform_device *
+>   *
+>   * Unbind this driver from the DFLL hardware device represented by
+> - * @pdev. The DFLL must be disabled for this to succeed. Returns 0
+> - * upon success or -EBUSY if the DFLL is still active.
+> + * @pdev. The DFLL must be disabled for this to succeed. Returns a
+> + * soc pointer upon success or -EBUSY if the DFLL is still active.
+>   */
+> -int tegra_dfll_unregister(struct platform_device *pdev)
+> +struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev)
+>  {
+>  	struct tegra_dfll *td = platform_get_drvdata(pdev);
+>  
+> @@ -1739,7 +1739,7 @@ int tegra_dfll_unregister(struct platform_device *pdev)
+>  	if (td->mode != DFLL_DISABLED) {
+>  		dev_err(&pdev->dev,
+>  			"must disable DFLL before removing driver\n");
+> -		return -EBUSY;
+> +		return ERR_PTR(-EBUSY);
+>  	}
+>  
+>  	debugfs_remove_recursive(td->debugfs_dir);
+> @@ -1753,6 +1753,6 @@ int tegra_dfll_unregister(struct platform_device *pdev)
+>  
+>  	reset_control_assert(td->dvco_rst);
+>  
+> -	return 0;
+> +	return td->soc;
+>  }
+>  EXPORT_SYMBOL(tegra_dfll_unregister);
+> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+> index ed2ad88..83352c8 100644
+> --- a/drivers/clk/tegra/clk-dfll.h
+> +++ b/drivers/clk/tegra/clk-dfll.h
+> @@ -43,7 +43,7 @@ struct tegra_dfll_soc_data {
+>  
+>  int tegra_dfll_register(struct platform_device *pdev,
+>  			struct tegra_dfll_soc_data *soc);
+> -int tegra_dfll_unregister(struct platform_device *pdev);
+> +struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
+>  int tegra_dfll_runtime_suspend(struct device *dev);
+>  int tegra_dfll_runtime_resume(struct device *dev);
+>  
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index ad1c1cc..269d359 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -125,19 +125,17 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	platform_set_drvdata(pdev, soc);
+> -
+>  	return 0;
+>  }
+>  
+>  static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+>  {
+> -	struct tegra_dfll_soc_data *soc = platform_get_drvdata(pdev);
+> -	int err;
+> +	struct tegra_dfll_soc_data *soc;
+>  
+> -	err = tegra_dfll_unregister(pdev);
+> -	if (err < 0)
+> -		dev_err(&pdev->dev, "failed to unregister DFLL: %d\n", err);
+> +	soc = tegra_dfll_unregister(pdev);
+> +	if (IS_ERR(soc))
+> +		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
+> +			PTR_ERR(soc));
+>  
+>  	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+>  
+> -- 
+> 2.1.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
