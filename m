@@ -1,65 +1,185 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/10] clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend
-Date: Mon, 16 Oct 2017 15:55:08 +0200
-Message-Id: <1508162116-5043-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v5 4/9] arm: dts: mt2712: Add clock controller device nodes
+Date: Thu, 19 Oct 2017 10:48:45 +0800
+Message-ID: <1508381330-3700-5-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-If a device is part of the CPG/MSSR Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+Add clock controller nodes for MT2712, include topckgen, infracfg,
+pericfg, mcucfg and apmixedsys. This patch also add six oscillators that
+provide clocks for MT2712.
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core.
-
-Hence provide an .active_wakeup() callback that always returns true.
-Note that this will only affect devices configured as wakeup sources.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 115 ++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index e580a5e6346c2533..de534896f596168c 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -481,6 +481,11 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
+diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+index 57d0396..d2ee3cd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+@@ -5,6 +5,7 @@
+  * SPDX-License-Identifier: (GPL-2.0 OR MIT)
+  */
  
-+static bool cpg_mssr_active_wakeup(struct device *dev)
-+{
-+	return true;
-+}
++#include <dt-bindings/clock/mt2712-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -73,6 +74,48 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
 +
- static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 					  const unsigned int *core_pm_clks,
- 					  unsigned int num_core_pm_clks)
-@@ -501,6 +506,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
- 	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->dev_ops.active_wakeup = cpg_mssr_active_wakeup;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
++	clk32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "clk32k";
++	};
++
++	clkfpc: oscillator@2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clkfpc";
++	};
++
++	clkaud_ext_i_0: oscillator@3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <6500000>;
++		clock-output-names = "clkaud_ext_i_0";
++	};
++
++	clkaud_ext_i_1: oscillator@4 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <196608000>;
++		clock-output-names = "clkaud_ext_i_1";
++	};
++
++	clkaud_ext_i_2: oscillator@5 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <180633600>;
++		clock-output-names = "clkaud_ext_i_2";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupt-parent = <&gic>;
+@@ -86,6 +129,24 @@
+ 			      (GIC_CPU_MASK_RAW(0x13) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2712-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2712-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2712-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	uart5: serial@1000f000 {
+ 		compatible = "mediatek,mt2712-uart",
+ 			     "mediatek,mt6577-uart";
+@@ -96,6 +157,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2712-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mcucfg: syscon@10220000 {
++		compatible = "mediatek,mt2712-mcucfg", "syscon";
++		reg = <0 0x10220000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	sysirq: interrupt-controller@10220a80 {
+ 		compatible = "mediatek,mt2712-sysirq",
+ 			     "mediatek,mt6577-sysirq";
+@@ -167,5 +240,47 @@
+ 		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
++
++	mfgcfg: syscon@13000000 {
++		compatible = "mediatek,mt2712-mfgcfg", "syscon";
++		reg = <0 0x13000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mmsys: syscon@14000000 {
++		compatible = "mediatek,mt2712-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	imgsys: syscon@15000000 {
++		compatible = "mediatek,mt2712-imgsys", "syscon";
++		reg = <0 0x15000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	bdpsys: syscon@15010000 {
++		compatible = "mediatek,mt2712-bdpsys", "syscon";
++		reg = <0 0x15010000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vdecsys: syscon@16000000 {
++		compatible = "mediatek,mt2712-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: syscon@18000000 {
++		compatible = "mediatek,mt2712-vencsys", "syscon";
++		reg = <0 0x18000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	jpgdecsys: syscon@19000000 {
++		compatible = "mediatek,mt2712-jpgdecsys", "syscon";
++		reg = <0 0x19000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
+ };
+ 
 -- 
-2.7.4
+1.9.1
