@@ -1,64 +1,196 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39766 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751917AbdJ3KoJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Oct 2017 06:44:09 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v5 8/9] soc: mediatek: add MT2712 scpsys support
+Date: Thu, 19 Oct 2017 10:48:49 +0800
+Message-ID: <1508381330-3700-9-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Mon, 30 Oct 2017 18:44:08 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/10] Allwinner H3/H5/A64(DE2) SimpleFB support
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Message-ID: <8eba6f36657bee32e60adb6356c15649@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-10-27 23:06，Icenowy Zheng 写道：
-> This patchset adds support for the SimpleFB on Allwinner SoCs with
-> "Display Engine 2.0".
-> 
-> PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
-> 
-> PATCH 4 adds the pipeline strings for DE2 SimpleFB.
-> 
-> PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-> for H3/H5 SoCs.
-> 
-> PATCH 8 to 10 are for Allwinner A64 SoC to enable SimpleFB.
-> 
-> Icenowy Zheng (10):
->   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
->   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
->   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
->   dt-bindings: simplefb-sunxi: add pipelines for DE2
->   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
->   arm64: allwinner: h5: add compatible string for DE2 CCU
->   ARM: sunxi: h3/h5: add simplefb nodes
->   dt-bindings: add binding for A64 DE2 CCU SRAM
+add scpsys driver for MT2712
 
-Sorry, but don't apply the following patches for two
-reasons:
-- the implementation of SRAM claiming in DE2 CCU is
-   forgotten to be sent;
-- the patch that adds DE2 CCU have an error.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 106 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 100 insertions(+), 6 deletions(-)
 
->   arm64: allwinner: a64: add DE2 CCU for A64 SoC
->   arm64: allwinner: a64: add simplefb for A64 SoC
-> 
->  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 +++-
->  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 ++
->  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 ++
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 ++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 
-> ++++++++++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 ++
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 53 
-> +++++++++++++++++-
->  7 files changed, 178 insertions(+), 5 deletions(-)
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index a4ece75..8809430 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -21,6 +21,7 @@
+ #include <linux/soc/mediatek/infracfg.h>
+ 
+ #include <dt-bindings/power/mt2701-power.h>
++#include <dt-bindings/power/mt2712-power.h>
+ #include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/power/mt7622-power.h>
+ #include <dt-bindings/power/mt8173-power.h>
+@@ -32,7 +33,7 @@
+ #define SPM_DIS_PWR_CON			0x023c
+ #define SPM_CONN_PWR_CON		0x0280
+ #define SPM_VEN2_PWR_CON		0x0298
+-#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173 */
++#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173, MT2712 */
+ #define SPM_BDP_PWR_CON			0x029c	/* MT2701 */
+ #define SPM_ETH_PWR_CON			0x02a0
+ #define SPM_HIF_PWR_CON			0x02a4
+@@ -40,12 +41,12 @@
+ #define SPM_MFG_2D_PWR_CON		0x02c0
+ #define SPM_MFG_ASYNC_PWR_CON		0x02c4
+ #define SPM_USB_PWR_CON			0x02cc
++#define SPM_USB2_PWR_CON		0x02d4	/* MT2712 */
+ #define SPM_ETHSYS_PWR_CON		0x02e0	/* MT7622 */
+ #define SPM_HIF0_PWR_CON		0x02e4	/* MT7622 */
+ #define SPM_HIF1_PWR_CON		0x02e8	/* MT7622 */
+ #define SPM_WB_PWR_CON			0x02ec	/* MT7622 */
+ 
+-
+ #define SPM_PWR_STATUS			0x060c
+ #define SPM_PWR_STATUS_2ND		0x0610
+ 
+@@ -64,12 +65,13 @@
+ #define PWR_STATUS_ETH			BIT(15)
+ #define PWR_STATUS_HIF			BIT(16)
+ #define PWR_STATUS_IFR_MSC		BIT(17)
++#define PWR_STATUS_USB2			BIT(19)	/* MT2712 */
+ #define PWR_STATUS_VENC_LT		BIT(20)
+ #define PWR_STATUS_VENC			BIT(21)
+-#define PWR_STATUS_MFG_2D		BIT(22)
+-#define PWR_STATUS_MFG_ASYNC		BIT(23)
+-#define PWR_STATUS_AUDIO		BIT(24)
+-#define PWR_STATUS_USB			BIT(25)
++#define PWR_STATUS_MFG_2D		BIT(22)	/* MT8173 */
++#define PWR_STATUS_MFG_ASYNC		BIT(23)	/* MT8173 */
++#define PWR_STATUS_AUDIO		BIT(24)	/* MT8173, MT2712 */
++#define PWR_STATUS_USB			BIT(25)	/* MT8173, MT2712 */
+ #define PWR_STATUS_ETHSYS		BIT(24)	/* MT7622 */
+ #define PWR_STATUS_HIF0			BIT(25)	/* MT7622 */
+ #define PWR_STATUS_HIF1			BIT(26)	/* MT7622 */
+@@ -602,6 +604,85 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ };
+ 
+ /*
++ * MT2712 power domain support
++ */
++static const struct scp_domain_data scp_domain_data_mt2712[] = {
++	[MT2712_POWER_DOMAIN_MM] = {
++		.name = "mm",
++		.sta_mask = PWR_STATUS_DISP,
++		.ctl_offs = SPM_DIS_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_VDEC] = {
++		.name = "vdec",
++		.sta_mask = PWR_STATUS_VDEC,
++		.ctl_offs = SPM_VDE_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM, CLK_VDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_VENC] = {
++		.name = "venc",
++		.sta_mask = PWR_STATUS_VENC,
++		.ctl_offs = SPM_VEN_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_ISP] = {
++		.name = "isp",
++		.sta_mask = PWR_STATUS_ISP,
++		.ctl_offs = SPM_ISP_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(13, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_AUDIO] = {
++		.name = "audio",
++		.sta_mask = PWR_STATUS_AUDIO,
++		.ctl_offs = SPM_AUDIO_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_AUDIO},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB] = {
++		.name = "usb",
++		.sta_mask = PWR_STATUS_USB,
++		.ctl_offs = SPM_USB_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB2] = {
++		.name = "usb2",
++		.sta_mask = PWR_STATUS_USB2,
++		.ctl_offs = SPM_USB2_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG] = {
++		.name = "mfg",
++		.sta_mask = PWR_STATUS_MFG,
++		.ctl_offs = SPM_MFG_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.clk_id = {CLK_MFG},
++		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
++		.active_wakeup = true,
++	},
++};
++
++/*
+  * MT6797 power domain support
+  */
+ 
+@@ -831,6 +912,16 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.bus_prot_use_set_clr_reg = false,
+ };
+ 
++static const struct scp_soc_data mt2712_data = {
++	.domains = scp_domain_data_mt2712,
++	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.regs = {
++		.pwr_sta_offs = SPM_PWR_STATUS,
++		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
++	},
++	.bus_prot_use_set_clr_reg = true,
++};
++
+ static const struct scp_soc_data mt6797_data = {
+ 	.domains = scp_domain_data_mt6797,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+@@ -874,6 +965,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 		.compatible = "mediatek,mt2701-scpsys",
+ 		.data = &mt2701_data,
+ 	}, {
++		.compatible = "mediatek,mt2712-scpsys",
++		.data = &mt2712_data,
++	}, {
+ 		.compatible = "mediatek,mt6797-scpsys",
+ 		.data = &mt6797_data,
+ 	}, {
+-- 
+1.9.1
