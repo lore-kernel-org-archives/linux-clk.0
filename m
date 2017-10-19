@@ -1,40 +1,75 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] clk: renesas: r8a7796: Correct parent clock of INTC-AP
-Date: Wed, 11 Oct 2017 10:29:51 +0200
-Message-Id: <1507710592-13740-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
-References: <1507710592-13740-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 19 Oct 2017 10:23:10 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+	jonathanh@nvidia.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+	pgaikwad@nvidia.com
+Subject: Re: [PATCH] clk: tegra: dfll: Fix drvdata overwriting issue
+Message-ID: <20171019082310.GC4459@ulmo>
+References: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eHhjakXzOLJAF9wJ"
+In-Reply-To: <1507849799-4256-1-git-send-email-nicoleotsuka@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 0.55 of
-September 8, 2017, the parent clock of the INTC-AP module clock on R-Car
-M3-W is S0D3.
 
-This change has no functional impact.
+--eHhjakXzOLJAF9wJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Oct 12, 2017 at 04:09:59PM -0700, Nicolin Chen wrote:
+> Both tegra124-dfll and clk-dfll are using platform_set_drvdata
+> to set drvdata of the exact same pdev while they use different
+> pointers for the drvdata. Once the drvdata has been overwritten
+> by tegra124-dfll, clk-dfll will never get its td pointer as it
+> expects.
+>=20
+> Since tegra124-dfll merely needs its soc pointer in its remove
+> function, this patch fixes the bug by removing the overwriting
+> in the tegra124-dfll file and letting the tegra_dfll_unregister
+> return an soc pointer for it.
+>=20
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>=20
+> As I don't have a T124 platform, I can't verify it on a board.
+> If someone could provide a Tested-by, it would be very helpful.
+> The test could be a simple system suspend/resume that activates
+> runtime_suspend/resume() where a platform_get_drvdata() would
+> be called. -- Nicolin
+>=20
+>  drivers/clk/tegra/clk-dfll.c               | 10 +++++-----
+>  drivers/clk/tegra/clk-dfll.h               |  2 +-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++++-------
+>  3 files changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 48731741b59e0c89..83a68e51e4ec1d12 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -145,7 +145,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
- 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A7796_CLK_CP),
--	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
-+	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S0D3),
- 	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S0D3),
- 	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S0D3),
- 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
--- 
-2.7.4
+Applied, thanks.
+
+Thierry
+
+--eHhjakXzOLJAF9wJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoYO4ACgkQ3SOs138+
+s6GazA/+OmV373+YFeBixNv1qvdheW2czQVb52IwKoiBLLPaa5qgD2udrabKfWTi
+391b94iDR+coqjGURAsRCKPIJdhrYORdrqYvE7VNi8b1BXrrTWNsR0oQr5F3T0Su
+U3uCc51EmMmpARvEkR3/33FLIIdBTkSOHHF/71bWd2c5v9NL+Uni2RFAPeqLPJq0
+Bq5QjpE2B/SCKB/wdZ9Uaf5VjCIW+ViRodrzW6V3HMGUbiR2rsnwcCi169U0/706
+WwVwqshEAu7blP4sLbd/1Fxk34yh22luObv0IFlUI5H47Gog8HXLCarwtUaUAxzg
+MPfV1BxA50G0XdazmJp/BFj99hchqU7cqadHm4rGZ7lO+ZueahuQdHDZ1eBki92H
+sxaJn99Nmi81yfYRO7JeOmLeNRjA1KcfnPrBos+gGEDxuihg6M0sdg0oKJp3hOFr
+AoduSABWmC5xQTvM/jhFGoA3+1mKjAMueFTWSmp0flRKYZUfkV78WrY80cjzGP5K
+Jwsda/0YFPFQgaNsoR25EiweUX67a/nUktDma2JwepPLUbh/nHNxF5/t/EIchE1t
+Pwewf95tZJxlYZz1nZRrThgi10ANzJX+HZMoyv61EURSBWGMtdde/XtKbs0kWoRq
+HKAhfROz9w8/yVNlaxho+6iM1Vr9cDGsR3Qa5d4ctm1ZtiAJjJc=
+=yQYP
+-----END PGP SIGNATURE-----
+
+--eHhjakXzOLJAF9wJ--
