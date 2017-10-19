@@ -1,141 +1,166 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
- <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
- <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
- <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <ecf50d7b-59d2-7b98-5d45-e95922e495bf@wwwdotorg.org>
-Date: Tue, 3 Oct 2017 09:38:07 -0600
-MIME-Version: 1.0
-In-Reply-To: <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard@mobile-devices.fr>,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v5 3/3] clk: at91: pmc: Support backup for programmable clocks
+Date: Thu, 19 Oct 2017 18:42:07 +0200
+Message-Id: <20171019164207.32717-4-romain.izard.pro@gmail.com>
+In-Reply-To: <20171019164207.32717-1-romain.izard.pro@gmail.com>
+References: <20171019164207.32717-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/03/2017 04:32 AM, Jon Hunter wrote:
-> 
-> 
-> On 03/10/17 00:02, Dmitry Osipenko wrote:
->> On 02.10.2017 20:05, Stephen Warren wrote:
->>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
->>>> On 29.09.2017 22:30, Stephen Warren wrote:
->>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>>>>
->>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>>>
->>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->>>>>>>>> on Tegra20/30 SoC's.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>> ---
->>>>>>>>>     .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23
->>>>>>>>> ++++++++++++++++++++++
->>>>>>>>>     1 file changed, 23 insertions(+)
->>>>>>>>>     create mode 100644
->>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>
->>>>>>>>> diff --git
->>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> new file mode 100644
->>>>>>>>> index 000000000000..2af9aa76ae11
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>> @@ -0,0 +1,23 @@
->>>>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>>>> +
->>>>>>>>> +Required properties:
->>>>>>>>> +- compatible:    Must be "nvidia,tegra20-ahbdma"
->>>>>>>>> +- reg:        Should contain registers base address and length.
->>>>>>>>> +- interrupts:    Should contain one entry, DMA controller interrupt.
->>>>>>>>> +- clocks:    Should contain one entry, DMA controller clock.
->>>>>>>>> +- resets :    Should contain one entry, DMA controller reset.
->>>>>>>>> +- #dma-cells:    Should be <1>. The cell represents DMA request select
->>>>>>>>> value
->>>>>>>>> +        for the peripheral. For more details consult the Tegra TRM's
->>>>>>>>> +        documentation, in particular AHB DMA channel control register
->>>>>>>>> +        REQ_SEL field.
->>>>>>>>
->>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as well?
->>>>>>>>
->>>>>>>
->>>>>>> Actually, DMA transfer trigger isn't related a hardware description. It's
->>>>>>> up to
->>>>>>> software to decide what trigger to select. So it shouldn't be in the binding.
->>>>>>
->>>>>> I think it could be, if say a board wanted a GPIO to trigger a transfer.
->>>>>>
->>>>>>> And I think the same applies to requester... any objections?
->>>>>>
->>>>>> Well, the REQ_SEL should definitely be in the binding.
->>>>>>
->>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
->>>>>> like we never bothered with it for the APB DMA and so maybe no ones uses
->>>>>> this.
->>>>>
->>>>> I don't think TRIG_SEL should be in the binding, at least at present. While
->>>>> TRIG_SEL certainly is something used to configure the transfer, I believe the
->>>>> semantics of the current DMA binding only cover DMA transfers that are initiated
->>>>> when SW desires, rather than being a combination of after SW programs the
->>>>> transfer plus some other HW event. So, we always use a default/hard-coded
->>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT. There's
->>>>> certainly no known use-case that requires a non-default TRIG_SEL value at
->>>>> present. We could add an extra #dma-cells value later if we find a use for it,
->>>>> and the semantics of that use-case make sense to add it to the DMA specifier,
->>>>> rather than some other separate higher-level property/driver/...
->>>>
->>>> Thank you for the comment. If we'd want to extend the binding further with the
->>>> trigger, how to differentiate trigger from the requester in a case of a single
->>>> #data-cell?
->>>>
->>>> Of course realistically a chance that the further extension would be needed is
->>>> very-very low, so we may defer the efforts to solve that question and for now
->>>> make driver aware of the potential #dma-cells extension.
->>>
->>> The request selector cell isn't optional, so is always present. If we later add
->>> an optional trig_sel cell, we'll either have:
->>>
->>> #dma-cells=<1>: req_sel
->>>
->>> or:
->>>
->>> #dma-cells=<2>: req_sel, trig_sel
->>
->> Why request sel. couldn't be optional? Could you please elaborate a bit more?
+From: Romain Izard <romain.izard@mobile-devices.fr>
 
-The documentation currently says it's mandatory, and DT bindings must be 
-evolved in a backwards-compatible fashion.
+When an AT91 programmable clock is declared in the device tree, register
+it into the Power Management Controller driver. On entering suspend mode,
+the driver saves and restores the Programmable Clock registers to support
+the backup mode for these clocks.
 
->> I think possible options are:
->>
->> #dma-cells=<1>: req_sel
->> #dma-cells=<1>: trig_sel
-> 
-> With the above, how would you know that it is the req_sel or trig_sel
-> that is specified?
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+Changes in v2:
+* register PCKs on clock startup
 
-Also, if req_sel were optional, then it'd be impossible to distinguish 
-between those cases, so we can't design a binding like that. In general, 
-when adding extra optional cells to an #xxx-cells style binding, then 
-whenever cell N is present, all cells before cell N must be present even 
-if optional.
+Changes in v3:
+* improve comments on hanling 0 in pmc_register_id and pmc_register_pck
+* declare local variables earlier for checkpatch
+
+ drivers/clk/at91/clk-programmable.c |  2 ++
+ drivers/clk/at91/pmc.c              | 35 +++++++++++++++++++++++++++++++++++
+ drivers/clk/at91/pmc.h              |  2 ++
+ 3 files changed, 39 insertions(+)
+
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 85a449cf61e3..0e6aab1252fc 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -204,6 +204,8 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 	if (ret) {
+ 		kfree(prog);
+ 		hw = ERR_PTR(ret);
++	} else {
++		pmc_register_pck(id);
+ 	}
+ 
+ 	return hw;
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 07dc2861ad3f..1fa27f4ea538 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -22,6 +22,7 @@
+ #include "pmc.h"
+ 
+ #define PMC_MAX_IDS 128
++#define PMC_MAX_PCKS 8
+ 
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range)
+@@ -50,6 +51,7 @@ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
+ static struct regmap *pmcreg;
+ 
+ static u8 registered_ids[PMC_MAX_IDS];
++static u8 registered_pcks[PMC_MAX_PCKS];
+ 
+ static struct
+ {
+@@ -66,8 +68,13 @@ static struct
+ 	u32 pcr[PMC_MAX_IDS];
+ 	u32 audio_pll0;
+ 	u32 audio_pll1;
++	u32 pckr[PMC_MAX_PCKS];
+ } pmc_cache;
+ 
++/*
++ * As Peripheral ID 0 is invalid on AT91 chips, the identifier is stored
++ * without alteration in the table, and 0 is for unused clocks.
++ */
+ void pmc_register_id(u8 id)
+ {
+ 	int i;
+@@ -82,9 +89,28 @@ void pmc_register_id(u8 id)
+ 	}
+ }
+ 
++/*
++ * As Programmable Clock 0 is valid on AT91 chips, there is an offset
++ * of 1 between the stored value and the real clock ID.
++ */
++void pmc_register_pck(u8 pck)
++{
++	int i;
++
++	for (i = 0; i < PMC_MAX_PCKS; i++) {
++		if (registered_pcks[i] == 0) {
++			registered_pcks[i] = pck + 1;
++			break;
++		}
++		if (registered_pcks[i] == (pck + 1))
++			break;
++	}
++}
++
+ static int pmc_suspend(void)
+ {
+ 	int i;
++	u8 num;
+ 
+ 	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
+ 	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
+@@ -103,6 +129,10 @@ static int pmc_suspend(void)
+ 		regmap_read(pmcreg, AT91_PMC_PCR,
+ 			    &pmc_cache.pcr[registered_ids[i]]);
+ 	}
++	for (i = 0; registered_pcks[i]; i++) {
++		num = registered_pcks[i] - 1;
++		regmap_read(pmcreg, AT91_PMC_PCKR(num), &pmc_cache.pckr[num]);
++	}
+ 
+ 	return 0;
+ }
+@@ -119,6 +149,7 @@ static bool pmc_ready(unsigned int mask)
+ static void pmc_resume(void)
+ {
+ 	int i;
++	u8 num;
+ 	u32 tmp;
+ 	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+ 
+@@ -143,6 +174,10 @@ static void pmc_resume(void)
+ 			     pmc_cache.pcr[registered_ids[i]] |
+ 			     AT91_PMC_PCR_CMD);
+ 	}
++	for (i = 0; registered_pcks[i]; i++) {
++		num = registered_pcks[i] - 1;
++		regmap_write(pmcreg, AT91_PMC_PCKR(num), pmc_cache.pckr[num]);
++	}
+ 
+ 	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
+ 		mask |= AT91_PMC_LOCKU;
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 858e8ef7e8db..d22b1fa9ecdc 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -31,8 +31,10 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 
+ #ifdef CONFIG_PM
+ void pmc_register_id(u8 id);
++void pmc_register_pck(u8 pck);
+ #else
+ static inline void pmc_register_id(u8 id) {}
++static inline void pmc_register_pck(u8 pck) {}
+ #endif
+ 
+ #endif /* __PMC_H_ */
+-- 
+2.11.0
