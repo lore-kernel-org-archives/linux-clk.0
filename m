@@ -1,135 +1,51 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	architt@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 3/3] clk: qcom: mmcc-msm8996: leave all mmagic gdscs and clocks always enabled
-Date: Thu, 12 Oct 2017 12:28:49 +0530
-Message-Id: <1507791529-24353-4-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1507791529-24353-1-git-send-email-rnayak@codeaurora.org>
-References: <1507791529-24353-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Thu, 19 Oct 2017 11:42:24 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20171019184223.GA7415@Asurada-Nvidia>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
+ <20171019094422.GI9005@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171019094422.GI9005@ulmo>
 List-ID: <linux-clk.vger.kernel.org>
 
-There's no bus infrastructure today to handle all the mmagic bus
-clocks and GDSCs needed by all the multimedia blocks in msm8996, like
-mdss, video, camera and gpu. Mark all these clocks with a CLK_IS_CRITICAL
-and GDSCs with a ALWAYS_ON flag for now so they are left always enabled.
-This patch should be reverted at some point when we do have a bus driver
-to manage these clocks and GDSCs.
+On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
+> > > Below is the call trace of tegra210_init_pllu() function:
+> > >   start_kernel()
+> > >   -> time_init()
+> > >   --> of_clk_init()
+> > >   ---> tegra210_clock_init()
+> > >   ----> tegra210_pll_init()
+> > >   -----> tegra210_init_pllu()
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+> I'm wondering why we're not seeing a splat for this. Usually the kernel
+> will warn if you sleep during atomic context. Does this mean we're just
+> not hitting that case?
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 352394d..3ba37f3 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -1229,7 +1229,7 @@ enum {
- 			.name = "mmss_mmagic_ahb_clk",
- 			.parent_names = (const char *[]){ "ahb_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1244,7 +1244,7 @@ enum {
- 			.name = "mmss_mmagic_cfg_ahb_clk",
- 			.parent_names = (const char *[]){ "ahb_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1303,7 +1303,7 @@ enum {
- 			.name = "mmagic_camss_axi_clk",
- 			.parent_names = (const char *[]){ "axi_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1318,7 +1318,7 @@ enum {
- 			.name = "mmagic_camss_noc_cfg_ahb_clk",
- 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1423,7 +1423,7 @@ enum {
- 			.name = "mmagic_mdss_axi_clk",
- 			.parent_names = (const char *[]){ "axi_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1438,7 +1438,7 @@ enum {
- 			.name = "mmagic_mdss_noc_cfg_ahb_clk",
- 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1513,7 +1513,7 @@ enum {
- 			.name = "mmagic_video_axi_clk",
- 			.parent_names = (const char *[]){ "axi_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1528,7 +1528,7 @@ enum {
- 			.name = "mmagic_video_noc_cfg_ahb_clk",
- 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2903,7 +2903,7 @@ enum {
- 		.name = "mmagic_video",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | ALWAYS_ON,
- };
- 
- static struct gdsc mmagic_mdss_gdsc = {
-@@ -2913,7 +2913,7 @@ enum {
- 		.name = "mmagic_mdss",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | ALWAYS_ON,
- };
- 
- static struct gdsc mmagic_camss_gdsc = {
-@@ -2923,7 +2923,7 @@ enum {
- 		.name = "mmagic_camss",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | ALWAYS_ON,
- };
- 
- static struct gdsc venus_gdsc = {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Yes.
+
+> readx_poll_timeout() has a might_sleep_if(), and
+> therefore it should always cause the splat.
+
+That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
+
+> Any ideas why this has gone unnoticed for all this time?
+
+We can see in the tegra210_init_pllu() function that it'll not call
+tegra210_enable_pllu() if pllu is already enabled (by bootloader).
+
+You can verify it by adding an irqs_disabled() in this routine. The
+function is called during system-boot and suspend-n-resume. And both
+cases should be irqs_disabled().
+
+Thanks
+Nicolin
