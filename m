@@ -1,64 +1,78 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 11/27] clk: ti: dm816x: cleanup unnecessary clock aliases
-Date: Mon, 30 Oct 2017 15:04:29 +0200
-Message-ID: <1509368685-29112-12-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 19 Oct 2017 11:44:22 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20171019094422.GI9005@ulmo>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="o7gdRJTuwFmWapyH"
+In-Reply-To: <20171019092919.GA7252@Asurada>
 List-ID: <linux-clk.vger.kernel.org>
 
-Most of the clock aliases are no longer needed, only leave the ones
-required by OMAP timer code in place.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-816x.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+--o7gdRJTuwFmWapyH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
-index 2a5d84f..ac9c94a 100644
---- a/drivers/clk/ti/clk-816x.c
-+++ b/drivers/clk/ti/clk-816x.c
-@@ -19,24 +19,8 @@
- static struct ti_dt_clk dm816x_clks[] = {
- 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
--	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
- 	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
- 	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
--	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
--	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
--	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
--	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
--	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
--	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
--	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
--	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
--	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
--	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
--	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
--	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
--	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
--	DT_CLK(NULL, "sysclk24_ck", "sysclk24_ck"),
--	DT_CLK("4a100000.ethernet", "sysclk24_ck", "sysclk24_ck"),
- 	{ .node_name = NULL },
- };
- 
-@@ -50,6 +34,7 @@ int __init dm816x_dt_clk_init(void)
- {
- 	ti_dt_clocks_register(dm816x_clks);
- 	omap2_clk_disable_autoidle_all();
-+	ti_clk_add_aliases();
- 	omap2_clk_enable_init_clocks(enable_init_clks,
- 				     ARRAY_SIZE(enable_init_clks));
- 
--- 
-1.9.1
+On Thu, Oct 19, 2017 at 02:29:20AM -0700, Nicolin Chen wrote:
+> On Fri, Sep 15, 2017 at 12:10:13PM -0700, Nicolin Chen wrote:
+> > Below is the call trace of tegra210_init_pllu() function:
+> >   start_kernel()
+> >   -> time_init()
+> >   --> of_clk_init()
+> >   ---> tegra210_clock_init()
+> >   ----> tegra210_pll_init()
+> >   -----> tegra210_init_pllu()
+> >=20
+> > Because the preemption is disabled in the start_kernel before calling
+> > time_init, tegra210_init_pllu is actually in an atomic context while
+> > it includes a readl_relaxed_poll_timeout that might sleep.
+> >=20
+> > So this patch just changes this readl_relaxed_poll_timeout() to its
+> > atomic version.
+> >=20
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+>=20
+> Thierry, can you also take a look at this one? I sent a month ago. Thanks.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I'm wondering why we're not seeing a splat for this. Usually the kernel
+will warn if you sleep during atomic context. Does this mean we're just
+not hitting that case? readx_poll_timeout() has a might_sleep_if(), and
+therefore it should always cause the splat.
+
+Any ideas why this has gone unnoticed for all this time?
+
+Thierry
+
+--o7gdRJTuwFmWapyH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnoc/YACgkQ3SOs138+
+s6GYBBAArS9B7UkWWtCLw/lv625C3fklYG8Cuk5tyXtd6APNjl9mXewlWUqYDshp
+LkdpAfFKeVcFSBVhi0pZISbv9lQxNXil7daZm57qil2G/LZZfAL5rsnPV2g0nvtR
+WWjIcmXPIVuTaQlfFuSFkt/xJtnB9I2K9HPmDeiKrmADld25ZaFnydNXr9uTmAzh
+jHAQz3yslxDP2thOuZrXxRAxdJb263fi3JdAoNF0GI4foAEdoaz+VxCnBBc4wSP1
+ye+HWhKoQEPEGoZGkvTN26wV9tkaTXagPi9Khgh9R18mA/WbWttFgTXc3xLq9SeU
+JFkp45aTv0oHPpSACbeErlMVMKCGKX+yPNjev+gj0MHePAZf8/y/dI7EDghz9Efu
+osbLC713zUGH6f/zFmlarr0OL1ItMn8KxteMRAonQzDoj7rXplmKba32qiTUyFX7
+p4ZH8ofDk7gu4sbXqzJpWJ1OBniyb3G7IBpYip5umf1HiEZ0cpcztleTVTQfJw1j
+SLDCCMgjdELoYH7UE51crw5x6znYSrkxMvV0h+uudrFpm/6P2CwkLrEA8x2emeYk
+UzUkfknbKVqEtbwOfrUlg39xmyUZKrgGtWs0gyUVPthsGIld/N6lWK+K+E+vWQjP
+9wGuBXdjJl35vZui5QrJhMzjlE8etROtJgFuK7dG2ZynFy3ptvw=
+=xRkw
+-----END PGP SIGNATURE-----
+
+--o7gdRJTuwFmWapyH--
