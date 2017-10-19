@@ -1,349 +1,96 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55347 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759916AbdJQJGq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:46 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 05/23] drm/sun4i: tcon: Don't rely on encoders to enable the TCON
-Date: Tue, 17 Oct 2017 11:06:12 +0200
-Message-Id: <90b4396e19b3eca61b2ebfdae0672074b88ad74d.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:18312 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751339AbdJSCtH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2017 22:49:07 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v5 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+Date: Thu, 19 Oct 2017 10:48:46 +0800
+Message-ID: <1508381330-3700-6-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-So far, we've required all the TCON-connected encoders to call the TCON
-enable and disable functions.
+Add power dt-bindings for MT2712.
 
-This was made this way because in the RGB/LVDS case, the TCON is the CRTC
-and the encoder. However, in all the other cases (HDMI, TV, DSI, etc.), we
-have another encoder down the road that needs to be programmed.
-
-We also needed to know which channel the encoder is connected to, which is
-encoder-specific.
-
-The CRTC's enable and disable callbacks can work just fine for our use
-case, and we can get the channel to use just by looking at the type of
-encoder, since that is fixed. Implement those callbacks, which will
-remove some of the encoder boilerplate.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_crtc.c     | 22 ++++++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c |  8 +--
- drivers/gpu/drm/sun4i/sun4i_rgb.c      | 14 +---
- drivers/gpu/drm/sun4i/sun4i_tcon.c     | 87 ++++++++++++---------------
- drivers/gpu/drm/sun4i/sun4i_tcon.h     | 10 +---
- drivers/gpu/drm/sun4i/sun4i_tv.c       |  6 +--
- 6 files changed, 67 insertions(+), 80 deletions(-)
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
+ include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index d097c6f93ad0..e86baa3746af 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -30,6 +30,22 @@
- #include "sunxi_engine.h"
- #include "sun4i_tcon.h"
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 40056f7..76bf45b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -12,11 +12,13 @@ power/power_domain.txt. It provides the power domains defined in
+ - include/dt-bindings/power/mt8173-power.h
+ - include/dt-bindings/power/mt6797-power.h
+ - include/dt-bindings/power/mt2701-power.h
++- include/dt-bindings/power/mt2712-power.h
+ - include/dt-bindings/power/mt7622-power.h
  
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt2712-scpsys"
+ 	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt7622-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+@@ -27,6 +29,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT7622: "hif_sel"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
+new file mode 100644
+index 0000000..92b46d7
+--- /dev/null
++++ b/include/dt-bindings/power/mt2712-power.h
+@@ -0,0 +1,26 @@
 +/*
-+ * While this isn't really working in the DRM theory, in practice we
-+ * can only ever have one encoder per TCON since we have a mux in our
-+ * TCON.
++ * Copyright (C) 2017 MediaTek Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 + */
-+static struct drm_encoder *sun4i_crtc_get_encoder(struct drm_crtc *crtc)
-+{
-+	struct drm_encoder *encoder;
 +
-+	drm_for_each_encoder(encoder, crtc->dev)
-+		if (encoder->crtc == crtc)
-+			return encoder;
++#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
++#define _DT_BINDINGS_POWER_MT2712_POWER_H
 +
-+	return NULL;
-+}
++#define MT2712_POWER_DOMAIN_MM		0
++#define MT2712_POWER_DOMAIN_VDEC	1
++#define MT2712_POWER_DOMAIN_VENC	2
++#define MT2712_POWER_DOMAIN_ISP		3
++#define MT2712_POWER_DOMAIN_AUDIO	4
++#define MT2712_POWER_DOMAIN_USB		5
++#define MT2712_POWER_DOMAIN_USB2	6
++#define MT2712_POWER_DOMAIN_MFG		7
 +
- static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
- 				    struct drm_crtc_state *old_state)
- {
-@@ -72,11 +88,12 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
- static void sun4i_crtc_atomic_disable(struct drm_crtc *crtc,
- 				      struct drm_crtc_state *old_state)
- {
-+	struct drm_encoder *encoder = sun4i_crtc_get_encoder(crtc);
- 	struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
- 
- 	DRM_DEBUG_DRIVER("Disabling the CRTC\n");
- 
--	sun4i_tcon_disable(scrtc->tcon);
-+	sun4i_tcon_set_status(scrtc->tcon, encoder, false);
- 
- 	if (crtc->state->event && !crtc->state->active) {
- 		spin_lock_irq(&crtc->dev->event_lock);
-@@ -90,11 +107,12 @@ static void sun4i_crtc_atomic_disable(struct drm_crtc *crtc,
- static void sun4i_crtc_atomic_enable(struct drm_crtc *crtc,
- 				     struct drm_crtc_state *old_state)
- {
-+	struct drm_encoder *encoder = sun4i_crtc_get_encoder(crtc);
- 	struct sun4i_crtc *scrtc = drm_crtc_to_sun4i_crtc(crtc);
- 
- 	DRM_DEBUG_DRIVER("Enabling the CRTC\n");
- 
--	sun4i_tcon_enable(scrtc->tcon);
-+	sun4i_tcon_set_status(scrtc->tcon, encoder, true);
- }
- 
- static const struct drm_crtc_helper_funcs sun4i_crtc_helper_funcs = {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 6ca6e6a74c4a..482bf03d55c1 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -86,8 +86,6 @@ static int sun4i_hdmi_atomic_check(struct drm_encoder *encoder,
- static void sun4i_hdmi_disable(struct drm_encoder *encoder)
- {
- 	struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
--	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
--	struct sun4i_tcon *tcon = crtc->tcon;
- 	u32 val;
- 
- 	DRM_DEBUG_DRIVER("Disabling the HDMI Output\n");
-@@ -95,22 +93,16 @@ static void sun4i_hdmi_disable(struct drm_encoder *encoder)
- 	val = readl(hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
- 	val &= ~SUN4I_HDMI_VID_CTRL_ENABLE;
- 	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
--
--	sun4i_tcon_channel_disable(tcon, 1);
- }
- 
- static void sun4i_hdmi_enable(struct drm_encoder *encoder)
- {
- 	struct drm_display_mode *mode = &encoder->crtc->state->adjusted_mode;
- 	struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
--	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
--	struct sun4i_tcon *tcon = crtc->tcon;
- 	u32 val = 0;
- 
- 	DRM_DEBUG_DRIVER("Enabling the HDMI Output\n");
- 
--	sun4i_tcon_channel_enable(tcon, 1);
--
- 	sun4i_hdmi_setup_avi_infoframes(hdmi, mode);
- 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(0, SUN4I_HDMI_PKT_AVI);
- 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(1, SUN4I_HDMI_PKT_END);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index 7cd7090ad63a..a7f297ed40c1 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -134,13 +134,10 @@ static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
- 
- 	DRM_DEBUG_DRIVER("Enabling RGB output\n");
- 
--	if (!IS_ERR(tcon->panel))
-+	if (!IS_ERR(tcon->panel)) {
- 		drm_panel_prepare(tcon->panel);
--
--	sun4i_tcon_channel_enable(tcon, 0);
--
--	if (!IS_ERR(tcon->panel))
- 		drm_panel_enable(tcon->panel);
-+	}
- }
- 
- static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
-@@ -150,13 +147,10 @@ static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
- 
- 	DRM_DEBUG_DRIVER("Disabling RGB output\n");
- 
--	if (!IS_ERR(tcon->panel))
-+	if (!IS_ERR(tcon->panel)) {
- 		drm_panel_disable(tcon->panel);
--
--	sun4i_tcon_channel_disable(tcon, 0);
--
--	if (!IS_ERR(tcon->panel))
- 		drm_panel_unprepare(tcon->panel);
-+	}
- }
- 
- static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 9b5b21ad8378..964cf22a1ced 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -35,66 +35,61 @@
- #include "sun4i_tcon.h"
- #include "sunxi_engine.h"
- 
--void sun4i_tcon_disable(struct sun4i_tcon *tcon)
-+static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
-+					  bool enabled)
- {
--	DRM_DEBUG_DRIVER("Disabling TCON\n");
-+	struct clk *clk;
- 
--	/* Disable the TCON */
--	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
--			   SUN4I_TCON_GCTL_TCON_ENABLE, 0);
--}
--EXPORT_SYMBOL(sun4i_tcon_disable);
--
--void sun4i_tcon_enable(struct sun4i_tcon *tcon)
--{
--	DRM_DEBUG_DRIVER("Enabling TCON\n");
--
--	/* Enable the TCON */
--	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
--			   SUN4I_TCON_GCTL_TCON_ENABLE,
--			   SUN4I_TCON_GCTL_TCON_ENABLE);
--}
--EXPORT_SYMBOL(sun4i_tcon_enable);
--
--void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
--{
--	DRM_DEBUG_DRIVER("Disabling TCON channel %d\n", channel);
--
--	/* Disable the TCON's channel */
--	if (channel == 0) {
-+	switch (channel) {
-+	case 0:
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
--				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
--		clk_disable_unprepare(tcon->dclk);
-+				   SUN4I_TCON0_CTL_TCON_ENABLE,
-+				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
-+		clk = tcon->dclk;
-+		break;
-+	case 1:
-+		WARN_ON(!tcon->quirks->has_channel_1);
-+		regmap_update_bits(tcon->regs, SUN4I_TCON1_CTL_REG,
-+				   SUN4I_TCON1_CTL_TCON_ENABLE,
-+				   enabled ? SUN4I_TCON1_CTL_TCON_ENABLE : 0);
-+		clk = tcon->sclk1;
-+		break;
-+	default:
-+		DRM_WARN("Unknown channel... doing nothing\n");
- 		return;
- 	}
- 
--	WARN_ON(!tcon->quirks->has_channel_1);
--	regmap_update_bits(tcon->regs, SUN4I_TCON1_CTL_REG,
--			   SUN4I_TCON1_CTL_TCON_ENABLE, 0);
--	clk_disable_unprepare(tcon->sclk1);
-+	if (enabled)
-+		clk_prepare_enable(clk);
-+	else
-+		clk_disable_unprepare(clk);
- }
--EXPORT_SYMBOL(sun4i_tcon_channel_disable);
- 
--void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
-+void sun4i_tcon_set_status(struct sun4i_tcon *tcon,
-+			   const struct drm_encoder *encoder,
-+			   bool enabled)
- {
--	DRM_DEBUG_DRIVER("Enabling TCON channel %d\n", channel);
-+	int channel;
- 
--	/* Enable the TCON's channel */
--	if (channel == 0) {
--		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
--				   SUN4I_TCON0_CTL_TCON_ENABLE,
--				   SUN4I_TCON0_CTL_TCON_ENABLE);
--		clk_prepare_enable(tcon->dclk);
-+	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_NONE:
-+		channel = 0;
-+		break;
-+	case DRM_MODE_ENCODER_TMDS:
-+	case DRM_MODE_ENCODER_TVDAC:
-+		channel = 1;
-+		break;
-+	default:
-+		DRM_DEBUG_DRIVER("Unknown encoder type, doing nothing...\n");
- 		return;
- 	}
- 
--	WARN_ON(!tcon->quirks->has_channel_1);
--	regmap_update_bits(tcon->regs, SUN4I_TCON1_CTL_REG,
--			   SUN4I_TCON1_CTL_TCON_ENABLE,
--			   SUN4I_TCON1_CTL_TCON_ENABLE);
--	clk_prepare_enable(tcon->sclk1);
-+	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
-+			   SUN4I_TCON_GCTL_TCON_ENABLE,
-+			   enabled ? SUN4I_TCON_GCTL_TCON_ENABLE : 0);
-+
-+	sun4i_tcon_channel_set_status(tcon, channel, enabled);
- }
--EXPORT_SYMBOL(sun4i_tcon_channel_enable);
- 
- void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
- {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index d81c6e20efe6..03f983927baa 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -190,15 +190,9 @@ struct sun4i_tcon {
- struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node);
- struct drm_panel *sun4i_tcon_find_panel(struct device_node *node);
- 
--/* Global Control */
--void sun4i_tcon_disable(struct sun4i_tcon *tcon);
--void sun4i_tcon_enable(struct sun4i_tcon *tcon);
--
--/* Channel Control */
--void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel);
--void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel);
--
- void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
-+void sun4i_tcon_set_status(struct sun4i_tcon *crtc,
-+			   const struct drm_encoder *encoder, bool enable);
- 
- /* Mode Related Controls */
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 050cfd43c7a0..2e27ff9fc58f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -345,12 +345,9 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
- {
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
--	struct sun4i_tcon *tcon = crtc->tcon;
- 
- 	DRM_DEBUG_DRIVER("Disabling the TV Output\n");
- 
--	sun4i_tcon_channel_disable(tcon, 1);
--
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
- 			   0);
-@@ -362,7 +359,6 @@ static void sun4i_tv_enable(struct drm_encoder *encoder)
- {
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
--	struct sun4i_tcon *tcon = crtc->tcon;
- 
- 	DRM_DEBUG_DRIVER("Enabling the TV Output\n");
- 
-@@ -371,8 +367,6 @@ static void sun4i_tv_enable(struct drm_encoder *encoder)
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
- 			   SUN4I_TVE_EN_ENABLE);
--
--	sun4i_tcon_channel_enable(tcon, 1);
- }
- 
- static void sun4i_tv_mode_set(struct drm_encoder *encoder,
++#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
 -- 
-git-series 0.9.1
+1.9.1
+
