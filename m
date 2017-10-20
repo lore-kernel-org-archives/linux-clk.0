@@ -1,39 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:40784 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756579AbdJQKPq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 06:15:46 -0400
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+To: Nicolin Chen <nicoleotsuka@gmail.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: <sboyd@codeaurora.org>, <pdeschrijver@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mturquette@baylibre.com>, <pgaikwad@nvidia.com>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada> <20171019094422.GI9005@ulmo>
+ <20171019184223.GA7415@Asurada-Nvidia>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
+Date: Fri, 20 Oct 2017 11:20:24 +0100
 MIME-Version: 1.0
-In-Reply-To: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
- <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 Oct 2017 18:15:20 +0800
-Message-ID: <CAGb2v67i9mNh8Y+Yxw8c9Q8x_Eg=ztyBW2F+HKcAXih-RjP=tQ@mail.gmail.com>
-Subject: Re: [PATCH 14/23] drm/sun4i: Create minimal multipliers and dividers
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171019184223.GA7415@Asurada-Nvidia>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 5:06 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The various outputs the TCON can provide have different constraints on the
-> dotclock divider. Let's make them configurable by the various mode_set
-> functions.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+On 19/10/17 19:42, Nicolin Chen wrote:
+> On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
+>>>> Below is the call trace of tegra210_init_pllu() function:
+>>>>   start_kernel()
+>>>>   -> time_init()
+>>>>   --> of_clk_init()
+>>>>   ---> tegra210_clock_init()
+>>>>   ----> tegra210_pll_init()
+>>>>   -----> tegra210_init_pllu()
+> 
+>> I'm wondering why we're not seeing a splat for this. Usually the kernel
+>> will warn if you sleep during atomic context. Does this mean we're just
+>> not hitting that case?
+> 
+> Yes.
+> 
+>> readx_poll_timeout() has a might_sleep_if(), and
+>> therefore it should always cause the splat.
+> 
+> That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
+> 
+>> Any ideas why this has gone unnoticed for all this time?
+> 
+> We can see in the tegra210_init_pllu() function that it'll not call
+> tegra210_enable_pllu() if pllu is already enabled (by bootloader).
+
+I was thinking that same and so I clobbered the PLLU enable bit with
+u-boot, however, then the kernel appears to hang on boot when enabling
+the PLL. So although this is probably a separate issue, I am curious if
+you have booted the mainline with the PLLU disabled?
+
+Cheers
+Jon
+
+-- 
+nvpublic
