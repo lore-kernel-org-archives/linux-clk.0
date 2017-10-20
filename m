@@ -1,69 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:50334 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753326AbdJPPet (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Oct 2017 11:34:49 -0400
-Received: by mail-wm0-f41.google.com with SMTP id u138so4566503wmu.5
-        for <linux-clk@vger.kernel.org>; Mon, 16 Oct 2017 08:34:49 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: meson: gxbb: Add VPU and VAPB clockids
-Date: Mon, 16 Oct 2017 17:34:44 +0200
-Message-Id: <1508168085-19032-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-References: <1508168085-19032-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Fri, 20 Oct 2017 11:24:07 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, sboyd@codeaurora.org,
+	pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20171020182406.GA12980@Asurada-Nvidia>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
+ <20171019094422.GI9005@ulmo>
+ <20171019184223.GA7415@Asurada-Nvidia>
+ <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <731a934a-4e78-b96d-239f-14cf83079605@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the clkids for the clocks feeding the Video Processing Unit.
+On Fri, Oct 20, 2017 at 11:20:24AM +0100, Jon Hunter wrote:
+> 
+> On 19/10/17 19:42, Nicolin Chen wrote:
+> > On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
+> >>>> Below is the call trace of tegra210_init_pllu() function:
+> >>>>   start_kernel()
+> >>>>   -> time_init()
+> >>>>   --> of_clk_init()
+> >>>>   ---> tegra210_clock_init()
+> >>>>   ----> tegra210_pll_init()
+> >>>>   -----> tegra210_init_pllu()
+> > 
+> >> I'm wondering why we're not seeing a splat for this. Usually the kernel
+> >> will warn if you sleep during atomic context. Does this mean we're just
+> >> not hitting that case?
+> > 
+> > Yes.
+> > 
+> >> readx_poll_timeout() has a might_sleep_if(), and
+> >> therefore it should always cause the splat.
+> > 
+> > That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
+> > 
+> >> Any ideas why this has gone unnoticed for all this time?
+> > 
+> > We can see in the tegra210_init_pllu() function that it'll not call
+> > tegra210_enable_pllu() if pllu is already enabled (by bootloader).
+> 
+> I was thinking that same and so I clobbered the PLLU enable bit with
+> u-boot, however, then the kernel appears to hang on boot when enabling
+> the PLL. So although this is probably a separate issue, I am curious if
+> you have booted the mainline with the PLLU disabled?
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/gxbb.h              |  6 +++++-
- include/dt-bindings/clock/gxbb-clkc.h | 11 +++++++++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+I am not sure if clearing the enable bit only would work. But the test
+below should be able to verify the situation -- setting the PLLU_BASE
+register to its reset value.
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 5b1d4b3..aee6fbb 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -190,8 +190,12 @@
- #define CLKID_SD_EMMC_B_CLK0_DIV  121
- #define CLKID_SD_EMMC_C_CLK0_SEL  123
- #define CLKID_SD_EMMC_C_CLK0_DIV  124
-+#define CLKID_VPU_0_DIV		  127
-+#define CLKID_VPU_1_DIV		  130
-+#define CLKID_VAPB_0_DIV	  134
-+#define CLKID_VAPB_1_DIV	  137
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ea695c4..2279373 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2602,6 +2602,7 @@ static int tegra210_init_pllu(void)
+ 	u32 reg;
+ 	int err;
  
--#define NR_CLKS			  126
-+#define NR_CLKS			  141
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index c04a76d..7c5a6f3 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -113,5 +113,16 @@
- #define CLKID_SD_EMMC_A_CLK0	119
- #define CLKID_SD_EMMC_B_CLK0	122
- #define CLKID_SD_EMMC_C_CLK0	125
-+#define CLKID_VPU_0_SEL		126
-+#define CLKID_VPU_0		128
-+#define CLKID_VPU_1_SEL		129
-+#define CLKID_VPU_1		131
-+#define CLKID_VPU		132
-+#define CLKID_VAPB_0_SEL	133
-+#define CLKID_VAPB_0		135
-+#define CLKID_VAPB_1_SEL	136
-+#define CLKID_VAPB_1		138
-+#define CLKID_VAPB_SEL		139
-+#define CLKID_VAPB		140
- 
- #endif /* __GXBB_CLKC_H */
--- 
-2.7.4
-
++	writel_relaxed(0x1011902, clk_base + PLLU_BASE);
+	tegra210_pllu_set_defaults(&pll_u_vco_params);
+	/* skip initialization when pllu is in hw controlled mode */
+	reg = readl_relaxed(clk_base + PLLU_BASE);
