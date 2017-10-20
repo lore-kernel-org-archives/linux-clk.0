@@ -1,580 +1,85 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 15/23] drm/sun4i: Add LVDS support
-Date: Tue, 17 Oct 2017 11:06:22 +0200
-Message-Id: <6e313d0b31dca3f47583668eb755d934a1ab515e.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v4.15-rc1
+Date: Fri, 20 Oct 2017 14:14:12 +0200
+Message-Id: <20171020121412.10527-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The TCON supports the LVDS interface to output to a panel or a bridge.
-Let's add support for it.
+Hi Michael, Stephen,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/Makefile     |   1 +-
- drivers/gpu/drm/sun4i/sun4i_lvds.c | 183 ++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun4i_lvds.h |  18 +++-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 193 +++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  25 ++++-
- 5 files changed, 419 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_lvds.c
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_lvds.h
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index cfba2c07519c..6fee15d016ef 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -10,6 +10,7 @@ sun4i-drm-hdmi-y		+= sun4i_hdmi_tmds_clk.o
- 
- sun4i-tcon-y			+= sun4i_tcon.o
- sun4i-tcon-y			+= sun4i_rgb.o
-+sun4i-tcon-y			+= sun4i_lvds.o
- sun4i-tcon-y			+= sun4i_dotclock.o
- sun4i-tcon-y			+= sun4i_crtc.o
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-new file mode 100644
-index 000000000000..635a3f505ecb
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-@@ -0,0 +1,183 @@
-+/*
-+ * Copyright (C) 2015 NextThing Co
-+ * Copyright (C) 2015-2017 Free Electrons
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_panel.h>
-+
-+#include "sun4i_crtc.h"
-+#include "sun4i_tcon.h"
-+#include "sun4i_lvds.h"
-+
-+struct sun4i_lvds {
-+	struct drm_connector	connector;
-+	struct drm_encoder	encoder;
-+
-+	struct sun4i_tcon	*tcon;
-+};
-+
-+static inline struct sun4i_lvds *
-+drm_connector_to_sun4i_lvds(struct drm_connector *connector)
-+{
-+	return container_of(connector, struct sun4i_lvds,
-+			    connector);
-+}
-+
-+static inline struct sun4i_lvds *
-+drm_encoder_to_sun4i_lvds(struct drm_encoder *encoder)
-+{
-+	return container_of(encoder, struct sun4i_lvds,
-+			    encoder);
-+}
-+
-+static int sun4i_lvds_get_modes(struct drm_connector *connector)
-+{
-+	struct sun4i_lvds *lvds =
-+		drm_connector_to_sun4i_lvds(connector);
-+	struct sun4i_tcon *tcon = lvds->tcon;
-+
-+	return drm_panel_get_modes(tcon->panel);
-+}
-+
-+static struct drm_connector_helper_funcs sun4i_lvds_con_helper_funcs = {
-+	.get_modes	= sun4i_lvds_get_modes,
-+};
-+
-+static void
-+sun4i_lvds_connector_destroy(struct drm_connector *connector)
-+{
-+	struct sun4i_lvds *lvds = drm_connector_to_sun4i_lvds(connector);
-+	struct sun4i_tcon *tcon = lvds->tcon;
-+
-+	drm_panel_detach(tcon->panel);
-+	drm_connector_cleanup(connector);
-+}
-+
-+static const struct drm_connector_funcs sun4i_lvds_con_funcs = {
-+	.fill_modes		= drm_helper_probe_single_connector_modes,
-+	.destroy		= sun4i_lvds_connector_destroy,
-+	.reset			= drm_atomic_helper_connector_reset,
-+	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static void sun4i_lvds_encoder_enable(struct drm_encoder *encoder)
-+{
-+	struct sun4i_lvds *lvds = drm_encoder_to_sun4i_lvds(encoder);
-+	struct sun4i_tcon *tcon = lvds->tcon;
-+
-+	DRM_DEBUG_DRIVER("Enabling LVDS output\n");
-+
-+	if (!IS_ERR(tcon->panel)) {
-+		drm_panel_prepare(tcon->panel);
-+		drm_panel_enable(tcon->panel);
-+	}
-+}
-+
-+static void sun4i_lvds_encoder_disable(struct drm_encoder *encoder)
-+{
-+	struct sun4i_lvds *lvds = drm_encoder_to_sun4i_lvds(encoder);
-+	struct sun4i_tcon *tcon = lvds->tcon;
-+
-+	DRM_DEBUG_DRIVER("Disabling LVDS output\n");
-+
-+	if (!IS_ERR(tcon->panel)) {
-+		drm_panel_disable(tcon->panel);
-+		drm_panel_unprepare(tcon->panel);
-+	}
-+}
-+
-+static const struct drm_encoder_helper_funcs sun4i_lvds_enc_helper_funcs = {
-+	.disable	= sun4i_lvds_encoder_disable,
-+	.enable		= sun4i_lvds_encoder_enable,
-+};
-+
-+static const struct drm_encoder_funcs sun4i_lvds_enc_funcs = {
-+	.destroy	= drm_encoder_cleanup,
-+};
-+
-+int sun4i_lvds_init(struct drm_device *drm, struct sun4i_tcon *tcon)
-+{
-+	struct drm_encoder *encoder;
-+	struct drm_bridge *bridge;
-+	struct sun4i_lvds *lvds;
-+	int ret;
-+
-+	lvds = devm_kzalloc(drm->dev, sizeof(*lvds), GFP_KERNEL);
-+	if (!lvds)
-+		return -ENOMEM;
-+	lvds->tcon = tcon;
-+	encoder = &lvds->encoder;
-+
-+	ret = drm_of_find_panel_or_bridge(tcon->dev->of_node, 1, 0,
-+					  &tcon->panel, &bridge);
-+	if (ret) {
-+		dev_info(drm->dev, "No panel or bridge found... LVDS output disabled\n");
-+		return 0;
-+	}
-+
-+	drm_encoder_helper_add(&lvds->encoder,
-+			       &sun4i_lvds_enc_helper_funcs);
-+	ret = drm_encoder_init(drm,
-+			       &lvds->encoder,
-+			       &sun4i_lvds_enc_funcs,
-+			       DRM_MODE_ENCODER_LVDS,
-+			       NULL);
-+	if (ret) {
-+		dev_err(drm->dev, "Couldn't initialise the lvds encoder\n");
-+		goto err_out;
-+	}
-+
-+	/* The LVDS encoder can only work with the TCON channel 0 */
-+	lvds->encoder.possible_crtcs = BIT(drm_crtc_index(&tcon->crtc->crtc));
-+
-+	if (tcon->panel) {
-+		drm_connector_helper_add(&lvds->connector,
-+					 &sun4i_lvds_con_helper_funcs);
-+		ret = drm_connector_init(drm, &lvds->connector,
-+					 &sun4i_lvds_con_funcs,
-+					 DRM_MODE_CONNECTOR_LVDS);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't initialise the lvds connector\n");
-+			goto err_cleanup_connector;
-+		}
-+
-+		drm_mode_connector_attach_encoder(&lvds->connector,
-+						  &lvds->encoder);
-+
-+		ret = drm_panel_attach(tcon->panel, &lvds->connector);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't attach our panel\n");
-+			goto err_cleanup_connector;
-+		}
-+	}
-+
-+	if (bridge) {
-+		ret = drm_bridge_attach(encoder, bridge, NULL);
-+		if (ret) {
-+			dev_err(drm->dev, "Couldn't attach our bridge\n");
-+			goto err_cleanup_connector;
-+		}
-+	}
-+
-+	return 0;
-+
-+err_cleanup_connector:
-+	drm_encoder_cleanup(&lvds->encoder);
-+err_out:
-+	return ret;
-+}
-+EXPORT_SYMBOL(sun4i_lvds_init);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.h b/drivers/gpu/drm/sun4i/sun4i_lvds.h
-new file mode 100644
-index 000000000000..1b8fad4b82c3
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sun4i_lvds.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2015 NextThing Co
-+ * Copyright (C) 2015-2017 Free Electrons
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#ifndef _SUN4I_LVDS_H_
-+#define _SUN4I_LVDS_H_
-+
-+int sun4i_lvds_init(struct drm_device *drm, struct sun4i_tcon *tcon);
-+
-+#endif /* _SUN4I_LVDS_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 3efa1ab045cd..6a20a467ee6d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -31,10 +31,52 @@
- #include "sun4i_crtc.h"
- #include "sun4i_dotclock.h"
- #include "sun4i_drv.h"
-+#include "sun4i_lvds.h"
- #include "sun4i_rgb.h"
- #include "sun4i_tcon.h"
- #include "sunxi_engine.h"
- 
-+static struct drm_connector *sun4i_tcon_get_connector(const struct drm_encoder *encoder)
-+{
-+	struct drm_connector *connector;
-+	struct drm_connector_list_iter iter;
-+
-+	drm_connector_list_iter_begin(encoder->dev, &iter);
-+	drm_for_each_connector_iter(connector, &iter)
-+		if (connector->encoder == encoder) {
-+			drm_connector_list_iter_end(&iter);
-+			return connector;
-+		}
-+	drm_connector_list_iter_end(&iter);
-+
-+	return NULL;
-+}
-+
-+static int sun4i_tcon_get_pixel_depth(const struct drm_encoder *encoder)
-+{
-+	struct drm_connector *connector;
-+	struct drm_display_info *info;
-+
-+	connector = sun4i_tcon_get_connector(encoder);
-+	if (!connector)
-+		return -EINVAL;
-+
-+	info = &connector->display_info;
-+	if (info->num_bus_formats != 1)
-+		return -EINVAL;
-+
-+	switch (info->bus_formats[0]) {
-+	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
-+		return 18;
-+
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-+		return 24;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
- 					  bool enabled)
- {
-@@ -69,9 +111,13 @@ void sun4i_tcon_set_status(struct sun4i_tcon *tcon,
- 			   const struct drm_encoder *encoder,
- 			   bool enabled)
- {
-+	bool is_lvds = false;
- 	int channel;
- 
- 	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_LVDS:
-+		is_lvds = true;
-+		/* Fallthrough */
- 	case DRM_MODE_ENCODER_NONE:
- 		channel = 0;
- 		break;
-@@ -84,10 +130,47 @@ void sun4i_tcon_set_status(struct sun4i_tcon *tcon,
- 		return;
- 	}
- 
-+	if (is_lvds && !enabled)
-+		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
-+				   SUN4I_TCON0_LVDS_IF_EN, 0);
-+
- 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
- 			   SUN4I_TCON_GCTL_TCON_ENABLE,
- 			   enabled ? SUN4I_TCON_GCTL_TCON_ENABLE : 0);
- 
-+	if (is_lvds && enabled) {
-+		u8 val;
-+
-+		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
-+				   SUN4I_TCON0_LVDS_IF_EN,
-+				   SUN4I_TCON0_LVDS_IF_EN);
-+
-+		regmap_write(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
-+			     SUN4I_TCON0_LVDS_ANA0_C(2) |
-+			     SUN4I_TCON0_LVDS_ANA0_V(3) |
-+			     SUN4I_TCON0_LVDS_ANA0_PD(2) |
-+			     SUN4I_TCON0_LVDS_ANA0_EN_LDO);
-+		udelay(2);
-+
-+		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
-+				   SUN4I_TCON0_LVDS_ANA0_EN_MB,
-+				   SUN4I_TCON0_LVDS_ANA0_EN_MB);
-+		udelay(2);
-+
-+		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
-+				   SUN4I_TCON0_LVDS_ANA0_EN_DRVC,
-+				   SUN4I_TCON0_LVDS_ANA0_EN_DRVC);
-+
-+		if (sun4i_tcon_get_pixel_depth(encoder) == 18)
-+			val = 7;
-+		else
-+			val = 0xf;
-+
-+		regmap_write_bits(tcon->regs, SUN4I_TCON0_LVDS_ANA0_REG,
-+				  SUN4I_TCON0_LVDS_ANA0_EN_DRVD(0xf),
-+				  SUN4I_TCON0_LVDS_ANA0_EN_DRVD(val));
-+	}
-+
- 	sun4i_tcon_channel_set_status(tcon, channel, enabled);
- }
- 
-@@ -170,6 +253,78 @@ static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
- 		     SUN4I_TCON0_BASIC0_Y(mode->crtc_vdisplay));
- }
- 
-+static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
-+				      const struct drm_encoder *encoder,
-+				      const struct drm_display_mode *mode)
-+{
-+	unsigned int bp;
-+	u8 clk_delay;
-+	u32 reg, val = 0;
-+
-+	tcon->dclk_min_div = 7;
-+	tcon->dclk_max_div = 7;
-+	sun4i_tcon0_mode_set_common(tcon, mode);
-+
-+	/* Adjust clock delay */
-+	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
-+	regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
-+			   SUN4I_TCON0_CTL_CLK_DELAY_MASK,
-+			   SUN4I_TCON0_CTL_CLK_DELAY(clk_delay));
-+
-+	/*
-+	 * This is called a backporch in the register documentation,
-+	 * but it really is the back porch + hsync
-+	 */
-+	bp = mode->crtc_htotal - mode->crtc_hsync_start;
-+	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
-+			 mode->crtc_htotal, bp);
-+
-+	/* Set horizontal display timings */
-+	regmap_write(tcon->regs, SUN4I_TCON0_BASIC1_REG,
-+		     SUN4I_TCON0_BASIC1_H_TOTAL(0x554) |
-+		     SUN4I_TCON0_BASIC1_H_BACKPORCH(0xa0));
-+
-+	/*
-+	 * This is called a backporch in the register documentation,
-+	 * but it really is the back porch + hsync
-+	 */
-+	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
-+	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
-+			 mode->crtc_vtotal, bp);
-+
-+	/* Set vertical display timings */
-+	regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
-+		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
-+		     SUN4I_TCON0_BASIC2_V_BACKPORCH(0x17));
-+
-+	reg = SUN4I_TCON0_LVDS_IF_CLK_SEL_TCON0 |
-+		SUN4I_TCON0_LVDS_IF_DATA_POL_NORMAL |
-+		SUN4I_TCON0_LVDS_IF_CLK_POL_NORMAL;
-+	if (sun4i_tcon_get_pixel_depth(encoder) == 24)
-+		reg |= SUN4I_TCON0_LVDS_IF_BITWIDTH_24BITS;
-+	else
-+		reg |= SUN4I_TCON0_LVDS_IF_BITWIDTH_18BITS;
-+
-+	regmap_write(tcon->regs, SUN4I_TCON0_LVDS_IF_REG, reg);
-+
-+	/* Setup the polarity of the various signals */
-+	if (!(mode->flags & DRM_MODE_FLAG_PHSYNC))
-+		val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
-+
-+	if (!(mode->flags & DRM_MODE_FLAG_PVSYNC))
-+		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-+
-+	regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, 0);
-+
-+	/* Map output pins to channel 0 */
-+	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
-+			   SUN4I_TCON_GCTL_IOMAP_MASK,
-+			   SUN4I_TCON_GCTL_IOMAP_TCON0);
-+
-+	/* Enable the output on the pins */
-+	regmap_write(tcon->regs, SUN4I_TCON0_IO_TRI_REG, 0xe0000000);
-+}
-+
- static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 				     const struct drm_display_mode *mode)
- {
-@@ -336,6 +491,9 @@ void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
- 			 const struct drm_display_mode *mode)
- {
- 	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_LVDS:
-+		sun4i_tcon0_mode_set_lvds(tcon, encoder, mode);
-+		break;
- 	case DRM_MODE_ENCODER_NONE:
- 		sun4i_tcon0_mode_set_rgb(tcon, mode);
- 		sun4i_tcon_set_mux(tcon, 0, encoder);
-@@ -667,7 +825,9 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	struct drm_device *drm = data;
- 	struct sun4i_drv *drv = drm->dev_private;
- 	struct sunxi_engine *engine;
-+	struct device_node *remote;
- 	struct sun4i_tcon *tcon;
-+	bool has_lvds;
- 	int ret;
- 
- 	engine = sun4i_tcon_find_engine(drv, dev->of_node);
-@@ -698,6 +858,26 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
-+	/*
-+	 * This can only be made optional since we've had DT nodes
-+	 * without the LVDS reset properties.
-+	 *
-+	 * If the property is missing, just disable LVDS, and print a
-+	 * warning.
-+	 */
-+	tcon->lvds_rst = devm_reset_control_get_optional(dev, "lvds");
-+	if (IS_ERR(tcon->lvds_rst)) {
-+		dev_err(dev, "Couldn't get our reset line\n");
-+		return PTR_ERR(tcon->lvds_rst);
-+	} else if (tcon->lvds_rst) {
-+		has_lvds = true;
-+		reset_control_reset(tcon->lvds_rst);
-+	} else {
-+		has_lvds = false;
-+		dev_warn(dev,
-+			 "Missing LVDS reset property, you should consider upgrading your DT\n");
-+	}
-+
- 	ret = sun4i_tcon_init_clocks(dev, tcon);
- 	if (ret) {
- 		dev_err(dev, "Couldn't init our TCON clocks\n");
-@@ -729,7 +909,18 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_rgb_init(drm, tcon);
-+	/*
-+	 * If we have an LVDS panel connected to the TCON, we should
-+	 * just probe the LVDS connector. Otherwise, just probe RGB as
-+	 * we used to.
-+	 */
-+	remote = of_graph_get_remote_node(dev->of_node, 1, 0);
-+	if (has_lvds && of_device_is_compatible(remote, "panel-lvds"))
-+		ret = sun4i_lvds_init(drm, tcon);
-+	else
-+		ret = sun4i_rgb_init(drm, tcon);
-+	of_node_put(remote);
-+
- 	if (ret < 0)
- 		goto err_free_clocks;
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 4141fbd97ddf..382689e5396e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -70,7 +70,21 @@
- #define SUN4I_TCON0_TTL2_REG			0x78
- #define SUN4I_TCON0_TTL3_REG			0x7c
- #define SUN4I_TCON0_TTL4_REG			0x80
-+
- #define SUN4I_TCON0_LVDS_IF_REG			0x84
-+#define SUN4I_TCON0_LVDS_IF_EN				BIT(31)
-+#define SUN4I_TCON0_LVDS_IF_BITWIDTH_MASK		BIT(26)
-+#define SUN4I_TCON0_LVDS_IF_BITWIDTH_18BITS		(1 << 26)
-+#define SUN4I_TCON0_LVDS_IF_BITWIDTH_24BITS		(0 << 26)
-+#define SUN4I_TCON0_LVDS_IF_CLK_SEL_MASK		BIT(20)
-+#define SUN4I_TCON0_LVDS_IF_CLK_SEL_TCON0		(1 << 20)
-+#define SUN4I_TCON0_LVDS_IF_CLK_POL_MASK		BIT(4)
-+#define SUN4I_TCON0_LVDS_IF_CLK_POL_NORMAL		(1 << 4)
-+#define SUN4I_TCON0_LVDS_IF_CLK_POL_INV			(0 << 4)
-+#define SUN4I_TCON0_LVDS_IF_DATA_POL_MASK		GENMASK(3, 0)
-+#define SUN4I_TCON0_LVDS_IF_DATA_POL_NORMAL		(0xf)
-+#define SUN4I_TCON0_LVDS_IF_DATA_POL_INV		(0)
-+
- #define SUN4I_TCON0_IO_POL_REG			0x88
- #define SUN4I_TCON0_IO_POL_DCLK_PHASE(phase)		((phase & 3) << 28)
- #define SUN4I_TCON0_IO_POL_HSYNC_POSITIVE		BIT(25)
-@@ -131,6 +145,16 @@
- #define SUN4I_TCON_CEU_RANGE_G_REG		0x144
- #define SUN4I_TCON_CEU_RANGE_B_REG		0x148
- #define SUN4I_TCON_MUX_CTRL_REG			0x200
-+
-+#define SUN4I_TCON0_LVDS_ANA0_REG		0x220
-+#define SUN4I_TCON0_LVDS_ANA0_EN_MB			BIT(31)
-+#define SUN4I_TCON0_LVDS_ANA0_EN_LDO			BIT(30)
-+#define SUN4I_TCON0_LVDS_ANA0_EN_DRVC			BIT(24)
-+#define SUN4I_TCON0_LVDS_ANA0_EN_DRVD(x)		(((x) & 0xf) << 20)
-+#define SUN4I_TCON0_LVDS_ANA0_C(x)			(((x) & 3) << 17)
-+#define SUN4I_TCON0_LVDS_ANA0_V(x)			(((x) & 3) << 8)
-+#define SUN4I_TCON0_LVDS_ANA0_PD(x)			(((x) & 3) << 4)
-+
- #define SUN4I_TCON1_FILL_CTL_REG		0x300
- #define SUN4I_TCON1_FILL_BEG0_REG		0x304
- #define SUN4I_TCON1_FILL_END0_REG		0x308
-@@ -174,6 +198,7 @@ struct sun4i_tcon {
- 
- 	/* Reset control */
- 	struct reset_control		*lcd_rst;
-+	struct reset_control		*lvds_rst;
- 
- 	struct drm_panel		*panel;
- 
--- 
-git-series 0.9.1
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
+
+for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
+
+  clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
+
+Note that this pulls in parts from two other tags that are going to go
+in via the ARM SoC tree. Those are needed to a couple of resolve build
+dependencies.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v4.15-rc1
+
+This contains cleanups and minor fixes for the Tegra clock driver.
+
+----------------------------------------------------------------
+Bhumika Goyal (1):
+      clk: tegra: Make tegra_clk_pll_params __ro_after_init
+
+Dmitry Osipenko (4):
+      clk: tegra: Add AHB DMA clock entry
+      clk: tegra: Correct parent of the APBDMA clock
+      clk: tegra: Use common definition of APBDMA clock gate
+      clk: tegra: Bump SCLK clock rate to 216 MHz
+
+Michał Mirosław (1):
+      clk: tegra: Fix cclk_lp divisor register
+
+Nicolin Chen (2):
+      clk: tegra: dfll: Fix drvdata overwriting issue
+      clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init()
+
+Thierry Reding (6):
+      dt-bindings: clock: tegra: Add sor1_out clock
+      Merge branch 'for-4.15/dt-bindings' into for-4.15/clk
+      Merge branch 'for-4.15/firmware' into for-4.15/clk
+      clk: tegra: Add peripheral clock registration helper
+      clk: tegra: Use tegra_clk_register_periph_data()
+      clk: tegra: Fix sor1_out clock implementation
+
+Timo Alho (2):
+      firmware: tegra: Propagate error code to caller
+      clk: tegra: Check BPMP response return code
+
+ drivers/clk/tegra/clk-bpmp.c               | 15 ++++++---
+ drivers/clk/tegra/clk-dfll.c               | 10 +++---
+ drivers/clk/tegra/clk-dfll.h               |  2 +-
+ drivers/clk/tegra/clk-id.h                 |  1 +
+ drivers/clk/tegra/clk-periph.c             |  8 +++++
+ drivers/clk/tegra/clk-tegra-periph.c       | 24 ++------------
+ drivers/clk/tegra/clk-tegra114.c           |  4 +--
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++----
+ drivers/clk/tegra/clk-tegra20.c            | 13 +++-----
+ drivers/clk/tegra/clk-tegra210.c           | 51 ++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra30.c            | 23 +++++++-------
+ drivers/clk/tegra/clk.h                    |  3 ++
+ drivers/firmware/tegra/bpmp.c              | 22 +++++++++----
+ include/dt-bindings/clock/tegra210-car.h   |  1 +
+ include/soc/tegra/bpmp.h                   |  1 +
+ 15 files changed, 119 insertions(+), 71 deletions(-)
