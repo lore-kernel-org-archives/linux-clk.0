@@ -1,65 +1,57 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/10] clk: renesas: mstp: Keep wakeup sources active during system suspend
-Date: Mon, 16 Oct 2017 15:55:07 +0200
-Message-Id: <1508162116-5043-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Thu, 19 Oct 2017 17:19:01 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
+	mturquette@baylibre.com, pgaikwad@nvidia.com
+Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20171020001859.GA9196@Asurada-Nvidia>
+References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
+ <20171019092919.GA7252@Asurada>
+ <20171019094422.GI9005@ulmo>
+ <20171019184223.GA7415@Asurada-Nvidia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171019184223.GA7415@Asurada-Nvidia>
 List-ID: <linux-clk.vger.kernel.org>
 
-If a device is part of the CPG/MSTP Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+On Thu, Oct 19, 2017 at 11:42:24AM -0700, Nicolin Chen wrote:
+> On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
+> > > > Below is the call trace of tegra210_init_pllu() function:
+> > > >   start_kernel()
+> > > >   -> time_init()
+> > > >   --> of_clk_init()
+> > > >   ---> tegra210_clock_init()
+> > > >   ----> tegra210_pll_init()
+> > > >   -----> tegra210_init_pllu()
+> 
+> > I'm wondering why we're not seeing a splat for this. Usually the kernel
+> > will warn if you sleep during atomic context. Does this mean we're just
+> > not hitting that case?
+> 
+> Yes.
+> 
+> > readx_poll_timeout() has a might_sleep_if(), and
+> > therefore it should always cause the splat.
+> 
+> That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
+> 
+> > Any ideas why this has gone unnoticed for all this time?
+> 
+> We can see in the tegra210_init_pllu() function that it'll not call
+> tegra210_enable_pllu() if pllu is already enabled (by bootloader).
+> 
+> You can verify it by adding an irqs_disabled() in this routine. The
+> function is called during system-boot and suspend-n-resume. And both
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core.
+A correction: using mainline kernel, only system-boot as the commit log
+describes.
 
-Hence provide an .active_wakeup() callback that always returns true.
-Note that this will only affect devices configured as wakeup sources.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-mstp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 500a9e4e03c48957..912e4745d8011fe8 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -329,6 +329,11 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
-+static bool cpg_mstp_active_wakeup(struct device *dev)
-+{
-+	return true;
-+}
-+
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
- {
- 	struct generic_pm_domain *pd;
-@@ -345,6 +350,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 
- 	pd->name = np->name;
- 	pd->flags = GENPD_FLAG_PM_CLK;
-+	pd->dev_ops.active_wakeup = cpg_mstp_active_wakeup;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+> cases should be irqs_disabled().
+> 
+> Thanks
+> Nicolin
