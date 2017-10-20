@@ -1,56 +1,64 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 23 Oct 2017 14:57:03 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Thierry
- Reding" <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Message-ID: <20171023115703.GR27164@tbergstrom-lnx.Nvidia.com>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.15-rc1
+To: Thierry Reding <thierry.reding@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20171020121412.10527-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6f5cfeeb-cdff-b390-4c09-77e460a9f793@nvidia.com>
+Date: Fri, 20 Oct 2017 17:00:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <20171020121412.10527-1-thierry.reding@gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 23, 2017 at 12:12:52PM +0100, Jon Hunter wrote:
-> Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
-> fixed the parent clock for APBDMA, but the consequence of this that
-> after probing the APBDMA device, the APB Clock (or PCLK) is now
-> disabled. Disabling the APB clock causes accesses to any other device
-> on the APB to hang and prevent Tegra from booting.
-> 
-> Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
-> to prevent the clock being disabled if unused on boot. However, even
-> if it is used, it still needs to be always kept enabled and so update
-> the flag for the APB clock to be "CLK_IS_CRITICAL".
-> 
-> Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
-> 
-> Suggested-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Thierry,
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+On 20/10/17 13:14, Thierry Reding wrote:
+> Hi Michael, Stephen,
+> 
+> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+> 
+>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
+> 
+> for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
+> 
+>   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
+> 
+> Note that this pulls in parts from two other tags that are going to go
+> in via the ARM SoC tree. Those are needed to a couple of resolve build
+> dependencies.
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> clk: tegra: Changes for v4.15-rc1
+> 
+> This contains cleanups and minor fixes for the Tegra clock driver.
+> 
+> ----------------------------------------------------------------
+> Bhumika Goyal (1):
+>       clk: tegra: Make tegra_clk_pll_params __ro_after_init
+> 
+> Dmitry Osipenko (4):
+>       clk: tegra: Add AHB DMA clock entry
+>       clk: tegra: Correct parent of the APBDMA clock
 
-> ---
->  drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-> index 4f6fd307cb70..10047107c1dc 100644
-> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-> @@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
->  				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
->  				   &sysrate_lock);
->  	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
-> -				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-> +				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
->  				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
->  	*dt_clk = clk;
->  }
-> -- 
-> 2.7.4
-> 
+I noticed that -next is not currently booting on most Tegra boards and
+it appears that the above commit has exposed a problem where pclk can
+get turned off incorrectly. I have discussed with Peter and he has
+identified a simple fix. I have ran out of time today, but can send a
+patch on Monday. Can we sort this out next week and re-send this pull
+request?
+
+Cheers
+Jon
+
+-- 
+nvpublic
