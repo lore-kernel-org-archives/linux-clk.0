@@ -1,70 +1,48 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Sat, 21 Oct 2017 07:10:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Timo Alho <talho@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
+Message-ID: <20171021141038.GB15990@codeaurora.org>
+References: <cover.1504776489.git.talho@nvidia.com>
+ <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
+ <20171017103736.GA30589@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <20171004023006.31763-1-linus.walleij@linaro.org>
-References: <20171004023006.31763-1-linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 30 Oct 2017 15:23:43 +0100
-Message-ID: <CACRpkdZL9GD0H1n1-Xu2vYH-WHxEpf4843tSs1=M_QvdHdbPpA@mail.gmail.com>
-Subject: Re: [PATCH] RESEND: clk: Avoid sending high rates to downstream
- clocks during set_rate
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Opera <montvid@gmail.com>,
-	John Stultz <john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171017103736.GA30589@ulmo>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 4, 2017 at 4:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On 10/17, Thierry Reding wrote:
+> On Thu, Sep 07, 2017 at 12:31:02PM +0300, Timo Alho wrote:
+> > Check return code in BPMP response message(s). The typical error case
+> > is when clock operation is attempted with invalid clock identifier.
+> > 
+> > Also remove error print from call to clk_get_info() as the
+> > implementation loops through range of all possible identifier, but the
+> > operation is expected error out when the clock id is unused.
+> > 
+> > Signed-off-by: Timo Alho <talho@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> Hi Mike, Stephen,
+> 
+> do you mind if I pick this up into the Tegra tree? It has a build
+> dependency on patch 1/4.
+> 
+> I only now realized that you guys weren't on Cc, hence quoting in
+> full.
+> 
 
-> From: Stephen Boyd <sboyd@codeaurora.org>
->
-> If a clock is on and we call clk_set_rate() on it we may get into
-> a situation where the clock temporarily increases in rate
-> dramatically while we walk the tree and call .set_rate() ops. For
-> example, consider a case where a PLL feeds into a divider.
-> Initially the divider is set to divide by 1 and the PLL is
-> running fairly slow (100MHz). The downstream consumer of the
-> divider output can only handle rates =< 400 MHz, but the divider
-> can only choose between divisors of 1 and 4.
->
->  +-----+   +----------------+
->  | PLL |-->| div 1 or div 4 |---> consumer device
->  +-----+   +----------------+
->
-> To achieve a rate of 400MHz on the output of the divider, we
-> would have to set the rate of the PLL to 1.6 GHz and then divide
-> it by 4. The current code would set the PLL to 1.6GHz first while
-> the divider is still set to 1, thus causing the downstream
-> consumer of the clock to receive a few clock cycles of 1.6GHz
-> clock (far beyond it's maximum acceptable rate). We should be
-> changing the divider first before increasing the PLL rate to
-> avoid this problem.
->
-> Therefore, set the rate of any child clocks that are increasing
-> in rate from their current rate so that they can increase their
-> dividers if necessary. We assume that there isn't such a thing as
-> minimum rate requirements.
->
-> Cc: Opera <montvid@gmail.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> Stephen: just wanted to check what's up with this patch.
-> When I apply it on my kernel I get graphics on the Nexus7,
-> when I don't, I don't.
->
-> OpenWRT has started to carry the patch in their tree I noticed.
-> I found it in John Stultz patch stack.
->
-> Is there some similar patch floating in some other series, is
-> it fundamentally wrong or something else?
->
-> Just wanted to reboot the discussion so we know where this is
-> standing.
+No worries
 
-Gentle ping on this patch too.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Sorry for pushing, it's just so nice to have graphics working
-out-of-the-box on Nexus 7.
 
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
