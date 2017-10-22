@@ -1,29 +1,92 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 25 Oct 2017 21:41:09 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 1/7] mailbox: qcom: Convert APCS IPC driver to use
- regmap
-Message-ID: <20171026044109.GN1575@tuxbook>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-2-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from plaes.org ([188.166.43.21]:33697 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932069AbdJVTC5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 22 Oct 2017 15:02:57 -0400
+Date: Sun, 22 Oct 2017 18:52:42 +0000
+From: Priit Laes <plaes@plaes.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH 15/23] drm/sun4i: Add LVDS support
+Message-ID: <20171022185241.GA11292@plaes.org>
+References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+ <6e313d0b31dca3f47583668eb755d934a1ab515e.1508231063.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170921164940.20343-2-georgi.djakov@linaro.org>
+In-Reply-To: <6e313d0b31dca3f47583668eb755d934a1ab515e.1508231063.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
-
-> This hardware block provides more functionalities that just IPC. Convert
-> it to regmap to allow other child platform devices to use the same regmap.
+On Tue, Oct 17, 2017 at 11:06:22AM +0200, Maxime Ripard wrote:
+> The TCON supports the LVDS interface to output to a panel or a bridge.
+> Let's add support for it.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/Makefile     |   1 +-
+>  drivers/gpu/drm/sun4i/sun4i_lvds.c | 183 ++++++++++++++++++++++++++++-
+>  drivers/gpu/drm/sun4i/sun4i_lvds.h |  18 +++-
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 193 +++++++++++++++++++++++++++++-
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  25 ++++-
+>  5 files changed, 419 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_lvds.c
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_lvds.h
 > 
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+[...]
 
-Regards,
-Bjorn
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 3efa1ab045cd..6a20a467ee6d 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+
+[...]
+> @@ -698,6 +858,26 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>  		return ret;
+>  	}
+>  
+> +	/*
+> +	 * This can only be made optional since we've had DT nodes
+> +	 * without the LVDS reset properties.
+> +	 *
+> +	 * If the property is missing, just disable LVDS, and print a
+> +	 * warning.
+> +	 */
+> +	tcon->lvds_rst = devm_reset_control_get_optional(dev, "lvds");
+> +	if (IS_ERR(tcon->lvds_rst)) {
+> +		dev_err(dev, "Couldn't get our reset line\n");
+> +		return PTR_ERR(tcon->lvds_rst);
+> +	} else if (tcon->lvds_rst) {
+> +		has_lvds = true;
+> +		reset_control_reset(tcon->lvds_rst);
+> +	} else {
+> +		has_lvds = false;
+> +		dev_warn(dev,
+> +			 "Missing LVDS reset property, you should consider upgrading your DT\n");
+
+This will generate annoying warning for tcon1 on A10/A20.
+
+> +	}
+> +
+>  	ret = sun4i_tcon_init_clocks(dev, tcon);
+>  	if (ret) {
+>  		dev_err(dev, "Couldn't init our TCON clocks\n");
+> @@ -729,7 +909,18 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>  		goto err_free_clocks;
+>  	}
+>  
+> -	ret = sun4i_rgb_init(drm, tcon);
+> +	/*
+> +	 * If we have an LVDS panel connected to the TCON, we should
+> +	 * just probe the LVDS connector. Otherwise, just probe RGB as
+> +	 * we used to.
+> +	 */
