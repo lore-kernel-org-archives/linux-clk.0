@@ -1,56 +1,91 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 4.15 round 1
-Date: Tue, 17 Oct 2017 19:43:31 +0200
-Message-ID: <14384670.j3hM3TuojQ@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20171020223452.GD1165@minitux>
+References: <20170908171830.13813-1-georgi.djakov@linaro.org>
+	<20170908171830.13813-2-georgi.djakov@linaro.org>
+	<a7cf55ba-0475-d74c-f759-a24e58ccde47@linaro.org>
+	<20171020223452.GD1165@minitux>
+Date: Sun, 22 Oct 2017 19:58:30 -0700
+Message-ID: <CAEG3pNAbf3hLchrYK+s9RwZ3zF3srkqdbvqPSBMOoGV65TguLQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] interconnect: Add generic on-chip interconnect API
+From: Michael Turquette <mturquette@baylibre.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Rob Herring <robh+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Saravana Kannan <skannan@codeaurora.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+	"Sweeney, Sean" <seansw@qti.qualcomm.com>, "Dai, David" <davidai@quicinc.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>, lorenzo.pieralisi@arm.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+Hi all,
 
-please find below the (tiny) first round of Rockchip clock changes for 4.15.
-Right now there isn't any more in the pipeline, but who knows that may
-change yet.
+On Fri, Oct 20, 2017 at 3:34 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Fri 20 Oct 07:43 PDT 2017, Georgi Djakov wrote:
+>
+>> Hi,
+>>
+>> On 09/08/2017 08:18 PM, Georgi Djakov wrote:
+>> > This patch introduce a new API to get requirements and configure the
+>> > interconnect buses across the entire chipset to fit with the current demand.
+>> >
+>> > The API is using a consumer/provider-based model, where the providers are
+>> > the interconnect buses and the consumers could be various drivers.
+>> > The consumers request interconnect resources (path) between endpoints and
+>> > set the desired constraints on this data flow path. The providers receive
+>> > requests from consumers and aggregate these requests for all master-slave
+>> > pairs on that path. Then the providers configure each participating in the
+>> > topology node according to the requested data flow path, physical links and
+>> > constraints. The topology could be complicated and multi-tiered and is SoC
+>> > specific.
+>> >
+>> > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> > ---
+>> >  Documentation/interconnect/interconnect.rst |  93 +++++++
+>> >  drivers/Kconfig                             |   2 +
+>> >  drivers/Makefile                            |   1 +
+>> >  drivers/interconnect/Kconfig                |  10 +
+>> >  drivers/interconnect/Makefile               |   1 +
+>> >  drivers/interconnect/interconnect.c         | 382 ++++++++++++++++++++++++++++
+>> >  include/linux/interconnect-consumer.h       |  73 ++++++
+>> >  include/linux/interconnect-provider.h       | 119 +++++++++
+>> >  8 files changed, 681 insertions(+)
+>> >  create mode 100644 Documentation/interconnect/interconnect.rst
+>> >  create mode 100644 drivers/interconnect/Kconfig
+>> >  create mode 100644 drivers/interconnect/Makefile
+>> >  create mode 100644 drivers/interconnect/interconnect.c
+>> >  create mode 100644 include/linux/interconnect-consumer.h
+>> >  create mode 100644 include/linux/interconnect-provider.h
+>>
+>> Any comments on this patch?
+>>
+>
+> Sorry, I still haven't found the time to do a proper review of this yet.
 
-Please pull.
-Thanks
-Heiko
+Same.
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+>
+>> I am planning to change the prefix that is used for naming for example
+>> the functions from "interconnect_" to something shorter like icbus_.
+>>
+>
+> This isn't implementing a bus; if you feel that just ic_ is too short I
+> would suggest naming things inter_. (But keep the full name in the file
+> names)
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+Not trying to bikeshed too much, but how about icc_ for "interconnect
+controller"? No idea if that is a hash collision with other in-kernel
+apis.
 
-are available in the git repository at:
+Just "ic_" looks to me like "integrated circuit".
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.15-rockchip-clk-1
+Regards,
+Mike
 
-for you to fetch changes up to 47e3ec0e4dae1714cc76596e38d16913f0e574e2:
-
-  clk: rockchip: use new cif/vdpu clock ids on rk3188 (2017-10-14 21:32:11 +0200)
-
-----------------------------------------------------------------
-Some new clock ids for rk3188 and rk3368 as well as removal of a
-superfluous memory allocation error message.
-
-----------------------------------------------------------------
-Heiko Stuebner (3):
-      clk: rockchip: add more rk3188 graphics clock ids
-      Merge branch 'v4.15-shared/clkids' into v4.15-clk/next
-      clk: rockchip: use new cif/vdpu clock ids on rk3188
-
-Markus Elfring (1):
-      clk: rockchip: Remove superfluous error message in rockchip_clk_register_cpuclk()
-
-Romain Perier (2):
-      clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
-      clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
-
- drivers/clk/rockchip/clk-cpu.c                |  2 --
- drivers/clk/rockchip/clk-rk3188.c             | 12 ++++++------
- drivers/clk/rockchip/clk-rk3368.c             |  2 +-
- include/dt-bindings/clock/rk3188-cru-common.h |  9 +++++++--
- include/dt-bindings/clock/rk3368-cru.h        |  1 +
- 5 files changed, 15 insertions(+), 11 deletions(-)
+>
+> Regards,
+> Bjorn
