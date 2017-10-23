@@ -1,77 +1,69 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
- <1508162116-5043-10-git-send-email-geert+renesas@glider.be> <b3825de9-16e8-94a4-0b23-bf0caf87a343@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Oct 2017 09:10:21 +0200
-Message-ID: <CAMuHMdWtYrhU9RstX2ajasfD-psUK2zdUQcXWTa3FjnrwEFfJw@mail.gmail.com>
-Subject: Re: [PATCH 09/10] [RFC] ravb: Remove obsolete explicit clock handling
- for WoL
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>
+In-Reply-To: <20171023073920.GA3802@ulmo>
+References: <20171020121412.10527-1-thierry.reding@gmail.com>
+	<20171023073920.GA3802@ulmo>
+Date: Mon, 23 Oct 2017 01:01:17 -0700
+Message-ID: <CAEG3pNBZc1m_jDmzVPN-n-najhts2VzPDOtqV-cNNbKObqA8wQ@mail.gmail.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.15-rc1
+From: Michael Turquette <mturquette@baylibre.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+Hi Thierry,
 
-On Mon, Oct 16, 2017 at 10:17 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 10/16/2017 04:55 PM, Geert Uytterhoeven wrote:
->> Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
->> is manually kept running during system suspend, to make sure the device
->> stays active.
+On Mon, Oct 23, 2017 at 12:39 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Oct 20, 2017 at 02:14:12PM +0200, Thierry Reding wrote:
+>> Hi Michael, Stephen,
 >>
->> Since "soc: renesas: rcar-sysc: Keep wakeup sources active during system
->> suspend", this workaround is no longer needed.  Hence remove all
->> explicit clock handling to keep the device active.
+>> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 >>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> [...]
->
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
->> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
->> b/drivers/net/ethernet/renesas/ravb_main.c
->> index fdf30bfa403bf416..11ffccca11d56df5 100644
->> --- a/drivers/net/ethernet/renesas/ravb_main.c
->> +++ b/drivers/net/ethernet/renesas/ravb_main.c
->
-> [...]
+>>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 >>
->> @@ -2289,8 +2283,6 @@ static int __maybe_unused ravb_resume(struct device
->> *dev)
->>                  *       this clock dance should be removed.
->>                  */
->>                 clk_disable(priv->clk);
->> -               clk_disable(priv->clk);
->> -               clk_enable(priv->clk);
->>                 clk_enable(priv->clk);
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk
+>>
+>> for you to fetch changes up to e4e2519df9928ae923205759176599969f344cd4:
+>>
+>>   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-10-20 13:37:45 +0200)
+>>
+>> Note that this pulls in parts from two other tags that are going to go
+>> in via the ARM SoC tree. Those are needed to a couple of resolve build
+>> dependencies.
+>>
+>> Thanks,
+>> Thierry
+>>
+>> ----------------------------------------------------------------
+>> clk: tegra: Changes for v4.15-rc1
+>>
+>> This contains cleanups and minor fixes for the Tegra clock driver.
+>>
+>> ----------------------------------------------------------------
+>> Bhumika Goyal (1):
+>>       clk: tegra: Make tegra_clk_pll_params __ro_after_init
+>>
+>> Dmitry Osipenko (4):
+>>       clk: tegra: Add AHB DMA clock entry
+>>       clk: tegra: Correct parent of the APBDMA clock
 >
+> Hi,
 >
->    I thought the entire clock dance could be removed now? Not yet?
+> looks like I was a little too quick on the trigger on this one and
+> missed a regression that this introduces.
+>
+> Can we hold off on this for a little? Jon should have a fix for this
+> within the day.
 
-The remaining clock dance steps work around PSCI powering down the SoC,
-after which the hardware and Linux disagree about the clock state.
-They can be removed after "[PATCH v3 0/5] clk: renesas: rcar-gen3: Restore
-clocks during resume" has hit upstream.
+Sounds good.
 
-Gr{oetje,eeting}s,
+Best regards,
+Mike
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Thanks,
+> Thierry
