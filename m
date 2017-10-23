@@ -1,177 +1,228 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 5/5] clk: aspeed: Add reset controller
-Date: Mon, 30 Oct 2017 16:32:50 +1030
-Message-Id: <20171030060250.701-6-joel@jms.id.au>
-In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
-References: <20171030060250.701-1-joel@jms.id.au>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v6 6/9] soc: mediatek: extend bus protection API
+Date: Mon, 23 Oct 2017 12:10:37 +0800
+Message-ID: <1508731840-4231-7-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-There are some resets that are not associated with gates. These are
-represented by a reset controller.
+MT2712 add "set/clear" bus control register to each control register set
+instead of providing only one "enable" control register, we could avoid
+the read-modify-write racing by declaring "bus_prot_reg_update" as "false"
+in scp_soc_data or declaring as "true" to use the legacy update method.
+By improving the mtk-infracfg bus protection implementation to
+support set/clear bus protection control method by IC configuration.
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
-v5:
-  - Add Andrew's Reviewed-by
-v3:
-  - Add named initalisers for the reset defines
-  - Add define for ADC
----
- drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/aspeed-clock.h | 10 ++++
- 2 files changed, 91 insertions(+), 1 deletion(-)
+ drivers/soc/mediatek/mtk-infracfg.c   | 26 ++++++++++++++++++++++----
+ drivers/soc/mediatek/mtk-scpsys.c     | 28 ++++++++++++++++++++--------
+ include/linux/soc/mediatek/infracfg.h |  7 ++++---
+ 3 files changed, 46 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index df5bc57a6ee2..d91e86c70e0c 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -17,6 +17,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
+diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
+index dba3055..8c310de 100644
+--- a/drivers/soc/mediatek/mtk-infracfg.c
++++ b/drivers/soc/mediatek/mtk-infracfg.c
+@@ -19,23 +19,33 @@
  
-@@ -275,6 +276,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
- 	.is_enabled = aspeed_clk_is_enabled,
+ #define INFRA_TOPAXI_PROTECTEN		0x0220
+ #define INFRA_TOPAXI_PROTECTSTA1	0x0228
++#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
++#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
+ 
+ /**
+  * mtk_infracfg_set_bus_protection - enable bus protection
+  * @regmap: The infracfg regmap
+  * @mask: The mask containing the protection bits to be enabled.
++ * @reg_update: The boolean flag determines to set the protection bits
++ *              by regmap_update_bits with enable register(PROTECTEN) or
++ *              by regmap_write with set register(PROTECTEN_SET).
+  *
+  * This function enables the bus protection bits for disabled power
+  * domains so that the system does not hang when some unit accesses the
+  * bus while in power down.
+  */
+-int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
++int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
++		bool reg_update)
+ {
+ 	unsigned long expired;
+ 	u32 val;
+ 	int ret;
+ 
+-	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, mask);
++	if (reg_update)
++		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask,
++				mask);
++	else
++		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
+ 
+ 	expired = jiffies + HZ;
+ 
+@@ -59,16 +69,24 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
+  * mtk_infracfg_clear_bus_protection - disable bus protection
+  * @regmap: The infracfg regmap
+  * @mask: The mask containing the protection bits to be disabled.
++ * @reg_update: The boolean flag determines to clear the protection bits
++ *              by regmap_update_bits with enable register(PROTECTEN) or
++ *              by regmap_write with clear register(PROTECTEN_CLR).
+  *
+  * This function disables the bus protection bits previously enabled with
+  * mtk_infracfg_set_bus_protection.
+  */
+-int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
++
++int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
++		bool reg_update)
+ {
+ 	unsigned long expired;
+ 	int ret;
+ 
+-	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
++	if (reg_update)
++		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
++	else
++		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
+ 
+ 	expired = jiffies + HZ;
+ 
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index e1ce8b1..ba552de 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -134,6 +134,7 @@ struct scp {
+ 	void __iomem *base;
+ 	struct regmap *infracfg;
+ 	struct scp_ctrl_reg ctrl_reg;
++	bool bus_prot_reg_update;
  };
  
-+/**
-+ * struct aspeed_reset - Aspeed reset controller
-+ * @map: regmap to access the containing system controller
-+ * @rcdev: reset controller device
-+ */
-+struct aspeed_reset {
-+	struct regmap			*map;
-+	struct reset_controller_dev	rcdev;
-+};
-+
-+#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
-+
-+static const u8 aspeed_resets[] = {
-+	[ASPEED_RESET_XDMA]	= 25,
-+	[ASPEED_RESET_MCTP]	= 24,
-+	[ASPEED_RESET_ADC]	= 23,
-+	[ASPEED_RESET_JTAG_MASTER] = 22,
-+	[ASPEED_RESET_MIC]	= 18,
-+	[ASPEED_RESET_PWM]	=  9,
-+	[ASPEED_RESET_PCIVGA]	=  8,
-+	[ASPEED_RESET_I2C]	=  2,
-+	[ASPEED_RESET_AHB]	=  1,
-+};
-+
-+static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-+}
-+
-+static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-+}
-+
-+static int aspeed_reset_status(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 val, rst = BIT(aspeed_resets[id]);
-+	int ret;
-+
-+	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & rst);
-+}
-+
-+static const struct reset_control_ops aspeed_reset_ops = {
-+	.assert = aspeed_reset_assert,
-+	.deassert = aspeed_reset_deassert,
-+	.status = aspeed_reset_status,
-+};
-+
- static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		struct regmap *map, u8 clock_idx, u8 reset_idx,
-@@ -316,10 +379,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
- 	struct device *dev = &pdev->dev;
-+	struct aspeed_reset *ar;
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
--	int i;
-+	int i, ret;
+ struct scp_subdomain {
+@@ -147,6 +148,7 @@ struct scp_soc_data {
+ 	const struct scp_subdomain *subdomains;
+ 	int num_subdomains;
+ 	const struct scp_ctrl_reg regs;
++	bool bus_prot_reg_update;
+ };
  
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -327,6 +391,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(map);
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+@@ -254,7 +256,8 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+ 
+ 	if (scpd->data->bus_prot_mask) {
+ 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
+-				scpd->data->bus_prot_mask);
++				scpd->data->bus_prot_mask,
++				scp->bus_prot_reg_update);
+ 		if (ret)
+ 			goto err_pwr_ack;
  	}
+@@ -289,7 +292,8 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
  
-+	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
-+	if (!ar)
-+		return -ENOMEM;
-+
-+	ar->map = map;
-+	ar->rcdev.owner = THIS_MODULE;
-+	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
-+	ar->rcdev.ops = &aspeed_reset_ops;
-+	ar->rcdev.of_node = dev->of_node;
-+
-+	ret = devm_reset_controller_register(dev, &ar->rcdev);
-+	if (ret) {
-+		dev_err(dev, "could not register reset controller\n");
-+		return ret;
-+	}
-+
- 	/* SoC generations share common layouts but have different divisors */
- 	soc_data = of_device_get_match_data(dev);
- 	if (!soc_data) {
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index 4a99421d77c8..8e19646d8025 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -39,4 +39,14 @@
+ 	if (scpd->data->bus_prot_mask) {
+ 		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
+-				scpd->data->bus_prot_mask);
++				scpd->data->bus_prot_mask,
++				scp->bus_prot_reg_update);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -382,7 +386,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
  
- #define ASPEED_NUM_CLKS			35
+ static struct scp *init_scp(struct platform_device *pdev,
+ 			const struct scp_domain_data *scp_domain_data, int num,
+-			const struct scp_ctrl_reg *scp_ctrl_reg)
++			const struct scp_ctrl_reg *scp_ctrl_reg,
++			bool bus_prot_reg_update)
+ {
+ 	struct genpd_onecell_data *pd_data;
+ 	struct resource *res;
+@@ -397,6 +402,8 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
+ 	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
  
-+#define ASPEED_RESET_XDMA		0
-+#define ASPEED_RESET_MCTP		1
-+#define ASPEED_RESET_ADC		2
-+#define ASPEED_RESET_JTAG_MASTER	3
-+#define ASPEED_RESET_MIC		4
-+#define ASPEED_RESET_PWM		5
-+#define ASPEED_RESET_PCIVGA		6
-+#define ASPEED_RESET_I2C		7
-+#define ASPEED_RESET_AHB		8
++	scp->bus_prot_reg_update = bus_prot_reg_update;
 +
- #endif
+ 	scp->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -816,7 +823,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+-	}
++	},
++	.bus_prot_reg_update = true,
+ };
+ 
+ static const struct scp_soc_data mt6797_data = {
+@@ -827,7 +835,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
+-	}
++	},
++	.bus_prot_reg_update = true,
+ };
+ 
+ static const struct scp_soc_data mt7622_data = {
+@@ -836,7 +845,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+-	}
++	},
++	.bus_prot_reg_update = true,
+ };
+ 
+ static const struct scp_soc_data mt8173_data = {
+@@ -847,7 +857,8 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+-	}
++	},
++	.bus_prot_reg_update = true,
+ };
+ 
+ /*
+@@ -884,7 +895,8 @@ static int scpsys_probe(struct platform_device *pdev)
+ 	match = of_match_device(of_scpsys_match_tbl, &pdev->dev);
+ 	soc = (const struct scp_soc_data *)match->data;
+ 
+-	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs);
++	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
++			soc->bus_prot_reg_update);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
+index a0182ec..67baca2 100644
+--- a/include/linux/soc/mediatek/infracfg.h
++++ b/include/linux/soc/mediatek/infracfg.h
+@@ -27,7 +27,8 @@
+ #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
+ 						 BIT(7) | BIT(8))
+ 
+-int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
+-int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
+-
++int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
++		bool reg_update);
++int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
++		bool reg_update);
+ #endif /* __SOC_MEDIATEK_INFRACFG_H */
 -- 
-2.14.1
+1.9.1
