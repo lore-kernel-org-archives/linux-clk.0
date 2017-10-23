@@ -1,75 +1,195 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 4/4] drm: rcar-du: Add R8A7745 support
-Date: Fri, 13 Oct 2017 16:22:22 +0100
-Message-Id: <1507908142-13142-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v6 8/9] soc: mediatek: add MT2712 scpsys support
+Date: Mon, 23 Oct 2017 12:10:39 +0800
+Message-ID: <1508731840-4231-9-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the R8A7745 DU (which is very similar to the R8A7794 DU);
-it has 2 RGB outputs.
+add scpsys driver for MT2712
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/soc/mediatek/mtk-scpsys.c | 106 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 100 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 3db5e8d..faa5b32 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -55,6 +55,27 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.num_lvds = 1,
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 7e7e4ec..2a0c3a7 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -21,6 +21,7 @@
+ #include <linux/soc/mediatek/infracfg.h>
+ 
+ #include <dt-bindings/power/mt2701-power.h>
++#include <dt-bindings/power/mt2712-power.h>
+ #include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/power/mt7622-power.h>
+ #include <dt-bindings/power/mt8173-power.h>
+@@ -32,7 +33,7 @@
+ #define SPM_DIS_PWR_CON			0x023c
+ #define SPM_CONN_PWR_CON		0x0280
+ #define SPM_VEN2_PWR_CON		0x0298
+-#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173 */
++#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173, MT2712 */
+ #define SPM_BDP_PWR_CON			0x029c	/* MT2701 */
+ #define SPM_ETH_PWR_CON			0x02a0
+ #define SPM_HIF_PWR_CON			0x02a4
+@@ -40,12 +41,12 @@
+ #define SPM_MFG_2D_PWR_CON		0x02c0
+ #define SPM_MFG_ASYNC_PWR_CON		0x02c4
+ #define SPM_USB_PWR_CON			0x02cc
++#define SPM_USB2_PWR_CON		0x02d4	/* MT2712 */
+ #define SPM_ETHSYS_PWR_CON		0x02e0	/* MT7622 */
+ #define SPM_HIF0_PWR_CON		0x02e4	/* MT7622 */
+ #define SPM_HIF1_PWR_CON		0x02e8	/* MT7622 */
+ #define SPM_WB_PWR_CON			0x02ec	/* MT7622 */
+ 
+-
+ #define SPM_PWR_STATUS			0x060c
+ #define SPM_PWR_STATUS_2ND		0x0610
+ 
+@@ -64,12 +65,13 @@
+ #define PWR_STATUS_ETH			BIT(15)
+ #define PWR_STATUS_HIF			BIT(16)
+ #define PWR_STATUS_IFR_MSC		BIT(17)
++#define PWR_STATUS_USB2			BIT(19)	/* MT2712 */
+ #define PWR_STATUS_VENC_LT		BIT(20)
+ #define PWR_STATUS_VENC			BIT(21)
+-#define PWR_STATUS_MFG_2D		BIT(22)
+-#define PWR_STATUS_MFG_ASYNC		BIT(23)
+-#define PWR_STATUS_AUDIO		BIT(24)
+-#define PWR_STATUS_USB			BIT(25)
++#define PWR_STATUS_MFG_2D		BIT(22)	/* MT8173 */
++#define PWR_STATUS_MFG_ASYNC		BIT(23)	/* MT8173 */
++#define PWR_STATUS_AUDIO		BIT(24)	/* MT8173, MT2712 */
++#define PWR_STATUS_USB			BIT(25)	/* MT8173, MT2712 */
+ #define PWR_STATUS_ETHSYS		BIT(24)	/* MT7622 */
+ #define PWR_STATUS_HIF0			BIT(25)	/* MT7622 */
+ #define PWR_STATUS_HIF1			BIT(26)	/* MT7622 */
+@@ -602,6 +604,85 @@ static void mtk_register_power_domains(struct platform_device *pdev,
  };
  
-+static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
-+	.gen = 2,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+	.num_crtcs = 2,
-+	.routes = {
-+		/*
-+		 * R8A7745 has two RGB outputs
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_DPAD1] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
+ /*
++ * MT2712 power domain support
++ */
++static const struct scp_domain_data scp_domain_data_mt2712[] = {
++	[MT2712_POWER_DOMAIN_MM] = {
++		.name = "mm",
++		.sta_mask = PWR_STATUS_DISP,
++		.ctl_offs = SPM_DIS_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
 +	},
-+	.num_lvds = 0,
++	[MT2712_POWER_DOMAIN_VDEC] = {
++		.name = "vdec",
++		.sta_mask = PWR_STATUS_VDEC,
++		.ctl_offs = SPM_VDE_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM, CLK_VDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_VENC] = {
++		.name = "venc",
++		.sta_mask = PWR_STATUS_VENC,
++		.ctl_offs = SPM_VEN_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_ISP] = {
++		.name = "isp",
++		.sta_mask = PWR_STATUS_ISP,
++		.ctl_offs = SPM_ISP_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(13, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_AUDIO] = {
++		.name = "audio",
++		.sta_mask = PWR_STATUS_AUDIO,
++		.ctl_offs = SPM_AUDIO_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_AUDIO},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB] = {
++		.name = "usb",
++		.sta_mask = PWR_STATUS_USB,
++		.ctl_offs = SPM_USB_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB2] = {
++		.name = "usb2",
++		.sta_mask = PWR_STATUS_USB2,
++		.ctl_offs = SPM_USB2_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG] = {
++		.name = "mfg",
++		.sta_mask = PWR_STATUS_MFG,
++		.ctl_offs = SPM_MFG_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.clk_id = {CLK_MFG},
++		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
++		.active_wakeup = true,
++	},
 +};
 +
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.gen = 2,
- 	.features = 0,
-@@ -229,6 +250,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
++/*
+  * MT6797 power domain support
+  */
  
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-+	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
- 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
- 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
+@@ -831,6 +912,16 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	.bus_prot_reg_update = true,
+ };
+ 
++static const struct scp_soc_data mt2712_data = {
++	.domains = scp_domain_data_mt2712,
++	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.regs = {
++		.pwr_sta_offs = SPM_PWR_STATUS,
++		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
++	},
++	.bus_prot_reg_update = false,
++};
++
+ static const struct scp_soc_data mt6797_data = {
+ 	.domains = scp_domain_data_mt6797,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+@@ -874,6 +965,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 		.compatible = "mediatek,mt2701-scpsys",
+ 		.data = &mt2701_data,
+ 	}, {
++		.compatible = "mediatek,mt2712-scpsys",
++		.data = &mt2712_data,
++	}, {
+ 		.compatible = "mediatek,mt6797-scpsys",
+ 		.data = &mt6797_data,
+ 	}, {
 -- 
-2.7.4
+1.9.1
