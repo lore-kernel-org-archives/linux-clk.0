@@ -1,154 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 2 Oct 2017 14:24:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-Message-ID: <20171002212435.GP457@codeaurora.org>
-References: <20170921042641.7326-1-joel@jms.id.au>
- <20170921042641.7326-4-joel@jms.id.au>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v6 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+Date: Mon, 23 Oct 2017 12:10:36 +0800
+Message-ID: <1508731840-4231-6-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170921042641.7326-4-joel@jms.id.au>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Joel Stanley wrote:
-> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
->  			mult, div);
->  }
->  
-> +static int __init aspeed_clk_probe(struct platform_device *pdev)
+Add power dt-bindings for MT2712.
 
-Drop __init? Should be a section mismatch with __init here.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
+ include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
 
-> +{
-> +	const struct aspeed_clk_soc_data *soc_data;
-> +	const struct clk_div_table *mac_div_table;
-> +	const struct clk_div_table *div_table;
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *map;
-> +	struct clk_hw *hw;
-> +	u32 val, rate;
-> +
-> +	map = syscon_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(map)) {
-> +		dev_err(dev, "no syscon regmap\n");
-> +		return PTR_ERR(map);
-> +	}
-> +
-> +	/* SoC generations share common layouts but have different divisors */
-> +	soc_data = of_device_get_match_data(&pdev->dev);
-
-Check for soc_data being NULL.
-
-> +	div_table = soc_data->div_table;
-> +	mac_div_table = soc_data->mac_div_table;
-> +
-> +	/* UART clock div13 setting */
-> +	regmap_read(map, ASPEED_MISC_CTRL, &val);
-> +	if (val & BIT(12))
-
-What does BIT(12) mean? #define or comment please.
-
-> +		rate = 24000000 / 13;
-> +	else
-> +		rate = 24000000;
-> +	/* TODO: Find the parent data for the uart clock */
-> +	hw = clk_hw_register_fixed_rate(NULL, "uart", NULL, 0, rate);
-> +	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
-> +
-> +	/*
-> +	 * Memory controller (M-PLL) PLL. This clock is configured by the
-> +	 * bootloader, and is exposed to Linux as a read-only clock rate.
-> +	 */
-> +	regmap_read(map, ASPEED_MPLL_PARAM, &val);
-> +	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	aspeed_calc_pll("mpll", val);
-> +
-> +	/* SD/SDIO clock divider (TODO: There's a gate too) */
-> +	hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
-
-Please pass your dev pointer here from the platform device.
-
-> +			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
-> +			div_table,
-> +			&aspeed_clk_lock);
-
-And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
-construct the dividers and muxes directly instead of using the
-basic type registration APIs.
-
-> +	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
-> +
-> +	/* MAC AHB bus clock divider */
-> +	hw = clk_hw_register_divider_table(NULL, "mac", "hpll", 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
-> +			mac_div_table,
-> +			&aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
-> +
-> +	/* LPC Host (LHCLK) clock divider */
-> +	hw = clk_hw_register_divider_table(NULL, "lhclk", "hpll", 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-> +			div_table,
-> +			&aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
-> +
-> +	/* Video Engine (ECLK) mux and clock divider */
-> +	hw = clk_hw_register_mux(NULL, "eclk_mux",
-> +			eclk_parents, ARRAY_SIZE(eclk_parents), 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 2, 2,
-> +			0, &aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-> +	hw = clk_hw_register_divider_table(NULL, "eclk", "eclk_mux", 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-> +			div_table,
-> +			&aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-> +
-> +	/* P-Bus (BCLK) clock divider */
-> +	hw = clk_hw_register_divider_table(NULL, "bclk", "hpll", 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 0, 2, 0,
-> +			div_table,
-> +			&aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
-> +
-> +	return 0;
-> +};
-> +
-> +static const struct of_device_id aspeed_clk_dt_ids[] = {
-> +	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
-> +	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
-> +	{ },
-
-           ^
-Nitpick, drop the comma
-
-> +};
-> +
-> +static struct platform_driver aspeed_clk_driver = {
-> +	.probe  = aspeed_clk_probe,
-> +	.driver = {
-> +		.name = "aspeed-clk",
-> +		.of_match_table = aspeed_clk_dt_ids,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +};
-> +builtin_platform_driver(aspeed_clk_driver);
-> +
-> +
-
-Kill a newline, save the internet.
-
->  static void __init aspeed_ast2400_cc(struct regmap *map)
->  {
->  	struct clk_hw *hw;
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 40056f7..76bf45b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -12,11 +12,13 @@ power/power_domain.txt. It provides the power domains defined in
+ - include/dt-bindings/power/mt8173-power.h
+ - include/dt-bindings/power/mt6797-power.h
+ - include/dt-bindings/power/mt2701-power.h
++- include/dt-bindings/power/mt2712-power.h
+ - include/dt-bindings/power/mt7622-power.h
+ 
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt2712-scpsys"
+ 	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt7622-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+@@ -27,6 +29,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT7622: "hif_sel"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
+new file mode 100644
+index 0000000..92b46d7
+--- /dev/null
++++ b/include/dt-bindings/power/mt2712-power.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2017 MediaTek Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
++ */
++
++#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
++#define _DT_BINDINGS_POWER_MT2712_POWER_H
++
++#define MT2712_POWER_DOMAIN_MM		0
++#define MT2712_POWER_DOMAIN_VDEC	1
++#define MT2712_POWER_DOMAIN_VENC	2
++#define MT2712_POWER_DOMAIN_ISP		3
++#define MT2712_POWER_DOMAIN_AUDIO	4
++#define MT2712_POWER_DOMAIN_USB		5
++#define MT2712_POWER_DOMAIN_USB2	6
++#define MT2712_POWER_DOMAIN_MFG		7
++
++#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
