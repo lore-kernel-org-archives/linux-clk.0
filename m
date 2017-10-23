@@ -1,44 +1,56 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/4] clk: renesas: cpg-mssr: Add du1 clock to R8A7745
-Date: Fri, 13 Oct 2017 16:22:21 +0100
-Message-Id: <1507908142-13142-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1507908142-13142-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 23 Oct 2017 14:57:03 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Thierry
+ Reding" <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Message-ID: <20171023115703.GR27164@tbergstrom-lnx.Nvidia.com>
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Oct 23, 2017 at 12:12:52PM +0100, Jon Hunter wrote:
+> Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+> fixed the parent clock for APBDMA, but the consequence of this that
+> after probing the APBDMA device, the APB Clock (or PCLK) is now
+> disabled. Disabling the APB clock causes accesses to any other device
+> on the APB to hang and prevent Tegra from booting.
+> 
+> Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
+> to prevent the clock being disabled if unused on boot. However, even
+> if it is used, it still needs to be always kept enabled and so update
+> the flag for the APB clock to be "CLK_IS_CRITICAL".
+> 
+> Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+> 
+> Suggested-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 9e2360a..2859504 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -129,6 +129,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- 	DEF_MOD("scif2",		 719,	R8A7745_CLK_P),
- 	DEF_MOD("scif1",		 720,	R8A7745_CLK_P),
- 	DEF_MOD("scif0",		 721,	R8A7745_CLK_P),
-+	DEF_MOD("du1",			 723,	R8A7745_CLK_ZX),
- 	DEF_MOD("du0",			 724,	R8A7745_CLK_ZX),
- 	DEF_MOD("ipmmu-sgx",		 800,	R8A7745_CLK_ZX),
- 	DEF_MOD("vin1",			 810,	R8A7745_CLK_ZG),
--- 
-2.7.4
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+
+> ---
+>  drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> index 4f6fd307cb70..10047107c1dc 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> @@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
+>  				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
+>  				   &sysrate_lock);
+>  	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
+> -				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
+> +				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
+>  				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
+>  	*dt_clk = clk;
+>  }
+> -- 
+> 2.7.4
+> 
