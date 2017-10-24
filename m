@@ -1,50 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51359 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752503AbdJ0PJ1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Oct 2017 11:09:27 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 04/10] dt-bindings: simplefb-sunxi: add pipelines for DE2
-Date: Fri, 27 Oct 2017 23:06:52 +0800
-Message-Id: <20171027150658.18509-5-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 24 Oct 2017 01:36:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: mturquette@baylibre.com, emilio@elopez.com.ar, wens@csie.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH] clk: sunxi: fix build warning
+Message-ID: <20171024083628.GC15990@codeaurora.org>
+References: <20171019190948.5754-1-clabbe.montjoie@gmail.com>
+ <20171020072904.kfmx65lbqd3uw2qh@flea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171020072904.kfmx65lbqd3uw2qh@flea>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we're going to add simplefb support for Allwinner SoCs with DE2, add
-suitable pipeline strings in the device tree binding.
+On 10/20, Maxime Ripard wrote:
+> Hi Stephen, Mike,
+> 
+> On Thu, Oct 19, 2017 at 09:09:48PM +0200, Corentin Labbe wrote:
+> > This patch fix the following build warning:
+> > drivers/clk/sunxi/clk-factors.c:279:14: warning: variable 'name' set but not used [-Wunused-but-set-variable]
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
+> Can you apply that patch directly? This is the only fix that we're
+> supposed to have for 4.14.
+> 
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Adds Rob's ACK.
+Fixes tag? And this is a new warning from the v4.14 merge window?
+I suppose it only removes code so that's a plus side for merging
+into fixes.
 
- .../devicetree/bindings/display/simple-framebuffer-sunxi.txt          | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
-index a9168ae6946c..d693b8dc9a62 100644
---- a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
-+++ b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
-@@ -15,6 +15,10 @@ Required properties:
-   "de_be1-lcd1"
-   "de_be0-lcd0-hdmi"
-   "de_be1-lcd1-hdmi"
-+  "mixer0-lcd0"
-+  "mixer0-lcd0-hdmi"
-+  "mixer1-lcd1-hdmi"
-+  "mixer1-lcd1-tve"
- 
- Example:
- 
 -- 
-2.13.6
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
