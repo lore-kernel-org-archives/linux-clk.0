@@ -1,95 +1,119 @@
-Return-Path: <s.nawrocki@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
-	<mturquette@baylibre.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, linux-samsung-soc
-	<linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for v4.15, part 2
-Message-id: <148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
-Date: Mon, 16 Oct 2017 12:29:19 +0200
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-References: <CGME20171016102923epcas1p445d71065cec89b9f62b9f02a5446c2dc@epcas1p4.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46843 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbdJXCMU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Oct 2017 22:12:20 -0400
+MIME-Version: 1.0
+In-Reply-To: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
+References: <1234a449a08131a74a3f4851f45458fa9b84ab5e.1508231063.git-series.maxime.ripard@free-electrons.com>
+From: Jonathan Liu <net147@gmail.com>
+Date: Tue, 24 Oct 2017 13:12:18 +1100
+Message-ID: <CANwerB0qxAhXbzAd0iheP4W+AXkbdsqOvrXdurPkHG8Y5bWSJA@mail.gmail.com>
+Subject: Re: [14/23] drm/sun4i: Create minimal multipliers and dividers
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Priit Laes <plaes@plaes.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mylene Josserand <mylene.josserand@free-electrons.com>,
+        linux-clk@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        icenowy@aosc.io
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Mike,
+Hi Maxime,
 
-This change set is based off of your clk-pm-runtime branch, I needed to
-do it that way as there were dependencies on the newly added clk runtime
-PM feature.  In this tag there is also a fix commit related to changes 
-introduced in the clk-pm-runtime branch. There will be a merge conflict, 
-you can find the conflict resolution hint below. 
+On 17 October 2017 at 20:06, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The various outputs the TCON can provide have different constraints on the
+> dotclock divider. Let's make them configurable by the various mode_set
+> functions.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_dotclock.c | 10 +++++++---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c     |  2 ++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h     |  2 ++
+>  3 files changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+> index d401156490f3..023f39bda633 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+> @@ -17,8 +17,9 @@
+>  #include "sun4i_dotclock.h"
+>
+>  struct sun4i_dclk {
+> -       struct clk_hw   hw;
+> -       struct regmap   *regmap;
+> +       struct clk_hw           hw;
+> +       struct regmap           *regmap;
+> +       struct sun4i_tcon       *tcon;
+>  };
+>
+>  static inline struct sun4i_dclk *hw_to_dclk(struct clk_hw *hw)
+> @@ -73,11 +74,13 @@ static unsigned long sun4i_dclk_recalc_rate(struct clk_hw *hw,
+>  static long sun4i_dclk_round_rate(struct clk_hw *hw, unsigned long rate,
+>                                   unsigned long *parent_rate)
+>  {
+> +       struct sun4i_dclk *dclk = hw_to_dclk(hw);
+> +       struct sun4i_tcon *tcon = dclk->tcon;
+>         unsigned long best_parent = 0;
+>         u8 best_div = 1;
+>         int i;
+>
+> -       for (i = 6; i <= 127; i++) {
+> +       for (i = tcon->dclk_min_div; i <= tcon->dclk_max_div; i++) {
+>                 unsigned long ideal = rate * i;
+>                 unsigned long rounded;
+>
+> @@ -167,6 +170,7 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
+>         dclk = devm_kzalloc(dev, sizeof(*dclk), GFP_KERNEL);
+>         if (!dclk)
+>                 return -ENOMEM;
+> +       dclk->tcon = tcon;
+>
+>         init.name = clk_name;
+>         init.ops = &sun4i_dclk_ops;
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index f69bcdf11cb8..3efa1ab045cd 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -177,6 +177,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+>         u8 clk_delay;
+>         u32 val = 0;
+>
+> +       tcon->dclk_min_div = 6;
+> +       tcon->dclk_max_div = 127;
+>         sun4i_tcon0_mode_set_common(tcon, mode);
+>
+>         /* Adjust clock delay */
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> index f61bf6d83b4a..4141fbd97ddf 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> @@ -169,6 +169,8 @@ struct sun4i_tcon {
+>
+>         /* Pixel clock */
+>         struct clk                      *dclk;
+> +       u8                              dclk_max_div;
+> +       u8                              dclk_min_div;
+>
+>         /* Reset control */
+>         struct reset_control            *lcd_rst;
 
-The following changes since commit ae432a9b314e07d486acfadc4df2f922721e6757:
+I have 4.3" RGB LCD enabled on sun7i-a20-olinuxino-lime and hdmi
+disabled. After applying this patch the LCD no longer turns on.
+If I add some debug statements to sun4i_dclk_recalc_rate, it shows
+tcon->dclk_min_div and tcon->dclk_max_div are both 0.
 
-  clk: samsung: exynos-audss: Add support for runtime PM (2017-09-07 15:26:01 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-exynos-pm
-
-for you to fetch changes up to 7679eb20353dc74e47fbc97b2d77fd4f88a77c0f:
-
-  clk: samsung: Add a separate driver for Exynos4412 ISP clocks (2017-10-16 11:25:50 +0200)
-
-----------------------------------------------------------------
-clk/samsung updates for v4.15, part 2
-
- - An addition of separate driver for the Exynos 4412 ISP CMU, needed
-   to model and properly handle the clock controller's dependencies
-   on the ISP power domain.
- - Adding __maybe_unused attributes to the exynos5433_cmu_{suspend,
-   resume} ops to suppress compiler warnings with CONFIG_PM disabled.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: samsung: exynos5433: mark PM functions as __maybe_unused
-
-Marek Szyprowski (3):
-      clk: samsung: Instantiate Exynos4412 ISP clocks only when available
-      clk: samsung: Add dt bindings for Exynos4412 ISP clock controller
-      clk: samsung: Add a separate driver for Exynos4412 ISP clocks
-
- .../devicetree/bindings/clock/exynos4-clock.txt  |  43 +++++
- drivers/clk/samsung/Makefile                     |   1 +
- drivers/clk/samsung/clk-exynos4.c                |  31 +++-
- drivers/clk/samsung/clk-exynos4412-isp.c         | 179 +++++++++++++++++++
- drivers/clk/samsung/clk-exynos5433.c             |   4 +-
- include/dt-bindings/clock/exynos4.h              |  35 ++++
- 6 files changed, 284 insertions(+), 9 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
-
-
--------8<----------
- +
- +		of_address_to_resource(np, 0, &res);
- +		if (resource_size(&res) > 0x18000) {
- +			samsung_clk_register_div(ctx, exynos4x12_isp_div_clks,
- +				ARRAY_SIZE(exynos4x12_isp_div_clks));
- +			samsung_clk_register_gate(ctx, exynos4x12_isp_gate_clks,
- +				ARRAY_SIZE(exynos4x12_isp_gate_clks));
- +		}
- +
-- 		if (of_machine_is_compatible("samsung,exynos4412")) {
-- 			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-- 				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-- 				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
-- 				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-- 		} else {
-- 			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-- 				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-- 				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
-- 				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-- 		}
-+ 		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+ 			mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+ 			e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
-+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-  	}
--------8<----------
-
--- 
-Thanks,
-Sylwester
+Regards,
+Jonathan
