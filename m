@@ -1,63 +1,48 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v6 9/9] arm: dts: Add power controller device node of MT2712
-Date: Mon, 23 Oct 2017 12:10:40 +0800
-Message-ID: <1508731840-4231-10-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 24 Oct 2017 07:15:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+	broonie@kernel.org, mturquette@baylibre.com,
+	alsa-devel@alsa-project.org, tiwai@suse.de, lgirdwood@gmail.com,
+	patches.audio@intel.com, linux-clk@vger.kernel.org,
+	harshapriya.n@intel.com,
+	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Subject: Re: [PATCH 5/6] ASoC: Intel: Skylake: Add ssp clock driver
+Message-ID: <20171024141517.GF15990@codeaurora.org>
+References: <1504794565-19168-6-git-send-email-subhransu.s.prusty@intel.com>
+ <20170907164642.GX3053@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170907164642.GX3053@localhost>
 List-ID: <linux-clk.vger.kernel.org>
 
-add power controller node for MT2712
+On 09/07, Vinod Koul wrote:
+> On Thu, Sep 07, 2017 at 07:59:24PM +0530, Subhransu S. Prusty wrote:
+> > From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+> > 
+> > For certain platforms it is required to start the clocks (mclk/sclk/fs)
+> > before the stream start. Example: for few chrome systems, codec needs the
+> > mclk/sclk to be enabled early for a successful clock synchronization and
+> > for few IVI platforms, clock need to be enabled at boot and should be ON
+> > always.
+> > 
+> > This patch creates virtual clock driver, which allows the machine driver to
+> > use the clock interface to send IPCs to DSP to enable/disable the clocks.
+> 
+> Mark, Michael, Stephen,
+> 
+> So this one adds a 'virtual' clock driver for audio clocks (mclk, bclk...)
+> and we have DSP configuring them.  The SW (driver) sends messages to DSP for
+> controlling these clocks, that is why we decided to keep this in ASoC, do
+> let us know if that is okay.
+> 
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I know there's a v2 and I'm replying here but this is fine from
+clk perspective. I tend to think of it as a "remote" driver
+instead where the clk control is done by a non-linux processor or
+"remote" processor, in this case the DSP. I'll ack v2.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index d2ee3cd..fa87f92 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt2712-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/mt2712-power.h>
- 
- / {
- 	compatible = "mediatek,mt2712";
-@@ -147,6 +148,21 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt2712-scpsys", "syscon";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MM_SEL>,
-+			 <&topckgen CLK_TOP_MFG_SEL>,
-+			 <&topckgen CLK_TOP_VENC_SEL>,
-+			 <&topckgen CLK_TOP_JPGDEC_SEL>,
-+			 <&topckgen CLK_TOP_A1SYS_HP_SEL>,
-+			 <&topckgen CLK_TOP_VDEC_SEL>;
-+		clock-names = "mm", "mfg", "venc",
-+			"jpgdec", "audio", "vdec";
-+		infracfg = <&infracfg>;
-+	};
-+
- 	uart5: serial@1000f000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
