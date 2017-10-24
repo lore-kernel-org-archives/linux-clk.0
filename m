@@ -1,248 +1,30 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 21/23] arm: dts: sun8i: a711: Add regulator support
-Date: Tue, 17 Oct 2017 11:06:28 +0200
-Message-Id: <4d3de5b4c36ea67135d898d982891a7913478d9d.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Romain Perier <romain.perier@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, philipp.tomsich@theobroma-systems.com, klaus.goger@theobroma-systems.com, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 4/4] arm64: dts: rockchip: add efuse for RK3368 SoCs
+Date: Tue, 24 Oct 2017 15:37:33 +0200
+Message-ID: <5744497.0PmpLyO0rR@phil>
+In-Reply-To: <20170904085119.25981-5-romain.perier@collabora.com>
+References: <20170904085119.25981-1-romain.perier@collabora.com> <20170904085119.25981-5-romain.perier@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 163 +++++++++++++++++++++--
- 1 file changed, 154 insertions(+), 9 deletions(-)
+Am Montag, 4. September 2017, 10:51:19 CEST schrieb Romain Perier:
+> This adds the definition for eFuse that is found on RK3368 SoCs with the
+> corresponding data cells.
+> 
+> Signed-off-by: Romain Perier <romain.perier@collabora.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index 723641f56a74..98dc0c22160b 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -43,7 +43,8 @@
- 
- /dts-v1/;
- #include "sun8i-a83t.dtsi"
--#include "sunxi-common-regulators.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "TBS A711 Tablet";
-@@ -105,7 +106,7 @@
- };
- 
- &mmc0 {
--	vmmc-supply = <&reg_vcc3v3>;
-+	vmmc-supply = <&reg_dcdc1>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
- 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
-@@ -117,8 +118,8 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	vmmc-supply = <&reg_vcc3v3>;
--	vqmmc-supply = <&reg_vcc3v3>;
-+	vmmc-supply = <&reg_dldo1>;
-+	vqmmc-supply = <&reg_dldo1>;
- 	non-removable;
- 	wakeup-source;
- 	status = "okay";
-@@ -135,8 +136,8 @@
- &mmc2 {
- 	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
- 	pinctrl-names = "default";
--	vmmc-supply = <&reg_vcc3v3>;
--	vqmmc-supply = <&reg_vcc3v3>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
- 	bus-width = <8>;
- 	non-removable;
- 	cap-mmc-hw-reset;
-@@ -147,10 +148,11 @@
- 	status = "okay";
- 
- 	axp813: pmic@3a3 {
--		compatible = "x-powers,axp813";
- 		reg = <0x3a3>;
- 		interrupt-parent = <&r_intc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		swin-supply = <&reg_dcdc1>;
-+		x-powers,drive-vbus-en;
- 	};
- 
- 	ac100: codec@e89 {
-@@ -179,6 +181,149 @@
- 
- };
- 
-+#include "axp813.dtsi"
-+
-+&reg_aldo1 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-1.8";
-+};
-+
-+&reg_aldo2 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-always-on;
-+	regulator-name = "vdd-drampll";
-+};
-+
-+&reg_aldo3 {
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-always-on;
-+	regulator-name = "avcc";
-+};
-+
-+&reg_dcdc1 {
-+	regulator-min-microvolt = <3100000>;
-+	regulator-max-microvolt = <3100000>;
-+	regulator-always-on;
-+	regulator-name = "vcc-io";
-+};
-+
-+&reg_dcdc2 {
-+	regulator-min-microvolt = <700000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-always-on;
-+	regulator-name = "vdd-cpu-A";
-+};
-+
-+&reg_dcdc3 {
-+	regulator-min-microvolt = <700000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-always-on;
-+	regulator-name = "vdd-cpu-B";
-+};
-+
-+&reg_dcdc4 {
-+	regulator-min-microvolt = <700000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-name = "vdd-gpu";
-+};
-+
-+&reg_dcdc5 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-always-on;
-+	regulator-name = "vcc-dram";
-+};
-+
-+&reg_dcdc6 {
-+	regulator-min-microvolt = <900000>;
-+	regulator-max-microvolt = <900000>;
-+	regulator-always-on;
-+	regulator-name = "vdd-sys";
-+};
-+
-+&reg_dldo1 {
-+	regulator-min-microvolt = <3100000>;
-+	regulator-max-microvolt = <3100000>;
-+	regulator-name = "vcc-wifi-io";
-+};
-+
-+&reg_dldo2 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <4200000>;
-+	regulator-name = "vcc-mipi";
-+};
-+
-+&reg_dldo3 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "vdd-csi";
-+};
-+
-+&reg_dldo4 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "avdd-csi";
-+};
-+
-+&reg_drivevbus {
-+	regulator-name = "usb0-vbus";
-+	status = "okay";
-+};
-+
-+&reg_eldo1 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "dvdd-csi-r";
-+};
-+
-+&reg_eldo2 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-dsi";
-+};
-+
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "dvdd-csi-f";
-+};
-+
-+&reg_fldo1 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vcc-hsic";
-+};
-+
-+&reg_fldo2 {
-+	regulator-min-microvolt = <700000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-always-on;
-+	regulator-name = "vdd-cpus";
-+};
-+
-+&reg_ldo_io0 {
-+	regulator-min-microvolt = <3100000>;
-+	regulator-max-microvolt = <3100000>;
-+	regulator-name = "vcc-ctp";
-+	status = "okay";
-+};
-+
-+&reg_ldo_io1 {
-+	regulator-min-microvolt = <3100000>;
-+	regulator-max-microvolt = <3100000>;
-+	regulator-name = "vcc-vb";
-+	status = "okay";
-+};
-+
-+&reg_sw {
-+	regulator-min-microvolt = <3100000>;
-+	regulator-max-microvolt = <3100000>;
-+	regulator-name = "vcc-lcd";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
-@@ -193,7 +338,7 @@
- };
- 
- &usbphy {
--	usb1_vbus_supply = <&reg_vcc5v0>;
--	usb2_vbus_supply = <&reg_vcc5v0>;
-+	usb1_vbus_supply = <&reg_vmain>;
-+	usb2_vbus_supply = <&reg_vmain>;
- 	status = "okay";
- };
--- 
-git-series 0.9.1
+applied for 4.15 after the following changes
+- moved efuse node to its correct position (determined by register address)
+- use correct clock-id as added by patch1 (efuse256 without the underscore)
+- added the #address- and #size-cells properties for the subnodes
+  to make dtc happy
+
+Please pay a bit more attention for future patches.
+
+
+Thanks
+Heiko
