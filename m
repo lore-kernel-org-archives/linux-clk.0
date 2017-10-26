@@ -1,96 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18312 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751339AbdJSCtH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Oct 2017 22:49:07 -0400
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v5 5/9] dt-bindings: soc: add MT2712 power dt-bindings
-Date: Thu, 19 Oct 2017 10:48:46 +0800
-Message-ID: <1508381330-3700-6-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 25 Oct 2017 21:13:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 6/7] dt-bindings: clock: Document qcom,apcs binding
+Message-ID: <20171026041326.GJ1575@tuxbook>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
+ <20170921164940.20343-7-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170921164940.20343-7-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add power dt-bindings for MT2712.
+On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
- include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 include/dt-bindings/power/mt2712-power.h
+> Add device-tree binding documentation for the Qualcom APCS clock
+> controller. This clock controller is a mux and half-integer divider
+> and provides the clock for the application CPU.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,apcs.txt        | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,apcs.txt b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> new file mode 100644
+> index 000000000000..8083bcc33ebe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,apcs.txt
+> @@ -0,0 +1,27 @@
+> +Qualcomm APCS Clock Controller Binding
+> +--------------------------------------
+> +The APCS hardware block provides a combined mux and half-integer divider
+> +functionality. It is used for a main CPU clock mux on MSM8916 platforms.
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +
+> +		"qcom,msm8916-apcs-clk"
+> +
+> +- clocks : shall be the phandle to the main input CPU PLL clock
+> +
+> +- #clock-cells : must be set to <0>
+> +
+> +Example:
+> +
+> +	apcs: mailbox@b011000 {
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 40056f7..76bf45b 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -12,11 +12,13 @@ power/power_domain.txt. It provides the power domains defined in
- - include/dt-bindings/power/mt8173-power.h
- - include/dt-bindings/power/mt6797-power.h
- - include/dt-bindings/power/mt2701-power.h
-+- include/dt-bindings/power/mt2712-power.h
- - include/dt-bindings/power/mt7622-power.h
- 
- Required properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2701-scpsys"
-+	- "mediatek,mt2712-scpsys"
- 	- "mediatek,mt6797-scpsys"
- 	- "mediatek,mt7622-scpsys"
- 	- "mediatek,mt8173-scpsys"
-@@ -27,6 +29,7 @@ Required properties:
-                       These are clocks which hardware needs to be
-                       enabled before enabling certain power domains.
- 	Required clocks for MT2701: "mm", "mfg", "ethif"
-+	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
- 	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT7622: "hif_sel"
- 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
-diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
-new file mode 100644
-index 0000000..92b46d7
---- /dev/null
-+++ b/include/dt-bindings/power/mt2712-power.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2017 MediaTek Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-+ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
-+#define _DT_BINDINGS_POWER_MT2712_POWER_H
-+
-+#define MT2712_POWER_DOMAIN_MM		0
-+#define MT2712_POWER_DOMAIN_VDEC	1
-+#define MT2712_POWER_DOMAIN_VENC	2
-+#define MT2712_POWER_DOMAIN_ISP		3
-+#define MT2712_POWER_DOMAIN_AUDIO	4
-+#define MT2712_POWER_DOMAIN_USB		5
-+#define MT2712_POWER_DOMAIN_USB2	6
-+#define MT2712_POWER_DOMAIN_MFG		7
-+
-+#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
--- 
-1.9.1
+This node describes the "apcs kpss global"-block.
 
+> +		compatible = "qcom,msm8916-apcs-kpss-global";
+> +		reg = <0xb011000 0x1000>;
+> +		#mbox-cells = <1>;
+> +
+> +		apcs_clk: apcs_clk {
+
+This node describes that your implementation is split in two different
+drivers.
+
+In other words, I think you should add the two clock properties to the
+apcs node, rather than adding a subnode. I also think you can make the
+mailbox driver implement the clock given the 8916 compatible.
+
+> +			compatible = "qcom,msm8916-apcs-clk";
+> +			clocks = <&a53pll>;
+> +			#clock-cells = <0>;
+> +		};
+> +	};
+
+Regards,
+Bjorn
