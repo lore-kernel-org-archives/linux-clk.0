@@ -1,66 +1,67 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 05/27] clk: ti: clkctrl: add support for retrying failed init
-Date: Mon, 30 Oct 2017 15:04:23 +0200
-Message-ID: <1509368685-29112-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] Rockchip clock updates for 4.15 round 1
+Date: Thu, 26 Oct 2017 09:18:45 +0200
+Message-ID: <4948420.5FYpQAHkKj@phil>
+In-Reply-To: <14384670.j3hM3TuojQ@phil>
+References: <14384670.j3hM3TuojQ@phil>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-In case the clkctrl node contains assigned-clock-* entries, registering
-the provider can fail with -EPROBE_DEFER. In this case, add the
-provider to the retry_init clock list so it will be cleaned up later.
+Hi Mike, Stephen,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clkctrl.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Am Dienstag, 17. Oktober 2017, 19:43:31 CEST schrieb Heiko Stuebner:
+> Hi Mike, Stephen,
+> 
+> please find below the (tiny) first round of Rockchip clock changes for 4.15.
+> Right now there isn't any more in the pipeline, but who knows that may
+> change yet.
+> 
+> Please pull.
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 91ddc92..0f78219 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -403,6 +403,12 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
- 	}
- }
- 
-+static void __init _clkctrl_add_provider(void *data,
-+					 struct device_node *np)
-+{
-+	of_clk_add_hw_provider(np, _ti_omap4_clkctrl_xlate, data);
-+}
-+
- static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- {
- 	struct omap_clkctrl_provider *provider;
-@@ -414,6 +420,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 	struct omap_clkctrl_clk *clkctrl_clk;
- 	const __be32 *addrp;
- 	u32 addr;
-+	int ret;
- 
- 	addrp = of_get_address(node, 0, NULL, NULL);
- 	addr = (u32)of_translate_address(node, addrp);
-@@ -508,7 +515,11 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		reg_data++;
- 	}
- 
--	of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
-+	ret = of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
-+	if (ret == -EPROBE_DEFER)
-+		ti_clk_retry_init(node, (void *)provider,
-+				  (ti_of_clk_init_cb_t)_clkctrl_add_provider);
-+
- 	return;
- 
- cleanup:
--- 
-1.9.1
+just a little ping for post-conference motivation :-)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks in advance
+Heiko
+
+
+
+> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+> 
+>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.15-rockchip-clk-1
+> 
+> for you to fetch changes up to 47e3ec0e4dae1714cc76596e38d16913f0e574e2:
+> 
+>   clk: rockchip: use new cif/vdpu clock ids on rk3188 (2017-10-14 21:32:11 +0200)
+> 
+> ----------------------------------------------------------------
+> Some new clock ids for rk3188 and rk3368 as well as removal of a
+> superfluous memory allocation error message.
+> 
+> ----------------------------------------------------------------
+> Heiko Stuebner (3):
+>       clk: rockchip: add more rk3188 graphics clock ids
+>       Merge branch 'v4.15-shared/clkids' into v4.15-clk/next
+>       clk: rockchip: use new cif/vdpu clock ids on rk3188
+> 
+> Markus Elfring (1):
+>       clk: rockchip: Remove superfluous error message in rockchip_clk_register_cpuclk()
+> 
+> Romain Perier (2):
+>       clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
+>       clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
+> 
+>  drivers/clk/rockchip/clk-cpu.c                |  2 --
+>  drivers/clk/rockchip/clk-rk3188.c             | 12 ++++++------
+>  drivers/clk/rockchip/clk-rk3368.c             |  2 +-
+>  include/dt-bindings/clock/rk3188-cru-common.h |  9 +++++++--
+>  include/dt-bindings/clock/rk3368-cru.h        |  1 +
+>  5 files changed, 15 insertions(+), 11 deletions(-)
+> 
