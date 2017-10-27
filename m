@@ -1,61 +1,72 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <20171002212435.GP457@codeaurora.org>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-4-joel@jms.id.au>
- <20171002212435.GP457@codeaurora.org>
-From: Joel Stanley <joel@jms.id.au>
-Date: Tue, 3 Oct 2017 15:18:00 +0930
-Message-ID: <CACPK8XeHj2xdw6HgkWRDiJPjurip3wVbkOmY0mGW=dSTVWsYmg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: aspeed: Add platform driver and register PLLs
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51438 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932189AbdJ0PJz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Oct 2017 11:09:55 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 07/10] ARM: sunxi: h3/h5: add simplefb nodes
+Date: Fri, 27 Oct 2017 23:06:55 +0800
+Message-Id: <20171027150658.18509-8-icenowy@aosc.io>
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 6:54 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 09/21, Joel Stanley wrote:
->> @@ -160,6 +191,104 @@ static struct clk_hw *aspeed_calc_pll(const char *name, u32 val)
->> +     /*
->> +      * Memory controller (M-PLL) PLL. This clock is configured by the
->> +      * bootloader, and is exposed to Linux as a read-only clock rate.
->> +      */
->> +     regmap_read(map, ASPEED_MPLL_PARAM, &val);
->> +     aspeed_clk_data->hws[ASPEED_CLK_MPLL] = aspeed_calc_pll("mpll", val);
->> +
->> +     /* SD/SDIO clock divider (TODO: There's a gate too) */
->> +     hw = clk_hw_register_divider_table(NULL, "sdio", "hpll", 0,
->
-> Please pass your dev pointer here from the platform device.
->
->> +                     scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
->> +                     div_table,
->> +                     &aspeed_clk_lock);
->
-> And check for errors? Perhaps use devm_clk_hw_regsiter() APIs and
-> construct the dividers and muxes directly instead of using the
-> basic type registration APIs.
+The H3/H5 SoCs have a HDMI output and a TV Composite output.
 
-Do you think that devm_ is overkill, given we will never unload this driver?
+Add simplefb nodes for these outputs.
 
-Can you explain why you suggest to construct the structures directly
-instead of using the APIs?
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-I had a read of the basic type registration functions, and the
-relevant failure paths are memory allocation failures. If we're out of
-memory that early in boot then things have gone pretty bad.
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 367319d22116..2ce0c3bb9896 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -53,6 +53,35 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0-hdmi";
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&ccu CLK_BUS_TCON0>, <&ccu CLK_BUS_HDMI>,
++				 <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>;
++			status = "disabled";
++		};
++
++		framebuffer-tve {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-tve";
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&ccu CLK_BUS_TCON1>, <&ccu CLK_BUS_TVE>,
++				 <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TVE>;
++			status = "disabled";
++		};
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+2.13.6
 
-I can add checks for null and bail out; I don't think there's value in
-freeing the allocated memory: if a system can't load it's clock driver
-then it's super hosed.
-
-Thanks for the review. I fixed all of the other things you mentioned.
-
-Cheers,
-
-Joel
