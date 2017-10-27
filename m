@@ -1,36 +1,91 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20171010091522.2286344-1-arnd@arndb.de>
-References: <20171010091522.2286344-1-arnd@arndb.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 10 Oct 2017 12:41:20 +0200
-Message-ID: <CAPDyKFozf1MfEgj2mCmogyJLzSmszoFXzg0Q=Ae-kv-itz+SGA@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: mark PM functions as __maybe_unused
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51376 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752503AbdJ0PJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Oct 2017 11:09:33 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 05/10] ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+Date: Fri, 27 Oct 2017 23:06:53 +0800
+Message-Id: <20171027150658.18509-6-icenowy@aosc.io>
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10 October 2017 at 11:15, Arnd Bergmann <arnd@arndb.de> wrote:
-> The suspend/resume functions are referenced conditionally, causing
-> a harmless warning when CONFIG_PM is disabled:
->
-> drivers/clk/samsung/clk-exynos5433.c:5476:12: error: 'exynos5433_cmu_resume' defined but not used [-Werror=unused-function]
-> drivers/clk/samsung/clk-exynos5433.c:5453:12: error: 'exynos5433_cmu_suspend' defined but not used [-Werror=unused-function]
->
-> This marks both as __maybe_unused to shut up the warning.
->
-> Fixes: 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The DE2 in H3/H5 has a clock control unit in it, and the behavior is
+slightly different between H3 and H5.
 
-FWIW:
+Add the common parts in H3/H5 DTSI, and add the compatible string in H3
+DTSI.
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+The compatible string of H5 DE2 CCU will be added in a separated patch.
 
-[...]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Use H3 DE2 CCU compatible as it's discovered that H3 and A83T DE2 CCU are
+  not equal.
+
+ arch/arm/boot/dts/sun8i-h3.dtsi    |  4 ++++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index b36f9f423c39..8495deecedad 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -85,6 +85,10 @@
+ 	compatible = "allwinner,sun8i-h3-ccu";
+ };
+ 
++&display_clocks {
++	compatible = "allwinner,sun8i-h3-de2-clk";
++};
++
+ &mmc0 {
+ 	compatible = "allwinner,sun7i-a20-mmc";
+ 	clocks = <&ccu CLK_BUS_MMC0>,
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index d7a71e726a9f..367319d22116 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -40,9 +40,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun8i-h3-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun8i-h3-ccu.h>
+ #include <dt-bindings/reset/sun8i-r-ccu.h>
+ 
+@@ -85,6 +87,18 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		display_clocks: clock@1000000 {
++			/* compatible is in per SoC .dtsi file */
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-h3-system-controller",
+ 				"syscon";
+-- 
+2.13.6
+
