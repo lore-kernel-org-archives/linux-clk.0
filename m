@@ -1,48 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Sat, 21 Oct 2017 07:10:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Timo Alho <talho@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: tegra: check BPMP response return code
-Message-ID: <20171021141038.GB15990@codeaurora.org>
-References: <cover.1504776489.git.talho@nvidia.com>
- <6a69e270519fd1c7a12a335053bf59671abc3c4b.1504776489.git.talho@nvidia.com>
- <20171017103736.GA30589@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171017103736.GA30589@ulmo>
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH v6 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
+Date: Fri, 27 Oct 2017 11:48:46 +0200
+Message-Id: <20171027094848.28365-5-o.rempel@pengutronix.de>
+In-Reply-To: <20171027094848.28365-1-o.rempel@pengutronix.de>
+References: <20171027094848.28365-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/17, Thierry Reding wrote:
-> On Thu, Sep 07, 2017 at 12:31:02PM +0300, Timo Alho wrote:
-> > Check return code in BPMP response message(s). The typical error case
-> > is when clock operation is attempted with invalid clock identifier.
-> > 
-> > Also remove error print from call to clk_get_info() as the
-> > implementation loops through range of all possible identifier, but the
-> > operation is expected error out when the clock id is unused.
-> > 
-> > Signed-off-by: Timo Alho <talho@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-bpmp.c | 15 ++++++++++-----
-> >  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> Hi Mike, Stephen,
-> 
-> do you mind if I pick this up into the Tegra tree? It has a build
-> dependency on patch 1/4.
-> 
-> I only now realized that you guys weren't on Cc, hence quoting in
-> full.
-> 
+Document the new optional "fsl,pmic-stby-poweroff" property.
 
-No worries
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
-
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index 444c47831a40..197f1a52e960 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -4,6 +4,13 @@ Required properties:
+ - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
+ - reg: I2C slave address
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
++  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
++  Use this option if the SoC should be powered off by external power
++  management IC (PMIC) on PMIC_STBY_REQ signal.
++  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
++
+ Required child node:
+ - regulators: This is the list of child nodes that specify the regulator
+   initialization data for defined regulators. Please refer to below doc
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
