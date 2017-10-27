@@ -1,55 +1,50 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1509470994.13838.28.camel@baylibre.com>
-Subject: Re: [PATCH v4 09/10] clk: add clk_rate_exclusive api
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King
- <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Quentin
- Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman
- <khilman@baylibre.com>
-Date: Tue, 31 Oct 2017 18:29:54 +0100
-In-Reply-To: <150899557300.90597.9865127803541159465@resonance>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
-	 <20170924200030.6227-10-jbrunet@baylibre.com>
-	 <150899557300.90597.9865127803541159465@resonance>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51359 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752503AbdJ0PJ1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Oct 2017 11:09:27 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 04/10] dt-bindings: simplefb-sunxi: add pipelines for DE2
+Date: Fri, 27 Oct 2017 23:06:52 +0800
+Message-Id: <20171027150658.18509-5-icenowy@aosc.io>
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-10-26 at 07:26 +0200, Michael Turquette wrote:
-> Hi Jerome,
-> 
-> Quoting Jerome Brunet (2017-09-24 22:00:29)
-> > @@ -1778,6 +1867,50 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
-> >  EXPORT_SYMBOL_GPL(clk_set_rate);
-> >  
-> >  /**
-> > + * clk_set_rate_exclusive - specify a new rate get exclusive control
-> > + * @clk: the clk whose rate is being changed
-> > + * @rate: the new rate for clk
-> > + *
-> > + * This is a combination of clk_set_rate() and clk_rate_exclusive_get()
-> > + * within a critical section
-> > + *
-> > + * This can be used initially to ensure that at least 1 consumer is
-> > + * statisfied when several consumers are competing for exclusivity over the
-> > + * same clock provider.
-> 
-> Please add the following here:
-> 
->   Calls to clk_rate_exclusive_get() should be balanced with calls to
->   clk_rate_exclusive_put().
+As we're going to add simplefb support for Allwinner SoCs with DE2, add
+suitable pipeline strings in the device tree binding.
 
-Oh indeed !
-I can do a resend with it or, if you prefer, you may directly amend the patch.
-As you prefer
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Adds Rob's ACK.
 
-Thanks
+ .../devicetree/bindings/display/simple-framebuffer-sunxi.txt          | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> 
-> Otherwise looks good to me.
-> 
-> Best regards,
-> Mike
+diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
+index a9168ae6946c..d693b8dc9a62 100644
+--- a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
++++ b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
+@@ -15,6 +15,10 @@ Required properties:
+   "de_be1-lcd1"
+   "de_be0-lcd0-hdmi"
+   "de_be1-lcd1-hdmi"
++  "mixer0-lcd0"
++  "mixer0-lcd0-hdmi"
++  "mixer1-lcd1-hdmi"
++  "mixer1-lcd1-tve"
+ 
+ Example:
+ 
+-- 
+2.13.6
+
