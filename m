@@ -1,59 +1,114 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170929225346.GN457@codeaurora.org>
-References: <20170924161919.24832-1-linus.walleij@linaro.org>
- <20170924161919.24832-2-linus.walleij@linaro.org> <20170929225346.GN457@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 1 Oct 2017 16:50:19 +0200
-Message-ID: <CACRpkdYD_zoyE7nXLZudhtWz-=JJnACe+s1UVOxvDH4vD8ypCA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: clk-gpio: Request GPIO descriptor as LOW
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 02/10] clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+Date: Fri, 27 Oct 2017 23:06:50 +0800
+Message-Id: <20171027150658.18509-3-icenowy@aosc.io>
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Sep 30, 2017 at 12:53 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 09/24, Linus Walleij wrote:
->> Requesting the GPIOD_OUT_LOW low will make sure the GPIO is
->> deasserted when requested. The gpiolib core will make sure that
->> if the GPIO line is active low, it will be logically driven high
->> when deasserted, see drivers/gpiolib.c gpiod_configure_flags().
->>
->> Cc: Sergej Sawazki <ce3a@gmx.de>
->> Cc: Jyri Sarha <jsarha@ti.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  drivers/clk/clk-gpio.c | 10 +---------
->>  1 file changed, 1 insertion(+), 9 deletions(-)
->>
->> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
->> index 9d057073e110..151513c655c3 100644
->> --- a/drivers/clk/clk-gpio.c
->> +++ b/drivers/clk/clk-gpio.c
->> @@ -109,14 +109,6 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
->>       if (!clk_gpio)
->>               return ERR_PTR(-ENOMEM);
->>
->> -     /*
->> -      * Set to disabled no matter what: NOTE if the GPIO line is active low
->> -      * the GPIO descriptor knows this and will set it high to deassert the
->> -      * line. This assumes the GPIO descriptor has been requested using
->> -      * GPIOD_ASIS by the callers so we need to initialize it as disabled here.
->> -      */
->> -     gpiod_set_value(gpiod, 0);
->> -
->
-> Is there a reason why we split this patch out and then deleted
-> the comment that was introduced in the previous patch? Why not
-> combine these two patches into one?
+Allwinner H3 features a DE2 CCU like the one on A83T, however the
+parent of the clocks is the DE module clock, not the PLL_DE clock.
 
-I was worried about the semantic ordering here (in the old code this pulling
-low happens at a different point in the sequence) so bisect would find that.
+Add support for it.
 
-But maybe it's just me being overly cautious.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 47 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-If you prefer, feel free to squash them when applying.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index 5cc9d9952121..2db5d4e00ea7 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -41,6 +41,8 @@ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+ 
+ static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+ 		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
++		   CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
+ 
+@@ -65,6 +67,20 @@ static struct ccu_common *sun8i_a83t_de2_clks[] = {
+ 	&wb_div_a83_clk.common,
+ };
+ 
++static struct ccu_common *sun8i_h3_de2_clks[] = {
++	&mixer0_clk.common,
++	&mixer1_clk.common,
++	&wb_clk.common,
++
++	&bus_mixer0_clk.common,
++	&bus_mixer1_clk.common,
++	&bus_wb_clk.common,
++
++	&mixer0_div_clk.common,
++	&mixer1_div_clk.common,
++	&wb_div_clk.common,
++};
++
+ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+ 	&mixer0_clk.common,
+ 	&wb_clk.common,
+@@ -93,6 +109,23 @@ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
++static struct clk_hw_onecell_data sun8i_h3_de2_hw_clks = {
++	.hws	= {
++		[CLK_MIXER0]		= &mixer0_clk.common.hw,
++		[CLK_MIXER1]		= &mixer1_clk.common.hw,
++		[CLK_WB]		= &wb_clk.common.hw,
++
++		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
++		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
++		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
++
++		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
+ static struct clk_hw_onecell_data sun8i_v3s_de2_hw_clks = {
+ 	.hws	= {
+ 		[CLK_MIXER0]		= &mixer0_clk.common.hw,
+@@ -133,6 +166,16 @@ static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
+ };
+ 
++static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
++	.ccu_clks	= sun8i_h3_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun8i_h3_de2_clks),
++
++	.hw_clks	= &sun8i_h3_de2_hw_clks,
++
++	.resets		= sun8i_a83t_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
++};
++
+ static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
+ 	.ccu_clks	= sun8i_a83t_de2_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
+@@ -238,6 +281,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
+ 		.data = &sun8i_a83t_de2_clk_desc,
+ 	},
+ 	{
++		.compatible = "allwinner,sun8i-h3-de2-clk",
++		.data = &sun8i_h3_de2_clk_desc,
++	},
++	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-clk",
+ 		.data = &sun8i_v3s_de2_clk_desc,
+ 	},
+-- 
+2.13.6
