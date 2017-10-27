@@ -1,79 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38418 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753146AbdJKJZZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Oct 2017 05:25:25 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 0/5] Fix problems with Exynos4412 ISP clocks
-Date: Wed, 11 Oct 2017 11:25:10 +0200
-Message-id: <20171011092515.1698-1-m.szyprowski@samsung.com>
-References: <CGME20171011092520eucas1p15370b8f6ecbe832b3fbb1e52ba9ed040@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH RESEND v6 0/6] provide power off support for iMX6 with external PMIC
+Date: Fri, 27 Oct 2017 11:48:42 +0200
+Message-Id: <20171027094848.28365-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi!
+Last version of this patch set was send at 20 Jun 2017, this is a rebase against
+kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
+please point me.
 
-Exynos4412 ISP clock controller is located in the SOC area, which belongs
-to ISP power domain. This was not properly handled by the current
-Exynos4-clk driver. This patchset instantiates a separate clock driver
-for those clocks, updates all clients of ISP clocks and ensures that
-the driver is properly integrated in ISP power domin using runtime PM
-feature of the clock framework.
+This patch series is providing power off support for Freescale/NXP iMX6 based
+boards with external power management integrated circuit (PMIC).
 
-This finally solves all the mysterious freezes in accessing ISP clocks
-when ISP power domain is disabled.
+changes:
+v6:
+ - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+ - fix "MPIC_STBY_REQ" typo in the comment.
 
-The last patch breaks support for old dtbs. It can be applied when all
-boards are updated. Exynos4412 ISP subsystem is only used by Trats2
-boards, for which kernel is updated always together with the dtb file,
-so the last patch can be applied to the next kernel release after merging
-the DTS patch.
+v5:
+ - remove useless includes from pm-imx6.c patch
+ - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
+   patch
 
-This patchset requires clocks runtime PM support ("Add runtime PM support
-for clocks (on Exynos SoC example)" v9 patchset), which has been recently
-merged to clk-next.
+v4:
+ - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
+   patch
+ - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+   patch
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
 v3:
-- moved dt-bindings changes to separate patch and rewrote dt bindings
-  documentation as requrested by Rob Herring
+ - set pm_power_off_prepare = NULL on .remove.
+ - documentation and spelling fixes.
+ - use %pf instead of lookup_symbol_name.
 
-v2: https://www.spinics.net/lists/linux-samsung-soc/msg60737.html
-- fixed minor issues pointed by Krzysztof Kozlowski
+Oleksij Rempel (6):
+  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+    property
+  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+    is set
+  kernel/reboot.c: export pm_power_off_prepare
+  regulator: pfuze100: add fsl,pmic-stby-poweroff property
+  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+  ARM: dts: imx6: RIoTboard provide standby on power off option
 
-v1: https://www.spinics.net/lists/linux-clk/msg20274.html
-- initial version of this patchset
-
-Patch summary:
-
-Marek Szyprowski (5):
-  clk: samsung: Instantiate Exynos4412 ISP clocks only when available
-  clk: samsung: Add dt bindings for Exynos4412 ISP clock controller
-  clk: samsung: Add a separate driver for Exynos4412 ISP clocks
-  ARM: dts: exynos: Add Exynos4412 ISP clock controller
-  clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
-
- .../devicetree/bindings/clock/exynos4-clock.txt    |  43 +++++
- arch/arm/boot/dts/exynos4412.dtsi                  |  71 ++++----
- drivers/clk/samsung/Makefile                       |   1 +
- drivers/clk/samsung/clk-exynos4.c                  |  66 +-------
- drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
- include/dt-bindings/clock/exynos4.h                |  65 ++++----
- 6 files changed, 303 insertions(+), 122 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
+ .../devicetree/bindings/clock/imx6q-clock.txt      |  8 ++
+ .../devicetree/bindings/regulator/pfuze100.txt     |  7 ++
+ arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
+ arch/arm/mach-imx/pm-imx6.c                        | 25 ++++++
+ drivers/regulator/pfuze100-regulator.c             | 92 ++++++++++++++++++++++
+ kernel/reboot.c                                    |  1 +
+ 6 files changed, 138 insertions(+)
 
 -- 
-2.14.2
-
+2.11.0
