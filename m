@@ -1,32 +1,60 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net> <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 3 Oct 2017 22:25:37 +0200
-Message-ID: <CACRpkdbQQKXYRMe+qvOfnN3ESex7NJ7RzfSfJsAQQpDeeEu9wg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk/versatile: Delete two error messages for a failed
- memory allocation in icst_clk_setup()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51468 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932281AbdJ0PKJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Oct 2017 11:10:09 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 08/10] dt-bindings: add binding for A64 DE2 CCU SRAM
+Date: Fri, 27 Oct 2017 23:06:56 +0800
+Message-Id: <20171027150658.18509-9-icenowy@aosc.io>
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 9:39 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+A64's Display Engine 2.0 needs a section of SRAM (SRAM C) to be claimed,
+otherwise the whole DE2 memory zone cannot be accessed (kept to all 0).
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:21:23 +0200
->
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Add binding for this, in order to make the DE2 CCU able to claim the
+SRAM and enable access to the DE2 clock and reset registers.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Adds description of the situation when the SRAM is not claimed.
 
-Yours,
-Linus Walleij
+ Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+index f2fa87c4765c..a7d558a2b9b2 100644
+--- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -6,6 +6,7 @@ Required properties :
+ 		- "allwinner,sun8i-a83t-de2-clk"
+ 		- "allwinner,sun8i-h3-de2-clk"
+ 		- "allwinner,sun8i-v3s-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk"
+ 		- "allwinner,sun50i-h5-de2-clk"
+ 
+ - reg: Must contain the registers base address and length
+@@ -18,6 +19,10 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+ 
++Additional required properties for "allwinner,sun50i-a64-de2-clk" :
++- allwinner,sram: See Documentation/devicetree/bindings/sram/sunxi-sram.txt,
++		  should be the SRAM C section on A64 SoC.
++
+ Example:
+ de2_clocks: clock@1000000 {
+ 	compatible = "allwinner,sun8i-h3-de2-clk";
+-- 
+2.13.6
+
