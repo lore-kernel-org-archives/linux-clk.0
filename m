@@ -1,138 +1,91 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55336 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759958AbdJQJGt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Oct 2017 05:06:49 -0400
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Mylene Josserand <mylene.josserand@free-electrons.com>
-Subject: [PATCH 23/23] arm: dts: sun8i: a711: Enable the LCD
-Date: Tue, 17 Oct 2017 11:06:30 +0200
-Message-Id: <148ef066f9390f25fc7d4da4b4ea89862dfef06c.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:49242 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751390AbdJ1RgO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Oct 2017 13:36:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <20171012231709.GH18706@codeaurora.org>
+References: <1507166751-2012-1-git-send-email-yamada.masahiro@socionext.com> <20171012231709.GH18706@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 29 Oct 2017 02:35:29 +0900
+Message-ID: <CAK7LNATuSGfQwL1sP9Z9qtkWgnO5agfPbYjs5m6EkOvexTzzZA@mail.gmail.com>
+Subject: Re: [RFC PATCH] clk: move of_clk_get_parent_count() declaration to <linux/__clk.h>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        linux-fbdev@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A711 has 1024x600 LVDS panel, with a PWM-based backlight. Add it to our
-DT.
+Hi Stephen,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 62 ++++++++++++++++++++++++-
- 1 file changed, 62 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index e4d08bff3158..5abcb3c9f4b3 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -45,6 +45,7 @@
- #include "sun8i-a83t.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "TBS A711 Tablet";
-@@ -59,6 +60,44 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		enable-gpios = <&pio 3 29 GPIO_ACTIVE_HIGH>;
-+
-+		brightness-levels = <0 1 2 4 8 16 32 64 128 255>;
-+		default-brightness-level = <9>;
-+	};
-+
-+	panel {
-+		compatible = "tbs,a711-panel", "panel-lvds";
-+		backlight = <&backlight>;
-+		power-supply = <&reg_sw>;
-+
-+		width-mm = <153>;
-+		height-mm = <90>;
-+		data-mapping = "vesa-24";
-+
-+		panel-timing {
-+			/* 1024x600 @60Hz */
-+			clock-frequency = <52000000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hsync-len = <20>;
-+			hfront-porch = <180>;
-+			hback-porch = <160>;
-+			vfront-porch = <12>;
-+			vback-porch = <23>;
-+			vsync-len = <5>;
-+		};
-+
-+		port {
-+			panel_input: endpoint {
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+
- 	reg_vbat: reg-vbat {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vbat";
-@@ -89,6 +128,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- /*
-  * An USB-2 hub is connected here, which also means we don't need to
-  * enable the OHCI controller.
-@@ -144,6 +187,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -324,6 +373,19 @@
- 	regulator-name = "vcc-lcd";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_lvds_pins>;
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
+2017-10-13 8:17 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 10/05, Masahiro Yamada wrote:
+>> The clock consumer, drivers/video/fbdev/simplefb.c, includes
+>> <linux/clk-provider.h> just for calling of_clk_get_parent_count().
+>> This is ugly.
+>>
+>> Looking at simplefb_clocks_get(), of_clk_get_parent_count() seems
+>> useful for clock consumers as well as for clock providers.
+>>
+>> Unfortunately, we do not have a good home for declarations shared
+>> between consumers and providers.
+>>
+>> Create a new header <linux/__clk.h>, and move it over to it.  This
+>> header must be included via <linux/clk.h> or <linux/clk-provider.h>
+>> (this is why it is prefixed with double-underscore).  Add #error
+>> so the build terminates if it is included directly.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>
+> How about we add a get_all_the_clks_for_the_device() sort of API
+> that uses the bulk clk code but also allocates the array by
+> reading the number of clks from DT? Please think of a better name
+> of course. We can figure out how to handle non-DT platforms if we
+> need to. With clkdev we could probably handle it with some sort
+> of lookup table search given a device name. Don't add that part
+> until we have a user though. I assume simplefb is all DT
+> platforms?
+
+of_reset_control_array_get() is implemented like that.
+
+It gets all the resets specified in DT, and automatically
+allocates the array of necessary number of pointers.
+
+clk-bulk and reset-array were implemented in a different way.
+
+
+
+> Either way, it looks like what we really want here is a way to
+> get every clk for a device and not look at the details.
+
+Yes.  This is helpful for generic drivers.
+
+
+>  USB has a
+> similar case, which I think Shawn Guo/Dong Aisheng was trying to
+> add an OF based bulk clk_get() API called of_clk_bulk_get()
+> for[1]. If this get all clks API works there too then we should
+> use it. If it can be non-DT specific, even better.
+>
+> [1] http://lkml.kernel.org/r/1506415441-4435-1-git-send-email-aisheng.dong@nxp.com
+
+OK, we can implement it based on Shawn/Dong's work.
+
+My concern is clk-bulk.c still needs to include #<linux/clk-provider.h>,
+but it is a bit odd since clk-bulk.c is a helper for clk consumers.
+
+
 -- 
-git-series 0.9.1
+Best Regards
+Masahiro Yamada
