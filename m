@@ -1,100 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:14112
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751079AbdJBKcs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Oct 2017 06:32:48 -0400
-From: Adriana Reus <adriana.reus@nxp.com>
-To: sboyd@codeaurora.org, mturquette@baylibre.com
-Cc: anson.huang@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Adriana Reus <adriana.reus@nxp.com>
-Subject: [PATCH RESEND 2/2] clk: imx: imx7d: Remove ARM_M0 clock
-Date: Mon,  2 Oct 2017 13:32:11 +0300
-Message-Id: <1506940331-16742-3-git-send-email-adriana.reus@nxp.com>
-In-Reply-To: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
-References: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 23/27] dt-bindings: clk: add dm814 clkctrl definitions
+Date: Mon, 30 Oct 2017 15:04:41 +0200
+Message-ID: <1509368685-29112-24-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-IMX7d does not have an M0 Core and this particular
-clock doesn't seem connected to anything else.
-Remove this entry from the CCM driver.
+Contains offsets for all dm814 clkctrl main and optional clocks.
 
-Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/imx/clk-imx7d.c             | 9 ---------
- include/dt-bindings/clock/imx7d-clock.h | 8 ++++----
- 2 files changed, 4 insertions(+), 13 deletions(-)
+ include/dt-bindings/clock/dm814.h | 45 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 include/dt-bindings/clock/dm814.h
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 0ac9b30..80dc211 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -54,11 +54,6 @@ static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
--static const char *arm_m0_sel[] = { "osc", "pll_sys_main_120m_clk",
--	"pll_enet_125m_clk", "pll_sys_pfd2_135m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
--	"pll_usb_main_clk", };
--
- static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
- 	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
-@@ -510,7 +505,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_SRC] = imx_clk_mux2("arm_a7_src", base + 0x8000, 24, 3, arm_a7_sel, ARRAY_SIZE(arm_a7_sel));
- 	clks[IMX7D_ARM_M4_ROOT_SRC] = imx_clk_mux2("arm_m4_src", base + 0x8080, 24, 3, arm_m4_sel, ARRAY_SIZE(arm_m4_sel));
--	clks[IMX7D_ARM_M0_ROOT_SRC] = imx_clk_mux2("arm_m0_src", base + 0x8100, 24, 3, arm_m0_sel, ARRAY_SIZE(arm_m0_sel));
- 	clks[IMX7D_MAIN_AXI_ROOT_SRC] = imx_clk_mux2("axi_src", base + 0x8800, 24, 3, axi_sel, ARRAY_SIZE(axi_sel));
- 	clks[IMX7D_DISP_AXI_ROOT_SRC] = imx_clk_mux2("disp_axi_src", base + 0x8880, 24, 3, disp_axi_sel, ARRAY_SIZE(disp_axi_sel));
- 	clks[IMX7D_ENET_AXI_ROOT_SRC] = imx_clk_mux2("enet_axi_src", base + 0x8900, 24, 3, enet_axi_sel, ARRAY_SIZE(enet_axi_sel));
-@@ -582,7 +576,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_CG] = imx_clk_gate3("arm_a7_cg", "arm_a7_src", base + 0x8000, 28);
- 	clks[IMX7D_ARM_M4_ROOT_CG] = imx_clk_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
--	clks[IMX7D_ARM_M0_ROOT_CG] = imx_clk_gate3("arm_m0_cg", "arm_m0_src", base + 0x8100, 28);
- 	clks[IMX7D_MAIN_AXI_ROOT_CG] = imx_clk_gate3("axi_cg", "axi_src", base + 0x8800, 28);
- 	clks[IMX7D_DISP_AXI_ROOT_CG] = imx_clk_gate3("disp_axi_cg", "disp_axi_src", base + 0x8880, 28);
- 	clks[IMX7D_ENET_AXI_ROOT_CG] = imx_clk_gate3("enet_axi_cg", "enet_axi_src", base + 0x8900, 28);
-@@ -721,7 +714,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_DIV] = imx_clk_divider2("arm_a7_div", "arm_a7_cg", base + 0x8000, 0, 3);
- 	clks[IMX7D_ARM_M4_ROOT_DIV] = imx_clk_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
--	clks[IMX7D_ARM_M0_ROOT_DIV] = imx_clk_divider2("arm_m0_div", "arm_m0_cg", base + 0x8100, 0, 3);
- 	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
- 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
- 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
-@@ -793,7 +785,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
- 	clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
--	clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk", "arm_m0_div", base + 0x4020, 0);
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
- 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index de62a83..e2f99ae 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -80,10 +80,10 @@
- #define IMX7D_ARM_M4_ROOT_SRC		67
- #define IMX7D_ARM_M4_ROOT_CG		68
- #define IMX7D_ARM_M4_ROOT_DIV		69
--#define IMX7D_ARM_M0_ROOT_CLK		70
--#define IMX7D_ARM_M0_ROOT_SRC		71
--#define IMX7D_ARM_M0_ROOT_CG		72
--#define IMX7D_ARM_M0_ROOT_DIV		73
-+#define IMX7D_ARM_M0_ROOT_CLK		70	/* unused */
-+#define IMX7D_ARM_M0_ROOT_SRC		71	/* unused */
-+#define IMX7D_ARM_M0_ROOT_CG		72	/* unused */
-+#define IMX7D_ARM_M0_ROOT_DIV		73	/* unused */
- #define IMX7D_MAIN_AXI_ROOT_CLK		74
- #define IMX7D_MAIN_AXI_ROOT_SRC		75
- #define IMX7D_MAIN_AXI_ROOT_CG		76
+diff --git a/include/dt-bindings/clock/dm814.h b/include/dt-bindings/clock/dm814.h
+new file mode 100644
+index 0000000..0e7099a
+--- /dev/null
++++ b/include/dt-bindings/clock/dm814.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright 2017 Texas Instruments, Inc.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __DT_BINDINGS_CLK_DM814_H
++#define __DT_BINDINGS_CLK_DM814_H
++
++#define DM814_CLKCTRL_OFFSET	0x0
++#define DM814_CLKCTRL_INDEX(offset)	((offset) - DM814_CLKCTRL_OFFSET)
++
++/* default clocks */
++#define DM814_USB_OTG_HS_CLKCTRL	DM814_CLKCTRL_INDEX(0x58)
++
++/* alwon clocks */
++#define DM814_UART1_CLKCTRL	DM814_CLKCTRL_INDEX(0x150)
++#define DM814_UART2_CLKCTRL	DM814_CLKCTRL_INDEX(0x154)
++#define DM814_UART3_CLKCTRL	DM814_CLKCTRL_INDEX(0x158)
++#define DM814_GPIO1_CLKCTRL	DM814_CLKCTRL_INDEX(0x15c)
++#define DM814_GPIO2_CLKCTRL	DM814_CLKCTRL_INDEX(0x160)
++#define DM814_I2C1_CLKCTRL	DM814_CLKCTRL_INDEX(0x164)
++#define DM814_I2C2_CLKCTRL	DM814_CLKCTRL_INDEX(0x168)
++#define DM814_WD_TIMER_CLKCTRL	DM814_CLKCTRL_INDEX(0x18c)
++#define DM814_MCSPI1_CLKCTRL	DM814_CLKCTRL_INDEX(0x190)
++#define DM814_GPMC_CLKCTRL	DM814_CLKCTRL_INDEX(0x1d0)
++#define DM814_CPGMAC0_CLKCTRL	DM814_CLKCTRL_INDEX(0x1d4)
++#define DM814_MPU_CLKCTRL	DM814_CLKCTRL_INDEX(0x1dc)
++#define DM814_RTC_CLKCTRL	DM814_CLKCTRL_INDEX(0x1f0)
++#define DM814_TPCC_CLKCTRL	DM814_CLKCTRL_INDEX(0x1f4)
++#define DM814_TPTC0_CLKCTRL	DM814_CLKCTRL_INDEX(0x1f8)
++#define DM814_TPTC1_CLKCTRL	DM814_CLKCTRL_INDEX(0x1fc)
++#define DM814_TPTC2_CLKCTRL	DM814_CLKCTRL_INDEX(0x200)
++#define DM814_TPTC3_CLKCTRL	DM814_CLKCTRL_INDEX(0x204)
++#define DM814_MMC1_CLKCTRL	DM814_CLKCTRL_INDEX(0x21c)
++#define DM814_MMC2_CLKCTRL	DM814_CLKCTRL_INDEX(0x220)
++#define DM814_MMC3_CLKCTRL	DM814_CLKCTRL_INDEX(0x224)
++
++#endif
 -- 
-2.7.4
+1.9.1
 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
