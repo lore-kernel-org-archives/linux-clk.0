@@ -1,51 +1,52 @@
-Return-Path: <nicoleotsuka@gmail.com>
-Return-Path: <nicoleotsuka@gmail.com>
-Date: Thu, 19 Oct 2017 11:42:24 -0700
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: sboyd@codeaurora.org, pdeschrijver@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, jonathanh@nvidia.com,
-	mturquette@baylibre.com, pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
- tegra210_clock_init
-Message-ID: <20171019184223.GA7415@Asurada-Nvidia>
-References: <1505502613-11801-1-git-send-email-nicoleotsuka@gmail.com>
- <20171019092919.GA7252@Asurada>
- <20171019094422.GI9005@ulmo>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 01/27] clk: ti: clkctrl: fix error messages to print out node name properly
+Date: Mon, 30 Oct 2017 15:04:19 +0200
+Message-ID: <1509368685-29112-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171019094422.GI9005@ulmo>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 11:44:22AM +0200, Thierry Reding wrote:
-> > > Below is the call trace of tegra210_init_pllu() function:
-> > >   start_kernel()
-> > >   -> time_init()
-> > >   --> of_clk_init()
-> > >   ---> tegra210_clock_init()
-> > >   ----> tegra210_pll_init()
-> > >   -----> tegra210_init_pllu()
+Current node name does not convey any information, as it is always "clk".
+Instead, print out the full node path, which will tell us better where
+something went wrong.
 
-> I'm wondering why we're not seeing a splat for this. Usually the kernel
-> will warn if you sleep during atomic context. Does this mean we're just
-> not hitting that case?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clkctrl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Yes.
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 53e71d0..2db7d40 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -351,8 +351,8 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+ 	if (ti_clk_parse_divider_data((int *)div_data->dividers,
+ 				      div_data->max_div, 0, 0,
+ 				      &div->width, &div->table)) {
+-		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
+-		       node->name, offset, data->bit);
++		pr_err("%s: Data parsing for %pOF:%04x:%d failed\n", __func__,
++		       node, offset, data->bit);
+ 		kfree(div);
+ 		return;
+ 	}
+@@ -428,7 +428,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	}
+ 
+ 	if (!data->addr) {
+-		pr_err("%s not found from clkctrl data.\n", node->name);
++		pr_err("%pOF not found from clkctrl data.\n", node);
+ 		return;
+ 	}
+ 
+-- 
+1.9.1
 
-> readx_poll_timeout() has a might_sleep_if(), and
-> therefore it should always cause the splat.
-
-That's true as long as CONFIG_DEBUG_ATOMIC_SLEEP is enabled locally.
-
-> Any ideas why this has gone unnoticed for all this time?
-
-We can see in the tegra210_init_pllu() function that it'll not call
-tegra210_enable_pllu() if pllu is already enabled (by bootloader).
-
-You can verify it by adding an irqs_disabled() in this routine. The
-function is called during system-boot and suspend-n-resume. And both
-cases should be irqs_disabled().
-
-Thanks
-Nicolin
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
