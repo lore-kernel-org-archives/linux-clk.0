@@ -1,63 +1,177 @@
 Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <20171002213742.GQ457@codeaurora.org>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-5-joel@jms.id.au>
- <20171002213742.GQ457@codeaurora.org>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
 From: Joel Stanley <joel@jms.id.au>
-Date: Tue, 3 Oct 2017 15:17:17 +0930
-Message-ID: <CACPK8XdrqmBC8M+=NDUVhYKPafw-Qc8fRikV+xJ84FyzG6BfxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: aspeed: Register gated clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
 	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v5 5/5] clk: aspeed: Add reset controller
+Date: Mon, 30 Oct 2017 16:32:50 +1030
+Message-Id: <20171030060250.701-6-joel@jms.id.au>
+In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
+References: <20171030060250.701-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 7:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 09/21, Joel Stanley wrote:
->> The majority of the clocks in the system are gates paired with a reset
->> controller that holds the IP in reset.
->>
->> This borrows from clk_hw_register_gate, but registers two 'gates', one
->> to control the clock enable register and the other to control the reset
->> IP. This allows us to enforce the ordering:
->>
->>  1. Place IP in reset
->>  2. Enable clock
->>  3. Delay
->>  4. Release reset
->>
->> There are some gates that do not have an associated reset; these are
->> handled by using -1 as the index for the reset.
->
-> Half of these aren't clks, but reset bits? Perhaps you should
-> register power domains for these things and then have the power
-> domain assert the reset, enable the clock, delay, and then
-> release the reset in the poweron callback. Then device drivers
-> don't have to be aware of the ordering, and you can keep
-> enforcing the ordering in one place, but we don't have to make
-> fake gates and shoehorn the sequence into the clk framework.
+There are some resets that are not associated with gates. These are
+represented by a reset controller.
 
-I had a look. We've got 24 gates being registered, and half are just
-gate+reset pairs, while the other half are both. Some of them have
-clocks with divisors upstream of the gate, so in those cases we do
-care what the rate is. For the others they are simply bringing the IP
-online.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v5:
+  - Add Andrew's Reviewed-by
+v3:
+  - Add named initalisers for the reset defines
+  - Add define for ADC
+---
+ drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h | 10 ++++
+ 2 files changed, 91 insertions(+), 1 deletion(-)
 
-Note that we don't have drivers for all of the peripherals, so things
-may change once those drivers are written.
-
-I hadn't looked into the power domain stuff - when I brought this up
-on the list recently Philip suggested that this should be contained in
-a clk driver, so that's the direction we went:
-
- http://www.spinics.net/lists/linux-clk/msg18733.html
-
-Cheers,
-
-Joel
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index df5bc57a6ee2..d91e86c70e0c 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -275,6 +276,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.is_enabled = aspeed_clk_is_enabled,
+ };
+ 
++/**
++ * struct aspeed_reset - Aspeed reset controller
++ * @map: regmap to access the containing system controller
++ * @rcdev: reset controller device
++ */
++struct aspeed_reset {
++	struct regmap			*map;
++	struct reset_controller_dev	rcdev;
++};
++
++#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++
++static const u8 aspeed_resets[] = {
++	[ASPEED_RESET_XDMA]	= 25,
++	[ASPEED_RESET_MCTP]	= 24,
++	[ASPEED_RESET_ADC]	= 23,
++	[ASPEED_RESET_JTAG_MASTER] = 22,
++	[ASPEED_RESET_MIC]	= 18,
++	[ASPEED_RESET_PWM]	=  9,
++	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_I2C]	=  2,
++	[ASPEED_RESET_AHB]	=  1,
++};
++
++static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++}
++
++static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++}
++
++static int aspeed_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 val, rst = BIT(aspeed_resets[id]);
++	int ret;
++
++	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return !!(val & rst);
++}
++
++static const struct reset_control_ops aspeed_reset_ops = {
++	.assert = aspeed_reset_assert,
++	.deassert = aspeed_reset_deassert,
++	.status = aspeed_reset_status,
++};
++
+ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+@@ -316,10 +379,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+ 	struct device *dev = &pdev->dev;
++	struct aspeed_reset *ar;
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
+-	int i;
++	int i, ret;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -327,6 +391,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
+ 
++	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
++	if (!ar)
++		return -ENOMEM;
++
++	ar->map = map;
++	ar->rcdev.owner = THIS_MODULE;
++	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
++	ar->rcdev.ops = &aspeed_reset_ops;
++	ar->rcdev.of_node = dev->of_node;
++
++	ret = devm_reset_controller_register(dev, &ar->rcdev);
++	if (ret) {
++		dev_err(dev, "could not register reset controller\n");
++		return ret;
++	}
++
+ 	/* SoC generations share common layouts but have different divisors */
+ 	soc_data = of_device_get_match_data(dev);
+ 	if (!soc_data) {
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index 4a99421d77c8..8e19646d8025 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -39,4 +39,14 @@
+ 
+ #define ASPEED_NUM_CLKS			35
+ 
++#define ASPEED_RESET_XDMA		0
++#define ASPEED_RESET_MCTP		1
++#define ASPEED_RESET_ADC		2
++#define ASPEED_RESET_JTAG_MASTER	3
++#define ASPEED_RESET_MIC		4
++#define ASPEED_RESET_PWM		5
++#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_I2C		7
++#define ASPEED_RESET_AHB		8
++
+ #endif
+-- 
+2.14.1
