@@ -1,75 +1,205 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Rob Herring <robh@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <20171005203355.5lftjytx5f6rhe2d@rob-hp-laptop>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4cb9745d-4bc1-57f0-f4ee-c12089d0c190@gmail.com>
-Date: Fri, 6 Oct 2017 00:30:59 +0300
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 17/27] dt-bindings: clk: add dra7 clkctrl definitions
+Date: Mon, 30 Oct 2017 15:04:35 +0200
+Message-ID: <1509368685-29112-18-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20171005203355.5lftjytx5f6rhe2d@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05.10.2017 23:33, Rob Herring wrote:
-> On Tue, Sep 26, 2017 at 02:22:04AM +0300, Dmitry Osipenko wrote:
->> Document DT bindings for NVIDIA Tegra AHB DMA controller that presents
->> on Tegra20/30 SoC's.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../bindings/dma/nvidia,tegra20-ahbdma.txt         | 23 ++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>
->> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->> new file mode 100644
->> index 000000000000..2af9aa76ae11
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->> @@ -0,0 +1,23 @@
->> +* NVIDIA Tegra AHB DMA controller
->> +
->> +Required properties:
->> +- compatible:	Must be "nvidia,tegra20-ahbdma"
->> +- reg:		Should contain registers base address and length.
->> +- interrupts:	Should contain one entry, DMA controller interrupt.
->> +- clocks:	Should contain one entry, DMA controller clock.
->> +- resets :	Should contain one entry, DMA controller reset.
->> +- #dma-cells:	Should be <1>. The cell represents DMA request select value
->> +		for the peripheral. For more details consult the Tegra TRM's
->> +		documentation, in particular AHB DMA channel control register
->> +		REQ_SEL field.
->> +
->> +Example:
->> +
->> +ahbdma: ahbdma@60008000  {
-> 
-> Use standard node names. dma-controller in this case.
-> 
+Contains offsets for all dra7 clkctrl main and optional clocks.
 
-Okay, I'll change it in v3. Thank you for the comment.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/dt-bindings/clock/dra7.h | 172 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 172 insertions(+)
+ create mode 100644 include/dt-bindings/clock/dra7.h
 
->> +	compatible = "nvidia,tegra20-ahbdma";
->> +	reg = <0x60008000 0x2000>;
->> +	interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
->> +	clocks = <&tegra_car TEGRA20_CLK_AHBDMA>;
->> +	resets = <&tegra_car 33>;
->> +	#dma-cells = <1>;
->> +};
->> -- 
->> 2.14.1
->>
+diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+new file mode 100644
+index 0000000..5e1061b
+--- /dev/null
++++ b/include/dt-bindings/clock/dra7.h
+@@ -0,0 +1,172 @@
++/*
++ * Copyright 2017 Texas Instruments, Inc.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __DT_BINDINGS_CLK_DRA7_H
++#define __DT_BINDINGS_CLK_DRA7_H
++
++#define DRA7_CLKCTRL_OFFSET	0x20
++#define DRA7_CLKCTRL_INDEX(offset)	((offset) - DRA7_CLKCTRL_OFFSET)
++
++/* mpu clocks */
++#define DRA7_MPU_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++
++/* ipu clocks */
++#define DRA7_IPU_CLKCTRL_OFFSET	0x40
++#define DRA7_IPU_CLKCTRL_INDEX(offset)	((offset) - DRA7_IPU_CLKCTRL_OFFSET)
++#define DRA7_MCASP1_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x50)
++#define DRA7_TIMER5_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x58)
++#define DRA7_TIMER6_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x60)
++#define DRA7_TIMER7_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x68)
++#define DRA7_TIMER8_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x70)
++#define DRA7_I2C5_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x78)
++#define DRA7_UART6_CLKCTRL	DRA7_IPU_CLKCTRL_INDEX(0x80)
++
++/* rtc clocks */
++#define DRA7_RTC_CLKCTRL_OFFSET	0x40
++#define DRA7_RTC_CLKCTRL_INDEX(offset)	((offset) - DRA7_RTC_CLKCTRL_OFFSET)
++#define DRA7_RTCSS_CLKCTRL	DRA7_RTC_CLKCTRL_INDEX(0x44)
++
++/* coreaon clocks */
++#define DRA7_SMARTREFLEX_MPU_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
++#define DRA7_SMARTREFLEX_CORE_CLKCTRL	DRA7_CLKCTRL_INDEX(0x38)
++
++/* l3main1 clocks */
++#define DRA7_L3_MAIN_1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++#define DRA7_GPMC_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
++#define DRA7_TPCC_CLKCTRL	DRA7_CLKCTRL_INDEX(0x70)
++#define DRA7_TPTC0_CLKCTRL	DRA7_CLKCTRL_INDEX(0x78)
++#define DRA7_TPTC1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
++#define DRA7_VCP1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_VCP2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x90)
++
++/* dma clocks */
++#define DRA7_DMA_SYSTEM_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++
++/* emif clocks */
++#define DRA7_DMM_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++
++/* atl clocks */
++#define DRA7_ATL_CLKCTRL_OFFSET	0x0
++#define DRA7_ATL_CLKCTRL_INDEX(offset)	((offset) - DRA7_ATL_CLKCTRL_OFFSET)
++#define DRA7_ATL_CLKCTRL	DRA7_ATL_CLKCTRL_INDEX(0x0)
++
++/* l4cfg clocks */
++#define DRA7_L4_CFG_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++#define DRA7_SPINLOCK_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
++#define DRA7_MAILBOX1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
++#define DRA7_MAILBOX2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x48)
++#define DRA7_MAILBOX3_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
++#define DRA7_MAILBOX4_CLKCTRL	DRA7_CLKCTRL_INDEX(0x58)
++#define DRA7_MAILBOX5_CLKCTRL	DRA7_CLKCTRL_INDEX(0x60)
++#define DRA7_MAILBOX6_CLKCTRL	DRA7_CLKCTRL_INDEX(0x68)
++#define DRA7_MAILBOX7_CLKCTRL	DRA7_CLKCTRL_INDEX(0x70)
++#define DRA7_MAILBOX8_CLKCTRL	DRA7_CLKCTRL_INDEX(0x78)
++#define DRA7_MAILBOX9_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
++#define DRA7_MAILBOX10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_MAILBOX11_CLKCTRL	DRA7_CLKCTRL_INDEX(0x90)
++#define DRA7_MAILBOX12_CLKCTRL	DRA7_CLKCTRL_INDEX(0x98)
++#define DRA7_MAILBOX13_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
++
++/* l3instr clocks */
++#define DRA7_L3_MAIN_2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++#define DRA7_L3_INSTR_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
++
++/* dss clocks */
++#define DRA7_DSS_CORE_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++#define DRA7_BB2D_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
++
++/* l3init clocks */
++#define DRA7_MMC1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
++#define DRA7_MMC2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
++#define DRA7_USB_OTG_SS2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x40)
++#define DRA7_USB_OTG_SS3_CLKCTRL	DRA7_CLKCTRL_INDEX(0x48)
++#define DRA7_USB_OTG_SS4_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
++#define DRA7_SATA_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_PCIE1_CLKCTRL	DRA7_CLKCTRL_INDEX(0xb0)
++#define DRA7_PCIE2_CLKCTRL	DRA7_CLKCTRL_INDEX(0xb8)
++#define DRA7_GMAC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xd0)
++#define DRA7_OCP2SCP1_CLKCTRL	DRA7_CLKCTRL_INDEX(0xe0)
++#define DRA7_OCP2SCP3_CLKCTRL	DRA7_CLKCTRL_INDEX(0xe8)
++#define DRA7_USB_OTG_SS1_CLKCTRL	DRA7_CLKCTRL_INDEX(0xf0)
++
++/* l4per clocks */
++#define DRA7_L4PER_CLKCTRL_OFFSET	0x0
++#define DRA7_L4PER_CLKCTRL_INDEX(offset)	((offset) - DRA7_L4PER_CLKCTRL_OFFSET)
++#define DRA7_L4_PER2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xc)
++#define DRA7_L4_PER3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x14)
++#define DRA7_TIMER10_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x28)
++#define DRA7_TIMER11_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x30)
++#define DRA7_TIMER2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x38)
++#define DRA7_TIMER3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x40)
++#define DRA7_TIMER4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x48)
++#define DRA7_TIMER9_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x50)
++#define DRA7_ELM_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x58)
++#define DRA7_GPIO2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x60)
++#define DRA7_GPIO3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x68)
++#define DRA7_GPIO4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x70)
++#define DRA7_GPIO5_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x78)
++#define DRA7_GPIO6_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x80)
++#define DRA7_HDQ1W_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x88)
++#define DRA7_EPWMSS1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x90)
++#define DRA7_EPWMSS2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x98)
++#define DRA7_I2C1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xa0)
++#define DRA7_I2C2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xa8)
++#define DRA7_I2C3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xb0)
++#define DRA7_I2C4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xb8)
++#define DRA7_L4_PER1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xc0)
++#define DRA7_EPWMSS0_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xc4)
++#define DRA7_TIMER13_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xc8)
++#define DRA7_TIMER14_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xd0)
++#define DRA7_TIMER15_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xd8)
++#define DRA7_MCSPI1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xf0)
++#define DRA7_MCSPI2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0xf8)
++#define DRA7_MCSPI3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x100)
++#define DRA7_MCSPI4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x108)
++#define DRA7_GPIO7_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x110)
++#define DRA7_GPIO8_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x118)
++#define DRA7_MMC3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x120)
++#define DRA7_MMC4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x128)
++#define DRA7_TIMER16_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x130)
++#define DRA7_QSPI_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x138)
++#define DRA7_UART1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x140)
++#define DRA7_UART2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x148)
++#define DRA7_UART3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x150)
++#define DRA7_UART4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x158)
++#define DRA7_MCASP2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x160)
++#define DRA7_MCASP3_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x168)
++#define DRA7_UART5_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x170)
++#define DRA7_MCASP5_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x178)
++#define DRA7_MCASP8_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x190)
++#define DRA7_MCASP4_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x198)
++#define DRA7_AES1_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1a0)
++#define DRA7_AES2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1a8)
++#define DRA7_DES_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1b0)
++#define DRA7_RNG_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1c0)
++#define DRA7_SHAM_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1c8)
++#define DRA7_UART7_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1d0)
++#define DRA7_UART8_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1e0)
++#define DRA7_UART9_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1e8)
++#define DRA7_DCAN2_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x1f0)
++#define DRA7_MCASP6_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x204)
++#define DRA7_MCASP7_CLKCTRL	DRA7_L4PER_CLKCTRL_INDEX(0x208)
++
++/* wkupaon clocks */
++#define DRA7_L4_WKUP_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++#define DRA7_WD_TIMER2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
++#define DRA7_GPIO1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x38)
++#define DRA7_TIMER1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x40)
++#define DRA7_TIMER12_CLKCTRL	DRA7_CLKCTRL_INDEX(0x48)
++#define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
++#define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
++#define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++
++#endif
+-- 
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
