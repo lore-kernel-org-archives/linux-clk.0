@@ -1,92 +1,107 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 03/23] drm/sun4i: tcon: Make tcon_set_mux mode argument const
-Date: Tue, 17 Oct 2017 11:06:10 +0200
-Message-Id: <b0cce5a43fc3b56953d21a54fc3c14672f755f42.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fe3d65d1ee05a55224d26e7d113388c428592b26.1508231063.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>,
- Mylene Josserand <mylene.josserand@free-electrons.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 24/27] clk: ti: dm814: add clkctrl clock data
+Date: Mon, 30 Oct 2017 15:04:42 +0200
+Message-ID: <1509368685-29112-25-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The drm_display_mode pointer can be mark const, so let's do it.
+Add data for dm814 clkctrl clocks, and register it within the clkctrl
+driver.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 +++---
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/ti/clk-814x.c | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clkctrl.c  |  4 ++++
+ drivers/clk/ti/clock.h    |  1 +
+ 3 files changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 68751b999877..54e1796d2953 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -134,7 +134,7 @@ static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
- }
+diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
+index 7dab941..f688fdd 100644
+--- a/drivers/clk/ti/clk-814x.c
++++ b/drivers/clk/ti/clk-814x.c
+@@ -9,9 +9,46 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
+ #include <linux/of_platform.h>
++#include <dt-bindings/clock/dm814.h>
  
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
--			struct drm_encoder *encoder)
-+			const struct drm_encoder *encoder)
- {
- 	int ret = -ENOTSUPP;
+ #include "clock.h"
  
-@@ -783,7 +783,7 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
++static const struct omap_clkctrl_reg_data dm814_default_clkctrl_regs[] __initconst = {
++	{ DM814_USB_OTG_HS_CLKCTRL, NULL, CLKF_SW_SUP, "pll260dcoclkldo" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data dm814_alwon_clkctrl_regs[] __initconst = {
++	{ DM814_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_GPIO1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM814_GPIO2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM814_I2C1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_I2C2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_WD_TIMER_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk18_ck" },
++	{ DM814_MCSPI1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM814_GPMC_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM814_CPGMAC0_CLKCTRL, NULL, CLKF_SW_SUP, "cpsw_125mhz_gclk" },
++	{ DM814_MPU_CLKCTRL, NULL, CLKF_SW_SUP, "mpu_ck" },
++	{ DM814_RTC_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk18_ck" },
++	{ DM814_TPCC_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM814_TPTC0_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM814_TPTC1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM814_TPTC2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM814_TPTC3_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM814_MMC1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk8_ck" },
++	{ DM814_MMC2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk8_ck" },
++	{ DM814_MMC3_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk8_ck" },
++	{ 0 },
++};
++
++const struct omap_clkctrl_data dm814_clkctrl_data[] __initconst = {
++	{ 0x48180500, dm814_default_clkctrl_regs },
++	{ 0x48181400, dm814_alwon_clkctrl_regs },
++	{ 0 },
++};
++
+ static struct ti_dt_clk dm814_clks[] = {
+ 	DT_CLK(NULL, "timer_sys_ck", "devosc_ck"),
+ 	{ .node_name = NULL },
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 74d1320..a531a89 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -453,6 +453,10 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	if (of_machine_is_compatible("ti,am4372"))
+ 		data = am4_clkctrl_data;
+ #endif
++#ifdef CONFIG_SOC_TI81XX
++	if (of_machine_is_compatible("ti,dm814"))
++		data = dm814_clkctrl_data;
++#endif
  
- /* platform specific TCON muxing callbacks */
- static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
--				  struct drm_encoder *encoder)
-+				  const struct drm_encoder *encoder)
- {
- 	u32 val;
+ 	while (data->addr) {
+ 		if (addr == data->addr)
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index a42bbb8..60e6794 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -235,6 +235,7 @@ struct omap_clkctrl_data {
+ extern const struct omap_clkctrl_data dra7_clkctrl_data[];
+ extern const struct omap_clkctrl_data am3_clkctrl_data[];
+ extern const struct omap_clkctrl_data am4_clkctrl_data[];
++extern const struct omap_clkctrl_data dm814_clkctrl_data[];
  
-@@ -799,7 +799,7 @@ static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
- }
- 
- static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
--			      struct drm_encoder *encoder)
-+			      const struct drm_encoder *encoder)
- {
- 	struct sun4i_tcon *tcon0 = sun4i_get_tcon0(encoder->dev);
- 	u32 shift;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index d9e1357cc8ae..d81c6e20efe6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -152,7 +152,7 @@ struct sun4i_tcon_quirks {
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
- 
- 	/* callback to handle tcon muxing options */
--	int	(*set_mux)(struct sun4i_tcon *, struct drm_encoder *);
-+	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
- };
- 
- struct sun4i_tcon {
+ #define CLKF_SW_SUP	BIT(0)
+ #define CLKF_HW_SUP	BIT(1)
 -- 
-git-series 0.9.1
+1.9.1
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
