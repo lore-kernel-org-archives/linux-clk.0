@@ -1,73 +1,70 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 18 Oct 2017 09:17:54 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] CLK: SPEAr: make aux_clk_masks structures const
-Message-ID: <20171018034754.GD27082@vireshk-i7>
-References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com>
- <1508251114-7042-3-git-send-email-bhumirks@gmail.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1508251114-7042-3-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <20171004023006.31763-1-linus.walleij@linaro.org>
+References: <20171004023006.31763-1-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Oct 2017 15:23:43 +0100
+Message-ID: <CACRpkdZL9GD0H1n1-Xu2vYH-WHxEpf4843tSs1=M_QvdHdbPpA@mail.gmail.com>
+Subject: Re: [PATCH] RESEND: clk: Avoid sending high rates to downstream
+ clocks during set_rate
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Opera <montvid@gmail.com>,
+	John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17-10-17, 16:38, Bhumika Goyal wrote:
-> Make these const as they are either stored in the masks 'const' field
-> of a clk_aux structure or passed to the function clk_register_aux 
-> having the argument as const.
-> 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+On Wed, Oct 4, 2017 at 4:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> From: Stephen Boyd <sboyd@codeaurora.org>
+>
+> If a clock is on and we call clk_set_rate() on it we may get into
+> a situation where the clock temporarily increases in rate
+> dramatically while we walk the tree and call .set_rate() ops. For
+> example, consider a case where a PLL feeds into a divider.
+> Initially the divider is set to divide by 1 and the PLL is
+> running fairly slow (100MHz). The downstream consumer of the
+> divider output can only handle rates =< 400 MHz, but the divider
+> can only choose between divisors of 1 and 4.
+>
+>  +-----+   +----------------+
+>  | PLL |-->| div 1 or div 4 |---> consumer device
+>  +-----+   +----------------+
+>
+> To achieve a rate of 400MHz on the output of the divider, we
+> would have to set the rate of the PLL to 1.6 GHz and then divide
+> it by 4. The current code would set the PLL to 1.6GHz first while
+> the divider is still set to 1, thus causing the downstream
+> consumer of the clock to receive a few clock cycles of 1.6GHz
+> clock (far beyond it's maximum acceptable rate). We should be
+> changing the divider first before increasing the PLL rate to
+> avoid this problem.
+>
+> Therefore, set the rate of any child clocks that are increasing
+> in rate from their current rate so that they can increase their
+> dividers if necessary. We assume that there isn't such a thing as
+> minimum rate requirements.
+>
+> Cc: Opera <montvid@gmail.com>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  drivers/clk/spear/clk-aux-synth.c   | 2 +-
->  drivers/clk/spear/spear1310_clock.c | 2 +-
->  drivers/clk/spear/spear1340_clock.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
-> index 8bea5df..2f145e3 100644
-> --- a/drivers/clk/spear/clk-aux-synth.c
-> +++ b/drivers/clk/spear/clk-aux-synth.c
-> @@ -29,7 +29,7 @@
->  
->  #define to_clk_aux(_hw) container_of(_hw, struct clk_aux, hw)
->  
-> -static struct aux_clk_masks default_aux_masks = {
-> +static const  struct aux_clk_masks default_aux_masks = {
->  	.eq_sel_mask = AUX_EQ_SEL_MASK,
->  	.eq_sel_shift = AUX_EQ_SEL_SHIFT,
->  	.eq1_mask = AUX_EQ1_SEL,
-> diff --git a/drivers/clk/spear/spear1310_clock.c b/drivers/clk/spear/spear1310_clock.c
-> index 2f86e3f..591248c 100644
-> --- a/drivers/clk/spear/spear1310_clock.c
-> +++ b/drivers/clk/spear/spear1310_clock.c
-> @@ -284,7 +284,7 @@
->  };
->  
->  /* i2s prescaler1 masks */
-> -static struct aux_clk_masks i2s_prs1_masks = {
-> +static const struct aux_clk_masks i2s_prs1_masks = {
->  	.eq_sel_mask = AUX_EQ_SEL_MASK,
->  	.eq_sel_shift = SPEAR1310_I2S_PRS1_EQ_SEL_SHIFT,
->  	.eq1_mask = AUX_EQ1_SEL,
-> diff --git a/drivers/clk/spear/spear1340_clock.c b/drivers/clk/spear/spear1340_clock.c
-> index cbb19a9..e5bc8c8 100644
-> --- a/drivers/clk/spear/spear1340_clock.c
-> +++ b/drivers/clk/spear/spear1340_clock.c
-> @@ -323,7 +323,7 @@
->  };
->  
->  /* i2s prescaler1 masks */
-> -static struct aux_clk_masks i2s_prs1_masks = {
-> +static const struct aux_clk_masks i2s_prs1_masks = {
->  	.eq_sel_mask = AUX_EQ_SEL_MASK,
->  	.eq_sel_shift = SPEAR1340_I2S_PRS1_EQ_SEL_SHIFT,
->  	.eq1_mask = AUX_EQ1_SEL,
+> Stephen: just wanted to check what's up with this patch.
+> When I apply it on my kernel I get graphics on the Nexus7,
+> when I don't, I don't.
+>
+> OpenWRT has started to carry the patch in their tree I noticed.
+> I found it in John Stultz patch stack.
+>
+> Is there some similar patch floating in some other series, is
+> it fundamentally wrong or something else?
+>
+> Just wanted to reboot the discussion so we know where this is
+> standing.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Gentle ping on this patch too.
 
--- 
-viresh
+Sorry for pushing, it's just so nice to have graphics working
+out-of-the-box on Nexus 7.
+
+Yours,
+Linus Walleij
