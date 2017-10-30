@@ -1,146 +1,263 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34294 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752103AbdJDN3h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 09:29:37 -0400
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 20/27] clk: ti: am33xx: add clkctrl clock data
+Date: Mon, 30 Oct 2017 15:04:38 +0200
+Message-ID: <1509368685-29112-21-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <20171003100016.32029-3-m.szyprowski@samsung.com>
-References: <CGME20171003100029eucas1p1e141119212369955ea3017b6aee183dc@eucas1p1.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-3-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Wed, 4 Oct 2017 22:28:56 +0900
-Message-ID: <CAGTfZH3m1HtX77xWU3n58SjoGwZ4FbcGLJTg1PiPmbXLg12ELw@mail.gmail.com>
-Subject: Re: [PATCH 2/9] clk: samsung: Remove clkdev alias support in Exynos4
- clk driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add data for am33xx clkctrl clocks, and register it within the clkctrl
+driver.
 
-On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> All Exynos4 boards have been fully converted to device-tree and use generic
-> dt-based CPUfreq driver, so there is no need to create any clkdev aliases
-> for the clocks. Drop all the code related to aliases handling.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 47 +++++++++------------------------------
->  1 file changed, 10 insertions(+), 37 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 9a51ce9a658f..3fbfd9ed82b7 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -535,9 +535,8 @@ static const struct samsung_fixed_factor_clock exynos4x12_fixed_factor_clks[] __
->
->  /* list of mux clocks supported in all exynos4 soc's */
->  static const struct samsung_mux_clock exynos4_mux_clks[] __initconst = {
-> -       MUX_FA(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> -                       CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0,
-> -                       "mout_apll"),
-> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> +                       CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
->         MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
->         MUX(0, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
->         MUX(0, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
-> @@ -838,11 +837,6 @@ static const struct samsung_div_clock exynos4x12_div_clks[] __initconst = {
->
->  /* list of gate clocks supported in all exynos4 soc's */
->  static const struct samsung_gate_clock exynos4_gate_clks[] __initconst = {
-> -       /*
-> -        * After all Exynos4 based platforms are migrated to use device tree,
-> -        * the device name and clock alias names specified below for some
-> -        * of the clocks can be removed.
-> -        */
->         GATE(CLK_PPMULEFT, "ppmuleft", "aclk200", GATE_IP_LEFTBUS, 1, 0, 0),
->         GATE(CLK_PPMURIGHT, "ppmuright", "aclk200", GATE_IP_RIGHTBUS, 1, 0, 0),
->         GATE(CLK_SCLK_HDMI, "sclk_hdmi", "mout_hdmi", SRC_MASK_TV, 0, 0, 0),
-> @@ -1190,20 +1184,6 @@ static const struct samsung_gate_clock exynos4x12_gate_clks[] __initconst = {
->                 0),
->  };
->
-> -static const struct samsung_clock_alias exynos4_aliases[] __initconst = {
-> -       ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
-> -       ALIAS(CLK_ARM_CLK, NULL, "armclk"),
-> -       ALIAS(CLK_SCLK_APLL, NULL, "mout_apll"),
-> -};
-> -
-> -static const struct samsung_clock_alias exynos4210_aliases[] __initconst = {
-> -       ALIAS(CLK_SCLK_MPLL, NULL, "mout_mpll"),
-> -};
-> -
-> -static const struct samsung_clock_alias exynos4x12_aliases[] __initconst = {
-> -       ALIAS(CLK_MOUT_MPLL_USER_C, NULL, "mout_mpll"),
-> -};
-> -
->  /*
->   * The parent of the fin_pll clock is selected by the XOM[0] bit. This bit
->   * resides in chipid register space, outside of the clock controller memory
-> @@ -1340,14 +1320,14 @@ static const struct samsung_pll_rate_table exynos4x12_vpll_rates[] __initconst =
->  };
->
->  static struct samsung_pll_clock exynos4210_plls[nr_plls] __initdata = {
-> -       [apll] = PLL_A(pll_4508, CLK_FOUT_APLL, "fout_apll", "fin_pll",
-> -               APLL_LOCK, APLL_CON0, "fout_apll", NULL),
-> -       [mpll] = PLL_A(pll_4508, CLK_FOUT_MPLL, "fout_mpll", "fin_pll",
-> -               E4210_MPLL_LOCK, E4210_MPLL_CON0, "fout_mpll", NULL),
-> -       [epll] = PLL_A(pll_4600, CLK_FOUT_EPLL, "fout_epll", "fin_pll",
-> -               EPLL_LOCK, EPLL_CON0, "fout_epll", NULL),
-> -       [vpll] = PLL_A(pll_4650c, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
-> -               VPLL_LOCK, VPLL_CON0, "fout_vpll", NULL),
-> +       [apll] = PLL(pll_4508, CLK_FOUT_APLL, "fout_apll", "fin_pll",
-> +               APLL_LOCK, APLL_CON0, NULL),
-> +       [mpll] = PLL(pll_4508, CLK_FOUT_MPLL, "fout_mpll", "fin_pll",
-> +               E4210_MPLL_LOCK, E4210_MPLL_CON0, NULL),
-> +       [epll] = PLL(pll_4600, CLK_FOUT_EPLL, "fout_epll", "fin_pll",
-> +               EPLL_LOCK, EPLL_CON0, NULL),
-> +       [vpll] = PLL(pll_4650c, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
-> +               VPLL_LOCK, VPLL_CON0, NULL),
->  };
->
->  static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
-> @@ -1494,8 +1474,6 @@ static void __init exynos4_clk_init(struct device_node *np,
->                         ARRAY_SIZE(exynos4210_div_clks));
->                 samsung_clk_register_gate(ctx, exynos4210_gate_clks,
->                         ARRAY_SIZE(exynos4210_gate_clks));
-> -               samsung_clk_register_alias(ctx, exynos4210_aliases,
-> -                       ARRAY_SIZE(exynos4210_aliases));
->                 samsung_clk_register_fixed_factor(ctx,
->                         exynos4210_fixed_factor_clks,
->                         ARRAY_SIZE(exynos4210_fixed_factor_clks));
-> @@ -1510,8 +1488,6 @@ static void __init exynos4_clk_init(struct device_node *np,
->                         ARRAY_SIZE(exynos4x12_div_clks));
->                 samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
->                         ARRAY_SIZE(exynos4x12_gate_clks));
-> -               samsung_clk_register_alias(ctx, exynos4x12_aliases,
-> -                       ARRAY_SIZE(exynos4x12_aliases));
->                 samsung_clk_register_fixed_factor(ctx,
->                         exynos4x12_fixed_factor_clks,
->                         ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-> @@ -1521,9 +1497,6 @@ static void __init exynos4_clk_init(struct device_node *np,
->                         CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
->         }
->
-> -       samsung_clk_register_alias(ctx, exynos4_aliases,
-> -                       ARRAY_SIZE(exynos4_aliases));
-> -
->         if (soc == EXYNOS4X12)
->                 exynos4x12_core_down_clock();
->         exynos4_clk_sleep_init();
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-33xx.c | 191 +++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/ti/clkctrl.c  |   4 +
+ drivers/clk/ti/clock.h    |   1 +
+ 3 files changed, 195 insertions(+), 1 deletion(-)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index 53a6726..612491a 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -19,12 +19,201 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
++#include <dt-bindings/clock/am3.h>
+ 
+ #include "clock.h"
+ 
++static const char * const am3_gpio1_dbclk_parents[] __initconst = {
++	"l4_per_cm:clk:0138:0",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am3_gpio2_bit_data[] __initconst = {
++	{ 18, TI_CLK_GATE, am3_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am3_gpio3_bit_data[] __initconst = {
++	{ 18, TI_CLK_GATE, am3_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am3_gpio4_bit_data[] __initconst = {
++	{ 18, TI_CLK_GATE, am3_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_l4_per_clkctrl_regs[] __initconst = {
++	{ AM3_CPGMAC0_CLKCTRL, NULL, CLKF_SW_SUP, "cpsw_125mhz_gclk", "cpsw_125mhz_clkdm" },
++	{ AM3_LCDC_CLKCTRL, NULL, CLKF_SW_SUP, "lcd_gclk", "lcdc_clkdm" },
++	{ AM3_USB_OTG_HS_CLKCTRL, NULL, CLKF_SW_SUP, "usbotg_fck", "l3s_clkdm" },
++	{ AM3_TPTC0_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_EMIF_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_ddr_m2_div2_ck", "l3_clkdm" },
++	{ AM3_OCMCRAM_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_GPMC_CLKCTRL, NULL, CLKF_SW_SUP, "l3s_gclk", "l3s_clkdm" },
++	{ AM3_MCASP0_CLKCTRL, NULL, CLKF_SW_SUP, "mcasp0_fck", "l3s_clkdm" },
++	{ AM3_UART6_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_MMC1_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk" },
++	{ AM3_ELM_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_I2C3_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_I2C2_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_SPI0_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_SPI1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_L4_LS_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_MCASP1_CLKCTRL, NULL, CLKF_SW_SUP, "mcasp1_fck", "l3s_clkdm" },
++	{ AM3_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_UART4_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_UART5_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM3_TIMER7_CLKCTRL, NULL, CLKF_SW_SUP, "timer7_fck" },
++	{ AM3_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "timer2_fck" },
++	{ AM3_TIMER3_CLKCTRL, NULL, CLKF_SW_SUP, "timer3_fck" },
++	{ AM3_TIMER4_CLKCTRL, NULL, CLKF_SW_SUP, "timer4_fck" },
++	{ AM3_RNG_CLKCTRL, NULL, CLKF_SW_SUP, "rng_fck" },
++	{ AM3_AES_CLKCTRL, NULL, CLKF_SW_SUP, "aes0_fck", "l3_clkdm" },
++	{ AM3_SHAM_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_GPIO2_CLKCTRL, am3_gpio2_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_GPIO3_CLKCTRL, am3_gpio3_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_GPIO4_CLKCTRL, am3_gpio4_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_TPCC_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_D_CAN0_CLKCTRL, NULL, CLKF_SW_SUP, "dcan0_fck" },
++	{ AM3_D_CAN1_CLKCTRL, NULL, CLKF_SW_SUP, "dcan1_fck" },
++	{ AM3_EPWMSS1_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_EPWMSS0_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_EPWMSS2_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_L3_INSTR_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_L3_MAIN_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_PRUSS_CLKCTRL, NULL, CLKF_SW_SUP, "pruss_ocp_gclk", "pruss_ocp_clkdm" },
++	{ AM3_TIMER5_CLKCTRL, NULL, CLKF_SW_SUP, "timer5_fck" },
++	{ AM3_TIMER6_CLKCTRL, NULL, CLKF_SW_SUP, "timer6_fck" },
++	{ AM3_MMC2_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk" },
++	{ AM3_MMC3_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk", "l3s_clkdm" },
++	{ AM3_TPTC1_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_TPTC2_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM3_SPINLOCK_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_MAILBOX_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_L4_HS_CLKCTRL, NULL, CLKF_SW_SUP, "l4hs_gclk", "l4hs_clkdm" },
++	{ AM3_OCPWP_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM3_CLKDIV32K_CLKCTRL, NULL, CLKF_SW_SUP, "clkdiv32k_ck", "clk_24mhz_clkdm" },
++	{ 0 },
++};
++
++static const char * const am3_gpio0_dbclk_parents[] __initconst = {
++	"gpio0_dbclk_mux_ck",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am3_gpio1_bit_data[] __initconst = {
++	{ 18, TI_CLK_GATE, am3_gpio0_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const char * const am3_dbg_sysclk_ck_parents[] __initconst = {
++	"sys_clkin_ck",
++	NULL,
++};
++
++static const char * const am3_trace_pmd_clk_mux_ck_parents[] __initconst = {
++	"l4_wkup_cm:clk:0010:19",
++	"l4_wkup_cm:clk:0010:30",
++	NULL,
++};
++
++static const char * const am3_trace_clk_div_ck_parents[] __initconst = {
++	"l4_wkup_cm:clk:0010:20",
++	NULL,
++};
++
++static const struct omap_clkctrl_div_data am3_trace_clk_div_ck_data __initconst = {
++	.max_div = 64,
++	.flags = CLK_DIVIDER_POWER_OF_TWO,
++};
++
++static const char * const am3_stm_clk_div_ck_parents[] __initconst = {
++	"l4_wkup_cm:clk:0010:22",
++	NULL,
++};
++
++static const struct omap_clkctrl_div_data am3_stm_clk_div_ck_data __initconst = {
++	.max_div = 64,
++	.flags = CLK_DIVIDER_POWER_OF_TWO,
++};
++
++static const char * const am3_dbg_clka_ck_parents[] __initconst = {
++	"dpll_core_m4_ck",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am3_debugss_bit_data[] __initconst = {
++	{ 19, TI_CLK_GATE, am3_dbg_sysclk_ck_parents, NULL },
++	{ 20, TI_CLK_MUX, am3_trace_pmd_clk_mux_ck_parents, NULL },
++	{ 22, TI_CLK_MUX, am3_trace_pmd_clk_mux_ck_parents, NULL },
++	{ 24, TI_CLK_DIVIDER, am3_trace_clk_div_ck_parents, &am3_trace_clk_div_ck_data },
++	{ 27, TI_CLK_DIVIDER, am3_stm_clk_div_ck_parents, &am3_stm_clk_div_ck_data },
++	{ 30, TI_CLK_GATE, am3_dbg_clka_ck_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_l4_wkup_clkctrl_regs[] __initconst = {
++	{ AM3_CONTROL_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_core_m4_div2_ck" },
++	{ AM3_GPIO1_CLKCTRL, am3_gpio1_bit_data, CLKF_SW_SUP, "dpll_core_m4_div2_ck" },
++	{ AM3_L4_WKUP_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_core_m4_div2_ck" },
++	{ AM3_DEBUGSS_CLKCTRL, am3_debugss_bit_data, CLKF_SW_SUP, "l4_wkup_cm:clk:0010:24", "l3_aon_clkdm" },
++	{ AM3_WKUP_M3_CLKCTRL, NULL, CLKF_NO_IDLEST, "dpll_core_m4_div2_ck", "l4_wkup_aon_clkdm" },
++	{ AM3_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_wkupdm_ck" },
++	{ AM3_I2C1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_wkupdm_ck" },
++	{ AM3_ADC_TSC_CLKCTRL, NULL, CLKF_SW_SUP, "adc_tsc_fck" },
++	{ AM3_SMARTREFLEX0_CLKCTRL, NULL, CLKF_SW_SUP, "smartreflex0_fck" },
++	{ AM3_TIMER1_CLKCTRL, NULL, CLKF_SW_SUP, "timer1_fck" },
++	{ AM3_SMARTREFLEX1_CLKCTRL, NULL, CLKF_SW_SUP, "smartreflex1_fck" },
++	{ AM3_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "wdt1_fck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_mpu_clkctrl_regs[] __initconst = {
++	{ AM3_MPU_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_mpu_m2_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_l4_rtc_clkctrl_regs[] __initconst = {
++	{ AM3_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_gfx_l3_clkctrl_regs[] __initconst = {
++	{ AM3_GFX_CLKCTRL, NULL, CLKF_SW_SUP, "gfx_fck_div_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am3_l4_cefuse_clkctrl_regs[] __initconst = {
++	{ AM3_CEFUSE_CLKCTRL, NULL, CLKF_SW_SUP, "sys_clkin_ck" },
++	{ 0 },
++};
++
++const struct omap_clkctrl_data am3_clkctrl_data[] __initconst = {
++	{ 0x44e00014, am3_l4_per_clkctrl_regs },
++	{ 0x44e00404, am3_l4_wkup_clkctrl_regs },
++	{ 0x44e00604, am3_mpu_clkctrl_regs },
++	{ 0x44e00800, am3_l4_rtc_clkctrl_regs },
++	{ 0x44e00904, am3_gfx_l3_clkctrl_regs },
++	{ 0x44e00a20, am3_l4_cefuse_clkctrl_regs },
++	{ 0 },
++};
++
+ static struct ti_dt_clk am33xx_clks[] = {
+-	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
++	DT_CLK(NULL, "timer_32k_ck", "l4_per_cm:0138:0"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
++	DT_CLK(NULL, "clkdiv32k_ick", "l4_per_cm:0138:0"),
++	DT_CLK(NULL, "dbg_clka_ck", "l4_wkup_cm:0010:30"),
++	DT_CLK(NULL, "dbg_sysclk_ck", "l4_wkup_cm:0010:19"),
++	DT_CLK(NULL, "gpio0_dbclk", "l4_wkup_cm:0004:18"),
++	DT_CLK(NULL, "gpio1_dbclk", "l4_per_cm:0098:18"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4_per_cm:009c:18"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4_per_cm:00a0:18"),
++	DT_CLK(NULL, "stm_clk_div_ck", "l4_wkup_cm:0010:27"),
++	DT_CLK(NULL, "stm_pmd_clock_mux_ck", "l4_wkup_cm:0010:22"),
++	DT_CLK(NULL, "trace_clk_div_ck", "l4_wkup_cm:0010:24"),
++	DT_CLK(NULL, "trace_pmd_clk_mux_ck", "l4_wkup_cm:0010:20"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 6a05c24..96cfde7 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -445,6 +445,10 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	if (of_machine_is_compatible("ti,dra7"))
+ 		data = dra7_clkctrl_data;
+ #endif
++#ifdef CONFIG_SOC_AM33XX
++	if (of_machine_is_compatible("ti,am33xx"))
++		data = am3_clkctrl_data;
++#endif
+ 
+ 	while (data->addr) {
+ 		if (addr == data->addr)
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index f0ebc92..c70507c 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -233,6 +233,7 @@ struct omap_clkctrl_data {
+ extern const struct omap_clkctrl_data omap4_clkctrl_data[];
+ extern const struct omap_clkctrl_data omap5_clkctrl_data[];
+ extern const struct omap_clkctrl_data dra7_clkctrl_data[];
++extern const struct omap_clkctrl_data am3_clkctrl_data[];
+ 
+ #define CLKF_SW_SUP	BIT(0)
+ #define CLKF_HW_SUP	BIT(1)
+-- 
+1.9.1
 
-
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
