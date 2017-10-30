@@ -1,132 +1,64 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Opera <montvid@gmail.com>,
-	John Stultz <john.stultz@linaro.org>
-Subject: [PATCH] RESEND: clk: Avoid sending high rates to downstream clocks during set_rate
-Date: Wed,  4 Oct 2017 04:30:06 +0200
-Message-Id: <20171004023006.31763-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:39766 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751917AbdJ3KoJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Oct 2017 06:44:09 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 30 Oct 2017 18:44:08 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/10] Allwinner H3/H5/A64(DE2) SimpleFB support
+In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+Message-ID: <8eba6f36657bee32e60adb6356c15649@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+在 2017-10-27 23:06，Icenowy Zheng 写道：
+> This patchset adds support for the SimpleFB on Allwinner SoCs with
+> "Display Engine 2.0".
+> 
+> PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+> 
+> PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+> 
+> PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
+> for H3/H5 SoCs.
+> 
+> PATCH 8 to 10 are for Allwinner A64 SoC to enable SimpleFB.
+> 
+> Icenowy Zheng (10):
+>   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
+>   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+>   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
+>   dt-bindings: simplefb-sunxi: add pipelines for DE2
+>   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+>   arm64: allwinner: h5: add compatible string for DE2 CCU
+>   ARM: sunxi: h3/h5: add simplefb nodes
+>   dt-bindings: add binding for A64 DE2 CCU SRAM
 
-If a clock is on and we call clk_set_rate() on it we may get into
-a situation where the clock temporarily increases in rate
-dramatically while we walk the tree and call .set_rate() ops. For
-example, consider a case where a PLL feeds into a divider.
-Initially the divider is set to divide by 1 and the PLL is
-running fairly slow (100MHz). The downstream consumer of the
-divider output can only handle rates =< 400 MHz, but the divider
-can only choose between divisors of 1 and 4.
+Sorry, but don't apply the following patches for two
+reasons:
+- the implementation of SRAM claiming in DE2 CCU is
+   forgotten to be sent;
+- the patch that adds DE2 CCU have an error.
 
- +-----+   +----------------+
- | PLL |-->| div 1 or div 4 |---> consumer device
- +-----+   +----------------+
-
-To achieve a rate of 400MHz on the output of the divider, we
-would have to set the rate of the PLL to 1.6 GHz and then divide
-it by 4. The current code would set the PLL to 1.6GHz first while
-the divider is still set to 1, thus causing the downstream
-consumer of the clock to receive a few clock cycles of 1.6GHz
-clock (far beyond it's maximum acceptable rate). We should be
-changing the divider first before increasing the PLL rate to
-avoid this problem.
-
-Therefore, set the rate of any child clocks that are increasing
-in rate from their current rate so that they can increase their
-dividers if necessary. We assume that there isn't such a thing as
-minimum rate requirements.
-
-Cc: Opera <montvid@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
-Stephen: just wanted to check what's up with this patch.
-When I apply it on my kernel I get graphics on the Nexus7,
-when I don't, I don't.
-
-OpenWRT has started to carry the patch in their tree I noticed.
-I found it in John Stultz patch stack.
-
-Is there some similar patch floating in some other series, is
-it fundamentally wrong or something else?
-
-Just wanted to reboot the discussion so we know where this is
-standing.
----
- drivers/clk/clk.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c8d83acda006..324e4fa11802 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1468,12 +1468,12 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
-  * walk down a subtree and set the new rates notifying the rate
-  * change on the way
-  */
--static void clk_change_rate(struct clk_core *core)
-+static void
-+clk_change_rate(struct clk_core *core, unsigned long best_parent_rate)
- {
- 	struct clk_core *child;
- 	struct hlist_node *tmp;
- 	unsigned long old_rate;
--	unsigned long best_parent_rate = 0;
- 	bool skip_set_rate = false;
- 	struct clk_core *old_parent;
- 	struct clk_core *parent = NULL;
-@@ -1525,6 +1525,7 @@ static void clk_change_rate(struct clk_core *core)
- 	trace_clk_set_rate_complete(core, core->new_rate);
- 
- 	core->rate = clk_recalc(core, best_parent_rate);
-+	core->rate = core->new_rate;
- 
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
-@@ -1552,12 +1553,13 @@ static void clk_change_rate(struct clk_core *core)
- 		/* Skip children who will be reparented to another clock */
- 		if (child->new_parent && child->new_parent != core)
- 			continue;
--		clk_change_rate(child);
-+		if (child->new_rate != child->rate)
-+			clk_change_rate(child, core->new_rate);
- 	}
- 
--	/* handle the new child who might not be in core->children yet */
--	if (core->new_child)
--		clk_change_rate(core->new_child);
-+	/* handle the new child who might not be in clk->children yet */
-+	if (core->new_child && core->new_child->new_rate != core->new_child->rate)
-+		clk_change_rate(core->new_child, core->new_rate);
- }
- 
- static int clk_core_set_rate_nolock(struct clk_core *core,
-@@ -1565,6 +1567,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- {
- 	struct clk_core *top, *fail_clk;
- 	unsigned long rate = req_rate;
-+	unsigned long parent_rate;
- 
- 	if (!core)
- 		return 0;
-@@ -1590,8 +1593,13 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return -EBUSY;
- 	}
- 
-+	if (top->parent)
-+		parent_rate = top->parent->rate;
-+	else
-+		parent_rate = 0;
-+
- 	/* change the rates */
--	clk_change_rate(top);
-+	clk_change_rate(top, parent_rate);
- 
- 	core->req_rate = req_rate;
- 
--- 
-2.13.5
+>   arm64: allwinner: a64: add DE2 CCU for A64 SoC
+>   arm64: allwinner: a64: add simplefb for A64 SoC
+> 
+>  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 +++-
+>  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 ++
+>  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 ++
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 ++++++++++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 
+> ++++++++++++++++++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 ++
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 53 
+> +++++++++++++++++-
+>  7 files changed, 178 insertions(+), 5 deletions(-)
