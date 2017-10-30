@@ -1,31 +1,34 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v9 0/7] Add support for Qualcomm A53 CPU clock
-To: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
- bjorn.andersson@linaro.org, robh+dt@kernel.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <49c12500-db97-0133-e43d-72b8116ed0a0@linaro.org>
-Date: Wed, 25 Oct 2017 14:56:20 +0300
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170921164940.20343-1-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171013112635.32296-1-linus.walleij@linaro.org>
+References: <20171013112635.32296-1-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Oct 2017 15:19:44 +0100
+Message-ID: <CACRpkdbFK-faa174j-DL8pk9PyuY2FrYexhis4MkOkh5Csywkw@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: qcom: Elaborate on "active" clocks in the RPM
+ clock bindings
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21/2017 07:49 PM, Georgi Djakov wrote:
-> This patchset adds support for the A53 CPU clock on MSM8916 platforms
-> and allows scaling of the CPU frequency on msm8916 based platforms.
-> 
-> Changes since v8 (https://lkml.org/lkml/2017/6/23/476)
->  * Converted APCS mailbox driver to use regmap and to populate child
->  platform devices that will handle the rest of the functionality
->  provided by APCS block.
->  * Picked Rob's Ack for the PLL binding.
->  * Changed the APCS binding and put it into a separate patch.
->  * Addressed review comments.
->  * Minor changes.
+On Fri, Oct 13, 2017 at 1:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Hi Stephen and Bjorn. A gentle ping on this..
+> The concept of "active" clocks is just explained in a bried comment in the
+> device driver, let's explain it a bit more in the device tree bindings
+> so everyone understands this.
+>
+> Cc: devicetree@vger.kernel.org
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Collect Rob's ACK.
+> ChangeLog v1->v2:
+> - Reword slighty in accordance with Stephens feedback.
+
+Gentle ping on this patch.
+
+Yours,
+Linus Walleij
