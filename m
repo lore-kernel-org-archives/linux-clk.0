@@ -1,375 +1,241 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:50311 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752431AbdJDPjr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Oct 2017 11:39:47 -0400
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 09/27] clk: ti: omap5: cleanup unnecessary clock aliases
+Date: Mon, 30 Oct 2017 15:04:27 +0200
+Message-ID: <1509368685-29112-10-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <20171003100016.32029-10-m.szyprowski@samsung.com>
-References: <CGME20171003100032eucas1p294307731c3e26a16c2e0fcd52fc2655c@eucas1p2.samsung.com>
- <20171003100016.32029-1-m.szyprowski@samsung.com> <20171003100016.32029-10-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Thu, 5 Oct 2017 00:39:06 +0900
-Message-ID: <CAGTfZH3q9FrsaAM7s+6TRGGgqBStqWB9ktcz3rcL4HMQcXaj9g@mail.gmail.com>
-Subject: Re: [PATCH 9/9] clk: samsung: Remove obsolete clkdev alias support
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Most of the clock aliases are no longer needed, only leave the ones
+required by OMAP timer code in place.
 
-On Tue, Oct 3, 2017 at 7:00 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Remove support for obsolete clkdev alias definition in generic
-> helper macros for MUX, DIV, GATE and PLL clocks. clkdev aliases can be
-> still created using samsung_clk_register_alias() function if given
-> platform still needs them. All current drivers have been converted
-> not to use *_A-style macros and checked if there are any clients for
-> the PLL clocks, which had aliases created unconditionally.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-pll.c |  9 ------
->  drivers/clk/samsung/clk.c     | 33 ++------------------
->  drivers/clk/samsung/clk.h     | 71 ++++++++-----------------------------------
->  3 files changed, 15 insertions(+), 98 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 037c61484098..137882657370 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -1397,15 +1397,6 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->         }
->
->         samsung_clk_add_lookup(ctx, &pll->hw, pll_clk->id);
-> -
-> -       if (!pll_clk->alias)
-> -               return;
-> -
-> -       ret = clk_hw_register_clkdev(&pll->hw, pll_clk->alias,
-> -                                    pll_clk->dev_name);
-> -       if (ret)
-> -               pr_err("%s: failed to register lookup for %s : %d",
-> -                       __func__, pll_clk->name, ret);
->  }
->
->  void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 7ce0fa86c5ff..484abc84a352 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -181,7 +181,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
->                                 unsigned int nr_clk)
->  {
->         struct clk_hw *clk_hw;
-> -       unsigned int idx, ret;
-> +       unsigned int idx;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
->                 clk_hw = clk_hw_register_mux(NULL, list->name,
-> @@ -195,15 +195,6 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
->                 }
->
->                 samsung_clk_add_lookup(ctx, clk_hw, list->id);
-> -
-> -               /* register a clock lookup only if a clock alias is specified */
-> -               if (list->alias) {
-> -                       ret = clk_hw_register_clkdev(clk_hw, list->alias,
-> -                                               list->dev_name);
-> -                       if (ret)
-> -                               pr_err("%s: failed to register lookup %s\n",
-> -                                               __func__, list->alias);
-> -               }
->         }
->  }
->
-> @@ -213,7 +204,7 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
->                                 unsigned int nr_clk)
->  {
->         struct clk_hw *clk_hw;
-> -       unsigned int idx, ret;
-> +       unsigned int idx;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
->                 if (list->table)
-> @@ -234,15 +225,6 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
->                 }
->
->                 samsung_clk_add_lookup(ctx, clk_hw, list->id);
-> -
-> -               /* register a clock lookup only if a clock alias is specified */
-> -               if (list->alias) {
-> -                       ret = clk_hw_register_clkdev(clk_hw, list->alias,
-> -                                               list->dev_name);
-> -                       if (ret)
-> -                               pr_err("%s: failed to register lookup %s\n",
-> -                                               __func__, list->alias);
-> -               }
->         }
->  }
->
-> @@ -252,7 +234,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
->                                 unsigned int nr_clk)
->  {
->         struct clk_hw *clk_hw;
-> -       unsigned int idx, ret;
-> +       unsigned int idx;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
->                 clk_hw = clk_hw_register_gate(NULL, list->name, list->parent_name,
-> @@ -264,15 +246,6 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
->                         continue;
->                 }
->
-> -               /* register a clock lookup only if a clock alias is specified */
-> -               if (list->alias) {
-> -                       ret = clk_hw_register_clkdev(clk_hw, list->alias,
-> -                                                       list->dev_name);
-> -                       if (ret)
-> -                               pr_err("%s: failed to register lookup %s\n",
-> -                                       __func__, list->alias);
-> -               }
-> -
->                 samsung_clk_add_lookup(ctx, clk_hw, list->id);
->         }
->  }
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index d5f0d3f818b6..1cb03b6e2dfd 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -106,7 +106,6 @@ struct samsung_fixed_factor_clock {
->  /**
->   * struct samsung_mux_clock: information about mux clock
->   * @id: platform specific id of the clock.
-> - * @dev_name: name of the device to which this clock belongs.
->   * @name: name of this mux clock.
->   * @parent_names: array of pointer to parent clock names.
->   * @num_parents: number of parents listed in @parent_names.
-> @@ -115,11 +114,9 @@ struct samsung_fixed_factor_clock {
->   * @shift: starting bit location of the mux control bit-field in @reg.
->   * @width: width of the mux control bit-field in @reg.
->   * @mux_flags: flags for mux-type clock.
-> - * @alias: optional clock alias name to be assigned to this clock.
->   */
->  struct samsung_mux_clock {
->         unsigned int            id;
-> -       const char              *dev_name;
->         const char              *name;
->         const char              *const *parent_names;
->         u8                      num_parents;
-> @@ -128,13 +125,11 @@ struct samsung_mux_clock {
->         u8                      shift;
->         u8                      width;
->         u8                      mux_flags;
-> -       const char              *alias;
->  };
->
-> -#define __MUX(_id, dname, cname, pnames, o, s, w, f, mf, a)    \
-> +#define __MUX(_id, cname, pnames, o, s, w, f, mf)              \
->         {                                                       \
->                 .id             = _id,                          \
-> -               .dev_name       = dname,                        \
->                 .name           = cname,                        \
->                 .parent_names   = pnames,                       \
->                 .num_parents    = ARRAY_SIZE(pnames),           \
-> @@ -143,36 +138,26 @@ struct samsung_mux_clock {
->                 .shift          = s,                            \
->                 .width          = w,                            \
->                 .mux_flags      = mf,                           \
-> -               .alias          = a,                            \
->         }
->
->  #define MUX(_id, cname, pnames, o, s, w)                       \
-> -       __MUX(_id, NULL, cname, pnames, o, s, w, 0, 0, NULL)
-> -
-> -#define MUX_A(_id, cname, pnames, o, s, w, a)                  \
-> -       __MUX(_id, NULL, cname, pnames, o, s, w, 0, 0, a)
-> +       __MUX(_id, cname, pnames, o, s, w, 0, 0)
->
->  #define MUX_F(_id, cname, pnames, o, s, w, f, mf)              \
-> -       __MUX(_id, NULL, cname, pnames, o, s, w, f, mf, NULL)
-> -
-> -#define MUX_FA(_id, cname, pnames, o, s, w, f, mf, a)          \
-> -       __MUX(_id, NULL, cname, pnames, o, s, w, f, mf, a)
-> +       __MUX(_id, cname, pnames, o, s, w, f, mf)
->
->  /**
->   * @id: platform specific id of the clock.
->   * struct samsung_div_clock: information about div clock
-> - * @dev_name: name of the device to which this clock belongs.
->   * @name: name of this div clock.
->   * @parent_name: name of the parent clock.
->   * @flags: optional flags for basic clock.
->   * @offset: offset of the register for configuring the div.
->   * @shift: starting bit location of the div control bit-field in @reg.
->   * @div_flags: flags for div-type clock.
-> - * @alias: optional clock alias name to be assigned to this clock.
->   */
->  struct samsung_div_clock {
->         unsigned int            id;
-> -       const char              *dev_name;
->         const char              *name;
->         const char              *parent_name;
->         unsigned long           flags;
-> @@ -180,14 +165,12 @@ struct samsung_div_clock {
->         u8                      shift;
->         u8                      width;
->         u8                      div_flags;
-> -       const char              *alias;
->         struct clk_div_table    *table;
->  };
->
-> -#define __DIV(_id, dname, cname, pname, o, s, w, f, df, a, t)  \
-> +#define __DIV(_id, cname, pname, o, s, w, f, df, t)    \
->         {                                                       \
->                 .id             = _id,                          \
-> -               .dev_name       = dname,                        \
->                 .name           = cname,                        \
->                 .parent_name    = pname,                        \
->                 .flags          = f,                            \
-> @@ -195,70 +178,51 @@ struct samsung_div_clock {
->                 .shift          = s,                            \
->                 .width          = w,                            \
->                 .div_flags      = df,                           \
-> -               .alias          = a,                            \
->                 .table          = t,                            \
->         }
->
->  #define DIV(_id, cname, pname, o, s, w)                                \
-> -       __DIV(_id, NULL, cname, pname, o, s, w, 0, 0, NULL, NULL)
-> -
-> -#define DIV_A(_id, cname, pname, o, s, w, a)                   \
-> -       __DIV(_id, NULL, cname, pname, o, s, w, 0, 0, a, NULL)
-> +       __DIV(_id, cname, pname, o, s, w, 0, 0, NULL)
->
->  #define DIV_F(_id, cname, pname, o, s, w, f, df)               \
-> -       __DIV(_id, NULL, cname, pname, o, s, w, f, df, NULL, NULL)
-> +       __DIV(_id, cname, pname, o, s, w, f, df, NULL)
->
->  #define DIV_T(_id, cname, pname, o, s, w, t)                   \
-> -       __DIV(_id, NULL, cname, pname, o, s, w, 0, 0, NULL, t)
-> +       __DIV(_id, cname, pname, o, s, w, 0, 0, t)
->
->  /**
->   * struct samsung_gate_clock: information about gate clock
->   * @id: platform specific id of the clock.
-> - * @dev_name: name of the device to which this clock belongs.
->   * @name: name of this gate clock.
->   * @parent_name: name of the parent clock.
->   * @flags: optional flags for basic clock.
->   * @offset: offset of the register for configuring the gate.
->   * @bit_idx: bit index of the gate control bit-field in @reg.
->   * @gate_flags: flags for gate-type clock.
-> - * @alias: optional clock alias name to be assigned to this clock.
->   */
->  struct samsung_gate_clock {
->         unsigned int            id;
-> -       const char              *dev_name;
->         const char              *name;
->         const char              *parent_name;
->         unsigned long           flags;
->         unsigned long           offset;
->         u8                      bit_idx;
->         u8                      gate_flags;
-> -       const char              *alias;
->  };
->
-> -#define __GATE(_id, dname, cname, pname, o, b, f, gf, a)       \
-> +#define __GATE(_id, cname, pname, o, b, f, gf)                 \
->         {                                                       \
->                 .id             = _id,                          \
-> -               .dev_name       = dname,                        \
->                 .name           = cname,                        \
->                 .parent_name    = pname,                        \
->                 .flags          = f,                            \
->                 .offset         = o,                            \
->                 .bit_idx        = b,                            \
->                 .gate_flags     = gf,                           \
-> -               .alias          = a,                            \
->         }
->
->  #define GATE(_id, cname, pname, o, b, f, gf)                   \
-> -       __GATE(_id, NULL, cname, pname, o, b, f, gf, NULL)
-> -
-> -#define GATE_A(_id, cname, pname, o, b, f, gf, a)              \
-> -       __GATE(_id, NULL, cname, pname, o, b, f, gf, a)
-> -
-> -#define GATE_D(_id, dname, cname, pname, o, b, f, gf)          \
-> -       __GATE(_id, dname, cname, pname, o, b, f, gf, NULL)
-> -
-> -#define GATE_DA(_id, dname, cname, pname, o, b, f, gf, a)      \
-> -       __GATE(_id, dname, cname, pname, o, b, f, gf, a)
-> +       __GATE(_id, cname, pname, o, b, f, gf)
->
->  #define PNAME(x) static const char * const x[] __initconst
->
-> @@ -275,18 +239,15 @@ struct samsung_clk_reg_dump {
->  /**
->   * struct samsung_pll_clock: information about pll clock
->   * @id: platform specific id of the clock.
-> - * @dev_name: name of the device to which this clock belongs.
->   * @name: name of this pll clock.
->   * @parent_name: name of the parent clock.
->   * @flags: optional flags for basic clock.
->   * @con_offset: offset of the register for configuring the PLL.
->   * @lock_offset: offset of the register for locking the PLL.
->   * @type: Type of PLL to be registered.
-> - * @alias: optional clock alias name to be assigned to this clock.
->   */
->  struct samsung_pll_clock {
->         unsigned int            id;
-> -       const char              *dev_name;
->         const char              *name;
->         const char              *parent_name;
->         unsigned long           flags;
-> @@ -294,31 +255,23 @@ struct samsung_pll_clock {
->         int                     lock_offset;
->         enum samsung_pll_type   type;
->         const struct samsung_pll_rate_table *rate_table;
-> -       const char              *alias;
->  };
->
-> -#define __PLL(_typ, _id, _dname, _name, _pname, _flags, _lock, _con,   \
-> -               _rtable, _alias)                                        \
-> +#define __PLL(_typ, _id, _name, _pname, _flags, _lock, _con, _rtable)  \
->         {                                                               \
->                 .id             = _id,                                  \
->                 .type           = _typ,                                 \
-> -               .dev_name       = _dname,                               \
->                 .name           = _name,                                \
->                 .parent_name    = _pname,                               \
->                 .flags          = _flags,                               \
->                 .con_offset     = _con,                                 \
->                 .lock_offset    = _lock,                                \
->                 .rate_table     = _rtable,                              \
-> -               .alias          = _alias,                               \
->         }
->
->  #define PLL(_typ, _id, _name, _pname, _lock, _con, _rtable)    \
-> -       __PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,     \
-> -               _lock, _con, _rtable, _name)
-> -
-> -#define PLL_A(_typ, _id, _name, _pname, _lock, _con, _alias, _rtable) \
-> -       __PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,     \
-> -               _lock, _con, _rtable, _alias)
-> +       __PLL(_typ, _id, _name, _pname, CLK_GET_RATE_NOCACHE, _lock,    \
-> +             _con, _rtable)
->
->  struct samsung_clock_reg_cache {
->         struct list_head node;
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-54xx.c | 194 +---------------------------------------------
+ 1 file changed, 2 insertions(+), 192 deletions(-)
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-
+diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
+index 294bc03..16aefef 100644
+--- a/drivers/clk/ti/clk-54xx.c
++++ b/drivers/clk/ti/clk-54xx.c
+@@ -28,200 +28,8 @@
+ #define OMAP5_DPLL_USB_DEFFREQ				960000000
+ 
+ static struct ti_dt_clk omap54xx_clks[] = {
+-	DT_CLK(NULL, "pad_clks_src_ck", "pad_clks_src_ck"),
+-	DT_CLK(NULL, "pad_clks_ck", "pad_clks_ck"),
+-	DT_CLK(NULL, "secure_32k_clk_src_ck", "secure_32k_clk_src_ck"),
+-	DT_CLK(NULL, "slimbus_src_clk", "slimbus_src_clk"),
+-	DT_CLK(NULL, "slimbus_clk", "slimbus_clk"),
+-	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
+-	DT_CLK(NULL, "virt_12000000_ck", "virt_12000000_ck"),
+-	DT_CLK(NULL, "virt_13000000_ck", "virt_13000000_ck"),
+-	DT_CLK(NULL, "virt_16800000_ck", "virt_16800000_ck"),
+-	DT_CLK(NULL, "virt_19200000_ck", "virt_19200000_ck"),
+-	DT_CLK(NULL, "virt_26000000_ck", "virt_26000000_ck"),
+-	DT_CLK(NULL, "virt_27000000_ck", "virt_27000000_ck"),
+-	DT_CLK(NULL, "virt_38400000_ck", "virt_38400000_ck"),
+-	DT_CLK(NULL, "sys_clkin", "sys_clkin"),
+-	DT_CLK(NULL, "xclk60mhsp1_ck", "xclk60mhsp1_ck"),
+-	DT_CLK(NULL, "xclk60mhsp2_ck", "xclk60mhsp2_ck"),
+-	DT_CLK(NULL, "abe_dpll_bypass_clk_mux", "abe_dpll_bypass_clk_mux"),
+-	DT_CLK(NULL, "abe_dpll_clk_mux", "abe_dpll_clk_mux"),
+-	DT_CLK(NULL, "dpll_abe_ck", "dpll_abe_ck"),
+-	DT_CLK(NULL, "dpll_abe_x2_ck", "dpll_abe_x2_ck"),
+-	DT_CLK(NULL, "dpll_abe_m2x2_ck", "dpll_abe_m2x2_ck"),
+-	DT_CLK(NULL, "abe_24m_fclk", "abe_24m_fclk"),
+-	DT_CLK(NULL, "abe_clk", "abe_clk"),
+-	DT_CLK(NULL, "abe_iclk", "abe_iclk"),
+-	DT_CLK(NULL, "abe_lp_clk_div", "abe_lp_clk_div"),
+-	DT_CLK(NULL, "dpll_abe_m3x2_ck", "dpll_abe_m3x2_ck"),
+-	DT_CLK(NULL, "dpll_core_ck", "dpll_core_ck"),
+-	DT_CLK(NULL, "dpll_core_x2_ck", "dpll_core_x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h21x2_ck", "dpll_core_h21x2_ck"),
+-	DT_CLK(NULL, "c2c_fclk", "c2c_fclk"),
+-	DT_CLK(NULL, "c2c_iclk", "c2c_iclk"),
+-	DT_CLK(NULL, "custefuse_sys_gfclk_div", "custefuse_sys_gfclk_div"),
+-	DT_CLK(NULL, "dpll_core_h11x2_ck", "dpll_core_h11x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h12x2_ck", "dpll_core_h12x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h13x2_ck", "dpll_core_h13x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h14x2_ck", "dpll_core_h14x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h22x2_ck", "dpll_core_h22x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h23x2_ck", "dpll_core_h23x2_ck"),
+-	DT_CLK(NULL, "dpll_core_h24x2_ck", "dpll_core_h24x2_ck"),
+-	DT_CLK(NULL, "dpll_core_m2_ck", "dpll_core_m2_ck"),
+-	DT_CLK(NULL, "dpll_core_m3x2_ck", "dpll_core_m3x2_ck"),
+-	DT_CLK(NULL, "iva_dpll_hs_clk_div", "iva_dpll_hs_clk_div"),
+-	DT_CLK(NULL, "dpll_iva_ck", "dpll_iva_ck"),
+-	DT_CLK(NULL, "dpll_iva_x2_ck", "dpll_iva_x2_ck"),
+-	DT_CLK(NULL, "dpll_iva_h11x2_ck", "dpll_iva_h11x2_ck"),
+-	DT_CLK(NULL, "dpll_iva_h12x2_ck", "dpll_iva_h12x2_ck"),
+-	DT_CLK(NULL, "mpu_dpll_hs_clk_div", "mpu_dpll_hs_clk_div"),
+-	DT_CLK(NULL, "dpll_mpu_ck", "dpll_mpu_ck"),
+-	DT_CLK(NULL, "dpll_mpu_m2_ck", "dpll_mpu_m2_ck"),
+-	DT_CLK(NULL, "per_dpll_hs_clk_div", "per_dpll_hs_clk_div"),
+-	DT_CLK(NULL, "dpll_per_ck", "dpll_per_ck"),
+-	DT_CLK(NULL, "dpll_per_x2_ck", "dpll_per_x2_ck"),
+-	DT_CLK(NULL, "dpll_per_h11x2_ck", "dpll_per_h11x2_ck"),
+-	DT_CLK(NULL, "dpll_per_h12x2_ck", "dpll_per_h12x2_ck"),
+-	DT_CLK(NULL, "dpll_per_h14x2_ck", "dpll_per_h14x2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2_ck", "dpll_per_m2_ck"),
+-	DT_CLK(NULL, "dpll_per_m2x2_ck", "dpll_per_m2x2_ck"),
+-	DT_CLK(NULL, "dpll_per_m3x2_ck", "dpll_per_m3x2_ck"),
+-	DT_CLK(NULL, "dpll_unipro1_ck", "dpll_unipro1_ck"),
+-	DT_CLK(NULL, "dpll_unipro1_clkdcoldo", "dpll_unipro1_clkdcoldo"),
+-	DT_CLK(NULL, "dpll_unipro1_m2_ck", "dpll_unipro1_m2_ck"),
+-	DT_CLK(NULL, "dpll_unipro2_ck", "dpll_unipro2_ck"),
+-	DT_CLK(NULL, "dpll_unipro2_clkdcoldo", "dpll_unipro2_clkdcoldo"),
+-	DT_CLK(NULL, "dpll_unipro2_m2_ck", "dpll_unipro2_m2_ck"),
+-	DT_CLK(NULL, "usb_dpll_hs_clk_div", "usb_dpll_hs_clk_div"),
+-	DT_CLK(NULL, "dpll_usb_ck", "dpll_usb_ck"),
+-	DT_CLK(NULL, "dpll_usb_clkdcoldo", "dpll_usb_clkdcoldo"),
+-	DT_CLK(NULL, "dpll_usb_m2_ck", "dpll_usb_m2_ck"),
+-	DT_CLK(NULL, "dss_syc_gfclk_div", "dss_syc_gfclk_div"),
+-	DT_CLK(NULL, "func_128m_clk", "func_128m_clk"),
+-	DT_CLK(NULL, "func_12m_fclk", "func_12m_fclk"),
+-	DT_CLK(NULL, "func_24m_clk", "func_24m_clk"),
+-	DT_CLK(NULL, "func_48m_fclk", "func_48m_fclk"),
+-	DT_CLK(NULL, "func_96m_fclk", "func_96m_fclk"),
+-	DT_CLK(NULL, "l3_iclk_div", "l3_iclk_div"),
+-	DT_CLK(NULL, "gpu_l3_iclk", "gpu_l3_iclk"),
+-	DT_CLK(NULL, "l3init_60m_fclk", "l3init_60m_fclk"),
+-	DT_CLK(NULL, "wkupaon_iclk_mux", "wkupaon_iclk_mux"),
+-	DT_CLK(NULL, "l3instr_ts_gclk_div", "l3instr_ts_gclk_div"),
+-	DT_CLK(NULL, "l4_root_clk_div", "l4_root_clk_div"),
+-	DT_CLK(NULL, "dss_32khz_clk", "dss_32khz_clk"),
+-	DT_CLK(NULL, "dss_48mhz_clk", "dss_48mhz_clk"),
+-	DT_CLK(NULL, "dss_dss_clk", "dss_dss_clk"),
+-	DT_CLK(NULL, "dss_sys_clk", "dss_sys_clk"),
+-	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-	DT_CLK(NULL, "gpio2_dbclk", "gpio2_dbclk"),
+-	DT_CLK(NULL, "gpio3_dbclk", "gpio3_dbclk"),
+-	DT_CLK(NULL, "gpio4_dbclk", "gpio4_dbclk"),
+-	DT_CLK(NULL, "gpio5_dbclk", "gpio5_dbclk"),
+-	DT_CLK(NULL, "gpio6_dbclk", "gpio6_dbclk"),
+-	DT_CLK(NULL, "gpio7_dbclk", "gpio7_dbclk"),
+-	DT_CLK(NULL, "gpio8_dbclk", "gpio8_dbclk"),
+-	DT_CLK(NULL, "iss_ctrlclk", "iss_ctrlclk"),
+-	DT_CLK(NULL, "lli_txphy_clk", "lli_txphy_clk"),
+-	DT_CLK(NULL, "lli_txphy_ls_clk", "lli_txphy_ls_clk"),
+-	DT_CLK(NULL, "mmc1_32khz_clk", "mmc1_32khz_clk"),
+-	DT_CLK(NULL, "sata_ref_clk", "sata_ref_clk"),
+-	DT_CLK(NULL, "slimbus1_slimbus_clk", "slimbus1_slimbus_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "usb_host_hs_hsic480m_p1_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "usb_host_hs_hsic480m_p2_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p3_clk", "usb_host_hs_hsic480m_p3_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "usb_host_hs_hsic60m_p1_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "usb_host_hs_hsic60m_p2_clk"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p3_clk", "usb_host_hs_hsic60m_p3_clk"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "usb_host_hs_utmi_p1_clk"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "usb_host_hs_utmi_p2_clk"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "usb_host_hs_utmi_p3_clk"),
+-	DT_CLK(NULL, "usb_otg_ss_refclk960m", "usb_otg_ss_refclk960m"),
+-	DT_CLK(NULL, "usb_phy_cm_clk32k", "usb_phy_cm_clk32k"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "usb_tll_hs_usb_ch0_clk"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "usb_tll_hs_usb_ch1_clk"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "usb_tll_hs_usb_ch2_clk"),
+-	DT_CLK(NULL, "aess_fclk", "aess_fclk"),
+-	DT_CLK(NULL, "dmic_sync_mux_ck", "dmic_sync_mux_ck"),
+-	DT_CLK(NULL, "dmic_gfclk", "dmic_gfclk"),
+-	DT_CLK(NULL, "fdif_fclk", "fdif_fclk"),
+-	DT_CLK(NULL, "gpu_core_gclk_mux", "gpu_core_gclk_mux"),
+-	DT_CLK(NULL, "gpu_hyd_gclk_mux", "gpu_hyd_gclk_mux"),
+-	DT_CLK(NULL, "hsi_fclk", "hsi_fclk"),
+-	DT_CLK(NULL, "mcasp_sync_mux_ck", "mcasp_sync_mux_ck"),
+-	DT_CLK(NULL, "mcasp_gfclk", "mcasp_gfclk"),
+-	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "mcbsp1_sync_mux_ck"),
+-	DT_CLK(NULL, "mcbsp1_gfclk", "mcbsp1_gfclk"),
+-	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "mcbsp2_sync_mux_ck"),
+-	DT_CLK(NULL, "mcbsp2_gfclk", "mcbsp2_gfclk"),
+-	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "mcbsp3_sync_mux_ck"),
+-	DT_CLK(NULL, "mcbsp3_gfclk", "mcbsp3_gfclk"),
+-	DT_CLK(NULL, "mmc1_fclk_mux", "mmc1_fclk_mux"),
+-	DT_CLK(NULL, "mmc1_fclk", "mmc1_fclk"),
+-	DT_CLK(NULL, "mmc2_fclk_mux", "mmc2_fclk_mux"),
+-	DT_CLK(NULL, "mmc2_fclk", "mmc2_fclk"),
+-	DT_CLK(NULL, "timer10_gfclk_mux", "timer10_gfclk_mux"),
+-	DT_CLK(NULL, "timer11_gfclk_mux", "timer11_gfclk_mux"),
+-	DT_CLK(NULL, "timer1_gfclk_mux", "timer1_gfclk_mux"),
+-	DT_CLK(NULL, "timer2_gfclk_mux", "timer2_gfclk_mux"),
+-	DT_CLK(NULL, "timer3_gfclk_mux", "timer3_gfclk_mux"),
+-	DT_CLK(NULL, "timer4_gfclk_mux", "timer4_gfclk_mux"),
+-	DT_CLK(NULL, "timer5_gfclk_mux", "timer5_gfclk_mux"),
+-	DT_CLK(NULL, "timer6_gfclk_mux", "timer6_gfclk_mux"),
+-	DT_CLK(NULL, "timer7_gfclk_mux", "timer7_gfclk_mux"),
+-	DT_CLK(NULL, "timer8_gfclk_mux", "timer8_gfclk_mux"),
+-	DT_CLK(NULL, "timer9_gfclk_mux", "timer9_gfclk_mux"),
+-	DT_CLK(NULL, "utmi_p1_gfclk", "utmi_p1_gfclk"),
+-	DT_CLK(NULL, "utmi_p2_gfclk", "utmi_p2_gfclk"),
+-	DT_CLK(NULL, "auxclk0_src_ck", "auxclk0_src_ck"),
+-	DT_CLK(NULL, "auxclk0_ck", "auxclk0_ck"),
+-	DT_CLK(NULL, "auxclkreq0_ck", "auxclkreq0_ck"),
+-	DT_CLK(NULL, "auxclk1_src_ck", "auxclk1_src_ck"),
+-	DT_CLK(NULL, "auxclk1_ck", "auxclk1_ck"),
+-	DT_CLK(NULL, "auxclkreq1_ck", "auxclkreq1_ck"),
+-	DT_CLK(NULL, "auxclk2_src_ck", "auxclk2_src_ck"),
+-	DT_CLK(NULL, "auxclk2_ck", "auxclk2_ck"),
+-	DT_CLK(NULL, "auxclkreq2_ck", "auxclkreq2_ck"),
+-	DT_CLK(NULL, "auxclk3_src_ck", "auxclk3_src_ck"),
+-	DT_CLK(NULL, "auxclk3_ck", "auxclk3_ck"),
+-	DT_CLK(NULL, "auxclkreq3_ck", "auxclkreq3_ck"),
+-	DT_CLK("omap_i2c.1", "ick", "dummy_ck"),
+-	DT_CLK("omap_i2c.2", "ick", "dummy_ck"),
+-	DT_CLK("omap_i2c.3", "ick", "dummy_ck"),
+-	DT_CLK("omap_i2c.4", "ick", "dummy_ck"),
+-	DT_CLK(NULL, "mailboxes_ick", "dummy_ck"),
+-	DT_CLK("omap_hsmmc.0", "ick", "dummy_ck"),
+-	DT_CLK("omap_hsmmc.1", "ick", "dummy_ck"),
+-	DT_CLK("omap_hsmmc.2", "ick", "dummy_ck"),
+-	DT_CLK("omap_hsmmc.3", "ick", "dummy_ck"),
+-	DT_CLK("omap_hsmmc.4", "ick", "dummy_ck"),
+-	DT_CLK("omap-mcbsp.1", "ick", "dummy_ck"),
+-	DT_CLK("omap-mcbsp.2", "ick", "dummy_ck"),
+-	DT_CLK("omap-mcbsp.3", "ick", "dummy_ck"),
+-	DT_CLK("omap-mcbsp.4", "ick", "dummy_ck"),
+-	DT_CLK("omap2_mcspi.1", "ick", "dummy_ck"),
+-	DT_CLK("omap2_mcspi.2", "ick", "dummy_ck"),
+-	DT_CLK("omap2_mcspi.3", "ick", "dummy_ck"),
+-	DT_CLK("omap2_mcspi.4", "ick", "dummy_ck"),
+-	DT_CLK(NULL, "uart1_ick", "dummy_ck"),
+-	DT_CLK(NULL, "uart2_ick", "dummy_ck"),
+-	DT_CLK(NULL, "uart3_ick", "dummy_ck"),
+-	DT_CLK(NULL, "uart4_ick", "dummy_ck"),
+-	DT_CLK("usbhs_omap", "usbhost_ick", "dummy_ck"),
+-	DT_CLK("usbhs_omap", "usbtll_fck", "dummy_ck"),
+-	DT_CLK("omap_wdt", "ick", "dummy_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
+ 	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin"),
+-	DT_CLK("4ae18000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("48032000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("48034000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("48036000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("4803e000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("48086000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("48088000.timer", "timer_sys_ck", "sys_clkin"),
+-	DT_CLK("40138000.timer", "timer_sys_ck", "dss_syc_gfclk_div"),
+-	DT_CLK("4013a000.timer", "timer_sys_ck", "dss_syc_gfclk_div"),
+-	DT_CLK("4013c000.timer", "timer_sys_ck", "dss_syc_gfclk_div"),
+-	DT_CLK("4013e000.timer", "timer_sys_ck", "dss_syc_gfclk_div"),
+ 	{ .node_name = NULL },
+ };
+ 
+@@ -234,6 +42,8 @@ int __init omap5xxx_dt_clk_init(void)
+ 
+ 	omap2_clk_disable_autoidle_all();
+ 
++	ti_clk_add_aliases();
++
+ 	abe_dpll_ref = clk_get_sys(NULL, "abe_dpll_clk_mux");
+ 	sys_32k_ck = clk_get_sys(NULL, "sys_32k_ck");
+ 	rc = clk_set_parent(abe_dpll_ref, sys_32k_ck);
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
