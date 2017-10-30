@@ -1,41 +1,64 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 5 Oct 2017 11:10:43 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add git repository to Renesas clock driver
- section
-Message-ID: <20171005091042.GG26369@verge.net.au>
-References: <1507116864-17219-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 11/27] clk: ti: dm816x: cleanup unnecessary clock aliases
+Date: Mon, 30 Oct 2017 15:04:29 +0200
+Message-ID: <1509368685-29112-12-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1507116864-17219-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 04, 2017 at 01:34:24PM +0200, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Most of the clock aliases are no longer needed, only leave the ones
+required by OMAP timer code in place.
 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-816x.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index 2a5d84f..ac9c94a 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -19,24 +19,8 @@
+ static struct ti_dt_clk dm816x_clks[] = {
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+-	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
+ 	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
+ 	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
+-	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
+-	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+-	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-	DT_CLK(NULL, "timer3_fck", "timer3_fck"),
+-	DT_CLK(NULL, "timer4_fck", "timer4_fck"),
+-	DT_CLK(NULL, "timer5_fck", "timer5_fck"),
+-	DT_CLK(NULL, "timer6_fck", "timer6_fck"),
+-	DT_CLK(NULL, "timer7_fck", "timer7_fck"),
+-	DT_CLK(NULL, "sysclk4_ck", "sysclk4_ck"),
+-	DT_CLK(NULL, "sysclk5_ck", "sysclk5_ck"),
+-	DT_CLK(NULL, "sysclk6_ck", "sysclk6_ck"),
+-	DT_CLK(NULL, "sysclk10_ck", "sysclk10_ck"),
+-	DT_CLK(NULL, "sysclk18_ck", "sysclk18_ck"),
+-	DT_CLK(NULL, "sysclk24_ck", "sysclk24_ck"),
+-	DT_CLK("4a100000.ethernet", "sysclk24_ck", "sysclk24_ck"),
+ 	{ .node_name = NULL },
+ };
+ 
+@@ -50,6 +34,7 @@ int __init dm816x_dt_clk_init(void)
+ {
+ 	ti_dt_clocks_register(dm816x_clks);
+ 	omap2_clk_disable_autoidle_all();
++	ti_clk_add_aliases();
+ 	omap2_clk_enable_init_clocks(enable_init_clks,
+ 				     ARRAY_SIZE(enable_init_clks));
+ 
+-- 
+1.9.1
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 61d77c8037a1faf9..d23f4fba728d091a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11476,6 +11476,7 @@ F:	include/linux/rpmsg/
->  RENESAS CLOCK DRIVERS
->  M:	Geert Uytterhoeven <geert+renesas@glider.be>
->  L:	linux-renesas-soc@vger.kernel.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
->  S:	Supported
->  F:	drivers/clk/renesas/
->  
-> -- 
-> 2.7.4
-> 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
