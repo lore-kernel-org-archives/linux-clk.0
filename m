@@ -1,198 +1,248 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-To: Dmitry Osipenko <digetx@gmail.com>, Stephen Warren
-	<swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "Laxman
- Dewangan" <ldewangan@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Rob Herring" <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
- <9e4e3dc1-85cd-2096-118c-7d0c929b9246@wwwdotorg.org>
- <5a5ce745-750f-9c8f-5129-c9b0f7aee614@gmail.com>
- <788f73dc-e011-aa9d-8850-f01ab9459c91@wwwdotorg.org>
- <795e4b19-b747-74c1-6f92-b961ab4bf822@gmail.com>
- <4443a8fb-7a4d-922b-2dd3-53236d39a050@nvidia.com>
- <d2ae09b5-7645-c79c-efcf-69b26adbfc19@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f23600ea-d249-970a-1c28-3e27c5b232f9@nvidia.com>
-Date: Tue, 3 Oct 2017 13:19:31 +0100
-MIME-Version: 1.0
-In-Reply-To: <d2ae09b5-7645-c79c-efcf-69b26adbfc19@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v5 2/5] clk: aspeed: Register core clocks
+Date: Mon, 30 Oct 2017 16:32:47 +1030
+Message-Id: <20171030060250.701-3-joel@jms.id.au>
+In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
+References: <20171030060250.701-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
+This registers the core clocks; those which are required to calculate
+the rate of the timer peripheral so the system can load a clocksource
+driver.
 
-On 03/10/17 13:07, Dmitry Osipenko wrote:
-> On 03.10.2017 13:32, Jon Hunter wrote:
->>
->>
->> On 03/10/17 00:02, Dmitry Osipenko wrote:
->>> On 02.10.2017 20:05, Stephen Warren wrote:
->>>> On 09/29/2017 09:11 PM, Dmitry Osipenko wrote:
->>>>> On 29.09.2017 22:30, Stephen Warren wrote:
->>>>>> On 09/27/2017 02:34 AM, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 27/09/17 02:57, Dmitry Osipenko wrote:
->>>>>>>> On 26.09.2017 17:50, Jon Hunter wrote:
->>>>>>>>>
->>>>>>>>> On 26/09/17 00:22, Dmitry Osipenko wrote:
->>>>>>>>>> Document DT bindings for NVIDIA Tegra AHB DMA controller that pr=
-esents
->>>>>>>>>> on Tegra20/30 SoC's.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>>> ---
->>>>>>>>>> =C2=A0=C2=A0 .../bindings/dma/nvidia,tegra20-ahbdma.txt=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 23
->>>>>>>>>> ++++++++++++++++++++++
->>>>>>>>>> =C2=A0=C2=A0 1 file changed, 23 insertions(+)
->>>>>>>>>> =C2=A0=C2=A0 create mode 100644
->>>>>>>>>> Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
->>>>>>>>>>
->>>>>>>>>> diff --git
->>>>>>>>>> a/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.tx=
-t
->>>>>>>>>> b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.tx=
-t
->>>>>>>>>> new file mode 100644
->>>>>>>>>> index 000000000000..2af9aa76ae11
->>>>>>>>>> --- /dev/null
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdm=
-a.txt
->>>>>>>>>> @@ -0,0 +1,23 @@
->>>>>>>>>> +* NVIDIA Tegra AHB DMA controller
->>>>>>>>>> +
->>>>>>>>>> +Required properties:
->>>>>>>>>> +- compatible:=C2=A0=C2=A0=C2=A0 Must be "nvidia,tegra20-ahbdma"
->>>>>>>>>> +- reg:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Should contain=
- registers base address and length.
->>>>>>>>>> +- interrupts:=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA c=
-ontroller interrupt.
->>>>>>>>>> +- clocks:=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA contr=
-oller clock.
->>>>>>>>>> +- resets :=C2=A0=C2=A0=C2=A0 Should contain one entry, DMA cont=
-roller reset.
->>>>>>>>>> +- #dma-cells:=C2=A0=C2=A0=C2=A0 Should be <1>. The cell represe=
-nts DMA request select
->>>>>>>>>> value
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for the peripheral. =
-For more details consult the Tegra TRM's
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 documentation, in pa=
-rticular AHB DMA channel control register
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 REQ_SEL field.
->>>>>>>>>
->>>>>>>>> What about the TRIG_SEL field? Do we need to handle this here as =
-well?
->>>>>>>>>
->>>>>>>>
->>>>>>>> Actually, DMA transfer trigger isn't related a hardware descriptio=
-n. It's
->>>>>>>> up to
->>>>>>>> software to decide what trigger to select. So it shouldn't be in t=
-he binding.
->>>>>>>
->>>>>>> I think it could be, if say a board wanted a GPIO to trigger a tran=
-sfer.
->>>>>>>
->>>>>>>> And I think the same applies to requester... any objections?
->>>>>>>
->>>>>>> Well, the REQ_SEL should definitely be in the binding.
->>>>>>>
->>>>>>> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Look=
-s
->>>>>>> like we never bothered with it for the APB DMA and so maybe no ones=
- uses
->>>>>>> this.
->>>>>>
->>>>>> I don't think TRIG_SEL should be in the binding, at least at present=
-. While
->>>>>> TRIG_SEL certainly is something used to configure the transfer, I be=
-lieve the
->>>>>> semantics of the current DMA binding only cover DMA transfers that a=
-re initiated
->>>>>> when SW desires, rather than being a combination of after SW program=
-s the
->>>>>> transfer plus some other HW event. So, we always use a default/hard-=
-coded
->>>>>> TRIG_SEL value. As such, there's no need for a TRIG_SEL value in DT.=
- There's
->>>>>> certainly no known use-case that requires a non-default TRIG_SEL val=
-ue at
->>>>>> present. We could add an extra #dma-cells value later if we find a u=
-se for it,
->>>>>> and the semantics of that use-case make sense to add it to the DMA s=
-pecifier,
->>>>>> rather than some other separate higher-level property/driver/...
->>>>>
->>>>> Thank you for the comment. If we'd want to extend the binding further=
- with the
->>>>> trigger, how to differentiate trigger from the requester in a case of=
- a single
->>>>> #data-cell?
->>>>>
->>>>> Of course realistically a chance that the further extension would be =
-needed is
->>>>> very-very low, so we may defer the efforts to solve that question and=
- for now
->>>>> make driver aware of the potential #dma-cells extension.
->>>>
->>>> The request selector cell isn't optional, so is always present. If we =
-later add
->>>> an optional trig_sel cell, we'll either have:
->>>>
->>>> #dma-cells=3D<1>: req_sel
->>>>
->>>> or:
->>>>
->>>> #dma-cells=3D<2>: req_sel, trig_sel
->>>
->>> Why request sel. couldn't be optional? Could you please elaborate a bit=
- more?
->>>
->>> I think possible options are:
->>>
->>> #dma-cells=3D<1>: req_sel
->>> #dma-cells=3D<1>: trig_sel
->>
->> With the above, how would you know that it is the req_sel or trig_sel
->> that is specified?
->>
->>> #dma-cells=3D<2>: req_sel, trig_sel
->>>
->>> The only difference between request and trigger is that trigger issues =
-the whole
->>> transfer, while request only a single burst. Isn't it possible to have =
-a case in
->>> HW for the "trigger-only" option? If not or it's a rareness, then I agr=
-ee that
->>> REQ_SEL must be mandatory.
->>
->> I think that what Stephen is proposing is that for now we go with
->> '#dma-cells=3D<1>' and if we ever need to support the trigger cell we
->> could add support for '#dma-cells=3D<2>'. So with this proposal the
->> 'req_sel' would always be required for both '#dma-cells=3D<1>' and
->> '#dma-cells=3D<2>'. Even if the req_sel is not actually used but the
->> 'trig_sel' is, the user would have to set 'req_sel' to some pre-defined
->> value (eg. -1) where we know to ignore it.
->>
->=20
-> Okay, I see now. Thank you for the clarification, but then we should have=
- that
-> pre-defined value declared in the binding?
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-I would have thought it should be in the dt-binding header.
+---
+v5:
+  - Add Andrew's Reviewed-by
+v4:
+  - Add defines to document the BIT() macros
+v3:
+  - Fix ast2400 ahb calculation
+  - Remove incorrect 'this is wrong' comment
+  - Separate out clkin calc to be per platform
+  - Support 48MHz clkin on ast2400
+---
+ drivers/clk/clk-aspeed.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
 
-Cheers
-Jon
-
---=20
-nvpublic
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 388a98f4ca41..a8da411326e9 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -20,7 +20,23 @@
+ 
+ #include <dt-bindings/clock/aspeed-clock.h>
+ 
++#define ASPEED_RESET_CTRL	0x04
++#define ASPEED_CLK_SELECTION	0x08
++#define ASPEED_CLK_STOP_CTRL	0x0c
++#define ASPEED_MPLL_PARAM	0x20
++#define ASPEED_HPLL_PARAM	0x24
++#define  AST2500_HPLL_BYPASS_EN	BIT(20)
++#define  AST2400_HPLL_STRAPPED	BIT(18)
++#define  AST2400_HPLL_BYPASS_EN	BIT(17)
++#define ASPEED_MISC_CTRL	0x2c
++#define  UART_DIV13_EN		BIT(12)
+ #define ASPEED_STRAP		0x70
++#define  CLKIN_25MHZ_EN		BIT(23)
++#define  AST2400_CLK_SOURCE_SEL	BIT(18)
++#define ASPEED_CLK_SELECTION_2	0xd8
++
++/* Globally visible clocks */
++static DEFINE_SPINLOCK(aspeed_clk_lock);
+ 
+ /* Keeps track of all clocks */
+ static struct clk_hw_onecell_data *aspeed_clk_data;
+@@ -98,6 +114,160 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
+ 
++static const struct clk_div_table ast2400_div_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
++static const struct clk_div_table ast2500_div_table[] = {
++	{ 0x0, 4 },
++	{ 0x1, 8 },
++	{ 0x2, 12 },
++	{ 0x3, 16 },
++	{ 0x4, 20 },
++	{ 0x5, 24 },
++	{ 0x6, 28 },
++	{ 0x7, 32 },
++	{ 0 }
++};
++
++static struct clk_hw *aspeed_ast2400_calc_pll(const char *name, u32 val)
++{
++	unsigned int mult, div;
++
++	if (val & AST2400_HPLL_BYPASS_EN) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
++		u32 n = (val >> 5) & 0x3f;
++		u32 od = (val >> 4) & 0x1;
++		u32 d = val & 0xf;
++
++		mult = (2 - od) * (n + 2);
++		div = d + 1;
++	}
++	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
++			mult, div);
++};
++
++static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
++{
++	unsigned int mult, div;
++
++	if (val & AST2500_HPLL_BYPASS_EN) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
++		u32 p = (val >> 13) & 0x3f;
++		u32 m = (val >> 5) & 0xff;
++		u32 n = val & 0x1f;
++
++		mult = (m + 1) / (n + 1);
++		div = p + 1;
++	}
++
++	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
++			mult, div);
++}
++
++static void __init aspeed_ast2400_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, freq, div;
++
++	/*
++	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
++	 * strapping
++	 */
++	regmap_read(map, ASPEED_STRAP, &val);
++	if (val & CLKIN_25MHZ_EN)
++		freq = 25000000;
++	else if (val & AST2400_CLK_SOURCE_SEL)
++		freq = 48000000;
++	else
++		freq = 24000000;
++	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
++	pr_debug("clkin @%u MHz\n", freq / 1000000);
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
++
++	/*
++	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
++	 *   00: Select CPU:AHB = 1:1
++	 *   01: Select CPU:AHB = 2:1
++	 *   10: Select CPU:AHB = 4:1
++	 *   11: Select CPU:AHB = 3:1
++	 */
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 10) & 0x3;
++	div = val + 1;
++	if (div == 3)
++		div = 4;
++	else if (div == 4)
++		div = 3;
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
++			ast2400_div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++}
++
++static void __init aspeed_ast2500_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, freq, div;
++
++	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
++	regmap_read(map, ASPEED_STRAP, &val);
++	if (val & CLKIN_25MHZ_EN)
++		freq = 25000000;
++	else
++		freq = 24000000;
++	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
++	pr_debug("clkin @%u MHz\n", freq / 1000000);
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2500_calc_pll("hpll", val);
++
++	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 9) & 0x7;
++	WARN(val == 0, "strapping is zero: cannot determine ahb clock");
++	div = 2 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	regmap_read(map, ASPEED_CLK_SELECTION, &val);
++	val = (val >> 23) & 0x7;
++	div = 4 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++};
++
+ static void __init aspeed_cc_init(struct device_node *np)
+ {
+ 	struct regmap *map;
+@@ -139,6 +309,13 @@ static void __init aspeed_cc_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
++		aspeed_ast2400_cc(map);
++	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
++		aspeed_ast2500_cc(map);
++	else
++		pr_err("unknown platform, failed to add clocks\n");
++
+ 	aspeed_clk_data->num = ASPEED_NUM_CLKS;
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
+ 	if (ret)
+-- 
+2.14.1
