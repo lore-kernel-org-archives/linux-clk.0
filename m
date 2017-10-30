@@ -1,90 +1,114 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 0/9] clk: sunxi-ng: Use sigma-delta modulation for audio PLL
-Date: Thu, 12 Oct 2017 16:36:56 +0800
-Message-Id: <20171012083705.24409-1-wens@csie.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 26/27] clk: ti: dm816: add clkctrl clock data
+Date: Mon, 30 Oct 2017 15:04:44 +0200
+Message-ID: <1509368685-29112-27-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Add data for dm816 clkctrl clocks, and register it within the clkctrl
+driver.
 
-This series adds support for fractional-N synthesis using sigma-delta
-modulation in the audio PLL to get the exact required clock rate.
-This fixes the speed and pitch change when audio is played back on
-sunxi platforms, due to the slightly inaccurate audio clock.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-816x.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clkctrl.c  |  3 +++
+ drivers/clk/ti/clock.h    |  1 +
+ 3 files changed, 49 insertions(+)
 
-I've done this for all platforms I can test at the moment. A83T is left
-out for now as the the clock unit's design is slightly different. I
-was unable to work on the A33, as my board is very unstable, plus A33
-audio playback seems to be broken at the moment. There might be some
-issue with the DAPM routes.
-
-Patch 1 fixes an error with the audio PLL's post-divider bit field
-offset.
-
-Patch 2 adds a check for fractional mode clock rates in the N-M clock's
-round_rate callback. This is mostly for aesthetics to have both
-round_rate and set_rate code paths look the same. In practice the N-M
-factors can also generate the fractional mode clock rates directly.
-
-Patch 3 adds a table based sigma-delta modulation clock type. This is
-implemented much like the fractional mode clocks, as a helper library
-to be integrated into the various factor clocks where needed. As there
-is no explanation on how to calculate the parameters for SDM, the table
-based approach allows us to copy existing parameters from the vendor
-kernel.
-
-Patch 4 hooks the SDM clock type helpers into the N-M factors clock
-type. The audio PLLs on most of our are of this type.
-
-Patches 5 ~ 9 convert the audio PLL to using SDM on various SoCs. The
-changes are the same, accounting for minor variances between SoCs:
-
-    - audio PLL post-divider now forced to 1.
-
-    - pll-audio-1x fixed-factor-clock divider now set to 1, matching
-      the hardware setting from above.
-
-    - SDM parameter table added.
-
-    - SDM parameters added to pll-audio-base clock.
-
-Please have a look.
-
-ChenYu
-
-Chen-Yu Tsai (9):
-  clk: sunxi-ng: sun5i: Fix bit offset of audio PLL post-divider
-  clk: sunxi-ng: nm: Check if requested rate is supported by fractional
-    clock
-  clk: sunxi-ng: Add sigma-delta modulation support
-  clk: sunxi-ng: nm: Add support for sigma-delta modulation
-  clk: sunxi-ng: sun8i: h3: Use sigma-delta modulation for audio PLL
-  clk: sunxi-ng: sun4i: Use sigma-delta modulation for audio PLL
-  clk: sunxi-ng: sun5i: Use sigma-delta modulation for audio PLL
-  clk: sunxi-ng: sun6i: Use sigma-delta modulation for audio PLL
-  clk: sunxi-ng: sun8i: a23: Use sigma-delta modulation for audio PLL
-
- drivers/clk/sunxi-ng/Makefile        |   1 +
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c |  26 ++++--
- drivers/clk/sunxi-ng/ccu-sun5i.c     |  27 ++++--
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c |  38 ++++++---
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c |  38 ++++++---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c  |  38 ++++++---
- drivers/clk/sunxi-ng/ccu_common.h    |   1 +
- drivers/clk/sunxi-ng/ccu_nm.c        |  25 +++++-
- drivers/clk/sunxi-ng/ccu_nm.h        |  25 ++++++
- drivers/clk/sunxi-ng/ccu_sdm.c       | 158 +++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_sdm.h       |  80 ++++++++++++++++++
- 11 files changed, 404 insertions(+), 53 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.c
- create mode 100644 drivers/clk/sunxi-ng/ccu_sdm.h
-
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index ac9c94a..7d215cd 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -13,9 +13,54 @@
+ #include <linux/list.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
++#include <dt-bindings/clock/dm816.h>
+ 
+ #include "clock.h"
+ 
++static const struct omap_clkctrl_reg_data dm816_default_clkctrl_regs[] __initconst = {
++	{ DM816_USB_OTG_HS_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data dm816_alwon_clkctrl_regs[] __initconst = {
++	{ DM816_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_GPIO1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM816_GPIO2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM816_I2C1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_I2C2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_TIMER1_CLKCTRL, NULL, CLKF_SW_SUP, "timer1_fck" },
++	{ DM816_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "timer2_fck" },
++	{ DM816_TIMER3_CLKCTRL, NULL, CLKF_SW_SUP, "timer3_fck" },
++	{ DM816_TIMER4_CLKCTRL, NULL, CLKF_SW_SUP, "timer4_fck" },
++	{ DM816_TIMER5_CLKCTRL, NULL, CLKF_SW_SUP, "timer5_fck" },
++	{ DM816_TIMER6_CLKCTRL, NULL, CLKF_SW_SUP, "timer6_fck" },
++	{ DM816_TIMER7_CLKCTRL, NULL, CLKF_SW_SUP, "timer7_fck" },
++	{ DM816_WD_TIMER_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk18_ck" },
++	{ DM816_MCSPI1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_MAILBOX_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM816_SPINBOX_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM816_MMC1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk10_ck" },
++	{ DM816_GPMC_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk6_ck" },
++	{ DM816_DAVINCI_MDIO_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk24_ck" },
++	{ DM816_EMAC1_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk24_ck" },
++	{ DM816_MPU_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk2_ck" },
++	{ DM816_RTC_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "sysclk18_ck" },
++	{ DM816_TPCC_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM816_TPTC0_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM816_TPTC1_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM816_TPTC2_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ DM816_TPTC3_CLKCTRL, NULL, CLKF_SW_SUP, "sysclk4_ck" },
++	{ 0 },
++};
++
++const struct omap_clkctrl_data dm816_clkctrl_data[] __initconst = {
++	{ 0x48180500, dm816_default_clkctrl_regs },
++	{ 0x48181400, dm816_alwon_clkctrl_regs },
++	{ 0 },
++};
++
+ static struct ti_dt_clk dm816x_clks[] = {
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index a531a89..75aa4de 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -456,6 +456,9 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ #ifdef CONFIG_SOC_TI81XX
+ 	if (of_machine_is_compatible("ti,dm814"))
+ 		data = dm814_clkctrl_data;
++
++	if (of_machine_is_compatible("ti,dm816"))
++		data = dm816_clkctrl_data;
+ #endif
+ 
+ 	while (data->addr) {
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 60e6794..c560254 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -236,6 +236,7 @@ struct omap_clkctrl_data {
+ extern const struct omap_clkctrl_data am3_clkctrl_data[];
+ extern const struct omap_clkctrl_data am4_clkctrl_data[];
+ extern const struct omap_clkctrl_data dm814_clkctrl_data[];
++extern const struct omap_clkctrl_data dm816_clkctrl_data[];
+ 
+ #define CLKF_SW_SUP	BIT(0)
+ #define CLKF_HW_SUP	BIT(1)
 -- 
-2.14.2
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
