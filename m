@@ -1,33 +1,51 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 04/27] clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended
+Date: Mon, 30 Oct 2017 15:04:22 +0200
+Message-ID: <1509368685-29112-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net> <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 3 Oct 2017 22:26:18 +0200
-Message-ID: <CACRpkdaWQpjHhx+Jp5Ne-mZ110S-4iZ19TUYqwV2km0jbqTn6g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 9:40 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+This will happen on certain platforms when entering / leaving suspend
+and the system attempts to disable certain clocks at very early/late
+phase, burping out a warning from timekeeping core. Avoid the issue
+by checking if the timekeeping is suspended and using the fallback
+udelay approach for checking timeouts.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:24:43 +0200
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clkctrl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 284ba449..91ddc92 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
+ #include <linux/delay.h>
++#include <linux/timekeeping.h>
+ #include "clock.h"
+ 
+ #define NO_IDLEST			0x1
+@@ -90,7 +91,7 @@ static bool _omap4_is_ready(u32 val)
+ 
+ static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
+ {
+-	if (unlikely(_early_timeout)) {
++	if (unlikely(_early_timeout || timekeeping_suspended)) {
+ 		if (time->cycles++ < timeout) {
+ 			udelay(1);
+ 			return false;
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
