@@ -1,67 +1,146 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41065 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbdJBKs2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 06:48:28 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-Date: Mon, 02 Oct 2017 12:47:55 +0200
-Message-id: <20171002104759.25944-1-m.szyprowski@samsung.com>
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 21/27] dt-bindings: clk: add am43xx clkctrl definitions
+Date: Mon, 30 Oct 2017 15:04:39 +0200
+Message-ID: <1509368685-29112-22-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi!
+Contains offsets for all am43xx clkctrl main and optional clocks.
 
-Exynos4412 ISP clock controller is located in the SOC area, which belongs
-to ISP power domain. This was not properly handled by the current
-Exynos4-clk driver. This patchset instantiates a separate clock driver
-for those clocks, updates all clients of ISP clocks and ensures that
-the driver is properly integrated in ISP power domin using runtime PM
-feature of the clock framework.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/dt-bindings/clock/am4.h | 113 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 113 insertions(+)
+ create mode 100644 include/dt-bindings/clock/am4.h
 
-This finally solves all the mysterious freezes in accessing ISP clocks
-when ISP power domain is disabled.
-
-The last patch breaks support for old dtbs. It can be applied when all
-boards are updated. Exynos4412 ISP subsystem is only used by Trats2
-boards, for which kernel is updated always together with the dtb file,
-so the last patch can be applied to the next kernel release after merging
-the DTS patch.
-
-This patchset requires clocks runtime PM support ("Add runtime PM support
-for clocks (on Exynos SoC example)" v9 patchset), which I hope to be
-merged soon to clk-next.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  clk: samsung: Instantiate Exynos4412 ISP clocks only when available
-  clk: samsung: Add a separate driver for Exynos4412 ISP clocks
-  ARM: dts: exynos: Add Exynos4412 ISP clock controller
-  clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
-
- .../devicetree/bindings/clock/exynos4-clock.txt    |  27 ++++
- arch/arm/boot/dts/exynos4412.dtsi                  |  71 ++++----
- drivers/clk/samsung/Makefile                       |   1 +
- drivers/clk/samsung/clk-exynos4.c                  |  66 +-------
- drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
- include/dt-bindings/clock/exynos4.h                |  65 ++++----
- 6 files changed, 287 insertions(+), 122 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
-
+diff --git a/include/dt-bindings/clock/am4.h b/include/dt-bindings/clock/am4.h
+new file mode 100644
+index 0000000..d21df00
+--- /dev/null
++++ b/include/dt-bindings/clock/am4.h
+@@ -0,0 +1,113 @@
++/*
++ * Copyright 2017 Texas Instruments, Inc.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __DT_BINDINGS_CLK_AM4_H
++#define __DT_BINDINGS_CLK_AM4_H
++
++#define AM4_CLKCTRL_OFFSET	0x20
++#define AM4_CLKCTRL_INDEX(offset)	((offset) - AM4_CLKCTRL_OFFSET)
++
++/* l4_wkup clocks */
++#define AM4_ADC_TSC_CLKCTRL	AM4_CLKCTRL_INDEX(0x120)
++#define AM4_L4_WKUP_CLKCTRL	AM4_CLKCTRL_INDEX(0x220)
++#define AM4_WKUP_M3_CLKCTRL	AM4_CLKCTRL_INDEX(0x228)
++#define AM4_COUNTER_32K_CLKCTRL	AM4_CLKCTRL_INDEX(0x230)
++#define AM4_TIMER1_CLKCTRL	AM4_CLKCTRL_INDEX(0x328)
++#define AM4_WD_TIMER2_CLKCTRL	AM4_CLKCTRL_INDEX(0x338)
++#define AM4_I2C1_CLKCTRL	AM4_CLKCTRL_INDEX(0x340)
++#define AM4_UART1_CLKCTRL	AM4_CLKCTRL_INDEX(0x348)
++#define AM4_SMARTREFLEX0_CLKCTRL	AM4_CLKCTRL_INDEX(0x350)
++#define AM4_SMARTREFLEX1_CLKCTRL	AM4_CLKCTRL_INDEX(0x358)
++#define AM4_CONTROL_CLKCTRL	AM4_CLKCTRL_INDEX(0x360)
++#define AM4_GPIO1_CLKCTRL	AM4_CLKCTRL_INDEX(0x368)
++
++/* mpu clocks */
++#define AM4_MPU_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++
++/* gfx_l3 clocks */
++#define AM4_GFX_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++
++/* l4_rtc clocks */
++#define AM4_RTC_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++
++/* l4_per clocks */
++#define AM4_L3_MAIN_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++#define AM4_AES_CLKCTRL	AM4_CLKCTRL_INDEX(0x28)
++#define AM4_DES_CLKCTRL	AM4_CLKCTRL_INDEX(0x30)
++#define AM4_L3_INSTR_CLKCTRL	AM4_CLKCTRL_INDEX(0x40)
++#define AM4_OCMCRAM_CLKCTRL	AM4_CLKCTRL_INDEX(0x50)
++#define AM4_SHAM_CLKCTRL	AM4_CLKCTRL_INDEX(0x58)
++#define AM4_VPFE0_CLKCTRL	AM4_CLKCTRL_INDEX(0x68)
++#define AM4_VPFE1_CLKCTRL	AM4_CLKCTRL_INDEX(0x70)
++#define AM4_TPCC_CLKCTRL	AM4_CLKCTRL_INDEX(0x78)
++#define AM4_TPTC0_CLKCTRL	AM4_CLKCTRL_INDEX(0x80)
++#define AM4_TPTC1_CLKCTRL	AM4_CLKCTRL_INDEX(0x88)
++#define AM4_TPTC2_CLKCTRL	AM4_CLKCTRL_INDEX(0x90)
++#define AM4_L4_HS_CLKCTRL	AM4_CLKCTRL_INDEX(0xa0)
++#define AM4_GPMC_CLKCTRL	AM4_CLKCTRL_INDEX(0x220)
++#define AM4_MCASP0_CLKCTRL	AM4_CLKCTRL_INDEX(0x238)
++#define AM4_MCASP1_CLKCTRL	AM4_CLKCTRL_INDEX(0x240)
++#define AM4_MMC3_CLKCTRL	AM4_CLKCTRL_INDEX(0x248)
++#define AM4_QSPI_CLKCTRL	AM4_CLKCTRL_INDEX(0x258)
++#define AM4_USB_OTG_SS0_CLKCTRL	AM4_CLKCTRL_INDEX(0x260)
++#define AM4_USB_OTG_SS1_CLKCTRL	AM4_CLKCTRL_INDEX(0x268)
++#define AM4_PRUSS_CLKCTRL	AM4_CLKCTRL_INDEX(0x320)
++#define AM4_L4_LS_CLKCTRL	AM4_CLKCTRL_INDEX(0x420)
++#define AM4_D_CAN0_CLKCTRL	AM4_CLKCTRL_INDEX(0x428)
++#define AM4_D_CAN1_CLKCTRL	AM4_CLKCTRL_INDEX(0x430)
++#define AM4_EPWMSS0_CLKCTRL	AM4_CLKCTRL_INDEX(0x438)
++#define AM4_EPWMSS1_CLKCTRL	AM4_CLKCTRL_INDEX(0x440)
++#define AM4_EPWMSS2_CLKCTRL	AM4_CLKCTRL_INDEX(0x448)
++#define AM4_EPWMSS3_CLKCTRL	AM4_CLKCTRL_INDEX(0x450)
++#define AM4_EPWMSS4_CLKCTRL	AM4_CLKCTRL_INDEX(0x458)
++#define AM4_EPWMSS5_CLKCTRL	AM4_CLKCTRL_INDEX(0x460)
++#define AM4_ELM_CLKCTRL	AM4_CLKCTRL_INDEX(0x468)
++#define AM4_GPIO2_CLKCTRL	AM4_CLKCTRL_INDEX(0x478)
++#define AM4_GPIO3_CLKCTRL	AM4_CLKCTRL_INDEX(0x480)
++#define AM4_GPIO4_CLKCTRL	AM4_CLKCTRL_INDEX(0x488)
++#define AM4_GPIO5_CLKCTRL	AM4_CLKCTRL_INDEX(0x490)
++#define AM4_GPIO6_CLKCTRL	AM4_CLKCTRL_INDEX(0x498)
++#define AM4_HDQ1W_CLKCTRL	AM4_CLKCTRL_INDEX(0x4a0)
++#define AM4_I2C2_CLKCTRL	AM4_CLKCTRL_INDEX(0x4a8)
++#define AM4_I2C3_CLKCTRL	AM4_CLKCTRL_INDEX(0x4b0)
++#define AM4_MAILBOX_CLKCTRL	AM4_CLKCTRL_INDEX(0x4b8)
++#define AM4_MMC1_CLKCTRL	AM4_CLKCTRL_INDEX(0x4c0)
++#define AM4_MMC2_CLKCTRL	AM4_CLKCTRL_INDEX(0x4c8)
++#define AM4_RNG_CLKCTRL	AM4_CLKCTRL_INDEX(0x4e0)
++#define AM4_SPI0_CLKCTRL	AM4_CLKCTRL_INDEX(0x500)
++#define AM4_SPI1_CLKCTRL	AM4_CLKCTRL_INDEX(0x508)
++#define AM4_SPI2_CLKCTRL	AM4_CLKCTRL_INDEX(0x510)
++#define AM4_SPI3_CLKCTRL	AM4_CLKCTRL_INDEX(0x518)
++#define AM4_SPI4_CLKCTRL	AM4_CLKCTRL_INDEX(0x520)
++#define AM4_SPINLOCK_CLKCTRL	AM4_CLKCTRL_INDEX(0x528)
++#define AM4_TIMER2_CLKCTRL	AM4_CLKCTRL_INDEX(0x530)
++#define AM4_TIMER3_CLKCTRL	AM4_CLKCTRL_INDEX(0x538)
++#define AM4_TIMER4_CLKCTRL	AM4_CLKCTRL_INDEX(0x540)
++#define AM4_TIMER5_CLKCTRL	AM4_CLKCTRL_INDEX(0x548)
++#define AM4_TIMER6_CLKCTRL	AM4_CLKCTRL_INDEX(0x550)
++#define AM4_TIMER7_CLKCTRL	AM4_CLKCTRL_INDEX(0x558)
++#define AM4_TIMER8_CLKCTRL	AM4_CLKCTRL_INDEX(0x560)
++#define AM4_TIMER9_CLKCTRL	AM4_CLKCTRL_INDEX(0x568)
++#define AM4_TIMER10_CLKCTRL	AM4_CLKCTRL_INDEX(0x570)
++#define AM4_TIMER11_CLKCTRL	AM4_CLKCTRL_INDEX(0x578)
++#define AM4_UART2_CLKCTRL	AM4_CLKCTRL_INDEX(0x580)
++#define AM4_UART3_CLKCTRL	AM4_CLKCTRL_INDEX(0x588)
++#define AM4_UART4_CLKCTRL	AM4_CLKCTRL_INDEX(0x590)
++#define AM4_UART5_CLKCTRL	AM4_CLKCTRL_INDEX(0x598)
++#define AM4_UART6_CLKCTRL	AM4_CLKCTRL_INDEX(0x5a0)
++#define AM4_OCP2SCP0_CLKCTRL	AM4_CLKCTRL_INDEX(0x5b8)
++#define AM4_OCP2SCP1_CLKCTRL	AM4_CLKCTRL_INDEX(0x5c0)
++#define AM4_EMIF_CLKCTRL	AM4_CLKCTRL_INDEX(0x720)
++#define AM4_DSS_CORE_CLKCTRL	AM4_CLKCTRL_INDEX(0xa20)
++#define AM4_CPGMAC0_CLKCTRL	AM4_CLKCTRL_INDEX(0xb20)
++
++#endif
 -- 
-2.14.2
+1.9.1
 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
