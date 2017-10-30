@@ -1,53 +1,40 @@
-Return-Path: <xuwei5@hisilicon.com>
-Subject: Re: [PATCH 0/2] Add support for Hi6220 coresight
-To: Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
- <20170901013301.GN21656@codeaurora.org> <20171007121802.GC23080@leoy-linaro>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Li Pengcheng
-	<lipengcheng8@huawei.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <59E07FDE.40307@hisilicon.com>
-Date: Fri, 13 Oct 2017 09:57:02 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 00/27] clk: ti: clkctrl fixes and support for additional SoCs
+Date: Mon, 30 Oct 2017 15:04:18 +0200
+Message-ID: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20171007121802.GC23080@leoy-linaro>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Leo,
+Hi,
 
-On 2017/10/7 13:18, Leo Yan wrote:
-> Hi Stephen, Wei,
-> 
-> On Thu, Aug 31, 2017 at 06:33:01PM -0700, Stephen Boyd wrote:
->> On 09/01, Leo Yan wrote:
->>> This patch series adds support for coresight on Hi6220; the first patch
->>> is to fix coresight PLL so can avoid system hang after we enable
->>> coresight, the second patch is to add DT binding according to coresight
->>> topology.
->>>
->>> The patch has been tested on Hikey; By using OpenCSD snapshot mode, it
->>> can successfully decode ETF and ETB trace data.
->>>
->>
->> I can take the first one and second one goes through arm-soc?
-> 
-> Could you pick these two patches for Hi6220 coresight enabling for
-> this merge window? Or need me resend these two patches?
+This series contains a few cleanups/fixes and clkctrl support for
+am33xx, am43xx, dra7, dm81x and omap5 SoCs. This series can be
+applied independently of any other upcoming clkctrl related
+changes (mach-omap2 and dts.)
 
-Applied patch 2 into hisilicon dt tree with slight fix.
-Thanks!
+The way forward with hwmod cleanup will look something like following:
+- this series + related mach-omap2 changes merged
+- dts changes merged
+- introduction of the interconnect driver
+- removal of clkctrl related data from hwmod data
+- removal of the temporary clkctrl clock aliases from TI clock driver
+  (these are only needed as long as hwmod is still in charge of business)
 
-BR,
-Wei
+Boot testing done on all boards I have access to, and Tony has done
+some extra testing on dm81x boards which I don't have. Applied on top
+of 4.14-rc1, but I would say this is 4.16 material. The posting of
+this series has been delayed due to some nasty email issues I've been
+having, sorry about that.
 
-> 
-> Thanks,
-> Leo Yan
-> 
-> .
-> 
+Tree: https://github.com/t-kristo/linux-pm.git
+Branch: 4.14-rc1-clkctrl-driver
+
+-Tero
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
