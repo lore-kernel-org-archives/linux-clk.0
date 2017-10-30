@@ -1,46 +1,94 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2 3/4] nvmem: rockchip: add support for RK3368
-To: Heiko Stuebner <heiko@sntech.de>,
- Romain Perier <romain.perier@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- philipp.tomsich@theobroma-systems.com, klaus.goger@theobroma-systems.com,
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll
- <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20170904085119.25981-1-romain.perier@collabora.com>
- <20170904085119.25981-4-romain.perier@collabora.com>
- <1634846.UTLyzHzuUI@phil>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <fb1c4d16-afae-6401-4b4a-75a5aa61c101@linaro.org>
-Date: Mon, 16 Oct 2017 10:09:34 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+Subject: [PATCH 02/27] clk: ti: clkctrl: add support for clkdm init for clkctrl clocks
+Date: Mon, 30 Oct 2017 15:04:20 +0200
+Message-ID: <1509368685-29112-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1634846.UTLyzHzuUI@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Clkctrl clocks now support clockdomain init also. This will be needed
+so that hwmod core can drop the support for clockdomain handling.
 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clkctrl.c | 22 ++++++++++++++++++++++
+ drivers/clk/ti/clock.h   |  1 +
+ 2 files changed, 23 insertions(+)
 
-On 14/10/17 22:31, Heiko Stuebner wrote:
-> Hi Srinivas,
-> 
-> Am Montag, 4. September 2017, 10:51:18 CEST schrieb Romain Perier:
->> This adds the necessary function for handling support on RK3368 SoCs
->>
->> Signed-off-by: Romain Perier <romain.perier@collabora.com>
->> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> Srinivas, could you take a look at this patch and maybe pick it up?
-> 
-Its already sent to Greg KH for inclusion in 4.15.
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 2db7d40..284ba449 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -46,6 +46,7 @@
+ struct omap_clkctrl_provider {
+ 	void __iomem *base;
+ 	struct list_head clocks;
++	char *clkdm_name;
+ };
+ 
+ struct omap_clkctrl_clk {
+@@ -208,6 +209,7 @@ static int _omap4_clkctrl_clk_is_enabled(struct clk_hw *hw)
+ 	.enable		= _omap4_clkctrl_clk_enable,
+ 	.disable	= _omap4_clkctrl_clk_disable,
+ 	.is_enabled	= _omap4_clkctrl_clk_is_enabled,
++	.init		= omap2_init_clk_clkdm,
+ };
+ 
+ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+@@ -438,6 +440,21 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 
+ 	provider->base = of_iomap(node, 0);
+ 
++	provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
++				       GFP_KERNEL);
++	if (!provider->clkdm_name) {
++		kfree(provider);
++		return;
++	}
++
++	/*
++	 * Create default clkdm name, replace _cm from end of parent node
++	 * name with _clkdm
++	 */
++	strcpy(provider->clkdm_name, node->parent->name);
++	provider->clkdm_name[strlen(provider->clkdm_name) - 2] = 0;
++	strcat(provider->clkdm_name, "clkdm");
++
+ 	INIT_LIST_HEAD(&provider->clocks);
+ 
+ 	/* Generate clocks */
+@@ -460,6 +477,11 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		if (reg_data->flags & CLKF_NO_IDLEST)
+ 			hw->flags |= NO_IDLEST;
+ 
++		if (reg_data->clkdm_name)
++			hw->clkdm_name = reg_data->clkdm_name;
++		else
++			hw->clkdm_name = provider->clkdm_name;
++
+ 		init.parent_names = &reg_data->parent;
+ 		init.num_parents = 1;
+ 		init.flags = 0;
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 561dbe9..169241f 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -221,6 +221,7 @@ struct omap_clkctrl_reg_data {
+ 	const struct omap_clkctrl_bit_data *bit_data;
+ 	u16 flags;
+ 	const char *parent;
++	const char *clkdm_name;
+ };
+ 
+ struct omap_clkctrl_data {
+-- 
+1.9.1
 
---srini
-> 
-> Thanks
-> Heiko
-> 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
