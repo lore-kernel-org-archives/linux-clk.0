@@ -1,57 +1,202 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jose Abreu <joabreu@synopsys.com>,
-	Carlos Palminha <palminha@synopsys.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.9 021/104] clk/axs10x: Clear init field in driver probe
-Date: Fri,  6 Oct 2017 10:50:59 +0200
-Message-Id: <20171006083843.870474139@linuxfoundation.org>
-In-Reply-To: <20171006083840.743659740@linuxfoundation.org>
-References: <20171006083840.743659740@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v5 3/5] clk: aspeed: Add platform driver and register PLLs
+Date: Mon, 30 Oct 2017 16:32:48 +1030
+Message-Id: <20171030060250.701-4-joel@jms.id.au>
+In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
+References: <20171030060250.701-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This registers a platform driver to set up all of the non-core clocks.
 
-------------------
+The clocks that have configurable rates are now registered.
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-
-
-[ Upstream commit 6205406cf6f282d622f31de25036e6d1ab3a2ff5 ]
-
-Init field must be cleared in driver probe as this structure is not
-dinamically allocated. If not, wrong flags can be passed to core.
-
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Carlos Palminha <palminha@synopsys.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Fixes: 923587aafc2c ("clk/axs10x: Add I2S PLL clock driver")
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-Link: lkml.kernel.org/r/040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+--
+v5:
+ - Remove eclk configuration. We do not have enough information to
+ correctly implement the mux and divisor, so it will have to be
+ implemented in the future
+v4:
+ - Add eclk div table to fix ast2500 calculation
+ - Add defines to document the BIT() macros
+ - Pass dev where we can when registering clocks
+ - Check for errors when registering clk_hws
+v3:
+ - Fix bclk and eclk calculation
+ - Separate out ast2400 and ast25000 for pll calculation
 ---
- drivers/clk/axs10x/i2s_pll_clock.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-aspeed.c | 130 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
 
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct plat
- 	if (IS_ERR(pll_clk->base))
- 		return PTR_ERR(pll_clk->base);
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index a8da411326e9..8bf3f3767560 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -114,6 +116,18 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
  
-+	memset(&init, 0, sizeof(init));
- 	clk_name = node->name;
- 	init.name = clk_name;
- 	init.ops = &i2s_pll_ops;
++static const struct clk_div_table ast2500_mac_div_table[] = {
++	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
+ static const struct clk_div_table ast2400_div_table[] = {
+ 	{ 0x0, 2 },
+ 	{ 0x1, 4 },
+@@ -179,6 +193,122 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
+ 			mult, div);
+ }
+ 
++struct aspeed_clk_soc_data {
++	const struct clk_div_table *div_table;
++	const struct clk_div_table *mac_div_table;
++	struct clk_hw *(*calc_pll)(const char *name, u32 val);
++};
++
++static const struct aspeed_clk_soc_data ast2500_data = {
++	.div_table = ast2500_div_table,
++	.mac_div_table = ast2500_mac_div_table,
++	.calc_pll = aspeed_ast2500_calc_pll,
++};
++
++static const struct aspeed_clk_soc_data ast2400_data = {
++	.div_table = ast2400_div_table,
++	.mac_div_table = ast2400_div_table,
++	.calc_pll = aspeed_ast2400_calc_pll,
++};
++
++static int aspeed_clk_probe(struct platform_device *pdev)
++{
++	const struct aspeed_clk_soc_data *soc_data;
++	struct device *dev = &pdev->dev;
++	struct regmap *map;
++	struct clk_hw *hw;
++	u32 val, rate;
++
++	map = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "no syscon regmap\n");
++		return PTR_ERR(map);
++	}
++
++	/* SoC generations share common layouts but have different divisors */
++	soc_data = of_device_get_match_data(dev);
++	if (!soc_data) {
++		dev_err(dev, "no match data for platform\n");
++		return -EINVAL;
++	}
++
++	/* UART clock div13 setting */
++	regmap_read(map, ASPEED_MISC_CTRL, &val);
++	if (val & UART_DIV13_EN)
++		rate = 24000000 / 13;
++	else
++		rate = 24000000;
++	/* TODO: Find the parent data for the uart clock */
++	hw = clk_hw_register_fixed_rate(dev, "uart", NULL, 0, rate);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
++
++	/*
++	 * Memory controller (M-PLL) PLL. This clock is configured by the
++	 * bootloader, and is exposed to Linux as a read-only clock rate.
++	 */
++	regmap_read(map, ASPEED_MPLL_PARAM, &val);
++	hw = soc_data->calc_pll("mpll", val);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	hw;
++
++	/* SD/SDIO clock divider (TODO: There's a gate too) */
++	hw = clk_hw_register_divider_table(dev, "sdio", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
++
++	/* MAC AHB bus clock divider */
++	hw = clk_hw_register_divider_table(dev, "mac", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
++			soc_data->mac_div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
++
++	/* LPC Host (LHCLK) clock divider */
++	hw = clk_hw_register_divider_table(dev, "lhclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
++
++	/* P-Bus (BCLK) clock divider */
++	hw = clk_hw_register_divider_table(dev, "bclk", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
++			soc_data->div_table,
++			&aspeed_clk_lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
++
++	return 0;
++};
++
++static const struct of_device_id aspeed_clk_dt_ids[] = {
++	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
++	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
++	{ }
++};
++
++static struct platform_driver aspeed_clk_driver = {
++	.probe  = aspeed_clk_probe,
++	.driver = {
++		.name = "aspeed-clk",
++		.of_match_table = aspeed_clk_dt_ids,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(aspeed_clk_driver);
++
+ static void __init aspeed_ast2400_cc(struct regmap *map)
+ {
+ 	struct clk_hw *hw;
+-- 
+2.14.1
