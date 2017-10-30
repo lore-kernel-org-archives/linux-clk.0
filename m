@@ -1,65 +1,99 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2 03/10] clk: sunxi-ng: fix the A64/H5 clock description of
- DE2 CCU
-Date: Fri, 27 Oct 2017 23:06:51 +0800
-Message-Id: <20171027150658.18509-4-icenowy@aosc.io>
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <sre@kernel.org>
+Date: Mon, 30 Oct 2017 21:45:03 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-omap@vger.kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH 01/27] clk: ti: clkctrl: fix error messages to print out
+ node name properly
+Message-ID: <20171030204503.767jcweqm2mn237w@earth>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+ <1509368685-29112-2-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m2rj2gqqvm6ztmw4"
+In-Reply-To: <1509368685-29112-2-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks of A64/H5 SoCs in the DE2 CCU is the same as the clocks in H3
-DE2 CCU rather than the A83T DE2 CCU (the parent of them is the DE
-module clock).
 
-Fix this by change the clock descriptions to use the clocks of H3.
+--m2rj2gqqvm6ztmw4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 763c5bd045b1 ("clk: sunxi-ng: add support for DE2 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 2db5d4e00ea7..468d1abaf0ee 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -177,10 +177,10 @@ static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
- };
- 
- static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
--	.ccu_clks	= sun8i_a83t_de2_clks,
--	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
-+	.ccu_clks	= sun8i_h3_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_h3_de2_clks),
- 
--	.hw_clks	= &sun8i_a83t_de2_hw_clks,
-+	.hw_clks	= &sun8i_h3_de2_hw_clks,
- 
- 	.resets		= sun50i_a64_de2_resets,
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
--- 
-2.13.6
+On Mon, Oct 30, 2017 at 03:04:19PM +0200, Tero Kristo wrote:
+> Current node name does not convey any information, as it is always "clk".
+> Instead, print out the full node path, which will tell us better where
+> something went wrong.
+>=20
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
 
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- Sebastian
+
+>  drivers/clk/ti/clkctrl.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index 53e71d0..2db7d40 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -351,8 +351,8 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct =
+of_phandle_args *clkspec,
+>  	if (ti_clk_parse_divider_data((int *)div_data->dividers,
+>  				      div_data->max_div, 0, 0,
+>  				      &div->width, &div->table)) {
+> -		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
+> -		       node->name, offset, data->bit);
+> +		pr_err("%s: Data parsing for %pOF:%04x:%d failed\n", __func__,
+> +		       node, offset, data->bit);
+>  		kfree(div);
+>  		return;
+>  	}
+> @@ -428,7 +428,7 @@ static void __init _ti_omap4_clkctrl_setup(struct dev=
+ice_node *node)
+>  	}
+> =20
+>  	if (!data->addr) {
+> -		pr_err("%s not found from clkctrl data.\n", node->name);
+> +		pr_err("%pOF not found from clkctrl data.\n", node);
+>  		return;
+>  	}
+> =20
+> --=20
+> 1.9.1
+>=20
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/=
+Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--m2rj2gqqvm6ztmw4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAln3j0sACgkQ2O7X88g7
++pqQzg//fce/diZEsEfq7hI76IpG6g1Y3mybbH1+p1R1rito8uAbuWyBxcZzXIav
+xVDe8gTh1GD1X7JunzQvgwMoaTKe0PtkCpJMe63xBGzeVpzbRojuSOGKTHskIhQb
+DoKePsDRIE+SoGLAbWKfjMIOqiY8hb3sGDi4OMmTOq6YbOx06KmcY65mF4HJDFvk
+Sw1Tc4M4qC4Od+fXIU3BgsdMrZzyEvDyZPMmuNuZuumyjmCd6itPg++PGpnC/qQe
+YwynG+UjEw3yTxRFTPUB2ZJ8G1+3m0CkpHitUbG5Ue/2SR8t5Ro+Njomt8cuN8fa
+TUz965FhWFG6344d6v65W2/eEHfdBhLeBWoOQAd701CbVwjms/Q+FnFOYcMd8Z5D
+2uHF72tFq0noyz3a/QmATzEpFhauy5893Cszvsw5rPPVFKIDbjAybB9CMwH3dIsy
+/3zHYfi56TIWTHe9b8VAhao1ESjS1rDg2upcXnjuVTZQrezQM2J0K6vLfFK+mnrn
+2ONEf/zzm3tSTevisxmT4jRGgxdk+SbvqO5pySEh0sN8t4CnVHDHaUCTvi3r7haV
+45xrRIwPqkL2pROSkutGO89jqlRhdEY3rja5lvZfOs1Ctanfp7zACGzzI80P68oY
+WJU/Acwonv9B92232Sd1BDzD28a8LcxZ+dBiIEkuCvgjMPvGpzs=
+=+9A8
+-----END PGP SIGNATURE-----
+
+--m2rj2gqqvm6ztmw4--
