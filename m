@@ -1,66 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:14112
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750986AbdJBKcr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Oct 2017 06:32:47 -0400
-From: Adriana Reus <adriana.reus@nxp.com>
-To: sboyd@codeaurora.org, mturquette@baylibre.com
-Cc: anson.huang@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Adriana Reus <adriana.reus@nxp.com>
-Subject: [PATCH RESEND 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
-Date: Mon,  2 Oct 2017 13:32:10 +0300
-Message-Id: <1506940331-16742-2-git-send-email-adriana.reus@nxp.com>
-In-Reply-To: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
-References: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v5 0/5] clk: Add Aspeed clock driver
+Date: Mon, 30 Oct 2017 16:32:45 +1030
+Message-Id: <20171030060250.701-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-The parent of OCRAM_CLK should be axi_main_root_clk
-and not axi_post_div.
+This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
+Aspeed.
 
-before:
+This is v5. See patches for detailed changelogs.
 
-    axi_src                     1       1       332307692       0 0
-      axi_cg                    1       1       332307692       0 0
-        axi_pre_div             1       1       332307692       0 0
-          axi_post_div          1       1       332307692       0 0
-            ocram_clk           0       0       332307692       0 0
-            main_axi_root_clk   1       1       332307692       0 0
+v5: Address review from Andrew
+v4: Address review from Andrew and Stephen. 
+v3: Address review from Andrew and has seen more testing on hardware
+v2: split the driver out into a series of patches to make them easier to
+review.
 
-after:
+All of the important clocks are supported, with most non-essential ones
+also implemented where information is available. I am working with
+Aspeed to clear up some of the missing information, including the
+missing parent-sibling relationships.
 
-    axi_src                     1       1       332307692       0 0
-      axi_cg                    1       1       332307692       0 0
-        axi_pre_div             1       1       332307692       0 0
-          axi_post_div          1       1       332307692       0 0
-            main_axi_root_clk   1       1       332307692       0 0
-              ocram_clk         0       0       332307692       0 0
+We need to know the rate of the apb clock in order to correctly program
+the clocksource driver, so the apb and it's parents are created in the
+CLK_OF_DECLARE_DRIVER callback.
 
-Reference Doc: i.MX 7D Reference Manual - Chap 5, p 516
-(https://www.nxp.com/docs/en/reference-manual/IMX7DRM.pdf)
+The rest of the clocks are created at normal driver probe time. I
+followed the Gemini driver's lead with using the regmap where I could,
+but also having a pointer to the base address for use with the common
+clock callbacks.
 
-Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
-Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The driver borrows from the clk_gate common clock infrastructure, but modifies
+it in order to support the clock gate and reset pair that most of the clocks
+have. This pair must be reset-ungated-released, with appropriate delays,
+according to the datasheet.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 2305699..0ac9b30 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -797,7 +797,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
- 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
--	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
-+	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
- 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
- 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
+The first patch introduces the core clock registration parts, and describes
+the clocks. The second creates the core clocks, giving the system enough to
+boot (but without uart). Next come the non-core clocks, and finally the reset
+controller that is used for the few cocks that don't have a gate to go with their
+reset pair.
+
+Please review!
+
+Cheers,
+
+Joel
+
+
+Joel Stanley (5):
+  clk: Add clock driver for ASPEED BMC SoCs
+  clk: aspeed: Register core clocks
+  clk: aspeed: Add platform driver and register PLLs
+  clk: aspeed: Register gated clocks
+  clk: aspeed: Add reset controller
+
+ drivers/clk/Kconfig                      |  12 +
+ drivers/clk/Makefile                     |   1 +
+ drivers/clk/clk-aspeed.c                 | 666 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/aspeed-clock.h |  52 +++
+ 4 files changed, 731 insertions(+)
+ create mode 100644 drivers/clk/clk-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed-clock.h
+
 -- 
-2.7.4
-
+2.14.1
