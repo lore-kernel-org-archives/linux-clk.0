@@ -1,39 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 24 Oct 2017 01:36:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: mturquette@baylibre.com, emilio@elopez.com.ar, wens@csie.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: Re: [PATCH] clk: sunxi: fix build warning
-Message-ID: <20171024083628.GC15990@codeaurora.org>
-References: <20171019190948.5754-1-clabbe.montjoie@gmail.com>
- <20171020072904.kfmx65lbqd3uw2qh@flea>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171020072904.kfmx65lbqd3uw2qh@flea>
+In-Reply-To: <20171013115917.9318-1-linus.walleij@linaro.org>
+References: <20171013115917.9318-1-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Oct 2017 15:20:26 +0100
+Message-ID: <CACRpkda+e+m7LqdAjtQdTi52ysxpo-9ZDnWvx1jM1+w7oTcM-g@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v3] clk: qcom: Update DT bindings for the
+ MSM8660/APQ8060 RPMCC
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20, Maxime Ripard wrote:
-> Hi Stephen, Mike,
-> 
-> On Thu, Oct 19, 2017 at 09:09:48PM +0200, Corentin Labbe wrote:
-> > This patch fix the following build warning:
-> > drivers/clk/sunxi/clk-factors.c:279:14: warning: variable 'name' set but not used [-Wunused-but-set-variable]
-> > 
-> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> 
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> 
-> Can you apply that patch directly? This is the only fix that we're
-> supposed to have for 4.14.
-> 
+On Fri, Oct 13, 2017 at 1:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Fixes tag? And this is a new warning from the v4.14 merge window?
-I suppose it only removes code so that's a plus side for merging
-into fixes.
+> These compatible strings need to be added to extend support
+> for the RPM CC to cover MSM8660/APQ8060. We also need to add
+> enumberators to the include file for a few clocks that were
+> missing.
+>
+> Cc: devicetree@vger.kernel.org
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Move PLL4 last, and do not provide an enumerator for the
+>   "active" variant, we don't do that on PLL4.
+> ChangeLog v1->v2:
+> - Collect Rob's ACK
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gentle ping on this patch.
+
+Yours,
+Linus Walleij
