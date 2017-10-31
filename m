@@ -1,35 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 10 Oct 2017 10:38:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, andy.gross@linaro.org,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
-Message-ID: <20171010153821.wuusgkzrgqc6o4x7@rob-hp-laptop>
-References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
- <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	liuwei@actions-semi.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/3] Add clock driver for Actions S900 SoC
+Date: Wed,  1 Nov 2017 01:24:20 +0530
+Message-Id: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 10, 2017 at 02:27:13PM +0530, Rajendra Nayak wrote:
-> Add all RPM controlled clocks on msm8996 platform
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> [srini: Fixed various issues with offsets and made names specific to msm8996]
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+This series adds clock driver for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree data.
 
-Please add acks when posting new versions. 
+This series also addresses the review comments from previous
+submission happened last year.
 
-Acked-by: Rob Herring <robh@kernel.org>
+https://patchwork.kernel.org/patch/9254471/
 
->  drivers/clk/qcom/clk-smd-rpm.c                     | 82 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc.h             | 14 ++++
->  include/linux/soc/qcom/smd-rpm.h                   |  4 ++
->  4 files changed, 101 insertions(+)
+Driver has been validated on Bubblegum-96 board.
+
+Thanks,
+Mani
+
+Manivannan Sadhasivam (3):
+  arm64: dts: actions: add s900 clock controller nodes
+  clk: owl: add clock driver for Actions S900 SoC
+  Documentation: add Actions S900 clock bindings
+
+ .../bindings/clock/actions,s900-clock.txt          |  47 ++
+ MAINTAINERS                                        |   5 +
+ arch/arm64/boot/dts/actions/s900.dtsi              |  19 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/owl/Makefile                           |   2 +
+ drivers/clk/owl/clk-factor.c                       | 270 ++++++++++
+ drivers/clk/owl/clk-pll.c                          | 346 ++++++++++++
+ drivers/clk/owl/clk-s900.c                         | 587 +++++++++++++++++++++
+ drivers/clk/owl/clk.c                              | 318 +++++++++++
+ drivers/clk/owl/clk.h                              | 301 +++++++++++
+ include/dt-bindings/clock/actions,s900-clock.h     | 141 +++++
+ 11 files changed, 2037 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+ create mode 100644 drivers/clk/owl/Makefile
+ create mode 100644 drivers/clk/owl/clk-factor.c
+ create mode 100644 drivers/clk/owl/clk-pll.c
+ create mode 100644 drivers/clk/owl/clk-s900.c
+ create mode 100644 drivers/clk/owl/clk.c
+ create mode 100644 drivers/clk/owl/clk.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-clock.h
+
+-- 
+2.7.4
