@@ -1,65 +1,72 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.15
-Date: Wed,  4 Oct 2017 11:44:18 +0200
-Message-Id: <1507110258-11714-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	liuwei@actions-semi.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
+Date: Wed,  1 Nov 2017 01:24:21 +0530
+Message-Id: <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+This patch adds clock controller nodes for Actions Semi s900 SoC
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag1
-
-for you to fetch changes up to b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
-
-  clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.15
-
-  - Add support for the new R-Car V3M SoC,
-  - Small fixes and cleanups.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Markus Elfring (2):
-      clk: renesas: mstp: Delete error messages for failed memory allocations
-      clk: renesas: rcar-gen2: Delete error message for failed memory allocation
-
-Sergei Shtylyov (2):
-      dt-bindings: clock: Add R8A77970 CPG core clock definitions
-      clk: renesas: cpg-mssr: Add R8A77970 support
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/clk-mstp.c                     |   5 +-
- drivers/clk/renesas/clk-rcar-gen2.c                |   1 -
- drivers/clk/renesas/r8a77970-cpg-mssr.c            | 199 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a77970-cpg-mssr.h      |  48 +++++
- 9 files changed, 264 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a77970-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a77970-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 11406f6..c099ef1 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/actions,s900-clock.h>
+ 
+ / {
+ 	compatible = "actions,s900";
+@@ -88,6 +89,24 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
++	diff_24M: diff_24M {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		#clock-cells = <0>;
++	};
++
++	clock: clock-controller@e0160000 {
++		compatible = "actions,s900-clock";
++		reg = <0 0xe0160000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+-- 
+2.7.4
