@@ -1,65 +1,89 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 0/4] add support of clock driver on MediaTek MT7622
-Date: Thu, 5 Oct 2017 11:50:21 +0800
-Message-ID: <cover.1507174350.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	liuwei@actions-semi.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 3/3] Documentation: add Actions S900 clock bindings
+Date: Wed,  1 Nov 2017 01:24:23 +0530
+Message-Id: <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+This patch adds clock bindings for Actions Semi S900 SoC.
 
-Changes since v1:
-- fix up the makefile target for clk-mt7622-aud.o
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
 
-Add clock driver required by each function driver on MT7622 SoC with
-adding all clocks exported from every hardware subsystem such as topckgen,
-apmixedsys, infracfg, pericfg , pciessys, ssusbsys, ethsys and audsys.
-
-Chen Zhong (2):
-  clk: mediatek: add the option for determining PLL source clock
-  clk: mediatek: add clocks dt-bindings required header for MT7622 SoC
-
-Sean Wang (2):
-  dt-bindings: clock: mediatek: document clk bindings for MediaTek
-    MT7622 SoC
-  clk: mediatek: add clock support for MT7622 SoC
-
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |   1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt      |  22 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,hifsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |   1 +
- .../bindings/arm/mediatek/mediatek,pciesys.txt     |  22 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |   1 +
- .../bindings/arm/mediatek/mediatek,sgmiisys.txt    |  22 +
- .../bindings/arm/mediatek/mediatek,ssusbsys.txt    |  22 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |   1 +
- drivers/clk/mediatek/Kconfig                       |  30 +
- drivers/clk/mediatek/Makefile                      |   4 +
- drivers/clk/mediatek/clk-mt7622-aud.c              | 195 ++++++
- drivers/clk/mediatek/clk-mt7622-eth.c              | 156 +++++
- drivers/clk/mediatek/clk-mt7622-hif.c              | 169 +++++
- drivers/clk/mediatek/clk-mt7622.c                  | 780 +++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h                     |   1 +
- drivers/clk/mediatek/clk-pll.c                     |   5 +-
- include/dt-bindings/clock/mt7622-clk.h             | 289 ++++++++
- 19 files changed, 1722 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
- create mode 100644 drivers/clk/mediatek/clk-mt7622-aud.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622-eth.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622-hif.c
- create mode 100644 drivers/clk/mediatek/clk-mt7622.c
- create mode 100644 include/dt-bindings/clock/mt7622-clk.h
-
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+new file mode 100644
+index 0000000..951d6ad
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+@@ -0,0 +1,47 @@
++* Actions s900 Clock Controller
++
++The Actions s900 clock controller generates and supplies clock to various
++controllers within the SoC. The clock binding described here is applicable to
++s900 SoC.
++
++Required Properties:
++
++- compatible: should be "actions,s900-clock"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/actions,s900-clock.h header and can be used in device
++tree sources.
++
++External clocks:
++
++The hosc clock used as input for the plls is generated outside the SoC. It is
++expected that it is defined using standard clock bindings as "hosc".
++
++Actions s900 Clock Controller also require two more clocks:
++ - "losc" - internal low frequency oscillator
++ - "diff_24M" - internal differential 24MHz clock
++
++Example: Clock controller node:
++
++        clock: clock-controller@e0160000 {
++		compatible = "actions,s900-clock";
++		reg = <0 0xe0160000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++Example: UART controller node that consumes clock generated by the clock
++controller:
++
++	serial5: uart@e012a000 {
++		compatible = "actions,s900-uart", "actions,owl-uart";
++		reg = <0x0 0xe012a000 0x0 0x2000>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clock CLK_UART5>;
++		clock-names = "uart";
++	};
 -- 
 2.7.4
