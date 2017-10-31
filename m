@@ -1,84 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32857 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751773AbdJBRgf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Oct 2017 13:36:35 -0400
-Date: Mon, 2 Oct 2017 19:36:31 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 0/4] Fix problems with Exynos4412 ISP clocks
-Message-ID: <20171002173631.lgkqfrtbacyzqeml@kozik-lap>
-References: <CGME20171002104824eucas1p1f9795b5403b6cd599b1e33e9dc7b604f@eucas1p1.samsung.com>
- <20171002104759.25944-1-m.szyprowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 31 Oct 2017 14:51:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.15, part 2
+Message-ID: <20171031215141.GF30645@codeaurora.org>
+References: <CGME20171016102923epcas1p445d71065cec89b9f62b9f02a5446c2dc@epcas1p4.samsung.com>
+ <148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20171002104759.25944-1-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 02, 2017 at 12:47:55PM +0200, Marek Szyprowski wrote:
-> Hi!
+On 10/16, Sylwester Nawrocki wrote:
+> Hi Stephen, Mike,
 > 
-> Exynos4412 ISP clock controller is located in the SOC area, which belongs
-> to ISP power domain. This was not properly handled by the current
-> Exynos4-clk driver. This patchset instantiates a separate clock driver
-> for those clocks, updates all clients of ISP clocks and ensures that
-> the driver is properly integrated in ISP power domin using runtime PM
-> feature of the clock framework.
+> This change set is based off of your clk-pm-runtime branch, I needed to
+> do it that way as there were dependencies on the newly added clk runtime
+> PM feature.  In this tag there is also a fix commit related to changes 
+> introduced in the clk-pm-runtime branch. There will be a merge conflict, 
+> you can find the conflict resolution hint below. 
 > 
-> This finally solves all the mysterious freezes in accessing ISP clocks
-> when ISP power domain is disabled.
+> The following changes since commit ae432a9b314e07d486acfadc4df2f922721e6757:
 > 
-> The last patch breaks support for old dtbs. It can be applied when all
-> boards are updated. Exynos4412 ISP subsystem is only used by Trats2
-> boards, for which kernel is updated always together with the dtb file,
-> so the last patch can be applied to the next kernel release after merging
-> the DTS patch.
+>   clk: samsung: exynos-audss: Add support for runtime PM (2017-09-07 15:26:01 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.15-exynos-pm
 
-I am fine with this approach. However I see that third patch (dts)
-depends on previous so it will also wait one cycle. arm-soc folks for
-some time do not accept code mixed with dts.
-
-Unless you can split dts into two patches: adding new clock controller
-and removing old. In such case the new clock could be applied in
-parallel to clk code changes.
-
-Best regards,
-Krzysztof
-
+Did you change keys recently? My older version of gnupg chokes on
+your signature which is slightly concerning. The other PR didn't
+have problems.
 
 > 
-> This patchset requires clocks runtime PM support ("Add runtime PM support
-> for clocks (on Exynos SoC example)" v9 patchset), which I hope to be
-> merged soon to clk-next.
+> for you to fetch changes up to 7679eb20353dc74e47fbc97b2d77fd4f88a77c0f:
 > 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
+>   clk: samsung: Add a separate driver for Exynos4412 ISP clocks (2017-10-16 11:25:50 +0200)
 > 
+> ----------------------------------------------------------------
+> clk/samsung updates for v4.15, part 2
 > 
-> Patch summary:
-> 
-> Marek Szyprowski (4):
->   clk: samsung: Instantiate Exynos4412 ISP clocks only when available
->   clk: samsung: Add a separate driver for Exynos4412 ISP clocks
->   ARM: dts: exynos: Add Exynos4412 ISP clock controller
->   clk: samsung: Remove obsolete code for Exynos4412 ISP clocks
-> 
->  .../devicetree/bindings/clock/exynos4-clock.txt    |  27 ++++
->  arch/arm/boot/dts/exynos4412.dtsi                  |  71 ++++----
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos4.c                  |  66 +-------
->  drivers/clk/samsung/clk-exynos4412-isp.c           | 179 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos4.h                |  65 ++++----
->  6 files changed, 287 insertions(+), 122 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-exynos4412-isp.c
-> 
-> -- 
-> 2.14.2
-> 
+>  - An addition of separate driver for the Exynos 4412 ISP CMU, needed
+>    to model and properly handle the clock controller's dependencies
+>    on the ISP power domain.
+
+I find it sad that you opted to break the clk node up into two
+nodes and clk providers purely to satisfy the requirement that
+runtime PM be used with struct devices instead of solving the
+problem of multiple power domains for a single struct device and
+how that would work with runtime PM.
+
+Anyway, who am I to stand in the way of progress! I'll pull this
+into clk-next.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
