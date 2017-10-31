@@ -1,67 +1,71 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v5 0/9] Mediatek MT2712 clock and scpsys support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
-References: <1508381330-3700-1-git-send-email-weiyi.lu@mediatek.com>
- <e67f2b01-552b-e9b3-6c38-141e3063439d@gmail.com>
- <20171024083830.GD15990@codeaurora.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <d8e00869-f6ff-9209-f630-abcb6815e225@gmail.com>
-Date: Wed, 25 Oct 2017 10:38:03 +0200
 MIME-Version: 1.0
-In-Reply-To: <20171024083830.GD15990@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1509470994.13838.28.camel@baylibre.com>
+References: <20170924200030.6227-1-jbrunet@baylibre.com>
+	<20170924200030.6227-10-jbrunet@baylibre.com>
+	<150899557300.90597.9865127803541159465@resonance>
+	<1509470994.13838.28.camel@baylibre.com>
+Date: Tue, 31 Oct 2017 17:32:51 +0000
+Message-ID: <CAEG3pNDFSn0_K4X66vn0LZ_1PeTfkEPB7YVDKQwFZtN2x=iH=w@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] clk: add clk_rate_exclusive api
+From: Michael Turquette <mturquette@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman <khilman@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi J=C3=A9r=C3=B4me,
 
+On Tue, Oct 31, 2017 at 5:29 PM, Jerome Brunet <jbrunet@baylibre.com> wrote=
+:
+> On Thu, 2017-10-26 at 07:26 +0200, Michael Turquette wrote:
+>> Hi Jerome,
+>>
+>> Quoting Jerome Brunet (2017-09-24 22:00:29)
+>> > @@ -1778,6 +1867,50 @@ int clk_set_rate(struct clk *clk, unsigned long=
+ rate)
+>> >  EXPORT_SYMBOL_GPL(clk_set_rate);
+>> >
+>> >  /**
+>> > + * clk_set_rate_exclusive - specify a new rate get exclusive control
+>> > + * @clk: the clk whose rate is being changed
+>> > + * @rate: the new rate for clk
+>> > + *
+>> > + * This is a combination of clk_set_rate() and clk_rate_exclusive_get=
+()
+>> > + * within a critical section
+>> > + *
+>> > + * This can be used initially to ensure that at least 1 consumer is
+>> > + * statisfied when several consumers are competing for exclusivity ov=
+er the
+>> > + * same clock provider.
+>>
+>> Please add the following here:
+>>
+>>   Calls to clk_rate_exclusive_get() should be balanced with calls to
+>>   clk_rate_exclusive_put().
+>
+> Oh indeed !
+> I can do a resend with it or, if you prefer, you may directly amend the p=
+atch.
+> As you prefer
 
-On 10/24/2017 10:38 AM, Stephen Boyd wrote:
-> On 10/19, Matthias Brugger wrote:
->>
->>
->> On 10/19/2017 04:48 AM, Weiyi Lu wrote:
->>> This series is based on v4.14-rc1 and composed of
->>> clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
->>>
->>> changes since v4:
->>> - Refine scpsys and infracfg for bus protection by passing 
->>>   a boolean flag to determine the register update method.
->>>
->>> changes since v3:
->>> - Rebase to v4.14-rc1.
->>>
->>> changes since v2:
->>> - ensure the clocks used by clocksource driver are registered
->>>   before clocksource init() by using CLK_OF_DECLARE()
->>> - correct the frequency of clk32k/clkrtc_ext/clkrtc_int
->>>
->>> changes since v1:
->>> - Rebase to v4.13-next-soc.
->>> - Refine scpsys and infracfg for bus protection.
->>>
->>> Weiyi Lu (9):
->>>   dt-bindings: ARM: Mediatek: Document bindings for MT2712
->>>   clk: mediatek: Add dt-bindings for MT2712 clocks
->>>   clk: mediatek: Add MT2712 clock support
->>
->> Stephen, Mike: are you ok with the patches 1-3 of this series?
->>
->> If so, then I will take the rest through my tree.
->>
-> 
-> Do you need a branch for headers? I'm see there's a v6 so I'll
-> review that one.
-> 
+Previously we agreed that these should go onto the next -rc1 so that
+they have more soak time. Being a very lazy person, may I ask you to
+rebase the patches on -rc1 when it comes out (with this small change)
+and then I'll pull them? You can send a PR directly if you like.
 
-If you plan to merge them to v4.15 then no, otherwise that would be helpfull.
+Best regards,
+Mike
 
-AFAIK no changes between v5 and v6.
-
-Thanks!
-Matthias
+>
+> Thanks
+>
+>>
+>> Otherwise looks good to me.
+>>
+>> Best regards,
+>> Mike
+>
