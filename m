@@ -1,35 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:40:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	boris.brezillon@free-electrons.com, mturquette@baylibre.com,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	inguin@gmx.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: at91: utmi: set the mainck rate
-Message-ID: <20171102064031.GC30645@codeaurora.org>
-References: <20170906095159.13295-1-ludovic.desroches@microchip.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170906095159.13295-1-ludovic.desroches@microchip.com>
+To: Wei Xu <xuwei5@hisilicon.com>, "Leo Yan" <leo.yan@linaro.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <59E07FDE.40307@hisilicon.com>
+Cc: "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Li Pengcheng" <lipengcheng8@huawei.com>,
+ "Zhangfei Gao" <zhangfei.gao@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
+ <20170901013301.GN21656@codeaurora.org>
+ <20171007121802.GC23080@leoy-linaro> <59E07FDE.40307@hisilicon.com>
+Message-ID: <150955133019.90597.6277114786385559431@resonance>
+Subject: Re: [PATCH 0/2] Add support for Hi6220 coresight
+Date: Wed, 01 Nov 2017 16:48:50 +0100
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/06, Ludovic Desroches wrote:
-> By default, it is assumed that the UTMI clock is generated from a 12 MHz
-> reference clock (MAINCK). If it's not the case, the FREQ field of the
-> SFR_UTMICKTRIM has to be updated to generate the UTMI clock in the
-> proper way.
-> 
-> The UTMI clock has a fixed rate of 480 MHz. In fact, there is no
-> multiplier we can configure. The multiplier is managed internally,
-> depending on the reference clock frequency, to achieve the target of
-> 480 MHz.
-> 
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> ---
+Quoting Wei Xu (2017-10-13 10:57:02)
+> Hi Leo,
+> =
 
-Applied to clk-next
+> On 2017/10/7 13:18, Leo Yan wrote:
+> > Hi Stephen, Wei,
+> > =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > On Thu, Aug 31, 2017 at 06:33:01PM -0700, Stephen Boyd wrote:
+> >> On 09/01, Leo Yan wrote:
+> >>> This patch series adds support for coresight on Hi6220; the first pat=
+ch
+> >>> is to fix coresight PLL so can avoid system hang after we enable
+> >>> coresight, the second patch is to add DT binding according to coresig=
+ht
+> >>> topology.
+> >>>
+> >>> The patch has been tested on Hikey; By using OpenCSD snapshot mode, it
+> >>> can successfully decode ETF and ETB trace data.
+> >>>
+> >>
+> >> I can take the first one and second one goes through arm-soc?
+> > =
+
+> > Could you pick these two patches for Hi6220 coresight enabling for
+> > this merge window? Or need me resend these two patches?
+> =
+
+> Applied patch 2 into hisilicon dt tree with slight fix.
+> Thanks!
+
+Cool. Patch #1 applied to clk tree.
+
+Regards,
+Mike
+
+> =
+
+> BR,
+> Wei
+> =
+
+> > =
+
+> > Thanks,
+> > Leo Yan
+> > =
+
+> > .
+> > =
+
+>=20
