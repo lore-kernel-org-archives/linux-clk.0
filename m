@@ -1,40 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
-        slemieux.tyco@gmail.com, vireshk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/6] SPEAr: clk: pr_err() strings should end with newlines
-Date: Fri, 24 Nov 2017 12:25:31 +0530
-Message-Id: <35a712ed8ee10491c0a605d0cc825250286370a4.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 01:16:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
+Message-ID: <20171102081648.GJ11011@codeaurora.org>
+References: <20170901145343.19890-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170901145343.19890-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pr_err() messages should end with a new-line to avoid other messages
-being concatenated.
+On 09/01, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The sor1_src clock implemented on Tegra210 is modelled the wrong way
+> around, which causes some issues with HDMI and DP support. This clock
+> implementation is provided by BPMP on Tegra186, which models this in
+> a more correct way. Since this introduces incompatibilities between
+> the two SoC generations which we want to avoid, the Tegra210 will be
+> fixed in subsequent patches.
+> 
+> This change adds sor1_out as an alias for sor1_src.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/spear/clk-gpt-synth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/spear/clk-gpt-synth.c b/drivers/clk/spear/clk-gpt-synth.c
-index 1a722e9..1cf219a6 100644
---- a/drivers/clk/spear/clk-gpt-synth.c
-+++ b/drivers/clk/spear/clk-gpt-synth.c
-@@ -120,7 +120,7 @@ struct clk *clk_register_gpt(const char *name, const char *parent_name, unsigned
- 	struct clk *clk;
- 
- 	if (!name || !parent_name || !reg || !rtbl || !rtbl_cnt) {
--		pr_err("Invalid arguments passed");
-+		pr_err("Invalid arguments passed\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
