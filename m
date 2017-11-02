@@ -1,45 +1,46 @@
-Return-Path: <tirupath@codeaurora.org>
-Subject: Re: [PATCH V6] clk: qcom: Add spmi_pmic clock divider support
-To: Rob Herring <robh@kernel.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, mark.rutland@arm.com,
- andy.gross@linaro.org, david.brown@linaro.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-References: <1510912127-4582-1-git-send-email-tirupath@codeaurora.org>
- <20171117202243.you76ej4qvk3ul3g@rob-hp-laptop>
-From: Tirupathi Reddy T <tirupath@codeaurora.org>
-Message-ID: <396227ab-d628-ba5e-1e63-ad51f5cae253@codeaurora.org>
-Date: Tue, 21 Nov 2017 14:42:51 +0530
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 01:15:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 010/102] clk: tegra: explicitly request exclusive reset
+ control
+Message-ID: <20171102081508.GI11011@codeaurora.org>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719152646.25903-11-p.zabel@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20171117202243.you76ej4qvk3ul3g@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170719152646.25903-11-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/19, Philipp Zabel wrote:
+> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+> reset lines") started to transition the reset control request API calls
+> to explicitly state whether the driver needs exclusive or shared reset
+> control behavior. Convert all drivers requesting exclusive resets to the
+> explicit API call so the temporary transition helpers can be removed.
+> 
+> No functional changes.
+> 
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
 
+Applied to clk-next
 
-On 11/18/2017 1:52 AM, Rob Herring wrote:
-> On Fri, Nov 17, 2017 at 03:18:47PM +0530, Tirupathi Reddy wrote:
->> Clkdiv module provides a clock output on the PMIC with CXO as
->> the source. This clock can be routed through PMIC GPIOs. Add
->> a device driver to configure this clkdiv module.
->>
->> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Normally your S-o-B would be last.
-Addressed in next patch version [7]
->
->> ---
->>   .../bindings/clock/clk-spmi-pmic-div.txt           |  59 ++++
-> Please split bindings to a separate patch.
-Addressed in next patch version [7]
->
-> Otherwise,
->
-> Acked-by: Rob Herring <robh@kernel.org>
->
->>   drivers/clk/qcom/Kconfig                           |   9 +
->>   drivers/clk/qcom/Makefile                          |   1 +
->>   drivers/clk/qcom/clk-spmi-pmic-div.c               | 308 +++++++++++++++++++++
->>   4 files changed, 377 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
->>   create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
