@@ -1,46 +1,242 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18438 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759924AbdKPPaF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:30:05 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 2/4] clk: tegra: add fence_delay for clock registers
-Date: Thu, 16 Nov 2017 17:29:53 +0200
-Message-ID: <1510846195-28555-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown
+	<broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li
+	<ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 06/11] clk: sprd: add divider clock support
+Date: Thu, 2 Nov 2017 14:56:21 +0800
+Message-ID: <20171102065626.21835-7-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To ensure writes to clock registers have properly propagated through the
-clock control logic and state machines, we need to ensure the writes have
-been posted in the registers and wait for 1us after that.
+This is a feature that can also be found in sprd composite clocks,
+provide a bunch of helpers that can be reused later on.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- drivers/clk/tegra/clk.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/sprd/Makefile |   1 +
+ drivers/clk/sprd/div.c    | 100 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/div.h    |  79 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 180 insertions(+)
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 872f118..d5badbe 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- 
-+/* Combined read fence with delay */
-+#define fence_udelay(delay, reg)	\
-+	do {				\
-+		readl(reg);		\
-+		udelay(delay);		\
-+	} while(0)
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index cee36b5..80e6039 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -3,3 +3,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
++clk-sprd-y	+= div.o
+diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
+new file mode 100644
+index 0000000..3e08dcd
+--- /dev/null
++++ b/drivers/clk/sprd/div.c
+@@ -0,0 +1,100 @@
++/*
++ * Spreadtrum divider clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
 +
- #endif /* TEGRA_CLK_H */
++#include <linux/clk-provider.h>
++
++#include "div.h"
++
++DEFINE_SPINLOCK(sprd_div_lock);
++EXPORT_SYMBOL_GPL(sprd_div_lock);
++
++long sprd_div_helper_round_rate(struct sprd_clk_common *common,
++				const struct sprd_div_internal *div,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	return divider_round_rate(&common->hw, rate, parent_rate,
++				  NULL, div->width, 0);
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_round_rate);
++
++static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
++
++	return sprd_div_helper_round_rate(&cd->common, &cd->div,
++					  rate, parent_rate);
++}
++
++unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
++					  const struct sprd_div_internal *div,
++					  unsigned long parent_rate)
++{
++	unsigned long val;
++	unsigned int reg;
++
++	sprd_regmap_read(common->regmap, common->reg, &reg);
++	val = reg >> div->shift;
++	val &= (1 << div->width) - 1;
++
++	return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_recalc_rate);
++
++static unsigned long sprd_div_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
++
++	return sprd_div_helper_recalc_rate(&cd->common, &cd->div, parent_rate);
++}
++
++int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
++			     const struct sprd_div_internal *div,
++			     unsigned long rate,
++			     unsigned long parent_rate)
++{
++	unsigned long flags;
++	unsigned long val;
++	unsigned int reg;
++
++	val = divider_get_val(rate, parent_rate, NULL,
++			      div->width, 0);
++
++	spin_lock_irqsave(common->lock, flags);
++
++	sprd_regmap_read(common->regmap, common->reg, &reg);
++	reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
++
++	sprd_regmap_write(common->regmap, common->reg,
++			  reg | (val << div->shift));
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_set_rate);
++
++static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
++
++	return sprd_div_helper_set_rate(&cd->common, &cd->div,
++					rate, parent_rate);
++}
++
++const struct clk_ops sprd_div_ops = {
++	.recalc_rate = sprd_div_recalc_rate,
++	.round_rate = sprd_div_round_rate,
++	.set_rate = sprd_div_set_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_div_ops);
+diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
+new file mode 100644
+index 0000000..fa47773
+--- /dev/null
++++ b/drivers/clk/sprd/div.h
+@@ -0,0 +1,79 @@
++/*
++ * Spreadtrum divider clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_DIV_H_
++#define _SPRD_DIV_H_
++
++#include "common.h"
++
++/**
++ * struct sprd_div_internal - Internal divider description
++ * @shift: Bit offset of the divider in its register
++ * @width: Width of the divider field in its register
++ *
++ * That structure represents a single divider, and is meant to be
++ * embedded in other structures representing the various clock
++ * classes.
++ */
++struct sprd_div_internal {
++	u8	shift;
++	u8	width;
++};
++
++#define _SPRD_DIV_CLK(_shift, _width)	\
++	{				\
++		.shift	= _shift,	\
++		.width	= _width,	\
++	}
++
++struct sprd_div {
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_DIV_CLK(_struct, _name, _parent, _reg,			\
++			_shift, _width, _flags)				\
++	struct sprd_div _struct = {					\
++		.div	= _SPRD_DIV_CLK(_shift, _width),		\
++		.common	= {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.lock		= &sprd_div_lock,		\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &sprd_div_ops,	\
++						      _flags),		\
++		}							\
++	}
++
++static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_div, common);
++}
++
++long sprd_div_helper_round_rate(struct sprd_clk_common *common,
++				const struct sprd_div_internal *div,
++				unsigned long rate,
++				unsigned long *parent_rate);
++
++unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
++					  const struct sprd_div_internal *div,
++					  unsigned long parent_rate);
++
++int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
++			     const struct sprd_div_internal *div,
++			     unsigned long rate,
++			     unsigned long parent_rate);
++
++extern const struct clk_ops sprd_div_ops;
++extern spinlock_t sprd_div_lock;
++
++#endif /* _SPRD_DIV_H_ */
 -- 
-1.9.1
-
+2.7.4
