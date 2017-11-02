@@ -1,82 +1,61 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>
-References: <20171106075212.14275-1-yixun.lan@amlogic.com>
- <889b8fd5-31e4-1371-6121-0f1aec6fa777@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin
- Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <c773682c-6045-a476-e0c8-04347624c4e3@amlogic.com>
-Date: Mon, 6 Nov 2017 17:31:56 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbdKBHLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Nov 2017 03:11:31 -0400
+Date: Thu, 2 Nov 2017 00:11:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add a regmap to Allwinner R40 CCU to export GMAC
+ register
+Message-ID: <20171102071125.GL30645@codeaurora.org>
+References: <20171006063333.12345-1-icenowy@aosc.io>
+ <20171009071809.jte47cd2mt4iv6y7@flea.lan>
+ <14505033-D960-4287-92F2-554E2EDDFC59@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <889b8fd5-31e4-1371-6121-0f1aec6fa777@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <14505033-D960-4287-92F2-554E2EDDFC59@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Neil:
+On 10/09, Icenowy Zheng wrote:
+> 
+> 
+> 于 2017年10月9日 GMT+08:00 下午3:18:09, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+> >On Fri, Oct 06, 2017 at 06:33:31AM +0000, Icenowy Zheng wrote:
+> >> In the CCU of the Allwinner R40 SoC, there's a GMAC configuration
+> >register,
+> >> which is intended to be accessed by the dwmac-sun8i driver. On SoCs
+> >already
+> >> supported by the driver the register is placed in the syscon rather
+> >than
+> >> the CCU.
+> >> 
+> >> As CCU is a critical part of the SoC, so write to it should be
+> >strictly
+> >> limited. A regmap with restricted write permission is created by the
+> >R40
+> >> CCU driver, and can be get with dev_get_regmap. In order to tie the
+> >regmap
+> >> to the CCU device, the R40 CCU is now a platform driver, so a
+> >platform
+> >> device is created for it (and then tied with the regmap).
+> >> 
+> >> The first patch does the conversion of the driver to a platform
+> >driver,
+> >> and the second patch adds the regmap.
+> >
+> >I'd like to see first what you want to do with it.
+> 
+> Export the GMAC configuration register to dwmac-sun8i.
+> 
 
+Is this series going to be reposted?
 
-On 11/06/17 16:57, Neil Armstrong wrote:
-> On 06/11/2017 08:52, Yixun Lan wrote:
->> According to the datasheet, in Meson-GXBB/GXL series,
->> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
->> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
->>
->> Test passed at gxl_skt dev board.
->>
->> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>
->> ---
->> I think this error was introduced by a copy & paste from meson8 code?
->> and we didn't notice them due to the SANA clock is also enabled by
->> DTS (so SAR_ADC works fine)?
->> ---
->>  drivers/clk/meson/gxbb.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->> index b2d1e8ed7152..92168348ffa6 100644
->> --- a/drivers/clk/meson/gxbb.c
->> +++ b/drivers/clk/meson/gxbb.c
->> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
->>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
->>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
->>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
->> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
->> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
->>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
->>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
->>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
->> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
->>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
->>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
->>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
->> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
->> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
->>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
->>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
->>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
->>
-> 
-> Hi Yixun,
-> 
-> Can you precise how it affects the saradc driver ? from the DT and clk PoV ?
->
-the saradc module doesn't require sana clock (it's irrelvevant), we will
-send a patchset v3 to address this.
-
-> Also, can you add a Fixes: tag on the patch ?
-> 
-sure, I can do this.
-
-> Thanks,
-> Neil
-> 
-> .
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
