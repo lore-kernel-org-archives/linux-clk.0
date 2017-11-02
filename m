@@ -1,103 +1,176 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 4 Nov 2017 15:20:37 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-	rdunlap@infradead.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, liuwei@actions-semi.com
-Subject: Re: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
-Message-ID: <20171104095037.GC18680@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
- <a8bd3b8b-190a-6dbf-6976-207baca3030b@suse.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 07/11] clk: sprd: add composite clock support
+Date: Thu, 2 Nov 2017 14:56:22 +0800
+Message-ID: <20171102065626.21835-8-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <a8bd3b8b-190a-6dbf-6976-207baca3030b@suse.de>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andreas,
-On Sat, Nov 04, 2017 at 04:43:31PM +0800, Andreas Färber wrote:
-> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
-> > This patch adds clock controller nodes for Actions Semi s900 SoC
-> 
-> Please avoid "This patch". Once applied, it's a commit. :)
-> 
-Ack.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-> > index 11406f6..c099ef1 100644
-> > --- a/arch/arm64/boot/dts/actions/s900.dtsi
-> > +++ b/arch/arm64/boot/dts/actions/s900.dtsi
-> > @@ -5,6 +5,7 @@
-> >   */
-> >  
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/clock/actions,s900-clock.h>
-> 
-> Alphabetical order please.
-> 
-Ack.
-> >  
-> >  / {
-> >  	compatible = "actions,s900";
-> > @@ -88,6 +89,24 @@
-> >  		#clock-cells = <0>;
-> >  	};
-> >  
-> > +	losc: losc {
-> > +		compatible = "fixed-clock";
-> > +		clock-frequency = <32768>;
-> > +		#clock-cells = <0>;
-> > +	};
-> > +
-> > +	diff_24M: diff_24M {
-> 
-> No underscore in node names please - maybe diff-24M or simpler diff24M?
-> Please double-check that name - is it from manual or from schematics?
-> 
-Actually, this name comes from vendor driver and they have used "24M_diff".
-As per DT conventions I renamed it to "diff_24M".
+This patch introduced composite driver for Spreadtrum's SoCs. The
+functions of this composite clock simply consist of divider and
+mux clocks.
 
-But I'm not clear about that clock. As I said in my reply to Rob's review
-there isn't much documentation also. So, I guess we can name it as diff24M
-for now.
-> > +		compatible = "fixed-clock";
-> > +		clock-frequency = <24000000>;
-> > +		#clock-cells = <0>;
-> > +	};
-> > +
-> > +	clock: clock-controller@e0160000 {
-> > +		compatible = "actions,s900-clock";
-> > +		reg = <0 0xe0160000 0 0x1000>;
-> > +		#clock-cells = <1>;
-> > +	};
-> 
-> This node belongs into the soc node below, ordered by unit address.
-> And maybe there's a better label than "clock"? "clkc" or some official
-> name from the manual?
-> 
-Will use "cmu".
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile    |  1 +
+ drivers/clk/sprd/composite.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/composite.h | 49 +++++++++++++++++++++++++++++++++
+ 3 files changed, 115 insertions(+)
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
 
-Thanks,
-Mani
-> > +
-> >  	soc {
-> >  		compatible = "simple-bus";
-> >  		#address-cells = <2>;
-> 
-> Regards,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 80e6039..2262e76 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
+ clk-sprd-y	+= div.o
++clk-sprd-y	+= composite.o
+diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
+new file mode 100644
+index 0000000..30d5b36
+--- /dev/null
++++ b/drivers/clk/sprd/composite.c
+@@ -0,0 +1,65 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk-provider.h>
++
++#include "composite.h"
++
++DEFINE_SPINLOCK(sprd_comp_lock);
++EXPORT_SYMBOL_GPL(sprd_comp_lock);
++
++static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_round_rate(&cc->common, &cc->div,
++					 rate, parent_rate);
++}
++
++static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
++}
++
++static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_set_rate(&cc->common, &cc->div,
++				       rate, parent_rate);
++}
++
++static u8 sprd_comp_get_parent(struct clk_hw *hw)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
++}
++
++static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
++}
++
++const struct clk_ops sprd_comp_ops = {
++	.get_parent	= sprd_comp_get_parent,
++	.set_parent	= sprd_comp_set_parent,
++
++	.round_rate	= sprd_comp_round_rate,
++	.recalc_rate	= sprd_comp_recalc_rate,
++	.set_rate	= sprd_comp_set_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_comp_ops);
+diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
+new file mode 100644
+index 0000000..551f274
+--- /dev/null
++++ b/drivers/clk/sprd/composite.h
+@@ -0,0 +1,49 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_COMPOSITE_H_
++#define _SPRD_COMPOSITE_H_
++
++#include "common.h"
++#include "mux.h"
++#include "div.h"
++
++struct sprd_comp {
++	struct sprd_mux_internal	mux;
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _table,		\
++			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
++	struct sprd_comp _struct = {					\
++		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
++		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
++		.common = {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.lock		= &sprd_comp_lock,		\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parent,		\
++						       &sprd_comp_ops,	\
++						       _flags),		\
++			 }						\
++	}
++
++static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_comp, common);
++}
++
++extern const struct clk_ops sprd_comp_ops;
++extern spinlock_t sprd_comp_lock;
++
++#endif /* _SPRD_COMPOSITE_H_ */
+-- 
+2.7.4
