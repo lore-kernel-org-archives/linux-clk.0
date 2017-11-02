@@ -1,62 +1,30 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 2/2] clk: ti: dra7-atl-clock: fix child-node lookups
-To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, stable
-	<stable@vger.kernel.org>
-References: <20171111162929.11722-1-johan@kernel.org>
- <20171111162929.11722-2-johan@kernel.org>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <a35e8131-a726-0897-5f85-84ddd10d0b7e@ti.com>
-Date: Mon, 13 Nov 2017 22:15:13 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 00:10:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, andy.gross@linaro.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
+Message-ID: <20171102071001.GK30645@codeaurora.org>
+References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+ <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171111162929.11722-2-johan@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/11/2017 06:29 PM, Johan Hovold wrote:
-> Fix child node-lookup during probe, which ended up searching the whole
-> device tree depth-first starting at parent rather than just matching on
-> its children.
+On 10/10, Rajendra Nayak wrote:
+> Add all RPM controlled clocks on msm8996 platform
 > 
-> Note that the original premature free of the parent node has already
-> been fixed separately, but that fix was apparently never backported to
-> stable.
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-> 
-> Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
-> Fixes: 660e15519399 ("clk: ti: dra7-atl-clock: Fix of_node reference counting")
-> Cc: stable <stable@vger.kernel.org>     # 3.16: 660e15519399
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> [srini: Fixed various issues with offsets and made names specific to msm8996]
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  drivers/clk/ti/clk-dra7-atl.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-> index 13eb04f72389..148815470431 100644
-> --- a/drivers/clk/ti/clk-dra7-atl.c
-> +++ b/drivers/clk/ti/clk-dra7-atl.c
-> @@ -274,8 +274,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
->  
->  		/* Get configuration for the ATL instances */
->  		snprintf(prop, sizeof(prop), "atl%u", i);
-> -		of_node_get(node);
-> -		cfg_node = of_find_node_by_name(node, prop);
-> +		cfg_node = of_get_child_by_name(node, prop);
->  		if (cfg_node) {
->  			ret = of_property_read_u32(cfg_node, "bws",
->  						   &cdesc->bws);
-> 
 
+Applied to clk-next
 
 -- 
-Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
