@@ -1,310 +1,108 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: ALKML <linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	DTML <devicetree@vger.kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Roy Franz <roy.franz@cavium.com>,
-	Harb Abdulhamid <harba@codeaurora.org>,
-	Nishanth Menon <nm@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Loc Ho <lho@apm.com>,
-	Ryan Harkin <Ryan.Harkin@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH v4 16/20] clk: add support for clocks provided by SCMI
-Date: Fri,  3 Nov 2017 14:47:53 +0000
-Message-Id: <1509720477-18936-17-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1509720477-18936-1-git-send-email-sudeep.holla@arm.com>
-References: <1509720477-18936-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:48326 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbdKBHWb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Nov 2017 03:22:31 -0400
+Received: by mail-lf0-f42.google.com with SMTP id r135so4474112lfe.5
+        for <linux-clk@vger.kernel.org>; Thu, 02 Nov 2017 00:22:30 -0700 (PDT)
+Received: from android-fee78d8a8fd46114.lan (78-57-212-189.static.zebra.lt. [78.57.212.189])
+        by smtp.gmail.com with ESMTPSA id f14sm412182lfg.53.2017.11.02.00.22.28
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Nov 2017 00:22:29 -0700 (PDT)
+Date: Thu, 02 Nov 2017 09:22:27 +0200
+In-Reply-To: <24C08A61-4CBD-4890-8C7A-DEC665A04E9A@gmail.com>
+References: <24C08A61-4CBD-4890-8C7A-DEC665A04E9A@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH] RESEND: clk: Avoid sending high rates to downstream clocks during set_rate
+To: linux-clk@vger.kernel.org
+From: Modestas <montvid@gmail.com>
+Message-ID: <CB50A9B9-4BAD-441D-B9B8-CACFA5B51471@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Management Interface(SCMI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
 
-This patch adds support for the clocks provided by SCP using SCMI
-protocol.
 
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Thanks for the information=2E As I understand there is no @ when this will=
+ be upstreamed=2E My Krait device can not boot the linux kernel to login wi=
+thout this patch so this patch is critical=2E Without it i just see a blank=
+ screen without any dmesg info=2E=C2=A0
+
+On November 2, 2017 9:00:03 AM GMT+02:00, Stephen Boyd <sboyd@codeaurora=
+=2Eorg> wrote:
+
+On 10/04, Linus Walleij wrote:
+
+From: Stephen Boyd <sboyd@codeaurora=2Eorg>
+
+If a clock is on and we call clk_set_rate() on it we may get into
+a situation where the clock temporarily increases in rate
+dramatically while we walk the tree and call =2Eset_rate() ops=2E For
+example, consider a case where a PLL feeds into a divider=2E
+Initially the divider is set to divide by 1 and the PLL is
+running fairly slow (100MHz)=2E The downstream consumer of the
+divider output can only handle rates =3D< 400 MHz, but the divider
+can only choose between divisors of 1 and 4=2E
+
++-----+ +----------------+
+| PLL |-->| div 1 or div 4 |---> consumer device
++-----+ +----------------+
+
+To achieve a rate of 400MHz on the output of the divider, we
+would have to set the rate of the PLL to 1=2E6 GHz and then divide
+it by 4=2E The current code would set the PLL to 1=2E6GHz first while
+the divider is still set to 1, thus causing the downstream
+consumer of the clock to receive a few clock cycles of 1=2E6GHz
+clock (far beyond it's maximum acceptable rate)=2E We should be
+changing the divider first before increasing the PLL rate to
+avoid this problem=2E
+
+Therefore, set the rate of any child clocks that are increasing
+in rate from their current rate so that they can increase their
+dividers if necessary=2E We assume that there isn't such a thing as
+minimum rate requirements=2E
+
+Cc: Opera <montvid@gmail=2Ecom>
+Cc: John Stultz <john=2Estultz@linaro=2Eorg>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora=2Eorg>
 ---
- MAINTAINERS            |   2 +-
- drivers/clk/Kconfig    |  10 +++
- drivers/clk/Makefile   |   1 +
- drivers/clk/clk-scmi.c | 213 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 225 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/clk-scmi.c
+Stephen: just wanted to check what's up with this patch=2E
+When I apply it on my kernel I get graphics on the Nexus7,
+when I don't, I don't=2E
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8ee63627f1ac..1f9004d68ad4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12954,7 +12954,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
- L:	linux-arm-kernel@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/arm,sc[mp]i.txt
--F:	drivers/clk/clk-scpi.c
-+F:	drivers/clk/clk-sc[mp]i.c
- F:	drivers/cpufreq/scpi-cpufreq.c
- F:	drivers/firmware/arm_scpi.c
- F:	drivers/firmware/arm_scmi/
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa6767e..57c66b22eab8 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -62,6 +62,16 @@ config COMMON_CLK_HI655X
- 	  multi-function device has one fixed-rate oscillator, clocked
- 	  at 32KHz.
- 
-+config COMMON_CLK_SCMI
-+	tristate "Clock driver controlled via SCMI interface"
-+	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-+	  ---help---
-+	  This driver provides support for clocks that are controlled
-+	  by firmware that implements the SCMI interface.
-+
-+	  This driver uses SCMI Message Protocol to interact with the
-+	  firmware providing all the clock controls.
-+
- config COMMON_CLK_SCPI
- 	tristate "Clock driver controlled via SCPI interface"
- 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c99f363826f0..46ad2f2b686a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-+obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-new file mode 100644
-index 000000000000..1e4d7a57779b
---- /dev/null
-+++ b/drivers/clk/clk-scmi.c
-@@ -0,0 +1,213 @@
-+/*
-+ * System Control and Power Interface (SCMI) Protocol based clock driver
-+ *
-+ * Copyright (C) 2017 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/scmi_protocol.h>
-+#include <asm/div64.h>
-+
-+struct scmi_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	const struct scmi_clock_info *info;
-+	const struct scmi_handle *handle;
-+};
-+
-+#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
-+
-+static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	int ret;
-+	u64 rate;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
-+	if (ret)
-+		return 0;
-+	return rate;
-+}
-+
-+static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	int step;
-+	u64 fmin, fmax, ftmp;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. scmi_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
-+	 */
-+	if (clk->info->rate_discrete)
-+		return rate;
-+
-+	fmin = clk->info->range.min_rate;
-+	fmax = clk->info->range.max_rate;
-+	if (rate <= fmin)
-+		return fmin;
-+	else if (rate >= fmax)
-+		return fmax;
-+
-+	ftmp = rate - fmin;
-+	ftmp += clk->info->range.step_size - 1; /* to round up */
-+	step = do_div(ftmp, clk->info->range.step_size);
-+
-+	return step * clk->info->range.step_size + fmin;
-+}
-+
-+static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
-+}
-+
-+static int scmi_clk_enable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return clk->handle->clk_ops->enable(clk->handle, clk->id);
-+}
-+
-+static void scmi_clk_disable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	clk->handle->clk_ops->disable(clk->handle, clk->id);
-+}
-+
-+static const struct clk_ops scmi_clk_ops = {
-+	.recalc_rate = scmi_clk_recalc_rate,
-+	.round_rate = scmi_clk_round_rate,
-+	.set_rate = scmi_clk_set_rate,
-+	/*
-+	 * We can't provide enable/disable callback as we can't perform the same
-+	 * in atomic context. Since the clock framework provides standard API
-+	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
-+	 * context, it should be fine providing prepare/unprepare.
-+	 */
-+	.prepare = scmi_clk_enable,
-+	.unprepare = scmi_clk_disable,
-+};
-+
-+static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-+{
-+	int ret;
-+	struct clk_init_data init = {
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.num_parents = 0,
-+		.ops = &scmi_clk_ops,
-+		.name = sclk->info->name,
-+	};
-+
-+	sclk->hw.init = &init;
-+	ret = devm_clk_hw_register(dev, &sclk->hw);
-+	if (!ret)
-+		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
-+				      sclk->info->range.max_rate);
-+	return ret;
-+}
-+
-+static int scmi_clocks_probe(struct scmi_device *sdev)
-+{
-+	int idx, count, err;
-+	struct clk_hw **hws;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct device *dev = &sdev->dev;
-+	struct device_node *np = dev->of_node;
-+	const struct scmi_handle *handle = sdev->handle;
-+
-+	if (!handle || !handle->clk_ops)
-+		return -ENODEV;
-+
-+	count = handle->clk_ops->count_get(handle);
-+	if (count < 0) {
-+		dev_err(dev, "%s: invalid clock output count\n", np->name);
-+		return -EINVAL;
-+	}
-+
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
-+				sizeof(*clk_data->hws) * count, GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = count;
-+	hws = clk_data->hws;
-+
-+	for (idx = 0; idx < count; idx++) {
-+		struct scmi_clk *sclk;
-+
-+		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-+		if (!sclk)
-+			return -ENOMEM;
-+
-+		sclk->info = handle->clk_ops->info_get(handle, idx);
-+		if (!sclk->info) {
-+			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
-+			continue;
-+		}
-+
-+		sclk->id = idx;
-+		sclk->handle = handle;
-+
-+		err = scmi_clk_ops_init(dev, sclk);
-+		if (err) {
-+			dev_err(dev, "failed to register clock %d\n", idx);
-+			devm_kfree(dev, sclk);
-+			hws[idx] = NULL;
-+		} else {
-+			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
-+			hws[idx] = &sclk->hw;
-+		}
-+	}
-+
-+	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+}
-+
-+static void scmi_clocks_remove(struct scmi_device *sdev)
-+{
-+	struct device *dev = &sdev->dev;
-+	struct device_node *np = dev->of_node;
-+
-+	of_clk_del_provider(np);
-+}
-+
-+static const struct scmi_device_id scmi_id_table[] = {
-+	{ SCMI_PROTOCOL_CLOCK },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-+
-+static struct scmi_driver scmi_clocks_driver = {
-+	.name = "scmi-clocks",
-+	.probe = scmi_clocks_probe,
-+	.remove = scmi_clocks_remove,
-+	.id_table = scmi_id_table,
-+};
-+module_scmi_driver(scmi_clocks_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCMI clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+OpenWRT has started to carry the patch in their tree I noticed=2E
+I found it in John Stultz patch stack=2E
+
+Is there some similar patch floating in some other series, is
+it fundamentally wrong or something else?
+
+Just wanted to reboot the discussion so we know where this is
+standing=2E
+
+
+This patch wants to go away and be replaced with coordinated clk
+rates code=2E So far, nothing has appeared for that though, so this
+problem is stuck in limbo, blocking Krait CPUfreq=2E
+
+I have no idea why it matters for your Nexus7 graphics stuff=2E As
+far as I know the GPU clk on Nexus7 is a plain old dynamic rcg
+that can switch rates glitch free and we don't do anything odd
+like reprogramming the parent PLL of the rcg to use faster rates,
+which is mostly what this patch is for=2E
+
+I wrote this patch for Krait CPUfreq originally=2E In that case we
+reprogram PLLs higher up in tree and then have to adjust dividers
+below that and doing that in the wrong order causes high
+frequencies to come down the tree into the CPU that we can't turn
+off=2E
+
+I suspect OpenWRT has pulled in the patch for Krait CPUfreq=2E It
+could be that you also need it for that=2E Or it could be that odd
+line where we don't look at the result of clk_recalc, and just
+blast in the calculated new rate into core->rate somehow fixes
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
