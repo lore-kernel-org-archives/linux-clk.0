@@ -1,94 +1,238 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <julien.thierry@arm.com>
+Subject: Re: [PATCH V3 05/11] clk: sprd: add mux clock support
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Mark Brown <broonie@kernel.org>,
+ Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+ Ben Li <ben.li@spreadtrum.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Orson Zhai <orson.zhai@spreadtrum.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+ <20171102065626.21835-6-chunyan.zhang@spreadtrum.com>
+From: Julien Thierry <julien.thierry@arm.com>
+Message-ID: <532aed43-03bf-ea26-bdc2-d7deb1093f53@arm.com>
+Date: Thu, 2 Nov 2017 18:11:05 +0000
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU84DFZmFACuXLqhFsR-Q+1d3GPG3NFPinLRW8=96BDCA@mail.gmail.com>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
- <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com> <CAMuHMdU84DFZmFACuXLqhFsR-Q+1d3GPG3NFPinLRW8=96BDCA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 10 Nov 2017 13:49:46 +0100
-Message-ID: <CAPDyKFrstmMQ=R49EKXQ3fs=_pwhmJkaX8K0dY4u9OZVxY3Z4w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171102065626.21835-6-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10 November 2017 at 11:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> On Fri, Nov 10, 2017 at 10:57 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 9 November 2017 at 14:26, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->>> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
->>> used as a wakeup source, it must be kept active during system suspend.
->>
->> Geert, I think we discussed this a bit already. I wonder if the above
->> is a correct statement for all devices in these PM domains, that has
->> wakeups?
->
-> It is true for all wakeup sources (e.g. Ethernet and serial).
->
->> Don't these SoCs make use of any external logic (out-of-band IRQ) to
->> deal with the wakeup IRQs?
->>
->> For example, how is GPIO irqs dealt with in this regards?
->
-> Interrupt controllers (incl. GPIO) may, depending on SoC type:
->   - be located in a controllable power area (SH/R-Mobile),
->   - may run from a controllable module clock (SH/R-Mobile, R-Car Gen2/Gen3,
->     RZ/A1, RZ/G1).
->
-> So there are no out-of-band IRQs in the wakeup path, unless on SoCs where
-> the interrupt controllers are in an always-on power area, AND run from a
-> fixed clock. I think only R-Car Gen1 falls in that category.
-> Still, R-Car Gen1 needs active_wakeup for wakeup sources.
+Hi,
 
-Perhaps out-of-band IRQ is a too vague term. :-) Anyway, let me
-elaborate a bit more.
+On 02/11/17 06:56, Chunyan Zhang wrote:
+> This patch adds clock multiplexor support for Spreadtrum platforms,
+> the mux clocks also can be found in sprd composite clocks, so
+> provides two helpers that can be reused later on.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> ---
+>   drivers/clk/sprd/Makefile |  1 +
+>   drivers/clk/sprd/mux.c    | 89 +++++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/clk/sprd/mux.h    | 65 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 155 insertions(+)
+>   create mode 100644 drivers/clk/sprd/mux.c
+>   create mode 100644 drivers/clk/sprd/mux.h
+> 
+> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+> index 8cd5592..cee36b5 100644
+> --- a/drivers/clk/sprd/Makefile
+> +++ b/drivers/clk/sprd/Makefile
+> @@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+>   
+>   clk-sprd-y	+= common.o
+>   clk-sprd-y	+= gate.o
+> +clk-sprd-y	+= mux.o
+> diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
+> new file mode 100644
+> index 0000000..5a344e0
+> --- /dev/null
+> +++ b/drivers/clk/sprd/mux.c
+> @@ -0,0 +1,89 @@
+> +/*
+> + * Spreadtrum multiplexer clock driver
+> + *
+> + * Copyright (C) 2017 Spreadtrum, Inc.
+> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "mux.h"
+> +
+> +DEFINE_SPINLOCK(sprd_mux_lock);
+> +EXPORT_SYMBOL_GPL(sprd_mux_lock);
+> +
+> +u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
+> +			      const struct sprd_mux_internal *mux)
+> +{
+> +	unsigned int reg;
+> +	u8 parent;
+> +	int num_parents;
+> +	int i;
+> +
+> +	sprd_regmap_read(common->regmap, common->reg, &reg);
+> +	parent = reg >> mux->shift;
+> +	parent &= (1 << mux->width) - 1;
+> +
+> +	if (mux->table) {
+> +		num_parents = clk_hw_get_num_parents(&common->hw);
+> +
+> +		for (i = 0; i < num_parents; i++)
+> +			if (parent == mux->table[i] ||
+> +			    (i < (num_parents - 1) && parent > mux->table[i] &&
+> +			     parent < mux->table[i + 1]))
+> +				return i;
+> +		if (i == num_parents)
+> +			return i - 1;
 
-Apologize for being so persistent, but I really want to get to bottom with this.
+The if branch is not necessary since you only get there when the loop 
+has finished, so the condition is always true. And the loop can be 
+simplified to:
 
-According to the statement above, it seems like IRQs (including GPIOs)
-is controllable from a separate "power area" (or module clock). In
-many ARM SoCs that "power area" is a separate piece of external logic,
-sometimes it may even consist a small co-processor. I guess you
-already know that, but wanted to point it out for clarity.
+for (i = 0; i < num_parents - 1; i++)
+	if (parent >= mux->table[i] &&  parent < mux->table[i + 1])
+		return i;
 
-For that reason, some serial drivers re-routs its serial rx pin to a
-GPIO IRQ to deal with wakeup, instead of keeping the serial device
-always powered. This enables the GPIO IRQ to be managed by the
-external logic, thus allowing the serial device and the PM domain it
-is attached to, to be powered off. Especially during system suspend,
-that may avoid wasting lots of power.
+return num_parents;
 
-Another example, where I think a more fine grained method is preferred
-over using GENPD_FLAG_ACTIVE_WAKEUP, is when an SD card controller has
-an card detect pin hooked up to a GPIO. Thus the device_may_wakeup()
-would return true for the SD card controller's struct device, but that
-does not mean that the device needs to stay powered during system
-suspend.
 
->
-> See series "[PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o.
-> explicit clock handling", which includes GPIO interrupts.
->
->> If that is the case, you should really avoid using the big hammer
->> method of setting the GENPD_FLAG_ACTIVE_WAKEUP.
->
-> So I think I do need the big hammer ;-)
+> +	}
+> +
+> +	return parent;
+> +}
+> +EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
+> +
+> +static u8 sprd_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct sprd_mux *cm = hw_to_sprd_mux(hw);
+> +
+> +	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
+> +}
+> +
+> +int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
+> +			       const struct sprd_mux_internal *mux,
+> +			       u8 index)
+> +{
+> +	unsigned long flags = 0;
+> +	unsigned int reg;
+> +
+> +	if (mux->table)
+> +		index = mux->table[index];
+> +
+> +	spin_lock_irqsave(common->lock, flags);
+> +
+> +	sprd_regmap_read(common->regmap, common->reg, &reg);
+> +	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
+> +	sprd_regmap_write(common->regmap, common->reg,
+> +			  reg | (index << mux->shift));
+> +
+> +	spin_unlock_irqrestore(common->lock, flags);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
+> +
+> +static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct sprd_mux *cm = hw_to_sprd_mux(hw);
+> +
+> +	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
+> +}
+> +
+> +const struct clk_ops sprd_mux_ops = {
+> +	.get_parent = sprd_mux_get_parent,
+> +	.set_parent = sprd_mux_set_parent,
+> +	.determine_rate = __clk_mux_determine_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(sprd_mux_ops);
 
->From a hypothetical point of view, if you were to use the more fine
-grained method I proposed [1] (or something very similar), how many
-drivers would you need to change, to be able to remove the current
-workaround?
+Same as with the other patch, I'd recommend have one set of ops for 
+direct mux and another one for a mux using a table to map the parents. 
+Keeping functions for both modes separate.
 
-[...]
+Cheers,
 
-Kind regards
-Uffe
+> diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
+> new file mode 100644
+> index 0000000..148ca8c
+> --- /dev/null
+> +++ b/drivers/clk/sprd/mux.h
+> @@ -0,0 +1,65 @@
+> +/*
+> + * Spreadtrum multiplexer clock driver
+> + *
+> + * Copyright (C) 2017 Spreadtrum, Inc.
+> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +#ifndef _SPRD_MUX_H_
+> +#define _SPRD_MUX_H_
+> +
+> +#include "common.h"
+> +
+> +struct sprd_mux_internal {
+> +	u8		shift;
+> +	u8		width;
+> +	const u8	*table;
+> +};
+> +
+> +struct sprd_mux {
+> +	struct sprd_mux_internal mux;
+> +	struct sprd_clk_common	common;
+> +};
+> +
+> +#define _SPRD_MUX_CLK(_shift, _width, _table)		\
+> +	{						\
+> +		.shift	= _shift,			\
+> +		.width	= _width,			\
+> +		.table	= _table,			\
+> +	}
+> +
+> +#define SPRD_MUX_CLK(_struct, _name, _parents, _table,			\
+> +				     _reg, _shift, _width,		\
+> +				     _flags)				\
+> +	struct sprd_mux _struct = {					\
+> +		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
+> +		.common	= {						\
+> +			.regmap		= NULL,				\
+> +			.reg		= _reg,				\
+> +			.lock		= &sprd_mux_lock,		\
+> +			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
+> +						       _parents,	\
+> +						       &sprd_mux_ops,	\
+> +						       _flags),		\
+> +		}							\
+> +	}
+> +
+> +static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
+> +{
+> +	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
+> +
+> +	return container_of(common, struct sprd_mux, common);
+> +}
+> +
+> +extern const struct clk_ops sprd_mux_ops;
+> +extern spinlock_t sprd_mux_lock;
+> +
+> +u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
+> +			      const struct sprd_mux_internal *mux);
+> +int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
+> +			       const struct sprd_mux_internal *mux,
+> +			       u8 index);
+> +
+> +#endif /* _SPRD_MUX_H_ */
+> 
 
-[1]
-https://www.spinics.net/lists/linux-renesas-soc/msg19911.html
+-- 
+Julien Thierry
