@@ -1,58 +1,27 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v3 7/7] ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
-Date: Wed, 22 Nov 2017 16:11:19 +0530
-Message-Id: <1511347279-26989-8-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1511347279-26989-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1511347279-26989-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Nov 2017 23:43:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, robdclark@gmail.com,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Remove unused RCG ops
+Message-ID: <20171102064345.GD30645@codeaurora.org>
+References: <20170823225543.GJ21656@codeaurora.org>
+ <20170824173644.10305-1-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170824173644.10305-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+On 08/24, Georgi Djakov wrote:
+> The RCGs ops for shared branches are not used now, so remove it.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
 
-If mclk/sclk is already running, FW responds with IPC reply MCLK/SCLK
-already running. Add these to the IPC reply lookup table.
+Applied to clk-next
 
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- sound/soc/intel/skylake/skl-sst-ipc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 8708755..9f3ce73 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -249,6 +249,8 @@ enum skl_ipc_glb_reply {
- 	IPC_GLB_REPLY_INVALID_CONFIG_DATA_LEN = 121,
- 	IPC_GLB_REPLY_GATEWAY_NOT_INITIALIZED = 140,
- 	IPC_GLB_REPLY_GATEWAY_NOT_EXIST = 141,
-+	IPC_GLB_REPLY_SCLK_ALREADY_RUNNING = 150,
-+	IPC_GLB_REPLY_MCLK_ALREADY_RUNNING = 151,
- 
- 	IPC_GLB_REPLY_PPL_NOT_INITIALIZED = 160,
- 	IPC_GLB_REPLY_PPL_NOT_EXIST = 161,
-@@ -401,6 +403,10 @@ struct skl_ipc_err_map {
- static struct skl_ipc_err_map skl_err_map[] = {
- 	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
- 	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+	{"SCLK already running", IPC_GLB_REPLY_SCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_SCLK_ALREADY_RUNNING},
-+	{"MCLK already running", IPC_GLB_REPLY_MCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_MCLK_ALREADY_RUNNING},
- };
- 
- static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
