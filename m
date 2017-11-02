@@ -1,42 +1,30 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Nov 2017 08:27:03 -0700
+Date: Thu, 2 Nov 2017 01:17:10 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	linux-omap@vger.kernel.org, tony@atomide.com
-Subject: Re: [PATCH 03/27] clk: ti: add support for clkctrl aliases
-Message-ID: <20171103152703.GU11011@codeaurora.org>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
- <1509368685-29112-4-git-send-email-t-kristo@ti.com>
+To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra30: fix cclk_lp divisor register
+Message-ID: <20171102081710.GN11011@codeaurora.org>
+References: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1509368685-29112-4-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f54b8ff896d3dcbae51741b817d65a7e9a21987a.1505789180.git.mirq-linux@rere.qmqm.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/30, Tero Kristo wrote:
-> +		}
-> +
-> +		if (num_args && clkctrl_nodes_missing)
-> +			continue;
-> +
-> +		node = of_find_node_by_name(NULL, buf);
-> +		if (num_args)
-> +			node = of_find_node_by_name(node, "clk");
->  		clkspec.np = node;
-> +		clkspec.args_count = num_args;
-> +		for (i = 0; i < num_args; i++) {
-> +			ret = kstrtoint(tags[i], i ? 10 : 16, clkspec.args + i);
+On 09/19, Michał Mirosław wrote:
+> According to comments in code and common sense, cclk_lp uses its
+> own divisor, not cclk_g's.
+> 
+> Fixes: b08e8c0ecc42 ("clk: tegra: add clock support for Tegra30")
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> ---
 
-Is this some sort of DT checker?
-
-> +			if (ret) {
-> +				pr_warn("Bad tag in %s at %d: %s\n",
-> +					c->node_name, i, tags[i]);
-> +				return;
-> +			}
-> +		}
->  		clk = of_clk_get_from_provider(&clkspec);
->  
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
