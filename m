@@ -1,49 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 00:25:44 -0700
+Date: Thu, 2 Nov 2017 01:21:17 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: =?iso-8859-1?Q?S=E9bastien?= Szymanski <sebastien.szymanski@armadeus.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Julien Boibessot <julien.boibessot@armadeus.com>,
-	Nicolas Colombain <nicolas.colombain@armadeus.com>,
-	Fabien Marteau <fabien.marteau@armadeus.com>
-Subject: Re: [PATCH 1/1] clk: imx6: refine hdmi_isfr's parent to make HDMI
- work on i.MX6 SoCs w/o VPU
-Message-ID: <20171102072544.GP30645@codeaurora.org>
-References: <1501584007-12433-1-git-send-email-sebastien.szymanski@armadeus.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
+Subject: Re: [PATCH 2/2] clk: clk-gpio: Request GPIO descriptor as LOW
+Message-ID: <20171102082117.GQ11011@codeaurora.org>
+References: <20170924161919.24832-1-linus.walleij@linaro.org>
+ <20170924161919.24832-2-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1501584007-12433-1-git-send-email-sebastien.szymanski@armadeus.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170924161919.24832-2-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/01, Sébastien Szymanski wrote:
-> On i.MX6 SoCs without VPU (in my case MCIMX6D4AVT10AC), the hdmi driver
-> fails to probe:
+On 09/24, Linus Walleij wrote:
+> Requesting the GPIOD_OUT_LOW low will make sure the GPIO is
+> deasserted when requested. The gpiolib core will make sure that
+> if the GPIO line is active low, it will be logically driven high
+> when deasserted, see drivers/gpiolib.c gpiod_configure_flags().
 > 
-> [    2.540030] dwhdmi-imx 120000.hdmi: Unsupported HDMI controller
-> (0000:00:00)
-> [    2.548199] imx-drm display-subsystem: failed to bind 120000.hdmi
-> (ops dw_hdmi_imx_ops): -19
-> [    2.557403] imx-drm display-subsystem: master bind failed: -19
-> 
-> That's because hdmi_isfr's parent, video_27m, is not correctly ungated.
-> As explained in commit 5ccc248cc537 ("ARM: imx6q: clk: Add support for
-> mipi_core_cfg clock as a shared clock gate"), video_27m is gated by
-> CCM_CCGR3[CG8].
-> 
-> On i.MX6 SoCs with VPU, the hdmi is working thanks to the
-> CCM_CMEOR[mod_en_ov_vpu] bit which makes the video_27m ungated whatever
-> is in CCM_CCGR3[CG8]. The issue can be reproduced by setting
-> CCMEOR[mod_en_ov_vpu] to 0.
-> 
-> Make the HDMI work in every case by setting hdmi_isfr's parent to
-> mipi_core_cfg.
-> 
-> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+> Cc: Sergej Sawazki <ce3a@gmx.de>
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 
 Applied to clk-next
