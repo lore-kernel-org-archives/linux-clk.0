@@ -1,67 +1,36 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-Date: Mon, 27 Nov 2017 17:48:44 +0800
-Message-ID: <20171127094844.16742-3-yixun.lan@amlogic.com>
-In-Reply-To: <20171127094844.16742-1-yixun.lan@amlogic.com>
-References: <20171127094844.16742-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 01:12:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Chen Zhong <chen.zhong@mediatek.com>
+Subject: Re: [PATCH v2 2/4] clk: mediatek: add the option for determining PLL
+ source clock
+Message-ID: <20171102081205.GG11011@codeaurora.org>
+References: <cover.1507174799.git.sean.wang@mediatek.com>
+ <b90d46284cb527d1412352606912f5e8d18b3e53.1507174799.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <b90d46284cb527d1412352606912f5e8d18b3e53.1507174799.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
+On 10/05, sean.wang@mediatek.com wrote:
+> From: Chen Zhong <chen.zhong@mediatek.com>
+> 
+> Since the previous setup always sets the PLL using crystal 26MHz, this
+> doesn't always happen in every MediaTek platform. So the patch added
+> flexibility for assigning extra member for determining the PLL source
+> clock.
+> 
+> Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
 
-Try to add Hiubus DT info, and also enable clock DT info
-for the Amlogic's Meson-AXG SoC.
+Applied to clk-next
 
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index b932a784b02a..36a2e98338a8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/axg-clkc.h>
- 
- / {
- 	compatible = "amlogic,meson-axg";
-@@ -148,6 +149,20 @@
- 			#address-cells = <0>;
- 		};
- 
-+		hiubus: hiubus@ff63c000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff63c000 0x0 0x1c00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-+
-+			clkc: clock-controller@0 {
-+				compatible = "amlogic,axg-clkc";
-+				#clock-cells = <1>;
-+				reg = <0x0 0x0 0x0 0x320>;
-+			};
-+		};
-+
- 		mailbox: mailbox@ff63dc00 {
- 			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
- 			reg = <0 0xff63dc00 0 0x400>;
 -- 
-2.15.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
