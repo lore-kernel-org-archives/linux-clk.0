@@ -1,22 +1,39 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:31:47 -0700
+Date: Thu, 2 Nov 2017 01:21:13 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mmp: make clk_ops const
-Message-ID: <20171102063147.GX30645@codeaurora.org>
-References: <1503408955-18824-1-git-send-email-bhumirks@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
+Subject: Re: [PATCH 1/2] clk: clk-gpio: Make GPIO clock provider use
+ descriptors only
+Message-ID: <20171102082113.GP11011@codeaurora.org>
+References: <20170924161919.24832-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503408955-18824-1-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <20170924161919.24832-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22, Bhumika Goyal wrote:
-> Make these const as they are only stored in the const field of a
-> clk_init_data structure.
+On 09/24, Linus Walleij wrote:
+> After som grep:ing it turns out nothing in the kernel is really calling
+> clk_[hw_]_register_gpio_[gate|mux](). All existing instances are just
+> created directly from the device tree probe functions at the bottom of
+> the clk-gpio.c clock provider file.
 > 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> This means we can change the signature of the function without any
+> consequences! Everyone should be using GPIO descriptors now, so let's
+> just go in and enforce that.
+> 
+> This saves a bit of code since GPIO descriptors know inherently if they
+> are active low so no need for the code keeping track of that.
+> 
+> We leave it to the caller to come up with the GPIO descriptor. It is
+> nowadays possible to do that even without a corresponding device, so
+> no excuse not to pass them around. The one in-kernel user lifecycles
+> it using devm_gpiod_get() in gpio_clk_driver_probe().
+> 
+> Cc: Sergej Sawazki <ce3a@gmx.de>
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 
 Applied to clk-next
