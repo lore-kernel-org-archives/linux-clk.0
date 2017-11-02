@@ -1,37 +1,98 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:19:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory
- allocation in three functions
-Message-ID: <20171102081941.GO11011@codeaurora.org>
-References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 02/11] dt-bindings: Add Spreadtrum clock binding documentation
+Date: Thu, 2 Nov 2017 14:56:17 +0800
+Message-ID: <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 18:40:34 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Introduce a new binding with its documentation for Spreadtrum clock
+sub-framework.
 
-Applied to clk-next
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ Documentation/devicetree/bindings/clock/sprd.txt | 55 ++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
+new file mode 100644
+index 0000000..5c09529
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sprd.txt
+@@ -0,0 +1,55 @@
++Spreadtrum Clock Binding
++------------------------
++
++Required properties:
++- compatible: should contain the following compatible strings:
++	- "sprd,sc9860-pmu-gate"
++	- "sprd,sc9860-pll"
++	- "sprd,sc9860-ap-clk"
++	- "sprd,sc9860-aon-prediv"
++	- "sprd,sc9860-apahb-gate"
++	- "sprd,sc9860-aon-gate"
++	- "sprd,sc9860-aonsecure-clk"
++	- "sprd,sc9860-agcp-gate"
++	- "sprd,sc9860-gpu-clk"
++	- "sprd,sc9860-vsp-clk"
++	- "sprd,sc9860-vsp-gate"
++	- "sprd,sc9860-cam-clk"
++	- "sprd,sc9860-cam-gate"
++	- "sprd,sc9860-disp-clk"
++	- "sprd,sc9860-disp-gate"
++	- "sprd,sc9860-apapb-gate"
++
++- #clock-cells: must be 1
++
++- clocks : shall be the input parent clock(s) phandle for the clock.
++
++Optional properties:
++
++- reg:	Contain the registers base address and length. It must be configured only if no 'sprd,syscon' under the node.
++
++- sprd,syscon: phandle to the syscon which is in the same address area with the clock.
++
++Example:
++
++	pmu_gate: pmu-gate {
++		compatible = "sprd,sc9860-pmu-gate";
++		sprd,syscon = <&pmu_apb>;
++		clocks = <&ext_26m>;
++		#clock-cells = <1>;
++	};
++
++	pll: pll {
++		compatible = "sprd,sc9860-pll";
++		sprd,syscon = <&ana_apb>;
++		clocks = <&pmu_gate 0>;
++		#clock-cells = <1>;
++	};
++
++	ap_clk: clock-controller@20000000 {
++		compatible = "sprd,sc9860-ap-clk";
++		reg = <0 0x20000000 0 0x400>;
++		clocks = <&ext_26m>, <&pll 0>,
++			 <&pmu_gate 0>;
++		#clock-cells = <1>;
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
