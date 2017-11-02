@@ -1,32 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:57:40 -0800
+Date: Thu, 2 Nov 2017 01:03:25 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	Alex Elder <elder@linaro.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] [media] clk-kona-setup: Delete two error messages for a
- failed memory allocation in parent_process()
-Message-ID: <20171114015740.GE11955@codeaurora.org>
-References: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
+To: Weiyi Lu <weiyi.lu@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com
+Subject: Re: [PATCH v6 1/9] dt-bindings: ARM: Mediatek: Document bindings for
+ MT2712
+Message-ID: <20171102080325.GA11011@codeaurora.org>
+References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
+ <1508731840-4231-2-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
+In-Reply-To: <1508731840-4231-2-git-send-email-weiyi.lu@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 16:54:20 +0200
+On 10/23, Weiyi Lu wrote:
+> This patch adds the binding documentation for apmixedsys, bdpsys,
+> imgsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, pericfg, topckgen,
+> vdecsys and vencsys for Mediatek MT2712.
 > 
-> Omit extra messages for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
 
 Applied to clk-next
