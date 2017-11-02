@@ -1,96 +1,63 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 7/8] clk: mediatek: mt8173-mm: switch to mfd device
-Date: Tue, 14 Nov 2017 22:41:13 +0100
-Message-Id: <20171114214114.15793-8-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:37360 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbdKBHtO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 2 Nov 2017 03:49:14 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Thu, 02 Nov 2017 15:49:13 +0800
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add a regmap to Allwinner R40 CCU to export GMAC
+ register
+In-Reply-To: <20171102071125.GL30645@codeaurora.org>
+References: <20171006063333.12345-1-icenowy@aosc.io>
+ <20171009071809.jte47cd2mt4iv6y7@flea.lan>
+ <14505033-D960-4287-92F2-554E2EDDFC59@aosc.io>
+ <20171102071125.GL30645@codeaurora.org>
+Message-ID: <30ef499cba17ed6ccefcc22444fbf271@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As the new mfd device is in place, switch probing
-for the MMSYS to support invocation from the mfd device.
+在 2017-11-02 15:11，Stephen Boyd 写道：
+> On 10/09, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2017年10月9日 GMT+08:00 下午3:18:09, Maxime Ripard 
+>> <maxime.ripard@free-electrons.com> 写到:
+>> >On Fri, Oct 06, 2017 at 06:33:31AM +0000, Icenowy Zheng wrote:
+>> >> In the CCU of the Allwinner R40 SoC, there's a GMAC configuration
+>> >register,
+>> >> which is intended to be accessed by the dwmac-sun8i driver. On SoCs
+>> >already
+>> >> supported by the driver the register is placed in the syscon rather
+>> >than
+>> >> the CCU.
+>> >>
+>> >> As CCU is a critical part of the SoC, so write to it should be
+>> >strictly
+>> >> limited. A regmap with restricted write permission is created by the
+>> >R40
+>> >> CCU driver, and can be get with dev_get_regmap. In order to tie the
+>> >regmap
+>> >> to the CCU device, the R40 CCU is now a platform driver, so a
+>> >platform
+>> >> device is created for it (and then tied with the regmap).
+>> >>
+>> >> The first patch does the conversion of the driver to a platform
+>> >driver,
+>> >> and the second patch adds the regmap.
+>> >
+>> >I'd like to see first what you want to do with it.
+>> 
+>> Export the GMAC configuration register to dwmac-sun8i.
+>> 
+> 
+> Is this series going to be reposted?
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/clk/mediatek/clk-mt8173.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 96c292c3e440..0fd39228eef4 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -13,8 +13,10 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/mfd/mmsys.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
-@@ -1152,10 +1154,16 @@ static void __init mtk_imgsys_init(struct device_node *node)
- }
- CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
- 
--static void __init mtk_mmsys_init(struct device_node *node)
-+static int mtk_mmsys_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	int r;
-+	struct device_node *node;
-+	struct mmsys_dev *mmsys_private;
-+
-+	mmsys_private = dev_get_drvdata(pdev->dev.parent);
-+	node = mmsys_private->of_node;
-+
- 
- 	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
- 
-@@ -1166,8 +1174,17 @@ static void __init mtk_mmsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	return r;
- }
--CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
-+
-+static struct platform_driver clk_mt8173_mm_drv = {
-+	.probe = mtk_mmsys_probe,
-+	.driver = {
-+		.name = "clk-mt8173-mm",
-+	},
-+};
-+builtin_platform_driver(clk_mt8173_mm_drv);
- 
- static void __init mtk_vdecsys_init(struct device_node *node)
- {
--- 
-2.14.2
+Yes, thanks.
