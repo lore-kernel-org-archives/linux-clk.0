@@ -1,34 +1,30 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 6 Nov 2017 16:13:37 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kaihua Zhong <zhongkaihua@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
-	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
-	leo.yan@linaro.org, zhangfei.gao@linaro.org, guodong.xu@linaro.org,
-	chenjun14@huawei.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, suzhuangluan@hisilicon.com,
-	xuezhiliang@hisilicon.com, kevin.wangtao@hisilicon.com
-Subject: Re: [PATCH 1/3] dt-bindings: clk: Hi3660: Document stub clock
-Message-ID: <20171106221337.grwywvxzes7jcgob@rob-hp-laptop>
-References: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
- <1509693907-90682-2-git-send-email-zhongkaihua@huawei.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Nov 2017 23:46:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] clk: qcom: Elaborate on "active" clocks in the RPM
+ clock bindings
+Message-ID: <20171102064651.GF30645@codeaurora.org>
+References: <20171013112635.32296-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1509693907-90682-2-git-send-email-zhongkaihua@huawei.com>
+In-Reply-To: <20171013112635.32296-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 03, 2017 at 03:25:05PM +0800, Kaihua Zhong wrote:
-> From: Leo Yan <leo.yan@linaro.org>
+On 10/13, Linus Walleij wrote:
+> The concept of "active" clocks is just explained in a bried comment in the
+> device driver, let's explain it a bit more in the device tree bindings
+> so everyone understands this.
 > 
-> Document the DT binding for stub clock which is used for CPU,
-> GPU and DDR frequency scaling.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> Cc: devicetree@vger.kernel.org
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  Documentation/devicetree/bindings/clock/hi3660-clock.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
