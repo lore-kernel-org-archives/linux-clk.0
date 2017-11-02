@@ -1,63 +1,50 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v7 6/6] arm: dts: Add power controller device node of MT2712
-Date: Tue, 28 Nov 2017 15:28:22 +0800
-Message-ID: <1511854102-23195-8-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 00:27:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Adriana Reus <adriana.reus@nxp.com>
+Cc: mturquette@baylibre.com, anson.huang@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/2] clk: imx: imx7d: Fix parent clock for
+ OCRAM_CLK
+Message-ID: <20171102072758.GR30645@codeaurora.org>
+References: <1506940331-16742-1-git-send-email-adriana.reus@nxp.com>
+ <1506940331-16742-2-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1506940331-16742-2-git-send-email-adriana.reus@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-add power controller node for MT2712
+On 10/02, Adriana Reus wrote:
+> The parent of OCRAM_CLK should be axi_main_root_clk
+> and not axi_post_div.
+> 
+> before:
+> 
+>     axi_src                     1       1       332307692       0 0
+>       axi_cg                    1       1       332307692       0 0
+>         axi_pre_div             1       1       332307692       0 0
+>           axi_post_div          1       1       332307692       0 0
+>             ocram_clk           0       0       332307692       0 0
+>             main_axi_root_clk   1       1       332307692       0 0
+> 
+> after:
+> 
+>     axi_src                     1       1       332307692       0 0
+>       axi_cg                    1       1       332307692       0 0
+>         axi_pre_div             1       1       332307692       0 0
+>           axi_post_div          1       1       332307692       0 0
+>             main_axi_root_clk   1       1       332307692       0 0
+>               ocram_clk         0       0       332307692       0 0
+> 
+> Reference Doc: i.MX 7D Reference Manual - Chap 5, p 516
+> (https://www.nxp.com/docs/en/reference-manual/IMX7DRM.pdf)
+> 
+> Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+> Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+> ---
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index 5703793..61dd763 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt2712-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/mt2712-power.h>
- 
- / {
- 	compatible = "mediatek,mt2712";
-@@ -172,6 +173,21 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt2712-scpsys", "syscon";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MM_SEL>,
-+			 <&topckgen CLK_TOP_MFG_SEL>,
-+			 <&topckgen CLK_TOP_VENC_SEL>,
-+			 <&topckgen CLK_TOP_JPGDEC_SEL>,
-+			 <&topckgen CLK_TOP_A1SYS_HP_SEL>,
-+			 <&topckgen CLK_TOP_VDEC_SEL>;
-+		clock-names = "mm", "mfg", "venc",
-+			"jpgdec", "audio", "vdec";
-+		infracfg = <&infracfg>;
-+	};
-+
- 	uart5: serial@1000f000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
