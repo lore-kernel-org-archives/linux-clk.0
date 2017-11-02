@@ -1,124 +1,101 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
-Date: Tue, 14 Nov 2017 22:41:09 +0100
-Message-Id: <20171114214114.15793-4-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 10/11] arm64: dts: add syscon for whale2 platform
+Date: Thu, 2 Nov 2017 14:56:25 +0800
+Message-ID: <20171102065626.21835-11-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-With the mtk-mmsys MFD device in place, we switch the probing for
-mt2701 from device-tree to mfd.
+Some clocks on the SoC of Whale2 families (e.g. SC9860) are in the same
+address area with syscon devices, the proper syscon node will be
+quoted under the definitions of those clocks in DT.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index dd249cf5121e..5a263aa3ab6e 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -21,6 +21,7 @@
- #include <drm/drm_of.h>
- #include <linux/component.h>
- #include <linux/iommu.h>
-+#include <linux/mfd/mmsys.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..a9995fa 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -17,6 +17,51 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- static int mtk_drm_probe(struct platform_device *pdev)
- {
-+	struct mmsys_dev *mmsys_private;
- 	struct device *dev = &pdev->dev;
- 	struct mtk_drm_private *private;
--	struct device_node *node;
-+	struct device_node *node, *parent_node;
- 	struct component_match *match = NULL;
- 	int ret;
- 	int i;
-@@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
- 	INIT_WORK(&private->commit.work, mtk_atomic_work);
- 	private->data = of_device_get_match_data(dev);
- 
--	private->config_regs = syscon_node_to_regmap(dev->of_node);
--	if (IS_ERR(private->config_regs))
--		return PTR_ERR(private->config_regs);
-+	/* Check if called from mfd */
-+	if (!dev->of_node) {
-+		mmsys_private = dev_get_drvdata(pdev->dev.parent);
-+		private->data = (struct mtk_mmsys_driver_data *)
-+				platform_get_device_id(pdev)->driver_data;
-+		private->config_regs =
-+			syscon_node_to_regmap(mmsys_private->of_node);
-+		parent_node = mmsys_private->of_node->parent;
-+	} else {
-+		private->config_regs = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(private->config_regs))
-+			return PTR_ERR(private->config_regs);
-+		parent_node = dev->of_node->parent;
-+	}
- 
- 	/* Iterate over sibling DISP function blocks */
--	for_each_child_of_node(dev->of_node->parent, node) {
-+	for_each_child_of_node(parent_node, node) {
- 		const struct of_device_id *of_id;
- 		enum mtk_ddp_comp_type comp_type;
- 		int comp_id;
-@@ -553,13 +566,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
- 			 mtk_drm_sys_resume);
- 
- static const struct of_device_id mtk_drm_of_ids[] = {
--	{ .compatible = "mediatek,mt2701-mmsys",
--	  .data = &mt2701_mmsys_driver_data},
- 	{ .compatible = "mediatek,mt8173-mmsys",
- 	  .data = &mt8173_mmsys_driver_data},
- 	{ }
- };
- 
-+static const struct platform_device_id mtk_drm_ids[] = {
-+	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
++		ap_ahb: syscon@20210000 {
++			compatible = "syscon";
++			reg = <0 0x20210000 0 0x10000>;
++		};
 +
- static struct platform_driver mtk_drm_platform_driver = {
- 	.probe	= mtk_drm_probe,
- 	.remove	= mtk_drm_remove,
-@@ -568,6 +585,7 @@ static struct platform_driver mtk_drm_platform_driver = {
- 		.of_match_table = mtk_drm_of_ids,
- 		.pm     = &mtk_drm_pm_ops,
- 	},
-+	.id_table = mtk_drm_ids,
- };
++		pmu_apb: syscon@402b0000 {
++			compatible = "syscon";
++			reg = <0 0x402b0000 0 0x10000>;
++		};
++
++		aon_apb: syscon@402e0000 {
++			compatible = "syscon";
++			reg = <0 0x402e0000 0 0x10000>;
++		};
++
++		ana_apb: syscon@40400000 {
++			compatible = "syscon";
++			reg = <0 0x40400000 0 0x10000>;
++		};
++
++		agcp_ahb: syscon@415e0000 {
++			compatible = "syscon";
++			reg = <0 0x415e0000 0 0x1000000>;
++		};
++
++		vsp_ahb: syscon@61100000 {
++			compatible = "syscon";
++			reg = <0 0x61100000 0 0x10000>;
++		};
++
++		cam_ahb: syscon@62100000 {
++			compatible = "syscon";
++			reg = <0 0x62100000 0 0x10000>;
++		};
++
++		disp_ahb: syscon@63100000 {
++			compatible = "syscon";
++			reg = <0 0x63100000 0 0x10000>;
++		};
++
++		ap_apb: syscon@70b00000 {
++			compatible = "syscon";
++			reg = <0 0x70b00000 0 0x40000>;
++		};
++
+ 		ap-apb {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+@@ -59,7 +104,6 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+ 	};
  
- static struct platform_driver * const mtk_drm_drivers[] = {
+ 	ext_26m: ext-26m {
 -- 
-2.14.2
+2.7.4
