@@ -1,32 +1,55 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 22:35:09 -0700
+Date: Thu, 2 Nov 2017 00:25:50 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.15
-Message-ID: <20171102053509.GJ30645@codeaurora.org>
-References: <1507110258-11714-1-git-send-email-geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH] clk: imx: clk-imx6ul: allow lcdif_pre_sel to change
+ parent rate
+Message-ID: <20171102072550.GQ30645@codeaurora.org>
+References: <20171012132935.3508-1-p.zabel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1507110258-11714-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20171012132935.3508-1-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/04, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
+On 10/12, Philipp Zabel wrote:
+> Allowing the lcdif_pre_sel to propagate rate changes to its parent PLL
+> allows more fine grained control over the LCDIF pixel clock rate.
 > 
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+> For example, the Innovision AT043TN24 LCD panel described in the
+> imx6ul-14x14-evk device tree requires a 9 MHz pixel clock.
+> Before this patch, the lcdif_pre_sel clock rate is fixed, and just
+> setting the lcdif_pred and lcdif_podf dividers only allows to get as
+> close as about 8.44 MHz:
 > 
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+>     pll3                                  1            1   480000000 0 0
+>        pll3_bypass                        1            1   480000000 0 0
+> 	  pll3_usb_otg                    1            1   480000000 0 0
+> 	     pll3_pfd1_540m               1            1   540000000 0 0
+> 		lcdif_pre_sel             1            1   540000000 0 0
+> 		   lcdif_pred             1            1    67500000 0 0
+> 		      lcdif_podf           1            1     8437500 0 0
+> 			 lcdif_pix           1            1     8437500 0 0
 > 
-> are available in the git repository at:
+> Once lcdif_pre_sel is allowed to propagate rate requests to its parent,
+> the actual pixel clock matches the requested value:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag1
+>     pll3                                  1            1   480000000 0 0
+>        pll3_bypass                        1            1   480000000 0 0
+> 	  pll3_usb_otg                    1            1   480000000 0 0
+> 	     pll3_pfd1_540m               1            1   288000000 0 0
+> 		lcdif_pre_sel             1            1   288000000 0 0
+> 		   lcdif_pred             1            1    36000000 0 0
+> 		      lcdif_podf           1            1     9000000 0 0
+>                          lcdif_pix           1            1     9000000 0 0
 > 
-> for you to fetch changes up to b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
-> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
 
-Thanks. Pulled.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
