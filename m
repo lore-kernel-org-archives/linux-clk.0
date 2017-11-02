@@ -1,45 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44402 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752257AbdKXG4D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:56:03 -0500
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
-        slemieux.tyco@gmail.com, vireshk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
-Date: Fri, 24 Nov 2017 12:25:30 +0530
-Message-Id: <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 1 Nov 2017 19:04:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 3/3] Documentation: add Actions S900 clock bindings
+Message-ID: <20171102000448.hd3syjfviyy5wwqy@rob-hp-laptop>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-pr_err() messages should end with a new-line to avoid other messages
-being concatenated.
+On Wed, Nov 01, 2017 at 01:24:23AM +0530, Manivannan Sadhasivam wrote:
+> This patch adds clock bindings for Actions Semi S900 SoC.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/spear/clk-frac-synth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+"dt-bindings: clock: " for the subject.
 
-diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
-index 58d678b..cbdf43a 100644
---- a/drivers/clk/spear/clk-frac-synth.c
-+++ b/drivers/clk/spear/clk-frac-synth.c
-@@ -131,7 +131,7 @@ struct clk *clk_register_frac(const char *name, const char *parent_name,
- 	struct clk *clk;
- 
- 	if (!name || !parent_name || !reg || !rtbl || !rtbl_cnt) {
--		pr_err("Invalid arguments passed");
-+		pr_err("Invalid arguments passed\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--- 
-1.9.1
+This patch should come before the dts and driver changes.
 
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> new file mode 100644
+> index 0000000..951d6ad
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> @@ -0,0 +1,47 @@
+> +* Actions s900 Clock Controller
+> +
+> +The Actions s900 clock controller generates and supplies clock to various
+> +controllers within the SoC. The clock binding described here is applicable to
+> +s900 SoC.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "actions,s900-clock"
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +- #clock-cells: should be 1.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/actions,s900-clock.h header and can be used in device
+> +tree sources.
+> +
+> +External clocks:
+> +
+> +The hosc clock used as input for the plls is generated outside the SoC. It is
+> +expected that it is defined using standard clock bindings as "hosc".
+> +
+> +Actions s900 Clock Controller also require two more clocks:
+> + - "losc" - internal low frequency oscillator
+> + - "diff_24M" - internal differential 24MHz clock
+> +
+> +Example: Clock controller node:
+> +
+> +        clock: clock-controller@e0160000 {
+> +		compatible = "actions,s900-clock";
+> +		reg = <0 0xe0160000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +Example: UART controller node that consumes clock generated by the clock
+> +controller:
+> +
+> +	serial5: uart@e012a000 {
+
+serial@...
+
+> +		compatible = "actions,s900-uart", "actions,owl-uart";
+> +		reg = <0x0 0xe012a000 0x0 0x2000>;
+> +		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clock CLK_UART5>;
+> +		clock-names = "uart";
+> +	};
+> -- 
+> 2.7.4
+> 
