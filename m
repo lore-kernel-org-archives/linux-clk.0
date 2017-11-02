@@ -1,58 +1,28 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 03/27] clk: ti: add support for clkctrl aliases
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
- <1509368685-29112-4-git-send-email-t-kristo@ti.com>
- <20171103152703.GU11011@codeaurora.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <b8090db5-48e7-07a2-223c-ead8662d36cb@ti.com>
-Date: Mon, 6 Nov 2017 09:46:41 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Nov 2017 23:38:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Tirupathi Reddy <tirupath@codeaurora.org>
+Subject: Re: [PATCH 2/2] clk: qcom: common: Migrate to devm_* APIs for resets
+ and clk providers
+Message-ID: <20171102063828.GB30645@codeaurora.org>
+References: <20170901231641.19141-1-sboyd@codeaurora.org>
+ <20170901231641.19141-3-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171103152703.GU11011@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170901231641.19141-3-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/11/17 17:27, Stephen Boyd wrote:
-> On 10/30, Tero Kristo wrote:
->> +		}
->> +
->> +		if (num_args && clkctrl_nodes_missing)
->> +			continue;
->> +
->> +		node = of_find_node_by_name(NULL, buf);
->> +		if (num_args)
->> +			node = of_find_node_by_name(node, "clk");
->>   		clkspec.np = node;
->> +		clkspec.args_count = num_args;
->> +		for (i = 0; i < num_args; i++) {
->> +			ret = kstrtoint(tags[i], i ? 10 : 16, clkspec.args + i);
+On 09/01, Stephen Boyd wrote:
+> Now that we have devm APIs for the reset controller and of clk hw
+> provider APIs we can remove the custom code here.
 > 
-> Is this some sort of DT checker?
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Not really, it just parses a string of format:
+Applied to clk-next
 
-<clkctrl_provider>:<hex-offset>:<bit-offset>.
-
-... so that it can find a matching clock. Needed temporarily for 
-omap_hwmod backwards compatibility. This piece can be removed once hwmod 
-is gone.
-
-I can add some comment along these lines to the code if you want.
-
--Tero
-
-> 
->> +			if (ret) {
->> +				pr_warn("Bad tag in %s at %d: %s\n",
->> +					c->node_name, i, tags[i]);
->> +				return;
->> +			}
->> +		}
->>   		clk = of_clk_get_from_provider(&clkspec);
->>   
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
