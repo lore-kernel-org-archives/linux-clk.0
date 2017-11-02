@@ -1,41 +1,118 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 15:53:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tero Kristo <t-kristo@ti.com>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 2/2] clk: ti: dra7-atl-clock: fix child-node lookups
-Message-ID: <20171114235332.GF11955@codeaurora.org>
-References: <20171111162929.11722-1-johan@kernel.org>
- <20171111162929.11722-2-johan@kernel.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 00/11] add clock driver for Spreadtrum platforms
+Date: Thu, 2 Nov 2017 14:56:15 +0800
+Message-ID: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171111162929.11722-2-johan@kernel.org>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/11, Johan Hovold wrote:
-> Fix child node-lookup during probe, which ended up searching the whole
-> device tree depth-first starting at parent rather than just matching on
-> its children.
-> 
-> Note that the original premature free of the parent node has already
-> been fixed separately, but that fix was apparently never backported to
-> stable.
-> 
-> Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
-> Fixes: 660e15519399 ("clk: ti: dra7-atl-clock: Fix of_node reference counting")
-> Cc: stable <stable@vger.kernel.org>     # 3.16: 660e15519399
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
+This series adds Spreadtrum clock support together with its binding
+documentation and devicetree data.
 
-Applied to clk-next
+Any comments would be greatly appreciated.
+
+Thanks,
+Chunyan
+
+Changes from V2: (http://lkml.iu.edu/hypermail/linux/kernel/1707.1/01504.html)
+* Switch to use regmap to access registers;
+* Splited all clocks into 16 separated nodes, for each belongs to a single address area; 
+* Rearranged the order of clock declaration in sc9860-clk.c, sorted them upon the address area;
+* Added syscon device tree nodes which will be quoted by the node of clocks which are in
+  the same address area with the syscon device;
+* Revised the binding documentation according to the dt modification. 
+
+Changes from V1: (https://lkml.org/lkml/2017/6/17/356)
+* Address Stephen's comments:
+  - Switch to use platform device driver instead of the DT probing mechanism.
+  - Move the common clock macro out from vendor directory, but need to remove those
+    overlap code from other vendors (such as sunxi-ng) once this get merged.
+  - Add support to be built as a module.
+  - Add 'sprd_' prefix for all spin locks used in these drivers.
+  - Mark input parameter of sprd_x with const.
+  - Remove unreasonable dependencies to CONFIG_64BIT.
+  - Add readl() after writing the same register.
+  - Remove CLK_IS_BASIC which is no longer used.
+  - Remove unnecessery CLK_IGNORE_UNUSED when defining a clock.
+  - Change to expose all clock index.
+  - Use clk_ instead of ccu.
+  - Add Kconfig for sprd clocks.
+  - Move the fixed clocks out from the soc node.
+  - Switch to use 64-bit math in pll driver instead of 32-bit math.
+* Revise binding documentation according to dt modification.
+* Rename sc9860.c to sc9860-clk.c
+
+
+Chunyan Zhang (11):
+  drivers: move clock common macros out from vendor directories
+  dt-bindings: Add Spreadtrum clock binding documentation
+  clk: sprd: Add common infrastructure
+  clk: sprd: add gate clock support
+  clk: sprd: add mux clock support
+  clk: sprd: add divider clock support
+  clk: sprd: add composite clock support
+  clk: sprd: add adjustable pll support
+  clk: sprd: add clocks support for SC9860
+  arm64: dts: add syscon for whale2 platform
+  arm64: dts: add clocks for SC9860
+
+ Documentation/devicetree/bindings/clock/sprd.txt |   55 +
+ arch/arm64/boot/dts/sprd/sc9860.dtsi             |  115 ++
+ arch/arm64/boot/dts/sprd/whale2.dtsi             |   48 +-
+ drivers/clk/Kconfig                              |    1 +
+ drivers/clk/Makefile                             |    1 +
+ drivers/clk/clk_common.h                         |   60 +
+ drivers/clk/sprd/Kconfig                         |   14 +
+ drivers/clk/sprd/Makefile                        |   11 +
+ drivers/clk/sprd/common.c                        |  112 ++
+ drivers/clk/sprd/common.h                        |   57 +
+ drivers/clk/sprd/composite.c                     |   65 +
+ drivers/clk/sprd/composite.h                     |   49 +
+ drivers/clk/sprd/div.c                           |  100 ++
+ drivers/clk/sprd/div.h                           |   79 +
+ drivers/clk/sprd/gate.c                          |  106 ++
+ drivers/clk/sprd/gate.h                          |   54 +
+ drivers/clk/sprd/mux.c                           |   89 +
+ drivers/clk/sprd/mux.h                           |   65 +
+ drivers/clk/sprd/pll.c                           |  268 +++
+ drivers/clk/sprd/pll.h                           |  110 ++
+ drivers/clk/sprd/sc9860-clk.c                    | 1987 ++++++++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9860-clk.h      |  408 +++++
+ 22 files changed, 3852 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+ create mode 100644 drivers/clk/clk_common.h
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
+ create mode 100644 drivers/clk/sprd/gate.c
+ create mode 100644 drivers/clk/sprd/gate.h
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/mux.h
+ create mode 100644 drivers/clk/sprd/pll.c
+ create mode 100644 drivers/clk/sprd/pll.h
+ create mode 100644 drivers/clk/sprd/sc9860-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
