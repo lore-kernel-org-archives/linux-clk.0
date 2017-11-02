@@ -1,79 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6500 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753334AbdKPPaD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:30:03 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
-Date: Thu, 16 Nov 2017 17:29:52 +0200
-Message-ID: <1510846195-28555-2-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 2 Nov 2017 16:44:47 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/10] Allwinner H3/H5/A64(DE2) SimpleFB support
+Message-ID: <20171102154447.b5qo3rvu5djxupay@flea>
+References: <20171027150658.18509-1-icenowy@aosc.io>
+ <9bca10cc95d04f87a1122bc582402310@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="766nqwxqmfxoxega"
+In-Reply-To: <9bca10cc95d04f87a1122bc582402310@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is needed by the memory built-in self test work around.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
- include/dt-bindings/clock/tegra210-car.h |  2 +-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+--766nqwxqmfxoxega
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 6d7a613..55a5b7f 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -40,6 +40,7 @@
- 
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
-+#define CLK_SOURCE_LA 0x1f8
- 
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
- 	return 0;
- }
- 
-+static const char * const la_parents[] = {
-+	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
-+};
-+
-+static struct tegra_clk_periph tegra210_la =
-+	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
-+
- static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-@@ -2667,6 +2675,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA210_CLK_DSIB] = clk;
- 
-+	/* la */
-+	clk = tegra_clk_register_periph("la", la_parents,
-+			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
-+			CLK_SOURCE_LA, 0);
- 	/* emc mux */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index a9dc145..5df857a 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -95,7 +95,7 @@
- #define TEGRA210_CLK_CSITE 73
- /* 74 */
- /* 75 */
--/* 76 */
-+#define TEGRA210_CLK_LA 76
- /* 77 */
- #define TEGRA210_CLK_SOC_THERM 78
- #define TEGRA210_CLK_DTV 79
--- 
-1.9.1
+On Thu, Nov 02, 2017 at 04:51:29PM +0800, Icenowy Zheng wrote:
+> =E5=9C=A8 2017-10-27 23:06=EF=BC=8CIcenowy Zheng =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > This patchset adds support for the SimpleFB on Allwinner SoCs with
+> > "Display Engine 2.0".
+> >=20
+> > PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+> >=20
+> > PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+> >=20
+> > PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
+> > for H3/H5 SoCs.
+> >=20
+> > PATCH 8 to 10 are for Allwinner A64 SoC to enable SimpleFB.
+> >=20
+> > Icenowy Zheng (10):
+> >   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
+> >   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+> >   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
+> >   dt-bindings: simplefb-sunxi: add pipelines for DE2
+> >   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+> >   arm64: allwinner: h5: add compatible string for DE2 CCU
+> >   ARM: sunxi: h3/h5: add simplefb nodes
+> >   dt-bindings: add binding for A64 DE2 CCU SRAM
+> >   arm64: allwinner: a64: add DE2 CCU for A64 SoC
+> >   arm64: allwinner: a64: add simplefb for A64 SoC
+>=20
+> Maxime, could you review and, if possible, apply the H3/5
+> part of this patchset?
 
+This came a bit late, we're too close from the merge window
+now. Please resend them after -rc1 is out.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--766nqwxqmfxoxega
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZ+z1vAAoJEBx+YmzsjxAgJQYP/RoY+HL7SVN8c/UCknR2nmtj
+1hzOlmcXJs5ZeMxA5H7Mb0Hs/lhhAI8YhGK3y+ChH6VhmkgqtfExjIgKBDGmMpSt
+LKeAP5cg0nDfxu1/XCBCp0u9O4bK0l9epggZ8+/1JjBZ3BuZcXBCcwrD+KqgrZDc
+yvxsphuFBlerJwPOjTlDlpN4czKwYVledLwoC69Ru6/ijT7as55pcypVEK+SnXMH
+vTZBPU4CigL29Ofpr+67SAxe/0Ow+9r+RxyPHdwaWYQUKBMVfyACjlO0uKadzUmB
+aB0C3kp1/6HcUiNRF7+IEXuukidIC1PlH42EJdb2JFb2uRLg44f2wnLx8bmN/4Rr
+AL1dtEXmJ7g3zixKNTa30fpoFXontBub9xYmDXOBuVEwBQtQU1QUWTrTn8IANY1j
+94AcvxkRyPbcqWVsVNFItLdhq5yks/hAv0Rq7kTIGZxF43ZPn0FL55rG2q5lcV6f
+r9N9RYmdw8MooOjipyO43+ZkiXQDCO+ZweOG83FwRnADytvIInJ58BQifLx3mBms
+gYBwYabxO0ZnbwwHaoJAnLaezqiDNb8uhSq2vjvCZJWBkBSBAnKgnesC2VdvBvLQ
+JWJzexem1yNxhcADeMnggSW4TOjJGQCZCNVnUuPmFyRalH0a2eNfQ7rH/cAlSjHo
+gRHUEFSSGpSoQdA6jLeh
+=DTuu
+-----END PGP SIGNATURE-----
+
+--766nqwxqmfxoxega--
