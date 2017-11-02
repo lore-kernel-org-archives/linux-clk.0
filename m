@@ -1,45 +1,30 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 22:36:00 -0700
+Date: Wed, 1 Nov 2017 23:38:24 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.15 (take two)
-Message-ID: <20171102053600.GN30645@codeaurora.org>
-References: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Tirupathi Reddy <tirupath@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: Add
+ devm_of_clk_add_hw_provider()/del_provider() APIs
+Message-ID: <20171102063824.GA30645@codeaurora.org>
+References: <20170901231641.19141-1-sboyd@codeaurora.org>
+ <20170901231641.19141-2-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1508498590-10566-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20170901231641.19141-2-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
+On 09/01, Stephen Boyd wrote:
+> Sometimes we only have one of_clk_del_provider() call in driver
+> error and remove paths, because we're missing a
+> devm_of_clk_add_hw_provider() API. Introduce the API so we can
+> convert drivers to use this and potentially reduce the amount of
+> code needed to remove providers in drivers.
 > 
-> The following changes since commit b4021bbe10017d994e5a96ebfd2677bbaf2b37e0:
-> 
->   clk: renesas: rcar-gen2: Delete error message for failed memory allocation (2017-09-28 17:57:34 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.15-tag2
-> 
-> for you to fetch changes up to 3f7a4d084159c52513d1ff77f3b3b880bcf517d9:
-> 
->   clk: renesas: rcar-gen3: Restore R clock during resume (2017-10-20 11:16:09 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.15 (take two)
-> 
->   - Add support for the second display unit clock on RZ/G1E,
->   - Add git repository to MAINTAINERS,
->   - Add suspend/resume support for R-Car Gen3 CPG/MSSR,
->   - Small fixes and cleanups.
-> 
-> Note: this is on top of my previous pull request, for
-> tags/clk-renesas-for-v4.15-tag1, which you haven't pulled yet.
-> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Thanks. Pulled.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
