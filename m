@@ -1,61 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 18:12:55 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, jassisinghbrar@gmail.com,
-	robh+dt@kernel.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 3/7] mailbox: qcom: Move the apcs struct into a
- separate header
-Message-ID: <20171114021255.GY11955@codeaurora.org>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-4-georgi.djakov@linaro.org>
- <20171026042811.GL1575@tuxbook>
- <5bad4c4b-362b-ba9f-3072-1cced7a004dd@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from [103.59.133.81] ([103.59.133.81]:36346 "EHLO mani-Aspire-E5-573"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753430AbdKFOGb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Nov 2017 09:06:31 -0500
+Date: Fri, 3 Nov 2017 00:11:23 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, davem@davemloft.net,
+        mchehab@kernel.org, rdunlap@infradead.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        liuwei@actions-semi.com
+Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
+Message-ID: <20171102184123.GA15014@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
+ <20171102000246.rcermsfe7rycrmk3@rob-hp-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5bad4c4b-362b-ba9f-3072-1cced7a004dd@linaro.org>
+In-Reply-To: <20171102000246.rcermsfe7rycrmk3@rob-hp-laptop>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/27, Georgi Djakov wrote:
-> Hi Bjorn,
-> 
-> Thanks for reviewing!
-> 
-> On 10/26/2017 07:28 AM, Bjorn Andersson wrote:
-> > On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
+On Wed, Nov 01, 2017 at 07:02:46PM -0500, Rob Herring wrote:
+> On Wed, Nov 01, 2017 at 01:24:22AM +0530, Manivannan Sadhasivam wrote:
+> > This patch adds clock driver for Actions Semi OWL
+> > series S900 SoC.
 > > 
-> >> Move the structure shared by the APCS IPC device and its subdevices
-> >> into a separate header file.
-> >>
-> > 
-> > As you're creating the apcs regmap with devm_regmap_init_mmio() you can
-> > just call dev_get_regmap(dev->parent) in your child to get the handle.
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  MAINTAINERS                                    |   5 +
+> >  drivers/clk/Makefile                           |   1 +
+> >  drivers/clk/owl/Makefile                       |   2 +
+> >  drivers/clk/owl/clk-factor.c                   | 270 ++++++++++++
+> >  drivers/clk/owl/clk-pll.c                      | 346 +++++++++++++++
+> >  drivers/clk/owl/clk-s900.c                     | 587 +++++++++++++++++++++++++
+> >  drivers/clk/owl/clk.c                          | 318 ++++++++++++++
+> >  drivers/clk/owl/clk.h                          | 301 +++++++++++++
 > 
-> Ok, thanks!
+> >  include/dt-bindings/clock/actions,s900-clock.h | 141 ++++++
 > 
-> > 
-> > But I would prefer that you just add the clock code to the existing
-> > driver.
-> 
-> This will require an ack from Stephen, and i got the impression that he
-> prefers a separate clk driver [1].
-> 
-> Stephen, are you ok with registering the clocks from the apcs mailbox
-> driver?
-> 
-> [1] https://lkml.org/lkml/2017/6/26/750
+> This belongs in the DT binding patch.
+>
+Ack. Will add it in next revision.
 
-The parent regmap "trick" was the plan. Is something wrong with
-that?
-
-Not having random clk drivers scattered throughout the tree is
-sort of nice because it makes for an easier time finding things
-that are similar. Maybe that's an abuse of the driver model
-though? Just to get things into some same directory. I'm fine
-either way.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Mani 
+> >  9 files changed, 1971 insertions(+)
+> >  create mode 100644 drivers/clk/owl/Makefile
+> >  create mode 100644 drivers/clk/owl/clk-factor.c
+> >  create mode 100644 drivers/clk/owl/clk-pll.c
+> >  create mode 100644 drivers/clk/owl/clk-s900.c
+> >  create mode 100644 drivers/clk/owl/clk.c
+> >  create mode 100644 drivers/clk/owl/clk.h
+> >  create mode 100644 include/dt-bindings/clock/actions,s900-clock.h
