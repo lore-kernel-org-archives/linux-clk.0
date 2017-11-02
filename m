@@ -1,42 +1,23 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:15:08 -0700
+Date: Wed, 1 Nov 2017 23:31:36 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 010/102] clk: tegra: explicitly request exclusive reset
- control
-Message-ID: <20171102081508.GI11011@codeaurora.org>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719152646.25903-11-p.zabel@pengutronix.de>
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: spear: make clk_ops const
+Message-ID: <20171102063136.GT30645@codeaurora.org>
+References: <1503407690-13541-1-git-send-email-bhumirks@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170719152646.25903-11-p.zabel@pengutronix.de>
+In-Reply-To: <1503407690-13541-1-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/19, Philipp Zabel wrote:
-> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> reset lines") started to transition the reset control request API calls
-> to explicitly state whether the driver needs exclusive or shared reset
-> control behavior. Convert all drivers requesting exclusive resets to the
-> explicit API call so the temporary transition helpers can be removed.
+On 08/22, Bhumika Goyal wrote:
+> Make these const as they are only stored in the const field of a
+> clk_init_data structure.
 > 
-> No functional changes.
-> 
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 > ---
 
 Applied to clk-next
