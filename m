@@ -1,52 +1,184 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6610 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbdKPPdR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:17 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 0/8] Tegra210 DFLL implementation
-Date: Thu, 16 Nov 2017 17:33:01 +0200
-Message-ID: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 11/11] arm64: dts: add clocks for SC9860
+Date: Thu, 2 Nov 2017 14:56:26 +0800
+Message-ID: <20171102065626.21835-12-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series introduces support for the DFLL as a CPU clock source
-on Tegra210. As Jetson TX2 uses a PWM controlled regulator which
-is driven directly by the DFLLs PWM output, we also introduce support
-for PWM regulators next to I2C controlled regulators. Because the
-regulator voltage directly changes the DFLL output frequency and
-the registers for controlling the PWM output are part of the DFLL
-IP block, we don't model a seperate regulator object for this
-PWM regulator, but instead control it directly from withing the
-DFLL driver.
+Some clocks on SC9860 are in the same address area with syscon devices,
+those are what have a property of 'sprd,syscon' which would refer to
+syscon devices, others would have a reg property indicated their address
+ranges.
 
-Peter De Schrijver (8):
-  clk: tegra: dfll registration for multiple SoCs
-  clk: tegra: DT align parameter for CVB calculation
-  clk: tegra: add CVB tables for Tegra210 CPU DFLL
-  clk: tegra: dfll: support PWM regulator control
-  clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
-  cpufreq: tegra124-cpufreq: extend to support Tegra210
-  arm64: dts: tegra: Add Tegra210 DFLL definition
-  arm64: dts: nvidia: Tegra210 CPU clock definition
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |   2 +-
+ 2 files changed, 116 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  20 +
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  12 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       |  27 ++
- drivers/clk/tegra/Kconfig                      |   5 +
- drivers/clk/tegra/Makefile                     |   2 +-
- drivers/clk/tegra/clk-dfll.c                   | 481 ++++++++++++++++++++----
- drivers/clk/tegra/clk-dfll.h                   |   7 +
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c     | 492 ++++++++++++++++++++++++-
- drivers/clk/tegra/cvb.c                        |  17 +-
- drivers/clk/tegra/cvb.h                        |   6 +-
- drivers/cpufreq/tegra124-cpufreq.c             |  13 +-
- 11 files changed, 978 insertions(+), 104 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..95746b2 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,120 @@
+ 	};
+ 
+ 	soc {
++		pmu_gate: pmu-gate {
++			compatible = "sprd,sc9860-pmu-gate";
++			sprd,syscon = <&pmu_apb>; /* 0x402b0000 */
++			clocks = <&ext_26m>;
++			#clock-cells = <1>;
++		};
++
++		pll: pll {
++			compatible = "sprd,sc9860-pll";
++			sprd,syscon = <&ana_apb>; /* 0x40400000 */
++			clocks = <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		ap_clk: clock-controller@20000000 {
++			compatible = "sprd,sc9860-ap-clk";
++			reg = <0 0x20000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_prediv: aon-prediv {
++			compatible = "sprd,sc9860-aon-prediv";
++			reg = <0 0x402d0000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		apahb_gate: apahb-gate {
++			compatible = "sprd,sc9860-apahb-gate";
++			sprd,syscon = <&ap_ahb>; /* 0x20210000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_gate: aon-gate {
++			compatible = "sprd,sc9860-aon-gate";
++			sprd,syscon = <&aon_apb>; /* 0x402e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aonsecure_clk: clock-controller@40880000 {
++			compatible = "sprd,sc9860-aonsecure-clk";
++			reg = <0 0x40880000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		agcp_gate: agcp-gate {
++			compatible = "sprd,sc9860-agcp-gate";
++			sprd,syscon = <&agcp_ahb>; /* 0x415e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		gpu_clk: clock-controller@60200000 {
++			compatible = "sprd,sc9860-gpu-clk";
++			reg = <0 0x60200000 0 0x400>;
++			clocks = <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_clk: clock-controller@61000000 {
++			compatible = "sprd,sc9860-vsp-clk";
++			reg = <0 0x61000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_gate: vsp-gate {
++			compatible = "sprd,sc9860-vsp-gate";
++			sprd,syscon = <&vsp_ahb>; /* 0x61100000 */
++			clocks = <&vsp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_clk: clock-controller@62000000 {
++			compatible = "sprd,sc9860-cam-clk";
++			reg = <0 0x62000000 0 0x4000>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_gate: cam-gate {
++			compatible = "sprd,sc9860-cam-gate";
++			sprd,syscon = <&cam_ahb>; /* 0x62100000 */
++			clocks = <&cam_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_clk: clock-controller@63000000 {
++			compatible = "sprd,sc9860-disp-clk";
++			reg = <0 0x63000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_gate: disp-gate {
++			compatible = "sprd,sc9860-disp-gate";
++			sprd,syscon = <&disp_ahb>; /* 0x63100000 */
++			clocks = <&disp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		apapb_gate: apapb-gate {
++			compatible = "sprd,sc9860-apapb-gate";
++			sprd,syscon = <&ap_apb>; /* 0x70b00000 */
++			clocks = <&ap_clk 0>;
++			#clock-cells = <1>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index a9995fa..206aaf1 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -110,6 +110,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
+ 	};
+ };
 -- 
-1.9.1
-
+2.7.4
