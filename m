@@ -1,42 +1,104 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 18:06:43 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, tony@atomide.com
-Subject: Re: [PATCHv2 04/28] clk: ti: clkctrl: use fallback udelay approach
- if timekeeping is suspended
-Message-ID: <20171114020643.GU11955@codeaurora.org>
-References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
- <1510218917-1725-2-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 01/11] drivers: move clock common macros out from vendor directories
+Date: Thu, 2 Nov 2017 14:56:16 +0800
+Message-ID: <20171102065626.21835-2-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1510218917-1725-2-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/09, Tero Kristo wrote:
-> In certain cases it is possible that the timekeeping has been suspended
-> already when attempting to disable/enable a clkctrl clock. This will
-> happen at least on am43xx platform when attempting to enable / disable
-> the clockevent source itself, burping out a warning from timekeeping core.
-> 
-> The sequence of events leading to this:
-> -> timekeeping_suspend()
->  -> clockevents_suspend()
->   -> omap_clkevt_idle()
->    -> omap_hwmod_idle()
->     -> _omap4_clkctrl_clk_disable()
->      -> _omap4_is_timeout()
-> 
-> Avoid the issue by checking if the timekeeping is suspended and using
-> the fallback udelay approach for checking timeouts.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+These macros are used by more than one SoC vendor platforms, avoid to
+have many copies of these code, this patch moves them to the common
+clock directory which every clock drivers can access to.
 
-No Cc on timekeeping maintainers, but OK.
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 drivers/clk/clk_common.h
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
+diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
+new file mode 100644
+index 0000000..21e93d2
+--- /dev/null
++++ b/drivers/clk/clk_common.h
+@@ -0,0 +1,60 @@
++/*
++ * drivers/clk/clk_common.h
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CLK_COMMON_H_
++#define _CLK_COMMON_H_
++
++#include <linux/clk-provider.h>
++
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= (const char *[]) { _parent },	\
++		.num_parents	= 1,				\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
++	(&(struct clk_init_data) {                      \
++		.flags          = _flags,               \
++		.name           = _name,                \
++		.parent_names   = NULL,                 \
++		.num_parents    = 0,                    \
++		.ops            = _ops,                 \
++	})
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++#define CLK_FIXED_RATE(_struct, _name, _flags,				\
++		       _fixed_rate, _fixed_accuracy)			\
++	struct clk_fixed_rate _struct = {				\
++		.fixed_rate	= _fixed_rate,				\
++		.fixed_accuracy	= _fixed_accuracy,			\
++		.hw.init	= CLK_HW_INIT_NO_PARENT(_name,		\
++					  &clk_fixed_rate_ops,		\
++							_flags),	\
++	}
++
++#endif /* _CLK_COMMON_H_ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
