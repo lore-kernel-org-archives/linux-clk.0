@@ -1,29 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:03:30 -0700
+Date: Thu, 2 Nov 2017 01:19:41 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Weiyi Lu <weiyi.lu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v6 2/9] clk: mediatek: Add dt-bindings for MT2712 clocks
-Message-ID: <20171102080330.GB11011@codeaurora.org>
-References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
- <1508731840-4231-3-git-send-email-weiyi.lu@mediatek.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory
+ allocation in three functions
+Message-ID: <20171102081941.GO11011@codeaurora.org>
+References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1508731840-4231-3-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23, Weiyi Lu wrote:
-> Add MT2712 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg, pericfg, mcucfg and subsystem clocks.
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:40:34 +0200
 > 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
