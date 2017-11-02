@@ -1,182 +1,42 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V4 07/12] clk: sprd: add composite clock support
-Date: Fri, 10 Nov 2017 14:36:02 +0800
-Message-ID: <20171110063607.3250-8-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Nov 2017 01:06:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Shunli Wang <shunli.wang@mediatek.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Erin Lo <erin.lo@mediatek.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sean Wang <sean.wang@mediatek.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: mark mtk_infrasys_init_early __init
+Message-ID: <20171102080624.GD11011@codeaurora.org>
+References: <20170915192848.649455-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170915192848.649455-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduced composite clock driver for Spreadtrum's SoCs.
-The functions of this composite clock simply consists of divider
-and mux clocks.
+On 09/15, Arnd Bergmann wrote:
+> On gcc-4.6, we get a harmless link-time warning:
+> 
+> WARNING: vmlinux.o(.text.unlikely+0x196a0): Section mismatch in reference from the function mtk_infrasys_init_early() to the function .init.text:mtk_clk_register_cpumuxes()
+> The function mtk_infrasys_init_early() references
+> the function __init mtk_clk_register_cpumuxes().
+> This is often because mtk_infrasys_init_early lacks a __init
+> annotation or the annotation of mtk_clk_register_cpumuxes is wrong.
+> 
+> Newer compilers inline this function so they don't warn, but
+> marking it __init is the right solution for all versions.
+> 
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile    |  1 +
- drivers/clk/sprd/composite.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/composite.h | 55 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 121 insertions(+)
- create mode 100644 drivers/clk/sprd/composite.c
- create mode 100644 drivers/clk/sprd/composite.h
+Applied to clk-next
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 80e6039..2262e76 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
- clk-sprd-y	+= div.o
-+clk-sprd-y	+= composite.o
-diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
-new file mode 100644
-index 0000000..30d5b36
---- /dev/null
-+++ b/drivers/clk/sprd/composite.c
-@@ -0,0 +1,65 @@
-+/*
-+ * Spreadtrum composite clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "composite.h"
-+
-+DEFINE_SPINLOCK(sprd_comp_lock);
-+EXPORT_SYMBOL_GPL(sprd_comp_lock);
-+
-+static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_round_rate(&cc->common, &cc->div,
-+					 rate, parent_rate);
-+}
-+
-+static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
-+}
-+
-+static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_set_rate(&cc->common, &cc->div,
-+				       rate, parent_rate);
-+}
-+
-+static u8 sprd_comp_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
-+}
-+
-+static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
-+}
-+
-+const struct clk_ops sprd_comp_ops = {
-+	.get_parent	= sprd_comp_get_parent,
-+	.set_parent	= sprd_comp_set_parent,
-+
-+	.round_rate	= sprd_comp_round_rate,
-+	.recalc_rate	= sprd_comp_recalc_rate,
-+	.set_rate	= sprd_comp_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_comp_ops);
-diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
-new file mode 100644
-index 0000000..a9bd68d
---- /dev/null
-+++ b/drivers/clk/sprd/composite.h
-@@ -0,0 +1,55 @@
-+/*
-+ * Spreadtrum composite clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_COMPOSITE_H_
-+#define _SPRD_COMPOSITE_H_
-+
-+#include "common.h"
-+#include "mux.h"
-+#include "div.h"
-+
-+struct sprd_comp {
-+	struct sprd_mux_ssel	mux;
-+	struct sprd_div_internal	div;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,	\
-+			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
-+	struct sprd_comp _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
-+		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_comp_lock,		\
-+			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-+						       _parent,		\
-+						       &sprd_comp_ops,	\
-+						       _flags),		\
-+			 }						\
-+	}
-+
-+#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,	\
-+			_mwidth, _dshift, _dwidth, _flags)	\
-+	SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg,	\
-+			    NULL, _mshift, _mwidth,		\
-+			    _dshift, _dwidth, _flags)
-+
-+static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_comp, common);
-+}
-+
-+extern const struct clk_ops sprd_comp_ops;
-+extern spinlock_t sprd_comp_lock;
-+
-+#endif /* _SPRD_COMPOSITE_H_ */
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
