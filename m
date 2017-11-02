@@ -1,49 +1,64 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1509615364.24591.23.camel@baylibre.com>
-Subject: Re: [PATCH v4 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Michael Turquette
-	 <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "Jerome Brunet
-	<jbrunet@baylibre.com>, linux-clk@vger.kernel.org,	
-	""linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,	
-	""Linus Walleij <linus.walleij@linaro.org>, Quentin Schulz	
-	""<quentin.schulz@free-electrons.com>, Kevin Hilman	
-	""<khilman@baylibre.com>, Peter De Schrijver"
-	 <pdeschrijver@nvidia.com>, Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 02 Nov 2017 10:36:04 +0100
-In-Reply-To: <20171102090405.wletgjwzbtkmljc3@flea>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
-	 <150899576543.90597.13810909942564444110@resonance>
-	 <20171102090405.wletgjwzbtkmljc3@flea>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 2 Nov 2017 18:41:08 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Li Pengcheng <lipengcheng8@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add support for Hi6220 coresight
+Message-ID: <20171102104108.GC3550@leoy-linaro>
+References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
+ <20170901013301.GN21656@codeaurora.org>
+ <20171007121802.GC23080@leoy-linaro>
+ <59E07FDE.40307@hisilicon.com>
+ <150955133019.90597.6277114786385559431@resonance>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <150955133019.90597.6277114786385559431@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-11-02 at 10:04 +0100, Maxime Ripard wrote:
-> Hi Mike,
-> 
-> On Thu, Oct 26, 2017 at 07:29:25AM +0200, Michael Turquette wrote:
-> > Quoting Jerome Brunet (2017-09-24 22:00:20)
-> > > This Patchset is related the RFC [0] and the discussion around
-> > > CLK_SET_RATE_GATE available here [1]
+On Wed, Nov 01, 2017 at 04:48:50PM +0100, Michael Turquette wrote:
+> Quoting Wei Xu (2017-10-13 10:57:02)
+> > Hi Leo,
 > > 
-> > + Maxime & ChenYu
+> > On 2017/10/7 13:18, Leo Yan wrote:
+> > > Hi Stephen, Wei,
+> > > 
+> > > On Thu, Aug 31, 2017 at 06:33:01PM -0700, Stephen Boyd wrote:
+> > >> On 09/01, Leo Yan wrote:
+> > >>> This patch series adds support for coresight on Hi6220; the first patch
+> > >>> is to fix coresight PLL so can avoid system hang after we enable
+> > >>> coresight, the second patch is to add DT binding according to coresight
+> > >>> topology.
+> > >>>
+> > >>> The patch has been tested on Hikey; By using OpenCSD snapshot mode, it
+> > >>> can successfully decode ETF and ETB trace data.
+> > >>>
+> > >>
+> > >> I can take the first one and second one goes through arm-soc?
+> > > 
+> > > Could you pick these two patches for Hi6220 coresight enabling for
+> > > this merge window? Or need me resend these two patches?
 > > 
-> > Have you tested this latest version? If it works for you as expected,
-> > please feel free to add your Tested-by's.
+> > Applied patch 2 into hisilicon dt tree with slight fix.
+> > Thanks!
 > 
-> We were not in Cc on this one (obviously) and I'm not subscribed to
-> linux-clk, is there a git branch available somewhere so we can test?
+> Cool. Patch #1 applied to clk tree.
 
-Here it is:
-https://github.com/jeromebrunet/linux/commits/amlogic/wip/clk-lock
+Thanks, Mike and Wei.
 
-Happy testing !
-
-
+> Regards,
+> Mike
 > 
-> Thanks!
-> Maxime
-> 
+> > 
+> > BR,
+> > Wei
+> > 
+> > > 
+> > > Thanks,
+> > > Leo Yan
