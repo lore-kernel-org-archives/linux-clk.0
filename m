@@ -1,36 +1,36 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:59:27 -0800
+Date: Thu, 2 Nov 2017 00:09:56 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk/ux500: Improve a size determination in three
- functions
-Message-ID: <20171114015927.GQ11955@codeaurora.org>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
- <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>, mturquette@baylibre.com,
+	andy.gross@linaro.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
+Message-ID: <20171102070956.GJ30645@codeaurora.org>
+References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
+ <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
+ <20171011054319.GF1165@minitux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+In-Reply-To: <20171011054319.GF1165@minitux>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:30:53 +0200
+On 10/10, Bjorn Andersson wrote:
+> On Tue 10 Oct 01:57 PDT 2017, Rajendra Nayak wrote:
 > 
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
+> > Add all RPM controlled clocks on msm8996 platform
+> > 
+> > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> > [srini: Fixed various issues with offsets and made names specific to msm8996]
+> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> This issue was detected by using the Coccinelle software.
+> Your S-o-b should be last in this list.
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
 
-Applied to clk-next
+I moved it to the end, which feels weird because typically first
+signoff is the author. But nothing I see says that's true, so
+let's swap it.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
