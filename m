@@ -1,49 +1,106 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6596 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbdKPPc3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:32:29 -0500
-Date: Thu, 16 Nov 2017 17:32:24 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
-Message-ID: <20171116153224.GS6210@tbergstrom-lnx.Nvidia.com>
-References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:50102 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbdKBHWd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Nov 2017 03:22:33 -0400
+Received: by mail-lf0-f51.google.com with SMTP id w21so5247904lfc.6
+        for <linux-clk@vger.kernel.org>; Thu, 02 Nov 2017 00:22:32 -0700 (PDT)
+Received: from android-fee78d8a8fd46114.lan (78-57-212-189.static.zebra.lt. [78.57.212.189])
+        by smtp.gmail.com with ESMTPSA id i72sm409873lfe.67.2017.11.02.00.22.30
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Nov 2017 00:22:30 -0700 (PDT)
+Date: Thu, 02 Nov 2017 09:19:39 +0200
+In-Reply-To: <24C08A61-4CBD-4890-8C7A-DEC665A04E9A@gmail.com>
+References: <24C08A61-4CBD-4890-8C7A-DEC665A04E9A@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH] RESEND: clk: Avoid sending high rates to downstream clocks during set_rate
+To: linux-clk@vger.kernel.org
+From: Modestas <montvid@gmail.com>
+Message-ID: <EC4690F5-CEB3-4999-947C-C7F1EF4172F3@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry about the repost. You can ignore this.
 
-Peter.
 
-On Thu, Nov 16, 2017 at 05:29:51PM +0200, Peter De Schrijver wrote:
-> This patch series introduces the Memory Built-In Self Test (MBIST)
-> work around (WAR) needed when power ungating certain domains. More
-> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> implement the WAR in the Tegra210 clock driver, because most accesses are
-> to CAR registers and for the VENC domain, we need to make sure the CSI
-> clock source is not changed during the WAR execution.
-> 
-> Changes in v2:
-> * Use readl for fence_delay() rather than readl_relaxed
-> * clarify MBIST and WAR acronyms
-> 
-> Peter De Schrijver (4):
->   clk: tegra: Add la clock for Tegra210
->   clk: tegra: add fence_delay for clock registers
->   clk: tegra: MBIST work around for Tegra210
->   soc/tegra: pmc: apply MBIST work around fo Tegra210
-> 
->  drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk.h                  |   7 +
->  drivers/soc/tegra/pmc.c                  |   5 +
->  include/dt-bindings/clock/tegra210-car.h |   2 +-
->  include/linux/clk/tegra.h                |   1 +
->  5 files changed, 383 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 1.9.1
-> 
+Thanks for the information=2E As I understand there is no @ when this will=
+ be upstreamed=2E My Krait device can not boot the linux kernel to login wi=
+thout this patch so this patch is critical=2E Without it i just see a blank=
+ screen without any dmesg info=2E=C2=A0
+
+On November 2, 2017 9:00:03 AM GMT+02:00, Stephen Boyd <sboyd@codeaurora=
+=2Eorg> wrote:
+
+On 10/04, Linus Walleij wrote:
+
+From: Stephen Boyd <sboyd@codeaurora=2Eorg>
+
+If a clock is on and we call clk_set_rate() on it we may get into
+a situation where the clock temporarily increases in rate
+dramatically while we walk the tree and call =2Eset_rate() ops=2E For
+example, consider a case where a PLL feeds into a divider=2E
+Initially the divider is set to divide by 1 and the PLL is
+running fairly slow (100MHz)=2E The downstream consumer of the
+divider output can only handle rates =3D< 400 MHz, but the divider
+can only choose between divisors of 1 and 4=2E
+
++-----+ +----------------+
+| PLL |-->| div 1 or div 4 |---> consumer device
++-----+ +----------------+
+
+To achieve a rate of 400MHz on the output of the divider, we
+would have to set the rate of the PLL to 1=2E6 GHz and then divide
+it by 4=2E The current code would set the PLL to 1=2E6GHz first while
+the divider is still set to 1, thus causing the downstream
+consumer of the clock to receive a few clock cycles of 1=2E6GHz
+clock (far beyond it's maximum acceptable rate)=2E We should be
+changing the divider first before increasing the PLL rate to
+avoid this problem=2E
+
+Therefore, set the rate of any child clocks that are increasing
+in rate from their current rate so that they can increase their
+dividers if necessary=2E We assume that there isn't such a thing as
+minimum rate requirements=2E
+
+Cc: Opera <montvid@gmail=2Ecom>
+Cc: John Stultz <john=2Estultz@linaro=2Eorg>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora=2Eorg>
+---
+Stephen: just wanted to check what's up with this patch=2E
+When I apply it on my kernel I get graphics on the Nexus7,
+when I don't, I don't=2E
+
+OpenWRT has started to carry the patch in their tree I noticed=2E
+I found it in John Stultz patch stack=2E
+
+Is there some similar patch floating in some other series, is
+it fundamentally wrong or something else?
+
+Just wanted to reboot the discussion so we know where this is
+standing=2E
+
+
+This patch wants to go away and be replaced with coordinated clk
+rates code=2E So far, nothing has appeared for that though, so this
+problem is stuck in limbo, blocking Krait CPUfreq=2E
+
+I have no idea why it matters for your Nexus7 graphics stuff=2E As
+far as I know the GPU clk on Nexus7 is a plain old dynamic rcg
+that can switch rates glitch free and we don't do anything odd
+like reprogramming the parent PLL of the rcg to use faster rates,
+which is mostly what this patch is for=2E
+
+I wrote this patch for Krait CPUfreq originally=2E In that case we
+reprogram PLLs higher up in tree and then have to adjust dividers
+below that and doing that in the wrong order causes high
+frequencies to come down the tree into the CPU that we can't turn
+off=2E
+
+I suspect OpenWRT has pulled in the patch for Krait CPUfreq=2E It
+could be that you also need it for that=2E Or it could be that odd
+line where we don't look at the result of clk_recalc, and just
+blast in the calculated new rate into core->rate somehow fixes
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
