@@ -1,112 +1,43 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 2/4] clk: meson-axg: add clocks dt-bindings required header
-Date: Fri, 1 Dec 2017 09:24:50 +0800
-Message-ID: <20171201012452.27086-3-yixun.lan@amlogic.com>
-In-Reply-To: <20171201012452.27086-1-yixun.lan@amlogic.com>
-References: <20171201012452.27086-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 3 Nov 2017 08:27:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	linux-omap@vger.kernel.org, tony@atomide.com
+Subject: Re: [PATCH 03/27] clk: ti: add support for clkctrl aliases
+Message-ID: <20171103152703.GU11011@codeaurora.org>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+ <1509368685-29112-4-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1509368685-29112-4-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
+On 10/30, Tero Kristo wrote:
+> +		}
+> +
+> +		if (num_args && clkctrl_nodes_missing)
+> +			continue;
+> +
+> +		node = of_find_node_by_name(NULL, buf);
+> +		if (num_args)
+> +			node = of_find_node_by_name(node, "clk");
+>  		clkspec.np = node;
+> +		clkspec.args_count = num_args;
+> +		for (i = 0; i < num_args; i++) {
+> +			ret = kstrtoint(tags[i], i ? 10 : 16, clkspec.args + i);
 
-Add the required header for the clocks ID dt-bindings
-exported from various subsystem in the Meson-AXG SoC.
+Is this some sort of DT checker?
 
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
+> +			if (ret) {
+> +				pr_warn("Bad tag in %s at %d: %s\n",
+> +					c->node_name, i, tags[i]);
+> +				return;
+> +			}
+> +		}
+>  		clk = of_clk_get_from_provider(&clkspec);
+>  
 
-diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
-new file mode 100644
-index 000000000000..941ac70e7f30
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-clkc.h
-@@ -0,0 +1,71 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson-AXG clock tree IDs
-+ *
-+ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __AXG_CLKC_H
-+#define __AXG_CLKC_H
-+
-+#define CLKID_SYS_PLL				0
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				2
-+#define CLKID_FCLK_DIV3				3
-+#define CLKID_FCLK_DIV4				4
-+#define CLKID_FCLK_DIV5				5
-+#define CLKID_FCLK_DIV7				6
-+#define CLKID_GP0_PLL				7
-+#define CLKID_CLK81				10
-+#define CLKID_MPLL0				11
-+#define CLKID_MPLL1				12
-+#define CLKID_MPLL2				13
-+#define CLKID_MPLL3				14
-+#define CLKID_DDR				15
-+#define CLKID_AUDIO_LOCKER			16
-+#define CLKID_MIPI_DSI_HOST			17
-+#define CLKID_ISA				18
-+#define CLKID_PL301				19
-+#define CLKID_PERIPHS				20
-+#define CLKID_SPICC0				21
-+#define CLKID_I2C				22
-+#define CLKID_RNG0				23
-+#define CLKID_UART0				24
-+#define CLKID_MIPI_DSI_PHY			25
-+#define CLKID_SPICC1				26
-+#define CLKID_PCIE_A				27
-+#define CLKID_PCIE_B				28
-+#define CLKID_HIU_IFACE				29
-+#define CLKID_ASSIST_MISC			30
-+#define CLKID_SD_EMMC_B				31
-+#define CLKID_SD_EMMC_C				32
-+#define CLKID_DMA				33
-+#define CLKID_SPI				34
-+#define CLKID_AUDIO				35
-+#define CLKID_ETH				36
-+#define CLKID_UART1				37
-+#define CLKID_G2D				38
-+#define CLKID_USB0				39
-+#define CLKID_USB1				40
-+#define CLKID_RESET				41
-+#define CLKID_USB				42
-+#define CLKID_AHB_ARB0				43
-+#define CLKID_EFUSE				44
-+#define CLKID_BOOT_ROM				45
-+#define CLKID_AHB_DATA_BUS			46
-+#define CLKID_AHB_CTRL_BUS			47
-+#define CLKID_USB1_DDR_BRIDGE			48
-+#define CLKID_USB0_DDR_BRIDGE			49
-+#define CLKID_MMC_PCLK				50
-+#define CLKID_VPU_INTR				51
-+#define CLKID_SEC_AHB_AHB3_BRIDGE		52
-+#define CLKID_GIC				53
-+#define CLKID_AO_MEDIA_CPU			54
-+#define CLKID_AO_AHB_SRAM			55
-+#define CLKID_AO_AHB_BUS			56
-+#define CLKID_AO_IFACE				57
-+#define CLKID_AO_I2C				58
-+#define CLKID_SD_EMMC_B_CLK0			59
-+#define CLKID_SD_EMMC_C_CLK0			60
-+
-+#endif /* __AXG_CLKC_H */
 -- 
-2.15.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
