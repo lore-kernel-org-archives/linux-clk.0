@@ -1,37 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 3 Nov 2017 08:11:00 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.14-rc7
-Date: Fri,  3 Nov 2017 13:26:22 -0700
-Message-Id: <20171103202622.22995-1-sboyd@codeaurora.org>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
+Cc: maxime.ripard@free-electrons.com, wens@csie.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: a83t: Fix i2c buses bits
+Message-ID: <20171103151100.GR11011@codeaurora.org>
+References: <20171103105747.26335-1-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20171103105747.26335-1-mylene.josserand@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 5dcbeca615ef12047a5f4097b91030cbf995b1d2:
+On 11/03, Mylène Josserand wrote:
+> i2c1 and i2c2 bits for CCU are not bit 0 but bit 1 and bit 2.
+> Because of that, the i2c0 (bit 0) was not correctly configured.
+> Fixed the correct bits for i2c1 and i2c2.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+> ---
 
-  clk: samsung: exynos4: Enable VPLL and EPLL clocks for suspend/resume cycle (2017-10-04 09:19:13 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to db9d79f6e7de3e059d897234f93cbe1e55a0ed50:
-
-  clk: uniphier: fix clock data for PXs3 (2017-10-24 01:57:24 -0700)
-
-----------------------------------------------------------------
-One fix for USB clks on Uniphier PXs3 SoCs
-
-----------------------------------------------------------------
-Masahiro Yamada (1):
-      clk: uniphier: fix clock data for PXs3
-
- drivers/clk/uniphier/clk-uniphier-sys.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Please add a Fixes tag.
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
