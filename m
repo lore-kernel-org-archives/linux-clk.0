@@ -1,69 +1,63 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 4 Nov 2017 15:34:04 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-	rdunlap@infradead.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, liuwei@actions-semi.com
-Subject: Re: [PATCH 0/3] Add clock driver for Actions S900 SoC
-Message-ID: <20171104100404.GA23738@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <62797b3b-a622-48a1-9dc5-3cc2b5c7afd3@suse.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 3 Nov 2017 08:43:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	linux-omap@vger.kernel.org, tony@atomide.com
+Subject: Re: [PATCH 04/27] clk: ti: clkctrl: use fallback udelay approach if
+ timekeeping is suspended
+Message-ID: <20171103154317.GV11011@codeaurora.org>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+ <1509368685-29112-5-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <62797b3b-a622-48a1-9dc5-3cc2b5c7afd3@suse.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1509368685-29112-5-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Nov 04, 2017 at 05:05:31PM +0800, Andreas Färber wrote:
-> Hi Mani,
+On 10/30, Tero Kristo wrote:
+> This will happen on certain platforms when entering / leaving suspend
+> and the system attempts to disable certain clocks at very early/late
+> phase, burping out a warning from timekeeping core. Avoid the issue
+> by checking if the timekeeping is suspended and using the fallback
+> udelay approach for checking timeouts.
 > 
-> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
-> > This series adds clock driver for Actions Semi OWL series
-> > S900 SoC with relevant clock bindings and device tree data.
-> > 
-> > This series also addresses the review comments from previous
-> > submission happened last year.
-> > 
-> > https://patchwork.kernel.org/patch/9254471/
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  drivers/clk/ti/clkctrl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Interesting - I had searched for any S500/S900 patches before starting
-> to work on this but came up empty on LAKML.
->
-Even I'm also not able to find the patch submission in LKML. But found that
-in patchwork. 
-> It seems you missed at least one review comment from 2016 about the
-> example indentation, so please double-check for anything Stephen already
-> pointed out.
-> 
-Agree. Will incorporate in next revision. Can't blame checkpatch for this ;-)
-> > Driver has been validated on Bubblegum-96 board.
-> > 
-> > Thanks,
-> > Mani
-> > 
-> > Manivannan Sadhasivam (3):
-> >   arm64: dts: actions: add s900 clock controller nodes
-> >   clk: owl: add clock driver for Actions S900 SoC
-> >   Documentation: add Actions S900 clock bindings
-> 
-> Please reverse the patch order.
-> 
-Ack.
-> Have you checked S500 code whether the S900 vs. common split is correct?
-> 
-Will look at both S500 and S700.
-> Many thanks for your work on this,
-> 
-I should thank you for getting the SoC support in :-)
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index 284ba449..91ddc92 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/clk/ti.h>
+>  #include <linux/delay.h>
+> +#include <linux/timekeeping.h>
 
--Mani
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+>  #include "clock.h"
+>  
+>  #define NO_IDLEST			0x1
+> @@ -90,7 +91,7 @@ static bool _omap4_is_ready(u32 val)
+>  
+>  static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
+>  {
+> -	if (unlikely(_early_timeout)) {
+> +	if (unlikely(_early_timeout || timekeeping_suspended)) {
+>  		if (time->cycles++ < timeout) {
+
+This would be the second user of timekeeping_suspended outside of
+timekeeping core. Why don't we just udelay(1) every time we call
+this function? The loop on ktime without any sort of delay in it
+may actually spin faster, especially because we can't get
+interrupted here (irqs are off). And irqs + preemption enabled is
+typically where you would want to use ktime instead of counting
+udelay() calls to see if you hit a timeout.
+
+This code seems over-complicated given the constraints at the
+call-sites.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
