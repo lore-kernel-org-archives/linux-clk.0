@@ -1,204 +1,125 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 2/8] mfd: mtk-mmsys: Add mmsys driver
-Date: Tue, 14 Nov 2017 22:41:08 +0100
-Message-Id: <20171114214114.15793-3-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <zhang.lyra@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <ba6366af-ecae-5f8b-f48b-6f93fbe833c0@arm.com>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+ <20171102065626.21835-6-chunyan.zhang@spreadtrum.com> <532aed43-03bf-ea26-bdc2-d7deb1093f53@arm.com>
+ <ba6366af-ecae-5f8b-f48b-6f93fbe833c0@arm.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 3 Nov 2017 20:12:42 +0800
+Message-ID: <CAAfSe-tt==o2ZDq=C=pa_oAsA-xG1XMO=Nvd5qbHRTVgPaLBsw@mail.gmail.com>
+Subject: Re: [PATCH V3 05/11] clk: sprd: add mux clock support
+To: Julien Thierry <julien.thierry@arm.com>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Orson Zhai <orson.zhai@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMSYS subsystem includes clocks and drm components.
-This patch adds a MFD device to probe both drivers from the same
-device tree compatible.
+On 3 November 2017 at 02:22, Julien Thierry <julien.thierry@arm.com> wrote:
+>
+>
+> On 02/11/17 18:11, Julien Thierry wrote:
+>>
+>> Hi,
+>>
+>> On 02/11/17 06:56, Chunyan Zhang wrote:
+>>>
+>>> This patch adds clock multiplexor support for Spreadtrum platforms,
+>>> the mux clocks also can be found in sprd composite clocks, so
+>>> provides two helpers that can be reused later on.
+>>>
+>>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>>> ---
+>>>   drivers/clk/sprd/Makefile |  1 +
+>>>   drivers/clk/sprd/mux.c    | 89
+>>> +++++++++++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/sprd/mux.h    | 65 ++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 155 insertions(+)
+>>>   create mode 100644 drivers/clk/sprd/mux.c
+>>>   create mode 100644 drivers/clk/sprd/mux.h
+>>>
+>>> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+>>> index 8cd5592..cee36b5 100644
+>>> --- a/drivers/clk/sprd/Makefile
+>>> +++ b/drivers/clk/sprd/Makefile
+>>> @@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)    += clk-sprd.o
+>>>   clk-sprd-y    += common.o
+>>>   clk-sprd-y    += gate.o
+>>> +clk-sprd-y    += mux.o
+>>> diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
+>>> new file mode 100644
+>>> index 0000000..5a344e0
+>>> --- /dev/null
+>>> +++ b/drivers/clk/sprd/mux.c
+>>> @@ -0,0 +1,89 @@
+>>> +/*
+>>> + * Spreadtrum multiplexer clock driver
+>>> + *
+>>> + * Copyright (C) 2017 Spreadtrum, Inc.
+>>> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>>> + *
+>>> + * SPDX-License-Identifier: GPL-2.0
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/regmap.h>
+>>> +
+>>> +#include "mux.h"
+>>> +
+>>> +DEFINE_SPINLOCK(sprd_mux_lock);
+>>> +EXPORT_SYMBOL_GPL(sprd_mux_lock);
+>>> +
+>>> +u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
+>>> +                  const struct sprd_mux_internal *mux)
+>>> +{
+>>> +    unsigned int reg;
+>>> +    u8 parent;
+>>> +    int num_parents;
+>>> +    int i;
+>>> +
+>>> +    sprd_regmap_read(common->regmap, common->reg, &reg);
+>>> +    parent = reg >> mux->shift;
+>>> +    parent &= (1 << mux->width) - 1;
+>>> +
+>>> +    if (mux->table) {
+>>> +        num_parents = clk_hw_get_num_parents(&common->hw);
+>>> +
+>>> +        for (i = 0; i < num_parents; i++)
+>>> +            if (parent == mux->table[i] ||
+>>> +                (i < (num_parents - 1) && parent > mux->table[i] &&
+>>> +                 parent < mux->table[i + 1]))
+>>> +                return i;
+>>> +        if (i == num_parents)
+>>> +            return i - 1;
+>>
+>>
+>> The if branch is not necessary since you only get there when the loop has
+>> finished, so the condition is always true. And the loop can be simplified
+>> to:
+>>
+>> for (i = 0; i < num_parents - 1; i++)
+>>      if (parent >= mux->table[i] &&  parent < mux->table[i + 1])
+>>          return i;
+>>
+>> return num_parents;
+>
+>
+> Oops, meant to say "return num_parents - 1;" on that last line.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/mfd/Kconfig       |  9 +++++
- drivers/mfd/Makefile      |  2 ++
- drivers/mfd/mtk-mmsys.c   | 91 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/mmsys.h | 18 ++++++++++
- 4 files changed, 120 insertions(+)
- create mode 100644 drivers/mfd/mtk-mmsys.c
- create mode 100644 include/linux/mfd/mmsys.h
+Yes, that makes the code nicer, and thanks to your reminder, I even
+make it more clean by moving the check for 'mux->table' up.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index fc5e4fef89d2..3250ce5d205a 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -368,6 +368,15 @@ config MFD_MC13XXX_I2C
- 	help
- 	  Select this if your MC13xxx is connected via an I2C bus.
- 
-+config MFD_MEDIATEK_MMSYS
-+	tristate "Mediatek MMSYS interface"
-+	select MDF_CORE
-+	select REGMAP_MMIO
-+	help
-+	  Select this if you have a MMSYS subsystem in your SoC. The
-+	  MMSYS subsystem has at least a clock driver part and some
-+	  DRM components.
-+
- config MFD_MXS_LRADC
- 	tristate "Freescale i.MX23/i.MX28 LRADC"
- 	depends on ARCH_MXS || COMPILE_TEST
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 8703ff17998e..d4fc99df784c 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -100,6 +100,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
- obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
- obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
- 
-+obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
-+
- obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
- 
- obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-new file mode 100644
-index 000000000000..102b491aa28f
---- /dev/null
-+++ b/drivers/mfd/mtk-mmsys.c
-@@ -0,0 +1,91 @@
-+/*
-+ * mtk-mmsys.c  --  Mediatek MMSYS multi-function driver
-+ *
-+ *  Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
-+ *
-+ * Author: Matthias Brugger <matthias.bgg@gmail.com>
-+ *
-+ * For licencing details see kernel-base/COPYING
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/mmsys.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+enum {
-+	MMSYS_MT2701 = 1,
-+};
-+
-+static const struct mfd_cell mmsys_mt2701_devs[] = {
-+	{ .name = "clk-mt2701-mm", },
-+	{ .name = "drm-mt2701-mm", },
-+};
-+
-+static int mmsys_probe(struct platform_device *pdev)
-+{
-+	struct mmsys_dev *private;
-+	const struct mfd_cell *mmsys_cells;
-+	int nr_cells;
-+	long id;
-+	int ret;
-+
-+	id = (long) of_device_get_match_data(&pdev->dev);
-+	if (!id) {
-+		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (id) {
-+	case MMSYS_MT2701:
-+		mmsys_cells = mmsys_mt2701_devs;
-+		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
-+	if (!private)
-+		return -ENOMEM;
-+
-+	private->dev = &pdev->dev;
-+	dev_set_drvdata(private->dev, private);
-+
-+	private->of_node = pdev->dev.of_node;
-+
-+	ret = devm_mfd_add_devices(private->dev, 0, mmsys_cells, nr_cells,
-+					NULL, 0, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+};
-+
-+static const struct of_device_id of_match_mmsys[] = {
-+	{ .compatible = "mediatek,mt2701-mmsys",
-+	  .data = (void *) MMSYS_MT2701,
-+	},
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver mmsys_drv = {
-+	.probe = mmsys_probe,
-+	.driver = {
-+		.name = "mediatek-mmysys",
-+		.of_match_table = of_match_ptr(of_match_mmsys),
-+	},
-+};
-+
-+builtin_platform_driver(mmsys_drv);
-+
-+MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/mmsys.h b/include/linux/mfd/mmsys.h
-new file mode 100644
-index 000000000000..274b9ee03ada
---- /dev/null
-+++ b/include/linux/mfd/mmsys.h
-@@ -0,0 +1,18 @@
-+/* Header of MMSYS MFD core driver for Mediatek platforms
-+ *
-+ * Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it under
-+ * the terms of the GNU General Public License version 2 as published by the
-+ * Free Software Foundation.
-+ */
-+
-+#ifndef __MEDIATEK_MMSYS__H__
-+#define __MEDIATEK_MMSYS__H__
-+
-+struct mmsys_dev {
-+	struct device		*dev;
-+	struct device_node	*of_node;
-+};
-+
-+#endif
--- 
-2.14.2
+
+Thanks,
+Chunyan
+
+>
+> --
+> Julien Thierry
