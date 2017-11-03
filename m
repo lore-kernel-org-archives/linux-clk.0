@@ -1,100 +1,38 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 11/12] arm64: dts: add syscon for whale2 platform
-Date: Mon, 20 Nov 2017 14:01:36 +0800
-Message-ID: <20171120060137.27380-12-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <zhongkaihua@huawei.com>
+From: Kaihua Zhong <zhongkaihua@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <xuejiancheng@hisilicon.com>, <wenpan@hisilicon.com>,
+	<leo.yan@linaro.org>, <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
+	<zhongkaihua@huawei.com>, <chenjun14@huawei.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
+	<kevin.wangtao@hisilicon.com>
+Subject: [PATCH 0/3] Hi3660 stubclock drivers 
+Date: Fri, 3 Nov 2017 15:25:04 +0800
+Message-ID: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on SC9860 are in the same address area with syscon
-devices, the proper syscon node will be quoted under the
-definitions of those clocks in DT.
+This patchset relies on Hi3660 mailbox drivers.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+Kaihua Zhong (2):
+  clk: hisilicon: Add support for Hi3660 stub clocks
+  arm64: dts: Hi3660: Add binding for stub clock
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 7c217c5..6ea3a75 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -17,6 +17,51 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		ap_ahb_regs: syscon@20210000 {
-+			compatible = "syscon";
-+			reg = <0 0x20210000 0 0x10000>;
-+		};
-+
-+		pmu_regs: syscon@402b0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402b0000 0 0x10000>;
-+		};
-+
-+		aon_regs: syscon@402e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402e0000 0 0x10000>;
-+		};
-+
-+		ana_regs: syscon@40400000 {
-+			compatible = "syscon";
-+			reg = <0 0x40400000 0 0x10000>;
-+		};
-+
-+		agcp_regs: syscon@415e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x415e0000 0 0x1000000>;
-+		};
-+
-+		vsp_regs: syscon@61100000 {
-+			compatible = "syscon";
-+			reg = <0 0x61100000 0 0x10000>;
-+		};
-+
-+		cam_regs: syscon@62100000 {
-+			compatible = "syscon";
-+			reg = <0 0x62100000 0 0x10000>;
-+		};
-+
-+		disp_regs: syscon@63100000 {
-+			compatible = "syscon";
-+			reg = <0 0x63100000 0 0x10000>;
-+		};
-+
-+		ap_apb_regs: syscon@70b00000 {
-+			compatible = "syscon";
-+			reg = <0 0x70b00000 0 0x40000>;
-+		};
-+
- 		ap-apb {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
-@@ -59,7 +104,6 @@
- 				status = "disabled";
- 			};
- 		};
--
- 	};
- 
- 	ext_26m: ext-26m {
+Leo Yan (1):
+  dt-bindings: clk: Hi3660: Document stub clock
+
+ .../devicetree/bindings/clock/hi3660-clock.txt     |   6 +
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   8 +
+ drivers/clk/hisilicon/Kconfig                      |   6 +
+ drivers/clk/hisilicon/Makefile                     |   1 +
+ drivers/clk/hisilicon/clk-hi3660-stub.c            | 195 +++++++++++++++++++++
+ include/dt-bindings/clock/hi3660-clock.h           |   7 +
+ 6 files changed, 223 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/clk-hi3660-stub.c
+
 -- 
-2.7.4
+1.9.1
