@@ -1,248 +1,69 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V4 04/12] clk: sprd: add gate clock support
-Date: Fri, 10 Nov 2017 14:35:59 +0800
-Message-ID: <20171110063607.3250-5-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 4 Nov 2017 15:34:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 0/3] Add clock driver for Actions S900 SoC
+Message-ID: <20171104100404.GA23738@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <62797b3b-a622-48a1-9dc5-3cc2b5c7afd3@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <62797b3b-a622-48a1-9dc5-3cc2b5c7afd3@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the Spreadtrum's SoCs are just simple gates. Add
-support for those clocks.
+On Sat, Nov 04, 2017 at 05:05:31PM +0800, Andreas Färber wrote:
+> Hi Mani,
+> 
+> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
+> > This series adds clock driver for Actions Semi OWL series
+> > S900 SoC with relevant clock bindings and device tree data.
+> > 
+> > This series also addresses the review comments from previous
+> > submission happened last year.
+> > 
+> > https://patchwork.kernel.org/patch/9254471/
+> 
+> Interesting - I had searched for any S500/S900 patches before starting
+> to work on this but came up empty on LAKML.
+>
+Even I'm also not able to find the patch submission in LKML. But found that
+in patchwork. 
+> It seems you missed at least one review comment from 2016 about the
+> example indentation, so please double-check for anything Stephen already
+> pointed out.
+> 
+Agree. Will incorporate in next revision. Can't blame checkpatch for this ;-)
+> > Driver has been validated on Bubblegum-96 board.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > Manivannan Sadhasivam (3):
+> >   arm64: dts: actions: add s900 clock controller nodes
+> >   clk: owl: add clock driver for Actions S900 SoC
+> >   Documentation: add Actions S900 clock bindings
+> 
+> Please reverse the patch order.
+> 
+Ack.
+> Have you checked S500 code whether the S900 vs. common split is correct?
+> 
+Will look at both S500 and S700.
+> Many thanks for your work on this,
+> 
+I should thank you for getting the SoC support in :-)
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile |   1 +
- drivers/clk/sprd/gate.c   | 124 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/gate.h   |  63 +++++++++++++++++++++++
- 3 files changed, 188 insertions(+)
- create mode 100644 drivers/clk/sprd/gate.c
- create mode 100644 drivers/clk/sprd/gate.h
-
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 74f4b80..8cd5592 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
- 
- clk-sprd-y	+= common.o
-+clk-sprd-y	+= gate.o
-diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
-new file mode 100644
-index 0000000..fa0d9ee
---- /dev/null
-+++ b/drivers/clk/sprd/gate.c
-@@ -0,0 +1,124 @@
-+/*
-+ * Spreadtrum gate clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "gate.h"
-+
-+DEFINE_SPINLOCK(sprd_gate_lock);
-+EXPORT_SYMBOL_GPL(sprd_gate_lock);
-+
-+static void clk_gate_toggle(const struct sprd_gate *sg, bool en)
-+{
-+	const struct sprd_clk_common *common = &sg->common;
-+	unsigned long flags = 0;
-+	unsigned int reg;
-+	bool set = sg->flags & CLK_GATE_SET_TO_DISABLE ? true : false;
-+
-+	set ^= en;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+
-+	if (set)
-+		reg |= sg->enable_mask;
-+	else
-+		reg &= ~sg->enable_mask;
-+
-+	sprd_regmap_write(common->regmap, common->reg, reg);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+}
-+
-+static void clk_sc_gate_toggle(const struct sprd_gate *sg, bool en)
-+{
-+	const struct sprd_clk_common *common = &sg->common;
-+	unsigned long flags = 0;
-+	bool set = sg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	unsigned int offset;
-+
-+	set ^= en;
-+
-+	/*
-+	 * Each set/clear gate clock has three registers:
-+	 * common->reg			- base register
-+	 * common->reg + offset		- set register
-+	 * common->reg + 2 * offset	- clear register
-+	 */
-+	offset = set ? sg->sc_offset : sg->sc_offset * 2;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+	sprd_regmap_write(common->regmap, common->reg + offset,
-+			  sg->enable_mask);
-+	spin_unlock_irqrestore(common->lock, flags);
-+}
-+
-+static void sprd_gate_disable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	clk_gate_toggle(sg, false);
-+}
-+
-+static int sprd_gate_enable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	clk_gate_toggle(sg, true);
-+
-+	return 0;
-+}
-+
-+static void sprd_sc_gate_disable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	clk_sc_gate_toggle(sg, false);
-+}
-+
-+static int sprd_sc_gate_enable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	clk_sc_gate_toggle(sg, true);
-+
-+	return 0;
-+}
-+static int sprd_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+	struct sprd_clk_common *common = &sg->common;
-+	unsigned int reg;
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+
-+	if (sg->flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= sg->enable_mask;
-+
-+	reg &= sg->enable_mask;
-+
-+	return reg ? 1 : 0;
-+}
-+
-+const struct clk_ops sprd_gate_ops = {
-+	.disable	= sprd_gate_disable,
-+	.enable		= sprd_gate_enable,
-+	.is_enabled	= sprd_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(sprd_gate_ops);
-+
-+const struct clk_ops sprd_sc_gate_ops = {
-+	.disable	= sprd_sc_gate_disable,
-+	.enable		= sprd_sc_gate_enable,
-+	.is_enabled	= sprd_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(sprd_sc_gate_ops);
-+
-diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
-new file mode 100644
-index 0000000..dad8ba0
---- /dev/null
-+++ b/drivers/clk/sprd/gate.h
-@@ -0,0 +1,63 @@
-+/*
-+ * Spreadtrum gate clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_GATE_H_
-+#define _SPRD_GATE_H_
-+
-+#include "common.h"
-+
-+struct sprd_gate {
-+	u32			enable_mask;
-+	u16			flags;
-+	u16			sc_offset;
-+
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, _sc_offset,	\
-+			     _enable_mask, _flags, _gate_flags, _ops)	\
-+	struct sprd_gate _struct = {					\
-+		.enable_mask	= _enable_mask,				\
-+		.sc_offset	= _sc_offset,				\
-+		.flags		= _gate_flags,				\
-+		.common	= {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_gate_lock,		\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      _ops,		\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+#define SPRD_GATE_CLK(_struct, _name, _parent, _reg,			\
-+		      _enable_mask, _flags, _gate_flags)		\
-+	SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, 0,		\
-+			     _enable_mask, _flags, _gate_flags,		\
-+			     &sprd_gate_ops)
-+
-+#define SPRD_SC_GATE_CLK(_struct, _name, _parent, _reg, _sc_offset,	\
-+			 _enable_mask, _flags, _gate_flags)		\
-+	SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, _sc_offset,	\
-+			     _enable_mask, _flags, _gate_flags,		\
-+			     &sprd_sc_gate_ops)
-+
-+static inline struct sprd_gate *hw_to_sprd_gate(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_gate, common);
-+}
-+
-+extern const struct clk_ops sprd_gate_ops;
-+extern const struct clk_ops sprd_sc_gate_ops;
-+extern spinlock_t sprd_gate_lock;
-+
-+#endif /* _SPRD_GATE_H_ */
--- 
-2.7.4
+-Mani
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
