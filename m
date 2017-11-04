@@ -1,176 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V3 07/11] clk: sprd: add composite clock support
-Date: Thu, 2 Nov 2017 14:56:22 +0800
-Message-ID: <20171102065626.21835-8-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Message-ID: <59FDED7E.8030100@baylibre.com>
+Date: Sat, 04 Nov 2017 17:40:30 +0100
+From: Neil Armstrong <narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>,
+ Jerome Brunet <jbrunet@baylibre.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC
+References: <20171103181703.30434-1-yixun.lan@amlogic.com> <e8a5faa9-d3ca-e03e-3589-2685d6ada30a@amlogic.com>
+In-Reply-To: <e8a5faa9-d3ca-e03e-3589-2685d6ada30a@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduced composite driver for Spreadtrum's SoCs. The
-functions of this composite clock simply consist of divider and
-mux clocks.
+Hi Yixun,
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile    |  1 +
- drivers/clk/sprd/composite.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/composite.h | 49 +++++++++++++++++++++++++++++++++
- 3 files changed, 115 insertions(+)
- create mode 100644 drivers/clk/sprd/composite.c
- create mode 100644 drivers/clk/sprd/composite.h
+Le 04/11/2017 09:41, Yixun Lan a écrit :
+> 
+> 
+> On 11/04/17 02:17, Yixun Lan wrote:
+>> According to the datasheet, the clock gate bit for
+>> SARADC is bit[22] in Meson-GXBB/GXL series.
+>>
+>> Change-Id: Ic4fa58276d2a9ea273eef0a08541fc213ac5ac89
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  drivers/clk/meson/gxbb.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+>> index b2d1e8ed7152..4f5b535fcd12 100644
+>> --- a/drivers/clk/meson/gxbb.c
+>> +++ b/drivers/clk/meson/gxbb.c
+>> @@ -1139,7 +1139,6 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+>> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+>>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+>> @@ -1149,6 +1148,7 @@ static MESON_GATE(gxbb_async_fifo, HHI_GCLK_MPEG0, 16);
+>>  static MESON_GATE(gxbb_sdio, HHI_GCLK_MPEG0, 17);
+>>  static MESON_GATE(gxbb_abuf, HHI_GCLK_MPEG0, 18);
+>>  static MESON_GATE(gxbb_hiu_iface, HHI_GCLK_MPEG0, 19);
+>> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 22);
+>>  static MESON_GATE(gxbb_assist_misc, HHI_GCLK_MPEG0, 23);
+>>  static MESON_GATE(gxbb_emmc_a, HHI_GCLK_MPEG0, 24);
+>>  static MESON_GATE(gxbb_emmc_b, HHI_GCLK_MPEG0, 25);
+>>
+> Hi Neil
+>  I assume you will take this via the clk-meson tree..
+> could you amend the commit msg and drop the 'Change-Id'?
+> (for other parts, please feel free to adjust if you see fit)
+>  thanks
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 80e6039..2262e76 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
- clk-sprd-y	+= div.o
-+clk-sprd-y	+= composite.o
-diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
-new file mode 100644
-index 0000000..30d5b36
---- /dev/null
-+++ b/drivers/clk/sprd/composite.c
-@@ -0,0 +1,65 @@
-+/*
-+ * Spreadtrum composite clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "composite.h"
-+
-+DEFINE_SPINLOCK(sprd_comp_lock);
-+EXPORT_SYMBOL_GPL(sprd_comp_lock);
-+
-+static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_round_rate(&cc->common, &cc->div,
-+					 rate, parent_rate);
-+}
-+
-+static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
-+}
-+
-+static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_set_rate(&cc->common, &cc->div,
-+				       rate, parent_rate);
-+}
-+
-+static u8 sprd_comp_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
-+}
-+
-+static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
-+}
-+
-+const struct clk_ops sprd_comp_ops = {
-+	.get_parent	= sprd_comp_get_parent,
-+	.set_parent	= sprd_comp_set_parent,
-+
-+	.round_rate	= sprd_comp_round_rate,
-+	.recalc_rate	= sprd_comp_recalc_rate,
-+	.set_rate	= sprd_comp_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_comp_ops);
-diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
-new file mode 100644
-index 0000000..551f274
---- /dev/null
-+++ b/drivers/clk/sprd/composite.h
-@@ -0,0 +1,49 @@
-+/*
-+ * Spreadtrum composite clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_COMPOSITE_H_
-+#define _SPRD_COMPOSITE_H_
-+
-+#include "common.h"
-+#include "mux.h"
-+#include "div.h"
-+
-+struct sprd_comp {
-+	struct sprd_mux_internal	mux;
-+	struct sprd_div_internal	div;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _table,		\
-+			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
-+	struct sprd_comp _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
-+		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_comp_lock,		\
-+			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-+						       _parent,		\
-+						       &sprd_comp_ops,	\
-+						       _flags),		\
-+			 }						\
-+	}
-+
-+static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_comp, common);
-+}
-+
-+extern const struct clk_ops sprd_comp_ops;
-+extern spinlock_t sprd_comp_lock;
-+
-+#endif /* _SPRD_COMPOSITE_H_ */
--- 
-2.7.4
+Yes, I will push it as a fix.
+
+Can you check if the saradc driver is still functional when applied ?
+
+Neil
+
+> 
+> Yixun
+> 
