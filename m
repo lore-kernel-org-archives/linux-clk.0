@@ -1,72 +1,99 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 0/8] arm/arm64: mediatek: Fix mmsys device probing
-Date: Tue, 14 Nov 2017 22:41:06 +0100
-Message-Id: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 4 Nov 2017 14:58:27 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 3/3] Documentation: add Actions S900 clock bindings
+Message-ID: <20171104092827.GA18680@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
+ <20171102000448.hd3syjfviyy5wwqy@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171102000448.hd3syjfviyy5wwqy@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
-used in the clk driver) and some registers to set the routing and enable
-the differnet blocks of the display subsystem.
+On Wed, Nov 01, 2017 at 07:04:48PM -0500, Rob Herring wrote:
+> On Wed, Nov 01, 2017 at 01:24:23AM +0530, Manivannan Sadhasivam wrote:
+> > This patch adds clock bindings for Actions Semi S900 SoC.
+> 
+> "dt-bindings: clock: " for the subject.
+> 
+> This patch should come before the dts and driver changes.
+>
+Sure. Will incorporate in next revision.
 
-Up to now both drivers, clock and drm are probed with the same device tree
-compatible. But only the first driver get probed, which in effect breaks
-graphics on mt8173 and mt2701.
-
-This patch set introduces a new mfd device, which binds against the mmsys
-compatible and takes care of probing the needed devices. It was tested on the
-bananapi-r2 and the Acer R13 Chromebook.
-
-Matthias Brugger (8):
-  drm/mediatek: Use regmap for register access
-  mfd: mtk-mmsys: Add mmsys driver
-  drm/mediatek: mt2701: switch to mfd probing.
-  clk: mediatek: mt2701-mm: switch to mfd device
-  mfd: mtk-mmsys: Add mt8173 nodes
-  drm/mediatek: Add mfd support for mt8173
-  clk: mediatek: mt8173-mm: switch to mfd device
-  MAINTAINERS: update Mediatek Soc entry
-
- MAINTAINERS                             |   2 +
- drivers/clk/mediatek/clk-mt2701-mm.c    |  13 ++--
- drivers/clk/mediatek/clk-mt8173.c       |  21 ++++++-
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c |   4 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c  |  30 +++++----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |   4 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c  |  35 ++++++-----
- drivers/gpu/drm/mediatek/mtk_drm_drv.h  |   2 +-
- drivers/mfd/Kconfig                     |   9 +++
- drivers/mfd/Makefile                    |   2 +
- drivers/mfd/mtk-mmsys.c                 | 105 ++++++++++++++++++++++++++++++++
- include/linux/mfd/mmsys.h               |  18 ++++++
- 12 files changed, 200 insertions(+), 45 deletions(-)
- create mode 100644 drivers/mfd/mtk-mmsys.c
- create mode 100644 include/linux/mfd/mmsys.h
-
--- 
-2.14.2
+Thanks,
+Mani 
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > new file mode 100644
+> > index 0000000..951d6ad
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > @@ -0,0 +1,47 @@
+> > +* Actions s900 Clock Controller
+> > +
+> > +The Actions s900 clock controller generates and supplies clock to various
+> > +controllers within the SoC. The clock binding described here is applicable to
+> > +s900 SoC.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: should be "actions,s900-clock"
+> > +- reg: physical base address of the controller and length of memory mapped
+> > +  region.
+> > +- #clock-cells: should be 1.
+> > +
+> > +Each clock is assigned an identifier and client nodes can use this identifier
+> > +to specify the clock which they consume.
+> > +
+> > +All available clocks are defined as preprocessor macros in
+> > +dt-bindings/clock/actions,s900-clock.h header and can be used in device
+> > +tree sources.
+> > +
+> > +External clocks:
+> > +
+> > +The hosc clock used as input for the plls is generated outside the SoC. It is
+> > +expected that it is defined using standard clock bindings as "hosc".
+> > +
+> > +Actions s900 Clock Controller also require two more clocks:
+> > + - "losc" - internal low frequency oscillator
+> > + - "diff_24M" - internal differential 24MHz clock
+> > +
+> > +Example: Clock controller node:
+> > +
+> > +        clock: clock-controller@e0160000 {
+> > +		compatible = "actions,s900-clock";
+> > +		reg = <0 0xe0160000 0 0x1000>;
+> > +		#clock-cells = <1>;
+> > +	};
+> > +
+> > +Example: UART controller node that consumes clock generated by the clock
+> > +controller:
+> > +
+> > +	serial5: uart@e012a000 {
+> 
+> serial@...
+> 
+> > +		compatible = "actions,s900-uart", "actions,owl-uart";
+> > +		reg = <0x0 0xe012a000 0x0 0x2000>;
+> > +		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks = <&clock CLK_UART5>;
+> > +		clock-names = "uart";
+> > +	};
+> > -- 
+> > 2.7.4
+> > 
