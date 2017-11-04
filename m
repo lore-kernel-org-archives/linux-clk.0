@@ -1,38 +1,78 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 10 Nov 2017 15:11:18 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V4 02/12] dt-bindings: Add Spreadtrum clock binding
- documentation
-Message-ID: <20171110211118.sxdobmec2gmznikc@rob-hp-laptop>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
- <20171110063607.3250-3-chunyan.zhang@spreadtrum.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 4 Nov 2017 15:24:00 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
+Message-ID: <20171104095400.GD18680@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
+ <7c87aee4-dde4-ab3d-06b0-75f3686ab5dd@suse.de>
+ <20171104091949.GB14705@linaro.org>
+ <25a2e233-f565-8baa-17e2-9c867bbbe9d0@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171110063607.3250-3-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <25a2e233-f565-8baa-17e2-9c867bbbe9d0@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 10, 2017 at 02:35:57PM +0800, Chunyan Zhang wrote:
-> Introduce a new binding with its documentation for Spreadtrum clock
-> sub-framework.
+On Sat, Nov 04, 2017 at 05:30:36PM +0800, Andreas Färber wrote:
+> Hi,
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  Documentation/devicetree/bindings/clock/sprd.txt | 63 ++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+> Am 04.11.2017 um 17:19 schrieb Manivannan Sadhasivam:
+> >>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> >>> index c99f363..821c1e1 100644
+> >>> --- a/drivers/clk/Makefile
+> >>> +++ b/drivers/clk/Makefile
+> >>> @@ -75,6 +75,7 @@ endif
+> >>>  obj-y					+= mvebu/
+> >>>  obj-$(CONFIG_ARCH_MXS)			+= mxs/
+> >>>  obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+> >>> +obj-$(CONFIG_ARCH_ACTIONS)		+= owl/
+> >>>  obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+> >>>  obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+> >>>  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+> >>> diff --git a/drivers/clk/owl/Makefile b/drivers/clk/owl/Makefile
+> >>> new file mode 100644
+> >>> index 0000000..dbba0af
+> >>> --- /dev/null
+> >>> +++ b/drivers/clk/owl/Makefile
+> >>> @@ -0,0 +1,2 @@
+> >>> +obj-y				+= clk.o clk-pll.o clk-factor.o
+> >>> +obj-$(CONFIG_ARCH_ACTIONS)	+= clk-s900.o
+> >>
+> >> $(CONFIG_ARCH_ACTIONS) is superfluous here.
+> >>
+> > Okay. Since, we haven't added ARCH_ACTIONS to defconfig yet I intentionally
+> > made this conditional compilation.
+> > 
+> > Would like a suggestion from you on this!
+> 
+> My point was that the ../Makefile already uses $(CONFIG_ARCH_ACTIONS),
+> so $(CONFIG_ARCH_ACTIONS) can never be n here.
+>
+Ah. Missed that :-) 
+> Instead you should probably either use $(CONFIG_ARM64) or better some
+> new Kconfig option (CONFIG_CLK_OWL_S900?), so that we don't
+> unnecessarily compile S900 on 32-bit arm and S500 on arm64.
+> 
+CONFIG_CLK_OWL_S900 seems to be beter
+> Another point: What about S700? Does it need to duplicate clk-s900.c or
+> can we share any code between the two?
+> 
+Haven't looked at that yet. Will let you know.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Thanks,
+Mani
+> Cheers,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
