@@ -1,27 +1,103 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:43:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, robdclark@gmail.com,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Remove unused RCG ops
-Message-ID: <20171102064345.GD30645@codeaurora.org>
-References: <20170823225543.GJ21656@codeaurora.org>
- <20170824173644.10305-1-georgi.djakov@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 4 Nov 2017 15:20:37 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
+Message-ID: <20171104095037.GC18680@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
+ <a8bd3b8b-190a-6dbf-6976-207baca3030b@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170824173644.10305-1-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <a8bd3b8b-190a-6dbf-6976-207baca3030b@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24, Georgi Djakov wrote:
-> The RCGs ops for shared branches are not used now, so remove it.
+Hi Andreas,
+On Sat, Nov 04, 2017 at 04:43:31PM +0800, Andreas Färber wrote:
+> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
+> > This patch adds clock controller nodes for Actions Semi s900 SoC
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
+> Please avoid "This patch". Once applied, it's a commit. :)
+> 
+Ack.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+> > index 11406f6..c099ef1 100644
+> > --- a/arch/arm64/boot/dts/actions/s900.dtsi
+> > +++ b/arch/arm64/boot/dts/actions/s900.dtsi
+> > @@ -5,6 +5,7 @@
+> >   */
+> >  
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/clock/actions,s900-clock.h>
+> 
+> Alphabetical order please.
+> 
+Ack.
+> >  
+> >  / {
+> >  	compatible = "actions,s900";
+> > @@ -88,6 +89,24 @@
+> >  		#clock-cells = <0>;
+> >  	};
+> >  
+> > +	losc: losc {
+> > +		compatible = "fixed-clock";
+> > +		clock-frequency = <32768>;
+> > +		#clock-cells = <0>;
+> > +	};
+> > +
+> > +	diff_24M: diff_24M {
+> 
+> No underscore in node names please - maybe diff-24M or simpler diff24M?
+> Please double-check that name - is it from manual or from schematics?
+> 
+Actually, this name comes from vendor driver and they have used "24M_diff".
+As per DT conventions I renamed it to "diff_24M".
 
-Applied to clk-next
+But I'm not clear about that clock. As I said in my reply to Rob's review
+there isn't much documentation also. So, I guess we can name it as diff24M
+for now.
+> > +		compatible = "fixed-clock";
+> > +		clock-frequency = <24000000>;
+> > +		#clock-cells = <0>;
+> > +	};
+> > +
+> > +	clock: clock-controller@e0160000 {
+> > +		compatible = "actions,s900-clock";
+> > +		reg = <0 0xe0160000 0 0x1000>;
+> > +		#clock-cells = <1>;
+> > +	};
+> 
+> This node belongs into the soc node below, ordered by unit address.
+> And maybe there's a better label than "clock"? "clkc" or some official
+> name from the manual?
+> 
+Will use "cmu".
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Mani
+> > +
+> >  	soc {
+> >  		compatible = "simple-bus";
+> >  		#address-cells = <2>;
+> 
+> Regards,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
