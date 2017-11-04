@@ -1,111 +1,130 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 02/18] drm/panel: lvds: Add support for the power-supply
- property
-Date: Mon, 27 Nov 2017 16:41:26 +0100
-Message-Id: <56a41d54acf87cdb2dc6f7e816f13816a66e2697.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 4 Nov 2017 15:11:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+	rdunlap@infradead.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, liuwei@actions-semi.com
+Subject: Re: [PATCH 3/3] Documentation: add Actions S900 clock bindings
+Message-ID: <20171104094129.GB18680@linaro.org>
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
+ <5c55d704-6414-13d7-1311-64b425d4404a@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <5c55d704-6414-13d7-1311-64b425d4404a@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-A significant number of panels need to power up a regulator in order to
-operate properly. Add support for the power-supply property to enable and
-disable such a regulator whenever needed.
+Hi Andreas,
+On Sat, Nov 04, 2017 at 04:55:04PM +0800, Andreas Färber wrote:
+> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
+> > This patch adds clock bindings for Actions Semi S900 SoC.
+> 
+> "This patch"
+>
+Ack. 
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > new file mode 100644
+> > index 0000000..951d6ad
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
+> > @@ -0,0 +1,47 @@
+> > +* Actions s900 Clock Controller
+> 
+> Please consistently spell it S900 here and below - it looks especially
+> odd when you upper-case all other words.
+> 
+Ack.
+> > +
+> > +The Actions s900 clock controller generates and supplies clock to various
+> > +controllers within the SoC. The clock binding described here is applicable to
+> > +s900 SoC.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: should be "actions,s900-clock"
+> 
+> What about "actions,s900-cmu" as in Clock Management Unit? (manual
+> version 1.0 section 1.5, page 6)
+> 
+"cmu" makes sense, will change it.
+> > +- reg: physical base address of the controller and length of memory mapped
+> > +  region.
+> > +- #clock-cells: should be 1.
+> > +
+> > +Each clock is assigned an identifier and client nodes can use this identifier
+> 
+> ", and"?
+> 
+Ack.
+> > +to specify the clock which they consume.
+> > +
+> > +All available clocks are defined as preprocessor macros in
+> > +dt-bindings/clock/actions,s900-clock.h header and can be used in device
+> > +tree sources.
+> 
+> As Rob pointed out, missing here.
+> 
+Will add this header to dt-bindings patch in next revision.
+> > +
+> > +External clocks:
+> > +
+> > +The hosc clock used as input for the plls is generated outside the SoC. It is
+> > +expected that it is defined using standard clock bindings as "hosc".
+> > +
+> > +Actions s900 Clock Controller also require two more clocks:
+> > + - "losc" - internal low frequency oscillator
+> > + - "diff_24M" - internal differential 24MHz clock
+> > +
+> > +Example: Clock controller node:
+> > +
+> > +        clock: clock-controller@e0160000 {
+> > +		compatible = "actions,s900-clock";
+> > +		reg = <0 0xe0160000 0 0x1000>;
+> > +		#clock-cells = <1>;
+> > +	};
+> 
+> Spaces vs. tab indentation.
+> 
+Ack.
+> Regarding the question in the dts patch, I think cmu would be a better
+> label here and there.
+> 
+Yeah. Will use cmu.
+> > +
+> > +Example: UART controller node that consumes clock generated by the clock
+> > +controller:
+> > +
+> > +	serial5: uart@e012a000 {
+> > +		compatible = "actions,s900-uart", "actions,owl-uart";
+> > +		reg = <0x0 0xe012a000 0x0 0x2000>;
+> > +		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks = <&clock CLK_UART5>;
+> > +		clock-names = "uart";
+> 
+> Better not use a clock name here that is not defined in the uart binding.
+> 
+Agree.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/panel/panel-lvds.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
-index e2d57c01200b..57e38a9e7ab4 100644
---- a/drivers/gpu/drm/panel/panel-lvds.c
-+++ b/drivers/gpu/drm/panel/panel-lvds.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
- #include <drm/drmP.h>
-@@ -39,6 +40,7 @@ struct panel_lvds {
- 	bool data_mirror;
- 
- 	struct backlight_device *backlight;
-+	struct regulator *supply;
- 
- 	struct gpio_desc *enable_gpio;
- 	struct gpio_desc *reset_gpio;
-@@ -69,6 +71,9 @@ static int panel_lvds_unprepare(struct drm_panel *panel)
- 	if (lvds->enable_gpio)
- 		gpiod_set_value_cansleep(lvds->enable_gpio, 0);
- 
-+	if (lvds->supply)
-+		regulator_disable(lvds->supply);
-+
- 	return 0;
- }
- 
-@@ -76,6 +81,17 @@ static int panel_lvds_prepare(struct drm_panel *panel)
- {
- 	struct panel_lvds *lvds = to_panel_lvds(panel);
- 
-+	if (lvds->supply) {
-+		int err;
-+
-+		err = regulator_enable(lvds->supply);
-+		if (err < 0) {
-+			dev_err(lvds->dev, "failed to enable supply: %d\n",
-+				err);
-+			return err;
-+		}
-+	}
-+
- 	if (lvds->enable_gpio)
- 		gpiod_set_value_cansleep(lvds->enable_gpio, 1);
- 
-@@ -196,6 +212,13 @@ static int panel_lvds_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	lvds->supply = devm_regulator_get_optional(lvds->dev, "power");
-+	if (IS_ERR(lvds->supply)) {
-+		ret = PTR_ERR(lvds->supply);
-+		dev_err(lvds->dev, "failed to request regulator: %d\n", ret);
-+		return ret;
-+	}
-+
- 	/* Get GPIOs and backlight controller. */
- 	lvds->enable_gpio = devm_gpiod_get_optional(lvds->dev, "enable",
- 						     GPIOD_OUT_LOW);
--- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Mani
+> > +	};
+> 
+> Regards,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
