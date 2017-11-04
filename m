@@ -1,37 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:11:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, matthias.bgg@gmail.com,
-	mark.rutland@arm.com, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Chen Zhong <chen.zhong@mediatek.com>
-Subject: Re: [PATCH v2 4/4] clk: mediatek: add clocks dt-bindings required
- header for MT7622 SoC
-Message-ID: <20171102081159.GE11011@codeaurora.org>
-References: <cover.1507174799.git.sean.wang@mediatek.com>
- <7e2a5ac16547f911b00017ba3fad4076dad4d7d8.1507174799.git.sean.wang@mediatek.com>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ rdunlap@infradead.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ liuwei@actions-semi.com
+References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <a8bd3b8b-190a-6dbf-6976-207baca3030b@suse.de>
+Date: Sat, 4 Nov 2017 16:43:31 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7e2a5ac16547f911b00017ba3fad4076dad4d7d8.1507174799.git.sean.wang@mediatek.com>
+In-Reply-To: <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05, sean.wang@mediatek.com wrote:
-> From: Chen Zhong <chen.zhong@mediatek.com>
+Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
+> This patch adds clock controller nodes for Actions Semi s900 SoC
+
+Please avoid "This patch". Once applied, it's a commit. :)
+
 > 
-> Add the required header for the entire clocks dt-bindings exported
-> from topckgen, apmixedsys, infracfg, pericfg, ethsys, pciesys, ssusbsys
-> and audsys which could be found on MT7622 SoC.
-> 
-> Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
+>  arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+> index 11406f6..c099ef1 100644
+> --- a/arch/arm64/boot/dts/actions/s900.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
+> @@ -5,6 +5,7 @@
+>   */
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/actions,s900-clock.h>
 
-This should be patch 3 instead of 4 so that patch 3 compiles...
+Alphabetical order please.
 
-Applied to clk-next.
+>  
+>  / {
+>  	compatible = "actions,s900";
+> @@ -88,6 +89,24 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	losc: losc {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	diff_24M: diff_24M {
+
+No underscore in node names please - maybe diff-24M or simpler diff24M?
+Please double-check that name - is it from manual or from schematics?
+
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	clock: clock-controller@e0160000 {
+> +		compatible = "actions,s900-clock";
+> +		reg = <0 0xe0160000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+
+This node belongs into the soc node below, ordered by unit address.
+And maybe there's a better label than "clock"? "clkc" or some official
+name from the manual?
+
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+
+Regards,
+Andreas
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
