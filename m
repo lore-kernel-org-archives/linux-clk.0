@@ -1,106 +1,46 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V4 02/12] dt-bindings: Add Spreadtrum clock binding documentation
-Date: Fri, 10 Nov 2017 14:35:57 +0800
-Message-ID: <20171110063607.3250-3-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: mylene.josserand@free-electrons.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] clk: sunxi-ng: a83t: Fix i2c buses bits
+Date: Sun,  5 Nov 2017 17:51:34 +0100
+Message-Id: <20171105165134.5199-1-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a new binding with its documentation for Spreadtrum clock
-sub-framework.
+i2c1 and i2c2 bits for CCU are not bit 0 but bit 1 and bit 2.
+Because of that, the i2c0 (bit 0) was not correctly configured.
+Fixed the correct bits for i2c1 and i2c2.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Fixes: 05359be1176b ("clk: sunxi-ng: Add driver for A83T CCU")
+
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
 ---
- Documentation/devicetree/bindings/clock/sprd.txt | 63 ++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
-new file mode 100644
-index 0000000..e9d179e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd.txt
-@@ -0,0 +1,63 @@
-+Spreadtrum Clock Binding
-+------------------------
-+
-+Required properties:
-+- compatible: should contain the following compatible strings:
-+	- "sprd,sc9860-pmu-gate"
-+	- "sprd,sc9860-pll"
-+	- "sprd,sc9860-ap-clk"
-+	- "sprd,sc9860-aon-prediv"
-+	- "sprd,sc9860-apahb-gate"
-+	- "sprd,sc9860-aon-gate"
-+	- "sprd,sc9860-aonsecure-clk"
-+	- "sprd,sc9860-agcp-gate"
-+	- "sprd,sc9860-gpu-clk"
-+	- "sprd,sc9860-vsp-clk"
-+	- "sprd,sc9860-vsp-gate"
-+	- "sprd,sc9860-cam-clk"
-+	- "sprd,sc9860-cam-gate"
-+	- "sprd,sc9860-disp-clk"
-+	- "sprd,sc9860-disp-gate"
-+	- "sprd,sc9860-apapb-gate"
-+
-+- #clock-cells: must be 1
-+
-+- clocks : Should be the input parent clock(s) phandle for the clock, this
-+	   property here just simply shows which clock group the clocks'
-+	   parents are in, since each clk node would represent many clocks
-+	   which are defined in the driver.  The detailed dependency
-+	   relationship (i.e. how many parents and which are the parents)
-+	   are implemented in driver code.
-+
-+Optional properties:
-+
-+- reg:	Contain the registers base address and length. It must be configured
-+	only if no 'sprd,syscon' under the node.
-+
-+- sprd,syscon: phandle to the syscon which is in the same address area with
-+	       the clock, and so we can get regmap for the clocks from the
-+	       syscon device.
-+
-+Example:
-+
-+	pmu_gate: pmu-gate {
-+		compatible = "sprd,sc9860-pmu-gate";
-+		sprd,syscon = <&pmu_regs>;
-+		clocks = <&ext_26m>;
-+		#clock-cells = <1>;
-+	};
-+
-+	pll: pll {
-+		compatible = "sprd,sc9860-pll";
-+		sprd,syscon = <&ana_regs>;
-+		clocks = <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ap_clk: clock-controller@20000000 {
-+		compatible = "sprd,sc9860-ap-clk";
-+		reg = <0 0x20000000 0 0x400>;
-+		clocks = <&ext_26m>, <&pll 0>,
-+			 <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index e43acebdfbcd..f8203115a6bc 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -354,9 +354,9 @@ static SUNXI_CCU_GATE(bus_tdm_clk,	"bus-tdm",	"apb1",
+ static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
+ 		      0x06c, BIT(0), 0);
+ static SUNXI_CCU_GATE(bus_i2c1_clk,	"bus-i2c1",	"apb2",
+-		      0x06c, BIT(0), 0);
++		      0x06c, BIT(1), 0);
+ static SUNXI_CCU_GATE(bus_i2c2_clk,	"bus-i2c2",	"apb2",
+-		      0x06c, BIT(0), 0);
++		      0x06c, BIT(2), 0);
+ static SUNXI_CCU_GATE(bus_uart0_clk,	"bus-uart0",	"apb2",
+ 		      0x06c, BIT(16), 0);
+ static SUNXI_CCU_GATE(bus_uart1_clk,	"bus-uart1",	"apb2",
 -- 
-2.7.4
+2.11.0
