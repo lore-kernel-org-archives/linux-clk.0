@@ -1,67 +1,112 @@
-Return-Path: <pombredanne@nexb.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 6 Nov 2017 11:15:19 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V3 02/11] dt-bindings: Add Spreadtrum clock binding
+ documentation
+Message-ID: <20171106171519.xomnca72adqtzm2n@rob-hp-laptop>
+References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
+ <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <20171130084108.23083-1-benjamin.gaignard@st.com>
-References: <20171130084108.23083-1-benjamin.gaignard@st.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Thu, 30 Nov 2017 12:28:26 +0100
-Message-ID: <CAOFm3uG_7kChnvxW0SbHSMP5q_KSZeaNxjkKb774ZmcwukJ_Mw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: stm32-h7: fix copyright
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, alexandre.torgue@st.com,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	Benjamin Gaignard <benjamin.gaignard@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 9:41 AM, Benjamin Gaignard
-<benjamin.gaignard@linaro.org> wrote:
-> Uniformize STMicroelectronics copyrights header
-> Add SPDX identifier
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> CC: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Thu, Nov 02, 2017 at 02:56:17PM +0800, Chunyan Zhang wrote:
+> Introduce a new binding with its documentation for Spreadtrum clock
+> sub-framework.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 > ---
->  drivers/clk/clk-stm32h7.c | 19 +++----------------
->  1 file changed, 3 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
-> index 61c3e40507d3..db2b162c0d4c 100644
-> --- a/drivers/clk/clk-stm32h7.c
-> +++ b/drivers/clk/clk-stm32h7.c
-> @@ -1,20 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (C) Gabriel Fernandez 2017
-> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com>
-> - *
-> - * License terms: GPL V2.0.
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms and conditions of the GNU General Public License,
-> - * version 2, as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> - * more details.
-> - *
-> - * You should have received a copy of the GNU General Public License along with
-> - * this program.  If not, see <http://www.gnu.org/licenses/>.
-> + * Copyright (C) STMicroelectronics 2017
-> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
->   */
->
->  #include <linux/clk.h>
+>  Documentation/devicetree/bindings/clock/sprd.txt | 55 ++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
+> new file mode 100644
+> index 0000000..5c09529
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd.txt
+> @@ -0,0 +1,55 @@
+> +Spreadtrum Clock Binding
+> +------------------------
+> +
+> +Required properties:
+> +- compatible: should contain the following compatible strings:
+> +	- "sprd,sc9860-pmu-gate"
+> +	- "sprd,sc9860-pll"
+> +	- "sprd,sc9860-ap-clk"
+> +	- "sprd,sc9860-aon-prediv"
+> +	- "sprd,sc9860-apahb-gate"
+> +	- "sprd,sc9860-aon-gate"
+> +	- "sprd,sc9860-aonsecure-clk"
+> +	- "sprd,sc9860-agcp-gate"
+> +	- "sprd,sc9860-gpu-clk"
+> +	- "sprd,sc9860-vsp-clk"
+> +	- "sprd,sc9860-vsp-gate"
+> +	- "sprd,sc9860-cam-clk"
+> +	- "sprd,sc9860-cam-gate"
+> +	- "sprd,sc9860-disp-clk"
+> +	- "sprd,sc9860-disp-gate"
+> +	- "sprd,sc9860-apapb-gate"
+> +
+> +- #clock-cells: must be 1
+> +
+> +- clocks : shall be the input parent clock(s) phandle for the clock.
 
-Awesome! Don't you like it when you remove this type of things?
+You need to document how many clocks for each block.
 
-FWIW,
+> +
+> +Optional properties:
+> +
+> +- reg:	Contain the registers base address and length. It must be configured only if no 'sprd,syscon' under the node.
+> +
+> +- sprd,syscon: phandle to the syscon which is in the same address area with the clock.
+> +
+> +Example:
+> +
+> +	pmu_gate: pmu-gate {
+> +		compatible = "sprd,sc9860-pmu-gate";
+> +		sprd,syscon = <&pmu_apb>;
 
-Reviewed-by: Philippe Ombredanne <pombredanne@nexb.com>
+Ideally, the pmu-gate node would be a child of pmu_apb and use the reg 
+property if clock registers are a contiguous range. Then you don't need 
+this phandle.
 
--- 
-Cordially
-Philippe Ombredanne
+> +		clocks = <&ext_26m>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	pll: pll {
+> +		compatible = "sprd,sc9860-pll";
+> +		sprd,syscon = <&ana_apb>;
+
+Same here.
+
+> +		clocks = <&pmu_gate 0>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	ap_clk: clock-controller@20000000 {
+> +		compatible = "sprd,sc9860-ap-clk";
+> +		reg = <0 0x20000000 0 0x400>;
+> +		clocks = <&ext_26m>, <&pll 0>,
+> +			 <&pmu_gate 0>;
+> +		#clock-cells = <1>;
+> +	};
+> -- 
+> 2.7.4
+> 
