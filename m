@@ -1,41 +1,84 @@
-Return-Path: <hanetzer@startmail.com>
-Date: Tue, 21 Nov 2017 05:56:12 -0600
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, mark.rutland@arm.com,
-	xuejiancheng@hisilicon.com, zhangfei.gao@linaro.org,
-	wnpan@hisilicon.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	xuwei5@hisilicon.com, linux@armlinux.org.uk
-Subject: Re: [PATCH v2 1/3] clk: hisilicon: add CRG driver Hi3521A SoC
-Message-ID: <20171121115611.bmdriap3uoazmyiw@proprietary-killer.fossland>
-References: <20171017223854.6980-1-hanetzer@startmail.com>
- <20171017223854.6980-2-hanetzer@startmail.com>
- <20171024184250.d4wmzr6osd4o53oz@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171024184250.d4wmzr6osd4o53oz@rob-hp-laptop>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <20171103181703.30434-1-yixun.lan@amlogic.com>
+ <e8a5faa9-d3ca-e03e-3589-2685d6ada30a@amlogic.com>
+ <59FDED7E.8030100@baylibre.com>
+CC: <yixun.lan@amlogic.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <db60769c-cd96-5deb-32ba-e092d1bc9346@amlogic.com>
+Date: Mon, 6 Nov 2017 10:56:46 +0800
+MIME-Version: 1.0
+In-Reply-To: <59FDED7E.8030100@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 24, 2017 at 01:42:50PM -0500, Rob Herring wrote:
-> On Tue, Oct 17, 2017 at 05:38:52PM -0500, Marty E. Plummer wrote:
-> > Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
-> > generates clock and reset signals used by other module blocks on SoC.
-> > 
-> > Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
-> > ---
-> > Changes in v2:
-> >   - Switched to SPDX tags and GPL-2.0+
-> > 
-> >  drivers/clk/hisilicon/Kconfig             |   7 ++
-> >  drivers/clk/hisilicon/Makefile            |   1 +
-> >  drivers/clk/hisilicon/crg-hi3521a.c       | 196 ++++++++++++++++++++++++++++++
+Hi Neil
+
+On 11/05/17 00:40, Neil Armstrong wrote:
+> Hi Yixun,
 > 
-> >  include/dt-bindings/clock/hi3521a-clock.h |  23 ++++
+> Le 04/11/2017 09:41, Yixun Lan a écrit :
+>>
+>>
+>> On 11/04/17 02:17, Yixun Lan wrote:
+>>> According to the datasheet, the clock gate bit for
+>>> SARADC is bit[22] in Meson-GXBB/GXL series.
+>>>
+>>> Change-Id: Ic4fa58276d2a9ea273eef0a08541fc213ac5ac89
+>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>> ---
+>>>  drivers/clk/meson/gxbb.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+>>> index b2d1e8ed7152..4f5b535fcd12 100644
+>>> --- a/drivers/clk/meson/gxbb.c
+>>> +++ b/drivers/clk/meson/gxbb.c
+>>> @@ -1139,7 +1139,6 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>>>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>>>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>>>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+>>> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+>>>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>>>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>>>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+>>> @@ -1149,6 +1148,7 @@ static MESON_GATE(gxbb_async_fifo, HHI_GCLK_MPEG0, 16);
+>>>  static MESON_GATE(gxbb_sdio, HHI_GCLK_MPEG0, 17);
+>>>  static MESON_GATE(gxbb_abuf, HHI_GCLK_MPEG0, 18);
+>>>  static MESON_GATE(gxbb_hiu_iface, HHI_GCLK_MPEG0, 19);
+>>> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 22);
+>>>  static MESON_GATE(gxbb_assist_misc, HHI_GCLK_MPEG0, 23);
+>>>  static MESON_GATE(gxbb_emmc_a, HHI_GCLK_MPEG0, 24);
+>>>  static MESON_GATE(gxbb_emmc_b, HHI_GCLK_MPEG0, 25);
+>>>
+>> Hi Neil
+>>  I assume you will take this via the clk-meson tree..
+>> could you amend the commit msg and drop the 'Change-Id'?
+>> (for other parts, please feel free to adjust if you see fit)
+>>  thanks
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-Actually nack this for now. I need to change some stuff over to use a
-different clock for the sp804 timer@12000000, apparently I'm going to
-need to use CLK_OF_DECLARE to get the clock in question working that
-early in boot.
+> Yes, I will push it as a fix.
+> 
+> Can you check if the saradc driver is still functional when applied ?
+>
+sorry, this isn't a correct fix.
+please drop this one, and I will push another patch
+
+> Neil
+> 
+>>
+>> Yixun
+>>
+> 
+> .
+> 
