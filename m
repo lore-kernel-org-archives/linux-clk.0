@@ -1,34 +1,93 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:59:48 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk/versatile: Delete two error messages for a
- failed memory allocation in icst_clk_setup()
-Message-ID: <20171114015948.GT11955@codeaurora.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
- <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	arnd@arndb.de,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/3] arm64: dts: actions: Add S900 clock management unit nodes
+Date: Tue,  7 Nov 2017 01:15:51 +0530
+Message-Id: <1509997552-29718-3-git-send-email-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
+References: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:21:23 +0200
-> 
-> Omit extra messages for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Add Actions Semi S900 Clock Management Unit (CMU) nodes
 
-Applied to clk-next
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Changes in v2:
 
+1. Fixed commit message
+2. Changed "diff_24M" to "diff24M"
+3. Changed clock-controller node name to "cmu"
+4. Added clocks property
+5. Moved "cmu" node under "soc" node
+6. Sorted headers in alphabetical order
+
+ arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 11406f6..bc0963e 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -4,6 +4,7 @@
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+ 
++#include <dt-bindings/clock/actions,s900-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -88,6 +89,18 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
++	diff24M: diff24M {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -154,6 +167,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		cmu: clock-controller@e0160000 {
++			compatible = "actions,s900-cmu";
++			reg = <0 0xe0160000 0 0x1000>;
++			clocks = <&hosc>, <&losc>;
++			#clock-cells = <1>;
++		};
++
+ 		timer: timer@e0228000 {
+ 			compatible = "actions,s900-timer";
+ 			reg = <0x0 0xe0228000 0x0 0x8000>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
