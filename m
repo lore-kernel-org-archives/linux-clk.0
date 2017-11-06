@@ -1,79 +1,95 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+References: <20171106075212.14275-1-yixun.lan@amlogic.com>
+ <1509959454.1328.8.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin
+ Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <9b1f5cb5-9029-8865-a867-54d819b42e1a@amlogic.com>
+Date: Mon, 6 Nov 2017 17:38:12 +0800
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be> <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Nov 2017 11:22:30 +0100
-Message-ID: <CAMuHMdU84DFZmFACuXLqhFsR-Q+1d3GPG3NFPinLRW8=96BDCA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1509959454.1328.8.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Hi Jerome:
 
-On Fri, Nov 10, 2017 at 10:57 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 9 November 2017 at 14:26, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
->> used as a wakeup source, it must be kept active during system suspend.
->
-> Geert, I think we discussed this a bit already. I wonder if the above
-> is a correct statement for all devices in these PM domains, that has
-> wakeups?
-
-It is true for all wakeup sources (e.g. Ethernet and serial).
-
-> Don't these SoCs make use of any external logic (out-of-band IRQ) to
-> deal with the wakeup IRQs?
->
-> For example, how is GPIO irqs dealt with in this regards?
-
-Interrupt controllers (incl. GPIO) may, depending on SoC type:
-  - be located in a controllable power area (SH/R-Mobile),
-  - may run from a controllable module clock (SH/R-Mobile, R-Car Gen2/Gen3,
-    RZ/A1, RZ/G1).
-
-So there are no out-of-band IRQs in the wakeup path, unless on SoCs where
-the interrupt controllers are in an always-on power area, AND run from a
-fixed clock. I think only R-Car Gen1 falls in that category.
-Still, R-Car Gen1 needs active_wakeup for wakeup sources.
-
-See series "[PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o.
-explicit clock handling", which includes GPIO interrupts.
-
-> If that is the case, you should really avoid using the big hammer
-> method of setting the GENPD_FLAG_ACTIVE_WAKEUP.
-
-So I think I do need the big hammer ;-)
-
->> Currently this is handled in device-specific drivers by explicitly
->> increasing the use count of the module clock when the device is
->> configured as a wakeup source, or if it is part of the wakeup path.
+On 11/06/17 17:10, Jerome Brunet wrote:
+> On Mon, 2017-11-06 at 15:52 +0800, Yixun Lan wrote:
+>> According to the datasheet, in Meson-GXBB/GXL series,
+>> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+>> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
 >>
->> However, this is merely a workaround.  The proper way to prevent the
->> device from being stopped is to inform this requirement to the genpd
->> core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
->> 95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
->> active wakeup behavior").
+>> Test passed at gxl_skt dev board.
+> I think this refer to a board naming used in amlogic vendor kernel ?
+> Would you mind telling what it is ?
+> 
 >>
->> Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
->> RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
->> SoCs.  This will allow for the workarounds can be removed later.
+>> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> 
+> Subject is missing "v2" tag and a reference to the previous message:
+> 20171103181703.30434-1-yixun.lan@amlogic.com
+> 
+Ok..
+I was considering this patch as a new one, so didn't add a v2 tag
 
-Gr{oetje,eeting}s,
+>>
+>> ---
+>> I think this error was introduced by a copy & paste from meson8 code?
+>> and we didn't notice them due to the SANA clock is also enabled by
+>> DTS (so SAR_ADC works fine)?
+>> ---
+>>  drivers/clk/meson/gxbb.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+>> index b2d1e8ed7152..92168348ffa6 100644
+>> --- a/drivers/clk/meson/gxbb.c
+>> +++ b/drivers/clk/meson/gxbb.c
+>> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+>> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+>> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+>>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+>> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,
+>> 9);
+>>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+>>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+>>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+>> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
+>> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+> 
+> The value currently used in the driver are with respect to the
+> Datasheet of GXBB (v1.1.4) and GXL (S905X - V0.3-20170314), which are available
+> to the public at http://http://linux-meson.com
+> 
+> the adc driver is claiming both clock, so this patch should not change anything
+> to the adc operation.
+> 
+> * Is this patch fixing any issue ?
+this will remove the un-used 'sana' clock from saradc,
+to reflect how the hardware actually work..
 
-                        Geert
+there is no function changed
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> * Is it an error in the published datasheets ?
+then, I think the published datasheet need to be updated.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+>>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+>>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+> 
+> .
+> 
