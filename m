@@ -1,61 +1,58 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 03/27] clk: ti: add support for clkctrl aliases
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+ <1509368685-29112-4-git-send-email-t-kristo@ti.com>
+ <20171103152703.GU11011@codeaurora.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <b8090db5-48e7-07a2-223c-ead8662d36cb@ti.com>
+Date: Mon, 6 Nov 2017 09:46:41 +0200
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
-References: <20171107140942.29243-1-yixun.lan@amlogic.com> <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sun, 12 Nov 2017 02:35:26 +0100
-Message-ID: <CAFBinCBJck9p8dDr-tmzFVyCk0Udfh4pB0z8c_HmJ4T+g20tQw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] fix the clock setting for SAR ADC
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-	Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org,
-	linux-iio@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171103152703.GU11011@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yixun,
+On 03/11/17 17:27, Stephen Boyd wrote:
+> On 10/30, Tero Kristo wrote:
+>> +		}
+>> +
+>> +		if (num_args && clkctrl_nodes_missing)
+>> +			continue;
+>> +
+>> +		node = of_find_node_by_name(NULL, buf);
+>> +		if (num_args)
+>> +			node = of_find_node_by_name(node, "clk");
+>>   		clkspec.np = node;
+>> +		clkspec.args_count = num_args;
+>> +		for (i = 0; i < num_args; i++) {
+>> +			ret = kstrtoint(tags[i], i ? 10 : 16, clkspec.args + i);
+> 
+> Is this some sort of DT checker?
 
-On Tue, Nov 7, 2017 at 10:36 PM, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-> Hi Yixun,
->
-> On Tue, Nov 7, 2017 at 3:09 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
->> patch [1/4]:
->>   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
->> the published datasheets[4] also has wrong description about this.
->>   This patch should be explicitly merged *before* other patches.
->>
->> patch [2-4/4]:
->>   Drop the "sana" clock from SAR ADC module,
-> I agree with Jerome that patch 2/4 should be applied last.
-> when I wrote the driver I couldn't get it to work on my GXBB board
-> (which unfortunately has died since then) because the clocks were
-> disabled (they weren't enabled by the bootloader). people who are
-> using an old .dtb would get the same problem again until the clock
-> driver is merged
->
->>   From the hardware perspective, the SAR ADC module doesn't
->> require "sana" clock to wrok. This should apply to all SoC,
->> including meson6,8, GXBB, GXL..
-> thank you for clarifying this!
->
->> Note: the whole patchset series has been tested at GXL-P212 board,
->> we haven't got any meson6,8 board to test, so I would appreciate
->> if someone (Martin?) could help to confirm it works there.
-> I can test this on a Meson8b and a Meson8m2 board on the weekend -
-> I'll let you know about the results
-the ADC still works fine with this series applied on my Meson8m2 board
-as well as my Meson8b EC-100
-I added my "Reviewed-by" and "Acked-by" to the corresponding patches
-(with a change request on the .dts patch)
+Not really, it just parses a string of format:
 
-Thank you for fixing this!
+<clkctrl_provider>:<hex-offset>:<bit-offset>.
 
+... so that it can find a matching clock. Needed temporarily for 
+omap_hwmod backwards compatibility. This piece can be removed once hwmod 
+is gone.
 
-Regards
-Martin
+I can add some comment along these lines to the code if you want.
+
+-Tero
+
+> 
+>> +			if (ret) {
+>> +				pr_warn("Bad tag in %s at %d: %s\n",
+>> +					c->node_name, i, tags[i]);
+>> +				return;
+>> +			}
+>> +		}
+>>   		clk = of_clk_get_from_provider(&clkspec);
+>>   
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
