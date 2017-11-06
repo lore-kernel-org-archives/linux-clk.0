@@ -1,89 +1,73 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 5/8] mfd: mtk-mmsys: Add mt8173 nodes
-Date: Tue, 14 Nov 2017 22:41:11 +0100
-Message-Id: <20171114214114.15793-6-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 04/27] clk: ti: clkctrl: use fallback udelay approach if
+ timekeeping is suspended
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>
+References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
+ <1509368685-29112-5-git-send-email-t-kristo@ti.com>
+ <20171103154317.GV11011@codeaurora.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <3249933f-7f37-a6c9-ed0c-58d40f06578b@ti.com>
+Date: Mon, 6 Nov 2017 09:33:16 +0200
+MIME-Version: 1.0
+In-Reply-To: <20171103154317.GV11011@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devices for the mt8173 SoC.
+On 03/11/17 17:43, Stephen Boyd wrote:
+> On 10/30, Tero Kristo wrote:
+>> This will happen on certain platforms when entering / leaving suspend
+>> and the system attempts to disable certain clocks at very early/late
+>> phase, burping out a warning from timekeeping core. Avoid the issue
+>> by checking if the timekeeping is suspended and using the fallback
+>> udelay approach for checking timeouts.
+>>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/clk/ti/clkctrl.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+>> index 284ba449..91ddc92 100644
+>> --- a/drivers/clk/ti/clkctrl.c
+>> +++ b/drivers/clk/ti/clkctrl.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/of_address.h>
+>>   #include <linux/clk/ti.h>
+>>   #include <linux/delay.h>
+>> +#include <linux/timekeeping.h>
+> 
+>>   #include "clock.h"
+>>   
+>>   #define NO_IDLEST			0x1
+>> @@ -90,7 +91,7 @@ static bool _omap4_is_ready(u32 val)
+>>   
+>>   static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
+>>   {
+>> -	if (unlikely(_early_timeout)) {
+>> +	if (unlikely(_early_timeout || timekeeping_suspended)) {
+>>   		if (time->cycles++ < timeout) {
+> 
+> This would be the second user of timekeeping_suspended outside of
+> timekeeping core. Why don't we just udelay(1) every time we call
+> this function? The loop on ktime without any sort of delay in it
+> may actually spin faster, especially because we can't get
+> interrupted here (irqs are off). And irqs + preemption enabled is
+> typically where you would want to use ktime instead of counting
+> udelay() calls to see if you hit a timeout.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+It actually was originally just udelay() but I changed it to use the 
+ktime_get() approach way back due to comments provided on some early 
+revisions of this patch. See: https://patchwork.kernel.org/patch/7884371/
 
-diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-index 102b491aa28f..45973dfc6010 100644
---- a/drivers/mfd/mtk-mmsys.c
-+++ b/drivers/mfd/mtk-mmsys.c
-@@ -21,6 +21,7 @@
- 
- enum {
- 	MMSYS_MT2701 = 1,
-+	MMSYS_MT8173,
- };
- 
- static const struct mfd_cell mmsys_mt2701_devs[] = {
-@@ -28,6 +29,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
- 	{ .name = "drm-mt2701-mm", },
- };
- 
-+static const struct mfd_cell mmsys_mt8173_devs[] = {
-+	{ .name = "clk-mt8173-mm", },
-+	{ .name = "drm-mt8173-mm", },
-+};
-+
-+
- static int mmsys_probe(struct platform_device *pdev)
- {
- 	struct mmsys_dev *private;
-@@ -47,6 +54,10 @@ static int mmsys_probe(struct platform_device *pdev)
- 		mmsys_cells = mmsys_mt2701_devs;
- 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
- 		break;
-+	case MMSYS_MT8173:
-+		mmsys_cells = mmsys_mt8173_devs;
-+		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
-+		break;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -74,6 +85,9 @@ static const struct of_device_id of_match_mmsys[] = {
- 	{ .compatible = "mediatek,mt2701-mmsys",
- 	  .data = (void *) MMSYS_MT2701,
- 	},
-+	{ .compatible = "mediatek,mt8173-mmsys",
-+	  .data = (void *) MMSYS_MT8173,
-+	},
- 	{ /* sentinel */ },
- };
- 
--- 
-2.14.2
+> 
+> This code seems over-complicated given the constraints at the
+> call-sites.
+> 
+
+True, I can easily change it to just use udelay() if wanted.
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
