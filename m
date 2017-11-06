@@ -1,78 +1,68 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 4 Nov 2017 15:24:00 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-	rdunlap@infradead.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, liuwei@actions-semi.com
-Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
-Message-ID: <20171104095400.GD18680@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
- <7c87aee4-dde4-ab3d-06b0-75f3686ab5dd@suse.de>
- <20171104091949.GB14705@linaro.org>
- <25a2e233-f565-8baa-17e2-9c867bbbe9d0@suse.de>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+To: Yixun Lan <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20171106075212.14275-1-yixun.lan@amlogic.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <889b8fd5-31e4-1371-6121-0f1aec6fa777@baylibre.com>
+Date: Mon, 6 Nov 2017 09:57:26 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <25a2e233-f565-8baa-17e2-9c867bbbe9d0@suse.de>
+In-Reply-To: <20171106075212.14275-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Nov 04, 2017 at 05:30:36PM +0800, Andreas Färber wrote:
-> Hi,
+On 06/11/2017 08:52, Yixun Lan wrote:
+> According to the datasheet, in Meson-GXBB/GXL series,
+> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
 > 
-> Am 04.11.2017 um 17:19 schrieb Manivannan Sadhasivam:
-> >>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> >>> index c99f363..821c1e1 100644
-> >>> --- a/drivers/clk/Makefile
-> >>> +++ b/drivers/clk/Makefile
-> >>> @@ -75,6 +75,7 @@ endif
-> >>>  obj-y					+= mvebu/
-> >>>  obj-$(CONFIG_ARCH_MXS)			+= mxs/
-> >>>  obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
-> >>> +obj-$(CONFIG_ARCH_ACTIONS)		+= owl/
-> >>>  obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
-> >>>  obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
-> >>>  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
-> >>> diff --git a/drivers/clk/owl/Makefile b/drivers/clk/owl/Makefile
-> >>> new file mode 100644
-> >>> index 0000000..dbba0af
-> >>> --- /dev/null
-> >>> +++ b/drivers/clk/owl/Makefile
-> >>> @@ -0,0 +1,2 @@
-> >>> +obj-y				+= clk.o clk-pll.o clk-factor.o
-> >>> +obj-$(CONFIG_ARCH_ACTIONS)	+= clk-s900.o
-> >>
-> >> $(CONFIG_ARCH_ACTIONS) is superfluous here.
-> >>
-> > Okay. Since, we haven't added ARCH_ACTIONS to defconfig yet I intentionally
-> > made this conditional compilation.
-> > 
-> > Would like a suggestion from you on this!
+> Test passed at gxl_skt dev board.
 > 
-> My point was that the ../Makefile already uses $(CONFIG_ARCH_ACTIONS),
-> so $(CONFIG_ARCH_ACTIONS) can never be n here.
->
-Ah. Missed that :-) 
-> Instead you should probably either use $(CONFIG_ARM64) or better some
-> new Kconfig option (CONFIG_CLK_OWL_S900?), so that we don't
-> unnecessarily compile S900 on 32-bit arm and S500 on arm64.
+> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 > 
-CONFIG_CLK_OWL_S900 seems to be beter
-> Another point: What about S700? Does it need to duplicate clk-s900.c or
-> can we share any code between the two?
+> ---
+> I think this error was introduced by a copy & paste from meson8 code?
+> and we didn't notice them due to the SANA clock is also enabled by
+> DTS (so SAR_ADC works fine)?
+> ---
+>  drivers/clk/meson/gxbb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-Haven't looked at that yet. Will let you know.
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index b2d1e8ed7152..92168348ffa6 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
+>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
+> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+> 
+
+Hi Yixun,
+
+Can you precise how it affects the saradc driver ? from the DT and clk PoV ?
+
+Also, can you add a Fixes: tag on the patch ?
 
 Thanks,
-Mani
-> Cheers,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+Neil
