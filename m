@@ -1,59 +1,44 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	<khilman@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen
-	<xingyu.chen@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-Date: Mon, 6 Nov 2017 15:52:12 +0800
-Message-ID: <20171106075212.14275-1-yixun.lan@amlogic.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 6 Nov 2017 16:44:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
+	mark.rutland@arm.com, liuwei@actions-semi.com,
+	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+	devicetree@vger.kernel.org, arnd@arndb.de, davem@davemloft.net,
+	mchehab@kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org, manivannanece23@gmail.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add Actions S900 clock
+ bindings
+Message-ID: <20171106224409.7viz5ylvdszeorxk@rob-hp-laptop>
+References: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1509997552-29718-2-git-send-email-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1509997552-29718-2-git-send-email-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the datasheet, in Meson-GXBB/GXL series,
-The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+On Tue, Nov 07, 2017 at 01:15:50AM +0530, Manivannan Sadhasivam wrote:
+> Add Actions Semi S900 clock bindings.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> Changes in v2:
+> 
+> 1. Added binding header to this patch
+> 2. Changed clock-controller node name to cmu
+> 3. Added clocks property to cmu node
+> 4. Changed compatible property value to "actions,s900-cmu"
+> 5. Fixed example UART controller node
+> 6. Fixed tab vs space issue
+> 
+>  .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 +++++++
+>  include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++++++++++++++++++
+>  2 files changed, 186 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>  create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
-Test passed at gxl_skt dev board.
-
-Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-
----
-I think this error was introduced by a copy & paste from meson8 code?
-and we didn't notice them due to the SANA clock is also enabled by
-DTS (so SAR_ADC works fine)?
----
- drivers/clk/meson/gxbb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index b2d1e8ed7152..92168348ffa6 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
- static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
- static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
- static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
--static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-+static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
- static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
- static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
- static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-@@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
- static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
- static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
- static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
--static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-+static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
- static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
- static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
- static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
--- 
-2.14.1
+Acked-by: Rob Herring <robh@kernel.org>
