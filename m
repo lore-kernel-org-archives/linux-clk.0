@@ -1,83 +1,82 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1511428377.7685.9.camel@pengutronix.de>
-Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
- ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
- lee.jones@linaro.org
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	Matthias Brugger
-	 <mbrugger@suse.com>
-Date: Thu, 23 Nov 2017 10:12:57 +0100
-In-Reply-To: <20171114214114.15793-4-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-4-mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>
+References: <20171106075212.14275-1-yixun.lan@amlogic.com>
+ <889b8fd5-31e4-1371-6121-0f1aec6fa777@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin
+ Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <c773682c-6045-a476-e0c8-04347624c4e3@amlogic.com>
+Date: Mon, 6 Nov 2017 17:31:56 +0800
+MIME-Version: 1.0
+In-Reply-To: <889b8fd5-31e4-1371-6121-0f1aec6fa777@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> With the mtk-mmsys MFD device in place, we switch the probing for
-> mt2701 from device-tree to mfd.
+Hi Neil:
+
+
+On 11/06/17 16:57, Neil Armstrong wrote:
+> On 06/11/2017 08:52, Yixun Lan wrote:
+>> According to the datasheet, in Meson-GXBB/GXL series,
+>> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+>> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+>>
+>> Test passed at gxl_skt dev board.
+>>
+>> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>
+>> ---
+>> I think this error was introduced by a copy & paste from meson8 code?
+>> and we didn't notice them due to the SANA clock is also enabled by
+>> DTS (so SAR_ADC works fine)?
+>> ---
+>>  drivers/clk/meson/gxbb.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+>> index b2d1e8ed7152..92168348ffa6 100644
+>> --- a/drivers/clk/meson/gxbb.c
+>> +++ b/drivers/clk/meson/gxbb.c
+>> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+>> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+>> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+>>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+>> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
+>>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+>>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+>>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+>> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
+>> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+>>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+>>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+>>
 > 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
->  1 file changed, 25 insertions(+), 7 deletions(-)
+> Hi Yixun,
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index dd249cf5121e..5a263aa3ab6e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -21,6 +21,7 @@
->  #include <drm/drm_of.h>
->  #include <linux/component.h>
->  #include <linux/iommu.h>
-> +#include <linux/mfd/mmsys.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
-> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
->  
->  static int mtk_drm_probe(struct platform_device *pdev)
->  {
-> +	struct mmsys_dev *mmsys_private;
->  	struct device *dev = &pdev->dev;
->  	struct mtk_drm_private *private;
-> -	struct device_node *node;
-> +	struct device_node *node, *parent_node;
->  	struct component_match *match = NULL;
->  	int ret;
->  	int i;
-> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  	INIT_WORK(&private->commit.work, mtk_atomic_work);
->  	private->data = of_device_get_match_data(dev);
->  
-> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
-> -	if (IS_ERR(private->config_regs))
-> -		return PTR_ERR(private->config_regs);
-> +	/* Check if called from mfd */
-> +	if (!dev->of_node) {
-> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
-> +		private->data = (struct mtk_mmsys_driver_data *)
-> +				platform_get_device_id(pdev)->driver_data;
-> +		private->config_regs =
-> +			syscon_node_to_regmap(mmsys_private->of_node);
-> +		parent_node = mmsys_private->of_node->parent;
+> Can you precise how it affects the saradc driver ? from the DT and clk PoV ?
+>
+the saradc module doesn't require sana clock (it's irrelvevant), we will
+send a patchset v3 to address this.
 
-I think this could be just:
+> Also, can you add a Fixes: tag on the patch ?
+> 
+sure, I can do this.
 
-		mmsys_node = pdev->dev.parent->of_node;
-		private->data = (struct mtk_mmsys_driver_data *)> +	
-			platform_get_device_id(pdev)->driver_data;
-		private->config_regs = syscon_node_to_regmap(mmsys_node);
-		parent_node = mmsys_node->parent;
-
-regards
-Philipp
+> Thanks,
+> Neil
+> 
+> .
+> 
