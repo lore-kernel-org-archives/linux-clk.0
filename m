@@ -1,46 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11218 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934311AbdKPO3K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 09:29:10 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 2/4] clk: tegra: add fence_delay for clock registers
-Date: Thu, 16 Nov 2017 16:29:00 +0200
-Message-ID: <1510842542-16451-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Carlo Caione <carlo@caione.org>, Kevin
+ Hilman <khilman@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen
+	<xingyu.chen@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/4] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+Date: Tue, 7 Nov 2017 22:12:23 +0800
+Message-ID: <20171107141223.1507-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-To ensure writes to clock registers have properly propagated through the
-clock control logic and state machines, we need to ensure the writes have
-been posted in the registers and wait for 1us after that.
+According to the datasheet, in Meson-GXBB/GXL series,
+The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Test passed at gxl-s905x-p212 board.
+
+The following published datasheets are wrong and should be updated
+[1] GXBB v1.1.4
+[2] GXL v0.3_20170314
+
+Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/tegra/clk.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/meson/gxbb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 872f118..d5badbe 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- 
-+/* Combined read fence with delay */
-+#define fence_udelay(delay, reg)	\
-+	do {				\
-+		readl(reg);		\
-+		udelay(delay);		\
-+	} while(0)
-+
- #endif /* TEGRA_CLK_H */
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index b2d1e8ed7152..92168348ffa6 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+ static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+ static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+ static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+-static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
++static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+ static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+ static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+ static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+@@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2, 9);
+ static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+ static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+ static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+-static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
++static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+ static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+ static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+ static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
 -- 
-1.9.1
-
+2.14.1
