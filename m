@@ -1,86 +1,45 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 4/8] clk: mediatek: mt2701-mm: switch to mfd device
-Date: Tue, 14 Nov 2017 22:41:10 +0100
-Message-Id: <20171114214114.15793-5-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Tue, 7 Nov 2017 15:54:27 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Kaihua Zhong <zhongkaihua@huawei.com>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, mark.rutland@arm.com, xuwei5@hisilicon.com,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
+	zhangfei.gao@linaro.org, guodong.xu@linaro.org,
+	chenjun14@huawei.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, suzhuangluan@hisilicon.com,
+	xuezhiliang@hisilicon.com, kevin.wangtao@hisilicon.com
+Subject: Re: [PATCH 1/3] dt-bindings: clk: Hi3660: Document stub clock
+Message-ID: <20171107075427.GC23571@leoy-linaro>
+References: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
+ <1509693907-90682-2-git-send-email-zhongkaihua@huawei.com>
+ <20171106221337.grwywvxzes7jcgob@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171106221337.grwywvxzes7jcgob@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the new mfd device is in place, switch probing
-for the MMSYS to support invocation from the mfd device.
+On Mon, Nov 06, 2017 at 04:13:37PM -0600, Rob Herring wrote:
+> On Fri, Nov 03, 2017 at 03:25:05PM +0800, Kaihua Zhong wrote:
+> > From: Leo Yan <leo.yan@linaro.org>
+> > 
+> > Document the DT binding for stub clock which is used for CPU,
+> > GPU and DDR frequency scaling.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/clock/hi3660-clock.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/clk/mediatek/clk-mt2701-mm.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Thanks, Rob.
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index fe1f85072fc5..1725c2c17ca3 100644
---- a/drivers/clk/mediatek/clk-mt2701-mm.c
-+++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/mfd/mmsys.h>
- #include <linux/platform_device.h>
- 
- #include "clk-mtk.h"
-@@ -87,16 +88,15 @@ static const struct mtk_gate mm_clks[] = {
- 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
- };
- 
--static const struct of_device_id of_match_clk_mt2701_mm[] = {
--	{ .compatible = "mediatek,mt2701-mmsys", },
--	{}
--};
--
- static int clk_mt2701_mm_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	int r;
--	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *node;
-+	struct mmsys_dev *mmsys_private;
-+
-+	mmsys_private = dev_get_drvdata(pdev->dev.parent);
-+	node = mmsys_private->of_node;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
- 
-@@ -116,7 +116,6 @@ static struct platform_driver clk_mt2701_mm_drv = {
- 	.probe = clk_mt2701_mm_probe,
- 	.driver = {
- 		.name = "clk-mt2701-mm",
--		.of_match_table = of_match_clk_mt2701_mm,
- 	},
- };
- 
--- 
-2.14.2
+And will refactor the dt binding header in next version with other
+comments.
+
+Thanks,
+Leo Yan
