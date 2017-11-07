@@ -1,44 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13408 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759924AbdKPPdV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:21 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 8/8] arm64: dts: nvidia: Tegra210 CPU clock definition
-Date: Thu, 16 Nov 2017 17:33:09 +0200
-Message-ID: <1510846389-28712-9-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL v2] clk: tegra: Changes for v4.15-rc1
+Date: Tue,  7 Nov 2017 16:25:32 +0100
+Message-Id: <20171107152532.13918-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hi Michael, Stephen,
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 813b9d8..c8d14d4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1230,6 +1230,13 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <0>;
-+			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA210_CLK_PLL_X>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P_OUT_CPU>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
- 
- 		cpu@1 {
--- 
-1.9.1
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk-2
+
+for you to fetch changes up to 22ef01a203d27fee8b7694020b7e722db7efd2a7:
+
+  clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-11-01 15:00:07 +0100)
+
+Note that this pulls in parts from two other tags that are going to go
+in via the ARM SoC tree. Those are needed to a couple of resolve build
+dependencies.
+
+This is the follow-up pull request that includes Jon's fix for the pclk
+issue.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v4.15-rc1
+
+This contains cleanups and minor fixes for the Tegra clock driver.
+
+----------------------------------------------------------------
+Bhumika Goyal (1):
+      clk: tegra: Make tegra_clk_pll_params __ro_after_init
+
+Dmitry Osipenko (4):
+      clk: tegra: Add AHB DMA clock entry
+      clk: tegra: Correct parent of the APBDMA clock
+      clk: tegra: Use common definition of APBDMA clock gate
+      clk: tegra: Bump SCLK clock rate to 216 MHz
+
+Jon Hunter (1):
+      clk: tegra: Mark APB clock as critical
+
+Michał Mirosław (1):
+      clk: tegra: Fix cclk_lp divisor register
+
+Nicolin Chen (2):
+      clk: tegra: dfll: Fix drvdata overwriting issue
+      clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init()
+
+Thierry Reding (6):
+      dt-bindings: clock: tegra: Add sor1_out clock
+      Merge branch 'for-4.15/dt-bindings' into for-4.15/clk
+      Merge branch 'for-4.15/firmware' into for-4.15/clk
+      clk: tegra: Add peripheral clock registration helper
+      clk: tegra: Use tegra_clk_register_periph_data()
+      clk: tegra: Fix sor1_out clock implementation
+
+Timo Alho (2):
+      firmware: tegra: Propagate error code to caller
+      clk: tegra: Check BPMP response return code
+
+ drivers/clk/tegra/clk-bpmp.c               | 15 ++++++---
+ drivers/clk/tegra/clk-dfll.c               | 10 +++---
+ drivers/clk/tegra/clk-dfll.h               |  2 +-
+ drivers/clk/tegra/clk-id.h                 |  1 +
+ drivers/clk/tegra/clk-periph.c             |  8 +++++
+ drivers/clk/tegra/clk-tegra-periph.c       | 24 ++------------
+ drivers/clk/tegra/clk-tegra-super-gen4.c   |  2 +-
+ drivers/clk/tegra/clk-tegra114.c           |  4 +--
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 12 +++----
+ drivers/clk/tegra/clk-tegra20.c            | 13 +++-----
+ drivers/clk/tegra/clk-tegra210.c           | 51 ++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra30.c            | 23 +++++++-------
+ drivers/clk/tegra/clk.h                    |  3 ++
+ drivers/firmware/tegra/bpmp.c              | 22 +++++++++----
+ include/dt-bindings/clock/tegra210-car.h   |  1 +
+ include/soc/tegra/bpmp.h                   |  1 +
+ 16 files changed, 120 insertions(+), 72 deletions(-)
