@@ -1,251 +1,76 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V6 02/12] clk: sprd: Add common infrastructure
-Date: Mon, 27 Nov 2017 18:01:05 +0800
-Message-ID: <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
-References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1510051139.1328.52.camel@baylibre.com>
+Subject: Re: [PATCH v3 1/4] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
+	 <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 07 Nov 2017 11:38:59 +0100
+In-Reply-To: <20171107054142.7935-1-yixun.lan@amlogic.com>
+References: <20171107054142.7935-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Added Spreadtrum's clock driver framework together with common
-structures and interface functions.
+On Tue, 2017-11-07 at 13:41 +0800, Yixun Lan wrote:
+> According to the datasheet, in Meson-GXBB/GXL series,
+> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+> 
+> Test passed at gxl-s905x-p212 board.
+> 
+> The following published datasheets are wrong and should be updated
+> [1] GXBB v1.1.4, page 57
+> http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
+> [2] GXL v0.3_20170314, page
+> http://www.mediafire.com/file/5bpt054va5ut7v9/S905X_Datasheet_V0.3_20170314pub
+> licversion-Wesion.pdf
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/Kconfig       |  1 +
- drivers/clk/Makefile      |  1 +
- drivers/clk/sprd/Kconfig  |  4 ++
- drivers/clk/sprd/Makefile |  3 ++
- drivers/clk/sprd/common.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/common.h | 52 +++++++++++++++++++++++++
- 6 files changed, 160 insertions(+)
- create mode 100644 drivers/clk/sprd/Kconfig
- create mode 100644 drivers/clk/sprd/Makefile
- create mode 100644 drivers/clk/sprd/common.c
- create mode 100644 drivers/clk/sprd/common.h
+You may mention those links in the cover letter, since mediafire links are
+unlikely to last, better no mentioning them here. The version is enough.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa..ce1a32be 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -236,6 +236,7 @@ source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
- source "drivers/clk/samsung/Kconfig"
-+source "drivers/clk/sprd/Kconfig"
- source "drivers/clk/sunxi-ng/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f7f761b..d880d13 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-+obj-$(CONFIG_ARCH_SPRD)			+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
-diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
-new file mode 100644
-index 0000000..67a3287
---- /dev/null
-+++ b/drivers/clk/sprd/Kconfig
-@@ -0,0 +1,4 @@
-+config SPRD_COMMON_CLK
-+	tristate "Clock support for Spreadtrum SoCs"
-+	depends on ARCH_SPRD || COMPILE_TEST
-+	default ARCH_SPRD
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-new file mode 100644
-index 0000000..74f4b80
---- /dev/null
-+++ b/drivers/clk/sprd/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
-+
-+clk-sprd-y	+= common.o
-diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-new file mode 100644
-index 0000000..4e38b74a
---- /dev/null
-+++ b/drivers/clk/sprd/common.c
-@@ -0,0 +1,99 @@
-+/*
-+ * Spreadtrum clock infrastructure
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+#include "common.h"
-+
-+static const struct regmap_config sprdclk_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xffff,
-+	.fast_io	= true,
-+};
-+
-+static void sprd_clk_set_regmap(const struct sprd_clk_desc *desc,
-+			 struct regmap *regmap)
-+{
-+	int i;
-+	struct sprd_clk_common *cclk;
-+
-+	for (i = 0; i < desc->num_clk_clks; i++) {
-+		cclk = desc->clk_clks[i];
-+		if (!cclk)
-+			continue;
-+
-+		cclk->regmap = regmap;
-+	}
-+}
-+
-+int sprd_clk_regmap_init(struct platform_device *pdev,
-+			 const struct sprd_clk_desc *desc)
-+{
-+	void __iomem *base;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct regmap *regmap = NULL;
-+
-+	if (of_find_property(node, "sprd,syscon", NULL)) {
-+		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
-+		if (IS_ERR(regmap)) {
-+			pr_err("%s: failed to get syscon regmap\n", __func__);
-+			return PTR_ERR(regmap);
-+		}
-+	} else {
-+		base = of_iomap(node, 0);
-+		regmap = devm_regmap_init_mmio(&pdev->dev, base,
-+					       &sprdclk_regmap_config);
-+		if (IS_ERR(regmap)) {
-+			pr_err("failed to init regmap.\n");
-+			return PTR_ERR(regmap);
-+		}
-+	}
-+
-+	sprd_clk_set_regmap(desc, regmap);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
-+
-+int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
-+{
-+	int i, ret = 0;
-+	struct clk_hw *hw;
-+
-+	for (i = 0; i < clkhw->num; i++) {
-+
-+		hw = clkhw->hws[i];
-+
-+		if (!hw)
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+				     clkhw);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider.\n");
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(sprd_clk_probe);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
-new file mode 100644
-index 0000000..8cd774e
---- /dev/null
-+++ b/drivers/clk/sprd/common.h
-@@ -0,0 +1,52 @@
-+/*
-+ * Spreadtrum clock infrastructure
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_CLK_COMMON_H_
-+#define _SPRD_CLK_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+#include "../clk_common.h"
-+
-+struct device_node;
-+
-+struct sprd_clk_common {
-+	struct regmap	*regmap;
-+	u32		reg;
-+	struct clk_hw	hw;
-+};
-+
-+struct sprd_clk_desc {
-+	struct sprd_clk_common		**clk_clks;
-+	unsigned long			num_clk_clks;
-+	struct clk_hw_onecell_data      *hw_clks;
-+};
-+
-+#define sprd_regmap_read(map, reg, val)				\
-+({								\
-+	(map) ? regmap_read((map), (reg), (val)) : (-EINVAL);	\
-+})
-+
-+#define sprd_regmap_write(map, reg, val)			\
-+({								\
-+	(map) ? regmap_write((map), (reg), (val)) : (-EINVAL);	\
-+})
-+
-+static inline struct sprd_clk_common *
-+	hw_to_sprd_clk_common(const struct clk_hw *hw)
-+{
-+	return container_of(hw, struct sprd_clk_common, hw);
-+}
-+int sprd_clk_regmap_init(struct platform_device *pdev,
-+			 const struct sprd_clk_desc *desc);
-+int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw);
-+
-+#endif /* _SPRD_CLK_COMMON_H_ */
--- 
-2.7.4
+> 
+> Fixes: 7ba64d82b358 ("gxbb: clk: Adjust MESON_GATE macro to be shared..")
+
+The commit where the issue is introduced is actually
+Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver") 
+
+Yes there has been a rework afterward, but the problem you are fixing originate
+from that commit.
+
+
+> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  drivers/clk/meson/gxbb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index b2d1e8ed7152..92168348ffa6 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
+>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
+> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,
+> 9);
+>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
+> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
