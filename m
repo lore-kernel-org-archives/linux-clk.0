@@ -1,54 +1,89 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] clk: renesas: mstp: Keep wakeup sources active during system suspend
-Date: Thu,  9 Nov 2017 14:27:00 +0100
-Message-Id: <1510234022-29442-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1510052597.1328.69.camel@baylibre.com>
+Subject: Re: [PATCH v3 0/4] fix the clock setting for SAR ADC
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, devicetree@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
+	 <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 07 Nov 2017 12:03:17 +0100
+In-Reply-To: <20171107053646.31087-1-yixun.lan@amlogic.com>
+References: <20171107053646.31087-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-If a device is part of the CPG/MSTP Clock Domain and to be used as a
-wakeup source, it must be kept active during system suspend.
+On Tue, 2017-11-07 at 13:36 +0800, Yixun Lan wrote:
+> patch [1/4]:
+>   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
+> the published datasheet also has wrong description about this.
+> 
+> patch [2-4/4]:
+>   Drop the "sana" clock from SAR ADC module,
+> 
+>   From the hardware perspective, the SAR ADC module doesn't
+> require "sana" clock to wrok. This should apply to all SoC,
+> including meson6,8, GXBB, GXL..
+> 
+> Note: the whole patchset series has been tested at GXL-P212 board,
+> we haven't got any meson6,8 board to test, so I would appreciate
+> if someone (Martin?) could help to confirm it works there.
+>  
+> Changes since v2 at [2] :
+>   - explicitly point out 'sana' clock is not required for saradc, and drop
+> them
+>   - update comments, as the published datasheet is wrong
+>  
+> Changes since v1 at [1] :
+>   - correct SAR ADC/SANA clock gate bit
+> 
+> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005221.ht
+> ml
+> [2] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005242.ht
+> ml
+> 
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+Those patches should go through different trees. To avoid causing a (temporary)
+regression, the clk patch absolutely needs to be merged before any other patches
+is merged.
 
-Note that this will only affect devices configured as wakeup sources.
+I can take the clk patch as a fix for v4.15. It's too late for v4.14 but it's
+not big deal, I suppose the long term kernel will pick it up later on.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Integrate "clk: renesas: mstp: Use GENPD_FLAG_ACTIVE_WAKEUP",
----
- drivers/clk/renesas/clk-mstp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Once the sana clock is indeed *the* sana clock, which of IIO or DT patch is
+merged first does not matter, the sana clock is optional.
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 500a9e4e03c48957..0b222197a4576fd7 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -344,7 +344,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 		return;
- 
- 	pd->name = np->name;
--	pd->flags = GENPD_FLAG_PM_CLK;
-+	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
--- 
-2.7.4
+BTW, the cover letter and the IIO patch are missing the IIO maintainer and
+mailing list. According to MAINTAINERS, you are missing:
+
+* Jonathan Cameron <jic23@kernel.org>
+* linux-iio@vger.kernel.org
+
+Please resend with the warning note above (so other maintainers are aware of
+dependency), the correction applied to patch 1 commit log and the missing
+recipients.
+
+> 
+> Xingyu Chen (3):
+>   iio: adc: meson-saradc: remove irrelevant clock "sana"
+>   dt-bindings: iio: adc: update the doc for SAR ADC
+>   ARM64: dts: meson: drop "sana" clock from SAR ADC
+> 
+> Yixun Lan (1):
+>   clk: meson: gxbb: fix wrong clock for SARADC/SANA
+> 
+>  .../bindings/iio/adc/amlogic,meson-saradc.txt        |  1 -
+>  arch/arm/boot/dts/meson8.dtsi                        |  5 ++---
+>  arch/arm/boot/dts/meson8b.dtsi                       |  5 ++---
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          |  3 +--
+>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi           |  3 +--
+>  drivers/clk/meson/gxbb.c                             |  4 ++--
+>  drivers/iio/adc/meson_saradc.c                       | 20 -----------------
+> ---
+>  7 files changed, 8 insertions(+), 33 deletions(-)
+> 
