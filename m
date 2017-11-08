@@ -1,230 +1,84 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-3-yixun.lan@amlogic.com>
- <20171129193433.GA19419@codeaurora.org>
-CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael
- Turquette <mturquette@baylibre.com>, Carlo Caione <carlo@caione.org>, Qiufang
- Dai <qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
-Date: Thu, 30 Nov 2017 14:01:18 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:18906 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751674AbdKHNZ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Nov 2017 08:25:27 -0500
 MIME-Version: 1.0
-In-Reply-To: <20171129193433.GA19419@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <1508374366-27171-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1508374366-27171-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 8 Nov 2017 22:24:19 +0900
+Message-ID: <CAK7LNARdcAvoNoe56fGvsmsWP=nZhQWtkDaxv=6r8h8T=FzNxw@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: fix parent of miodmac clock data
+To: linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen
+Hi Stephen,
 
-On 11/30/17 03:34, Stephen Boyd wrote:
-> On 11/28, Yixun Lan wrote:
->> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
->> new file mode 100644
->> index 000000000000..51c5b4062715
->> --- /dev/null
->> +++ b/drivers/clk/meson/axg.c
->> @@ -0,0 +1,948 @@
->> +/*
->> + * AmLogic Meson-AXG Clock Controller Driver
->> + *
->> + * Copyright (c) 2016 Baylibre SAS.
->> + * Author: Michael Turquette <mturquette@baylibre.com>
->> + *
->> + * Copyright (c) 2017 Amlogic, inc.
->> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
->> + *
->> + * SPDX-License-Identifier: GPL-2.0+
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/init.h>
->> +
->> +#include "clkc.h"
->> +#include "axg.h"
->> +
->> +static DEFINE_SPINLOCK(clk_lock);
-> 
-> meson_axg_clk_lock?
-> 
-em... I'd leave it unchanged
+Could you pick this up, please?
 
-because the spinlock will be used at macro MESON_GATE() [1] which
-defined at drivers/clk/meson/clkc.h, and it assume using the generic
-name 'clk_lock', change name will break the code..
-
-and besides it's already defined as static, so I see no problem here
+You sent a pull request last week.
+So, queuing this for -next is fine for me.
 
 
-[1]
-#define MESON_GATE(_name, _reg, _bit)                                   \
-struct clk_gate _name = {                                               \
-        .reg = (void __iomem *) _reg,                                   \
-        .bit_idx = (_bit),                                              \
-        .lock = &clk_lock,
 
-[2]
-drivers/clk/meson/gxbb.c
-drivers/clk/meson/meson8b.c
-
->> +
->> +static const struct pll_rate_table sys_pll_rate_table[] = {
->> +	PLL_RATE(24000000, 56, 1, 2),
->> +	PLL_RATE(48000000, 64, 1, 2),
->> +	PLL_RATE(72000000, 72, 1, 2),
->> +	PLL_RATE(96000000, 64, 1, 2),
->> +	PLL_RATE(120000000, 80, 1, 2),
->> +	PLL_RATE(144000000, 96, 1, 2),
->> +	PLL_RATE(168000000, 56, 1, 1),
->> +	PLL_RATE(192000000, 64, 1, 1),
->> +	PLL_RATE(216000000, 72, 1, 1),
->> +	PLL_RATE(240000000, 80, 1, 1),
-> [...]
->> +
->> +static const struct clkc_data axg_clkc_data = {
->> +	.clk_gates = axg_clk_gates,
->> +	.clk_gates_count = ARRAY_SIZE(axg_clk_gates),
->> +	.clk_mplls = axg_clk_mplls,
->> +	.clk_mplls_count = ARRAY_SIZE(axg_clk_mplls),
->> +	.clk_plls = axg_clk_plls,
->> +	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
->> +	.clk_muxes = axg_clk_muxes,
->> +	.clk_muxes_count = ARRAY_SIZE(axg_clk_muxes),
->> +	.clk_dividers = axg_clk_dividers,
->> +	.clk_dividers_count = ARRAY_SIZE(axg_clk_dividers),
->> +	.hw_onecell_data = &axg_hw_onecell_data,
->> +};
->> +
->> +static const struct of_device_id clkc_match_table[] = {
->> +	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
->> +	{},
-> 
-> Nitpick: Drop the comma. Nothing comes after this.
-> 
-sure, can do
-
->> +};
->> +
->> +static int axg_clkc_probe(struct platform_device *pdev)
->> +{
->> +	const struct clkc_data *clkc_data;
->> +	void __iomem *clk_base;
->> +	int ret, clkid, i;
->> +	struct device *dev = &pdev->dev;
->> +
->> +	clkc_data = of_device_get_match_data(&pdev->dev);
->> +	if (!clkc_data)
->> +		return -EINVAL;
->> +
->> +	/*  Generic clocks and PLLs */
->> +	clk_base = of_iomap(dev->of_node, 0);
-> 
-> Use platform device APIs for ioremapping?
-> 
-I assume you are referring to 'platform_get_resource +
-devm_ioremap_resource' ?
-
-the idea sounds good to me.
+2017-10-19 9:52 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> The "miodmac" is not a child of "stdmac".  They are independent
+> from each other.  Fix it.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  drivers/clk/uniphier/clk-uniphier-mio.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
+> index 16e4d30..badc478 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-mio.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-mio.c
+> @@ -13,6 +13,8 @@
+>   * GNU General Public License for more details.
+>   */
+>
+> +#include <linux/stddef.h>
+> +
+>  #include "clk-uniphier.h"
+>
+>  #define UNIPHIER_MIO_CLK_SD_FIXED                                      \
+> @@ -73,15 +75,12 @@
+>  #define UNIPHIER_MIO_CLK_USB2_PHY(idx, ch)                             \
+>         UNIPHIER_CLK_GATE("usb2" #ch "-phy", (idx), "usb2", 0x20 + 0x200 * (ch), 29)
+>
+> -#define UNIPHIER_MIO_CLK_DMAC(idx)                                     \
+> -       UNIPHIER_CLK_GATE("miodmac", (idx), "stdmac", 0x20, 25)
+> -
+>  const struct uniphier_clk_data uniphier_ld4_mio_clk_data[] = {
+>         UNIPHIER_MIO_CLK_SD_FIXED,
+>         UNIPHIER_MIO_CLK_SD(0, 0),
+>         UNIPHIER_MIO_CLK_SD(1, 1),
+>         UNIPHIER_MIO_CLK_SD(2, 2),
+> -       UNIPHIER_MIO_CLK_DMAC(7),
+> +       UNIPHIER_CLK_GATE("miodmac", 7, NULL, 0x20, 25),
+>         UNIPHIER_MIO_CLK_USB2(8, 0),
+>         UNIPHIER_MIO_CLK_USB2(9, 1),
+>         UNIPHIER_MIO_CLK_USB2(10, 2),
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
->> +	if (!clk_base) {
->> +		pr_err("%s: Unable to map clk base\n", __func__);
->> +		return -ENXIO;
->> +	}
->> +
->> +	/* Populate base address for PLLs */
->> +	for (i = 0; i < clkc_data->clk_plls_count; i++)
->> +		clkc_data->clk_plls[i]->base = clk_base;
->> +
->> +	/* Populate base address for MPLLs */
->> +	for (i = 0; i < clkc_data->clk_mplls_count; i++)
->> +		clkc_data->clk_mplls[i]->base = clk_base;
->> +
->> +	/* Populate base address for gates */
->> +	for (i = 0; i < clkc_data->clk_gates_count; i++)
->> +		clkc_data->clk_gates[i]->reg = clk_base +
->> +			(u64)clkc_data->clk_gates[i]->reg;
->> +
->> +	/* Populate base address for muxes */
->> +	for (i = 0; i < clkc_data->clk_muxes_count; i++)
->> +		clkc_data->clk_muxes[i]->reg = clk_base +
->> +			(u64)clkc_data->clk_muxes[i]->reg;
->> +
->> +	/* Populate base address for dividers */
->> +	for (i = 0; i < clkc_data->clk_dividers_count; i++)
->> +		clkc_data->clk_dividers[i]->reg = clk_base +
->> +			(u64)clkc_data->clk_dividers[i]->reg;
->> +
->> +	/*
->> +	 * register all clks
->> +	 */
-> 
-> Yes, that's obvious..
-> 
-will drop at next version
 
->> +	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
->> +		/* array might be sparse */
->> +		if (!clkc_data->hw_onecell_data->hws[clkid])
->> +			continue;
->> +
->> +		ret = devm_clk_hw_register(dev,
->> +					clkc_data->hw_onecell_data->hws[clkid]);
->> +		if (ret)
->> +			goto iounmap;
->> +	}
->> +
->> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->> +			clkc_data->hw_onecell_data);
->> +
->> +iounmap:
->> +	iounmap(clk_base);
-can also drop this once convert to devm_ API
-
->> +	return ret;
->> +}
->> +
->> +static struct platform_driver axg_driver = {
->> +	.probe		= axg_clkc_probe,
->> +	.driver		= {
->> +		.name	= "axg-clkc",
->> +		.of_match_table = clkc_match_table,
->> +	},
->> +};
->> +
->> +builtin_platform_driver(axg_driver);
->> diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
->> new file mode 100644
->> index 000000000000..d2c0f49ba0df
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/axg-clkc.h
->> @@ -0,0 +1,72 @@
->> +/*
->> + * Meson-AXG clock tree IDs
->> + *
->> + * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
->> + *
->> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> 
-> There's a standard way to add these it seems. They should be the
-> first line in the file and look like
-> 
-> /* SPDX-License-Identifier: */
-> 
-> for header files and 
-> 
-> // SPDX-License-Identifier: 
-> 
-> for C files.
-> 
-
-thanks for the suggestion, will update at next version
+-- 
+Best Regards
+Masahiro Yamada
