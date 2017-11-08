@@ -1,35 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 22:33:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, kernel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH v6 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-Message-ID: <20171102053353.GI30645@codeaurora.org>
-References: <20171027094848.28365-1-o.rempel@pengutronix.de>
- <20171027094848.28365-2-o.rempel@pengutronix.de>
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171027094848.28365-2-o.rempel@pengutronix.de>
+Sender: joel.stan@gmail.com
+In-Reply-To: <20171030060250.701-1-joel@jms.id.au>
+References: <20171030060250.701-1-joel@jms.id.au>
+From: Joel Stanley <joel@jms.id.au>
+Date: Wed, 8 Nov 2017 14:20:23 +1030
+Message-ID: <CACPK8Xd22yji6cLAmq1B=6gLPh2y2_sc63RH8J+H+FDHyupR6w@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] clk: Add Aspeed clock driver
+To: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/27, Oleksij Rempel wrote:
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+Hi Stephen (and other maintainers),
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Have you had a chance to review this series?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I've done a lot of testing and they are looking good on hardware.
+
+On Mon, Oct 30, 2017 at 4:32 PM, Joel Stanley <joel@jms.id.au> wrote:
+> This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
+> Aspeed.
+>
+> This is v5. See patches for detailed changelogs.
+>
+> v5: Address review from Andrew
+> v4: Address review from Andrew and Stephen.
+> v3: Address review from Andrew and has seen more testing on hardware
+> v2: split the driver out into a series of patches to make them easier to
+> review.
+>
+> All of the important clocks are supported, with most non-essential ones
+> also implemented where information is available. I am working with
+> Aspeed to clear up some of the missing information, including the
+> missing parent-sibling relationships.
+>
+> We need to know the rate of the apb clock in order to correctly program
+> the clocksource driver, so the apb and it's parents are created in the
+> CLK_OF_DECLARE_DRIVER callback.
+>
+> The rest of the clocks are created at normal driver probe time. I
+> followed the Gemini driver's lead with using the regmap where I could,
+> but also having a pointer to the base address for use with the common
+> clock callbacks.
+>
+> The driver borrows from the clk_gate common clock infrastructure, but modifies
+> it in order to support the clock gate and reset pair that most of the clocks
+> have. This pair must be reset-ungated-released, with appropriate delays,
+> according to the datasheet.
+>
+> The first patch introduces the core clock registration parts, and describes
+> the clocks. The second creates the core clocks, giving the system enough to
+> boot (but without uart). Next come the non-core clocks, and finally the reset
+> controller that is used for the few cocks that don't have a gate to go with their
+> reset pair.
+>
+> Please review!
+>
+> Cheers,
+>
+> Joel
+>
+>
+> Joel Stanley (5):
+>   clk: Add clock driver for ASPEED BMC SoCs
+>   clk: aspeed: Register core clocks
+>   clk: aspeed: Add platform driver and register PLLs
+>   clk: aspeed: Register gated clocks
+>   clk: aspeed: Add reset controller
+>
+>  drivers/clk/Kconfig                      |  12 +
+>  drivers/clk/Makefile                     |   1 +
+>  drivers/clk/clk-aspeed.c                 | 666 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/aspeed-clock.h |  52 +++
+>  4 files changed, 731 insertions(+)
+>  create mode 100644 drivers/clk/clk-aspeed.c
+>  create mode 100644 include/dt-bindings/clock/aspeed-clock.h
+>
+> --
+> 2.14.1
+>
