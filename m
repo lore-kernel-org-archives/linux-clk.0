@@ -1,80 +1,81 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 13 Nov 2017 20:47:02 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, jassisinghbrar@gmail.com,
-	robh+dt@kernel.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 3/7] mailbox: qcom: Move the apcs struct into a
- separate header
-Message-ID: <20171114044702.GF28761@minitux>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-4-georgi.djakov@linaro.org>
- <20171026042811.GL1575@tuxbook>
- <5bad4c4b-362b-ba9f-3072-1cced7a004dd@linaro.org>
- <20171114021255.GY11955@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171114021255.GY11955@codeaurora.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
+Date: Thu,  9 Nov 2017 14:26:59 +0100
+Message-Id: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon 13 Nov 18:12 PST 2017, Stephen Boyd wrote:
+	Hi Rafael, Ulf, Kevin,
 
-> On 10/27, Georgi Djakov wrote:
-> > Hi Bjorn,
-> > 
-> > Thanks for reviewing!
-> > 
-> > On 10/26/2017 07:28 AM, Bjorn Andersson wrote:
-> > > On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
-> > > 
-> > >> Move the structure shared by the APCS IPC device and its subdevices
-> > >> into a separate header file.
-> > >>
-> > > 
-> > > As you're creating the apcs regmap with devm_regmap_init_mmio() you can
-> > > just call dev_get_regmap(dev->parent) in your child to get the handle.
-> > 
-> > Ok, thanks!
-> > 
-> > > 
-> > > But I would prefer that you just add the clock code to the existing
-> > > driver.
-> > 
-> > This will require an ack from Stephen, and i got the impression that he
-> > prefers a separate clk driver [1].
-> > 
-> > Stephen, are you ok with registering the clocks from the apcs mailbox
-> > driver?
-> > 
-> > [1] https://lkml.org/lkml/2017/6/26/750
-> 
-> The parent regmap "trick" was the plan. Is something wrong with
-> that?
-> 
+If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+used as a wakeup source, it must be kept active during system suspend.
 
-Not at all, but then this patch (moving apcs context to a shared header
-file) shouldn't be needed, or am I missing something?
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source, or if it is part of the wakeup path.
 
-> Not having random clk drivers scattered throughout the tree is
-> sort of nice because it makes for an easier time finding things
-> that are similar. Maybe that's an abuse of the driver model
-> though? Just to get things into some same directory. I'm fine
-> either way.
-> 
+However, this is merely a workaround.  The proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
+95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
+active wakeup behavior").
 
-Keeping the clock driver in the clock subsystem does make sense. I see
-now that there is a include of a local header file as well, so that
-would just be messy to keep split.
+Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
+RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
+SoCs.  This will allow for the workarounds can be removed later.
 
-I'm fine with the extra driver instance, it's the DT that I don't think
-should describe the fact that we want to keep the clock-part in the
-clock subsystem.
+This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
+active wakeup behavior", and retains only fixes for Renesas PM Domain
+drivers.
 
-Do you see any problems spawning the clock driver programmatically and
-then calling of_clk_add_hw_provider() on the parent's of_node?
+Changes compared to v1:
+  - Integrate follow-up patches to use GENPD_FLAG_ACTIVE_WAKEUP instead
+    of adding an "always true" callback.
 
-Regards,
-Bjorn
+As GENPD_FLAG_ACTIVE_WAKEUP exists in pm/linux-next only, and this
+series is a dependency for the removal of workarounds in drivers of
+multiple subsystems (net, irqchip, and gpio), I think it is a good idea
+to still queue this for v4.15 in the PM tree, if possible.
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7795/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for applying!
+
+Geert Uytterhoeven (3):
+  clk: renesas: mstp: Keep wakeup sources active during system suspend
+  clk: renesas: cpg-mssr: Keep wakeup sources active during system
+    suspend
+  soc: renesas: rcar-sysc: Keep wakeup sources active during system
+    suspend
+
+ drivers/clk/renesas/clk-mstp.c         | 2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ drivers/soc/renesas/rcar-sysc.c        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
