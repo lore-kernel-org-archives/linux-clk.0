@@ -1,50 +1,55 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/4] dt-bindings: clock: add compatible variant for the Meson-AXG
-Date: Fri, 1 Dec 2017 09:24:49 +0800
-Message-ID: <20171201012452.27086-2-yixun.lan@amlogic.com>
-In-Reply-To: <20171201012452.27086-1-yixun.lan@amlogic.com>
-References: <20171201012452.27086-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources active during system suspend
+Date: Thu,  9 Nov 2017 14:27:02 +0100
+Message-Id: <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the documentation to support clock driver for the Amlogic's
-Meson-AXG SoC.
+If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
+Domain and to be used as a wakeup source, it must be kept active during
+system suspend.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source.  However, the proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+
+Note that this will only affect devices configured as wakeup sources.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+v2:
+  - Integrate "soc: renesas: rcar-sysc: Use GENPD_FLAG_ACTIVE_WAKEUP",
+---
+ drivers/soc/renesas/rcar-sysc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index 924040769186..e2b377ed6f91 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -5,8 +5,11 @@ controllers within the SoC.
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index c8406e81640f6560..ac4df1c43b2fbdbe 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -224,7 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
  
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
--	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
-+- compatible: should be:
-+		"amlogic,gxbb-clkc" for GXBB SoC,
-+		"amlogic,gxl-clkc" for GXL and GXM SoC,
-+		"amlogic,axg-clkc" for AXG SoC.
-+
- - reg: physical base address of the clock controller and length of memory
-        mapped region.
- 
+ 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
+ 		/* Enable Clock Domain for I/O devices */
+-		genpd->flags |= GENPD_FLAG_PM_CLK;
++		genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 		if (has_cpg_mstp) {
+ 			genpd->attach_dev = cpg_mstp_attach_dev;
+ 			genpd->detach_dev = cpg_mstp_detach_dev;
 -- 
-2.15.0
+2.7.4
