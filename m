@@ -1,68 +1,272 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/3] add clk controller driver for Meson-AXG SoC
-Date: Tue, 28 Nov 2017 20:53:27 +0800
-Message-ID: <20171128125330.363-1-yixun.lan@amlogic.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>
+Subject: [PATCHv2 23/28] clk: ti: am43xx: add clkctrl clock data
+Date: Thu, 9 Nov 2017 11:15:17 +0200
+Message-ID: <1510218917-1725-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add driver for the clk controller which found in Meson AXG SoC
+Add data for am43xx clkctrl clocks, and register it within the clkctrl
+driver.
 
-  Note, we deliberately create a seperate source file for the Meson AXG
-series, instead of sharing code with previous GXBB/GXL - the file axg.c
-It would help us maintaining the code more easily.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-43xx.c | 196 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clkctrl.c  |   6 ++
+ drivers/clk/ti/clock.h    |   2 +
+ 3 files changed, 204 insertions(+)
 
-Changes since v2 [2]:
- - drop register offset calculation
- - update dt-bindings for new compatible variant
-
-Changes since v1 [1]:
- - rework register definion, use '(offset << 2)' to better match
-   the description from data sheet
- - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
- - rebase code to v4.15-rc1
-
-[2]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
-
-[1] 
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
-
-
-Qiufang Dai (2):
-  clk: meson-axg: add clock controller drivers
-  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-
-Yixun Lan (1):
-  dt-bindings: clock: add compatible variant for the Meson-AXG
-
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  15 +
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/axg.c                            | 948 +++++++++++++++++++++
- drivers/clk/meson/axg.h                            | 126 +++
- include/dt-bindings/clock/axg-clkc.h               |  72 ++
- 8 files changed, 1176 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
-
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index f67fd5a..2b7c2e0 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -19,12 +19,208 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
++#include <dt-bindings/clock/am4.h>
+ 
+ #include "clock.h"
+ 
++static const char * const am4_synctimer_32kclk_parents[] __initconst = {
++	"mux_synctimer32k_ck",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am4_counter_32k_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_synctimer_32kclk_parents, NULL },
++	{ 0 },
++};
++
++static const char * const am4_gpio0_dbclk_parents[] __initconst = {
++	"gpio0_dbclk_mux_ck",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio1_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio0_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am4_l4_wkup_clkctrl_regs[] __initconst = {
++	{ AM4_ADC_TSC_CLKCTRL, NULL, CLKF_SW_SUP, "adc_tsc_fck", "l3s_tsc_clkdm" },
++	{ AM4_L4_WKUP_CLKCTRL, NULL, CLKF_SW_SUP, "sys_clkin_ck", "l4_wkup_clkdm" },
++	{ AM4_WKUP_M3_CLKCTRL, NULL, CLKF_NO_IDLEST, "sys_clkin_ck" },
++	{ AM4_COUNTER_32K_CLKCTRL, am4_counter_32k_bit_data, CLKF_SW_SUP, "l4_wkup_cm:clk:0210:8" },
++	{ AM4_TIMER1_CLKCTRL, NULL, CLKF_SW_SUP, "timer1_fck", "l4_wkup_clkdm" },
++	{ AM4_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "wdt1_fck", "l4_wkup_clkdm" },
++	{ AM4_I2C1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_wkupdm_ck", "l4_wkup_clkdm" },
++	{ AM4_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_wkupdm_ck", "l4_wkup_clkdm" },
++	{ AM4_SMARTREFLEX0_CLKCTRL, NULL, CLKF_SW_SUP, "smartreflex0_fck", "l4_wkup_clkdm" },
++	{ AM4_SMARTREFLEX1_CLKCTRL, NULL, CLKF_SW_SUP, "smartreflex1_fck", "l4_wkup_clkdm" },
++	{ AM4_CONTROL_CLKCTRL, NULL, CLKF_SW_SUP, "sys_clkin_ck", "l4_wkup_clkdm" },
++	{ AM4_GPIO1_CLKCTRL, am4_gpio1_bit_data, CLKF_SW_SUP, "sys_clkin_ck", "l4_wkup_clkdm" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am4_mpu_clkctrl_regs[] __initconst = {
++	{ AM4_MPU_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_mpu_m2_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am4_gfx_l3_clkctrl_regs[] __initconst = {
++	{ AM4_GFX_CLKCTRL, NULL, CLKF_SW_SUP, "gfx_fck_div_ck" },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am4_l4_rtc_clkctrl_regs[] __initconst = {
++	{ AM4_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
++	{ 0 },
++};
++
++static const char * const am4_usb_otg_ss0_refclk960m_parents[] __initconst = {
++	"dpll_per_clkdcoldo",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am4_usb_otg_ss0_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_usb_otg_ss0_refclk960m_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am4_usb_otg_ss1_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_usb_otg_ss0_refclk960m_parents, NULL },
++	{ 0 },
++};
++
++static const char * const am4_gpio1_dbclk_parents[] __initconst = {
++	"clkdiv32k_ick",
++	NULL,
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio2_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio3_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio4_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio5_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_bit_data am4_gpio6_bit_data[] __initconst = {
++	{ 8, TI_CLK_GATE, am4_gpio1_dbclk_parents, NULL },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data am4_l4_per_clkctrl_regs[] __initconst = {
++	{ AM4_L3_MAIN_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_AES_CLKCTRL, NULL, CLKF_SW_SUP, "aes0_fck", "l3_clkdm" },
++	{ AM4_DES_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_L3_INSTR_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_OCMCRAM_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_SHAM_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_VPFE0_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3s_clkdm" },
++	{ AM4_VPFE1_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3s_clkdm" },
++	{ AM4_TPCC_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_TPTC0_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_TPTC1_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_TPTC2_CLKCTRL, NULL, CLKF_SW_SUP, "l3_gclk", "l3_clkdm" },
++	{ AM4_L4_HS_CLKCTRL, NULL, CLKF_SW_SUP, "l4hs_gclk", "l3_clkdm" },
++	{ AM4_GPMC_CLKCTRL, NULL, CLKF_SW_SUP, "l3s_gclk", "l3s_clkdm" },
++	{ AM4_MCASP0_CLKCTRL, NULL, CLKF_SW_SUP, "mcasp0_fck", "l3s_clkdm" },
++	{ AM4_MCASP1_CLKCTRL, NULL, CLKF_SW_SUP, "mcasp1_fck", "l3s_clkdm" },
++	{ AM4_MMC3_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk", "l3s_clkdm" },
++	{ AM4_QSPI_CLKCTRL, NULL, CLKF_SW_SUP, "l3s_gclk", "l3s_clkdm" },
++	{ AM4_USB_OTG_SS0_CLKCTRL, am4_usb_otg_ss0_bit_data, CLKF_SW_SUP, "l3s_gclk", "l3s_clkdm" },
++	{ AM4_USB_OTG_SS1_CLKCTRL, am4_usb_otg_ss1_bit_data, CLKF_SW_SUP, "l3s_gclk", "l3s_clkdm" },
++	{ AM4_PRUSS_CLKCTRL, NULL, CLKF_SW_SUP, "pruss_ocp_gclk", "pruss_ocp_clkdm" },
++	{ AM4_L4_LS_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_D_CAN0_CLKCTRL, NULL, CLKF_SW_SUP, "dcan0_fck" },
++	{ AM4_D_CAN1_CLKCTRL, NULL, CLKF_SW_SUP, "dcan1_fck" },
++	{ AM4_EPWMSS0_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EPWMSS1_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EPWMSS2_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EPWMSS3_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EPWMSS4_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EPWMSS5_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_ELM_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_GPIO2_CLKCTRL, am4_gpio2_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_GPIO3_CLKCTRL, am4_gpio3_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_GPIO4_CLKCTRL, am4_gpio4_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_GPIO5_CLKCTRL, am4_gpio5_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_GPIO6_CLKCTRL, am4_gpio6_bit_data, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_HDQ1W_CLKCTRL, NULL, CLKF_SW_SUP, "func_12m_clk" },
++	{ AM4_I2C2_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_I2C3_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_MAILBOX_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_MMC1_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk" },
++	{ AM4_MMC2_CLKCTRL, NULL, CLKF_SW_SUP, "mmc_clk" },
++	{ AM4_RNG_CLKCTRL, NULL, CLKF_SW_SUP, "rng_fck" },
++	{ AM4_SPI0_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_SPI1_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_SPI2_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_SPI3_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_SPI4_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_SPINLOCK_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "timer2_fck" },
++	{ AM4_TIMER3_CLKCTRL, NULL, CLKF_SW_SUP, "timer3_fck" },
++	{ AM4_TIMER4_CLKCTRL, NULL, CLKF_SW_SUP, "timer4_fck" },
++	{ AM4_TIMER5_CLKCTRL, NULL, CLKF_SW_SUP, "timer5_fck" },
++	{ AM4_TIMER6_CLKCTRL, NULL, CLKF_SW_SUP, "timer6_fck" },
++	{ AM4_TIMER7_CLKCTRL, NULL, CLKF_SW_SUP, "timer7_fck" },
++	{ AM4_TIMER8_CLKCTRL, NULL, CLKF_SW_SUP, "timer8_fck" },
++	{ AM4_TIMER9_CLKCTRL, NULL, CLKF_SW_SUP, "timer9_fck" },
++	{ AM4_TIMER10_CLKCTRL, NULL, CLKF_SW_SUP, "timer10_fck" },
++	{ AM4_TIMER11_CLKCTRL, NULL, CLKF_SW_SUP, "timer11_fck" },
++	{ AM4_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_UART4_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_UART5_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_UART6_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_per_m2_div4_ck" },
++	{ AM4_OCP2SCP0_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_OCP2SCP1_CLKCTRL, NULL, CLKF_SW_SUP, "l4ls_gclk" },
++	{ AM4_EMIF_CLKCTRL, NULL, CLKF_SW_SUP, "dpll_ddr_m2_ck", "emif_clkdm" },
++	{ AM4_DSS_CORE_CLKCTRL, NULL, CLKF_SW_SUP, "disp_clk", "dss_clkdm" },
++	{ AM4_CPGMAC0_CLKCTRL, NULL, CLKF_SW_SUP, "cpsw_125mhz_gclk", "cpsw_125mhz_clkdm" },
++	{ 0 },
++};
++
++const struct omap_clkctrl_data am4_clkctrl_data[] __initconst = {
++	{ 0x44df2820, am4_l4_wkup_clkctrl_regs },
++	{ 0x44df8320, am4_mpu_clkctrl_regs },
++	{ 0x44df8420, am4_gfx_l3_clkctrl_regs },
++	{ 0x44df8520, am4_l4_rtc_clkctrl_regs },
++	{ 0x44df8820, am4_l4_per_clkctrl_regs },
++	{ 0 },
++};
++
++const struct omap_clkctrl_data am438x_clkctrl_data[] __initconst = {
++	{ 0x44df2820, am4_l4_wkup_clkctrl_regs },
++	{ 0x44df8320, am4_mpu_clkctrl_regs },
++	{ 0x44df8420, am4_gfx_l3_clkctrl_regs },
++	{ 0x44df8820, am4_l4_per_clkctrl_regs },
++	{ 0 },
++};
++
+ static struct ti_dt_clk am43xx_clks[] = {
+ 	DT_CLK(NULL, "timer_32k_ck", "clkdiv32k_ick"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
++	DT_CLK(NULL, "gpio0_dbclk", "l4_wkup_cm:0348:8"),
++	DT_CLK(NULL, "gpio1_dbclk", "l4_per_cm:0458:8"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4_per_cm:0460:8"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4_per_cm:0468:8"),
++	DT_CLK(NULL, "gpio4_dbclk", "l4_per_cm:0470:8"),
++	DT_CLK(NULL, "gpio5_dbclk", "l4_per_cm:0478:8"),
++	DT_CLK(NULL, "synctimer_32kclk", "l4_wkup_cm:0210:8"),
++	DT_CLK(NULL, "usb_otg_ss0_refclk960m", "l4_per_cm:0240:8"),
++	DT_CLK(NULL, "usb_otg_ss1_refclk960m", "l4_per_cm:0248:8"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 66548eb..b524bc9 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -460,6 +460,12 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	if (of_machine_is_compatible("ti,am33xx"))
+ 		data = am3_clkctrl_data;
+ #endif
++#ifdef CONFIG_SOC_AM43XX
++	if (of_machine_is_compatible("ti,am4372"))
++		data = am4_clkctrl_data;
++	if (of_machine_is_compatible("ti,am438x"))
++		data = am438x_clkctrl_data;
++#endif
+ 
+ 	while (data->addr) {
+ 		if (addr == data->addr)
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index d9bf890..53c7b9d 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -234,6 +234,8 @@ struct omap_clkctrl_data {
+ extern const struct omap_clkctrl_data omap5_clkctrl_data[];
+ extern const struct omap_clkctrl_data dra7_clkctrl_data[];
+ extern const struct omap_clkctrl_data am3_clkctrl_data[];
++extern const struct omap_clkctrl_data am4_clkctrl_data[];
++extern const struct omap_clkctrl_data am438x_clkctrl_data[];
+ 
+ #define CLKF_SW_SUP	BIT(0)
+ #define CLKF_HW_SUP	BIT(1)
 -- 
-2.15.0
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
