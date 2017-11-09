@@ -1,70 +1,150 @@
-Return-Path: <Andy.tang@nxp.com>
-From: <Andy.tang@nxp.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
-CC: <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
-	<evicetree@vger.kernel.org>, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH v2] clk: qoriq: add more divider clocks support
-Date: Wed, 22 Nov 2017 09:40:53 +0800
-Message-ID: <20171122014053.13597-1-Andy.tang@nxp.com>
-Return-Path: Andy.tang@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>
+Subject: [PATCHv2 05/28] clk: ti: convert retry_init param to use void data type
+Date: Thu, 9 Nov 2017 11:15:15 +0200
+Message-ID: <1510218917-1725-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yuantian Tang <andy.tang@nxp.com>
+User data should be void type, as the core framework doesn't need to
+know what is passed through.
 
-More divider clocks are needed by IP. So enlarge the PLL divider
-array to accommodate more divider clocks.
-
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
-resend with ack added
-v2:
-  - fix a logical error
+ drivers/clk/ti/apll.c      |  3 ++-
+ drivers/clk/ti/clk.c       | 12 ++++++------
+ drivers/clk/ti/clock.h     |  4 ++--
+ drivers/clk/ti/composite.c |  3 ++-
+ drivers/clk/ti/dpll.c      |  3 ++-
+ 5 files changed, 14 insertions(+), 11 deletions(-)
 
- Documentation/devicetree/bindings/clock/qoriq-clock.txt | 1 +
- drivers/clk/clk-qoriq.c                                 | 9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index 6498e1fdbb33..97f46adac85f 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -78,6 +78,7 @@ second cell is the clock index for the specified type.
- 	2	hwaccel		index (n in CLKCGnHWACSR)
- 	3	fman		0 for fm1, 1 for fm2
- 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
-+				4=pll/5, 5=pll/6, 6=pll/7, 7=pll/8
- 	5	coreclk		must be 0
- 
- 3. Example
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index b0ea753b8709..3a1812f65e5d 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -41,7 +41,7 @@ struct clockgen_pll_div {
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index 83b148f..9498e93 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -133,9 +133,10 @@ static u8 dra7_init_apll_parent(struct clk_hw *hw)
+ 	.get_parent	= &dra7_init_apll_parent,
  };
  
- struct clockgen_pll {
--	struct clockgen_pll_div div[4];
-+	struct clockgen_pll_div div[8];
+-static void __init omap_clk_register_apll(struct clk_hw *hw,
++static void __init omap_clk_register_apll(void *user,
+ 					  struct device_node *node)
+ {
++	struct clk_hw *hw = user;
+ 	struct clk_hw_omap *clk_hw = to_clk_hw_omap(hw);
+ 	struct dpll_data *ad = clk_hw->dpll_data;
+ 	struct clk *clk;
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 10a7045..302c9e6 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -178,7 +178,7 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 
+ struct clk_init_item {
+ 	struct device_node *node;
+-	struct clk_hw *hw;
++	void *user;
+ 	ti_of_clk_init_cb_t func;
+ 	struct list_head link;
  };
+@@ -188,14 +188,14 @@ struct clk_init_item {
+ /**
+  * ti_clk_retry_init - retries a failed clock init at later phase
+  * @node: device not for the clock
+- * @hw: partially initialized clk_hw struct for the clock
++ * @user: user data pointer
+  * @func: init function to be called for the clock
+  *
+  * Adds a failed clock init to the retry list. The retry list is parsed
+  * once all the other clocks have been initialized.
+  */
+-int __init ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+-			      ti_of_clk_init_cb_t func)
++int __init ti_clk_retry_init(struct device_node *node, void *user,
++			     ti_of_clk_init_cb_t func)
+ {
+ 	struct clk_init_item *retry;
  
- #define CLKSEL_VALID	1
-@@ -1127,6 +1127,13 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 		struct clk *clk;
- 		int ret;
+@@ -206,7 +206,7 @@ int __init ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
  
-+		/*
-+		 * For platform PLL, there are 8 divider clocks.
-+		 * For core PLL, there are 4 divider clocks at most.
-+		 */
-+		if (idx != PLATFORM_PLL && i >= 4)
-+			break;
-+
- 		snprintf(pll->div[i].name, sizeof(pll->div[i].name),
- 			 "cg-pll%d-div%d", idx, i + 1);
+ 	retry->node = node;
+ 	retry->func = func;
+-	retry->hw = hw;
++	retry->user = user;
+ 	list_add(&retry->link, &retry_list);
  
+ 	return 0;
+@@ -328,7 +328,7 @@ void ti_dt_clk_init_retry_clks(void)
+ 	while (!list_empty(&retry_list) && retries) {
+ 		list_for_each_entry_safe(retry, tmp, &retry_list, link) {
+ 			pr_debug("retry-init: %s\n", retry->node->name);
+-			retry->func(retry->hw, retry->node);
++			retry->func(retry->user, retry->node);
+ 			list_del(&retry->link);
+ 			kfree(retry);
+ 		}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 169241f..999fe72 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -235,7 +235,7 @@ struct omap_clkctrl_data {
+ #define CLKF_HW_SUP	BIT(1)
+ #define CLKF_NO_IDLEST	BIT(2)
+ 
+-typedef void (*ti_of_clk_init_cb_t)(struct clk_hw *, struct device_node *);
++typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
+ 
+ struct clk *ti_clk_register_gate(struct ti_clk *setup);
+ struct clk *ti_clk_register_interface(struct ti_clk *setup);
+@@ -263,7 +263,7 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ int ti_clk_get_reg_addr(struct device_node *node, int index,
+ 			struct clk_omap_reg *reg);
+ void ti_dt_clocks_register(struct ti_dt_clk *oclks);
+-int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
++int ti_clk_retry_init(struct device_node *node, void *user,
+ 		      ti_of_clk_init_cb_t func);
+ int ti_clk_add_component(struct device_node *node, struct clk_hw *hw, int type);
+ 
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index beea894..3eaba2d 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -161,9 +161,10 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
+ }
+ #endif
+ 
+-static void __init _register_composite(struct clk_hw *hw,
++static void __init _register_composite(void *user,
+ 				       struct device_node *node)
+ {
++	struct clk_hw *hw = user;
+ 	struct clk *clk;
+ 	struct clk_hw_omap_comp *cclk = to_clk_hw_comp(hw);
+ 	struct component_clk *comp;
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index d4e4444..d246598 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -152,9 +152,10 @@
+  * clk-bypass is missing), the clock is added to retry list and
+  * the initialization is retried on later stage.
+  */
+-static void __init _register_dpll(struct clk_hw *hw,
++static void __init _register_dpll(void *user,
+ 				  struct device_node *node)
+ {
++	struct clk_hw *hw = user;
+ 	struct clk_hw_omap *clk_hw = to_clk_hw_omap(hw);
+ 	struct dpll_data *dd = clk_hw->dpll_data;
+ 	struct clk *clk;
 -- 
-2.14.1
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
