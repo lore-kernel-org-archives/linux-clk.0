@@ -1,103 +1,72 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>
-Subject: [PATCH 1/3] clk: mvebu: armada-37xx-periph: cosmetic changes
-Date: Thu, 30 Nov 2017 14:40:27 +0100
-Message-Id: <20171130134029.20751-2-gregory.clement@free-electrons.com>
-In-Reply-To: <20171130134029.20751-1-gregory.clement@free-electrons.com>
-References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>
+Subject: [PATCHv2 04/28] clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended
+Date: Thu, 9 Nov 2017 11:15:14 +0200
+Message-ID: <1510218917-1725-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches fixes few cosmetic issues such as alignment, blank lines
-and required space.
+In certain cases it is possible that the timekeeping has been suspended
+already when attempting to disable/enable a clkctrl clock. This will
+happen at least on am43xx platform when attempting to enable / disable
+the clockevent source itself, burping out a warning from timekeeping core.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+The sequence of events leading to this:
+-> timekeeping_suspend()
+ -> clockevents_suspend()
+  -> omap_clkevt_idle()
+   -> omap_hwmod_idle()
+    -> _omap4_clkctrl_clk_disable()
+     -> _omap4_is_timeout()
+
+Avoid the issue by checking if the timekeeping is suspended and using
+the fallback udelay approach for checking timeouts.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/clk/ti/clkctrl.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index cecb0fdfaef6..6dae21ced18a 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -79,6 +79,7 @@ static const struct clk_div_table clk_table2[] = {
- 	{ .val = 1, .div = 4, },
- 	{ .val = 0, .div = 0, }, /* last entry */
- };
-+
- static const struct clk_ops clk_double_div_ops;
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 284ba449..38dbcc1 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
+ #include <linux/delay.h>
++#include <linux/timekeeping.h>
+ #include "clock.h"
  
- #define PERIPH_GATE(_name, _bit)		\
-@@ -217,7 +218,7 @@ PERIPH_CLK_FULL(counter, 23, 20, DIV_SEL0, 23, clk_table6);
- PERIPH_CLK_FULL_DD(eip97, 24, 24, DIV_SEL2, DIV_SEL2, 22, 19);
- PERIPH_CLK_MUX_DIV(cpu, 22, DIV_SEL0, 28, clk_table6);
+ #define NO_IDLEST			0x1
+@@ -90,7 +91,18 @@ static bool _omap4_is_ready(u32 val)
  
--static struct clk_periph_data data_nb[] ={
-+static struct clk_periph_data data_nb[] = {
- 	REF_CLK_FULL_DD(mmc),
- 	REF_CLK_FULL_DD(sata_host),
- 	REF_CLK_FULL_DD(sec_at),
-@@ -281,7 +282,7 @@ static unsigned int get_div(void __iomem *reg, int shift)
- }
- 
- static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
--		unsigned long parent_rate)
-+						unsigned long parent_rate)
+ static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
  {
- 	struct clk_double_div *double_div = to_clk_double_div(hw);
- 	unsigned int div;
-@@ -303,6 +304,7 @@ static const struct of_device_id armada_3700_periph_clock_of_match[] = {
- 	.data = data_sb, },
- 	{ }
- };
-+
- static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 					 void __iomem *reg, spinlock_t *lock,
- 					 struct device *dev, struct clk_hw **hw)
-@@ -355,9 +357,9 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
- 	}
- 
- 	*hw = clk_hw_register_composite(dev, data->name, data->parent_names,
--				       data->num_parents, mux_hw,
--				       mux_ops, rate_hw, rate_ops,
--				       gate_hw, gate_ops, CLK_IGNORE_UNUSED);
-+					data->num_parents, mux_hw,
-+					mux_ops, rate_hw, rate_ops,
-+					gate_hw, gate_ops, CLK_IGNORE_UNUSED);
- 
- 	if (IS_ERR(*hw))
- 		return PTR_ERR(*hw);
-@@ -406,12 +408,11 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 		if (armada_3700_add_composite_clk(&data[i], reg,
- 						  &driver_data->lock, dev, hw))
- 			dev_err(dev, "Can't register periph clock %s\n",
--			       data[i].name);
--
-+				data[i].name);
- 	}
- 
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
--				  driver_data->hw_data);
-+				     driver_data->hw_data);
- 	if (ret) {
- 		for (i = 0; i < num_periph; i++)
- 			clk_hw_unregister(driver_data->hw_data->hws[i]);
+-	if (unlikely(_early_timeout)) {
++	/*
++	 * There are two special cases where ktime_to_ns() can't be
++	 * used to track the timeouts. First one is during early boot
++	 * when the timers haven't been initialized yet. The second
++	 * one is during suspend-resume cycle while timekeeping is
++	 * being suspended / resumed. Clocksource for the system
++	 * can be from a timer that requires pm_runtime access, which
++	 * will eventually bring us here with timekeeping_suspended,
++	 * during both suspend entry and resume paths. This happens
++	 * at least on am43xx platform.
++	 */
++	if (unlikely(_early_timeout || timekeeping_suspended)) {
+ 		if (time->cycles++ < timeout) {
+ 			udelay(1);
+ 			return false;
 -- 
-2.15.0
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
