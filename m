@@ -1,66 +1,65 @@
-Return-Path: <andy.tang@nxp.com>
-From: <andy.tang@nxp.com>
-To: <mturquette@baylibre.com>
-CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH] clk: qoriq: add more divider clocks support
-Date: Wed, 8 Nov 2017 16:26:15 +0800
-Message-ID: <20171108082615.46769-1-andy.tang@nxp.com>
-Return-Path: andy.tang@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>
+Subject: [PATCHv2 06/28] clk: ti: clkctrl: add support for retrying failed init
+Date: Thu, 9 Nov 2017 11:15:16 +0200
+Message-ID: <1510218917-1725-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yuantian Tang <andy.tang@nxp.com>
+In case the clkctrl node contains assigned-clock-* entries, registering
+the provider can fail with -EPROBE_DEFER. In this case, add the
+provider to the retry_init clock list so it will be cleaned up later.
 
-More divider clocks are needed by IP. So enlarge the PLL divider
-array to accommodate more divider clocks.
-
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- Documentation/devicetree/bindings/clock/qoriq-clock.txt | 1 +
- drivers/clk/clk-qoriq.c                                 | 9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/clk/ti/clkctrl.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index 6498e1fdbb33..97f46adac85f 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -78,6 +78,7 @@ second cell is the clock index for the specified type.
- 	2	hwaccel		index (n in CLKCGnHWACSR)
- 	3	fman		0 for fm1, 1 for fm2
- 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
-+				4=pll/5, 5=pll/6, 6=pll/7, 7=pll/8
- 	5	coreclk		must be 0
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 38dbcc1..7d82fff 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -414,6 +414,12 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+ 	}
+ }
  
- 3. Example
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index b0ea753b8709..c2cd3f01fd62 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -41,7 +41,7 @@ struct clockgen_pll_div {
- };
- 
- struct clockgen_pll {
--	struct clockgen_pll_div div[4];
-+	struct clockgen_pll_div div[8];
- };
- 
- #define CLKSEL_VALID	1
-@@ -1127,6 +1127,13 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 		struct clk *clk;
- 		int ret;
- 
-+		/*
-+		 * For platform PLL, there are 8 divider clocks.
-+		 * For core PLL, there are 4 divider clocks at most.
-+		 */
-+		if (i != 0 && i >= 4)
-+			break;
++static void __init _clkctrl_add_provider(void *data,
++					 struct device_node *np)
++{
++	of_clk_add_hw_provider(np, _ti_omap4_clkctrl_xlate, data);
++}
 +
- 		snprintf(pll->div[i].name, sizeof(pll->div[i].name),
- 			 "cg-pll%d-div%d", idx, i + 1);
+ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ {
+ 	struct omap_clkctrl_provider *provider;
+@@ -425,6 +431,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	struct omap_clkctrl_clk *clkctrl_clk;
+ 	const __be32 *addrp;
+ 	u32 addr;
++	int ret;
  
+ 	addrp = of_get_address(node, 0, NULL, NULL);
+ 	addr = (u32)of_translate_address(node, addrp);
+@@ -519,7 +526,10 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		reg_data++;
+ 	}
+ 
+-	of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
++	ret = of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
++	if (ret == -EPROBE_DEFER)
++		ti_clk_retry_init(node, provider, _clkctrl_add_provider);
++
+ 	return;
+ 
+ cleanup:
 -- 
-2.14.1
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
