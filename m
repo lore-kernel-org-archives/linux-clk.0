@@ -1,39 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36437 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751136AbdKXGzx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:55:53 -0500
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
-        slemieux.tyco@gmail.com, vireshk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/6] clk: pr_err() strings should end with newlines
-Date: Fri, 24 Nov 2017 12:25:27 +0530
-Message-Id: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend
+Date: Thu,  9 Nov 2017 14:27:01 +0100
+Message-Id: <1510234022-29442-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-pr_err() messages should end with a new-line to avoid other messages
-being concatenated.
+If a device is part of the CPG/MSSR Clock Domain and to be used as a
+wakeup source, it must be kept active during system suspend.
 
-Arvind Yadav (6):
-  [PATCH 1/6] clk: stm32f4: pr_err() strings should end with newlines
-  [PATCH 2/6] clk: lpc32xx: pr_err() strings should end with newlines
-  [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
-  [PATCH 4/6] SPEAr: clk: pr_err() strings should end with newlines
-  [PATCH 5/6] clk: h8s2678: pr_err() strings should end with newlines
-  [PATCH 6/6] clk: h8300: pr_err() strings should end with newlines
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source.  However, the proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
 
- drivers/clk/clk-stm32f4.c          | 2 +-
- drivers/clk/h8300/clk-div.c        | 4 ++--
- drivers/clk/h8300/clk-h8s2678.c    | 6 +++---
- drivers/clk/nxp/clk-lpc32xx.c      | 4 ++--
- drivers/clk/spear/clk-frac-synth.c | 2 +-
- drivers/clk/spear/clk-gpt-synth.c  | 2 +-
- 6 files changed, 10 insertions(+), 10 deletions(-)
+Note that this will only affect devices configured as wakeup sources.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Integrate "clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP",
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index e580a5e6346c2533..99699b715d7cf2de 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -500,7 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 
+ 	genpd = &pd->genpd;
+ 	genpd->name = np->name;
+-	genpd->flags = GENPD_FLAG_PM_CLK;
++	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
+ 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
 -- 
-1.9.1
-
+2.7.4
