@@ -1,85 +1,226 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, <devicetree@vger.kernel.org>
-CC: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Carlo Caione
-	<carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Yixun Lan
-	<yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 0/4] fix the clock setting for SAR ADC
-Date: Tue, 7 Nov 2017 22:09:42 +0800
-Message-ID: <20171107140942.29243-1-yixun.lan@amlogic.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V4 05/12] clk: sprd: add mux clock support
+Date: Fri, 10 Nov 2017 14:36:00 +0800
+Message-ID: <20171110063607.3250-6-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-patch [1/4]:
-  Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
-the published datasheets[4] also has wrong description about this.
-  This patch should be explicitly merged *before* other patches.
+This patch adds clock multiplexor support for Spreadtrum platforms,
+the mux clocks also can be found in sprd composite clocks, so
+provides two helpers that can be reused later on.
 
-patch [2-4/4]:
-  Drop the "sana" clock from SAR ADC module,
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile |  1 +
+ drivers/clk/sprd/mux.c    | 86 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/mux.h    | 78 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 165 insertions(+)
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/mux.h
 
-  From the hardware perspective, the SAR ADC module doesn't
-require "sana" clock to wrok. This should apply to all SoC,
-including meson6,8, GXBB, GXL..
-
-Note: the whole patchset series has been tested at GXL-P212 board,
-we haven't got any meson6,8 board to test, so I would appreciate
-if someone (Martin?) could help to confirm it works there.
-
-Changes since v3 at [3] :
-  - fix the missing iio maintainers for patch[2/4]
-  - add warning about the dependency, the patch[1/4] should go first
-  - update comments
-
-Changes since v2 at [2] :
-  - explicitly point out 'sana' clock is not required for saradc, and drop them
-  - update comments, as the published datasheet is wrong
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 8cd5592..cee36b5 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
  
-Changes since v1 at [1] :
-  - correct SAR ADC/SANA clock gate bit
-
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005221.html
-
-[2] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005242.html
-
-[3] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005252.html
-    http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005257.html
-    http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005253.html
-    http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005254.html
-    http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005255.html
-
-
-[4] GXBB v1.1.4, page 57
-      http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
-    GXL v0.3_20170314
-      http://www.mediafire.com/file/5bpt054va5ut7v9/S905X_Datasheet_V0.3_20170314publicversion-Wesion.pdf
-
-
-Xingyu Chen (3):
-  iio: adc: meson-saradc: remove irrelevant clock "sana"
-  dt-bindings: iio: adc: update the doc for SAR ADC
-  ARM64: dts: meson: drop "sana" clock from SAR ADC
-
-Yixun Lan (1):
-  clk: meson: gxbb: fix wrong clock for SARADC/SANA
-
- .../bindings/iio/adc/amlogic,meson-saradc.txt        |  1 -
- arch/arm/boot/dts/meson8.dtsi                        |  5 ++---
- arch/arm/boot/dts/meson8b.dtsi                       |  5 ++---
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          |  3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi           |  3 +--
- drivers/clk/meson/gxbb.c                             |  4 ++--
- drivers/iio/adc/meson_saradc.c                       | 20 --------------------
- 7 files changed, 8 insertions(+), 33 deletions(-)
-
+ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
++clk-sprd-y	+= mux.o
+diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
+new file mode 100644
+index 0000000..dacb5b4
+--- /dev/null
++++ b/drivers/clk/sprd/mux.c
+@@ -0,0 +1,86 @@
++/*
++ * Spreadtrum multiplexer clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "mux.h"
++
++DEFINE_SPINLOCK(sprd_mux_lock);
++EXPORT_SYMBOL_GPL(sprd_mux_lock);
++
++u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
++			      const struct sprd_mux_ssel *mux)
++{
++	unsigned int reg;
++	u8 parent;
++	int num_parents;
++	int i;
++
++	sprd_regmap_read(common->regmap, common->reg, &reg);
++	parent = reg >> mux->shift;
++	parent &= (1 << mux->width) - 1;
++
++	if (!mux->table)
++		return parent;
++
++	num_parents = clk_hw_get_num_parents(&common->hw);
++
++	for (i = 0; i < num_parents - 1; i++)
++		if (parent >= mux->table[i] && parent < mux->table[i + 1])
++			return i;
++
++	return num_parents - 1;
++}
++EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
++
++static u8 sprd_mux_get_parent(struct clk_hw *hw)
++{
++	struct sprd_mux *cm = hw_to_sprd_mux(hw);
++
++	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
++}
++
++int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
++			       const struct sprd_mux_ssel *mux,
++			       u8 index)
++{
++	unsigned long flags = 0;
++	unsigned int reg;
++
++	if (mux->table)
++		index = mux->table[index];
++
++	spin_lock_irqsave(common->lock, flags);
++
++	sprd_regmap_read(common->regmap, common->reg, &reg);
++	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
++	sprd_regmap_write(common->regmap, common->reg,
++			  reg | (index << mux->shift));
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
++
++static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sprd_mux *cm = hw_to_sprd_mux(hw);
++
++	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
++}
++
++const struct clk_ops sprd_mux_ops = {
++	.get_parent = sprd_mux_get_parent,
++	.set_parent = sprd_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_mux_ops);
+diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
+new file mode 100644
+index 0000000..72a3f78
+--- /dev/null
++++ b/drivers/clk/sprd/mux.h
+@@ -0,0 +1,78 @@
++/*
++ * Spreadtrum multiplexer clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_MUX_H_
++#define _SPRD_MUX_H_
++
++#include "common.h"
++
++/**
++ * struct sprd_mux_ssel - Mux clock's source select bits in its register
++ * @shift: Bit offset of the divider in its register
++ * @width: Width of the divider field in its register
++ * @table: For some mux clocks, not all sources are used on some special
++ *	   chips, this matches the value of mux clock's register and the
++ *	   sources which are used for this mux clock
++ */
++struct sprd_mux_ssel {
++	u8		shift;
++	u8		width;
++	const u8	*table;
++};
++
++struct sprd_mux {
++	struct sprd_mux_ssel mux;
++	struct sprd_clk_common	common;
++};
++
++#define _SPRD_MUX_CLK(_shift, _width, _table)		\
++	{						\
++		.shift	= _shift,			\
++		.width	= _width,			\
++		.table	= _table,			\
++	}
++
++#define SPRD_MUX_CLK_TABLE(_struct, _name, _parents, _table,		\
++				     _reg, _shift, _width,		\
++				     _flags)				\
++	struct sprd_mux _struct = {					\
++		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
++		.common	= {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.lock		= &sprd_mux_lock,		\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &sprd_mux_ops,	\
++						       _flags),		\
++		}							\
++	}
++
++#define SPRD_MUX_CLK(_struct, _name, _parents, _reg,		\
++		     _shift, _width, _flags)			\
++	SPRD_MUX_CLK_TABLE(_struct, _name, _parents, NULL,	\
++			   _reg, _shift, _width, _flags)
++
++static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_mux, common);
++}
++
++extern const struct clk_ops sprd_mux_ops;
++extern spinlock_t sprd_mux_lock;
++
++u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
++			      const struct sprd_mux_ssel *mux);
++int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
++			       const struct sprd_mux_ssel *mux,
++			       u8 index);
++
++#endif /* _SPRD_MUX_H_ */
 -- 
-2.14.1
+2.7.4
