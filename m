@@ -1,72 +1,101 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>
-Subject: [PATCHv2 04/28] clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended
-Date: Thu, 9 Nov 2017 11:15:14 +0200
-Message-ID: <1510218917-1725-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
-References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V4 11/12] arm64: dts: add syscon for whale2 platform
+Date: Fri, 10 Nov 2017 14:36:06 +0800
+Message-ID: <20171110063607.3250-12-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-In certain cases it is possible that the timekeeping has been suspended
-already when attempting to disable/enable a clkctrl clock. This will
-happen at least on am43xx platform when attempting to enable / disable
-the clockevent source itself, burping out a warning from timekeeping core.
+Some clocks on SC9860 are in the same address area with syscon
+devices, the proper syscon node will be quoted under the
+definitions of those clocks in DT.
 
-The sequence of events leading to this:
--> timekeeping_suspend()
- -> clockevents_suspend()
-  -> omap_clkevt_idle()
-   -> omap_hwmod_idle()
-    -> _omap4_clkctrl_clk_disable()
-     -> _omap4_is_timeout()
-
-Avoid the issue by checking if the timekeeping is suspended and using
-the fallback udelay approach for checking timeouts.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- drivers/clk/ti/clkctrl.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 284ba449..38dbcc1 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -21,6 +21,7 @@
- #include <linux/of_address.h>
- #include <linux/clk/ti.h>
- #include <linux/delay.h>
-+#include <linux/timekeeping.h>
- #include "clock.h"
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..6ea3a75 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -17,6 +17,51 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- #define NO_IDLEST			0x1
-@@ -90,7 +91,18 @@ static bool _omap4_is_ready(u32 val)
++		ap_ahb_regs: syscon@20210000 {
++			compatible = "syscon";
++			reg = <0 0x20210000 0 0x10000>;
++		};
++
++		pmu_regs: syscon@402b0000 {
++			compatible = "syscon";
++			reg = <0 0x402b0000 0 0x10000>;
++		};
++
++		aon_regs: syscon@402e0000 {
++			compatible = "syscon";
++			reg = <0 0x402e0000 0 0x10000>;
++		};
++
++		ana_regs: syscon@40400000 {
++			compatible = "syscon";
++			reg = <0 0x40400000 0 0x10000>;
++		};
++
++		agcp_regs: syscon@415e0000 {
++			compatible = "syscon";
++			reg = <0 0x415e0000 0 0x1000000>;
++		};
++
++		vsp_regs: syscon@61100000 {
++			compatible = "syscon";
++			reg = <0 0x61100000 0 0x10000>;
++		};
++
++		cam_regs: syscon@62100000 {
++			compatible = "syscon";
++			reg = <0 0x62100000 0 0x10000>;
++		};
++
++		disp_regs: syscon@63100000 {
++			compatible = "syscon";
++			reg = <0 0x63100000 0 0x10000>;
++		};
++
++		ap_apb_regs: syscon@70b00000 {
++			compatible = "syscon";
++			reg = <0 0x70b00000 0 0x40000>;
++		};
++
+ 		ap-apb {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+@@ -59,7 +104,6 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+ 	};
  
- static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
- {
--	if (unlikely(_early_timeout)) {
-+	/*
-+	 * There are two special cases where ktime_to_ns() can't be
-+	 * used to track the timeouts. First one is during early boot
-+	 * when the timers haven't been initialized yet. The second
-+	 * one is during suspend-resume cycle while timekeeping is
-+	 * being suspended / resumed. Clocksource for the system
-+	 * can be from a timer that requires pm_runtime access, which
-+	 * will eventually bring us here with timekeeping_suspended,
-+	 * during both suspend entry and resume paths. This happens
-+	 * at least on am43xx platform.
-+	 */
-+	if (unlikely(_early_timeout || timekeeping_suspended)) {
- 		if (time->cycles++ < timeout) {
- 			udelay(1);
- 			return false;
+ 	ext_26m: ext-26m {
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
