@@ -1,84 +1,144 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:18906 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbdKHNZ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Nov 2017 08:25:27 -0500
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V4 00/12] add clock driver for Spreadtrum platforms
+Date: Fri, 10 Nov 2017 14:35:55 +0800
+Message-ID: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <1508374366-27171-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1508374366-27171-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 8 Nov 2017 22:24:19 +0900
-Message-ID: <CAK7LNARdcAvoNoe56fGvsmsWP=nZhQWtkDaxv=6r8h8T=FzNxw@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: fix parent of miodmac clock data
-To: linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+This series adds Spreadtrum clock support together with its binding
+documentation and devicetree data.
 
-Could you pick this up, please?
+Any comments would be greatly appreciated.
 
-You sent a pull request last week.
-So, queuing this for -next is fine for me.
-
-
-
-2017-10-19 9:52 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> The "miodmac" is not a child of "stdmac".  They are independent
-> from each other.  Fix it.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  drivers/clk/uniphier/clk-uniphier-mio.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
-> index 16e4d30..badc478 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-mio.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-mio.c
-> @@ -13,6 +13,8 @@
->   * GNU General Public License for more details.
->   */
->
-> +#include <linux/stddef.h>
-> +
->  #include "clk-uniphier.h"
->
->  #define UNIPHIER_MIO_CLK_SD_FIXED                                      \
-> @@ -73,15 +75,12 @@
->  #define UNIPHIER_MIO_CLK_USB2_PHY(idx, ch)                             \
->         UNIPHIER_CLK_GATE("usb2" #ch "-phy", (idx), "usb2", 0x20 + 0x200 * (ch), 29)
->
-> -#define UNIPHIER_MIO_CLK_DMAC(idx)                                     \
-> -       UNIPHIER_CLK_GATE("miodmac", (idx), "stdmac", 0x20, 25)
-> -
->  const struct uniphier_clk_data uniphier_ld4_mio_clk_data[] = {
->         UNIPHIER_MIO_CLK_SD_FIXED,
->         UNIPHIER_MIO_CLK_SD(0, 0),
->         UNIPHIER_MIO_CLK_SD(1, 1),
->         UNIPHIER_MIO_CLK_SD(2, 2),
-> -       UNIPHIER_MIO_CLK_DMAC(7),
-> +       UNIPHIER_CLK_GATE("miodmac", 7, NULL, 0x20, 25),
->         UNIPHIER_MIO_CLK_USB2(8, 0),
->         UNIPHIER_MIO_CLK_USB2(9, 1),
->         UNIPHIER_MIO_CLK_USB2(10, 2),
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patchset also added a few common clock mactos into drivers/clk/clk_common.h,
+which are generally useful for all vendors' clock driver, sunxi-ng, zte, sprd
+(added in this patchse) use them (or part of them) at present, once this patchset
+is merged, I can help to remove the duplicated code which is under the vendors'
+respective directories.
 
 
+Thanks,
+Chunyan
+
+Changes from V3: (https://lkml.org/lkml/2017/11/2/61)
+* Addressed comments from Julien Thierry:
+  - Clean the if branch of sprd_mux_helper_get_parent()
+  - Have the Gate clock macros and ops for both mode (i.e. sc_gate and gate) separate;
+  - Have the Mux clock macros with/without table separate, and same changes
+    for the composite clock.
+* Switched the function name from _endisable to _toggle;
+* Fixed Kbuild test error:
+  - Added exporting sprd_clk_regmap_init() which would be used in other module(s);
+* Change the function sprd_clk_set_regmap() to the static one, and removed the
+  declear from the include file;
+* Addressed comments from Rob:
+  - Separate the dt-binding include file from the driver patch;
+  - Documented more for the property "clocks"
+* Changed the syscon device names;
+* Changed the name of 'sprd_mux_internal' to 'sprd_mux_ssel'
+  
+
+Changes from V2: (http://lkml.iu.edu/hypermail/linux/kernel/1707.1/01504.html)
+* Switch to use regmap to access registers;
+* Splited all clocks into 16 separated nodes, for each belongs to a single address area; 
+* Rearranged the order of clock declaration in sc9860-clk.c, sorted them upon the address area;
+* Added syscon device tree nodes which will be quoted by the node of clocks which are in
+  the same address area with the syscon device;
+* Revised the binding documentation according to the dt modification. 
+
+Changes from V1: (https://lkml.org/lkml/2017/6/17/356)
+* Address Stephen's comments:
+  - Switch to use platform device driver instead of the DT probing mechanism.
+  - Move the common clock macro out from vendor directory, but need to remove those
+    overlap code from other vendors (such as sunxi-ng) once this get merged.
+  - Add support to be built as a module.
+  - Add 'sprd_' prefix for all spin locks used in these drivers.
+  - Mark input parameter of sprd_x with const.
+  - Remove unreasonable dependencies to CONFIG_64BIT.
+  - Add readl() after writing the same register.
+  - Remove CLK_IS_BASIC which is no longer used.
+  - Remove unnecessery CLK_IGNORE_UNUSED when defining a clock.
+  - Change to expose all clock index.
+  - Use clk_ instead of ccu.
+  - Add Kconfig for sprd clocks.
+  - Move the fixed clocks out from the soc node.
+  - Switch to use 64-bit math in pll driver instead of 32-bit math.
+* Revise binding documentation according to dt modification.
+* Rename sc9860.c to sc9860-clk.c
+
+
+Chunyan Zhang (12):
+  drivers: move clock common macros out from vendor directories
+  dt-bindings: Add Spreadtrum clock binding documentation
+  clk: sprd: Add common infrastructure
+  clk: sprd: add gate clock support
+  clk: sprd: add mux clock support
+  clk: sprd: add divider clock support
+  clk: sprd: add composite clock support
+  clk: sprd: add adjustable pll support
+  clk: sprd: Add dt-bindings include file for SC9860
+  clk: sprd: add clocks support for SC9860
+  arm64: dts: add syscon for whale2 platform
+  arm64: dts: add clocks for SC9860
+
+ Documentation/devicetree/bindings/clock/sprd.txt |   63 +
+ arch/arm64/boot/dts/sprd/sc9860.dtsi             |  115 ++
+ arch/arm64/boot/dts/sprd/whale2.dtsi             |   48 +-
+ drivers/clk/Kconfig                              |    1 +
+ drivers/clk/Makefile                             |    1 +
+ drivers/clk/clk_common.h                         |   60 +
+ drivers/clk/sprd/Kconfig                         |   14 +
+ drivers/clk/sprd/Makefile                        |   11 +
+ drivers/clk/sprd/common.c                        |  113 ++
+ drivers/clk/sprd/common.h                        |   54 +
+ drivers/clk/sprd/composite.c                     |   65 +
+ drivers/clk/sprd/composite.h                     |   55 +
+ drivers/clk/sprd/div.c                           |  100 ++
+ drivers/clk/sprd/div.h                           |   79 +
+ drivers/clk/sprd/gate.c                          |  124 ++
+ drivers/clk/sprd/gate.h                          |   63 +
+ drivers/clk/sprd/mux.c                           |   86 +
+ drivers/clk/sprd/mux.h                           |   78 +
+ drivers/clk/sprd/pll.c                           |  268 +++
+ drivers/clk/sprd/pll.h                           |  110 ++
+ drivers/clk/sprd/sc9860-clk.c                    | 1987 ++++++++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9860-clk.h      |  408 +++++
+ 22 files changed, 3901 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+ create mode 100644 drivers/clk/clk_common.h
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
+ create mode 100644 drivers/clk/sprd/gate.c
+ create mode 100644 drivers/clk/sprd/gate.h
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/mux.h
+ create mode 100644 drivers/clk/sprd/pll.c
+ create mode 100644 drivers/clk/sprd/pll.h
+ create mode 100644 drivers/clk/sprd/sc9860-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
 
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
