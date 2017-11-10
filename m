@@ -1,166 +1,163 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:44963 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbdK0Xn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 18:43:28 -0500
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20171127222238.GF18379@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
- <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
- <CAF6AEGsw2=nERuJ8UCBr_kTBS0TigaA9LL1Hxw3JmNiu4oycOA@mail.gmail.com>
- <CAFp+6iGyB-iVb+vyDr6Dzk1FG6baiNy_kZWjB3sm_GViDh6rnQ@mail.gmail.com> <20171127222238.GF18379@codeaurora.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 27 Nov 2017 18:43:26 -0500
-Message-ID: <CAF6AEGtq2_tMBd1U_t19s8Eg7+-RPQ+E_pCZCd75iFs6_bx53A@mail.gmail.com>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <CAMuHMdVHT7Oebp-_5WRp2BZ5FU5d8aSsjPPNNKRQr3o17onquQ@mail.gmail.com>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com>
+ <CAMuHMdU84DFZmFACuXLqhFsR-Q+1d3GPG3NFPinLRW8=96BDCA@mail.gmail.com>
+ <CAPDyKFrstmMQ=R49EKXQ3fs=_pwhmJkaX8K0dY4u9OZVxY3Z4w@mail.gmail.com> <CAMuHMdVHT7Oebp-_5WRp2BZ5FU5d8aSsjPPNNKRQr3o17onquQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 10 Nov 2017 16:52:01 +0100
+Message-ID: <CAPDyKFpZRkNNOs7o2QurDrUA3XLhDbPqedjOiezStzz=X+u5kg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 27, 2017 at 5:22 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/15, Vivek Gautam wrote:
->> Hi,
->>
->>
->> On Mon, Aug 7, 2017 at 5:59 PM, Rob Clark <robdclark@gmail.com> wrote:
->> > On Mon, Aug 7, 2017 at 4:27 AM, Vivek Gautam
->> > <vivek.gautam@codeaurora.org> wrote:
->> >> On Thu, Jul 13, 2017 at 5:20 PM, Rob Clark <robdclark@gmail.com> wrote:
->> >>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> >>>> Hi Vivek,
->> >>>>
->> >>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->> >>>>> Hi Stephen,
->> >>>>>
->> >>>>>
->> >>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->> >>>>>> On 07/06, Vivek Gautam wrote:
->> >>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->> >>>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->> >>>>>>>                    size_t size)
->> >>>>>>>   {
->> >>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->> >>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->> >>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->> >>>>>>> +    size_t ret;
->> >>>>>>>         if (!ops)
->> >>>>>>>           return 0;
->> >>>>>>>   -    return ops->unmap(ops, iova, size);
->> >>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->> >>>>>> Can these map/unmap ops be called from an atomic context? I seem
->> >>>>>> to recall that being a problem before.
->> >>>>>
->> >>>>> That's something which was dropped in the following patch merged in master:
->> >>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->> >>>>>
->> >>>>> Looks like we don't  need locks here anymore?
->> >>>>
->> >>>>  Apart from the locking, wonder why a explicit pm_runtime is needed
->> >>>>  from unmap. Somehow looks like some path in the master using that
->> >>>>  should have enabled the pm ?
->> >>>>
->> >>>
->> >>> Yes, there are a bunch of scenarios where unmap can happen with
->> >>> disabled master (but not in atomic context).
->> >>
->> >> I would like to understand whether there is a situation where an unmap is
->> >> called in atomic context without an enabled master?
->> >>
->> >> Let's say we have the case where all the unmap calls in atomic context happen
->> >> only from the master's context (in which case the device link should
->> >> take care of
->> >> the pm state of smmu), and the only unmap that happen in non-atomic context
->> >> is the one with master disabled. In such a case doesn it make sense to
->> >> distinguish
->> >> the atomic/non-atomic context and add pm_runtime_get_sync()/put_sync() only
->> >> for the non-atomic context since that would be the one with master disabled.
->> >>
->> >
->> > At least drm/msm needs to hold obj->lock (a mutex) in unmap, so it
->> > won't unmap anything in atomic ctx (but it can unmap w/ master
->> > disabled).  I can't really comment about other non-gpu drivers.  It
->> > seems like a reasonable constraint that either master is enabled or
->> > not in atomic ctx.
->> >
->> > Currently we actually wrap unmap w/ pm_runtime_get/put_sync(), but I'd
->> > like to drop that to avoid powering up the gpu.
->>
->> Since the deferring the TLB maintenance doesn't look like the best approach [1],
->> how about if we try to power-up only the smmu from different client
->> devices such as,
->> GPU in the unmap path. Then we won't need to add pm_runtime_get/put() calls in
->> arm_smmu_unmap().
->>
->> The client device can use something like - pm_runtime_get_supplier() since
->> we already have the device link in place with this patch series. This should
->> power-on the supplier (which is smmu) without turning on the consumer
->> (such as GPU).
->>
->> pm_runtime_get_supplier() however is not exported at this moment.
->> Will it be useful to export this API and use it in the drivers.
->>
+On 10 November 2017 at 14:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
 >
-> I'm not sure pm_runtime_get_supplier() is correct either. That
-> feels like we're relying on the GPU driver knowing the internal
-> details of how the device links are configured.
+> On Fri, Nov 10, 2017 at 1:49 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 10 November 2017 at 11:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>> On Fri, Nov 10, 2017 at 10:57 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>> On 9 November 2017 at 14:26, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>>>>> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+>>>>> used as a wakeup source, it must be kept active during system suspend.
+>>>>
+>>>> Geert, I think we discussed this a bit already. I wonder if the above
+>>>> is a correct statement for all devices in these PM domains, that has
+>>>> wakeups?
+>>>
+>>> It is true for all wakeup sources (e.g. Ethernet and serial).
+>>>
+>>>> Don't these SoCs make use of any external logic (out-of-band IRQ) to
+>>>> deal with the wakeup IRQs?
+>>>>
+>>>> For example, how is GPIO irqs dealt with in this regards?
+>>>
+>>> Interrupt controllers (incl. GPIO) may, depending on SoC type:
+>>>   - be located in a controllable power area (SH/R-Mobile),
+>>>   - may run from a controllable module clock (SH/R-Mobile, R-Car Gen2/Gen3,
+>>>     RZ/A1, RZ/G1).
+>>>
+>>> So there are no out-of-band IRQs in the wakeup path, unless on SoCs where
+>>> the interrupt controllers are in an always-on power area, AND run from a
+>>> fixed clock. I think only R-Car Gen1 falls in that category.
+>>> Still, R-Car Gen1 needs active_wakeup for wakeup sources.
+>>
+>> Perhaps out-of-band IRQ is a too vague term. :-) Anyway, let me
+>> elaborate a bit more.
+>>
+>> Apologize for being so persistent, but I really want to get to bottom with this.
+>>
+>> According to the statement above, it seems like IRQs (including GPIOs)
+>> is controllable from a separate "power area" (or module clock). In
 >
-
-what does pm_runtime_get_supplier() do if IOMMU driver hasn't setup
-device-link?  If it is a no-op, then I guess the GPU driver calling
-pm_runtime_get_supplier() seems reasonable, and less annoying than
-having special cases in pm_resume path.. I don't feel too bad about
-having "just in case" get/put_supplier() calls in the unmap path.
-
-Also, presumably we still want to avoid powering up GPU even if we
-short circuit the firmware loading and rest of "booting up the GPU"..
-since presumably the GPU draws somewhat more power than the IOMMU..
-having the pm_resume/suspend path know about the diff between waking
-up / suspending the iommu and itself doesn't really feel less-bad than
-just doing "just in case" get/put_supplier() calls.
-
-BR,
--R
-
-> Is there some way to have the GPU driver know in its runtime PM
-> resume hook that it doesn't need to be powered on because it
-> isn't actively drawing anything or processing commands? I'm
-> thinking of the code calling pm_runtime_get() as proposed around
-> the IOMMU unmap path in the GPU driver and then having the
-> runtime PM resume hook in the GPU driver return some special
-> value to indicate that it didn't really resume because it didn't
-> need to and to treat the device as runtime suspended but not
-> return an error. Then the runtime PM core can keep track of that
-> and try to power the GPU on again when another pm_runtime_get()
-> is called on the GPU device.
+> There are two ways to save power: disabling the module clock, and powering
+> down the module logic.
 >
-> This keeps the consumer API the same, always pm_runtime_get(),
-> but leaves the device driver logic of what to do when the GPU
-> doesn't need to power on to the runtime PM hook where the driver
-> has all the information.
+>> many ARM SoCs that "power area" is a separate piece of external logic,
+>> sometimes it may even consist a small co-processor. I guess you
+>> already know that, but wanted to point it out for clarity.
 >
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> Sure.
+>
+> I think on some older SH/R-Mobile SoCs you can do something similar,
+> but even there you have to keep the interrupt controller's power area powered.
+> This makes sense, given those SoCs also have an SH core, which could be used
+> as the small co-processor that powers down the whole ARM subsystem and
+> handles wakeup through the SH subsystem's interrupt controller.
+>
+>> For that reason, some serial drivers re-routs its serial rx pin to a
+>> GPIO IRQ to deal with wakeup, instead of keeping the serial device
+>> always powered. This enables the GPIO IRQ to be managed by the
+>> external logic, thus allowing the serial device and the PM domain it
+>> is attached to, to be powered off. Especially during system suspend,
+>> that may avoid wasting lots of power.
+>
+> Doesn't re-routing a pin to a GPIO require using pinctrl?
+
+Yes.
+
+>
+> Here the serial device is the wakeup source, but it doesn't handle wakeup
+> itself...
+
+Exactly.
+
+>
+>> Another example, where I think a more fine grained method is preferred
+>> over using GENPD_FLAG_ACTIVE_WAKEUP, is when an SD card controller has
+>> an card detect pin hooked up to a GPIO. Thus the device_may_wakeup()
+>> would return true for the SD card controller's struct device, but that
+>> does not mean that the device needs to stay powered during system
+>> suspend.
+>
+> This one is more tricky, as I think we're already using a GPIO for CD on
+> many boards.
+> Then the SD device is the wakeup source, but it doesn't handle wakeup
+> itself...
+
+Exactly!
+
+>
+> So you not only need a flag to opt-in, but also a flag to opt-out?
+
+>From a genpd point of view, the default method is to trusts the driver
+to deal with the wakeup, then it treats the device (and thus the PM
+domain) as it can be powered down, even if it is configured as a
+wakeup source.
+
+Therefore, I have so far, only seen a reason to enable an opt-in
+method, to let drivers instruct genpd that it needs to change its
+default behavior.
+
+>
+>>> See series "[PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o.
+>>> explicit clock handling", which includes GPIO interrupts.
+>>>
+>>>> If that is the case, you should really avoid using the big hammer
+>>>> method of setting the GENPD_FLAG_ACTIVE_WAKEUP.
+>>>
+>>> So I think I do need the big hammer ;-)
+>>
+>> From a hypothetical point of view, if you were to use the more fine
+>> grained method I proposed [1] (or something very similar), how many
+>> drivers would you need to change, to be able to remove the current
+>> workaround?
+>
+> I think five:
+>
+>   - drivers/gpio/gpio-rcar.c
+>   - drivers/irqchip/irq-renesas-intc-irqpin.c
+>   - drivers/irqchip/irq-renesas-irqc.c
+>   - drivers/net/ethernet/renesas/ravb_main.c
+>   - drivers/net/ethernet/renesas/sh_eth.c
+
+Great, that sounds quite limited. :-)
+
+>
+> Note that while setting the flag wouldn't harm, it would not be necessary for
+> gpio-rcar and renesas-intc-irqpin when running on R-Car Gen1.  Not setting it
+> means using platform knowledge in a device driver, which is what genpd was
+> supposed to solve in the first place, and thus IMHO a layering violation.
+
+The flag (assuming you mean WAKEUP_POWERED), is to allow drivers to
+instruct the bus type and PM domain about that it think it uses
+"in-band-wakeup". If the bus type and PM domain has additional
+knowledge about wakeup configurations, it's free to override that
+behavior. So there should be no "layering violation. :-)
+
+In other words, genpd should continue to respect the
+GENPD_FLAG_ACTIVE_WAKEUP, but my point is, that I think the flag
+should be more carefully set by genpd clients.
+
+Does it make sense?
+
+Kind regards
+Uffe
