@@ -1,180 +1,184 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Rob Clark <robdclark@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org>
- <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
- <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
- <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
- <CAF6AEGsw2=nERuJ8UCBr_kTBS0TigaA9LL1Hxw3JmNiu4oycOA@mail.gmail.com>
- <CAFp+6iGyB-iVb+vyDr6Dzk1FG6baiNy_kZWjB3sm_GViDh6rnQ@mail.gmail.com>
- <20171127222238.GF18379@codeaurora.org>
- <CAF6AEGtq2_tMBd1U_t19s8Eg7+-RPQ+E_pCZCd75iFs6_bx53A@mail.gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <3a2f74e9-90cf-d843-d801-15eb614d7abe@codeaurora.org>
-Date: Tue, 28 Nov 2017 19:13:57 +0530
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V4 12/12] arm64: dts: add clocks for SC9860
+Date: Fri, 10 Nov 2017 14:36:07 +0800
+Message-ID: <20171110063607.3250-13-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <CAF6AEGtq2_tMBd1U_t19s8Eg7+-RPQ+E_pCZCd75iFs6_bx53A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Some clocks on SC9860 are in the same address area with syscon devices,
+those are what have a property of 'sprd,syscon' which would refer to
+syscon devices, others would have a reg property indicated their address
+ranges.
 
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |   2 +-
+ 2 files changed, 116 insertions(+), 1 deletion(-)
 
-On 11/28/2017 05:13 AM, Rob Clark wrote:
-> On Mon, Nov 27, 2017 at 5:22 PM, Stephen Boyd<sboyd@codeaurora.org>  wrote:
->> On 11/15, Vivek Gautam wrote:
->>> Hi,
->>>
->>>
->>> On Mon, Aug 7, 2017 at 5:59 PM, Rob Clark<robdclark@gmail.com>  wrote:
->>>> On Mon, Aug 7, 2017 at 4:27 AM, Vivek Gautam
->>>> <vivek.gautam@codeaurora.org>  wrote:
->>>>> On Thu, Jul 13, 2017 at 5:20 PM, Rob Clark<robdclark@gmail.com>  wrote:
->>>>>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R<sricharan@codeaurora.org>  wrote:
->>>>>>> Hi Vivek,
->>>>>>>
->>>>>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->>>>>>>> Hi Stephen,
->>>>>>>>
->>>>>>>>
->>>>>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->>>>>>>>> On 07/06, Vivek Gautam wrote:
->>>>>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>>>>>>>>    static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>>>>>>>>                     size_t size)
->>>>>>>>>>    {
->>>>>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>>>>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>>>>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>>>>>>>>> +    size_t ret;
->>>>>>>>>>          if (!ops)
->>>>>>>>>>            return 0;
->>>>>>>>>>    -    return ops->unmap(ops, iova, size);
->>>>>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->>>>>>>>> Can these map/unmap ops be called from an atomic context? I seem
->>>>>>>>> to recall that being a problem before.
->>>>>>>> That's something which was dropped in the following patch merged in master:
->>>>>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->>>>>>>>
->>>>>>>> Looks like we don't  need locks here anymore?
->>>>>>>   Apart from the locking, wonder why a explicit pm_runtime is needed
->>>>>>>   from unmap. Somehow looks like some path in the master using that
->>>>>>>   should have enabled the pm ?
->>>>>>>
->>>>>> Yes, there are a bunch of scenarios where unmap can happen with
->>>>>> disabled master (but not in atomic context).
->>>>> I would like to understand whether there is a situation where an unmap is
->>>>> called in atomic context without an enabled master?
->>>>>
->>>>> Let's say we have the case where all the unmap calls in atomic context happen
->>>>> only from the master's context (in which case the device link should
->>>>> take care of
->>>>> the pm state of smmu), and the only unmap that happen in non-atomic context
->>>>> is the one with master disabled. In such a case doesn it make sense to
->>>>> distinguish
->>>>> the atomic/non-atomic context and add pm_runtime_get_sync()/put_sync() only
->>>>> for the non-atomic context since that would be the one with master disabled.
->>>>>
->>>> At least drm/msm needs to hold obj->lock (a mutex) in unmap, so it
->>>> won't unmap anything in atomic ctx (but it can unmap w/ master
->>>> disabled).  I can't really comment about other non-gpu drivers.  It
->>>> seems like a reasonable constraint that either master is enabled or
->>>> not in atomic ctx.
->>>>
->>>> Currently we actually wrap unmap w/ pm_runtime_get/put_sync(), but I'd
->>>> like to drop that to avoid powering up the gpu.
->>> Since the deferring the TLB maintenance doesn't look like the best approach [1],
->>> how about if we try to power-up only the smmu from different client
->>> devices such as,
->>> GPU in the unmap path. Then we won't need to add pm_runtime_get/put() calls in
->>> arm_smmu_unmap().
->>>
->>> The client device can use something like - pm_runtime_get_supplier() since
->>> we already have the device link in place with this patch series. This should
->>> power-on the supplier (which is smmu) without turning on the consumer
->>> (such as GPU).
->>>
->>> pm_runtime_get_supplier() however is not exported at this moment.
->>> Will it be useful to export this API and use it in the drivers.
->>>
->> I'm not sure pm_runtime_get_supplier() is correct either. That
->> feels like we're relying on the GPU driver knowing the internal
->> details of how the device links are configured.
->>
-> what does pm_runtime_get_supplier() do if IOMMU driver hasn't setup
-> device-link?
-
-It will be a no-op.
-
-> If it is a no-op, then I guess the GPU driver calling
-> pm_runtime_get_supplier() seems reasonable, and less annoying than
-> having special cases in pm_resume path.. I don't feel too bad about
-> having "just in case" get/put_supplier() calls in the unmap path.
->
-> Also, presumably we still want to avoid powering up GPU even if we
-> short circuit the firmware loading and rest of "booting up the GPU"..
-> since presumably the GPU draws somewhat more power than the IOMMU..
-> having the pm_resume/suspend path know about the diff between waking
-> up / suspending the iommu and itself doesn't really feel less-bad than
-> just doing "just in case" get/put_supplier() calls.
-
-If it sounds okay, then i can send a patch that exports the
-pm_runtime_get/put_suppliers() APIs.
-
-
-Best regards
-Vivek
-
-> BR,
-> -R
->
->> Is there some way to have the GPU driver know in its runtime PM
->> resume hook that it doesn't need to be powered on because it
->> isn't actively drawing anything or processing commands? I'm
->> thinking of the code calling pm_runtime_get() as proposed around
->> the IOMMU unmap path in the GPU driver and then having the
->> runtime PM resume hook in the GPU driver return some special
->> value to indicate that it didn't really resume because it didn't
->> need to and to treat the device as runtime suspended but not
->> return an error. Then the runtime PM core can keep track of that
->> and try to power the GPU on again when another pm_runtime_get()
->> is called on the GPU device.
->>
->> This keeps the consumer API the same, always pm_runtime_get(),
->> but leaves the device driver logic of what to do when the GPU
->> doesn't need to power on to the runtime PM hook where the driver
->> has all the information.
->>
->> --
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
->> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message tomajordomo@vger.kernel.org
-> More majordomo info athttp://vger.kernel.org/majordomo-info.html
-
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..bf03da4 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,120 @@
+ 	};
+ 
+ 	soc {
++		pmu_gate: pmu-gate {
++			compatible = "sprd,sc9860-pmu-gate";
++			sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
++			clocks = <&ext_26m>;
++			#clock-cells = <1>;
++		};
++
++		pll: pll {
++			compatible = "sprd,sc9860-pll";
++			sprd,syscon = <&ana_regs>; /* 0x40400000 */
++			clocks = <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		ap_clk: clock-controller@20000000 {
++			compatible = "sprd,sc9860-ap-clk";
++			reg = <0 0x20000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_prediv: aon-prediv {
++			compatible = "sprd,sc9860-aon-prediv";
++			reg = <0 0x402d0000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		apahb_gate: apahb-gate {
++			compatible = "sprd,sc9860-apahb-gate";
++			sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_gate: aon-gate {
++			compatible = "sprd,sc9860-aon-gate";
++			sprd,syscon = <&aon_regs>; /* 0x402e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aonsecure_clk: clock-controller@40880000 {
++			compatible = "sprd,sc9860-aonsecure-clk";
++			reg = <0 0x40880000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		agcp_gate: agcp-gate {
++			compatible = "sprd,sc9860-agcp-gate";
++			sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		gpu_clk: clock-controller@60200000 {
++			compatible = "sprd,sc9860-gpu-clk";
++			reg = <0 0x60200000 0 0x400>;
++			clocks = <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_clk: clock-controller@61000000 {
++			compatible = "sprd,sc9860-vsp-clk";
++			reg = <0 0x61000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_gate: vsp-gate {
++			compatible = "sprd,sc9860-vsp-gate";
++			sprd,syscon = <&vsp_regs>; /* 0x61100000 */
++			clocks = <&vsp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_clk: clock-controller@62000000 {
++			compatible = "sprd,sc9860-cam-clk";
++			reg = <0 0x62000000 0 0x4000>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_gate: cam-gate {
++			compatible = "sprd,sc9860-cam-gate";
++			sprd,syscon = <&cam_regs>; /* 0x62100000 */
++			clocks = <&cam_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_clk: clock-controller@63000000 {
++			compatible = "sprd,sc9860-disp-clk";
++			reg = <0 0x63000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_gate: disp-gate {
++			compatible = "sprd,sc9860-disp-gate";
++			sprd,syscon = <&disp_regs>; /* 0x63100000 */
++			clocks = <&disp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		apapb_gate: apapb-gate {
++			compatible = "sprd,sc9860-apapb-gate";
++			sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
++			clocks = <&ap_clk 0>;
++			#clock-cells = <1>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 6ea3a75..eb004bb 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -110,6 +110,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
+ 	};
+ };
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
