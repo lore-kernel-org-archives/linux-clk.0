@@ -1,137 +1,79 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:32922 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbdK0PmA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 10:42:00 -0500
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        jernej.skrabec@siol.net
-Subject: [PATCH v2 18/18] ARM: dts: sun8i: a711: Enable the LCD
-Date: Mon, 27 Nov 2017 16:41:42 +0100
-Message-Id: <1a9c9ec49f2b0c55e9a72205e87474a0bc34d9f7.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4405 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752695AbdKJLiA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Nov 2017 06:38:00 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 1/4] clk: tegra: Add la clock for Tegra210
+Date: Fri, 10 Nov 2017 13:37:45 +0200
+Message-ID: <1510313868-24810-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A711 has 1024x600 LVDS panel, with a PWM-based backlight. Add it to our
-DT.
+This clock is needed by the MBIST WAR.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 61 ++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
+ include/dt-bindings/clock/tegra210-car.h |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index a021ee6da396..511fca491fe8 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -45,6 +45,7 @@
- #include "sun8i-a83t.dtsi"
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 6d7a613..55a5b7f 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -40,6 +40,7 @@
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
+ #define CLK_SOURCE_CSITE 0x1d4
+ #define CLK_SOURCE_EMC 0x19c
++#define CLK_SOURCE_LA 0x1f8
  
- / {
- 	model = "TBS A711 Tablet";
-@@ -59,6 +60,44 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
+ 	return 0;
+ }
  
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		enable-gpios = <&pio 3 29 GPIO_ACTIVE_HIGH>;
-+
-+		brightness-levels = <0 1 2 4 8 16 32 64 128 255>;
-+		default-brightness-level = <9>;
-+	};
-+
-+	panel {
-+		compatible = "tbs,a711-panel", "panel-lvds";
-+		backlight = <&backlight>;
-+		power-supply = <&reg_sw>;
-+
-+		width-mm = <153>;
-+		height-mm = <90>;
-+		data-mapping = "vesa-24";
-+
-+		panel-timing {
-+			/* 1024x600 @60Hz */
-+			clock-frequency = <52000000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hsync-len = <20>;
-+			hfront-porch = <180>;
-+			hback-porch = <160>;
-+			vfront-porch = <12>;
-+			vback-porch = <23>;
-+			vsync-len = <5>;
-+		};
-+
-+		port {
-+			panel_input: endpoint {
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+
- 	reg_vbat: reg-vbat {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vbat";
-@@ -89,6 +128,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
++static const char * const la_parents[] = {
++	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
 +};
 +
- /*
-  * An USB-2 hub is connected here, which also means we don't need to
-  * enable the OHCI controller.
-@@ -142,6 +185,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
++static struct tegra_clk_periph tegra210_la =
++	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
 +
- &r_rsb {
- 	status = "okay";
+ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					    void __iomem *pmc_base)
+ {
+@@ -2667,6 +2675,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					     periph_clk_enb_refcnt);
+ 	clks[TEGRA210_CLK_DSIB] = clk;
  
-@@ -323,6 +372,18 @@
- 	regulator-name = "vcc-lcd";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_lvds_pins>;
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
++	/* la */
++	clk = tegra_clk_register_periph("la", la_parents,
++			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
++			CLK_SOURCE_LA, 0);
+ 	/* emc mux */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index a9dc145..5df857a 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -95,7 +95,7 @@
+ #define TEGRA210_CLK_CSITE 73
+ /* 74 */
+ /* 75 */
+-/* 76 */
++#define TEGRA210_CLK_LA 76
+ /* 77 */
+ #define TEGRA210_CLK_SOC_THERM 78
+ #define TEGRA210_CLK_DTV 79
 -- 
-git-series 0.9.1
+1.9.1
+
