@@ -1,55 +1,38 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 00/18] drm/sun4i: Add A83t LVDS support
-Date: Mon, 27 Nov 2017 17:20:52 +0100
-Message-ID: <2681268.ePd4u43rOS@jernej-laptop>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 10 Nov 2017 15:11:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V4 09/12] clk: sprd: Add dt-bindings include file for
+ SC9860
+Message-ID: <20171110211154.z2j5emtcdef7xqv2@rob-hp-laptop>
+References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
+ <20171110063607.3250-10-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171110063607.3250-10-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Dne ponedeljek, 27. november 2017 ob 16:41:24 CET je Maxime Ripard napisal(a):
-> Hi,
+On Fri, Nov 10, 2017 at 02:36:04PM +0800, Chunyan Zhang wrote:
+> This file defines all SC9860 clock indexes, it should be included in the
+> device tree in which there's device using the clocks.
 > 
-> Here is an attempt at supporting the LVDS output in our DRM driver. This
-> has been tested on the A83T (with DE2), but since everything is basically
-> in the TCON, it should also be usable on the older SoCs with minor
-> modifications.
-> 
-> This was the occasion to refactor a bunch of things. The most notable ones
-> would be the documentation, and split of the UI layers in the mixer code,
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> ---
+>  include/dt-bindings/clock/sprd,sc9860-clk.h | 408 ++++++++++++++++++++++++++++
+>  1 file changed, 408 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
 
-I'm just about to send my series of patches which would add full support for 
-UI and VI planes (multi planes, HW scaling, all color formats). It would clash 
-with your patches 6, 7 and 8.
-
-Preview of my work as a single patch can be seen here:
-https://github.com/jernejsk/linux-1/commit/
-8fdef3b510b567bfe81c87b0c3e73ddcf4f5b711
-
-How would you like to handle that? Some changes are similar, but I don't see a 
-point rebasing my patches atop of yours.
-
-Since I'm almost done, I will just send them and we can discuss them then.
-
-Best regards,
-Jernej
-
-> and the switch to kfifo for our endpoint parsing code in the driver that
-> fixes an issue introduced by the switch to BFS.
-> 
-> Let me know what you think,
-> Maxime
+Acked-by: Rob Herring <robh@kernel.org>
