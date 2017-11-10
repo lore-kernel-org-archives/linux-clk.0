@@ -1,55 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 09:55:26 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL v2] clk: tegra: Changes for v4.15-rc1
-Message-ID: <20171114175526.GZ11955@codeaurora.org>
-References: <20171107152532.13918-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171107152532.13918-1-thierry.reding@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: versatile: add min/max rate boundaries for vexpress osc clock
+Date: Fri, 10 Nov 2017 16:06:57 +0000
+Message-Id: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/07, Thierry Reding wrote:
-> Hi Michael, Stephen,
-> 
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
-> 
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.15-clk-2
-> 
-> for you to fetch changes up to 22ef01a203d27fee8b7694020b7e722db7efd2a7:
-> 
->   clk: tegra: Use readl_relaxed_poll_timeout_atomic() in tegra210_clock_init() (2017-11-01 15:00:07 +0100)
-> 
-> Note that this pulls in parts from two other tags that are going to go
-> in via the ARM SoC tree. Those are needed to a couple of resolve build
-> dependencies.
-> 
-> This is the follow-up pull request that includes Jon's fix for the pclk
-> issue.
+Clock framework has a provider API(clk_hw_set_rate_range) to set the
+min/max rate of a clock. Use the same to set the boundaries for the
+vexpress osc clock.
 
-Thanks. Pulled into clk-next.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/clk/versatile/clk-vexpress-osc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.15-rc1
-> 
-> This contains cleanups and minor fixes for the Tegra clock driver.
-> 
+Hi Stephen,
 
-Please try to be a bit more descriptive here. I use these tag
-messages for the overall PR to linus and it makes it easier if I
-don't have to dig through all the commits to summarize up.
+Just a quick question, does the clk core ensure the round_rate request
+to the clock provider is within this bounds ? A quick grep suggests it's
+used after the call to round_rate in clk_calc_new_rates. I can't recall
+the details from when you introduced clk_hw_set_rate_range.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Sudeep
+
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index e7a868b83fe5..d3b5af2a02ab 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -104,6 +104,7 @@ static int vexpress_osc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(clk);
+
+ 	of_clk_add_provider(pdev->dev.of_node, of_clk_src_simple_get, clk);
++	clk_hw_set_rate_range(&osc->hw, osc->rate_min, osc->rate_max);
+
+ 	dev_dbg(&pdev->dev, "Registered clock '%s'\n", init.name);
+
+--
+2.7.4
