@@ -1,35 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:58:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk-u300: Improve a size determination in two
- functions
-Message-ID: <20171114015808.GH11955@codeaurora.org>
-References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
- <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12439 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752695AbdKJLh7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Nov 2017 06:37:59 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 0/4] MBIST WAR for Tegra210
+Date: Fri, 10 Nov 2017 13:37:44 +0200
+Message-ID: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 19:33:02 +0200
-> 
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+This patch series introduces the MBIST WAR needed when power ungating certain
+domains. More details can be found in 'clk: tegra: MBIST WAR for Tegra210'.
+I choose to implement the WAR in the Tegra210 clock driver, because most
+accesses are to CAR registers and for the VENC domain, we need to make sure
+the CSI clock source is not changed during the WAR execution.
 
-Applied to clk-next
+Peter De Schrijver (4):
+  clk: tegra: Add la clock for Tegra210
+  clk: tegra: add fence_delay for clock registers
+  clk: tegra: MBIST WAR for Tegra210
+  soc/tegra: pmc: apply MBIST WAR for Tegra210
+
+ drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h                  |   7 +
+ drivers/soc/tegra/pmc.c                  |   5 +
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ include/linux/clk/tegra.h                |   1 +
+ 5 files changed, 383 insertions(+), 3 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
