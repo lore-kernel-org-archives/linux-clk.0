@@ -1,206 +1,136 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	Naveen M <naveen.m@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v4 5/7] ASoC: Intel: eve: Enable mclk and ssp sclk early
-Date: Wed, 22 Nov 2017 17:39:50 +0530
-Message-Id: <1511352592-4006-6-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAPDyKFrstmMQ=R49EKXQ3fs=_pwhmJkaX8K0dY4u9OZVxY3Z4w@mail.gmail.com>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <CAPDyKFrJ67POYoB1PQUjWEWxgzcGuBRUMKSs5NmjoyLOFLuk4A@mail.gmail.com>
+ <CAMuHMdU84DFZmFACuXLqhFsR-Q+1d3GPG3NFPinLRW8=96BDCA@mail.gmail.com> <CAPDyKFrstmMQ=R49EKXQ3fs=_pwhmJkaX8K0dY4u9OZVxY3Z4w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Nov 2017 14:22:35 +0100
+Message-ID: <CAMuHMdVHT7Oebp-_5WRp2BZ5FU5d8aSsjPPNNKRQr3o17onquQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Naveen M <naveen.m@intel.com>
+Hi Ulf,
 
-rt5663 and rt5514 needs mclk/sclk early to synchronize its internal
-clocks.
+On Fri, Nov 10, 2017 at 1:49 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 10 November 2017 at 11:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Fri, Nov 10, 2017 at 10:57 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> On 9 November 2017 at 14:26, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>>>> If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
+>>>> used as a wakeup source, it must be kept active during system suspend.
+>>>
+>>> Geert, I think we discussed this a bit already. I wonder if the above
+>>> is a correct statement for all devices in these PM domains, that has
+>>> wakeups?
+>>
+>> It is true for all wakeup sources (e.g. Ethernet and serial).
+>>
+>>> Don't these SoCs make use of any external logic (out-of-band IRQ) to
+>>> deal with the wakeup IRQs?
+>>>
+>>> For example, how is GPIO irqs dealt with in this regards?
+>>
+>> Interrupt controllers (incl. GPIO) may, depending on SoC type:
+>>   - be located in a controllable power area (SH/R-Mobile),
+>>   - may run from a controllable module clock (SH/R-Mobile, R-Car Gen2/Gen3,
+>>     RZ/A1, RZ/G1).
+>>
+>> So there are no out-of-band IRQs in the wakeup path, unless on SoCs where
+>> the interrupt controllers are in an always-on power area, AND run from a
+>> fixed clock. I think only R-Car Gen1 falls in that category.
+>> Still, R-Car Gen1 needs active_wakeup for wakeup sources.
+>
+> Perhaps out-of-band IRQ is a too vague term. :-) Anyway, let me
+> elaborate a bit more.
+>
+> Apologize for being so persistent, but I really want to get to bottom with this.
+>
+> According to the statement above, it seems like IRQs (including GPIOs)
+> is controllable from a separate "power area" (or module clock). In
 
-Signed-off-by: Naveen M <naveen.m@intel.com>
-Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
----
- sound/soc/intel/boards/Kconfig                     |   1 +
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 100 +++++++++++++++++++++
- 2 files changed, 101 insertions(+)
+There are two ways to save power: disabling the module clock, and powering
+down the module logic.
 
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index f62f2ab..bdddab5 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -275,6 +275,7 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
-         depends on X86_INTEL_LPSS && I2C && SPI
-         select SND_SOC_INTEL_SST
-         depends on SND_SOC_INTEL_SKYLAKE
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
-         select SND_SOC_RT5663
-         select SND_SOC_RT5514
-         select SND_SOC_RT5514_SPI
-diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-index e767283..245300c 100644
---- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-@@ -30,6 +30,9 @@
- #include "../../codecs/rt5663.h"
- #include "../../codecs/hdac_hdmi.h"
- #include "../skylake/skl.h"
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- 
- #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
- #define KBL_REALTEK_DMIC_CODEC_DAI "rt5514-aif1"
-@@ -58,6 +61,8 @@ struct kbl_codec_private {
- 	struct snd_soc_jack kabylake_headset;
- 	struct list_head hdmi_pcm_list;
- 	struct snd_soc_jack kabylake_hdmi[2];
-+	struct clk *mclk;
-+	struct clk *sclk;
- };
- 
- enum {
-@@ -79,6 +84,67 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("DMIC"),
- };
- 
-+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-+			struct snd_kcontrol *k, int  event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
-+	int ret = 0;
-+
-+	/*
-+	 * MCLK/SCLK need to be ON early for a successful synchronization of
-+	 * codec internal clock. And the clocks are turned off during
-+	 * POST_PMD after the stream is stopped.
-+	 */
-+	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		if (__clk_is_enabled(priv->mclk))
-+			return 0;
-+
-+		/* Enable MCLK */
-+		ret = clk_set_rate(priv->mclk, 24000000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->mclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Enable SCLK */
-+		ret = clk_set_rate(priv->sclk, 3072000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
-+				ret);
-+			clk_disable_unprepare(priv->mclk);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->sclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-+			clk_disable_unprepare(priv->mclk);
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		if (!__clk_is_enabled(priv->mclk))
-+			return 0;
-+
-+		clk_disable_unprepare(priv->mclk);
-+		clk_disable_unprepare(priv->sclk);
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-@@ -87,11 +153,15 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_MIC("DMIC", NULL),
- 	SND_SOC_DAPM_SPK("HDMI1", NULL),
- 	SND_SOC_DAPM_SPK("HDMI2", NULL),
-+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-+			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
-+			SND_SOC_DAPM_POST_PMD),
- 
- };
- 
- static const struct snd_soc_dapm_route kabylake_map[] = {
- 	/* Headphones */
-+	{ "Headphone Jack", NULL, "Platform Clock" },
- 	{ "Headphone Jack", NULL, "HPOL" },
- 	{ "Headphone Jack", NULL, "HPOR" },
- 
-@@ -100,6 +170,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
- 	{ "Right Spk", NULL, "Right BE_OUT" },
- 
- 	/* other jacks */
-+	{ "Headset Mic", NULL, "Platform Clock" },
- 	{ "IN1P", NULL, "Headset Mic" },
- 	{ "IN1N", NULL, "Headset Mic" },
- 
-@@ -648,6 +719,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- {
- 	struct kbl_codec_private *ctx;
- 	struct skl_machine_pdata *pdata;
-+	int ret = 0;
- 
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
-@@ -663,6 +735,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- 		dmic_constraints = pdata->dmic_num == 2 ?
- 			&constraints_dmic_2ch : &constraints_dmic_channels;
- 
-+	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
-+	if (IS_ERR(ctx->mclk)) {
-+		ret = PTR_ERR(ctx->mclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_mclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
-+	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
-+	if (IS_ERR(ctx->sclk)) {
-+		ret = PTR_ERR(ctx->sclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_card(&pdev->dev, &kabylake_audio_card);
- }
- 
--- 
-2.7.4
+> many ARM SoCs that "power area" is a separate piece of external logic,
+> sometimes it may even consist a small co-processor. I guess you
+> already know that, but wanted to point it out for clarity.
+
+Sure.
+
+I think on some older SH/R-Mobile SoCs you can do something similar,
+but even there you have to keep the interrupt controller's power area powered.
+This makes sense, given those SoCs also have an SH core, which could be used
+as the small co-processor that powers down the whole ARM subsystem and
+handles wakeup through the SH subsystem's interrupt controller.
+
+> For that reason, some serial drivers re-routs its serial rx pin to a
+> GPIO IRQ to deal with wakeup, instead of keeping the serial device
+> always powered. This enables the GPIO IRQ to be managed by the
+> external logic, thus allowing the serial device and the PM domain it
+> is attached to, to be powered off. Especially during system suspend,
+> that may avoid wasting lots of power.
+
+Doesn't re-routing a pin to a GPIO require using pinctrl?
+
+Here the serial device is the wakeup source, but it doesn't handle wakeup
+itself...
+
+> Another example, where I think a more fine grained method is preferred
+> over using GENPD_FLAG_ACTIVE_WAKEUP, is when an SD card controller has
+> an card detect pin hooked up to a GPIO. Thus the device_may_wakeup()
+> would return true for the SD card controller's struct device, but that
+> does not mean that the device needs to stay powered during system
+> suspend.
+
+This one is more tricky, as I think we're already using a GPIO for CD on
+many boards.
+Then the SD device is the wakeup source, but it doesn't handle wakeup
+itself...
+
+So you not only need a flag to opt-in, but also a flag to opt-out?
+
+>> See series "[PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o.
+>> explicit clock handling", which includes GPIO interrupts.
+>>
+>>> If that is the case, you should really avoid using the big hammer
+>>> method of setting the GENPD_FLAG_ACTIVE_WAKEUP.
+>>
+>> So I think I do need the big hammer ;-)
+>
+> From a hypothetical point of view, if you were to use the more fine
+> grained method I proposed [1] (or something very similar), how many
+> drivers would you need to change, to be able to remove the current
+> workaround?
+
+I think five:
+
+  - drivers/gpio/gpio-rcar.c
+  - drivers/irqchip/irq-renesas-intc-irqpin.c
+  - drivers/irqchip/irq-renesas-irqc.c
+  - drivers/net/ethernet/renesas/ravb_main.c
+  - drivers/net/ethernet/renesas/sh_eth.c
+
+Note that while setting the flag wouldn't harm, it would not be necessary for
+gpio-rcar and renesas-intc-irqpin when running on R-Car Gen1.  Not setting it
+means using platform knowledge in a device driver, which is what genpd was
+supposed to solve in the first place, and thus IMHO a layering violation.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
