@@ -1,36 +1,42 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1511428388.7685.11.camel@pengutronix.de>
-Subject: Re: [PATCH 6/8] drm/mediatek: Add mfd support for mt8173
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
- ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
- lee.jones@linaro.org
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	Matthias Brugger
-	 <mbrugger@suse.com>
-Date: Thu, 23 Nov 2017 10:13:08 +0100
-In-Reply-To: <20171114214114.15793-7-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-7-mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12442 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752938AbdKJLiA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Nov 2017 06:38:00 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 2/4] clk: tegra: add fence_delay for clock registers
+Date: Fri, 10 Nov 2017 13:37:46 +0200
+Message-ID: <1510313868-24810-3-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> Use the MFD device for SoC mt8173. Probing via devicetree
-> is no longer needed for any SoC, so delete it.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Apart from the mmsys_private issue noted in previous patches,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 872f118..3b8947e 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ 
++/* Combined read fence with delay */
++#define fence_udelay(delay, reg)	\
++	do {				\
++		readl_relaxed(reg);	\
++		udelay(delay);		\
++	} while(0)
++
+ #endif /* TEGRA_CLK_H */
+-- 
+1.9.1
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
