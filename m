@@ -1,97 +1,49 @@
-Return-Path: <tirupath@codeaurora.org>
-From: Tirupathi Reddy <tirupath@codeaurora.org>
-To: sboyd@codeaurora.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jhovold@gmail.com>
+Return-Path: <jhovold@gmail.com>
+Sender: Johan Hovold <jhovold@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <t-kristo@ti.com>,
 	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	Tirupathi Reddy <tirupath@codeaurora.org>
-Subject: [PATCH V7 2/2] dt-bindings: Add qcom spmi_pmic clock divider bindings
-Date: Tue, 21 Nov 2017 14:41:05 +0530
-Message-Id: <1511255465-3984-3-git-send-email-tirupath@codeaurora.org>
-In-Reply-To: <1511255465-3984-1-git-send-email-tirupath@codeaurora.org>
-References: <1511255465-3984-1-git-send-email-tirupath@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 1/2] clk: qcom: common: fix legacy board-clock registration
+Date: Sat, 11 Nov 2017 17:29:28 +0100
+Message-Id: <20171111162929.11722-1-johan@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds device tree bindings for Qualcomm SPMI PMIC
-clock divider module.
+Make sure to search only the child nodes of "/clocks", rather than the
+whole device-tree depth-first starting at "/clocks" when determining
+whether to register a fixed clock in the legacy board-clock registration
+helper.
 
-Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- .../bindings/clock/qcom,spmi-pmic-div.txt          | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,spmi-pmic-div.txt
+ drivers/clk/qcom/common.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/qcom,spmi-pmic-div.txt
-new file mode 100644
-index 0000000..2cf2aba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,spmi-pmic-div.txt
-@@ -0,0 +1,59 @@
-+Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
-+
-+clkdiv configures the clock frequency of a set of outputs on the PMIC.
-+These clocks are typically wired through alternate functions on
-+gpio pins.
-+
-+=======================
-+Properties
-+=======================
-+
-+- compatible
-+	Usage:      required
-+	Value type: <string>
-+	Definition: must be "qcom,spmi-clkdiv".
-+
-+- reg
-+	Usage:      required
-+	Value type: <prop-encoded-array>
-+	Definition: base address of CLKDIV peripherals.
-+
-+- qcom,num-clkdivs
-+	Usage:      required
-+	Value type: <u32>
-+	Definition: number of CLKDIV peripherals.
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the xo clock.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "xo".
-+
-+- clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: shall contain 1.
-+
-+=======
-+Example
-+=======
-+
-+pm8998_clk_divs: clock-controller@5b00 {
-+	compatible = "qcom,spmi-clkdiv";
-+	reg = <0x5b00>;
-+	#clock-cells = <1>;
-+	qcom,num-clkdivs = <3>;
-+	clocks = <&xo_board>;
-+	clock-names = "xo";
-+
-+	assigned-clocks = <&pm8998_clk_divs 1>,
-+			  <&pm8998_clk_divs 2>,
-+			  <&pm8998_clk_divs 3>;
-+	assigned-clock-rates = <9600000>,
-+			       <9600000>,
-+			       <9600000>;
-+};
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index b35564c0493f..b8064a336d46 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -133,8 +133,10 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	int ret;
+ 
+ 	clocks_node = of_find_node_by_path("/clocks");
+-	if (clocks_node)
+-		node = of_find_node_by_name(clocks_node, path);
++	if (clocks_node) {
++		node = of_get_child_by_name(clocks_node, path);
++		of_node_put(clocks_node);
++	}
+ 
+ 	if (!node) {
+ 		fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.15.0
