@@ -1,58 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from [103.59.133.81] ([103.59.133.81]:36346 "EHLO mani-Aspire-E5-573"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753430AbdKFOGb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Nov 2017 09:06:31 -0500
-Date: Fri, 3 Nov 2017 00:11:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, afaerber@suse.de,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, davem@davemloft.net,
-        mchehab@kernel.org, rdunlap@infradead.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        liuwei@actions-semi.com
-Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
-Message-ID: <20171102184123.GA15014@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
- <20171102000246.rcermsfe7rycrmk3@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171102000246.rcermsfe7rycrmk3@rob-hp-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jhovold@gmail.com>
+Return-Path: <jhovold@gmail.com>
+Sender: Johan Hovold <jhovold@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>,
+	stable <stable@vger.kernel.org>,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: [PATCH 2/2] clk: ti: dra7-atl-clock: fix child-node lookups
+Date: Sat, 11 Nov 2017 17:29:29 +0100
+Message-Id: <20171111162929.11722-2-johan@kernel.org>
+In-Reply-To: <20171111162929.11722-1-johan@kernel.org>
+References: <20171111162929.11722-1-johan@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 01, 2017 at 07:02:46PM -0500, Rob Herring wrote:
-> On Wed, Nov 01, 2017 at 01:24:22AM +0530, Manivannan Sadhasivam wrote:
-> > This patch adds clock driver for Actions Semi OWL
-> > series S900 SoC.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  MAINTAINERS                                    |   5 +
-> >  drivers/clk/Makefile                           |   1 +
-> >  drivers/clk/owl/Makefile                       |   2 +
-> >  drivers/clk/owl/clk-factor.c                   | 270 ++++++++++++
-> >  drivers/clk/owl/clk-pll.c                      | 346 +++++++++++++++
-> >  drivers/clk/owl/clk-s900.c                     | 587 +++++++++++++++++++++++++
-> >  drivers/clk/owl/clk.c                          | 318 ++++++++++++++
-> >  drivers/clk/owl/clk.h                          | 301 +++++++++++++
-> 
-> >  include/dt-bindings/clock/actions,s900-clock.h | 141 ++++++
-> 
-> This belongs in the DT binding patch.
->
-Ack. Will add it in next revision.
+Fix child node-lookup during probe, which ended up searching the whole
+device tree depth-first starting at parent rather than just matching on
+its children.
 
-Thanks,
-Mani 
-> >  9 files changed, 1971 insertions(+)
-> >  create mode 100644 drivers/clk/owl/Makefile
-> >  create mode 100644 drivers/clk/owl/clk-factor.c
-> >  create mode 100644 drivers/clk/owl/clk-pll.c
-> >  create mode 100644 drivers/clk/owl/clk-s900.c
-> >  create mode 100644 drivers/clk/owl/clk.c
-> >  create mode 100644 drivers/clk/owl/clk.h
-> >  create mode 100644 include/dt-bindings/clock/actions,s900-clock.h
+Note that the original premature free of the parent node has already
+been fixed separately, but that fix was apparently never backported to
+stable.
+
+Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
+Fixes: 660e15519399 ("clk: ti: dra7-atl-clock: Fix of_node reference counting")
+Cc: stable <stable@vger.kernel.org>     # 3.16: 660e15519399
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/clk/ti/clk-dra7-atl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index 13eb04f72389..148815470431 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -274,8 +274,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+ 
+ 		/* Get configuration for the ATL instances */
+ 		snprintf(prop, sizeof(prop), "atl%u", i);
+-		of_node_get(node);
+-		cfg_node = of_find_node_by_name(node, prop);
++		cfg_node = of_get_child_by_name(node, prop);
+ 		if (cfg_node) {
+ 			ret = of_property_read_u32(cfg_node, "bws",
+ 						   &cdesc->bws);
+-- 
+2.15.0
