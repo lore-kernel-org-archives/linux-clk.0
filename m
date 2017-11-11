@@ -1,52 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35113 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752987AbdKXG4O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:56:14 -0500
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
-        slemieux.tyco@gmail.com, vireshk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/6] clk: h8300: pr_err() strings should end with newlines
-Date: Fri, 24 Nov 2017 12:25:33 +0530
-Message-Id: <5fe05a034e646f03e6129c7782e38e37856f80a1.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 10 Nov 2017 18:44:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Guodong Xu <guodong.xu@linaro.org>
+Cc: mturquette@baylibre.com, chenjun14@huawei.com, zhongkaihua@huawei.com,
+	zhangfei.gao@linaro.org, leo.yan@linaro.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: hi3660: fix incorrect uart3 clock freqency
+Message-ID: <20171111024451.GD22441@codeaurora.org>
+References: <20170807145156.7880-1-guodong.xu@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170807145156.7880-1-guodong.xu@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-pr_err() messages should end with a new-line to avoid other messages
-being concatenated.
+On 08/07, Guodong Xu wrote:
+> From: Zhong Kaihua <zhongkaihua@huawei.com>
+> 
+> UART3 clock rate is doubled in previous commit.
+> 
+> This error is not detected until recently a mezzanine board which makes
+> real use of uart3 port (through LS connector of 96boards) was setup
+> and tested on hi3660-hikey960 board.
+> 
+> This patch changes clock source rate of clk_factor_uart3 to 100000000.
+> 
+> Signed-off-by: Zhong Kaihua <zhongkaihua@huawei.com>
+> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+> ---
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/h8300/clk-div.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/h8300/clk-div.c b/drivers/clk/h8300/clk-div.c
-index 4ae6244..d413ade 100644
---- a/drivers/clk/h8300/clk-div.c
-+++ b/drivers/clk/h8300/clk-div.c
-@@ -24,13 +24,13 @@ static void __init h8300_div_clk_setup(struct device_node *node)
- 
- 	num_parents = of_clk_get_parent_count(node);
- 	if (!num_parents) {
--		pr_err("%s: no parent found", clk_name);
-+		pr_err("%s: no parent found\n", clk_name);
- 		return;
- 	}
- 
- 	divcr = of_iomap(node, 0);
- 	if (divcr == NULL) {
--		pr_err("%s: failed to map divide register", clk_name);
-+		pr_err("%s: failed to map divide register\n", clk_name);
- 		goto error;
- 	}
- 	offset = (unsigned long)divcr & 3;
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
