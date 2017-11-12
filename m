@@ -1,31 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:21:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
-Subject: Re: [PATCH 2/2] clk: clk-gpio: Request GPIO descriptor as LOW
-Message-ID: <20171102082117.GQ11011@codeaurora.org>
-References: <20170924161919.24832-1-linus.walleij@linaro.org>
- <20170924161919.24832-2-linus.walleij@linaro.org>
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170924161919.24832-2-linus.walleij@linaro.org>
+In-Reply-To: <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
+References: <20171107140942.29243-1-yixun.lan@amlogic.com> <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 12 Nov 2017 02:35:26 +0100
+Message-ID: <CAFBinCBJck9p8dDr-tmzFVyCk0Udfh4pB0z8c_HmJ4T+g20tQw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] fix the clock setting for SAR ADC
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+	Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org,
+	linux-iio@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Linus Walleij wrote:
-> Requesting the GPIOD_OUT_LOW low will make sure the GPIO is
-> deasserted when requested. The gpiolib core will make sure that
-> if the GPIO line is active low, it will be logically driven high
-> when deasserted, see drivers/gpiolib.c gpiod_configure_flags().
-> 
-> Cc: Sergej Sawazki <ce3a@gmx.de>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+Hi Yixun,
 
-Applied to clk-next
+On Tue, Nov 7, 2017 at 10:36 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> Hi Yixun,
+>
+> On Tue, Nov 7, 2017 at 3:09 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+>> patch [1/4]:
+>>   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
+>> the published datasheets[4] also has wrong description about this.
+>>   This patch should be explicitly merged *before* other patches.
+>>
+>> patch [2-4/4]:
+>>   Drop the "sana" clock from SAR ADC module,
+> I agree with Jerome that patch 2/4 should be applied last.
+> when I wrote the driver I couldn't get it to work on my GXBB board
+> (which unfortunately has died since then) because the clocks were
+> disabled (they weren't enabled by the bootloader). people who are
+> using an old .dtb would get the same problem again until the clock
+> driver is merged
+>
+>>   From the hardware perspective, the SAR ADC module doesn't
+>> require "sana" clock to wrok. This should apply to all SoC,
+>> including meson6,8, GXBB, GXL..
+> thank you for clarifying this!
+>
+>> Note: the whole patchset series has been tested at GXL-P212 board,
+>> we haven't got any meson6,8 board to test, so I would appreciate
+>> if someone (Martin?) could help to confirm it works there.
+> I can test this on a Meson8b and a Meson8m2 board on the weekend -
+> I'll let you know about the results
+the ADC still works fine with this series applied on my Meson8m2 board
+as well as my Meson8b EC-100
+I added my "Reviewed-by" and "Acked-by" to the corresponding patches
+(with a change request on the .dts patch)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thank you for fixing this!
+
+
+Regards
+Martin
