@@ -1,43 +1,62 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v7 0/6] Mediatek MT2712 clock and scpsys support 
-Date: Tue, 28 Nov 2017 15:28:15 +0800
-Message-ID: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 2/2] clk: ti: dra7-atl-clock: fix child-node lookups
+To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, stable
+	<stable@vger.kernel.org>
+References: <20171111162929.11722-1-johan@kernel.org>
+ <20171111162929.11722-2-johan@kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <a35e8131-a726-0897-5f85-84ddd10d0b7e@ti.com>
+Date: Mon, 13 Nov 2017 22:15:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171111162929.11722-2-johan@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on v4.15-rc1 and composed of
-scpsys control (PATCH 1-4) and device tree (PATCH 5-6)
+On 11/11/2017 06:29 PM, Johan Hovold wrote:
+> Fix child node-lookup during probe, which ended up searching the whole
+> device tree depth-first starting at parent rather than just matching on
+> its children.
+> 
+> Note that the original premature free of the parent node has already
+> been fixed separately, but that fix was apparently never backported to
+> stable.
 
-changes since v6:
-- Rebase to v4.15-rc1.
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-changes since v5:
-- Refine bus protection with proper variable name
-  and better implementation for the if statement.
+> 
+> Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
+> Fixes: 660e15519399 ("clk: ti: dra7-atl-clock: Fix of_node reference counting")
+> Cc: stable <stable@vger.kernel.org>     # 3.16: 660e15519399
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/clk/ti/clk-dra7-atl.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> index 13eb04f72389..148815470431 100644
+> --- a/drivers/clk/ti/clk-dra7-atl.c
+> +++ b/drivers/clk/ti/clk-dra7-atl.c
+> @@ -274,8 +274,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+>  
+>  		/* Get configuration for the ATL instances */
+>  		snprintf(prop, sizeof(prop), "atl%u", i);
+> -		of_node_get(node);
+> -		cfg_node = of_find_node_by_name(node, prop);
+> +		cfg_node = of_get_child_by_name(node, prop);
+>  		if (cfg_node) {
+>  			ret = of_property_read_u32(cfg_node, "bws",
+>  						   &cdesc->bws);
+> 
 
-changes since v4:
-- Refine scpsys and infracfg for bus protection by passing 
-  a boolean flag to determine the register update method
 
-changes since v3:
-- Rebase to v4.14-rc1.
+-- 
+Péter
 
-changes since v2:
-- ensure the clocks used by clocksource driver are registered
-  before clocksource init() by using CLK_OF_DECLARE()
-- correct the frequency of clk32k/clkrtc_ext/clkrtc_int
-
-changes since v1:
-- Rebase to v4.13-next-soc.
-- Refine scpsys and infracfg for bus protection.
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
