@@ -1,77 +1,49 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CAOFm3uGMHrNyov=BkrXbJQeHnMgZCHK7ogTru8Bj9An7aTz9DQ@mail.gmail.com>
-References: <20171130084108.23083-1-benjamin.gaignard@st.com>
- <CAOFm3uG_7kChnvxW0SbHSMP5q_KSZeaNxjkKb774ZmcwukJ_Mw@mail.gmail.com>
- <CA+M3ks41cBBqDrEGFZm5yGO0j8funfTAaTf_u2cJoD1p3XpQUQ@mail.gmail.com> <CAOFm3uGMHrNyov=BkrXbJQeHnMgZCHK7ogTru8Bj9An7aTz9DQ@mail.gmail.com>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Thu, 30 Nov 2017 14:05:54 +0100
-Message-ID: <CA+M3ks4pva9Kg+gj44KeUrDcKf9tn5O-0VkTv5uUebJ=812E3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: stm32-h7: fix copyright
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	Benjamin Gaignard <benjamin.gaignard@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:47818 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753121AbdKMP2C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Nov 2017 10:28:02 -0500
+From: Brian Starkey <brian.starkey@arm.com>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, sudeep.holla@arm.com
+Subject: [PATCH] clk: versatile: Remove WARNs in ->round_rate()
+Date: Mon, 13 Nov 2017 15:27:51 +0000
+Message-Id: <1510586871-27478-1-git-send-email-brian.starkey@arm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-11-30 13:56 GMT+01:00 Philippe Ombredanne <pombredanne@nexb.com>:
-> On Thu, Nov 30, 2017 at 1:47 PM, Benjamin Gaignard
-> <benjamin.gaignard@linaro.org> wrote:
->> 2017-11-30 12:28 GMT+01:00 Philippe Ombredanne <pombredanne@nexb.com>:
->>> On Thu, Nov 30, 2017 at 9:41 AM, Benjamin Gaignard
->>> <benjamin.gaignard@linaro.org> wrote:
->>>> Uniformize STMicroelectronics copyrights header
->>>> Add SPDX identifier
->>>>
->>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
->>>> CC: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>> ---
->>>>  drivers/clk/clk-stm32h7.c | 19 +++----------------
->>>>  1 file changed, 3 insertions(+), 16 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
->>>> index 61c3e40507d3..db2b162c0d4c 100644
->>>> --- a/drivers/clk/clk-stm32h7.c
->>>> +++ b/drivers/clk/clk-stm32h7.c
->>>> @@ -1,20 +1,7 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>>  /*
->>>> - * Copyright (C) Gabriel Fernandez 2017
->>>> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>> - *
->>>> - * License terms: GPL V2.0.
->>>> - *
->>>> - * This program is free software; you can redistribute it and/or modify it
->>>> - * under the terms and conditions of the GNU General Public License,
->>>> - * version 2, as published by the Free Software Foundation.
->>>> - *
->>>> - * This program is distributed in the hope it will be useful, but WITHOUT
->>>> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->>>> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->>>> - * more details.
->>>> - *
->>>> - * You should have received a copy of the GNU General Public License along with
->>>> - * this program.  If not, see <http://www.gnu.org/licenses/>.
->>>> + * Copyright (C) STMicroelectronics 2017
->>>> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
->>>>   */
->>>>
->>>>  #include <linux/clk.h>
->>>
->>> Awesome! Don't you like it when you remove this type of things?
->>
->> Yes but is also means that many other STM files need to be updated...
->
-> Sure thing. I have a FLOSS tool to help with this FWIW. I would be
-> glad to help as needed.
+clk_round_rate() is intended to be used to round a given clock rate to
+the closest one achievable by the actual clock. This implies that the
+input to clk_round_rate() is expected to be unachievable - and such
+cases shouldn't be treated as exceptional.
 
-Do you have a link to this tool ?
+To reflect this, remove the WARN_ONs which trigger when an unachievable
+clock rate is passed to vexpress_osc_round_rate().
 
->
-> --
-> Cordially
-> Philippe Ombredanne
+Reported-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/clk/versatile/clk-vexpress-osc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index e7a868b83fe5..59703d569d49 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -44,10 +44,10 @@ static long vexpress_osc_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct vexpress_osc *osc = to_vexpress_osc(hw);
+ 
+-	if (WARN_ON(osc->rate_min && rate < osc->rate_min))
++	if (osc->rate_min && rate < osc->rate_min)
+ 		rate = osc->rate_min;
+ 
+-	if (WARN_ON(osc->rate_max && rate > osc->rate_max))
++	if (osc->rate_max && rate > osc->rate_max)
+ 		rate = osc->rate_max;
+ 
+ 	return rate;
+-- 
+1.9.1
+
