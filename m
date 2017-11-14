@@ -1,69 +1,87 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1511790489.30519.11.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/2] add clk controller driver for Meson-AXG SoC
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, linux-amlogic@lists.infradead.org,
- devicetree@vger.kernel.org,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Mon, 27 Nov 2017 14:48:09 +0100
-In-Reply-To: <20171127094844.16742-1-yixun.lan@amlogic.com>
-References: <20171127094844.16742-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 10:12:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, jassisinghbrar@gmail.com,
+	robh+dt@kernel.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 3/7] mailbox: qcom: Move the apcs struct into a
+ separate header
+Message-ID: <20171114181212.GC11955@codeaurora.org>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
+ <20170921164940.20343-4-georgi.djakov@linaro.org>
+ <20171026042811.GL1575@tuxbook>
+ <5bad4c4b-362b-ba9f-3072-1cced7a004dd@linaro.org>
+ <20171114021255.GY11955@codeaurora.org>
+ <20171114044702.GF28761@minitux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171114044702.GF28761@minitux>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-11-27 at 17:48 +0800, Yixun Lan wrote:
-> Add driver for the clk controller which found in Meson AXG SoC
+On 11/13, Bjorn Andersson wrote:
+> On Mon 13 Nov 18:12 PST 2017, Stephen Boyd wrote:
 > 
->   Note, we deliberately create a seperate source file for the Meson AXG
-> series, instead of sharing code with previous GXBB/GXL - the file axg.c
-> It would help us maintaining the code more easily.
+> > On 10/27, Georgi Djakov wrote:
+> > > Hi Bjorn,
+> > > 
+> > > Thanks for reviewing!
+> > > 
+> > > On 10/26/2017 07:28 AM, Bjorn Andersson wrote:
+> > > > On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
+> > > > 
+> > > >> Move the structure shared by the APCS IPC device and its subdevices
+> > > >> into a separate header file.
+> > > >>
+> > > > 
+> > > > As you're creating the apcs regmap with devm_regmap_init_mmio() you can
+> > > > just call dev_get_regmap(dev->parent) in your child to get the handle.
+> > > 
+> > > Ok, thanks!
+> > > 
+> > > > 
+> > > > But I would prefer that you just add the clock code to the existing
+> > > > driver.
+> > > 
+> > > This will require an ack from Stephen, and i got the impression that he
+> > > prefers a separate clk driver [1].
+> > > 
+> > > Stephen, are you ok with registering the clocks from the apcs mailbox
+> > > driver?
+> > > 
+> > > [1] https://lkml.org/lkml/2017/6/26/750
+> > 
+> > The parent regmap "trick" was the plan. Is something wrong with
+> > that?
+> > 
+> 
+> Not at all, but then this patch (moving apcs context to a shared header
+> file) shouldn't be needed, or am I missing something?
 
-But this will be the last meson SoC added this way. We need factor the code the
-between meson8, gx and axg series since there is a lot of duplication there.
+Agreed.
 
 > 
-> Changes since v1 [1]:
->  - rework register definion, use '(offset << 2)' to better match
+> > Not having random clk drivers scattered throughout the tree is
+> > sort of nice because it makes for an easier time finding things
+> > that are similar. Maybe that's an abuse of the driver model
+> > though? Just to get things into some same directory. I'm fine
+> > either way.
+> > 
+> 
+> Keeping the clock driver in the clock subsystem does make sense. I see
+> now that there is a include of a local header file as well, so that
+> would just be messy to keep split.
+> 
+> I'm fine with the extra driver instance, it's the DT that I don't think
+> should describe the fact that we want to keep the clock-part in the
+> clock subsystem.
+> 
+> Do you see any problems spawning the clock driver programmatically and
+> then calling of_clk_add_hw_provider() on the parent's of_node?
 
-As previously discussed, please drop these calculations and just write what the
-offset actually are. Putting one comment at the top, explaining the translation,
-would be nice though. 
+Nope. We shouldn't need to modify DT to make this work.
 
->    the description from data sheet
->  - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
->  - rebase code to v4.15-rc1
-> 
-> [1] 
->   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
->   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
->   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
-> 
-> 
-> Qiufang Dai (2):
-
-First patch of the series should be adding the compatible documentation, which
-is missing here (unless it has gone through another channel and I missed it)
-
->   clk: meson-axg: add clock controller drivers
->   arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-> 
->  arch/arm64/Kconfig.platforms               |   1 +
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi |  15 +
->  drivers/clk/meson/Kconfig                  |   8 +
->  drivers/clk/meson/Makefile                 |   1 +
->  drivers/clk/meson/axg.c                    | 948
-> +++++++++++++++++++++++++++++
->  drivers/clk/meson/axg.h                    | 126 ++++
->  include/dt-bindings/clock/axg-clkc.h       |  72 +++
->  7 files changed, 1171 insertions(+)
->  create mode 100644 drivers/clk/meson/axg.c
->  create mode 100644 drivers/clk/meson/axg.h
->  create mode 100644 include/dt-bindings/clock/axg-clkc.h
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
