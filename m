@@ -1,104 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V3 01/11] drivers: move clock common macros out from vendor directories
-Date: Thu, 2 Nov 2017 14:56:16 +0800
-Message-ID: <20171102065626.21835-2-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH 8/8] MAINTAINERS: update Mediatek Soc entry
+Date: Tue, 14 Nov 2017 22:41:14 +0100
+Message-Id: <20171114214114.15793-9-mbrugger@suse.com>
+In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These macros are used by more than one SoC vendor platforms, avoid to
-have many copies of these code, this patch moves them to the common
-clock directory which every clock drivers can access to.
+Mediatek SoCs include several soc specific drivers as well
+as a mfd device. Add these to the maintainers file.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 drivers/clk/clk_common.h
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
-new file mode 100644
-index 0000000..21e93d2
---- /dev/null
-+++ b/drivers/clk/clk_common.h
-@@ -0,0 +1,60 @@
-+/*
-+ * drivers/clk/clk_common.h
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _CLK_COMMON_H_
-+#define _CLK_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= (const char *[]) { _parent },	\
-+		.num_parents	= 1,				\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
-+	(&(struct clk_init_data) {                      \
-+		.flags          = _flags,               \
-+		.name           = _name,                \
-+		.parent_names   = NULL,                 \
-+		.num_parents    = 0,                    \
-+		.ops            = _ops,                 \
-+	})
-+
-+#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
-+			_div, _mult, _flags)				\
-+	struct clk_fixed_factor _struct = {				\
-+		.div		= _div,					\
-+		.mult		= _mult,				\
-+		.hw.init	= CLK_HW_INIT(_name,			\
-+					      _parent,			\
-+					      &clk_fixed_factor_ops,	\
-+					      _flags),			\
-+	}
-+
-+#define CLK_FIXED_RATE(_struct, _name, _flags,				\
-+		       _fixed_rate, _fixed_accuracy)			\
-+	struct clk_fixed_rate _struct = {				\
-+		.fixed_rate	= _fixed_rate,				\
-+		.fixed_accuracy	= _fixed_accuracy,			\
-+		.hw.init	= CLK_HW_INIT_NO_PARENT(_name,		\
-+					  &clk_fixed_rate_ops,		\
-+							_flags),	\
-+	}
-+
-+#endif /* _CLK_COMMON_H_ */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2811a211632c..586797908865 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1606,6 +1606,8 @@ F:	arch/arm/boot/dts/mt7*
+ F:	arch/arm/boot/dts/mt8*
+ F:	arch/arm/mach-mediatek/
+ F:	arch/arm64/boot/dts/mediatek/
++F:	drivers/soc/mediatek/
++F:	drivers/mfd/mtk-mmsys.c
+ N:	mtk
+ K:	mediatek
+ 
 -- 
-2.7.4
+2.14.2
