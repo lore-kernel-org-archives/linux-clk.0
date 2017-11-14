@@ -1,32 +1,34 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:03:25 -0700
+Date: Mon, 13 Nov 2017 17:58:44 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Weiyi Lu <weiyi.lu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v6 1/9] dt-bindings: ARM: Mediatek: Document bindings for
- MT2712
-Message-ID: <20171102080325.GA11011@codeaurora.org>
-References: <1508731840-4231-1-git-send-email-weiyi.lu@mediatek.com>
- <1508731840-4231-2-git-send-email-weiyi.lu@mediatek.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk-xgene: Adjust six checks for null pointers
+Message-ID: <20171114015844.GJ11955@codeaurora.org>
+References: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
+ <c7cfc7bc-8457-1e6b-421d-6c4f0b5149a6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1508731840-4231-2-git-send-email-weiyi.lu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c7cfc7bc-8457-1e6b-421d-6c4f0b5149a6@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23, Weiyi Lu wrote:
-> This patch adds the binding documentation for apmixedsys, bdpsys,
-> imgsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, pericfg, topckgen,
-> vdecsys and vencsys for Mediatek MT2712.
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 21:27:52 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> The script “checkpatch.pl” pointed information out like the following.
+> 
+> Comparison to NULL could be written …
+> 
+> Thus fix the affected source code places.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
