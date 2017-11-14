@@ -1,31 +1,80 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:38:24 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Tirupathi Reddy <tirupath@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: Add
- devm_of_clk_add_hw_provider()/del_provider() APIs
-Message-ID: <20171102063824.GA30645@codeaurora.org>
-References: <20170901231641.19141-1-sboyd@codeaurora.org>
- <20170901231641.19141-2-sboyd@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 13 Nov 2017 20:47:02 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, jassisinghbrar@gmail.com,
+	robh+dt@kernel.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 3/7] mailbox: qcom: Move the apcs struct into a
+ separate header
+Message-ID: <20171114044702.GF28761@minitux>
+References: <20170921164940.20343-1-georgi.djakov@linaro.org>
+ <20170921164940.20343-4-georgi.djakov@linaro.org>
+ <20171026042811.GL1575@tuxbook>
+ <5bad4c4b-362b-ba9f-3072-1cced7a004dd@linaro.org>
+ <20171114021255.GY11955@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170901231641.19141-2-sboyd@codeaurora.org>
+In-Reply-To: <20171114021255.GY11955@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Stephen Boyd wrote:
-> Sometimes we only have one of_clk_del_provider() call in driver
-> error and remove paths, because we're missing a
-> devm_of_clk_add_hw_provider() API. Introduce the API so we can
-> convert drivers to use this and potentially reduce the amount of
-> code needed to remove providers in drivers.
+On Mon 13 Nov 18:12 PST 2017, Stephen Boyd wrote:
+
+> On 10/27, Georgi Djakov wrote:
+> > Hi Bjorn,
+> > 
+> > Thanks for reviewing!
+> > 
+> > On 10/26/2017 07:28 AM, Bjorn Andersson wrote:
+> > > On Thu 21 Sep 09:49 PDT 2017, Georgi Djakov wrote:
+> > > 
+> > >> Move the structure shared by the APCS IPC device and its subdevices
+> > >> into a separate header file.
+> > >>
+> > > 
+> > > As you're creating the apcs regmap with devm_regmap_init_mmio() you can
+> > > just call dev_get_regmap(dev->parent) in your child to get the handle.
+> > 
+> > Ok, thanks!
+> > 
+> > > 
+> > > But I would prefer that you just add the clock code to the existing
+> > > driver.
+> > 
+> > This will require an ack from Stephen, and i got the impression that he
+> > prefers a separate clk driver [1].
+> > 
+> > Stephen, are you ok with registering the clocks from the apcs mailbox
+> > driver?
+> > 
+> > [1] https://lkml.org/lkml/2017/6/26/750
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> The parent regmap "trick" was the plan. Is something wrong with
+> that?
+> 
 
-Applied to clk-next
+Not at all, but then this patch (moving apcs context to a shared header
+file) shouldn't be needed, or am I missing something?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Not having random clk drivers scattered throughout the tree is
+> sort of nice because it makes for an easier time finding things
+> that are similar. Maybe that's an abuse of the driver model
+> though? Just to get things into some same directory. I'm fine
+> either way.
+> 
+
+Keeping the clock driver in the clock subsystem does make sense. I see
+now that there is a include of a local header file as well, so that
+would just be messy to keep split.
+
+I'm fine with the extra driver instance, it's the DT that I don't think
+should describe the fact that we want to keep the clock-part in the
+clock subsystem.
+
+Do you see any problems spawning the clock driver programmatically and
+then calling of_clk_add_hw_provider() on the parent's of_node?
+
+Regards,
+Bjorn
