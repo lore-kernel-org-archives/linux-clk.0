@@ -1,112 +1,31 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 6 Nov 2017 11:15:19 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V3 02/11] dt-bindings: Add Spreadtrum clock binding
- documentation
-Message-ID: <20171106171519.xomnca72adqtzm2n@rob-hp-laptop>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
- <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:58:06 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk-u300: Add some spaces for better code readability
+Message-ID: <20171114015806.GG11955@codeaurora.org>
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+ <fd1866a5-f7a5-cfb4-0a87-b473e094c72e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <fd1866a5-f7a5-cfb4-0a87-b473e094c72e@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 02, 2017 at 02:56:17PM +0800, Chunyan Zhang wrote:
-> Introduce a new binding with its documentation for Spreadtrum clock
-> sub-framework.
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 19:46:51 +0200
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> Use space characters at some source code places according to
+> the Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  Documentation/devicetree/bindings/clock/sprd.txt | 55 ++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
-> new file mode 100644
-> index 0000000..5c09529
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd.txt
-> @@ -0,0 +1,55 @@
-> +Spreadtrum Clock Binding
-> +------------------------
-> +
-> +Required properties:
-> +- compatible: should contain the following compatible strings:
-> +	- "sprd,sc9860-pmu-gate"
-> +	- "sprd,sc9860-pll"
-> +	- "sprd,sc9860-ap-clk"
-> +	- "sprd,sc9860-aon-prediv"
-> +	- "sprd,sc9860-apahb-gate"
-> +	- "sprd,sc9860-aon-gate"
-> +	- "sprd,sc9860-aonsecure-clk"
-> +	- "sprd,sc9860-agcp-gate"
-> +	- "sprd,sc9860-gpu-clk"
-> +	- "sprd,sc9860-vsp-clk"
-> +	- "sprd,sc9860-vsp-gate"
-> +	- "sprd,sc9860-cam-clk"
-> +	- "sprd,sc9860-cam-gate"
-> +	- "sprd,sc9860-disp-clk"
-> +	- "sprd,sc9860-disp-gate"
-> +	- "sprd,sc9860-apapb-gate"
-> +
-> +- #clock-cells: must be 1
-> +
-> +- clocks : shall be the input parent clock(s) phandle for the clock.
 
-You need to document how many clocks for each block.
+Applied to clk-next
 
-> +
-> +Optional properties:
-> +
-> +- reg:	Contain the registers base address and length. It must be configured only if no 'sprd,syscon' under the node.
-> +
-> +- sprd,syscon: phandle to the syscon which is in the same address area with the clock.
-> +
-> +Example:
-> +
-> +	pmu_gate: pmu-gate {
-> +		compatible = "sprd,sc9860-pmu-gate";
-> +		sprd,syscon = <&pmu_apb>;
-
-Ideally, the pmu-gate node would be a child of pmu_apb and use the reg 
-property if clock registers are a contiguous range. Then you don't need 
-this phandle.
-
-> +		clocks = <&ext_26m>;
-> +		#clock-cells = <1>;
-> +	};
-> +
-> +	pll: pll {
-> +		compatible = "sprd,sc9860-pll";
-> +		sprd,syscon = <&ana_apb>;
-
-Same here.
-
-> +		clocks = <&pmu_gate 0>;
-> +		#clock-cells = <1>;
-> +	};
-> +
-> +	ap_clk: clock-controller@20000000 {
-> +		compatible = "sprd,sc9860-ap-clk";
-> +		reg = <0 0x20000000 0 0x400>;
-> +		clocks = <&ext_26m>, <&pll 0>,
-> +			 <&pmu_gate 0>;
-> +		#clock-cells = <1>;
-> +	};
-> -- 
-> 2.7.4
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
