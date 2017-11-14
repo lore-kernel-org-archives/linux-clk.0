@@ -1,102 +1,34 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v4 6/7] ASoC: Intel: Skylake: Make DSP replies more human readable
-Date: Wed, 22 Nov 2017 17:39:51 +0530
-Message-Id: <1511352592-4006-7-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:59:07 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk/mmp: Delete an error message for a failed memory
+ allocation in three functions
+Message-ID: <20171114015907.GN11955@codeaurora.org>
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+ <5a3e0b55-1eda-87a4-c4e3-d142d64830a5@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5a3e0b55-1eda-87a4-c4e3-d142d64830a5@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 22:25:38 +0200
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Add more meaning to the IPC replies for easy debugging. Replace the switch
-case with a lookup table to lookup for the IPC replies and print in human
-readable form.
+Applied to clk-next
 
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 5234faf..8708755 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
- 	return 0;
- }
- 
--static int skl_ipc_set_reply_error_code(u32 reply)
-+struct skl_ipc_err_map {
-+	const char *msg;
-+	enum skl_ipc_glb_reply reply;
-+	int err;
-+};
-+
-+static struct skl_ipc_err_map skl_err_map[] = {
-+	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
-+	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+};
-+
-+static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
- {
--	switch (reply) {
--	case IPC_GLB_REPLY_OUT_OF_MEMORY:
--		return -ENOMEM;
-+	int i;
- 
--	case IPC_GLB_REPLY_BUSY:
--		return -EBUSY;
-+	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
-+		if (skl_err_map[i].reply == reply)
-+			break;
-+	}
- 
--	default:
-+	if (i == ARRAY_SIZE(skl_err_map)) {
-+		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
-+				reply,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
- 		return -EINVAL;
- 	}
-+
-+	if (skl_err_map[i].err < 0)
-+		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+	else
-+		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+
-+	return skl_err_map[i].err;
- }
- 
- void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
-@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
- 
- 		}
- 	} else {
--		msg->errno = skl_ipc_set_reply_error_code(reply);
--		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
--		dev_err(ipc->dev, "FW Error Code: %u\n",
--			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
- 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
- 		case IPC_GLB_LOAD_MULTIPLE_MODS:
- 		case IPC_GLB_LOAD_LIBRARY:
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
