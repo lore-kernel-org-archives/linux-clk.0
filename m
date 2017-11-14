@@ -1,60 +1,38 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:59:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
+Message-ID: <20171114015903.GL11955@codeaurora.org>
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+ <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Thu, 02 Nov 2017 16:51:29 +0800
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/10] Allwinner H3/H5/A64(DE2) SimpleFB support
-In-Reply-To: <20171027150658.18509-1-icenowy@aosc.io>
-References: <20171027150658.18509-1-icenowy@aosc.io>
-Message-ID: <9bca10cc95d04f87a1122bc582402310@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-10-27 23:06，Icenowy Zheng 写道：
-> This patchset adds support for the SimpleFB on Allwinner SoCs with
-> "Display Engine 2.0".
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 09:00:21 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
 > 
-> PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+> The script “checkpatch.pl” pointed information out like the following.
 > 
-> PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+> Comparison to NULL could be written !…
 > 
-> PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-> for H3/H5 SoCs.
+> Thus fix the affected source code places.
 > 
-> PATCH 8 to 10 are for Allwinner A64 SoC to enable SimpleFB.
-> 
-> Icenowy Zheng (10):
->   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
->   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
->   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
->   dt-bindings: simplefb-sunxi: add pipelines for DE2
->   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
->   arm64: allwinner: h5: add compatible string for DE2 CCU
->   ARM: sunxi: h3/h5: add simplefb nodes
->   dt-bindings: add binding for A64 DE2 CCU SRAM
->   arm64: allwinner: a64: add DE2 CCU for A64 SoC
->   arm64: allwinner: a64: add simplefb for A64 SoC
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Maxime, could you review and, if possible, apply the H3/5
-part of this patchset?
+Applied to clk-next
 
-Thanks!
-Icenowy
-
-> 
->  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 +++-
->  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 ++
->  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 ++
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 ++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 
-> ++++++++++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 ++
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 53 
-> +++++++++++++++++-
->  7 files changed, 178 insertions(+), 5 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
