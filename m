@@ -1,22 +1,25 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:31:42 -0700
+Date: Mon, 13 Nov 2017 17:56:56 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, mturquette@baylibre.com,
+To: Colin King <colin.king@canonical.com>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mxs: make clk_ops const
-Message-ID: <20171102063142.GV30645@codeaurora.org>
-References: <1503409967-21357-1-git-send-email-bhumirks@gmail.com>
+Subject: Re: [PATCH][clk-next] ARC: clk: fix spelling mistake:
+ "configurarion" -> "configuration"
+Message-ID: <20171114015656.GA11955@codeaurora.org>
+References: <20170904093750.21755-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503409967-21357-1-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <20170904093750.21755-1-colin.king@canonical.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/22, Bhumika Goyal wrote:
-> Make these const as they are only stored in the const field of a
-> clk_init_data structure.
+On 09/04, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> Trivial fix to spelling mistake in dev_dbg message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 
 Applied to clk-next
