@@ -1,49 +1,33 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: versatile: add min/max rate boundaries for vexpress osc clock
-Date: Fri, 10 Nov 2017 16:06:57 +0000
-Message-Id: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:57:23 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk-mux: Delete an error message for a failed memory
+ allocation in clk_hw_register_mux_table()
+Message-ID: <20171114015723.GC11955@codeaurora.org>
+References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+ <31bc9968-20e9-1fd0-0f16-80cb0f2bffe0@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <31bc9968-20e9-1fd0-0f16-80cb0f2bffe0@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework has a provider API(clk_hw_set_rate_range) to set the
-min/max rate of a clock. Use the same to set the boundaries for the
-vexpress osc clock.
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 17:23:04 +0200
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/versatile/clk-vexpress-osc.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to clk-next
 
-Hi Stephen,
-
-Just a quick question, does the clk core ensure the round_rate request
-to the clock provider is within this bounds ? A quick grep suggests it's
-used after the call to round_rate in clk_calc_new_rates. I can't recall
-the details from when you introduced clk_hw_set_rate_range.
-
-Regards,
-Sudeep
-
-diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-index e7a868b83fe5..d3b5af2a02ab 100644
---- a/drivers/clk/versatile/clk-vexpress-osc.c
-+++ b/drivers/clk/versatile/clk-vexpress-osc.c
-@@ -104,6 +104,7 @@ static int vexpress_osc_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk);
-
- 	of_clk_add_provider(pdev->dev.of_node, of_clk_src_simple_get, clk);
-+	clk_hw_set_rate_range(&osc->hw, osc->rate_min, osc->rate_max);
-
- 	dev_dbg(&pdev->dev, "Registered clock '%s'\n", init.name);
-
---
-2.7.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
