@@ -1,24 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:38:28 -0700
+Date: Mon, 13 Nov 2017 17:59:16 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Tirupathi Reddy <tirupath@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: common: Migrate to devm_* APIs for resets
- and clk providers
-Message-ID: <20171102063828.GB30645@codeaurora.org>
-References: <20170901231641.19141-1-sboyd@codeaurora.org>
- <20170901231641.19141-3-sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <t-kristo@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk/ti: Delete an error message for a failed memory
+ allocation in two functions
+Message-ID: <20171114015916.GO11955@codeaurora.org>
+References: <120d01e4-5e58-e740-f6c7-c6835752aed3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170901231641.19141-3-sboyd@codeaurora.org>
+In-Reply-To: <120d01e4-5e58-e740-f6c7-c6835752aed3@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Stephen Boyd wrote:
-> Now that we have devm APIs for the reset controller and of clk hw
-> provider APIs we can remove the custom code here.
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 19:14:01 +0200
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
