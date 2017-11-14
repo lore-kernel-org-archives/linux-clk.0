@@ -1,54 +1,34 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>,
-        "mcoquelin.stm32@gmail.com"
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v2] clk: stm32-h7: fix copyright
-Date: Thu, 30 Nov 2017 16:11:22 +0000
-Message-ID: <c80f429c-71f6-cddd-e35b-bf800735a3ce@st.com>
-References: <20171130084108.23083-1-benjamin.gaignard@st.com>
-In-Reply-To: <20171130084108.23083-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:59:22 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk/spear: Delete five error messages for a failed
+ memory allocation
+Message-ID: <20171114015922.GP11955@codeaurora.org>
+References: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-QWNrZWQtYnk6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQoN
-Cg0KT24gMTEvMzAvMjAxNyAwOTo0MSBBTSwgQmVuamFtaW4gR2FpZ25hcmQgd3JvdGU6DQo+IFVu
-aWZvcm1pemUgU1RNaWNyb2VsZWN0cm9uaWNzIGNvcHlyaWdodHMgaGVhZGVyDQo+IEFkZCBTUERY
-IGlkZW50aWZpZXINCj4NCj4gU2lnbmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmph
-bWluLmdhaWduYXJkQHN0LmNvbT4NCj4gQWNrZWQtYnk6IEFsZXhhbmRyZSBUT1JHVUUgPGFsZXhh
-bmRyZS50b3JndWVAc3QuY29tPg0KPiBDQzogR2FicmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVy
-bmFuZGV6QHN0LmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9jbGsvY2xrLXN0bTMyaDcuYyB8IDE5
-ICsrKy0tLS0tLS0tLS0tLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCsp
-LCAxNiBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay1zdG0z
-Mmg3LmMgYi9kcml2ZXJzL2Nsay9jbGstc3RtMzJoNy5jDQo+IGluZGV4IDYxYzNlNDA1MDdkMy4u
-ZGIyYjE2MmMwZDRjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJoNy5jDQo+
-ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmMNCj4gQEAgLTEsMjAgKzEsNyBAQA0KPiAr
-Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gICAvKg0KPiAtICogQ29weXJp
-Z2h0IChDKSBHYWJyaWVsIEZlcm5hbmRleiAyMDE3DQo+IC0gKiBBdXRob3I6IEdhYnJpZWwgRmVy
-bmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+IC0gKg0KPiAtICogTGljZW5zZSB0
-ZXJtczogR1BMIFYyLjAuDQo+IC0gKg0KPiAtICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdh
-cmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkgaXQNCj4gLSAqIHVuZGVy
-IHRoZSB0ZXJtcyBhbmQgY29uZGl0aW9ucyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vu
-c2UsDQo+IC0gKiB2ZXJzaW9uIDIsIGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBG
-b3VuZGF0aW9uLg0KPiAtICoNCj4gLSAqIFRoaXMgcHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0
-aGUgaG9wZSBpdCB3aWxsIGJlIHVzZWZ1bCwgYnV0IFdJVEhPVVQNCj4gLSAqIEFOWSBXQVJSQU5U
-WTsgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mIE1FUkNIQU5UQUJJTElUWSBv
-cg0KPiAtICogRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuICBTZWUgdGhlIEdOVSBH
-ZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGZvcg0KPiAtICogbW9yZSBkZXRhaWxzLg0KPiAtICoNCj4g
-LSAqIFlvdSBzaG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIEdOVSBHZW5lcmFsIFB1
-YmxpYyBMaWNlbnNlIGFsb25nIHdpdGgNCj4gLSAqIHRoaXMgcHJvZ3JhbS4gIElmIG5vdCwgc2Vl
-IDxodHRwOi8vd3d3LmdudS5vcmcvbGljZW5zZXMvPi4NCj4gKyAqIENvcHlyaWdodCAoQykgU1RN
-aWNyb2VsZWN0cm9uaWNzIDIwMTcNCj4gKyAqIEF1dGhvcjogR2FicmllbCBGZXJuYW5kZXogPGdh
-YnJpZWwuZmVybmFuZGV6QHN0LmNvbT4gZm9yIFNUTWljcm9lbGVjdHJvbmljcy4NCj4gICAgKi8N
-Cj4gICANCj4gICAjaW5jbHVkZSA8bGludXgvY2xrLmg+DQo=
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:00:21 +0200
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
