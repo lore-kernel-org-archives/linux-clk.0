@@ -1,82 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11003 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757452AbdKQJ2R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Nov 2017 04:28:17 -0500
-From: Xu YiPing <xuyiping@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <xuejiancheng@hisilicon.com>,
-        <wenpan@hisilicon.com>, <leo.yan@linaro.org>,
-        <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
-        <zhongkaihua@huawei.com>, <chenjun14@huawei.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
-        <kevin.wangtao@hisilicon.com>
-Subject: [PATCH v3 1/3] dt-bindings: clk: Hi3660: Document stub clock
-Date: Fri, 17 Nov 2017 17:27:30 +0800
-Message-ID: <1510910852-2175-2-git-send-email-xuyiping@hisilicon.com>
-In-Reply-To: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
-References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH 0/8] arm/arm64: mediatek: Fix mmsys device probing
+Date: Tue, 14 Nov 2017 22:41:06 +0100
+Message-Id: <20171114214114.15793-1-mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Leo Yan <leo.yan@linaro.org>
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
-Document the DT binding for stub clock which is used for CPU,
-GPU and DDR frequency scaling.
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- Documentation/devicetree/bindings/clock/hi3660-clock.txt | 6 ++++++
- include/dt-bindings/clock/hi3660-clock.h                 | 7 +++++++
- 2 files changed, 13 insertions(+)
+This patch set introduces a new mfd device, which binds against the mmsys
+compatible and takes care of probing the needed devices. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
 
-diff --git a/Documentation/devicetree/bindings/clock/hi3660-clock.txt b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-index 0035a7e..946da7c 100644
---- a/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-@@ -13,12 +13,18 @@ Required Properties:
- 	- "hisilicon,hi3660-pmuctrl"
- 	- "hisilicon,hi3660-sctrl"
- 	- "hisilicon,hi3660-iomcu"
-+	- "hisilicon,hi3660-stub-clk"
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
- 
- - #clock-cells: should be 1.
- 
-+Optional Properties:
-+
-+- mboxes: Phandle to the mailbox for sending message to MCU.
-+            (See: ../mailbox/hisilicon,hi3660-mailbox.txt for more info)
-+
- Each clock is assigned an identifier and client nodes use this identifier
- to specify the clock which they consume.
- 
-diff --git a/include/dt-bindings/clock/hi3660-clock.h b/include/dt-bindings/clock/hi3660-clock.h
-index adb768d..75d583e 100644
---- a/include/dt-bindings/clock/hi3660-clock.h
-+++ b/include/dt-bindings/clock/hi3660-clock.h
-@@ -208,4 +208,11 @@
- #define HI3660_CLK_I2C6_IOMCU		3
- #define HI3660_CLK_IOMCU_PERI0		4
- 
-+/* clk in stub clock */
-+#define HI3660_CLK_STUB_CLUSTER0	0
-+#define HI3660_CLK_STUB_CLUSTER1	1
-+#define HI3660_CLK_STUB_GPU		2
-+#define HI3660_CLK_STUB_DDR		3
-+#define HI3660_CLK_STUB_NUM		4
-+
- #endif	/* __DTS_HI3660_CLOCK_H */
+Matthias Brugger (8):
+  drm/mediatek: Use regmap for register access
+  mfd: mtk-mmsys: Add mmsys driver
+  drm/mediatek: mt2701: switch to mfd probing.
+  clk: mediatek: mt2701-mm: switch to mfd device
+  mfd: mtk-mmsys: Add mt8173 nodes
+  drm/mediatek: Add mfd support for mt8173
+  clk: mediatek: mt8173-mm: switch to mfd device
+  MAINTAINERS: update Mediatek Soc entry
+
+ MAINTAINERS                             |   2 +
+ drivers/clk/mediatek/clk-mt2701-mm.c    |  13 ++--
+ drivers/clk/mediatek/clk-mt8173.c       |  21 ++++++-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c  |  30 +++++----
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  |  35 ++++++-----
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  |   2 +-
+ drivers/mfd/Kconfig                     |   9 +++
+ drivers/mfd/Makefile                    |   2 +
+ drivers/mfd/mtk-mmsys.c                 | 105 ++++++++++++++++++++++++++++++++
+ include/linux/mfd/mmsys.h               |  18 ++++++
+ 12 files changed, 200 insertions(+), 45 deletions(-)
+ create mode 100644 drivers/mfd/mtk-mmsys.c
+ create mode 100644 include/linux/mfd/mmsys.h
+
 -- 
-1.9.1
-
+2.14.2
