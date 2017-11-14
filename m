@@ -1,58 +1,42 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH 0/3] Add clock driver for Actions S900 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- rdunlap@infradead.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- liuwei@actions-semi.com
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <62797b3b-a622-48a1-9dc5-3cc2b5c7afd3@suse.de>
-Date: Sat, 4 Nov 2017 17:05:31 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 18:06:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, tony@atomide.com
+Subject: Re: [PATCHv2 04/28] clk: ti: clkctrl: use fallback udelay approach
+ if timekeeping is suspended
+Message-ID: <20171114020643.GU11955@codeaurora.org>
+References: <1510218917-1725-1-git-send-email-t-kristo@ti.com>
+ <1510218917-1725-2-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1510218917-1725-2-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mani,
-
-Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
-> This series adds clock driver for Actions Semi OWL series
-> S900 SoC with relevant clock bindings and device tree data.
+On 11/09, Tero Kristo wrote:
+> In certain cases it is possible that the timekeeping has been suspended
+> already when attempting to disable/enable a clkctrl clock. This will
+> happen at least on am43xx platform when attempting to enable / disable
+> the clockevent source itself, burping out a warning from timekeeping core.
 > 
-> This series also addresses the review comments from previous
-> submission happened last year.
+> The sequence of events leading to this:
+> -> timekeeping_suspend()
+>  -> clockevents_suspend()
+>   -> omap_clkevt_idle()
+>    -> omap_hwmod_idle()
+>     -> _omap4_clkctrl_clk_disable()
+>      -> _omap4_is_timeout()
 > 
-> https://patchwork.kernel.org/patch/9254471/
-
-Interesting - I had searched for any S500/S900 patches before starting
-to work on this but came up empty on LAKML.
-
-It seems you missed at least one review comment from 2016 about the
-example indentation, so please double-check for anything Stephen already
-pointed out.
-
-> Driver has been validated on Bubblegum-96 board.
+> Avoid the issue by checking if the timekeeping is suspended and using
+> the fallback udelay approach for checking timeouts.
 > 
-> Thanks,
-> Mani
-> 
-> Manivannan Sadhasivam (3):
->   arm64: dts: actions: add s900 clock controller nodes
->   clk: owl: add clock driver for Actions S900 SoC
->   Documentation: add Actions S900 clock bindings
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 
-Please reverse the patch order.
+No Cc on timekeeping maintainers, but OK.
 
-Have you checked S500 code whether the S900 vs. common split is correct?
-
-Many thanks for your work on this,
-
-Andreas
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
