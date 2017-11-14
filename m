@@ -1,229 +1,89 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 05/12] clk: sprd: add divider clock support
-Date: Mon, 20 Nov 2017 14:01:30 +0800
-Message-ID: <20171120060137.27380-6-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH 5/8] mfd: mtk-mmsys: Add mt8173 nodes
+Date: Tue, 14 Nov 2017 22:41:11 +0100
+Message-Id: <20171114214114.15793-6-mbrugger@suse.com>
+In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a feature that can also be found in sprd composite clocks,
-provide a bunch of helpers that can be reused later on.
+Add devices for the mt8173 SoC.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- drivers/clk/sprd/Makefile |  1 +
- drivers/clk/sprd/div.c    | 92 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/div.h    | 77 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 drivers/clk/sprd/div.c
- create mode 100644 drivers/clk/sprd/div.h
+ drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index cee36b5..80e6039 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
- clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
-+clk-sprd-y	+= div.o
-diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
-new file mode 100644
-index 0000000..8c7196f
---- /dev/null
-+++ b/drivers/clk/sprd/div.c
-@@ -0,0 +1,92 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "div.h"
-+
-+long sprd_div_helper_round_rate(struct sprd_clk_common *common,
-+				const struct sprd_div_internal *div,
-+				unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return divider_round_rate(&common->hw, rate, parent_rate,
-+				  NULL, div->width, 0);
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_round_rate);
-+
-+static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_round_rate(&cd->common, &cd->div,
-+					  rate, parent_rate);
-+}
-+
-+unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-+					  const struct sprd_div_internal *div,
-+					  unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	val = reg >> div->shift;
-+	val &= (1 << div->width) - 1;
-+
-+	return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_recalc_rate);
-+
-+static unsigned long sprd_div_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_recalc_rate(&cd->common, &cd->div, parent_rate);
-+}
-+
-+int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
-+			     const struct sprd_div_internal *div,
-+			     unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	val = divider_get_val(rate, parent_rate, NULL,
-+			      div->width, 0);
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
-+
-+	sprd_regmap_write(common->regmap, common->reg,
-+			  reg | (val << div->shift));
-+
-+	return 0;
-+
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_set_rate);
-+
-+static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_set_rate(&cd->common, &cd->div,
-+					rate, parent_rate);
-+}
-+
-+const struct clk_ops sprd_div_ops = {
-+	.recalc_rate = sprd_div_recalc_rate,
-+	.round_rate = sprd_div_round_rate,
-+	.set_rate = sprd_div_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_div_ops);
-diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
-new file mode 100644
-index 0000000..fb59fe5
---- /dev/null
-+++ b/drivers/clk/sprd/div.h
-@@ -0,0 +1,77 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_DIV_H_
-+#define _SPRD_DIV_H_
-+
-+#include "common.h"
-+
-+/**
-+ * struct sprd_div_internal - Internal divider description
-+ * @shift: Bit offset of the divider in its register
-+ * @width: Width of the divider field in its register
-+ *
-+ * That structure represents a single divider, and is meant to be
-+ * embedded in other structures representing the various clock
-+ * classes.
-+ */
-+struct sprd_div_internal {
-+	u8	shift;
-+	u8	width;
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+index 102b491aa28f..45973dfc6010 100644
+--- a/drivers/mfd/mtk-mmsys.c
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -21,6 +21,7 @@
+ 
+ enum {
+ 	MMSYS_MT2701 = 1,
++	MMSYS_MT8173,
+ };
+ 
+ static const struct mfd_cell mmsys_mt2701_devs[] = {
+@@ -28,6 +29,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
+ 	{ .name = "drm-mt2701-mm", },
+ };
+ 
++static const struct mfd_cell mmsys_mt8173_devs[] = {
++	{ .name = "clk-mt8173-mm", },
++	{ .name = "drm-mt8173-mm", },
 +};
 +
-+#define _SPRD_DIV_CLK(_shift, _width)	\
-+	{				\
-+		.shift	= _shift,	\
-+		.width	= _width,	\
-+	}
 +
-+struct sprd_div {
-+	struct sprd_div_internal	div;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_DIV_CLK(_struct, _name, _parent, _reg,			\
-+			_shift, _width, _flags)				\
-+	struct sprd_div _struct = {					\
-+		.div	= _SPRD_DIV_CLK(_shift, _width),		\
-+		.common	= {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &sprd_div_ops,	\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_div, common);
-+}
-+
-+long sprd_div_helper_round_rate(struct sprd_clk_common *common,
-+				const struct sprd_div_internal *div,
-+				unsigned long rate,
-+				unsigned long *parent_rate);
-+
-+unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-+					  const struct sprd_div_internal *div,
-+					  unsigned long parent_rate);
-+
-+int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
-+			     const struct sprd_div_internal *div,
-+			     unsigned long rate,
-+			     unsigned long parent_rate);
-+
-+extern const struct clk_ops sprd_div_ops;
-+
-+#endif /* _SPRD_DIV_H_ */
+ static int mmsys_probe(struct platform_device *pdev)
+ {
+ 	struct mmsys_dev *private;
+@@ -47,6 +54,10 @@ static int mmsys_probe(struct platform_device *pdev)
+ 		mmsys_cells = mmsys_mt2701_devs;
+ 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+ 		break;
++	case MMSYS_MT8173:
++		mmsys_cells = mmsys_mt8173_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -74,6 +85,9 @@ static const struct of_device_id of_match_mmsys[] = {
+ 	{ .compatible = "mediatek,mt2701-mmsys",
+ 	  .data = (void *) MMSYS_MT2701,
+ 	},
++	{ .compatible = "mediatek,mt8173-mmsys",
++	  .data = (void *) MMSYS_MT8173,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
-2.7.4
+2.14.2
