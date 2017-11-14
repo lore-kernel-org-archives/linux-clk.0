@@ -1,213 +1,36 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 13 Nov 2017 17:59:45 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v6 4/5] clk: aspeed: Register gated clocks
-Date: Tue, 28 Nov 2017 17:49:07 +1030
-Message-Id: <20171128071908.12279-5-joel@jms.id.au>
-In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
-References: <20171128071908.12279-1-joel@jms.id.au>
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in
+ icst_clk_setup()
+Message-ID: <20171114015945.GS11955@codeaurora.org>
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+ <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The majority of the clocks in the system are gates paired with a reset
-controller that holds the IP in reset.
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 21:24:43 +0200
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-This borrows from clk_hw_register_gate, but registers two 'gates', one
-to control the clock enable register and the other to control the reset
-IP. This allows us to enforce the ordering:
+Applied to clk-next
 
- 1. Place IP in reset
- 2. Enable clock
- 3. Delay
- 4. Release reset
-
-There are some gates that do not have an associated reset; these are
-handled by using -1 as the index for the reset.
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
-v5:
-  - Add Andrew's Reviewed-by
-v4:
- - Drop useless 'disable clock' comment
- - Drop CLK_IS_BASIC flag
- - Fix 'there are a number of clocks...' comment
- - Pass device to clk registration functions
- - Check for errors when registering clk_hws
-v3:
- - Remove gates offset as gates are now at the start of the list
----
- drivers/clk/clk-aspeed.c | 131 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 839243691b26..b5dc3e298693 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -202,6 +202,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
- 	.calc_pll = aspeed_ast2400_calc_pll,
- };
- 
-+static int aspeed_clk_enable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 rst = BIT(gate->reset_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Put IP in reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-+
-+		/* Delay 100us */
-+		udelay(100);
-+	}
-+
-+	/* Enable clock */
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Delay 10ms */
-+		/* TODO: can we sleep here? */
-+		msleep(10);
-+
-+		/* Take IP out of reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
-+	}
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void aspeed_clk_disable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+}
-+
-+static int aspeed_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 reg;
-+
-+	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-+
-+	return (reg & clk) ? 0 : 1;
-+}
-+
-+static const struct clk_ops aspeed_clk_gate_ops = {
-+	.enable = aspeed_clk_enable,
-+	.disable = aspeed_clk_disable,
-+	.is_enabled = aspeed_clk_is_enabled,
-+};
-+
-+static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		struct regmap *map, u8 clock_idx, u8 reset_idx,
-+		u8 clk_gate_flags, spinlock_t *lock)
-+{
-+	struct aspeed_clk_gate *gate;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &aspeed_clk_gate_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->map = map;
-+	gate->clock_idx = clock_idx;
-+	gate->reset_idx = reset_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
- static int aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
-@@ -209,6 +310,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
-+	int i;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -281,6 +383,35 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/*
-+	 * TODO: There are a number of clocks that not included in this driver
-+	 * as more information is required:
-+	 *   D2-PLL
-+	 *   D-PLL
-+	 *   YCLK
-+	 *   RGMII
-+	 *   RMII
-+	 *   UART[1..5] clock source mux
-+	 *   Video Engine (ECLK) mux and clock divider
-+	 */
-+
-+	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
-+		const struct aspeed_gate_data *gd = &aspeed_gates[i];
-+
-+		hw = aspeed_clk_hw_register_gate(dev,
-+				gd->name,
-+				gd->parent_name,
-+				gd->flags,
-+				map,
-+				gd->clock_idx,
-+				gd->reset_idx,
-+				CLK_GATE_SET_TO_DISABLE,
-+				&aspeed_clk_lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+		aspeed_clk_data->hws[i] = hw;
-+	}
-+
- 	return 0;
- };
- 
 -- 
-2.14.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
