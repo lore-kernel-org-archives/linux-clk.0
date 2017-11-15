@@ -1,31 +1,27 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 10 Nov 2017 18:49:23 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49412 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757494AbdKOAm5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Nov 2017 19:42:57 -0500
+Date: Tue, 14 Nov 2017 16:42:56 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] clk: hi3798cv200: correct parent mux clock for
- 'clk_sdio0_ciu'
-Message-ID: <20171111024923.GF22441@codeaurora.org>
-References: <1506538780-15513-1-git-send-email-shawnguo@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: tegra: Add la clock for Tegra210
+Message-ID: <20171115004256.GN11955@codeaurora.org>
+References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510313868-24810-2-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1506538780-15513-1-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <1510313868-24810-2-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
-> 
-> Other than 'mmc_mux', 'clk_sdio0_ciu' uses a different parent mux clock.
-> Let's add this mux clock as 'sdio0_mux', and correct the parent of
-> 'clk_sdio0_ciu' to be it.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
+On 11/10, Peter De Schrijver wrote:
+> This clock is needed by the MBIST WAR.
 
-Applied to clk-next
+I'm not sure everyone knows what WAR means. Maybe it can be
+spelled out as "workaround". Same comment applies to MBIST.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
