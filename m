@@ -1,32 +1,34 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:16:48 -0700
+Date: Tue, 14 Nov 2017 17:07:11 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
-Message-ID: <20171102081648.GJ11011@codeaurora.org>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com,
+	gabriel.fernandez.st@gmail.com
+Subject: Re: [RESEND PATCH] clk: stm32h7: fix test of clock config
+Message-ID: <20171115010711.GQ11955@codeaurora.org>
+References: <1507705044-30458-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170901145343.19890-1-thierry.reding@gmail.com>
+In-Reply-To: <1507705044-30458-1-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 10/11, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> The sor1_src clock implemented on Tegra210 is modelled the wrong way
-> around, which causes some issues with HDMI and DP support. This clock
-> implementation is provided by BPMP on Tegra186, which models this in
-> a more correct way. Since this introduces incompatibilities between
-> the two SoC generations which we want to avoid, the Tegra210 will be
-> fixed in subsequent patches.
+> fix test of composite clock config (bad copy / past)
 > 
-> This change adds sor1_out as an alias for sor1_src.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Fixes: 3e4d618b0722 ("clk: stm32h7: Add stm32h743 clock driver")
 > ---
 
 Applied to clk-next
