@@ -1,48 +1,79 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16118 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935363AbdKPO3L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 09:29:11 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
+Date: Thu, 16 Nov 2017 16:28:59 +0200
+Message-ID: <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAfSe-tadvpgJ0OC00Ccc+y+84t90dArfAu9ASOG77Hnw9Z=RA@mail.gmail.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
- <20171102065626.21835-10-chunyan.zhang@spreadtrum.com> <20171106214335.qvuvcwahemnpwftt@rob-hp-laptop>
- <CAAfSe-tadvpgJ0OC00Ccc+y+84t90dArfAu9ASOG77Hnw9Z=RA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 10 Nov 2017 15:10:24 -0600
-Message-ID: <CAL_Jsq+3wuzCPh1Pkbq79t9zkef-Gvg9AW4pgrKvwOuRJJyn1Q@mail.gmail.com>
-Subject: Re: [PATCH V3 09/11] clk: sprd: add clocks support for SC9860
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Orson Zhai <orson.zhai@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 9, 2017 at 2:18 AM, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> Hi Rob and Stephen,
->
-> On 7 November 2017 at 05:43, Rob Herring <robh@kernel.org> wrote:
->> On Thu, Nov 02, 2017 at 02:56:24PM +0800, Chunyan Zhang wrote:
->>> This patch added the list of clocks for Spreadtrum's SC9860 SoC,
->>> together with clock initialization code.
->>>
->>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->>> ---
->>>  drivers/clk/sprd/Kconfig                    |   10 +
->>>  drivers/clk/sprd/Makefile                   |    3 +
->>>  drivers/clk/sprd/sc9860-clk.c               | 1987 +++++++++++++++++++++++++++
->>>  include/dt-bindings/clock/sprd,sc9860-clk.h |  408 ++++++
->>
->> This belongs in the binding doc patch.
->
-> I noticed that this kind of files were submitted in driver patch
-> before when adding a new driver, how about I just put it into a single
-> patch in the next version?
+This clock is needed by the memory built-in self test work around.
 
-It's been done all ways, but the correct way is as I told you. Binding
-doc and header in one, driver in another patch.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
+ include/dt-bindings/clock/tegra210-car.h |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 6d7a613..55a5b7f 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -40,6 +40,7 @@
+ 
+ #define CLK_SOURCE_CSITE 0x1d4
+ #define CLK_SOURCE_EMC 0x19c
++#define CLK_SOURCE_LA 0x1f8
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
+ 	return 0;
+ }
+ 
++static const char * const la_parents[] = {
++	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
++};
++
++static struct tegra_clk_periph tegra210_la =
++	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
++
+ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					    void __iomem *pmc_base)
+ {
+@@ -2667,6 +2675,10 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					     periph_clk_enb_refcnt);
+ 	clks[TEGRA210_CLK_DSIB] = clk;
+ 
++	/* la */
++	clk = tegra_clk_register_periph("la", la_parents,
++			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
++			CLK_SOURCE_LA, 0);
+ 	/* emc mux */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index a9dc145..5df857a 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -95,7 +95,7 @@
+ #define TEGRA210_CLK_CSITE 73
+ /* 74 */
+ /* 75 */
+-/* 76 */
++#define TEGRA210_CLK_LA 76
+ /* 77 */
+ #define TEGRA210_CLK_SOC_THERM 78
+ #define TEGRA210_CLK_DTV 79
+-- 
+1.9.1
+
