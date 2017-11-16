@@ -1,74 +1,49 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-To: Dmitry Osipenko <digetx@gmail.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
-Date: Wed, 29 Nov 2017 10:12:00 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6596 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751685AbdKPPc3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:32:29 -0500
+Date: Thu, 16 Nov 2017 17:32:24 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+Message-ID: <20171116153224.GS6210@tbergstrom-lnx.Nvidia.com>
+References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Sorry about the repost. You can ignore this.
 
-On 29/11/17 00:09, Dmitry Osipenko wrote:
-> On 29.11.2017 02:30, Dmitry Osipenko wrote:
->> On 23.10.2017 14:12, Jon Hunter wrote:
->>> Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
->>> fixed the parent clock for APBDMA, but the consequence of this that
->>> after probing the APBDMA device, the APB Clock (or PCLK) is now
->>> disabled. Disabling the APB clock causes accesses to any other device
->>> on the APB to hang and prevent Tegra from booting.
->>>
->>> Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
->>> to prevent the clock being disabled if unused on boot. However, even
->>> if it is used, it still needs to be always kept enabled and so update
->>> the flag for the APB clock to be "CLK_IS_CRITICAL".
->>>
->>> Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
->>>
->>> Suggested-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>> ---
->>>  drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> index 4f6fd307cb70..10047107c1dc 100644
->>> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
->>> @@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
->>>  				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
->>>  				   &sysrate_lock);
->>>  	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
->>> -				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
->>> +				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
->>>  				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
->>>  	*dt_clk = clk;
->>>  }
->>>
->>
->> Unfortunately this patch somehow breaks Tegra20, getting a hang during boot. For
->> now I don't know what's the cause of the issue, may take a more detailed look
->> soon. If you have any suggestions, please tell.
->>
+Peter.
+
+On Thu, Nov 16, 2017 at 05:29:51PM +0200, Peter De Schrijver wrote:
+> This patch series introduces the Memory Built-In Self Test (MBIST)
+> work around (WAR) needed when power ungating certain domains. More
+> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+> implement the WAR in the Tegra210 clock driver, because most accesses are
+> to CAR registers and for the VENC domain, we need to make sure the CSI
+> clock source is not changed during the WAR execution.
 > 
-> It looks like that with CLK_IS_CRITICAL flag, pclk is getting enabled before
-> clock rate is setup and in result it is enabled with some invalid rate config.
-
-What Tegra20 platform? I have not seen any issues with booting Tegra20
-trimslice with v4.15-rc1 or next-20171129. I am surprised this clock
-would not have been enabled by the bootloader and hence rate set correctly.
-
-Cheers
-Jon
-
--- 
-nvpublic
+> Changes in v2:
+> * Use readl for fence_delay() rather than readl_relaxed
+> * clarify MBIST and WAR acronyms
+> 
+> Peter De Schrijver (4):
+>   clk: tegra: Add la clock for Tegra210
+>   clk: tegra: add fence_delay for clock registers
+>   clk: tegra: MBIST work around for Tegra210
+>   soc/tegra: pmc: apply MBIST work around fo Tegra210
+> 
+>  drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
+>  drivers/clk/tegra/clk.h                  |   7 +
+>  drivers/soc/tegra/pmc.c                  |   5 +
+>  include/dt-bindings/clock/tegra210-car.h |   2 +-
+>  include/linux/clk/tegra.h                |   1 +
+>  5 files changed, 383 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
