@@ -1,43 +1,289 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:21:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>, Jyri Sarha <jsarha@ti.com>
-Subject: Re: [PATCH 1/2] clk: clk-gpio: Make GPIO clock provider use
- descriptors only
-Message-ID: <20171102082113.GP11011@codeaurora.org>
-References: <20170924161919.24832-1-linus.walleij@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+Date: Thu, 16 Nov 2017 10:31:34 +0800
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	hermit.wangheming@hisilicon.com, project-aspen-dev@linaro.org,
+	tianshuliang <tianshuliang@hisilicon.com>
+Subject: Re: [PATCH 1/3] clk: hisilicon: add hisi phase clock support
+Message-ID: <20171116023131.GI11163@dragon>
+References: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1508324429-6012-2-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170924161919.24832-1-linus.walleij@linaro.org>
+In-Reply-To: <1508324429-6012-2-git-send-email-xuejiancheng@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Linus Walleij wrote:
-> After som grep:ing it turns out nothing in the kernel is really calling
-> clk_[hw_]_register_gpio_[gate|mux](). All existing instances are just
-> created directly from the device tree probe functions at the bottom of
-> the clk-gpio.c clock provider file.
+On Wed, Oct 18, 2017 at 07:00:27AM -0400, Jiancheng Xue wrote:
+> From: tianshuliang <tianshuliang@hisilicon.com>
 > 
-> This means we can change the signature of the function without any
-> consequences! Everyone should be using GPIO descriptors now, so let's
-> just go in and enforce that.
+> Add a phase clock type for HiSilicon SoCs,which supports
+> clk_set_phase operation.
+
+As the pair of phase operation, I don't see why clk_get_phase operation
+is missing.
+
 > 
-> This saves a bit of code since GPIO descriptors know inherently if they
-> are active low so no need for the code keeping track of that.
-> 
-> We leave it to the caller to come up with the GPIO descriptor. It is
-> nowadays possible to do that even without a corresponding device, so
-> no excuse not to pass them around. The one in-kernel user lifecycles
-> it using devm_gpiod_get() in gpio_clk_driver_probe().
-> 
-> Cc: Sergej Sawazki <ce3a@gmx.de>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: tianshuliang <tianshuliang@hisilicon.com>
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 > ---
+>  drivers/clk/hisilicon/Makefile         |   2 +-
+>  drivers/clk/hisilicon/clk-hisi-phase.c | 117 +++++++++++++++++++++++++++++++++
+>  drivers/clk/hisilicon/clk.c            |  45 +++++++++++++
+>  drivers/clk/hisilicon/clk.h            |  22 +++++++
+>  4 files changed, 185 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/hisilicon/clk-hisi-phase.c
+> 
+> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+> index 1e4c3dd..7189f07 100644
+> --- a/drivers/clk/hisilicon/Makefile
+> +++ b/drivers/clk/hisilicon/Makefile
+> @@ -2,7 +2,7 @@
+>  # Hisilicon Clock specific Makefile
+>  #
+>  
+> -obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
+> +obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
+>  
+>  obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+>  obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+> diff --git a/drivers/clk/hisilicon/clk-hisi-phase.c b/drivers/clk/hisilicon/clk-hisi-phase.c
+> new file mode 100644
+> index 0000000..436f0a1
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/clk-hisi-phase.c
+> @@ -0,0 +1,117 @@
+> +/*
+> + * Copyright (c) 2017 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Simple HiSilicon phase clock implementation.
+> + */
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include "clk.h"
+> +
+> +struct clk_hisi_phase {
+> +	struct clk_hw	hw;
+> +	void __iomem	*reg;
+> +	u32		*phase_values;
+> +	u32		*phase_regs;
+> +	u8		phase_num;
 
-Applied to clk-next
+I do not think this value-reg table is necessary, as the register value
+maps to phase degree in a way that is easy for programming, i.e. degree
+increases 45 with register value increases one.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +	u32		mask;
+> +	u8		shift;
+> +	u8		flags;
+> +	spinlock_t	*lock;
+> +};
+
+Have a newline here.
+
+> +#define to_clk_hisi_phase(_hw) container_of(_hw, struct clk_hisi_phase, hw)
+> +
+> +static u32 hisi_clk_get_phase_reg(struct clk_hisi_phase *phase, int degrees)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < phase->phase_num; i++)
+> +		if (phase->phase_values[i] == degrees)
+> +			return phase->phase_regs[i];
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int hisi_clk_set_phase(struct clk_hw *hw, int degrees)
+> +{
+> +	struct clk_hisi_phase *phase = to_clk_hisi_phase(hw);
+> +	u32 val, phase_reg;
+> +	unsigned long flags = 0;
+> +
+> +	phase_reg = hisi_clk_get_phase_reg(phase, degrees);
+> +	if (phase_reg < 0)
+> +		return phase_reg;
+> +
+> +	if (phase->lock)
+> +		spin_lock_irqsave(phase->lock, flags);
+> +	else
+> +		__acquire(phase->lock);
+> +
+> +	val = clk_readl(phase->reg);
+> +	val &= ~(phase->mask << phase->shift);
+> +	val |= phase_reg << phase->shift;
+> +	clk_writel(val, phase->reg);
+> +
+> +	if (phase->lock)
+> +		spin_unlock_irqrestore(phase->lock, flags);
+> +	else
+> +		__release(phase->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct clk_ops clk_phase_ops = {
+> +	.set_phase = hisi_clk_set_phase,
+> +};
+> +
+> +void clk_unregister_hisi_phase(struct clk *clk)
+> +{
+> +	struct clk_hisi_phase *phase;
+> +	struct clk_hw *hw;
+> +
+> +	hw = __clk_get_hw(clk);
+> +	if (!hw)
+> +		return;
+> +
+> +	phase = to_clk_hisi_phase(hw);
+> +	clk_unregister(clk);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_unregister_hisi_phase);
+
+If there no reason that this unregister function need to be before
+register function, I would suggest you put it after register function,
+so that you are consistent with other register/unregister function pair
+like hisi_clk_register[unregister]_phase() etc.
+
+Shawn
+
+> +
+> +struct clk *clk_register_hisi_phase(struct device *dev,
+> +		const struct hisi_phase_clock *clks,
+> +		void __iomem *base, spinlock_t *lock)
+> +{
+> +	struct clk_hisi_phase *phase;
+> +	struct clk *clk;
+> +	struct clk_init_data init;
+> +
+> +	phase = devm_kzalloc(dev, sizeof(struct clk_hisi_phase), GFP_KERNEL);
+> +	if (!phase)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = clks->name;
+> +	init.ops = &clk_phase_ops;
+> +	init.flags = clks->flags | CLK_IS_BASIC;
+> +	init.parent_names = clks->parent_names ? &clks->parent_names : NULL;
+> +	init.num_parents = clks->parent_names ? 1 : 0;
+> +
+> +	phase->reg = base + clks->offset;
+> +	phase->shift = clks->shift;
+> +	phase->mask = BIT(clks->width) - 1;
+> +	phase->lock = lock;
+> +	phase->phase_values = clks->phase_values;
+> +	phase->phase_regs = clks->phase_regs;
+> +	phase->phase_num = clks->phase_num;
+> +	phase->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &phase->hw);
+> +	return clk;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_register_hisi_phase);
+> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+> index b73c1df..e3adfad 100644
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+> @@ -197,6 +197,51 @@ int hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+>  }
+>  EXPORT_SYMBOL_GPL(hisi_clk_register_mux);
+>  
+> +int hisi_clk_register_phase(struct device *dev,
+> +			const struct hisi_phase_clock *clks,
+> +			int nums, struct hisi_clock_data *data)
+> +{
+> +	int i;
+> +	struct clk *clk;
+> +	void __iomem *base = data->base;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		clk =	clk_register_hisi_phase(dev,
+> +				&clks[i], base, &hisi_clk_lock);
+> +
+> +		if (IS_ERR(clk)) {
+> +			pr_err("%s: failed to register clock %s\n",
+> +			       __func__, clks[i].name);
+> +			goto err;
+> +		}
+> +
+> +		data->clk_data.clks[clks[i].id] = clk;
+> +	}
+> +	return 0;
+> +
+> +err:
+> +	while (i--)
+> +		clk_unregister_hisi_phase(data->clk_data.clks[clks[i].id]);
+> +
+> +	return PTR_ERR(clk);
+> +}
+> +EXPORT_SYMBOL_GPL(hisi_clk_register_phase);
+> +
+> +void hisi_clk_unregister_phase(const struct hisi_phase_clock *clks,
+> +				int nums, struct hisi_clock_data *data)
+> +{
+> +	struct clk **clocks = data->clk_data.clks;
+> +	int i, id;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		id = clks[i].id;
+> +
+> +		if (clocks[id])
+> +			clk_unregister_hisi_phase(clocks[id]);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(hisi_clk_unregister_phase);
+> +
+>  int hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+>  				      int nums, struct hisi_clock_data *data)
+>  {
+> diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+> index 4e1d1af..bc18730 100644
+> --- a/drivers/clk/hisilicon/clk.h
+> +++ b/drivers/clk/hisilicon/clk.h
+> @@ -68,6 +68,19 @@ struct hisi_mux_clock {
+>  	const char		*alias;
+>  };
+>  
+> +struct hisi_phase_clock {
+> +	unsigned int    id;
+> +	const char      *name;
+> +	const char      *parent_names;
+> +	unsigned long   flags;
+> +	unsigned long   offset;
+> +	u8		shift;
+> +	u8		width;
+> +	u32		*phase_values;
+> +	u32		*phase_regs;
+> +	u8		phase_num;
+> +};
+> +
+>  struct hisi_divider_clock {
+>  	unsigned int		id;
+>  	const char		*name;
+> @@ -120,6 +133,15 @@ int hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
+>  				int, struct hisi_clock_data *);
+>  int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+>  				struct hisi_clock_data *);
+> +struct clk *clk_register_hisi_phase(struct device *dev,
+> +				const struct hisi_phase_clock *clks,
+> +				void __iomem *base, spinlock_t *lock);
+> +void clk_unregister_hisi_phase(struct clk *clk);
+> +int hisi_clk_register_phase(struct device *dev,
+> +				const struct hisi_phase_clock *clks,
+> +				int nums, struct hisi_clock_data *data);
+> +void hisi_clk_unregister_phase(const struct hisi_phase_clock *clks,
+> +				int nums, struct hisi_clock_data *data);
+>  int hisi_clk_register_divider(const struct hisi_divider_clock *,
+>  				int, struct hisi_clock_data *);
+>  int hisi_clk_register_gate(const struct hisi_gate_clock *,
+> -- 
+> 2.7.4
+> 
