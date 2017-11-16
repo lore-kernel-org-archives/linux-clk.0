@@ -1,72 +1,75 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18523 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759583AbdKPPdU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:20 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 6/8] cpufreq: tegra124-cpufreq: extend to support Tegra210
+Date: Thu, 16 Nov 2017 17:33:07 +0200
+Message-ID: <1510846389-28712-7-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-To: Wei Xu <xuwei5@hisilicon.com>, "Leo Yan" <leo.yan@linaro.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <59E07FDE.40307@hisilicon.com>
-Cc: "Rob Herring" <robh+dt@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Li Pengcheng" <lipengcheng8@huawei.com>,
- "Zhangfei Gao" <zhangfei.gao@linaro.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
- <20170901013301.GN21656@codeaurora.org>
- <20171007121802.GC23080@leoy-linaro> <59E07FDE.40307@hisilicon.com>
-Message-ID: <150955133019.90597.6277114786385559431@resonance>
-Subject: Re: [PATCH 0/2] Add support for Hi6220 coresight
-Date: Wed, 01 Nov 2017 16:48:50 +0100
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Wei Xu (2017-10-13 10:57:02)
-> Hi Leo,
-> =
+Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+support in this driver. Also allow for the case where the CPU voltage is
+controlled directly by the DFLL rather than by a separate regulator object.
 
-> On 2017/10/7 13:18, Leo Yan wrote:
-> > Hi Stephen, Wei,
-> > =
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-> > On Thu, Aug 31, 2017 at 06:33:01PM -0700, Stephen Boyd wrote:
-> >> On 09/01, Leo Yan wrote:
-> >>> This patch series adds support for coresight on Hi6220; the first pat=
-ch
-> >>> is to fix coresight PLL so can avoid system hang after we enable
-> >>> coresight, the second patch is to add DT binding according to coresig=
-ht
-> >>> topology.
-> >>>
-> >>> The patch has been tested on Hikey; By using OpenCSD snapshot mode, it
-> >>> can successfully decode ETF and ETB trace data.
-> >>>
-> >>
-> >> I can take the first one and second one goes through arm-soc?
-> > =
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4353025..d631dc4 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+ {
+ 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+ 	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
++	if (priv->vdd_cpu_reg)
++		regulator_sync_voltage(priv->vdd_cpu_reg);
+ 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+ }
+ 
+@@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret = PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
++	if (IS_ERR(priv->vdd_cpu_reg))
++		priv->vdd_cpu_reg = NULL;
+ 
+ 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+@@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	clk_put(priv->cpu_clk);
+ out_put_vdd_cpu_reg:
+ 	regulator_put(priv->vdd_cpu_reg);
+-out_put_np:
+ 	of_node_put(np);
+ 
+ 	return ret;
+@@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
+ 	int ret;
+ 	struct platform_device *pdev;
+ 
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!(of_machine_is_compatible("nvidia,tegra124")
++		|| of_machine_is_compatible("nvidia,tegra210")))
+ 		return -ENODEV;
+ 
+ 	/*
+-- 
+1.9.1
 
-> > Could you pick these two patches for Hi6220 coresight enabling for
-> > this merge window? Or need me resend these two patches?
-> =
-
-> Applied patch 2 into hisilicon dt tree with slight fix.
-> Thanks!
-
-Cool. Patch #1 applied to clk tree.
-
-Regards,
-Mike
-
-> =
-
-> BR,
-> Wei
-> =
-
-> > =
-
-> > Thanks,
-> > Leo Yan
-> > =
-
-> > .
-> > =
-
->=20
