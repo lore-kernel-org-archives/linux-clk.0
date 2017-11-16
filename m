@@ -1,117 +1,59 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34106 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbdKUJMp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Nov 2017 04:12:45 -0500
-Subject: Re: [PATCH V6] clk: qcom: Add spmi_pmic clock divider support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-References: <1510912127-4582-1-git-send-email-tirupath@codeaurora.org>
- <20171117235611.GA13301@codeaurora.org>
-From: Tirupathi Reddy T <tirupath@codeaurora.org>
-Message-ID: <6e6399c9-f0a5-3048-d318-2bfc1ba85ded@codeaurora.org>
-Date: Tue, 21 Nov 2017 14:42:35 +0530
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16687 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758351AbdKPO3M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 09:29:12 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo Tegra210
+Date: Thu, 16 Nov 2017 16:29:02 +0200
+Message-ID: <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20171117235611.GA13301@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Apply the memory built-in self test work around when ungating certain
+Tegra210 power domains.
 
-On 11/18/2017 5:26 AM, Stephen Boyd wrote:
-> On 11/17, Tirupathi Reddy wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
->> new file mode 100644
->> index 0000000..2cf2aba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
-> Please move this to qcom,spmi-clkdiv.txt like other qcom bindings.
-Addressed in next patch version[7]
->
->> @@ -0,0 +1,59 @@
->> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
->> +
->> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
->> +These clocks are typically wired through alternate functions on
->> +gpio pins.
->> +
->> +=======================
->> +Properties
->> +=======================
->> +
->> +- compatible
->> +	Usage:      required
->> +	Value type: <string>
->> +	Definition: must be "qcom,spmi-clkdiv".
->> +
->> +- reg
->> +	Usage:      required
->> +	Value type: <prop-encoded-array>
->> +	Definition: base address of CLKDIV peripherals.
->> +
->> +- qcom,num-clkdivs
->> +	Usage:      required
->> +	Value type: <u32>
->> +	Definition: number of CLKDIV peripherals.
-> Would it work if we read the registers and looked for the clkdiv
-> subtype ID? If we read something that doesn't match, break and
-> stop adding clks? Or does reading the next "peripheral" cause
-> some sort of crash and burn scenario where the device see an
-> access control violation? Would be interesting to do it that way
-> and avoid needing a new property in DT.
-I feel it is better to go with the current design as we beforehand know the
-#div-clk peripherals in a PMIC. Reading the next peripheral might result in
-an unknown failure if there is no real peripheral there (PMIC peripherals
-are not in contiguous address space).
->> +
->> +
->> +	parent_name = of_clk_get_parent_name(of_node, 0);
->> +	if (!parent_name) {
->> +		dev_err(dev, "missing parent clock\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	init.parent_names = &parent_name;
->> +	init.num_parents = 1;
->> +	init.ops = &clk_spmi_pmic_div_ops;
->> +
->> +	for (i = 0, clkdiv = cc->clks; i < nclks; i++) {
->> +		spin_lock_init(&clkdiv[i].lock);
->> +		clkdiv[i].base = start + i * 0x100;
->> +		clkdiv[i].regmap = regmap;
->> +		clkdiv[i].cxo_period_ns = NSEC_PER_SEC / cxo_hz;
->> +		init.name = kasprintf(GFP_KERNEL, "div_clk%d", i + 1);
-> Hmm. Maybe we should just have this on the stack. 20 characters
-> should be plenty?
-Addressed in next patch version[7]
->> +		clkdiv[i].hw.init = &init;
->> +
->> +		ret = devm_clk_hw_register(dev, &clkdiv[i].hw);
->> +		kfree(init.name); /* clk framework made a copy */
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	return of_clk_add_hw_provider(of_node, spmi_pmic_div_clk_hw_get, cc);
->> +}
->> +
->> +static int spmi_pmic_clkdiv_remove(struct platform_device *pdev)
->> +{
->> +	of_clk_del_provider(pdev->dev.of_node);
->> +
->> +	return 0;
-> This can use devm now.
-Addressed in next patch version.
->> +}
->> +
->> +static const struct of_device_id spmi_pmic_clkdiv_match_table[] = {
->> +	{ .compatible = "qcom,spmi-clkdiv" },
->> +	{ /* sentinel */ }
->> +};
-> Nice!
-Thanks
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 0453ff6..4c0582d 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+ 
+ 	bool has_tsense_reset;
+ 	bool has_gpu_clamps;
++	bool needs_mbist_war;
+ 
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
+@@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	usleep_range(10, 20);
+ 
++	if (pg->pmc->soc->needs_mbist_war)
++		tegra210_handle_mbist_war(pg->id);
++
+ 	if (disable_clocks)
+ 		tegra_powergate_disable_clocks(pg);
+ 
+@@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+ 	.cpu_powergates = tegra210_cpu_powergates,
+ 	.has_tsense_reset = true,
+ 	.has_gpu_clamps = true,
++	.needs_mbist_war = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
+ };
+-- 
+1.9.1
 
