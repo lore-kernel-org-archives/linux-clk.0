@@ -1,88 +1,59 @@
-Return-Path: <Alexey.Brodkin@synopsys.com>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "Eugeniy.Paltsev@synopsys.com"
-	<Eugeniy.Paltsev@synopsys.com>, "linux-snps-arc@lists.infradead.org"
-	<linux-snps-arc@lists.infradead.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-Subject: Re: [PATCH RESEND] CLK: ARC: Set initial pll output frequency
- specified in device tree
-Date: Tue, 14 Nov 2017 21:19:34 +0000
-Message-ID: <1510694373.15407.1.camel@synopsys.com>
-References: <20171114122020.9800-1-Eugeniy.Paltsev@synopsys.com>
-	 <1b07abf9-c94d-1759-4182-519b77c8bb37@mentor.com>
-In-Reply-To: <1b07abf9-c94d-1759-4182-519b77c8bb37@mentor.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6501 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750905AbdKPPaE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:30:04 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo Tegra210
+Date: Thu, 16 Nov 2017 17:29:55 +0200
+Message-ID: <1510846195-28555-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVmxhZGltaXIsDQoNCk9uIFR1ZSwgMjAxNy0xMS0xNCBhdCAxOTowMSArMDIwMCwgVmxhZGlt
-aXIgWmFwb2xza2l5IHdyb3RlOg0KPiBPbiAxMS8xNC8yMDE3IDAyOjIwIFBNLCBFdWdlbml5IFBh
-bHRzZXYgd3JvdGU6DQo+ID4gDQo+ID4gQWRkIG9wdGlvbiB0byBzZXQgaW5pdGlhbCBvdXRwdXQg
-ZnJlcXVlbmN5IG9mIHBsbHMgdmlhDQo+ID4gImNsb2NrLWZyZXF1ZW5jeSIgcHJvcGVydHkgaW4g
-cGxsJ3MgZGV2aWNlIHRyZWUgbm9kZS4NCj4gPiBUaGlzIGZyZXF1ZW5jeSB3aWxsIGJlIHNldCB3
-aGlsZSBwbGwgZHJpdmVyIHByb2JlZC4NCj4gPiANCj4gPiBUaGUgdXNhZ2UgZXhhbXBsZSBpcyBz
-ZXR0aW5nIENQVSBjbG9jayBmcmVxdWVuY3kgb24gYm9vdA0KPiA+IFNlZSBkaXNjdXNzaW9uOg0K
-PiA+IGh0dHBzOi8vdXJsZGVmZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9f
-d3d3Lm1haWwtMkRhcmNoaXZlLmNvbV9saW51eC0yRHNucHMtMkRhcmMtNDBsaXN0cy5pbmZyYWRl
-YWQub3JnX21zZzAyNjg5Lmh0bWwmZD1Ed0lDQWcmYz1EUEw2DQo+ID4gX1hfNkprWEZ4N0FYV3FC
-MHRnJnI9bHFkZWVTU0VlczBHRkREbDY1NmVWaVhPN2JyZVM1NXl0V2tocGs1UjgxSSZtPXZURm9T
-djFFOE55UUM4bnFlNnB3dnVURHhHdkVlZmhBZEd3QW9BQk9yWTQmcz1zYm1NbmN6ZEtQMzE3Yk45
-NzNjWm4yV2NZRjI5a1ZNTFcNCj4gPiBjaFlmaFNHVDJNJmU9DQo+ID4gDQo+ID4gU2lnbmVkLW9m
-Zi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0KPiA+
-IC0tLQ0KPiA+IMKgLi4uL2JpbmRpbmdzL2Nsb2NrL3NucHMsaHNkay1wbGwtY2xvY2sudHh0wqDC
-oMKgwqDCoMKgwqDCoMKgfMKgwqA1ICsrKysNCj4gPiDCoC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L2Nsb2NrL3NucHMscGxsLWNsb2NrLnR4dMKgwqDCoHzCoMKgNSArKysrDQo+ID4gwqBkcml2ZXJz
-L2Nsay9heHMxMHgvcGxsX2Nsb2NrLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqB8IDM0ICsrKysrKysrKysrKysrKysrKysrLS0NCj4gPiDCoGRyaXZlcnMvY2xrL2Ns
-ay1oc2RrLXBsbC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB8IDM0ICsrKysrKysrKysrKysrKysrKysrLS0NCj4gPiDCoDQgZmlsZXMgY2hhbmdlZCwg
-NzQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMsaHNkay1wbGwtY2xv
-Y2sudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMsaHNk
-ay1wbGwtY2xvY2sudHh0DQo+ID4gaW5kZXggYzU2Yzc1NS4uNTcwMzA1OSAxMDA2NDQNCj4gPiAt
-LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxoc2RrLXBs
-bC1jbG9jay50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-Y2xvY2svc25wcyxoc2RrLXBsbC1jbG9jay50eHQNCj4gPiBAQCAtMTMsNiArMTMsMTAgQEAgUmVx
-dWlyZWQgcHJvcGVydGllczoNCj4gPiDCoC0gY2xvY2tzOiBzaGFsbCBiZSB0aGUgaW5wdXQgcGFy
-ZW50IGNsb2NrIHBoYW5kbGUgZm9yIHRoZSBQTEwuDQo+ID4gwqAtICNjbG9jay1jZWxsczogZnJv
-bSBjb21tb24gY2xvY2sgYmluZGluZzsgU2hvdWxkIGFsd2F5cyBiZSBzZXQgdG8gMC4NCj4gPiDC
-oA0KPiA+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICstIGNsb2NrLWZyZXF1ZW5jeTogb3V0
-cHV0IGZyZXF1ZW5jeSBnZW5lcmF0ZWQgYnkgcGxsIGluIEh6IHdoaWNoIHdpbGwgYmUgc2V0DQo+
-ID4gK3doaWxlIHByb2JpbmcuIFNob3VsZCBiZSBhIHNpbmdsZSBjZWxsLg0KPiA+ICsNCj4gPiDC
-oEV4YW1wbGU6DQo+ID4gwqAJaW5wdXRfY2xrOiBpbnB1dC1jbGsgew0KPiA+IMKgCQljbG9jay1m
-cmVxdWVuY3kgPSA8MzMzMzMzMzM+Ow0KPiA+IEBAIC0yNSw0ICsyOSw1IEBAIEV4YW1wbGU6DQo+
-ID4gwqAJCXJlZyA9IDwweDAwIDB4MTA+Ow0KPiA+IMKgCQkjY2xvY2stY2VsbHMgPSA8MD47DQo+
-ID4gwqAJCWNsb2NrcyA9IDwmaW5wdXRfY2xrPjsNCj4gPiArCQljbG9jay1mcmVxdWVuY3kgPSA8
-MTAwMDAwMDAwMD47DQo+ID4gwqAJfTsNCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMscGxsLWNsb2NrLnR4dCBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zbnBzLHBsbC1jbG9jay50eHQNCj4gPiBpbmRl
-eCAxMWZlNDg3Li41OTA4Zjk5IDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9jbG9jay9zbnBzLHBsbC1jbG9jay50eHQNCj4gPiArKysgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxwbGwtY2xvY2sudHh0DQo+ID4g
-QEAgLTEzLDYgKzEzLDEwIEBAIHJlZ2lzdGVycyBhbmQgc2Vjb25kIGZvciBjb3JyZXNwb25kaW5n
-IExPQ0sgQ0dVIHJlZ2lzdGVyLg0KPiA+IMKgLSBjbG9ja3M6IHNoYWxsIGJlIHRoZSBpbnB1dCBw
-YXJlbnQgY2xvY2sgcGhhbmRsZSBmb3IgdGhlIFBMTC4NCj4gPiDCoC0gI2Nsb2NrLWNlbGxzOiBm
-cm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOyBTaG91bGQgYWx3YXlzIGJlIHNldCB0byAwLg0KPiA+
-IMKgDQo+ID4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4gKy0gY2xvY2stZnJlcXVlbmN5OiBv
-dXRwdXQgZnJlcXVlbmN5IGdlbmVyYXRlZCBieSBwbGwgaW4gSHogd2hpY2ggd2lsbCBiZSBzZXQN
-Cj4gPiArd2hpbGUgcHJvYmluZy4gU2hvdWxkIGJlIGEgc2luZ2xlIGNlbGwuDQo+ID4gKw0KPiA+
-IMKgRXhhbXBsZToNCj4gPiDCoAlpbnB1dC1jbGs6IGlucHV0LWNsayB7DQo+ID4gwqAJCWNsb2Nr
-LWZyZXF1ZW5jeSA9IDwzMzMzMzMzMz47DQo+ID4gQEAgLTI1LDQgKzI5LDUgQEAgRXhhbXBsZToN
-Cj4gPiDCoAkJcmVnID0gPDB4ODAgMHgxMD4sIDwweDEwMCAweDEwPjsNCj4gPiDCoAkJI2Nsb2Nr
-LWNlbGxzID0gPDA+Ow0KPiA+IMKgCQljbG9ja3MgPSA8JmlucHV0LWNsaz47DQo+ID4gKwkJY2xv
-Y2stZnJlcXVlbmN5ID0gPDEwMDAwMDAwMD47DQo+ID4gwqAJfTsNCj4gDQo+IFlvdSBtYXkgY2hl
-Y2sgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Nsb2NrLWJpbmRpbmdz
-LnR4dA0KPiBhYm91dCBob3cgdG8gYXNzaWduIGluaXRpYWwgY2xvY2sgcmF0ZXMsIGluIGdlbmVy
-YWwgJ2Nsb2NrLWZyZXF1ZW5jeScNCj4gcHJvcGVydHkgaXMgYSBwcm9wZXJ0eSBvZiBjbG9jayBj
-b25zdW1lcnMgd2l0aCB0d28gZXhjZXB0aW9ucyBvZiBzaW1wbGUNCj4gY2xvY2sgc291cmNlcywg
-bmFtZWx5IGl0IGlzIHVzZWQgaW4gZml4ZWQgY2xvY2sgYW5kIFBXTSBjbG9jayBiaW5kaW5ncy4N
-Cg0KSSB0aGluayB0aGF0J3Mgd2hhdCB3ZSBhZ3JlZWQgb24gd2l0aCBSb2IgSGVycmluZyBiYWNr
-IGluIHRoZSBkYXkuDQpIYXZlIHlvdSBjaGVja2VkIHRoaXMgcG9zdCBvZiBoaW0gb24gdGhlIHRv
-cGljPw0KaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4LXNucHMtYXJj
-LzIwMTctU2VwdGVtYmVyLzAwMjkwOS5odG1sDQoNCkp1c3QgRllJIGl0IGFsbCBzdGFydGVkIGZy
-b20gbXkgcXVlc3Rpb24gaGVyZToNCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVybWFp
-bC9saW51eC1zbnBzLWFyYy8yMDE3LVNlcHRlbWJlci8wMDI5MDAuaHRtbA0KDQotQWxleGV5
+Apply the memory built-in self test work around when ungating certain
+Tegra210 power domains.
+
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 0453ff6..4c0582d 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+ 
+ 	bool has_tsense_reset;
+ 	bool has_gpu_clamps;
++	bool needs_mbist_war;
+ 
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
+@@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	usleep_range(10, 20);
+ 
++	if (pg->pmc->soc->needs_mbist_war)
++		tegra210_handle_mbist_war(pg->id);
++
+ 	if (disable_clocks)
+ 		tegra_powergate_disable_clocks(pg);
+ 
+@@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+ 	.cpu_powergates = tegra210_cpu_powergates,
+ 	.has_tsense_reset = true,
+ 	.has_gpu_clamps = true,
++	.needs_mbist_war = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
+ };
+-- 
+1.9.1
+
