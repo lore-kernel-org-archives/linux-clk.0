@@ -1,230 +1,42 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V6 05/12] clk: sprd: add divider clock support
-Date: Mon, 27 Nov 2017 18:01:08 +0800
-Message-ID: <20171127100115.20655-6-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
-References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 16 Nov 2017 14:17:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	hermit.wangheming@hisilicon.com, project-aspen-dev@linaro.org
+Subject: Re: [PATCH 0/3] add more clock definitions for hi3798cv200-poplar
+ board
+Message-ID: <20171116221754.GS11955@codeaurora.org>
+References: <1508324429-6012-1-git-send-email-xuejiancheng@hisilicon.com>
+ <20171116005438.GH11163@dragon>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171116005438.GH11163@dragon>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a feature that can also be found in sprd composite clocks,
-provide a bunch of helpers that can be reused later on.
+On 11/16, Shawn Guo wrote:
+> Hi Stephen,
+> 
+> On Wed, Oct 18, 2017 at 07:00:26AM -0400, Jiancheng Xue wrote:
+> > Add more clock definitions for hi3798cv200-poplar board.
+> > 
+> > Younian Wang (1):
+> >   clk: hisilicon: correct ir clock rate for hi3798cv200 SoC
+> > 
+> > tianshuliang (2):
+> >   clk: hisilicon: add hisi phase clock support
+> >   clk: hisilicon: add emmc sample and drive clock for hi3798cv200 SoC
+> 
+> Since you haven't applied this series, I will update it with a few more
+> patches added.  I assume it's late for 4.15 merge window anyway, so I
+> intend to maintain a branch for all those Hi3798CV200 clock patches.
+> After the patches are properly reviewed, I can rebase the branch to
+> 4.15-rc and then ask you to pull for next merge window.  Sounds good to
+> you?
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile |  1 +
- drivers/clk/sprd/div.c    | 92 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/div.h    | 77 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 drivers/clk/sprd/div.c
- create mode 100644 drivers/clk/sprd/div.h
+Yes that's fine. I am sending the PR today/tomorrow.
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index cee36b5..80e6039 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
- clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
-+clk-sprd-y	+= div.o
-diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
-new file mode 100644
-index 0000000..8c7196f
---- /dev/null
-+++ b/drivers/clk/sprd/div.c
-@@ -0,0 +1,92 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "div.h"
-+
-+long sprd_div_helper_round_rate(struct sprd_clk_common *common,
-+				const struct sprd_div_internal *div,
-+				unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return divider_round_rate(&common->hw, rate, parent_rate,
-+				  NULL, div->width, 0);
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_round_rate);
-+
-+static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_round_rate(&cd->common, &cd->div,
-+					  rate, parent_rate);
-+}
-+
-+unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-+					  const struct sprd_div_internal *div,
-+					  unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	val = reg >> div->shift;
-+	val &= (1 << div->width) - 1;
-+
-+	return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_recalc_rate);
-+
-+static unsigned long sprd_div_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_recalc_rate(&cd->common, &cd->div, parent_rate);
-+}
-+
-+int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
-+			     const struct sprd_div_internal *div,
-+			     unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	val = divider_get_val(rate, parent_rate, NULL,
-+			      div->width, 0);
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
-+
-+	sprd_regmap_write(common->regmap, common->reg,
-+			  reg | (val << div->shift));
-+
-+	return 0;
-+
-+}
-+EXPORT_SYMBOL_GPL(sprd_div_helper_set_rate);
-+
-+static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_div *cd = hw_to_sprd_div(hw);
-+
-+	return sprd_div_helper_set_rate(&cd->common, &cd->div,
-+					rate, parent_rate);
-+}
-+
-+const struct clk_ops sprd_div_ops = {
-+	.recalc_rate = sprd_div_recalc_rate,
-+	.round_rate = sprd_div_round_rate,
-+	.set_rate = sprd_div_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_div_ops);
-diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
-new file mode 100644
-index 0000000..fb59fe5
---- /dev/null
-+++ b/drivers/clk/sprd/div.h
-@@ -0,0 +1,77 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_DIV_H_
-+#define _SPRD_DIV_H_
-+
-+#include "common.h"
-+
-+/**
-+ * struct sprd_div_internal - Internal divider description
-+ * @shift: Bit offset of the divider in its register
-+ * @width: Width of the divider field in its register
-+ *
-+ * That structure represents a single divider, and is meant to be
-+ * embedded in other structures representing the various clock
-+ * classes.
-+ */
-+struct sprd_div_internal {
-+	u8	shift;
-+	u8	width;
-+};
-+
-+#define _SPRD_DIV_CLK(_shift, _width)	\
-+	{				\
-+		.shift	= _shift,	\
-+		.width	= _width,	\
-+	}
-+
-+struct sprd_div {
-+	struct sprd_div_internal	div;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_DIV_CLK(_struct, _name, _parent, _reg,			\
-+			_shift, _width, _flags)				\
-+	struct sprd_div _struct = {					\
-+		.div	= _SPRD_DIV_CLK(_shift, _width),		\
-+		.common	= {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &sprd_div_ops,	\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_div, common);
-+}
-+
-+long sprd_div_helper_round_rate(struct sprd_clk_common *common,
-+				const struct sprd_div_internal *div,
-+				unsigned long rate,
-+				unsigned long *parent_rate);
-+
-+unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-+					  const struct sprd_div_internal *div,
-+					  unsigned long parent_rate);
-+
-+int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
-+			     const struct sprd_div_internal *div,
-+			     unsigned long rate,
-+			     unsigned long parent_rate);
-+
-+extern const struct clk_ops sprd_div_ops;
-+
-+#endif /* _SPRD_DIV_H_ */
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
