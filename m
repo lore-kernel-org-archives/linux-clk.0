@@ -1,73 +1,141 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 04/27] clk: ti: clkctrl: use fallback udelay approach if
- timekeeping is suspended
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
- <1509368685-29112-5-git-send-email-t-kristo@ti.com>
- <20171103154317.GV11011@codeaurora.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <3249933f-7f37-a6c9-ed0c-58d40f06578b@ti.com>
-Date: Mon, 6 Nov 2017 09:33:16 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13407 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753928AbdKPPdS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:18 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 2/8] clk: tegra: DT align parameter for CVB calculation
+Date: Thu, 16 Nov 2017 17:33:03 +0200
+Message-ID: <1510846389-28712-3-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20171103154317.GV11011@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/11/17 17:43, Stephen Boyd wrote:
-> On 10/30, Tero Kristo wrote:
->> This will happen on certain platforms when entering / leaving suspend
->> and the system attempts to disable certain clocks at very early/late
->> phase, burping out a warning from timekeeping core. Avoid the issue
->> by checking if the timekeeping is suspended and using the fallback
->> udelay approach for checking timeouts.
->>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>   drivers/clk/ti/clkctrl.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
->> index 284ba449..91ddc92 100644
->> --- a/drivers/clk/ti/clkctrl.c
->> +++ b/drivers/clk/ti/clkctrl.c
->> @@ -21,6 +21,7 @@
->>   #include <linux/of_address.h>
->>   #include <linux/clk/ti.h>
->>   #include <linux/delay.h>
->> +#include <linux/timekeeping.h>
-> 
->>   #include "clock.h"
->>   
->>   #define NO_IDLEST			0x1
->> @@ -90,7 +91,7 @@ static bool _omap4_is_ready(u32 val)
->>   
->>   static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
->>   {
->> -	if (unlikely(_early_timeout)) {
->> +	if (unlikely(_early_timeout || timekeeping_suspended)) {
->>   		if (time->cycles++ < timeout) {
-> 
-> This would be the second user of timekeeping_suspended outside of
-> timekeeping core. Why don't we just udelay(1) every time we call
-> this function? The loop on ktime without any sort of delay in it
-> may actually spin faster, especially because we can't get
-> interrupted here (irqs are off). And irqs + preemption enabled is
-> typically where you would want to use ktime instead of counting
-> udelay() calls to see if you hit a timeout.
+When using a PWM controlled regulator, the voltage step and offset are
+determined by the regulator type in use. This is specified in DT rather
+than fixed in the CVB table. Hence pass this information to the CVB table
+calculation function. For backwards compatibility the table values are used
+if the corresponding parameter is 0.
 
-It actually was originally just udelay() but I changed it to use the 
-ktime_get() approach way back due to comments provided on some early 
-revisions of this patch. See: https://patchwork.kernel.org/patch/7884371/
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
+ drivers/clk/tegra/cvb.c                    | 17 +++++++++++++----
+ drivers/clk/tegra/cvb.h                    |  5 +++--
+ 3 files changed, 37 insertions(+), 8 deletions(-)
 
-> 
-> This code seems over-complicated given the constraints at the
-> call-sites.
-> 
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 1976e96..b587f6b 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 	struct tegra_dfll_soc_data *soc;
+ 	const struct of_device_id *of_id;
+ 	const struct dfll_fcpu_data *fcpu_data;
++	struct rail_alignment align;
+ 
+ 	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
+ 	fcpu_data = of_id->data;
+@@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
++	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
++					&align.offset_uv);
++	if (err < 0) {
++		dev_err(&pdev->dev,
++			"offset uv not found, default to table value\n");
++		align.offset_uv = 0;
++	}
++
++	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
++					&align.step_uv);
++	if (err < 0) {
++		dev_err(&pdev->dev,
++			"step uv not found, default to table value\n");
++		align.step_uv = 0;
++	}
++
+ 	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+ 
+ 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
+ 					   fcpu_data->cpu_cvb_tables_size,
+-					   process_id, speedo_id, speedo_value,
+-					   soc->max_freq);
++					   &align, process_id, speedo_id,
++					   speedo_value, soc->max_freq);
++	soc->alignment = align;
++
+ 	if (IS_ERR(soc->cvb)) {
+ 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
+ 			PTR_ERR(soc->cvb));
+diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+index da9e8e7..7ed1fbe 100644
+--- a/drivers/clk/tegra/cvb.c
++++ b/drivers/clk/tegra/cvb.c
+@@ -62,11 +62,19 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
+ }
+ 
+ static int build_opp_table(struct device *dev, const struct cvb_table *table,
++			   struct rail_alignment *align,
+ 			   int speedo_value, unsigned long max_freq)
+ {
+-	const struct rail_alignment *align = &table->alignment;
+ 	int i, ret, dfll_mv, min_mv, max_mv;
+ 
++	if (!align->step_uv)
++		align->step_uv = table->alignment.step_uv;
++	if (!align->step_uv)
++		return -EINVAL;
++
++	if (!align->offset_uv)
++		align->offset_uv = table->alignment.offset_uv;
++
+ 	min_mv = round_voltage(table->min_millivolts, align, UP);
+ 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
+ 
+@@ -109,8 +117,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+  */
+ const struct cvb_table *
+ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
+-			size_t count, int process_id, int speedo_id,
+-			int speedo_value, unsigned long max_freq)
++			size_t count, struct rail_alignment *align,
++			int process_id, int speedo_id, int speedo_value,
++			unsigned long max_freq)
+ {
+ 	size_t i;
+ 	int ret;
+@@ -124,7 +133,7 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+ 		if (table->process_id != -1 && table->process_id != process_id)
+ 			continue;
+ 
+-		ret = build_opp_table(dev, table, speedo_value, max_freq);
++		ret = build_opp_table(dev, table, align, speedo_value, max_freq);
+ 		return ret ? ERR_PTR(ret) : table;
+ 	}
+ 
+diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+index c1f0779..cfa110f 100644
+--- a/drivers/clk/tegra/cvb.h
++++ b/drivers/clk/tegra/cvb.h
+@@ -59,8 +59,9 @@ struct cvb_table {
+ 
+ const struct cvb_table *
+ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
+-			size_t count, int process_id, int speedo_id,
+-			int speedo_value, unsigned long max_freq);
++			size_t count, struct rail_alignment *align,
++			int process_id, int speedo_id, int speedo_value,
++			unsigned long max_freq);
+ void tegra_cvb_remove_opp_table(struct device *dev,
+ 				const struct cvb_table *table,
+ 				unsigned long max_freq);
+-- 
+1.9.1
 
-True, I can easily change it to just use udelay() if wanted.
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
