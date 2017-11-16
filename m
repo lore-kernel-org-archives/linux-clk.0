@@ -1,78 +1,43 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- ALKML <linux-arm-kernel@lists.infradead.org>,
- LKML <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
- Roy Franz <roy.franz@cavium.com>, Harb Abdulhamid <harba@codeaurora.org>,
- Nishanth Menon <nm@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- Loc Ho <lho@apm.com>, Alexey Klimov <alexey.klimov@arm.com>,
- Ryan Harkin <Ryan.Harkin@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 18/22] clk: add support for clocks provided by SCMI
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1506604306-20739-1-git-send-email-sudeep.holla@arm.com>
- <1506604306-20739-19-git-send-email-sudeep.holla@arm.com>
- <20171102072350.GO30645@codeaurora.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <c0b80daf-6361-87eb-fde6-a9d6a71e3e82@arm.com>
-Date: Thu, 2 Nov 2017 10:04:45 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18437 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758873AbdKPPaD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:30:03 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+Date: Thu, 16 Nov 2017 17:29:51 +0200
+Message-ID: <1510846195-28555-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20171102072350.GO30645@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch series introduces the Memory Built-In Self Test (MBIST)
+work around (WAR) needed when power ungating certain domains. More
+details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+implement the WAR in the Tegra210 clock driver, because most accesses are
+to CAR registers and for the VENC domain, we need to make sure the CSI
+clock source is not changed during the WAR execution.
 
+Changes in v2:
+* Use readl for fence_delay() rather than readl_relaxed
+* clarify MBIST and WAR acronyms
 
-On 02/11/17 07:23, Stephen Boyd wrote:
-> On 09/28, Sudeep Holla wrote:
->> On some ARM based systems, a separate Cortex-M based System Control
->> Processor(SCP) provides the overall power, clock, reset and system
->> control. System Control and Management Interface(SCMI) Message Protocol
->> is defined for the communication between the Application Cores(AP)
->> and the SCP.
->>
->> This patch adds support for the clocks provided by SCP using SCMI
->> protocol.
->>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: linux-clk@vger.kernel.org
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
-> 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
+Peter De Schrijver (4):
+  clk: tegra: Add la clock for Tegra210
+  clk: tegra: add fence_delay for clock registers
+  clk: tegra: MBIST work around for Tegra210
+  soc/tegra: pmc: apply MBIST work around fo Tegra210
 
-Thanks
-
->>  MAINTAINERS            |   2 +-
->>  drivers/clk/Kconfig    |  10 +++
->>  drivers/clk/Makefile   |   1 +
->>  drivers/clk/clk-scmi.c | 210 +++++++++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 222 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/clk-scmi.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 23ec3471f542..32c184391aee 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -12941,7 +12941,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
->>  L:	linux-arm-kernel@lists.infradead.org
->>  S:	Maintained
->>  F:	Documentation/devicetree/bindings/arm/arm,sc[mp]i.txt
->> -F:	drivers/clk/clk-scpi.c
->> +F:	drivers/clk/clk-sc[mp]i.c
-> 
-> Is there a lot of copy/paste going on from clk-scpi.c? Maybe it
-> could be consolidated?
-> 
-
-Not much apart from the usual driver skeleton. Also SCPI specification
-will not be enhanced any further while SCMI will be. So they will
-deviated in the feature set going further. Even I was thinking of
-merging then together initially but based on some WIP changes to the
-specification, I thought it may not be good idea. But if we think it can
-be merged in future , I will do that for sure(for easy maintenance)
+ drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h                  |   7 +
+ drivers/soc/tegra/pmc.c                  |   5 +
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ include/linux/clk/tegra.h                |   1 +
+ 5 files changed, 383 insertions(+), 3 deletions(-)
 
 -- 
-Regards,
-Sudeep
+1.9.1
+
