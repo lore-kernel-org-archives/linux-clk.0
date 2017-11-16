@@ -1,249 +1,478 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	arnd@arndb.de,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/3] dt-bindings: clock: Add Actions S900 clock bindings
-Date: Tue,  7 Nov 2017 01:15:50 +0530
-Message-Id: <1509997552-29718-2-git-send-email-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
-References: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16117 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935299AbdKPO3L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 09:29:11 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 3/4] clk: tegra: MBIST work around for Tegra210
+Date: Thu, 16 Nov 2017 16:29:01 +0200
+Message-ID: <1510842542-16451-4-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Actions Semi S900 clock bindings.
+Tegra210 has a hw bug which can cause IP blocks to lock up when ungating a
+domain. The reason is that the logic responsible for resetting the memory
+built-in self test mode can come up in an undefined state because it doesn't
+get a clock or reset signal. Work around this by making sure the logic will
+get some clock edges by ensuring the relevant clock is enabled and temporarily
+override the relevant second level clock gates (SLCG).
+Unfortunately for some IP blocks, the control bits for overriding the
+SLCGs are not in CAR, but in the IP block itself. This means we need to
+map a few extra register banks in the clock code.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-Changes in v2:
+ drivers/clk/tegra/clk-tegra210.c | 359 ++++++++++++++++++++++++++++++++++++++-
+ include/linux/clk/tegra.h        |   1 +
+ 2 files changed, 358 insertions(+), 2 deletions(-)
 
-1. Added binding header to this patch
-2. Changed clock-controller node name to cmu
-3. Added clocks property to cmu node
-4. Changed compatible property value to "actions,s900-cmu"
-5. Fixed example UART controller node
-6. Fixed tab vs space issue
-
- .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 +++++++
- include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++++++++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
- create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
-
-diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-new file mode 100644
-index 0000000..6e2c038
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-@@ -0,0 +1,47 @@
-+* Actions S900 Clock Management Unit (CMU)
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 55a5b7f..72de0e9 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -22,10 +22,12 @@
+ #include <linux/of_address.h>
+ #include <linux/delay.h>
+ #include <linux/export.h>
++#include <linux/mutex.h>
+ #include <linux/clk/tegra.h>
+ #include <dt-bindings/clock/tegra210-car.h>
+ #include <dt-bindings/reset/tegra210-car.h>
+ #include <linux/iopoll.h>
++#include <soc/tegra/pmc.h>
+ 
+ #include "clk.h"
+ #include "clk-id.h"
+@@ -231,6 +233,30 @@
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+ 
++#define LVL2_CLK_GATE_OVRA 0xf8
++#define LVL2_CLK_GATE_OVRC 0x3a0
++#define LVL2_CLK_GATE_OVRD 0x3a4
++#define LVL2_CLK_GATE_OVRE 0x554
 +
-+The Actions S900 clock management unit generates and supplies clock to various
-+controllers within the SoC. The clock binding described here is applicable to
-+S900 SoC.
++/* I2S registers to handle during APE MBIST WAR */
++#define TEGRA210_I2S_BASE  0x11000
++#define TEGRA210_I2S_SIZE  0x100
++#define TEGRA210_I2S_CTRLS 5
++#define TEGRA210_I2S_CG    0x88
++#define TEGRA210_I2S_CTRL  0xa0
 +
-+Required Properties:
++/* DISPA registers to handle during MBIST WAR */
++#define DC_CMD_DISPLAY_COMMAND 0xc8
++#define DC_COM_DSC_TOP_CTL 0xcf8
 +
-+- compatible: should be "actions,s900-cmu"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- clocks: Reference to the parent clocks ("hosc", "losc")
-+- #clock-cells: should be 1.
++/* VIC register to handle during MBIST WAR */
++#define NV_PVIC_THI_SLCG_OVERRIDE_LOW 0x8c
 +
-+Each clock is assigned an identifier, and client nodes can use this identifier
-+to specify the clock which they consume.
++/* APE, DISPA and VIC base addesses needed for MBIST WAR */
++#define TEGRA210_APE_BASE  0x702c0000
++#define TEGRA210_DISPA_BASE 0x54200000
++#define TEGRA210_VIC_BASE  0x54340000
 +
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/actions,s900-cmu.h header and can be used in device
-+tree sources.
+ /*
+  * SDM fractional divisor is 16-bit 2's complement signed number within
+  * (-2^12 ... 2^12-1) range. Represented in PLL data structure as unsigned
+@@ -255,8 +281,22 @@
+ } tegra210_cpu_clk_sctx;
+ #endif
+ 
++struct tegra210_domain_mbist_war {
++	int (*handle_lvl2_ovr)(struct tegra210_domain_mbist_war *mbist);
++	const u32 lvl2_offset;
++	const u32 lvl2_mask;
++	const unsigned int num_clks;
++	const unsigned int *clk_init_data;
++	struct clk_bulk_data *clks;
++};
 +
-+External clocks:
++static struct clk **clks;
 +
-+The hosc clock used as input for the plls is generated outside the SoC. It is
-+expected that it is defined using standard clock bindings as "hosc".
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
++static void __iomem *ape_base;
++static void __iomem *dispa_base;
++static void __iomem *vic_base;
+ 
+ static unsigned long osc_freq;
+ static unsigned long pll_ref_freq;
+@@ -266,6 +306,7 @@
+ static DEFINE_SPINLOCK(pll_re_lock);
+ static DEFINE_SPINLOCK(pll_u_lock);
+ static DEFINE_SPINLOCK(emc_lock);
++static DEFINE_MUTEX(lvl2_ovr_lock);
+ 
+ /* possible OSC frequencies in Hz */
+ static unsigned long tegra210_input_freq[] = {
+@@ -309,6 +350,8 @@
+ #define PLLA_MISC2_WRITE_MASK		0x06ffffff
+ 
+ /* PLLD */
++#define PLLD_BASE_CSI_CLKSOURCE		(1 << 23)
 +
-+Actions S900 CMU also requires one more clock:
-+ - "losc" - internal low frequency oscillator
+ #define PLLD_MISC0_EN_SDM		(1 << 16)
+ #define PLLD_MISC0_LOCK_OVERRIDE	(1 << 17)
+ #define PLLD_MISC0_LOCK_ENABLE		(1 << 18)
+@@ -512,6 +555,176 @@ void tegra210_set_sata_pll_seq_sw(bool state)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
+ 
++static int tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
++{
++	u32 val;
++	int err;
 +
-+Example: Clock Management Unit node:
++	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
++	if (err < 0)
++		return err;
 +
-+        cmu: clock-controller@e0160000 {
-+                compatible = "actions,s900-cmu";
-+                reg = <0 0xe0160000 0 0x1000>;
-+                clocks = <&hosc>, <&losc>;
-+                #clock-cells = <1>;
-+        };
++	mutex_lock(&lvl2_ovr_lock);
 +
-+Example: UART controller node that consumes clock generated by the clock
-+management unit:
++	val = readl_relaxed(clk_base + mbist->lvl2_offset);
++	writel_relaxed(val | mbist->lvl2_mask, clk_base + mbist->lvl2_offset);
++	fence_udelay(1, clk_base);
++	writel_relaxed(val, clk_base + mbist->lvl2_offset);
++	fence_udelay(1, clk_base);
 +
-+        uart: serial@e012a000 {
-+                compatible = "actions,s900-uart", "actions,owl-uart";
-+                reg = <0x0 0xe012a000 0x0 0x2000>;
-+                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+                clocks = <&cmu CLK_UART5>;
-+        };
-diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
-new file mode 100644
-index 0000000..2155449
---- /dev/null
-+++ b/include/dt-bindings/clock/actions,s900-cmu.h
-@@ -0,0 +1,139 @@
-+/*
-+ * Device Tree binding constants for Actions S900 Clock Management Unit
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Copyright (c) 2017 Linaro Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ */
++	mutex_unlock(&lvl2_ovr_lock);
 +
-+#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
-+#define __DT_BINDINGS_CLOCK_S900_CMU_H
++	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
 +
-+#define CLK_NONE			0
++	return 0;
++}
 +
-+/* fixed rate clocks */
-+#define CLK_LOSC			1
-+#define CLK_HOSC			2
++static int tegra210_venc_mbist_war(struct tegra210_domain_mbist_war *mbist)
++{
++	u32 csi_src, ovra, ovre;
++	int err;
++	unsigned long flags = 0;
 +
-+/* pll clocks */
-+#define CLK_CORE_PLL			3
-+#define CLK_DEV_PLL			4
-+#define CLK_DDR_PLL			5
-+#define CLK_NAND_PLL			6
-+#define CLK_DISPLAY_PLL			7
-+#define CLK_DSI_PLL			8
-+#define CLK_ASSIST_PLL			9
-+#define CLK_AUDIO_PLL			10
++	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
++	if (err < 0)
++		return err;
 +
-+/* system clock */
-+#define CLK_CPU				15
-+#define CLK_DEV				16
-+#define CLK_NOC				17
-+#define CLK_NOC_CLK_MUX			18
-+#define CLK_NOC_CLK_DIV			19
-+#define CLK_AHB				20
-+#define CLK_APB				21
-+#define CLK_DMAC			22
++	mutex_lock(&lvl2_ovr_lock);
++	spin_lock_irqsave(&pll_d_lock, flags);
 +
-+/* peripheral device clock */
-+#define CLK_GPIO			23
++	csi_src = readl_relaxed(clk_base + PLLD_BASE);
++	writel_relaxed(csi_src | PLLD_BASE_CSI_CLKSOURCE, clk_base + PLLD_BASE);
++	fence_udelay(1, clk_base);
 +
-+#define CLK_BISP			24
-+#define CLK_CSI0			25
-+#define CLK_CSI1			26
++	ovra = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRA);
++	writel_relaxed(ovra | BIT(15), clk_base + LVL2_CLK_GATE_OVRA);
++	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
++	writel_relaxed(ovre | BIT(3), clk_base + LVL2_CLK_GATE_OVRE);
++	fence_udelay(1, clk_base);
 +
-+#define CLK_DE				27
-+#define CLK_DE1				28
-+#define CLK_DE2				29
-+#define CLK_DE3				30
-+#define CLK_DSI				32
++	writel_relaxed(ovra, clk_base + LVL2_CLK_GATE_OVRA);
++	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
++	writel_relaxed(csi_src, clk_base + PLLD_BASE);
++	fence_udelay(1, clk_base);
 +
-+#define CLK_GPU				33
-+#define CLK_GPU_CORE			34
-+#define CLK_GPU_MEM			35
-+#define CLK_GPU_SYS			36
++	spin_unlock_irqrestore(&pll_d_lock, flags);
++	mutex_unlock(&lvl2_ovr_lock);
 +
-+#define CLK_HDE				37
-+#define CLK_I2C0			38
-+#define CLK_I2C1			39
-+#define CLK_I2C2			40
-+#define CLK_I2C3			41
-+#define CLK_I2C4			42
-+#define CLK_I2C5			43
-+#define CLK_I2SRX			44
-+#define CLK_I2STX			45
-+#define CLK_IMX				46
-+#define CLK_LCD				47
-+#define CLK_NAND0			48
-+#define CLK_NAND1			49
-+#define CLK_PWM0			50
-+#define CLK_PWM1			51
-+#define CLK_PWM2			52
-+#define CLK_PWM3			53
-+#define CLK_PWM4			54
-+#define CLK_PWM5			55
-+#define CLK_SD0				56
-+#define CLK_SD1				57
-+#define CLK_SD2				58
-+#define CLK_SD3				59
-+#define CLK_SENSOR			60
-+#define CLK_SPEED_SENSOR		61
-+#define CLK_SPI0			62
-+#define CLK_SPI1			63
-+#define CLK_SPI2			64
-+#define CLK_SPI3			65
-+#define CLK_THERMAL_SENSOR		66
-+#define CLK_UART0			67
-+#define CLK_UART1			68
-+#define CLK_UART2			69
-+#define CLK_UART3			70
-+#define CLK_UART4			71
-+#define CLK_UART5			72
-+#define CLK_UART6			73
-+#define CLK_VCE				74
-+#define CLK_VDE				75
++	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
 +
-+#define CLK_USB3_480MPLL0		76
-+#define CLK_USB3_480MPHY0		77
-+#define CLK_USB3_5GPHY			78
-+#define CLK_USB3_CCE			79
-+#define CLK_USB3_MAC			80
++	return 0;
++}
 +
-+#define CLK_TIMER			83
++static int tegra210_disp_mbist_war(struct tegra210_domain_mbist_war *mbist)
++{
++	u32 ovra, dsc_top_ctrl;
++	int err;
 +
-+#define CLK_HDMI_AUDIO			84
++	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
++	if (err < 0)
++		return err;
 +
-+#define CLK_24M				85
++	mutex_lock(&lvl2_ovr_lock);
 +
-+#define CLK_EDP				86
++	ovra = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRA);
++	writel_relaxed(ovra | BIT(1), clk_base + LVL2_CLK_GATE_OVRA);
++	fence_udelay(1, clk_base);
 +
-+#define CLK_24M_EDP			87
-+#define CLK_EDP_PLL			88
-+#define CLK_EDP_LINK			89
++	dsc_top_ctrl = readl_relaxed(dispa_base + DC_COM_DSC_TOP_CTL);
++	writel_relaxed(dsc_top_ctrl | BIT(2), dispa_base + DC_COM_DSC_TOP_CTL);
++	readl_relaxed(dispa_base + DC_CMD_DISPLAY_COMMAND);
++	writel_relaxed(dsc_top_ctrl, dispa_base + DC_COM_DSC_TOP_CTL);
++	readl_relaxed(dispa_base + DC_CMD_DISPLAY_COMMAND);
 +
-+#define CLK_USB2H0_PLLEN		90
-+#define CLK_USB2H0_PHY			91
-+#define CLK_USB2H0_CCE			92
-+#define CLK_USB2H1_PLLEN		93
-+#define CLK_USB2H1_PHY			94
-+#define CLK_USB2H1_CCE			95
++	writel_relaxed(ovra, clk_base + LVL2_CLK_GATE_OVRA);
++	fence_udelay(1, clk_base);
 +
-+#define CLK_DDR0			96
-+#define CLK_DDR1			97
-+#define CLK_DMM				98
++	mutex_unlock(&lvl2_ovr_lock);
 +
-+#define CLK_ETH_MAC			99
-+#define CLK_RMII_REF			100
++	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
 +
-+#define CLK_NR_CLKS			110
++	return 0;
++}
 +
-+#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
++static int tegra210_vic_mbist_war(struct tegra210_domain_mbist_war *mbist)
++{
++	u32 ovre, val;
++	int err;
++
++	err = clk_prepare_enable(clks[TEGRA210_CLK_HOST1X]);
++	if (err < 0)
++		return err;
++
++	mutex_lock(&lvl2_ovr_lock);
++
++	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
++	writel_relaxed(ovre | BIT(5), clk_base + LVL2_CLK_GATE_OVRE);
++	fence_udelay(1, clk_base);
++
++	val = readl_relaxed(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
++	writel_relaxed(val | BIT(0) | GENMASK(7,2) | BIT(24),
++			vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
++	readl(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
++	udelay(1);
++	writel_relaxed(val, vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
++	readl(vic_base + NV_PVIC_THI_SLCG_OVERRIDE_LOW);
++
++	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
++	fence_udelay(1, clk_base);
++
++	mutex_unlock(&lvl2_ovr_lock);
++
++	clk_disable_unprepare(clks[TEGRA210_CLK_HOST1X]);
++
++	return 0;
++}
++
++static int tegra210_ape_mbist_war(struct tegra210_domain_mbist_war *mbist)
++{
++	int err, i;
++	u32 ovrc, ovre;
++	void __iomem *i2s_base;
++
++	err = clk_bulk_prepare_enable(mbist->num_clks, mbist->clks);
++	if (err < 0)
++		return err;
++
++	mutex_lock(&lvl2_ovr_lock);
++
++	ovrc = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRC);
++	ovre = readl_relaxed(clk_base + LVL2_CLK_GATE_OVRE);
++	writel_relaxed(ovrc | BIT(1), clk_base + LVL2_CLK_GATE_OVRC);
++	writel_relaxed(ovre | BIT(10) | BIT(11),
++			clk_base + LVL2_CLK_GATE_OVRE);
++	fence_udelay(1, clk_base);
++
++	i2s_base = ape_base + TEGRA210_I2S_BASE;
++	for (i = 0; i < TEGRA210_I2S_CTRLS; i++) {
++		u32 i2s_ctrl;
++
++		i2s_ctrl = readl_relaxed(i2s_base + TEGRA210_I2S_CTRL);
++		writel_relaxed(i2s_ctrl | BIT(10),
++				i2s_base + TEGRA210_I2S_CTRL);
++		writel_relaxed(0, i2s_base + TEGRA210_I2S_CG);
++		readl(i2s_base + TEGRA210_I2S_CG);
++		writel_relaxed(1, i2s_base + TEGRA210_I2S_CG);
++		writel_relaxed(i2s_ctrl, i2s_base + TEGRA210_I2S_CTRL);
++		readl(i2s_base + TEGRA210_I2S_CTRL);
++
++		i2s_base += TEGRA210_I2S_SIZE;
++        }
++
++	writel_relaxed(ovrc, clk_base + LVL2_CLK_GATE_OVRC);
++	writel_relaxed(ovre, clk_base + LVL2_CLK_GATE_OVRE);
++	fence_udelay(1, clk_base);
++
++	mutex_unlock(&lvl2_ovr_lock);
++
++	clk_bulk_disable_unprepare(mbist->num_clks, mbist->clks);
++
++	return 0;
++}
++
+ static inline void _pll_misc_chk_default(void __iomem *base,
+ 					struct tegra_clk_pll_params *params,
+ 					u8 misc_num, u32 default_val, u32 mask)
+@@ -2410,13 +2623,137 @@ struct utmi_clk_param {
+ 	{ "pll_a1", &pll_a1_params, tegra_clk_pll_a1, "pll_ref" },
+ };
+ 
+-static struct clk **clks;
+-
+ static const char * const aclk_parents[] = {
+ 	"pll_a1", "pll_c", "pll_p", "pll_a_out0", "pll_c2", "pll_c3",
+ 	"clk_m"
+ };
+ 
++static const unsigned int nvjpg_slcg_clkids[] = { TEGRA210_CLK_NVDEC };
++static const unsigned int nvdec_slcg_clkids[] = { TEGRA210_CLK_NVJPG };
++static const unsigned int sor_slcg_clkids[] = { TEGRA210_CLK_HDA2CODEC_2X,
++	TEGRA210_CLK_HDA2HDMI, TEGRA210_CLK_DISP1, TEGRA210_CLK_DISP2 };
++static const unsigned int disp_slcg_clkids[] = { TEGRA210_CLK_LA,
++	TEGRA210_CLK_HOST1X};
++static const unsigned int xusba_slcg_clkids[] = { TEGRA210_CLK_XUSB_HOST,
++	TEGRA210_CLK_XUSB_DEV };
++static const unsigned int xusbb_slcg_clkids[] = { TEGRA210_CLK_XUSB_HOST,
++	TEGRA210_CLK_XUSB_SS };
++static const unsigned int xusbc_slcg_clkids[] = { TEGRA210_CLK_XUSB_DEV,
++	TEGRA210_CLK_XUSB_SS };
++static const unsigned int venc_slcg_clkids[] = { TEGRA210_CLK_HOST1X,
++	TEGRA210_CLK_PLL_D };
++static const unsigned int ape_slcg_clkids[] = { TEGRA210_CLK_ACLK,
++	TEGRA210_CLK_I2S0, TEGRA210_CLK_I2S1, TEGRA210_CLK_I2S2,
++	TEGRA210_CLK_I2S3, TEGRA210_CLK_I2S4, TEGRA210_CLK_SPDIF_OUT,
++	TEGRA210_CLK_D_AUDIO };
++
++static struct tegra210_domain_mbist_war tegra210_pg_mbist_war[] = {
++	[TEGRA_POWERGATE_VENC] = {
++		.handle_lvl2_ovr = tegra210_venc_mbist_war,
++		.num_clks = ARRAY_SIZE(venc_slcg_clkids),
++		.clk_init_data = venc_slcg_clkids,
++	},
++	[TEGRA_POWERGATE_SATA] = {
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(0) | BIT(17) | BIT(19),
++	},
++	[TEGRA_POWERGATE_MPE] = {
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRE,
++		.lvl2_mask = BIT(2),
++	},
++	[TEGRA_POWERGATE_SOR] = {
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.num_clks = ARRAY_SIZE(sor_slcg_clkids),
++		.clk_init_data = sor_slcg_clkids,
++		.lvl2_offset = LVL2_CLK_GATE_OVRA,
++		.lvl2_mask = BIT(1) | BIT(2),
++	},
++	[TEGRA_POWERGATE_DIS] = {
++		.handle_lvl2_ovr = tegra210_disp_mbist_war,
++		.num_clks = ARRAY_SIZE(disp_slcg_clkids),
++		.clk_init_data = disp_slcg_clkids,
++	},
++	[TEGRA_POWERGATE_DISB] = {
++		.num_clks = ARRAY_SIZE(disp_slcg_clkids),
++		.clk_init_data = disp_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRA,
++		.lvl2_mask = BIT(2),
++	},
++	[TEGRA_POWERGATE_XUSBA] = {
++		.num_clks = ARRAY_SIZE(xusba_slcg_clkids),
++		.clk_init_data = xusba_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(30) | BIT(31),
++	},
++	[TEGRA_POWERGATE_XUSBB] = {
++		.num_clks = ARRAY_SIZE(xusbb_slcg_clkids),
++		.clk_init_data = xusbb_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(30) | BIT(31),
++	},
++	[TEGRA_POWERGATE_XUSBC] = {
++		.num_clks = ARRAY_SIZE(xusbc_slcg_clkids),
++		.clk_init_data = xusbc_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(30) | BIT(31),
++	},
++	[TEGRA_POWERGATE_VIC] = {
++		.handle_lvl2_ovr = tegra210_vic_mbist_war,
++	},
++	[TEGRA_POWERGATE_NVDEC] = {
++		.num_clks = ARRAY_SIZE(nvdec_slcg_clkids),
++		.clk_init_data = nvdec_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(9) | BIT(31),
++	},
++	[TEGRA_POWERGATE_NVJPG] = {
++		.num_clks = ARRAY_SIZE(nvjpg_slcg_clkids),
++		.clk_init_data = nvjpg_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRC,
++		.lvl2_mask = BIT(9) | BIT(31),
++	},
++	[TEGRA_POWERGATE_AUD] = {
++		.num_clks = ARRAY_SIZE(ape_slcg_clkids),
++		.clk_init_data = ape_slcg_clkids,
++		.handle_lvl2_ovr = tegra210_ape_mbist_war,
++	},
++	[TEGRA_POWERGATE_VE2] = {
++		.handle_lvl2_ovr = tegra210_generic_mbist_war,
++		.lvl2_offset = LVL2_CLK_GATE_OVRD,
++		.lvl2_mask = BIT(22),
++	},
++};
++
++void tegra210_handle_mbist_war(unsigned int id)
++{
++	int err;
++
++	if (id >= ARRAY_SIZE(tegra210_pg_mbist_war)) {
++		pr_err("unknown domain id in MBIST WAR handler\n");
++		WARN_ON(1);
++		return;
++	}
++
++	if (!tegra210_pg_mbist_war[id].handle_lvl2_ovr)
++		return;
++
++	err =
++	 tegra210_pg_mbist_war[id].handle_lvl2_ovr(&tegra210_pg_mbist_war[id]);
++	if (err < 0) {
++		pr_err("error handling MBIST WAR for domain: %d\n", id);
++		WARN_ON(1);
++	}
++}
++
++
+ void tegra210_put_utmipll_in_iddq(void)
+ {
+ 	u32 reg;
+@@ -3148,6 +3485,24 @@ static void __init tegra210_clock_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	ape_base = ioremap(TEGRA210_APE_BASE, 256*1024);
++	if (!ape_base) {
++		pr_err("ioremap tegra210 APE failed\n");
++		return;
++	}
++
++	dispa_base = ioremap(TEGRA210_DISPA_BASE, 256*1024);
++	if (!dispa_base) {
++		pr_err("ioremap tegra210 DISPA failed\n");
++		return;
++	}
++
++	vic_base = ioremap(TEGRA210_VIC_BASE, 256*1024);
++	if (!vic_base) {
++		pr_err("ioremap tegra210 VIC failed\n");
++		return;
++	}
++
+ 	clks = tegra_clk_init(clk_base, TEGRA210_CLK_CLK_MAX,
+ 			      TEGRA210_CAR_BANK_COUNT);
+ 	if (!clks)
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index d23c9cf..6d1898b 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -128,5 +128,6 @@ static inline void tegra_cpu_clock_resume(void)
+ extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
++extern void tegra210_handle_mbist_war(unsigned int id);
+ 
+ #endif /* __LINUX_CLK_TEGRA_H_ */
 -- 
-2.7.4
+1.9.1
+
