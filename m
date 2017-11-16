@@ -1,82 +1,123 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sat, 11 Nov 2017 00:37:37 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v4 0/4] fix the clock setting for SAR ADC
-Message-ID: <20171111003737.000038f0@huawei.com>
-In-Reply-To: <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
-References: <20171107140942.29243-1-yixun.lan@amlogic.com>
- <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6612 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753928AbdKPPdT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:19 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 1/8] clk: tegra: dfll registration for multiple SoCs
+Date: Thu, 16 Nov 2017 17:33:02 +0200
+Message-ID: <1510846389-28712-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Neil Armstrong <narmstrong@baylibre.com>,
- linux-iio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Michael
- Turquette <mturquette@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>,
- linux-kernel@vger.kernel.org, Rob
- Herring <robh+dt@kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 7 Nov 2017 22:36:00 +0100
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+In a future patch, support for the DFLL in Tegra210 will be introduced.
+This requires support for more than 1 set of CVB and CPU max frequency
+tables.
 
-> Hi Yixun,
-> 
-> On Tue, Nov 7, 2017 at 3:09 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
-> > patch [1/4]:
-> >   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
-> > the published datasheets[4] also has wrong description about this.
-> >   This patch should be explicitly merged *before* other patches.
-> >
-> > patch [2-4/4]:
-> >   Drop the "sana" clock from SAR ADC module,  
-> I agree with Jerome that patch 2/4 should be applied last.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-Let me know when I should take this.
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index ad1c1cc..1976e96 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -21,6 +21,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <soc/tegra/fuse.h>
+ 
+@@ -28,8 +29,15 @@
+ #include "clk-dfll.h"
+ #include "cvb.h"
+ 
++struct dfll_fcpu_data {
++	const unsigned long *cpu_max_freq_table;
++	unsigned int cpu_max_freq_table_size;
++	const struct cvb_table *cpu_cvb_tables;
++	unsigned int cpu_cvb_tables_size;
++};
++
+ /* Maximum CPU frequency, indexed by CPU speedo id */
+-static const unsigned long cpu_max_freq_table[] = {
++static const unsigned long tegra124_cpu_max_freq_table[] = {
+ 	[0] = 2014500000UL,
+ 	[1] = 2320500000UL,
+ 	[2] = 2116500000UL,
+@@ -82,16 +90,36 @@
+ 	},
+ };
+ 
++static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
++	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
++	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
++	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
++	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
++};
++
++static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
++	{
++		.compatible = "nvidia,tegra124-dfll",
++		.data = &tegra124_dfll_fcpu_data,
++	},
++	{ },
++};
++
+ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ {
+ 	int process_id, speedo_id, speedo_value, err;
+ 	struct tegra_dfll_soc_data *soc;
++	const struct of_device_id *of_id;
++	const struct dfll_fcpu_data *fcpu_data;
++
++	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
++	fcpu_data = of_id->data;
+ 
+ 	process_id = tegra_sku_info.cpu_process_id;
+ 	speedo_id = tegra_sku_info.cpu_speedo_id;
+ 	speedo_value = tegra_sku_info.cpu_speedo_value;
+ 
+-	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
++	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+ 		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+ 			speedo_id);
+ 		return -ENODEV;
+@@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	soc->max_freq = cpu_max_freq_table[speedo_id];
++	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+ 
+-	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+-					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
++	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
++					   fcpu_data->cpu_cvb_tables_size,
+ 					   process_id, speedo_id, speedo_value,
+ 					   soc->max_freq);
+ 	if (IS_ERR(soc->cvb)) {
+@@ -144,11 +172,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+-	{ .compatible = "nvidia,tegra124-dfll", },
+-	{ },
+-};
+-
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+ 			   tegra_dfll_runtime_resume, NULL)
+-- 
+1.9.1
 
-Thanks,
-
-Jonathan
-
-> when I wrote the driver I couldn't get it to work on my GXBB board
-> (which unfortunately has died since then) because the clocks were
-> disabled (they weren't enabled by the bootloader). people who are
-> using an old .dtb would get the same problem again until the clock
-> driver is merged
-> 
-> >   From the hardware perspective, the SAR ADC module doesn't
-> > require "sana" clock to wrok. This should apply to all SoC,
-> > including meson6,8, GXBB, GXL..  
-> thank you for clarifying this!
-> 
-> > Note: the whole patchset series has been tested at GXL-P212 board,
-> > we haven't got any meson6,8 board to test, so I would appreciate
-> > if someone (Martin?) could help to confirm it works there.  
-> I can test this on a Meson8b and a Meson8m2 board on the weekend -
-> I'll let you know about the results
-> 
-> 
-> Regards
-> Martin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
