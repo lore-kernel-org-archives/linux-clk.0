@@ -1,93 +1,62 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/10] PM / Domain: Allow genpd users to specify default active wakeup behavior
-Date: Mon, 16 Oct 2017 15:55:10 +0200
-Message-Id: <1508162116-5043-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
-References: <1508162116-5043-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11004 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757450AbdKQJ2Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Nov 2017 04:28:16 -0500
+From: Xu YiPing <xuyiping@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <xuejiancheng@hisilicon.com>,
+        <wenpan@hisilicon.com>, <leo.yan@linaro.org>,
+        <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
+        <zhongkaihua@huawei.com>, <chenjun14@huawei.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
+        <kevin.wangtao@hisilicon.com>
+Subject: [PATCH v3 3/3] arm64: dts: Hi3660: Add binding for stub clock
+Date: Fri, 17 Nov 2017 17:27:32 +0800
+Message-ID: <1510910852-2175-4-git-send-email-xuyiping@hisilicon.com>
+In-Reply-To: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It is quite common for PM Domains to require slave devices to be kept
-active during system suspend if they are to be used as wakeup sources.
-To enable this, currently each PM Domain or driver has to provide its
-own gpd_dev_ops.active_wakeup() callback.
+From: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Introduce a new flag GENPD_FLAG_ACTIVE_WAKEUP to consolidate this.
-If specified, a default callback that always returns true will be
-installed in gpd_dev_ops.active_wakeup().
+Add DT binding for Hi3660 stub clock driver.
 
-PM Domains that need more fine-grained controls can still provide their
-own callbacks, as before.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Kai Zhao <zhaokai1@hisilicon.com>
+Signed-off-by: Tao Wang <kevin.wangtao@hisilicon.com>
+Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
+Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
 ---
- drivers/base/power/domain.c | 8 ++++++++
- include/linux/pm_domain.h   | 7 ++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e8ca5e2cf1e51e5a..d9670e7752e92994 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1168,6 +1168,11 @@ static void pm_genpd_complete(struct device *dev)
- 	genpd_unlock(genpd);
- }
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index 451b6bf..cbbc7f1 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -293,6 +293,13 @@
+ 			#mbox-cells = <3>;
+ 		};
  
-+static bool pm_genpd_active_wakeup_true(struct device *dev)
-+{
-+	return true;
-+}
++		stub_clock: stub_clock@e896b500 {
++			compatible = "hisilicon,hi3660-stub-clk";
++			reg = <0x0 0xe896b500 0x0 0x0100>;
++			#clock-cells = <1>;
++			mboxes = <&mailbox 13 3 0>;
++		};
 +
- /**
-  * genpd_syscore_switch - Switch power during system core suspend or resume.
-  * @dev: Device that normally is marked as "always on" to switch power for.
-@@ -1214,6 +1219,7 @@ EXPORT_SYMBOL_GPL(pm_genpd_syscore_poweron);
- #define pm_genpd_poweroff_noirq		NULL
- #define pm_genpd_restore_noirq		NULL
- #define pm_genpd_complete		NULL
-+#define pm_genpd_active_wakeup_true	NULL
- 
- #endif /* CONFIG_PM_SLEEP */
- 
-@@ -1587,6 +1593,8 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
- 		genpd->dev_ops.stop = pm_clk_suspend;
- 		genpd->dev_ops.start = pm_clk_resume;
- 	}
-+	if (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
-+		genpd->dev_ops.active_wakeup = pm_genpd_active_wakeup_true;
- 
- 	/* Always-on domains must be powered on at initialization. */
- 	if (genpd_is_always_on(genpd) && !genpd_status_on(genpd))
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 84f423d5633ee996..a6688efb29ee5406 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -18,9 +18,10 @@
- #include <linux/spinlock.h>
- 
- /* Defines used for the flags field in the struct generic_pm_domain */
--#define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
--#define GENPD_FLAG_IRQ_SAFE	(1U << 1) /* PM domain operates in atomic */
--#define GENPD_FLAG_ALWAYS_ON	(1U << 2) /* PM domain is always powered on */
-+#define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
-+#define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
-+#define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
-+#define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
- 
- enum gpd_status {
- 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
+ 		dual_timer0: timer@fff14000 {
+ 			compatible = "arm,sp804", "arm,primecell";
+ 			reg = <0x0 0xfff14000 0x0 0x1000>;
 -- 
-2.7.4
+1.9.1
+
