@@ -1,210 +1,82 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:32941 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752874AbdK0PmF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 10:42:05 -0500
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        jernej.skrabec@siol.net
-Subject: [PATCH v2 08/18] drm/sun4i: Reorder and document DE2 mixer registers
-Date: Mon, 27 Nov 2017 16:41:32 +0100
-Message-Id: <eade3012b16bfe687baff576349cca9609a664e3.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11003 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757452AbdKQJ2R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Nov 2017 04:28:17 -0500
+From: Xu YiPing <xuyiping@hisilicon.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <xuejiancheng@hisilicon.com>,
+        <wenpan@hisilicon.com>, <leo.yan@linaro.org>,
+        <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
+        <zhongkaihua@huawei.com>, <chenjun14@huawei.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
+        <kevin.wangtao@hisilicon.com>
+Subject: [PATCH v3 1/3] dt-bindings: clk: Hi3660: Document stub clock
+Date: Fri, 17 Nov 2017 17:27:30 +0800
+Message-ID: <1510910852-2175-2-git-send-email-xuyiping@hisilicon.com>
+In-Reply-To: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some registers values have been hardcoded so far, or were not as
-descriptive as supposed to, because of missing information. The various
-BSP that poped up since have given us more details, some hopefully we can
-be more explicit about things.
+From: Leo Yan <leo.yan@linaro.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Document the DT binding for stub clock which is used for CPU,
+GPU and DDR frequency scaling.
+
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 25 ++++----
- drivers/gpu/drm/sun4i/sun8i_mixer.h | 89 ++++++++++++++++--------------
- 2 files changed, 63 insertions(+), 51 deletions(-)
+ Documentation/devicetree/bindings/clock/hi3660-clock.txt | 6 ++++++
+ include/dt-bindings/clock/hi3660-clock.h                 | 7 +++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 648a6ad3104a..44d5e639ebb2 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -61,7 +61,7 @@ void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer, struct sun8i_ui *ui,
- 	regmap_update_bits(mixer->engine.regs,
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ui->chan, ui->id),
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK,
--			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF);
-+			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(255));
- }
+diff --git a/Documentation/devicetree/bindings/clock/hi3660-clock.txt b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
+index 0035a7e..946da7c 100644
+--- a/Documentation/devicetree/bindings/clock/hi3660-clock.txt
++++ b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
+@@ -13,12 +13,18 @@ Required Properties:
+ 	- "hisilicon,hi3660-pmuctrl"
+ 	- "hisilicon,hi3660-sctrl"
+ 	- "hisilicon,hi3660-iomcu"
++	- "hisilicon,hi3660-stub-clk"
  
- static int sun8i_mixer_drm_format_to_layer(struct drm_plane *plane,
-@@ -329,19 +329,20 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ - reg: physical base address of the controller and length of memory mapped
+   region.
  
- 	/* Initialize blender */
- 	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_FCOLOR_CTL,
--		     SUN8I_MIXER_BLEND_FCOLOR_CTL_DEF);
--	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PREMULTIPLY,
--		     SUN8I_MIXER_BLEND_PREMULTIPLY_DEF);
-+		     SUN8I_MIXER_BLEND_FCOLOR_CTL_FCOLOR_EN(0) |
-+		     SUN8I_MIXER_BLEND_FCOLOR_CTL_EN(0));
-+	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PREMULTIPLY, 0);
- 	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR,
--		     SUN8I_MIXER_BLEND_BKCOLOR_DEF);
-+		     SUN8I_MIXER_BLEND_BKCOLOR_ALPHA(255));
- 	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_MODE(0),
--		     SUN8I_MIXER_BLEND_MODE_DEF);
--	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_CK_CTL,
--		     SUN8I_MIXER_BLEND_CK_CTL_DEF);
--
--	regmap_write(mixer->engine.regs,
--		     SUN8I_MIXER_BLEND_ATTR_FCOLOR(0),
--		     SUN8I_MIXER_BLEND_ATTR_FCOLOR_DEF);
-+		     SUN8I_MIXER_BLEND_MODE_PIXEL_FS(1) |
-+		     SUN8I_MIXER_BLEND_MODE_PIXEL_FD(3) |
-+		     SUN8I_MIXER_BLEND_MODE_ALPHA_FS(1) |
-+		     SUN8I_MIXER_BLEND_MODE_ALPHA_FD(3));
-+	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_CK_CTL, 0);
-+
-+	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(0),
-+		     SUN8I_MIXER_BLEND_ATTR_FCOLOR_ALPHA(255));
+ - #clock-cells: should be 1.
  
- 	/* Select the first UI channel */
- 	DRM_DEBUG_DRIVER("Selecting channel %d (first UI channel)\n",
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-index ce984c436246..b6512198af55 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-@@ -22,71 +22,82 @@
- #define SUN8I_MIXER_COORD(x, y)			((y) << 16 | (x))
++Optional Properties:
++
++- mboxes: Phandle to the mailbox for sending message to MCU.
++            (See: ../mailbox/hisilicon,hi3660-mailbox.txt for more info)
++
+ Each clock is assigned an identifier and client nodes use this identifier
+ to specify the clock which they consume.
  
- #define SUN8I_MIXER_GLOBAL_CTL			0x0
-+#define SUN8I_MIXER_GLOBAL_CTL_RT_EN			BIT(0)
-+
- #define SUN8I_MIXER_GLOBAL_STATUS		0x4
- #define SUN8I_MIXER_GLOBAL_DBUFF		0x8
--#define SUN8I_MIXER_GLOBAL_SIZE			0xc
--
--#define SUN8I_MIXER_GLOBAL_CTL_RT_EN		0x1
-+#define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE			BIT(0)
+diff --git a/include/dt-bindings/clock/hi3660-clock.h b/include/dt-bindings/clock/hi3660-clock.h
+index adb768d..75d583e 100644
+--- a/include/dt-bindings/clock/hi3660-clock.h
++++ b/include/dt-bindings/clock/hi3660-clock.h
+@@ -208,4 +208,11 @@
+ #define HI3660_CLK_I2C6_IOMCU		3
+ #define HI3660_CLK_IOMCU_PERI0		4
  
--#define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE		0x1
-+#define SUN8I_MIXER_GLOBAL_SIZE			0xc
- 
- #define SUN8I_MIXER_BLEND_FCOLOR_CTL		0x1000
-+#define SUN8I_MIXER_BLEND_FCOLOR_CTL_EN(x)		BIT(8 + (x))
-+#define SUN8I_MIXER_BLEND_FCOLOR_CTL_FCOLOR_EN(x)	BIT(x)
++/* clk in stub clock */
++#define HI3660_CLK_STUB_CLUSTER0	0
++#define HI3660_CLK_STUB_CLUSTER1	1
++#define HI3660_CLK_STUB_GPU		2
++#define HI3660_CLK_STUB_DDR		3
++#define HI3660_CLK_STUB_NUM		4
 +
- #define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)	(0x1004 + 0x10 * (x) + 0x0)
-+#define SUN8I_MIXER_BLEND_ATTR_FCOLOR_ALPHA(x)		(((x) & 0xff) << 24)
-+
- #define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)	(0x1004 + 0x10 * (x) + 0x4)
-+
- #define SUN8I_MIXER_BLEND_ATTR_OFFSET(x)	(0x1004 + 0x10 * (x) + 0x8)
- #define SUN8I_MIXER_BLEND_ROUTE			0x1080
- #define SUN8I_MIXER_BLEND_PREMULTIPLY		0x1084
-+
- #define SUN8I_MIXER_BLEND_BKCOLOR		0x1088
-+#define SUN8I_MIXER_BLEND_BKCOLOR_ALPHA(x)		(((x) & 0xff) << 24)
-+
- #define SUN8I_MIXER_BLEND_OUTSIZE		0x108c
-+
- #define SUN8I_MIXER_BLEND_MODE(x)		(0x1090 + 0x04 * (x))
-+#define SUN8I_MIXER_BLEND_MODE_ALPHA_FD(x)		(((x) & 0xf) << 24)
-+#define SUN8I_MIXER_BLEND_MODE_ALPHA_FS(x)		(((x) & 0xf) << 16)
-+#define SUN8I_MIXER_BLEND_MODE_PIXEL_FD(x)		(((x) & 0xf) << 8)
-+#define SUN8I_MIXER_BLEND_MODE_PIXEL_FS(x)		((x) & 0xf)
-+
- #define SUN8I_MIXER_BLEND_CK_CTL		0x10b0
- #define SUN8I_MIXER_BLEND_CK_CFG		0x10b4
- #define SUN8I_MIXER_BLEND_CK_MAX(x)		(0x10c0 + 0x04 * (x))
- #define SUN8I_MIXER_BLEND_CK_MIN(x)		(0x10e0 + 0x04 * (x))
--#define SUN8I_MIXER_BLEND_OUTCTL		0x10fc
--
--/* The following numbers are some still unknown magic numbers */
--#define SUN8I_MIXER_BLEND_ATTR_FCOLOR_DEF	0xff000000
--#define SUN8I_MIXER_BLEND_FCOLOR_CTL_DEF	0x00000101
--#define SUN8I_MIXER_BLEND_PREMULTIPLY_DEF	0x0
--#define SUN8I_MIXER_BLEND_BKCOLOR_DEF		0xff000000
--#define SUN8I_MIXER_BLEND_MODE_DEF		0x03010301
--#define SUN8I_MIXER_BLEND_CK_CTL_DEF		0x0
- 
--#define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED	BIT(1)
-+#define SUN8I_MIXER_BLEND_OUTCTL		0x10fc
-+#define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED		BIT(1)
- 
- /*
-  * VI channels are not used now, but the support of them may be introduced in
-  * the future.
-  */
- 
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x0)
--#define SUN8I_MIXER_CHAN_UI_LAYER_SIZE(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x4)
--#define SUN8I_MIXER_CHAN_UI_LAYER_COORD(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x8)
--#define SUN8I_MIXER_CHAN_UI_LAYER_PITCH(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0xc)
--#define SUN8I_MIXER_CHAN_UI_LAYER_TOP_LADDR(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x10)
--#define SUN8I_MIXER_CHAN_UI_LAYER_BOT_LADDR(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x14)
--#define SUN8I_MIXER_CHAN_UI_LAYER_FCOLOR(ch, layer) \
--			(0x2000 + 0x1000 * (ch) + 0x20 * (layer) + 0x18)
--#define SUN8I_MIXER_CHAN_UI_TOP_HADDR(ch)	(0x2000 + 0x1000 * (ch) + 0x80)
--#define SUN8I_MIXER_CHAN_UI_BOT_HADDR(ch)	(0x2000 + 0x1000 * (ch) + 0x84)
--#define SUN8I_MIXER_CHAN_UI_OVL_SIZE(ch)	(0x2000 + 0x1000 * (ch) + 0x88)
-+#define SUN8I_MIXER_CHAN(ch)		(0x2000 + 0x1000 * (ch))
-+#define SUN8I_MIXER_UI_LAYER(ch, layer)	(SUN8I_MIXER_CHAN(ch) + 0x20 * (layer))
- 
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN		BIT(0)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK	GENMASK(2, 1)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK	GENMASK(11, 8)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x00)
- #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK	GENMASK(31, 24)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF	(1 << 1)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_ARGB8888	(0 << 8)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_XRGB8888	(4 << 8)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_RGB888	(8 << 8)
--#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF	(0xff << 24)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(x)			(0xff << 24)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK	GENMASK(11, 8)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_RGB888		(8 << 8)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_XRGB8888		(4 << 8)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_ARGB8888		(0 << 8)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK	GENMASK(2, 1)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF		(1 << 1)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN		BIT(0)
-+
-+#define SUN8I_MIXER_CHAN_UI_LAYER_SIZE(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x04)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_COORD(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x08)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_PITCH(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x0c)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_TOP_LADDR(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x10)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_BOT_LADDR(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x14)
-+#define SUN8I_MIXER_CHAN_UI_LAYER_FCOLOR(ch, layer)	\
-+	(SUN8I_MIXER_UI_LAYER(ch, layer) + 0x18)
-+
-+#define SUN8I_MIXER_CHAN_UI_TOP_HADDR(ch)	(SUN8I_MIXER_CHAN(ch) + 0x80)
-+#define SUN8I_MIXER_CHAN_UI_BOT_HADDR(ch)	(SUN8I_MIXER_CHAN(ch) + 0x84)
-+#define SUN8I_MIXER_CHAN_UI_OVL_SIZE(ch)	(SUN8I_MIXER_CHAN(ch) + 0x88)
- 
- /*
-  * These sub-engines are still unknown now, the EN registers are here only to
+ #endif	/* __DTS_HI3660_CLOCK_H */
 -- 
-git-series 0.9.1
+1.9.1
+
