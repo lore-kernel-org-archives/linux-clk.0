@@ -1,198 +1,106 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 29 Nov 2017 11:34:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
-Message-ID: <20171129193433.GA19419@codeaurora.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-3-yixun.lan@amlogic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 08/12] dt-bindings: Add Spreadtrum clock binding documentation
+Date: Mon, 20 Nov 2017 14:01:33 +0800
+Message-ID: <20171120060137.27380-9-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171128125330.363-3-yixun.lan@amlogic.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/28, Yixun Lan wrote:
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> new file mode 100644
-> index 000000000000..51c5b4062715
-> --- /dev/null
-> +++ b/drivers/clk/meson/axg.c
-> @@ -0,0 +1,948 @@
-> +/*
-> + * AmLogic Meson-AXG Clock Controller Driver
-> + *
-> + * Copyright (c) 2016 Baylibre SAS.
-> + * Author: Michael Turquette <mturquette@baylibre.com>
-> + *
-> + * Copyright (c) 2017 Amlogic, inc.
-> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0+
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/init.h>
-> +
-> +#include "clkc.h"
-> +#include "axg.h"
-> +
-> +static DEFINE_SPINLOCK(clk_lock);
+Introduce a new binding with its documentation for Spreadtrum clock
+sub-framework.
 
-meson_axg_clk_lock?
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/sprd.txt | 63 ++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
 
-> +
-> +static const struct pll_rate_table sys_pll_rate_table[] = {
-> +	PLL_RATE(24000000, 56, 1, 2),
-> +	PLL_RATE(48000000, 64, 1, 2),
-> +	PLL_RATE(72000000, 72, 1, 2),
-> +	PLL_RATE(96000000, 64, 1, 2),
-> +	PLL_RATE(120000000, 80, 1, 2),
-> +	PLL_RATE(144000000, 96, 1, 2),
-> +	PLL_RATE(168000000, 56, 1, 1),
-> +	PLL_RATE(192000000, 64, 1, 1),
-> +	PLL_RATE(216000000, 72, 1, 1),
-> +	PLL_RATE(240000000, 80, 1, 1),
-[...]
-> +
-> +static const struct clkc_data axg_clkc_data = {
-> +	.clk_gates = axg_clk_gates,
-> +	.clk_gates_count = ARRAY_SIZE(axg_clk_gates),
-> +	.clk_mplls = axg_clk_mplls,
-> +	.clk_mplls_count = ARRAY_SIZE(axg_clk_mplls),
-> +	.clk_plls = axg_clk_plls,
-> +	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
-> +	.clk_muxes = axg_clk_muxes,
-> +	.clk_muxes_count = ARRAY_SIZE(axg_clk_muxes),
-> +	.clk_dividers = axg_clk_dividers,
-> +	.clk_dividers_count = ARRAY_SIZE(axg_clk_dividers),
-> +	.hw_onecell_data = &axg_hw_onecell_data,
-> +};
-> +
-> +static const struct of_device_id clkc_match_table[] = {
-> +	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
-> +	{},
-
-Nitpick: Drop the comma. Nothing comes after this.
-
-> +};
-> +
-> +static int axg_clkc_probe(struct platform_device *pdev)
-> +{
-> +	const struct clkc_data *clkc_data;
-> +	void __iomem *clk_base;
-> +	int ret, clkid, i;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	clkc_data = of_device_get_match_data(&pdev->dev);
-> +	if (!clkc_data)
-> +		return -EINVAL;
-> +
-> +	/*  Generic clocks and PLLs */
-> +	clk_base = of_iomap(dev->of_node, 0);
-
-Use platform device APIs for ioremapping?
-
-> +	if (!clk_base) {
-> +		pr_err("%s: Unable to map clk base\n", __func__);
-> +		return -ENXIO;
-> +	}
-> +
-> +	/* Populate base address for PLLs */
-> +	for (i = 0; i < clkc_data->clk_plls_count; i++)
-> +		clkc_data->clk_plls[i]->base = clk_base;
-> +
-> +	/* Populate base address for MPLLs */
-> +	for (i = 0; i < clkc_data->clk_mplls_count; i++)
-> +		clkc_data->clk_mplls[i]->base = clk_base;
-> +
-> +	/* Populate base address for gates */
-> +	for (i = 0; i < clkc_data->clk_gates_count; i++)
-> +		clkc_data->clk_gates[i]->reg = clk_base +
-> +			(u64)clkc_data->clk_gates[i]->reg;
-> +
-> +	/* Populate base address for muxes */
-> +	for (i = 0; i < clkc_data->clk_muxes_count; i++)
-> +		clkc_data->clk_muxes[i]->reg = clk_base +
-> +			(u64)clkc_data->clk_muxes[i]->reg;
-> +
-> +	/* Populate base address for dividers */
-> +	for (i = 0; i < clkc_data->clk_dividers_count; i++)
-> +		clkc_data->clk_dividers[i]->reg = clk_base +
-> +			(u64)clkc_data->clk_dividers[i]->reg;
-> +
-> +	/*
-> +	 * register all clks
-> +	 */
-
-Yes, that's obvious..
-
-> +	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
-> +		/* array might be sparse */
-> +		if (!clkc_data->hw_onecell_data->hws[clkid])
-> +			continue;
-> +
-> +		ret = devm_clk_hw_register(dev,
-> +					clkc_data->hw_onecell_data->hws[clkid]);
-> +		if (ret)
-> +			goto iounmap;
-> +	}
-> +
-> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +			clkc_data->hw_onecell_data);
-> +
-> +iounmap:
-> +	iounmap(clk_base);
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver axg_driver = {
-> +	.probe		= axg_clkc_probe,
-> +	.driver		= {
-> +		.name	= "axg-clkc",
-> +		.of_match_table = clkc_match_table,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(axg_driver);
-> diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
-> new file mode 100644
-> index 000000000000..d2c0f49ba0df
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/axg-clkc.h
-> @@ -0,0 +1,72 @@
-> +/*
-> + * Meson-AXG clock tree IDs
-> + *
-> + * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-
-There's a standard way to add these it seems. They should be the
-first line in the file and look like
-
-/* SPDX-License-Identifier: */
-
-for header files and 
-
-// SPDX-License-Identifier: 
-
-for C files.
-
+diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
+new file mode 100644
+index 0000000..e9d179e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sprd.txt
+@@ -0,0 +1,63 @@
++Spreadtrum Clock Binding
++------------------------
++
++Required properties:
++- compatible: should contain the following compatible strings:
++	- "sprd,sc9860-pmu-gate"
++	- "sprd,sc9860-pll"
++	- "sprd,sc9860-ap-clk"
++	- "sprd,sc9860-aon-prediv"
++	- "sprd,sc9860-apahb-gate"
++	- "sprd,sc9860-aon-gate"
++	- "sprd,sc9860-aonsecure-clk"
++	- "sprd,sc9860-agcp-gate"
++	- "sprd,sc9860-gpu-clk"
++	- "sprd,sc9860-vsp-clk"
++	- "sprd,sc9860-vsp-gate"
++	- "sprd,sc9860-cam-clk"
++	- "sprd,sc9860-cam-gate"
++	- "sprd,sc9860-disp-clk"
++	- "sprd,sc9860-disp-gate"
++	- "sprd,sc9860-apapb-gate"
++
++- #clock-cells: must be 1
++
++- clocks : Should be the input parent clock(s) phandle for the clock, this
++	   property here just simply shows which clock group the clocks'
++	   parents are in, since each clk node would represent many clocks
++	   which are defined in the driver.  The detailed dependency
++	   relationship (i.e. how many parents and which are the parents)
++	   are implemented in driver code.
++
++Optional properties:
++
++- reg:	Contain the registers base address and length. It must be configured
++	only if no 'sprd,syscon' under the node.
++
++- sprd,syscon: phandle to the syscon which is in the same address area with
++	       the clock, and so we can get regmap for the clocks from the
++	       syscon device.
++
++Example:
++
++	pmu_gate: pmu-gate {
++		compatible = "sprd,sc9860-pmu-gate";
++		sprd,syscon = <&pmu_regs>;
++		clocks = <&ext_26m>;
++		#clock-cells = <1>;
++	};
++
++	pll: pll {
++		compatible = "sprd,sc9860-pll";
++		sprd,syscon = <&ana_regs>;
++		clocks = <&pmu_gate 0>;
++		#clock-cells = <1>;
++	};
++
++	ap_clk: clock-controller@20000000 {
++		compatible = "sprd,sc9860-ap-clk";
++		reg = <0 0x20000000 0 0x400>;
++		clocks = <&ext_26m>, <&pll 0>,
++			 <&pmu_gate 0>;
++		#clock-cells = <1>;
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
