@@ -1,97 +1,100 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf
-	Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: Manage proper runtime PM state in clk_change_rate()
-Date: Thu, 30 Nov 2017 13:14:51 +0100
-Message-id: <20171130121451.6710-1-m.szyprowski@samsung.com>
-References: <CGME20171130121511eucas1p1832c1f6e5bc9e263860e40478efca132@eucas1p1.samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 11/12] arm64: dts: add syscon for whale2 platform
+Date: Mon, 20 Nov 2017 14:01:36 +0800
+Message-ID: <20171120060137.27380-12-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_change_rate() propagates rate change down to all its children. Such
-operation requires managing proper runtime PM state of each child, what
-was missing. Add needed calls to clk_pm_runtime*() to ensure that
-set_rate() clock callback is called on runtime active clock.
+Some clocks on SC9860 are in the same address area with syscon
+devices, the proper syscon node will be quoted under the
+definitions of those clocks in DT.
 
-This fixes following issue found on Exynos5433 TM2 board with devfreq
-enabled:
-
-Synchronous External Abort: synchronous external abort (0x96000210) at 0xffffff80093f5600
-Internal error: : 96000210 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 5 Comm: kworker/u16:0 Not tainted 4.15.0-rc1-next-20171129+ #4
-Hardware name: Samsung TM2 board (DT)
-Workqueue: devfreq_wq devfreq_monitor
-task: ffffffc0ca96b600 task.stack: ffffff80093a8000
-pstate: a0000085 (NzCv daIf -PAN -UAO)
-pc : clk_divider_set_rate+0x54/0x118
-lr : clk_divider_set_rate+0x44/0x118
-...
-Process kworker/u16:0 (pid: 5, stack limit = 0xffffff80093a8000)
-Call trace:
- clk_divider_set_rate+0x54/0x118
- clk_change_rate+0xfc/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_change_rate+0x1f0/0x4e0
- clk_core_set_rate_nolock+0x138/0x148
- clk_set_rate+0x28/0x50
- exynos_bus_passive_target+0x6c/0x11c
- update_devfreq_passive+0x58/0xb4
- devfreq_passive_notifier_call+0x50/0x5c
- notifier_call_chain+0x4c/0x88
- __srcu_notifier_call_chain+0x54/0x80
- srcu_notifier_call_chain+0x14/0x1c
- update_devfreq+0x100/0x1b4
- devfreq_monitor+0x2c/0x88
- process_one_work+0x148/0x3d8
- worker_thread+0x13c/0x3f8
- kthread+0x100/0x12c
- ret_from_fork+0x10/0x18
-
-Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
-Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
-For some unknown reason handling of this case was missing in the initial
-patch, which added runtime PM support for clock core. Even tests in
-linux-next did not revealed this issue. This patch finaly fixes it,
-as it is now easy to trigger it with v4.15-rc1.
+ arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
----
- drivers/clk/clk.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 647d056df88c..8a1860a36c77 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1564,6 +1564,9 @@ static void clk_change_rate(struct clk_core *core)
- 		best_parent_rate = core->parent->rate;
- 	}
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..6ea3a75 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -17,6 +17,51 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
-+	if (clk_pm_runtime_get(core))
-+		return;
++		ap_ahb_regs: syscon@20210000 {
++			compatible = "syscon";
++			reg = <0 0x20210000 0 0x10000>;
++		};
 +
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
- 
-@@ -1634,6 +1637,8 @@ static void clk_change_rate(struct clk_core *core)
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
- 		clk_change_rate(core->new_child);
++		pmu_regs: syscon@402b0000 {
++			compatible = "syscon";
++			reg = <0 0x402b0000 0 0x10000>;
++		};
 +
-+	clk_pm_runtime_put(core);
- }
++		aon_regs: syscon@402e0000 {
++			compatible = "syscon";
++			reg = <0 0x402e0000 0 0x10000>;
++		};
++
++		ana_regs: syscon@40400000 {
++			compatible = "syscon";
++			reg = <0 0x40400000 0 0x10000>;
++		};
++
++		agcp_regs: syscon@415e0000 {
++			compatible = "syscon";
++			reg = <0 0x415e0000 0 0x1000000>;
++		};
++
++		vsp_regs: syscon@61100000 {
++			compatible = "syscon";
++			reg = <0 0x61100000 0 0x10000>;
++		};
++
++		cam_regs: syscon@62100000 {
++			compatible = "syscon";
++			reg = <0 0x62100000 0 0x10000>;
++		};
++
++		disp_regs: syscon@63100000 {
++			compatible = "syscon";
++			reg = <0 0x63100000 0 0x10000>;
++		};
++
++		ap_apb_regs: syscon@70b00000 {
++			compatible = "syscon";
++			reg = <0 0x70b00000 0 0x40000>;
++		};
++
+ 		ap-apb {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+@@ -59,7 +104,6 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+ 	};
  
- static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	ext_26m: ext-26m {
 -- 
-2.15.0
+2.7.4
