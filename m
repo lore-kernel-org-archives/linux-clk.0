@@ -1,56 +1,104 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Nov 2017 14:18:47 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	linux-omap@vger.kernel.org, tony@atomide.com
-Subject: Re: [PATCH 04/27] clk: ti: clkctrl: use fallback udelay approach if
- timekeeping is suspended
-Message-ID: <20171106221847.GB22441@codeaurora.org>
-References: <1509368685-29112-1-git-send-email-t-kristo@ti.com>
- <1509368685-29112-5-git-send-email-t-kristo@ti.com>
- <20171103154317.GV11011@codeaurora.org>
- <3249933f-7f37-a6c9-ed0c-58d40f06578b@ti.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 01/12] drivers: move clock common macros out from vendor directories
+Date: Mon, 20 Nov 2017 14:01:26 +0800
+Message-ID: <20171120060137.27380-2-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3249933f-7f37-a6c9-ed0c-58d40f06578b@ti.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/06, Tero Kristo wrote:
-> On 03/11/17 17:43, Stephen Boyd wrote:
-> >On 10/30, Tero Kristo wrote:
-> >>@@ -90,7 +91,7 @@ static bool _omap4_is_ready(u32 val)
-> >>  static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
-> >>  {
-> >>-	if (unlikely(_early_timeout)) {
-> >>+	if (unlikely(_early_timeout || timekeeping_suspended)) {
-> >>  		if (time->cycles++ < timeout) {
-> >
-> >This would be the second user of timekeeping_suspended outside of
-> >timekeeping core. Why don't we just udelay(1) every time we call
-> >this function? The loop on ktime without any sort of delay in it
-> >may actually spin faster, especially because we can't get
-> >interrupted here (irqs are off). And irqs + preemption enabled is
-> >typically where you would want to use ktime instead of counting
-> >udelay() calls to see if you hit a timeout.
-> 
-> It actually was originally just udelay() but I changed it to use the
-> ktime_get() approach way back due to comments provided on some early
-> revisions of this patch. See:
-> https://patchwork.kernel.org/patch/7884371/
-> 
+These macros are used by more than one SoC vendor platforms, avoid to
+have many copies of these code, this patch moves them to the common
+clock directory which every clock drivers can access to.
 
-Ok, so we use ktime to spin faster on the bit than udelay() would
-allow us to. That looks to be on purpose because udelay(1) is too
-long between bit checks.
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 drivers/clk/clk_common.h
 
-What is causing us to call this path after timekeeping has been
-suspended? Please add some more specifics to the commit text so
-we know exactly where it's happening. Also add a comment above
-the if statement describing why we're checking the variable so it
-isn't buried in commit text somewhere and Cc timekeeping
-maintainers on the patch please.
-
+diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
+new file mode 100644
+index 0000000..21e93d2
+--- /dev/null
++++ b/drivers/clk/clk_common.h
+@@ -0,0 +1,60 @@
++/*
++ * drivers/clk/clk_common.h
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CLK_COMMON_H_
++#define _CLK_COMMON_H_
++
++#include <linux/clk-provider.h>
++
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= (const char *[]) { _parent },	\
++		.num_parents	= 1,				\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
++	(&(struct clk_init_data) {                      \
++		.flags          = _flags,               \
++		.name           = _name,                \
++		.parent_names   = NULL,                 \
++		.num_parents    = 0,                    \
++		.ops            = _ops,                 \
++	})
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++#define CLK_FIXED_RATE(_struct, _name, _flags,				\
++		       _fixed_rate, _fixed_accuracy)			\
++	struct clk_fixed_rate _struct = {				\
++		.fixed_rate	= _fixed_rate,				\
++		.fixed_accuracy	= _fixed_accuracy,			\
++		.hw.init	= CLK_HW_INIT_NO_PARENT(_name,		\
++					  &clk_fixed_rate_ops,		\
++							_flags),	\
++	}
++
++#endif /* _CLK_COMMON_H_ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
