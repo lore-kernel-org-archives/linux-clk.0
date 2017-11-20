@@ -1,124 +1,147 @@
-Return-Path: <ck.hu@mediatek.com>
-Message-ID: <1511416092.20405.4.camel@mtksdaap41>
-Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
-From: CK Hu <ck.hu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
-	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
-	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
-Date: Thu, 23 Nov 2017 13:48:12 +0800
-In-Reply-To: <20171114214114.15793-4-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-4-mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 00/12] add clock driver for Spreadtrum platforms
+Date: Mon, 20 Nov 2017 14:01:25 +0800
+Message-ID: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Return-Path: ck.hu@mediatek.com
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Matthias:
+This series adds Spreadtrum clock support together with its binding
+documentation and devicetree data.
 
-On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> With the mtk-mmsys MFD device in place, we switch the probing for
-> mt2701 from device-tree to mfd.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
->  1 file changed, 25 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index dd249cf5121e..5a263aa3ab6e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -21,6 +21,7 @@
->  #include <drm/drm_of.h>
->  #include <linux/component.h>
->  #include <linux/iommu.h>
-> +#include <linux/mfd/mmsys.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
-> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
->  
->  static int mtk_drm_probe(struct platform_device *pdev)
->  {
-> +	struct mmsys_dev *mmsys_private;
->  	struct device *dev = &pdev->dev;
->  	struct mtk_drm_private *private;
-> -	struct device_node *node;
-> +	struct device_node *node, *parent_node;
->  	struct component_match *match = NULL;
->  	int ret;
->  	int i;
-> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  	INIT_WORK(&private->commit.work, mtk_atomic_work);
->  	private->data = of_device_get_match_data(dev);
->  
-> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
-> -	if (IS_ERR(private->config_regs))
-> -		return PTR_ERR(private->config_regs);
-> +	/* Check if called from mfd */
-> +	if (!dev->of_node) {
-> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
+Any comments would be greatly appreciated.
 
-Why do you directly access parent's driver data? You just need the
-device node of mmsys, maybe you could refer to [1].
+This patchset also added a few common clock mactos into drivers/clk/clk_common.h,
+which are generally useful for all vendors' clock driver, sunxi-ng, zte, sprd
+(added in this patchse) use them (or part of them) at present, once this patchset
+is merged, I can help to remove the duplicated code which is under the vendors'
+respective directories.
 
-[1]
-https://elixir.free-electrons.com/linux/latest/source/drivers/reset/reset-berlin.c#L78
 
-Regards,
-CK
+Thanks,
+Chunyan
 
-> +		private->data = (struct mtk_mmsys_driver_data *)
-> +				platform_get_device_id(pdev)->driver_data;
-> +		private->config_regs =
-> +			syscon_node_to_regmap(mmsys_private->of_node);
-> +		parent_node = mmsys_private->of_node->parent;
-> +	} else {
-> +		private->config_regs = syscon_node_to_regmap(dev->of_node);
-> +		if (IS_ERR(private->config_regs))
-> +			return PTR_ERR(private->config_regs);
-> +		parent_node = dev->of_node->parent;
-> +	}
->  
->  	/* Iterate over sibling DISP function blocks */
-> -	for_each_child_of_node(dev->of_node->parent, node) {
-> +	for_each_child_of_node(parent_node, node) {
->  		const struct of_device_id *of_id;
->  		enum mtk_ddp_comp_type comp_type;
->  		int comp_id;
-> @@ -553,13 +566,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
->  			 mtk_drm_sys_resume);
->  
->  static const struct of_device_id mtk_drm_of_ids[] = {
-> -	{ .compatible = "mediatek,mt2701-mmsys",
-> -	  .data = &mt2701_mmsys_driver_data},
->  	{ .compatible = "mediatek,mt8173-mmsys",
->  	  .data = &mt8173_mmsys_driver_data},
->  	{ }
->  };
->  
-> +static const struct platform_device_id mtk_drm_ids[] = {
-> +	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
-> +
->  static struct platform_driver mtk_drm_platform_driver = {
->  	.probe	= mtk_drm_probe,
->  	.remove	= mtk_drm_remove,
-> @@ -568,6 +585,7 @@ static struct platform_driver mtk_drm_platform_driver = {
->  		.of_match_table = mtk_drm_of_ids,
->  		.pm     = &mtk_drm_pm_ops,
->  	},
-> +	.id_table = mtk_drm_ids,
->  };
->  
->  static struct platform_driver * const mtk_drm_drivers[] = {
+Changes from V4: (https://www.spinics.net/lists/arm-kernel/msg616566.html)
+* Added Rob's Acked-by;
+* Removed spin lock from Spreadtrum's gate, mux, div drivers, since we have
+  switched to use regmap.
+
+Changes from V3: (https://lkml.org/lkml/2017/11/2/61)
+* Addressed comments from Julien Thierry:
+  - Clean the if branch of sprd_mux_helper_get_parent()
+  - Have the Gate clock macros and ops for both mode (i.e. sc_gate and gate) separate;
+  - Have the Mux clock macros with/without table separate, and same changes
+    for the composite clock.
+* Switched the function name from _endisable to _toggle;
+* Fixed Kbuild test error:
+  - Added exporting sprd_clk_regmap_init() which would be used in other module(s);
+* Change the function sprd_clk_set_regmap() to the static one, and removed the
+  declear from the include file;
+* Addressed comments from Rob:
+  - Separate the dt-binding include file from the driver patch;
+  - Documented more for the property "clocks"
+* Changed the syscon device names;
+* Changed the name of 'sprd_mux_internal' to 'sprd_mux_ssel'
+  
+
+Changes from V2: (http://lkml.iu.edu/hypermail/linux/kernel/1707.1/01504.html)
+* Switch to use regmap to access registers;
+* Splited all clocks into 16 separated nodes, for each belongs to a single address area; 
+* Rearranged the order of clock declaration in sc9860-clk.c, sorted them upon the address area;
+* Added syscon device tree nodes which will be quoted by the node of clocks which are in
+  the same address area with the syscon device;
+* Revised the binding documentation according to the dt modification. 
+
+Changes from V1: (https://lkml.org/lkml/2017/6/17/356)
+* Address Stephen's comments:
+  - Switch to use platform device driver instead of the DT probing mechanism.
+  - Move the common clock macro out from vendor directory, but need to remove those
+    overlap code from other vendors (such as sunxi-ng) once this get merged.
+  - Add support to be built as a module.
+  - Add 'sprd_' prefix for all spin locks used in these drivers.
+  - Mark input parameter of sprd_x with const.
+  - Remove unreasonable dependencies to CONFIG_64BIT.
+  - Add readl() after writing the same register.
+  - Remove CLK_IS_BASIC which is no longer used.
+  - Remove unnecessery CLK_IGNORE_UNUSED when defining a clock.
+  - Change to expose all clock index.
+  - Use clk_ instead of ccu.
+  - Add Kconfig for sprd clocks.
+  - Move the fixed clocks out from the soc node.
+  - Switch to use 64-bit math in pll driver instead of 32-bit math.
+* Revise binding documentation according to dt modification.
+* Rename sc9860.c to sc9860-clk.c
+
+Chunyan Zhang (12):
+  drivers: move clock common macros out from vendor directories
+  clk: sprd: Add common infrastructure
+  clk: sprd: add gate clock support
+  clk: sprd: add mux clock support
+  clk: sprd: add divider clock support
+  clk: sprd: add composite clock support
+  clk: sprd: add adjustable pll support
+  dt-bindings: Add Spreadtrum clock binding documentation
+  clk: sprd: Add dt-bindings include file for SC9860
+  clk: sprd: add clocks support for SC9860
+  arm64: dts: add syscon for whale2 platform
+  arm64: dts: add clocks for SC9860
+
+ Documentation/devicetree/bindings/clock/sprd.txt |   63 +
+ arch/arm64/boot/dts/sprd/sc9860.dtsi             |  115 ++
+ arch/arm64/boot/dts/sprd/whale2.dtsi             |   48 +-
+ drivers/clk/Kconfig                              |    1 +
+ drivers/clk/Makefile                             |    1 +
+ drivers/clk/clk_common.h                         |   60 +
+ drivers/clk/sprd/Kconfig                         |   14 +
+ drivers/clk/sprd/Makefile                        |   11 +
+ drivers/clk/sprd/common.c                        |  113 ++
+ drivers/clk/sprd/common.h                        |   53 +
+ drivers/clk/sprd/composite.c                     |   62 +
+ drivers/clk/sprd/composite.h                     |   53 +
+ drivers/clk/sprd/div.c                           |   92 +
+ drivers/clk/sprd/div.h                           |   77 +
+ drivers/clk/sprd/gate.c                          |  113 ++
+ drivers/clk/sprd/gate.h                          |   61 +
+ drivers/clk/sprd/mux.c                           |   78 +
+ drivers/clk/sprd/mux.h                           |   76 +
+ drivers/clk/sprd/pll.c                           |  268 +++
+ drivers/clk/sprd/pll.h                           |  110 ++
+ drivers/clk/sprd/sc9860-clk.c                    | 1987 ++++++++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9860-clk.h      |  408 +++++
+ 22 files changed, 3862 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+ create mode 100644 drivers/clk/clk_common.h
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
+ create mode 100644 drivers/clk/sprd/gate.c
+ create mode 100644 drivers/clk/sprd/gate.h
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/mux.h
+ create mode 100644 drivers/clk/sprd/pll.c
+ create mode 100644 drivers/clk/sprd/pll.h
+ create mode 100644 drivers/clk/sprd/sc9860-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
+
+-- 
+2.7.4
