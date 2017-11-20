@@ -1,38 +1,184 @@
-Return-Path: <zhongkaihua@huawei.com>
-From: Kaihua Zhong <zhongkaihua@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <xuejiancheng@hisilicon.com>, <wenpan@hisilicon.com>,
-	<leo.yan@linaro.org>, <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
-	<zhongkaihua@huawei.com>, <chenjun14@huawei.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
-	<kevin.wangtao@hisilicon.com>
-Subject: [PATCH 0/3] Hi3660 stubclock drivers 
-Date: Fri, 3 Nov 2017 15:25:04 +0800
-Message-ID: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 12/12] arm64: dts: add clocks for SC9860
+Date: Mon, 20 Nov 2017 14:01:37 +0800
+Message-ID: <20171120060137.27380-13-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset relies on Hi3660 mailbox drivers.
+Some clocks on SC9860 are in the same address area with syscon devices,
+those are what have a property of 'sprd,syscon' which would refer to
+syscon devices, others would have a reg property indicated their address
+ranges.
 
-Kaihua Zhong (2):
-  clk: hisilicon: Add support for Hi3660 stub clocks
-  arm64: dts: Hi3660: Add binding for stub clock
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |   2 +-
+ 2 files changed, 116 insertions(+), 1 deletion(-)
 
-Leo Yan (1):
-  dt-bindings: clk: Hi3660: Document stub clock
-
- .../devicetree/bindings/clock/hi3660-clock.txt     |   6 +
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   8 +
- drivers/clk/hisilicon/Kconfig                      |   6 +
- drivers/clk/hisilicon/Makefile                     |   1 +
- drivers/clk/hisilicon/clk-hi3660-stub.c            | 195 +++++++++++++++++++++
- include/dt-bindings/clock/hi3660-clock.h           |   7 +
- 6 files changed, 223 insertions(+)
- create mode 100644 drivers/clk/hisilicon/clk-hi3660-stub.c
-
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..bf03da4 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,120 @@
+ 	};
+ 
+ 	soc {
++		pmu_gate: pmu-gate {
++			compatible = "sprd,sc9860-pmu-gate";
++			sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
++			clocks = <&ext_26m>;
++			#clock-cells = <1>;
++		};
++
++		pll: pll {
++			compatible = "sprd,sc9860-pll";
++			sprd,syscon = <&ana_regs>; /* 0x40400000 */
++			clocks = <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		ap_clk: clock-controller@20000000 {
++			compatible = "sprd,sc9860-ap-clk";
++			reg = <0 0x20000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_prediv: aon-prediv {
++			compatible = "sprd,sc9860-aon-prediv";
++			reg = <0 0x402d0000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		apahb_gate: apahb-gate {
++			compatible = "sprd,sc9860-apahb-gate";
++			sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_gate: aon-gate {
++			compatible = "sprd,sc9860-aon-gate";
++			sprd,syscon = <&aon_regs>; /* 0x402e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aonsecure_clk: clock-controller@40880000 {
++			compatible = "sprd,sc9860-aonsecure-clk";
++			reg = <0 0x40880000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		agcp_gate: agcp-gate {
++			compatible = "sprd,sc9860-agcp-gate";
++			sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		gpu_clk: clock-controller@60200000 {
++			compatible = "sprd,sc9860-gpu-clk";
++			reg = <0 0x60200000 0 0x400>;
++			clocks = <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_clk: clock-controller@61000000 {
++			compatible = "sprd,sc9860-vsp-clk";
++			reg = <0 0x61000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_gate: vsp-gate {
++			compatible = "sprd,sc9860-vsp-gate";
++			sprd,syscon = <&vsp_regs>; /* 0x61100000 */
++			clocks = <&vsp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_clk: clock-controller@62000000 {
++			compatible = "sprd,sc9860-cam-clk";
++			reg = <0 0x62000000 0 0x4000>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_gate: cam-gate {
++			compatible = "sprd,sc9860-cam-gate";
++			sprd,syscon = <&cam_regs>; /* 0x62100000 */
++			clocks = <&cam_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_clk: clock-controller@63000000 {
++			compatible = "sprd,sc9860-disp-clk";
++			reg = <0 0x63000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_gate: disp-gate {
++			compatible = "sprd,sc9860-disp-gate";
++			sprd,syscon = <&disp_regs>; /* 0x63100000 */
++			clocks = <&disp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		apapb_gate: apapb-gate {
++			compatible = "sprd,sc9860-apapb-gate";
++			sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
++			clocks = <&ap_clk 0>;
++			#clock-cells = <1>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 6ea3a75..eb004bb 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -110,6 +110,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
+ 	};
+ };
 -- 
-1.9.1
+2.7.4
