@@ -1,52 +1,32 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47168 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757373AbdKOAld (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Nov 2017 19:41:33 -0500
-Date: Tue, 14 Nov 2017 16:41:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: tegra: add fence_delay for clock registers
-Message-ID: <20171115004132.GM11955@codeaurora.org>
-References: <1510313868-24810-1-git-send-email-pdeschrijver@nvidia.com>
- <1510313868-24810-3-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 21 Nov 2017 12:30:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: andy.tang@nxp.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qoriq: add more divider clocks support
+Message-ID: <20171121183038.4jntjiqlfnewmmwt@rob-hp-laptop>
+References: <20171121061300.23464-1-andy.tang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1510313868-24810-3-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171121061300.23464-1-andy.tang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/10, Peter De Schrijver wrote:
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-
-Some commit text perhaps explaining why we add this?
-
-> ---
->  drivers/clk/tegra/clk.h | 7 +++++++
->  1 file changed, 7 insertions(+)
+On Tue, Nov 21, 2017 at 02:13:00PM +0800, andy.tang@nxp.com wrote:
+> From: Yuantian Tang <andy.tang@nxp.com>
 > 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 872f118..3b8947e 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
->  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
->  
-> +/* Combined read fence with delay */
-> +#define fence_udelay(delay, reg)	\
-> +	do {				\
-> +		readl_relaxed(reg);	\
-> +		udelay(delay);		\
+> More divider clocks are needed by IP. So enlarge the PLL divider
+> array to accommodate more divider clocks.
+> 
+> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> ---
+> v2:
+>   - fix a logical error
+> 
+>  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 1 +
 
-Does the udelay() need to be after the readl()? As far as I
-recall, the delay can start spinning before the read returns
-because there isn't any sort of barrier between the two. One
-approach would be to have an mb() between the read and the delay
-so that the read is ordered with respect to the delay. If not, we
-need a better comment than "combined read fence with delay".
+Please add acks when posting new versions.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  drivers/clk/clk-qoriq.c                                 | 9 ++++++++-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
