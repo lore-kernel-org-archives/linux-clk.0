@@ -1,35 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:57:27 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk-mux: Improve a size determination in
- clk_hw_register_mux_table()
-Message-ID: <20171114015727.GD11955@codeaurora.org>
-References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
- <7d70d3de-ba3b-3619-05a8-9a4abe0dacfe@users.sourceforge.net>
+Return-Path: <andy.tang@nxp.com>
+From: <andy.tang@nxp.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
+CC: <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v2] clk: qoriq: add more divider clocks support
+Date: Tue, 21 Nov 2017 14:13:00 +0800
+Message-ID: <20171121061300.23464-1-andy.tang@nxp.com>
+Return-Path: andy.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7d70d3de-ba3b-3619-05a8-9a4abe0dacfe@users.sourceforge.net>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 17:30:06 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Yuantian Tang <andy.tang@nxp.com>
 
-Applied to clk-next
+More divider clocks are needed by IP. So enlarge the PLL divider
+array to accommodate more divider clocks.
 
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+---
+v2:
+  - fix a logical error
+
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt | 1 +
+ drivers/clk/clk-qoriq.c                                 | 9 ++++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+index 6498e1fdbb33..97f46adac85f 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -78,6 +78,7 @@ second cell is the clock index for the specified type.
+ 	2	hwaccel		index (n in CLKCGnHWACSR)
+ 	3	fman		0 for fm1, 1 for fm2
+ 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
++				4=pll/5, 5=pll/6, 6=pll/7, 7=pll/8
+ 	5	coreclk		must be 0
+ 
+ 3. Example
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index b0ea753b8709..3a1812f65e5d 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -41,7 +41,7 @@ struct clockgen_pll_div {
+ };
+ 
+ struct clockgen_pll {
+-	struct clockgen_pll_div div[4];
++	struct clockgen_pll_div div[8];
+ };
+ 
+ #define CLKSEL_VALID	1
+@@ -1127,6 +1127,13 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 		struct clk *clk;
+ 		int ret;
+ 
++		/*
++		 * For platform PLL, there are 8 divider clocks.
++		 * For core PLL, there are 4 divider clocks at most.
++		 */
++		if (idx != PLATFORM_PLL && i >= 4)
++			break;
++
+ 		snprintf(pll->div[i].name, sizeof(pll->div[i].name),
+ 			 "cg-pll%d-div%d", idx, i + 1);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
