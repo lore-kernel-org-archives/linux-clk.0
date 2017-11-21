@@ -1,177 +1,45 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v6 5/5] clk: aspeed: Add reset controller
-Date: Tue, 28 Nov 2017 17:49:08 +1030
-Message-Id: <20171128071908.12279-6-joel@jms.id.au>
-In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
-References: <20171128071908.12279-1-joel@jms.id.au>
+Return-Path: <tirupath@codeaurora.org>
+Subject: Re: [PATCH V6] clk: qcom: Add spmi_pmic clock divider support
+To: Rob Herring <robh@kernel.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, mark.rutland@arm.com,
+ andy.gross@linaro.org, david.brown@linaro.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+References: <1510912127-4582-1-git-send-email-tirupath@codeaurora.org>
+ <20171117202243.you76ej4qvk3ul3g@rob-hp-laptop>
+From: Tirupathi Reddy T <tirupath@codeaurora.org>
+Message-ID: <396227ab-d628-ba5e-1e63-ad51f5cae253@codeaurora.org>
+Date: Tue, 21 Nov 2017 14:42:51 +0530
+MIME-Version: 1.0
+In-Reply-To: <20171117202243.you76ej4qvk3ul3g@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-There are some resets that are not associated with gates. These are
-represented by a reset controller.
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
-v5:
-  - Add Andrew's Reviewed-by
-v3:
-  - Add named initalisers for the reset defines
-  - Add define for ADC
----
- drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/aspeed-clock.h | 10 ++++
- 2 files changed, 91 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index b5dc3e298693..f2722be17ede 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -8,6 +8,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-@@ -266,6 +267,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
- 	.is_enabled = aspeed_clk_is_enabled,
- };
- 
-+/**
-+ * struct aspeed_reset - Aspeed reset controller
-+ * @map: regmap to access the containing system controller
-+ * @rcdev: reset controller device
-+ */
-+struct aspeed_reset {
-+	struct regmap			*map;
-+	struct reset_controller_dev	rcdev;
-+};
-+
-+#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
-+
-+static const u8 aspeed_resets[] = {
-+	[ASPEED_RESET_XDMA]	= 25,
-+	[ASPEED_RESET_MCTP]	= 24,
-+	[ASPEED_RESET_ADC]	= 23,
-+	[ASPEED_RESET_JTAG_MASTER] = 22,
-+	[ASPEED_RESET_MIC]	= 18,
-+	[ASPEED_RESET_PWM]	=  9,
-+	[ASPEED_RESET_PCIVGA]	=  8,
-+	[ASPEED_RESET_I2C]	=  2,
-+	[ASPEED_RESET_AHB]	=  1,
-+};
-+
-+static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-+}
-+
-+static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-+}
-+
-+static int aspeed_reset_status(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 val, rst = BIT(aspeed_resets[id]);
-+	int ret;
-+
-+	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & rst);
-+}
-+
-+static const struct reset_control_ops aspeed_reset_ops = {
-+	.assert = aspeed_reset_assert,
-+	.deassert = aspeed_reset_deassert,
-+	.status = aspeed_reset_status,
-+};
-+
- static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		struct regmap *map, u8 clock_idx, u8 reset_idx,
-@@ -307,10 +370,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
- 	struct device *dev = &pdev->dev;
-+	struct aspeed_reset *ar;
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
--	int i;
-+	int i, ret;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -318,6 +382,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(map);
- 	}
- 
-+	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
-+	if (!ar)
-+		return -ENOMEM;
-+
-+	ar->map = map;
-+	ar->rcdev.owner = THIS_MODULE;
-+	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
-+	ar->rcdev.ops = &aspeed_reset_ops;
-+	ar->rcdev.of_node = dev->of_node;
-+
-+	ret = devm_reset_controller_register(dev, &ar->rcdev);
-+	if (ret) {
-+		dev_err(dev, "could not register reset controller\n");
-+		return ret;
-+	}
-+
- 	/* SoC generations share common layouts but have different divisors */
- 	soc_data = of_device_get_match_data(dev);
- 	if (!soc_data) {
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index 9e170fb9a0da..fe46ab69da5c 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -41,4 +41,14 @@
- 
- #define ASPEED_NUM_CLKS			35
- 
-+#define ASPEED_RESET_XDMA		0
-+#define ASPEED_RESET_MCTP		1
-+#define ASPEED_RESET_ADC		2
-+#define ASPEED_RESET_JTAG_MASTER	3
-+#define ASPEED_RESET_MIC		4
-+#define ASPEED_RESET_PWM		5
-+#define ASPEED_RESET_PCIVGA		6
-+#define ASPEED_RESET_I2C		7
-+#define ASPEED_RESET_AHB		8
-+
- #endif
--- 
-2.14.1
+On 11/18/2017 1:52 AM, Rob Herring wrote:
+> On Fri, Nov 17, 2017 at 03:18:47PM +0530, Tirupathi Reddy wrote:
+>> Clkdiv module provides a clock output on the PMIC with CXO as
+>> the source. This clock can be routed through PMIC GPIOs. Add
+>> a device driver to configure this clkdiv module.
+>>
+>> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Normally your S-o-B would be last.
+Addressed in next patch version [7]
+>
+>> ---
+>>   .../bindings/clock/clk-spmi-pmic-div.txt           |  59 ++++
+> Please split bindings to a separate patch.
+Addressed in next patch version [7]
+>
+> Otherwise,
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+>>   drivers/clk/qcom/Kconfig                           |   9 +
+>>   drivers/clk/qcom/Makefile                          |   1 +
+>>   drivers/clk/qcom/clk-spmi-pmic-div.c               | 308 +++++++++++++++++++++
+>>   4 files changed, 377 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>>   create mode 100644 drivers/clk/qcom/clk-spmi-pmic-div.c
