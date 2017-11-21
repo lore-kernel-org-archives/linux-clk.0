@@ -1,48 +1,117 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38167 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbdK1G6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 01:58:30 -0500
-Received: by mail-wm0-f66.google.com with SMTP id n74so13945016wmi.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 Nov 2017 22:58:30 -0800 (PST)
-To: Sudeep Holla <sudeep.holla@arm.com>
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] clk: fix compile testing of scpi clk driver
-Cc: linux-clk@vger.kernel.org,
-        kbuild test robot <fengguang.wu@intel.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <24058ecb-9f12-f7e1-503d-bd98eb894c6c@gmail.com>
-Date: Tue, 28 Nov 2017 07:58:23 +0100
+Received: from smtp.codeaurora.org ([198.145.29.96]:34106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbdKUJMp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Nov 2017 04:12:45 -0500
+Subject: Re: [PATCH V6] clk: qcom: Add spmi_pmic clock divider support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+References: <1510912127-4582-1-git-send-email-tirupath@codeaurora.org>
+ <20171117235611.GA13301@codeaurora.org>
+From: Tirupathi Reddy T <tirupath@codeaurora.org>
+Message-ID: <6e6399c9-f0a5-3048-d318-2bfc1ba85ded@codeaurora.org>
+Date: Tue, 21 Nov 2017 14:42:35 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171117235611.GA13301@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We now have a hard dependency on ARM_SCPI_PROTOCOL and may end up with
-the following error:
-ERROR: "get_scpi_ops" [drivers/clk/clk-scpi.ko] undefined!
-Fix this by removing COMPILE_TEST from COMMON_CLK_SCPI dependencies.
 
-Fixes: f7fee8be06a6 "firmware: arm_scpi: remove default for get_scpi_ops if not reachable"
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/clk/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa67..fe6fd705f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -64,7 +64,7 @@ config COMMON_CLK_HI655X
- 
- config COMMON_CLK_SCPI
- 	tristate "Clock driver controlled via SCPI interface"
--	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-+	depends on ARM_SCPI_PROTOCOL
- 	  ---help---
- 	  This driver provides support for clocks that are controlled
- 	  by firmware that implements the SCPI interface.
--- 
-2.15.0
+On 11/18/2017 5:26 AM, Stephen Boyd wrote:
+> On 11/17, Tirupathi Reddy wrote:
+>> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+>> new file mode 100644
+>> index 0000000..2cf2aba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+> Please move this to qcom,spmi-clkdiv.txt like other qcom bindings.
+Addressed in next patch version[7]
+>
+>> @@ -0,0 +1,59 @@
+>> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
+>> +
+>> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
+>> +These clocks are typically wired through alternate functions on
+>> +gpio pins.
+>> +
+>> +=======================
+>> +Properties
+>> +=======================
+>> +
+>> +- compatible
+>> +	Usage:      required
+>> +	Value type: <string>
+>> +	Definition: must be "qcom,spmi-clkdiv".
+>> +
+>> +- reg
+>> +	Usage:      required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: base address of CLKDIV peripherals.
+>> +
+>> +- qcom,num-clkdivs
+>> +	Usage:      required
+>> +	Value type: <u32>
+>> +	Definition: number of CLKDIV peripherals.
+> Would it work if we read the registers and looked for the clkdiv
+> subtype ID? If we read something that doesn't match, break and
+> stop adding clks? Or does reading the next "peripheral" cause
+> some sort of crash and burn scenario where the device see an
+> access control violation? Would be interesting to do it that way
+> and avoid needing a new property in DT.
+I feel it is better to go with the current design as we beforehand know the
+#div-clk peripherals in a PMIC. Reading the next peripheral might result in
+an unknown failure if there is no real peripheral there (PMIC peripherals
+are not in contiguous address space).
+>> +
+>> +
+>> +	parent_name = of_clk_get_parent_name(of_node, 0);
+>> +	if (!parent_name) {
+>> +		dev_err(dev, "missing parent clock\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	init.parent_names = &parent_name;
+>> +	init.num_parents = 1;
+>> +	init.ops = &clk_spmi_pmic_div_ops;
+>> +
+>> +	for (i = 0, clkdiv = cc->clks; i < nclks; i++) {
+>> +		spin_lock_init(&clkdiv[i].lock);
+>> +		clkdiv[i].base = start + i * 0x100;
+>> +		clkdiv[i].regmap = regmap;
+>> +		clkdiv[i].cxo_period_ns = NSEC_PER_SEC / cxo_hz;
+>> +		init.name = kasprintf(GFP_KERNEL, "div_clk%d", i + 1);
+> Hmm. Maybe we should just have this on the stack. 20 characters
+> should be plenty?
+Addressed in next patch version[7]
+>> +		clkdiv[i].hw.init = &init;
+>> +
+>> +		ret = devm_clk_hw_register(dev, &clkdiv[i].hw);
+>> +		kfree(init.name); /* clk framework made a copy */
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return of_clk_add_hw_provider(of_node, spmi_pmic_div_clk_hw_get, cc);
+>> +}
+>> +
+>> +static int spmi_pmic_clkdiv_remove(struct platform_device *pdev)
+>> +{
+>> +	of_clk_del_provider(pdev->dev.of_node);
+>> +
+>> +	return 0;
+> This can use devm now.
+Addressed in next patch version.
+>> +}
+>> +
+>> +static const struct of_device_id spmi_pmic_clkdiv_match_table[] = {
+>> +	{ .compatible = "qcom,spmi-clkdiv" },
+>> +	{ /* sentinel */ }
+>> +};
+> Nice!
+Thanks
 
