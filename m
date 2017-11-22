@@ -1,37 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 00:09:56 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>, mturquette@baylibre.com,
-	andy.gross@linaro.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
-Message-ID: <20171102070956.GJ30645@codeaurora.org>
-References: <1507625834-30499-1-git-send-email-rnayak@codeaurora.org>
- <1507625834-30499-2-git-send-email-rnayak@codeaurora.org>
- <20171011054319.GF1165@minitux>
+Return-Path: <Andy.tang@nxp.com>
+From: <Andy.tang@nxp.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>
+CC: <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
+	<evicetree@vger.kernel.org>, Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v2] clk: qoriq: add more divider clocks support
+Date: Wed, 22 Nov 2017 09:40:53 +0800
+Message-ID: <20171122014053.13597-1-Andy.tang@nxp.com>
+Return-Path: Andy.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171011054319.GF1165@minitux>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/10, Bjorn Andersson wrote:
-> On Tue 10 Oct 01:57 PDT 2017, Rajendra Nayak wrote:
-> 
-> > Add all RPM controlled clocks on msm8996 platform
-> > 
-> > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> > [srini: Fixed various issues with offsets and made names specific to msm8996]
-> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> Your S-o-b should be last in this list.
-> 
+From: Yuantian Tang <andy.tang@nxp.com>
 
-I moved it to the end, which feels weird because typically first
-signoff is the author. But nothing I see says that's true, so
-let's swap it.
+More divider clocks are needed by IP. So enlarge the PLL divider
+array to accommodate more divider clocks.
 
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+resend with ack added
+v2:
+  - fix a logical error
+
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt | 1 +
+ drivers/clk/clk-qoriq.c                                 | 9 ++++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+index 6498e1fdbb33..97f46adac85f 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -78,6 +78,7 @@ second cell is the clock index for the specified type.
+ 	2	hwaccel		index (n in CLKCGnHWACSR)
+ 	3	fman		0 for fm1, 1 for fm2
+ 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
++				4=pll/5, 5=pll/6, 6=pll/7, 7=pll/8
+ 	5	coreclk		must be 0
+ 
+ 3. Example
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index b0ea753b8709..3a1812f65e5d 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -41,7 +41,7 @@ struct clockgen_pll_div {
+ };
+ 
+ struct clockgen_pll {
+-	struct clockgen_pll_div div[4];
++	struct clockgen_pll_div div[8];
+ };
+ 
+ #define CLKSEL_VALID	1
+@@ -1127,6 +1127,13 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 		struct clk *clk;
+ 		int ret;
+ 
++		/*
++		 * For platform PLL, there are 8 divider clocks.
++		 * For core PLL, there are 4 divider clocks at most.
++		 */
++		if (idx != PLATFORM_PLL && i >= 4)
++			break;
++
+ 		snprintf(pll->div[i].name, sizeof(pll->div[i].name),
+ 			 "cg-pll%d-div%d", idx, i + 1);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
