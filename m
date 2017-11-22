@@ -1,72 +1,206 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rockchip@lists.infradead.org,
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: rockchip: protect cpu and ddr clks
-Date: Thu, 30 Nov 2017 10:35:15 +0800
-Message-Id: <20171130023515.27833-1-jeffy.chen@rock-chips.com>
+	Naveen M <naveen.m@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v4 5/7] ASoC: Intel: eve: Enable mclk and ssp sclk early
+Date: Wed, 22 Nov 2017 17:39:50 +0530
+Message-Id: <1511352592-4006-6-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These clks can never be turned off, so protect them as what we do in
-the sunxi clock-tree.
+From: Naveen M <naveen.m@intel.com>
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+rt5663 and rt5514 needs mclk/sclk early to synchronize its internal
+clocks.
+
+Signed-off-by: Naveen M <naveen.m@intel.com>
+Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
 ---
+ sound/soc/intel/boards/Kconfig                     |   1 +
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 100 +++++++++++++++++++++
+ 2 files changed, 101 insertions(+)
 
- drivers/clk/rockchip/clk-cpu.c | 5 +++++
- drivers/clk/rockchip/clk-ddr.c | 5 +++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 32c19c0f1e14..b741c23a18d1 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -36,6 +36,7 @@
- #include <linux/slab.h>
- #include <linux/io.h>
- #include <linux/clk.h>
+diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
+index f62f2ab..bdddab5 100644
+--- a/sound/soc/intel/boards/Kconfig
++++ b/sound/soc/intel/boards/Kconfig
+@@ -275,6 +275,7 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
+         depends on X86_INTEL_LPSS && I2C && SPI
+         select SND_SOC_INTEL_SST
+         depends on SND_SOC_INTEL_SKYLAKE
++	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
+         select SND_SOC_RT5663
+         select SND_SOC_RT5514
+         select SND_SOC_RT5514_SPI
+diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+index e767283..245300c 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+@@ -30,6 +30,9 @@
+ #include "../../codecs/rt5663.h"
+ #include "../../codecs/hdac_hdmi.h"
+ #include "../skylake/skl.h"
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
 +#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include "clk.h"
  
-@@ -334,6 +335,10 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 		goto free_rate_table;
- 	}
+ #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
+ #define KBL_REALTEK_DMIC_CODEC_DAI "rt5514-aif1"
+@@ -58,6 +61,8 @@ struct kbl_codec_private {
+ 	struct snd_soc_jack kabylake_headset;
+ 	struct list_head hdmi_pcm_list;
+ 	struct snd_soc_jack kabylake_hdmi[2];
++	struct clk *mclk;
++	struct clk *sclk;
+ };
  
-+	/* Protect CPU clock */
-+	__clk_get(cclk);
-+	clk_prepare_enable(cclk);
+ enum {
+@@ -79,6 +84,67 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
+ 	SOC_DAPM_PIN_SWITCH("DMIC"),
+ };
+ 
++static int platform_clock_control(struct snd_soc_dapm_widget *w,
++			struct snd_kcontrol *k, int  event)
++{
++	struct snd_soc_dapm_context *dapm = w->dapm;
++	struct snd_soc_card *card = dapm->card;
++	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
++	int ret = 0;
 +
- 	return cclk;
- 
- free_rate_table:
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index e8075359366b..9f85335d92f2 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -15,6 +15,7 @@
- 
- #include <linux/arm-smccc.h>
- #include <linux/clk.h>
-+#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/slab.h>
-@@ -147,5 +148,9 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	if (IS_ERR(clk))
- 		kfree(ddrclk);
- 
-+	/* Protect DDR clock */
-+	__clk_get(clk);
-+	clk_prepare_enable(clk);
++	/*
++	 * MCLK/SCLK need to be ON early for a successful synchronization of
++	 * codec internal clock. And the clocks are turned off during
++	 * POST_PMD after the stream is stopped.
++	 */
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		if (__clk_is_enabled(priv->mclk))
++			return 0;
 +
- 	return clk;
++		/* Enable MCLK */
++		ret = clk_set_rate(priv->mclk, 24000000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
++				ret);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->mclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
++			return ret;
++		}
++
++		/* Enable SCLK */
++		ret = clk_set_rate(priv->sclk, 3072000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
++				ret);
++			clk_disable_unprepare(priv->mclk);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->sclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
++			clk_disable_unprepare(priv->mclk);
++		}
++		break;
++	case SND_SOC_DAPM_POST_PMD:
++		if (!__clk_is_enabled(priv->mclk))
++			return 0;
++
++		clk_disable_unprepare(priv->mclk);
++		clk_disable_unprepare(priv->sclk);
++		break;
++	default:
++		return 0;
++	}
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
+ 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+@@ -87,11 +153,15 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_MIC("DMIC", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI1", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI2", NULL),
++	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
++			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
++			SND_SOC_DAPM_POST_PMD),
+ 
+ };
+ 
+ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	/* Headphones */
++	{ "Headphone Jack", NULL, "Platform Clock" },
+ 	{ "Headphone Jack", NULL, "HPOL" },
+ 	{ "Headphone Jack", NULL, "HPOR" },
+ 
+@@ -100,6 +170,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	{ "Right Spk", NULL, "Right BE_OUT" },
+ 
+ 	/* other jacks */
++	{ "Headset Mic", NULL, "Platform Clock" },
+ 	{ "IN1P", NULL, "Headset Mic" },
+ 	{ "IN1N", NULL, "Headset Mic" },
+ 
+@@ -648,6 +719,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ {
+ 	struct kbl_codec_private *ctx;
+ 	struct skl_machine_pdata *pdata;
++	int ret = 0;
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
+ 	if (!ctx)
+@@ -663,6 +735,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ 		dmic_constraints = pdata->dmic_num == 2 ?
+ 			&constraints_dmic_2ch : &constraints_dmic_channels;
+ 
++	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
++	if (IS_ERR(ctx->mclk)) {
++		ret = PTR_ERR(ctx->mclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_mclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
++	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
++	if (IS_ERR(ctx->sclk)) {
++		ret = PTR_ERR(ctx->sclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_sclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
+ 	return devm_snd_soc_register_card(&pdev->dev, &kabylake_audio_card);
  }
+ 
 -- 
-2.11.0
+2.7.4
