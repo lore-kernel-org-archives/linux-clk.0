@@ -1,81 +1,167 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-pm@vger.kernel.org,
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] PM / Domain: renesas: Fix active wakeup behavior
-Date: Thu,  9 Nov 2017 14:26:59 +0100
-Message-Id: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v4 3/7] ASoC: Intel: Skylake: Add extended I2S config blob support in Clock driver
+Date: Wed, 22 Nov 2017 17:39:48 +0530
+Message-Id: <1511352592-4006-4-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Rafael, Ulf, Kevin,
+Extended I2S config blob supports multiple mclk dividers in NHLT blob.
+This patch detects whether the I2S blob is legacy or extended based on the
+signature value and chooses the mclk source and divider accordingly.
 
-If a device in a Renesas ARM SoC is part of a Clock Domain, and it is
-used as a wakeup source, it must be kept active during system suspend.
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+---
+ sound/soc/intel/skylake/skl-i2s.h  | 31 ++++++++++++++++++++++++++++
+ sound/soc/intel/skylake/skl-nhlt.c | 41 +++++++++++++++++++++++++++-----------
+ 2 files changed, 60 insertions(+), 12 deletions(-)
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source, or if it is part of the wakeup path.
-
-However, this is merely a workaround.  The proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, using the new GENPD_FLAG_ACTIVE_WAKEUP flag introduced in commit
-95a20ef6f7e54c6a ("PM / Domains: Allow genpd users to specify default
-active wakeup behavior").
-
-Hence this series does that for PM Domain drivers used on R-Car, RZ/A1,
-RZ/G1 SoCs, mimicking what is already done succesfully on SH/R-Mobile
-SoCs.  This will allow for the workarounds can be removed later.
-
-This series was extracted from "[PATCH 00/10] PM / Domain: renesas: Fix
-active wakeup behavior", and retains only fixes for Renesas PM Domain
-drivers.
-
-Changes compared to v1:
-  - Integrate follow-up patches to use GENPD_FLAG_ACTIVE_WAKEUP instead
-    of adding an "always true" callback.
-
-As GENPD_FLAG_ACTIVE_WAKEUP exists in pm/linux-next only, and this
-series is a dependency for the removal of workarounds in drivers of
-multiple subsystems (net, irqchip, and gpio), I think it is a good idea
-to still queue this for v4.15 in the PM tree, if possible.
-
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7795/salvator-x, and
-sh73a0/kzm9g.
-
-Thanks for applying!
-
-Geert Uytterhoeven (3):
-  clk: renesas: mstp: Keep wakeup sources active during system suspend
-  clk: renesas: cpg-mssr: Keep wakeup sources active during system
-    suspend
-  soc: renesas: rcar-sysc: Keep wakeup sources active during system
-    suspend
-
- drivers/clk/renesas/clk-mstp.c         | 2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- drivers/soc/renesas/rcar-sysc.c        | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
+diff --git a/sound/soc/intel/skylake/skl-i2s.h b/sound/soc/intel/skylake/skl-i2s.h
+index dcf819b..ad0a1bb 100644
+--- a/sound/soc/intel/skylake/skl-i2s.h
++++ b/sound/soc/intel/skylake/skl-i2s.h
+@@ -27,6 +27,12 @@
+ #define SKL_SHIFT(x)			(ffs(x) - 1)
+ #define SKL_MCLK_DIV_RATIO_MASK		GENMASK(11, 0)
+ 
++#define is_legacy_blob(x) (x.signature != 0xEE)
++#define ext_to_legacy_blob(i2s_config_blob_ext) \
++	((struct skl_i2s_config_blob_legacy *) i2s_config_blob_ext)
++
++#define get_clk_src(mclk, mask) \
++		((mclk.mdivctrl & mask) >> SKL_SHIFT(mask))
+ struct skl_i2s_config {
+ 	u32 ssc0;
+ 	u32 ssc1;
+@@ -45,6 +51,24 @@ struct skl_i2s_config_mclk {
+ 	u32 mdivr;
+ };
+ 
++struct skl_i2s_config_mclk_ext {
++	u32 mdivctrl;
++	u32 mdivr_count;
++	u32 mdivr[0];
++} __packed;
++
++struct skl_i2s_config_blob_signature {
++	u32 minor_ver : 8;
++	u32 major_ver : 8;
++	u32 resvdz : 8;
++	u32 signature : 8;
++} __packed;
++
++struct skl_i2s_config_blob_header {
++	struct skl_i2s_config_blob_signature sig;
++	u32 size;
++};
++
+ /**
+  * struct skl_i2s_config_blob_legacy - Structure defines I2S Gateway
+  * configuration legacy blob
+@@ -61,4 +85,11 @@ struct skl_i2s_config_blob_legacy {
+ 	struct skl_i2s_config_mclk mclk;
+ };
+ 
++struct skl_i2s_config_blob_ext {
++	u32 gtw_attr;
++	struct skl_i2s_config_blob_header hdr;
++	u32 tdm_ts_group[SKL_I2S_MAX_TIME_SLOTS];
++	struct skl_i2s_config i2s_cfg;
++	struct skl_i2s_config_mclk_ext mclk;
++} __packed;
+ #endif /* __SOUND_SOC_SKL_I2S_H */
+diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
+index 4d2136c..c2dcce9 100644
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+@@ -26,6 +26,7 @@ static guid_t osc_guid =
+ 	GUID_INIT(0xA69F886E, 0x6CEB, 0x4594,
+ 		  0xA4, 0x1F, 0x7B, 0x5D, 0xCE, 0x24, 0xC5, 0x53);
+ 
++
+ struct nhlt_acpi_table *skl_nhlt_init(struct device *dev)
+ {
+ 	acpi_handle handle;
+@@ -272,6 +273,7 @@ void skl_nhlt_remove_sysfs(struct skl *skl)
+ void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ 				struct nhlt_fmt *fmt, u8 id)
+ {
++	struct skl_i2s_config_blob_ext *i2s_config_ext;
+ 	struct skl_i2s_config_blob_legacy *i2s_config;
+ 	struct skl_clk_parent_src *parent;
+ 	struct skl_ssp_clk *sclk, *sclkfs;
+@@ -332,12 +334,18 @@ void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ 
+ 		/* Fill rate and parent for sclk/sclkfs */
+ 		if (!present) {
+-			/* MCLK Divider Source Select */
+-			i2s_config = (struct skl_i2s_config_blob_legacy *)
++			i2s_config_ext = (struct skl_i2s_config_blob_ext *)
+ 						fmt->fmt_config[0].config.caps;
+-			clk_src = ((i2s_config->mclk.mdivctrl)
+-					& SKL_MNDSS_DIV_CLK_SRC_MASK) >>
+-					SKL_SHIFT(SKL_MNDSS_DIV_CLK_SRC_MASK);
++
++			/* MCLK Divider Source Select */
++			if (is_legacy_blob(i2s_config_ext->hdr.sig)) {
++				i2s_config = ext_to_legacy_blob(i2s_config_ext);
++				clk_src = get_clk_src(i2s_config->mclk,
++						SKL_MNDSS_DIV_CLK_SRC_MASK);
++			} else {
++				clk_src = get_clk_src(i2s_config_ext->mclk,
++						SKL_MNDSS_DIV_CLK_SRC_MASK);
++			}
+ 
+ 			parent = skl_get_parent_clk(clk_src);
+ 
+@@ -363,6 +371,7 @@ void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ void skl_get_mclk(struct skl *skl, struct skl_ssp_clk *mclk,
+ 				struct nhlt_fmt *fmt, u8 id)
+ {
++	struct skl_i2s_config_blob_ext *i2s_config_ext;
+ 	struct skl_i2s_config_blob_legacy *i2s_config;
+ 	struct nhlt_specific_cfg *fmt_cfg;
+ 	struct skl_clk_parent_src *parent;
+@@ -370,13 +379,21 @@ void skl_get_mclk(struct skl *skl, struct skl_ssp_clk *mclk,
+ 	u8 clk_src;
+ 
+ 	fmt_cfg = &fmt->fmt_config[0].config;
+-	i2s_config = (struct skl_i2s_config_blob_legacy *)fmt_cfg->caps;
+-
+-	/* MCLK Divider Source Select */
+-	clk_src = ((i2s_config->mclk.mdivctrl) & SKL_MCLK_DIV_CLK_SRC_MASK) >>
+-					SKL_SHIFT(SKL_MCLK_DIV_CLK_SRC_MASK);
+-
+-	clkdiv = i2s_config->mclk.mdivr & SKL_MCLK_DIV_RATIO_MASK;
++	i2s_config_ext = (struct skl_i2s_config_blob_ext *)fmt_cfg->caps;
++
++	/* MCLK Divider Source Select and divider */
++	if (is_legacy_blob(i2s_config_ext->hdr.sig)) {
++		i2s_config = ext_to_legacy_blob(i2s_config_ext);
++		clk_src = get_clk_src(i2s_config->mclk,
++				SKL_MCLK_DIV_CLK_SRC_MASK);
++		clkdiv = i2s_config->mclk.mdivr &
++				SKL_MCLK_DIV_RATIO_MASK;
++	} else {
++		clk_src = get_clk_src(i2s_config_ext->mclk,
++				SKL_MCLK_DIV_CLK_SRC_MASK);
++		clkdiv = i2s_config_ext->mclk.mdivr[0] &
++				SKL_MCLK_DIV_RATIO_MASK;
++	}
+ 
+ 	/* bypass divider */
+ 	div_ratio = 1;
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
