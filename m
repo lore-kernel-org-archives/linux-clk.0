@@ -1,43 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16686 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758331AbdKPO3K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 09:29:10 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
-Date: Thu, 16 Nov 2017 16:28:58 +0200
-Message-ID: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v4 0/7] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
+Date: Wed, 22 Nov 2017 17:39:45 +0530
+Message-Id: <1511352592-4006-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series introduces the Memory Built-In Self Test (MBIST)
-work around (WAR) needed when power ungating certain domains. More
-details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-implement the WAR in the Tegra210 clock driver, because most accesses are
-to CAR registers and for the VENC domain, we need to make sure the CSI
-clock source is not changed during the WAR execution.
+For certain platforms, clocks (mclk/sclk/fs) are required to be up before
+the stream start. Example: some codecs needs the mclk/sclk/fs to be
+enabled early for a successful clock synchronization. Some platforms
+require clock to be enabled at boot and be always ON.
 
-Changes in v2:
-* Use readl for fence_delay() rather than readl_relaxed
-* clarify MBIST and WAR acronyms
+By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+these clocks can be enabled early after the firmware is downloaded.
 
-Peter De Schrijver (4):
-  clk: tegra: Add la clock for Tegra210
-  clk: tegra: add fence_delay for clock registers
-  clk: tegra: MBIST work around for Tegra210
-  soc/tegra: pmc: apply MBIST work around fo Tegra210
+With this series, a virtual clock driver is created which provides
+interface to send the required IPCs from machine driver to enable the
+clocks. NHLT is parsed during probe and the clock information is populated.
+The pointer to blob is cached and sent along with the set_dma_control IPC
+structure during the clk prepare/unprepare callback. Clocks are created for
+a ssp if the nhlt table has endpoint configuration for that particular ssp.
+Skylake driver creates a platform driver with the clock information and
+register the clk ops callback.
 
- drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h                  |   7 +
- drivers/soc/tegra/pmc.c                  |   5 +
- include/dt-bindings/clock/tegra210-car.h |   2 +-
- include/linux/clk/tegra.h                |   1 +
- 5 files changed, 383 insertions(+), 3 deletions(-)
+Kabylake machine driver uses the clock interface to enable the clocks early
+as it is required by the rt5663 driver for clock synchronization.
+
+v3 -> v4
+	- Add missing signed-offs
+
+v2 -> v3
+	- Moved the clk ops and IPCs from Skylake driver to clk driver and
+	  reordered commits accordingly
+
+	- Add the support for extended I2S blob config which supports
+	  multiple mclk dividers in NHLT
+
+	- Enable the clocks as well in DAPM PMU event instead of hw_params
+	  in machine drivers as confirmed by codec vendor
+
+	- Do not register the clk if there is no valid clock source is
+	  avail in the I2S blob
+
+	- Take care of error return in the clk driver
+
+	- Address rest of the review comments and more optimization added
+
+	- Fix the warning
+		sound/soc/intel/skylake/skl.c:724:1-3:
+		WARNING: PTR_ERR_OR_ZERO can be used
+	  reported by scripts/coccinelle/api/ptr_ret.cocci
+
+	- Modified DSP replies as human readable to ease the debugging
+
+	- Add firmware replies for MCLK/SCLK clocks if they are running
+	  already
+
+v1 -> v2
+	- Register parent clocks with skylake device.
+	  With the patch "clk: Add support for runtime PM" soon to be merged
+	  will help DSP to stay active on call to clock enable.
+	  Reference: (https://patchwork.kernel.org/patch/9911741/)
+
+	- Fix the machine driver to enable clocks early for headphone
+	  playback path as well to fix a pop noise issue
+
+Harsha Priya (1):
+  ASoC: Intel: kbl: Enable mclk and ssp sclk early
+
+Naveen M (1):
+  ASoC: Intel: eve: Enable mclk and ssp sclk early
+
+Sriram Periyasamy (3):
+  ASoC: Intel: Skylake: Parse nhlt and register clock device
+  ASoC: Intel: Skylake: Add ssp clock driver
+  ASoC: Intel: Skylake: Add extended I2S config blob support in Clock
+    driver
+
+Subhransu S. Prusty (2):
+  ASoC: Intel: Skylake: Make DSP replies more human readable
+  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
+
+ sound/soc/intel/Kconfig                            |   3 +
+ sound/soc/intel/boards/Kconfig                     |   2 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c       | 101 ++++-
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 100 +++++
+ sound/soc/intel/skylake/Makefile                   |   5 +
+ sound/soc/intel/skylake/skl-i2s.h                  |  95 +++++
+ sound/soc/intel/skylake/skl-messages.c             |   1 +
+ sound/soc/intel/skylake/skl-nhlt.c                 | 172 ++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.c              | 470 +++++++++++++++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.h              | 117 +++++
+ sound/soc/intel/skylake/skl-sst-ipc.c              |  50 ++-
+ sound/soc/intel/skylake/skl.c                      |  93 ++++
+ sound/soc/intel/skylake/skl.h                      |  10 +
+ 13 files changed, 1207 insertions(+), 12 deletions(-)
+ create mode 100644 sound/soc/intel/skylake/skl-i2s.h
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.h
 
 -- 
-1.9.1
-
+2.7.4
