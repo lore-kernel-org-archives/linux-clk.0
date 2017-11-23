@@ -1,248 +1,124 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v6 2/5] clk: aspeed: Register core clocks
-Date: Tue, 28 Nov 2017 17:49:05 +1030
-Message-Id: <20171128071908.12279-3-joel@jms.id.au>
-In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
-References: <20171128071908.12279-1-joel@jms.id.au>
+Return-Path: <ck.hu@mediatek.com>
+Message-ID: <1511416092.20405.4.camel@mtksdaap41>
+Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
+From: CK Hu <ck.hu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
+	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 13:48:12 +0800
+In-Reply-To: <20171114214114.15793-4-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-4-mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: ck.hu@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers the core clocks; those which are required to calculate
-the rate of the timer peripheral so the system can load a clocksource
-driver.
+Hi, Matthias:
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
-v5:
-  - Add Andrew's Reviewed-by
-v4:
-  - Add defines to document the BIT() macros
-v3:
-  - Fix ast2400 ahb calculation
-  - Remove incorrect 'this is wrong' comment
-  - Separate out clkin calc to be per platform
-  - Support 48MHz clkin on ast2400
----
- drivers/clk/clk-aspeed.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 177 insertions(+)
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> With the mtk-mmsys MFD device in place, we switch the probing for
+> mt2701 from device-tree to mfd.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index dd249cf5121e..5a263aa3ab6e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -21,6 +21,7 @@
+>  #include <drm/drm_of.h>
+>  #include <linux/component.h>
+>  #include <linux/iommu.h>
+> +#include <linux/mfd/mmsys.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+>  
+>  static int mtk_drm_probe(struct platform_device *pdev)
+>  {
+> +	struct mmsys_dev *mmsys_private;
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_drm_private *private;
+> -	struct device_node *node;
+> +	struct device_node *node, *parent_node;
+>  	struct component_match *match = NULL;
+>  	int ret;
+>  	int i;
+> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+>  	private->data = of_device_get_match_data(dev);
+>  
+> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
+> -	if (IS_ERR(private->config_regs))
+> -		return PTR_ERR(private->config_regs);
+> +	/* Check if called from mfd */
+> +	if (!dev->of_node) {
+> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 381be5547178..9742f1d0977f 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -11,7 +11,23 @@
- 
- #include <dt-bindings/clock/aspeed-clock.h>
- 
-+#define ASPEED_RESET_CTRL	0x04
-+#define ASPEED_CLK_SELECTION	0x08
-+#define ASPEED_CLK_STOP_CTRL	0x0c
-+#define ASPEED_MPLL_PARAM	0x20
-+#define ASPEED_HPLL_PARAM	0x24
-+#define  AST2500_HPLL_BYPASS_EN	BIT(20)
-+#define  AST2400_HPLL_STRAPPED	BIT(18)
-+#define  AST2400_HPLL_BYPASS_EN	BIT(17)
-+#define ASPEED_MISC_CTRL	0x2c
-+#define  UART_DIV13_EN		BIT(12)
- #define ASPEED_STRAP		0x70
-+#define  CLKIN_25MHZ_EN		BIT(23)
-+#define  AST2400_CLK_SOURCE_SEL	BIT(18)
-+#define ASPEED_CLK_SELECTION_2	0xd8
-+
-+/* Globally visible clocks */
-+static DEFINE_SPINLOCK(aspeed_clk_lock);
- 
- /* Keeps track of all clocks */
- static struct clk_hw_onecell_data *aspeed_clk_data;
-@@ -89,6 +105,160 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-+static const struct clk_div_table ast2400_div_table[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
-+static const struct clk_div_table ast2500_div_table[] = {
-+	{ 0x0, 4 },
-+	{ 0x1, 8 },
-+	{ 0x2, 12 },
-+	{ 0x3, 16 },
-+	{ 0x4, 20 },
-+	{ 0x5, 24 },
-+	{ 0x6, 28 },
-+	{ 0x7, 32 },
-+	{ 0 }
-+};
-+
-+static struct clk_hw *aspeed_ast2400_calc_pll(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & AST2400_HPLL_BYPASS_EN) {
-+		/* Pass through mode */
-+		mult = div = 1;
-+	} else {
-+		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
-+		u32 n = (val >> 5) & 0x3f;
-+		u32 od = (val >> 4) & 0x1;
-+		u32 d = val & 0xf;
-+
-+		mult = (2 - od) * (n + 2);
-+		div = d + 1;
-+	}
-+	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-+			mult, div);
-+};
-+
-+static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & AST2500_HPLL_BYPASS_EN) {
-+		/* Pass through mode */
-+		mult = div = 1;
-+	} else {
-+		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
-+		u32 p = (val >> 13) & 0x3f;
-+		u32 m = (val >> 5) & 0xff;
-+		u32 n = val & 0x1f;
-+
-+		mult = (m + 1) / (n + 1);
-+		div = p + 1;
-+	}
-+
-+	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-+			mult, div);
-+}
-+
-+static void __init aspeed_ast2400_cc(struct regmap *map)
-+{
-+	struct clk_hw *hw;
-+	u32 val, freq, div;
-+
-+	/*
-+	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
-+	 * strapping
-+	 */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	if (val & CLKIN_25MHZ_EN)
-+		freq = 25000000;
-+	else if (val & AST2400_CLK_SOURCE_SEL)
-+		freq = 48000000;
-+	else
-+		freq = 24000000;
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-+	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+
-+	/*
-+	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-+	 * and we assume that it is enabled
-+	 */
-+	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-+	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
-+
-+	/*
-+	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
-+	 *   00: Select CPU:AHB = 1:1
-+	 *   01: Select CPU:AHB = 2:1
-+	 *   10: Select CPU:AHB = 4:1
-+	 *   11: Select CPU:AHB = 3:1
-+	 */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	val = (val >> 10) & 0x3;
-+	div = val + 1;
-+	if (div == 3)
-+		div = 4;
-+	else if (div == 4)
-+		div = 3;
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-+
-+	/* APB clock clock selection register SCU08 (aka PCLK) */
-+	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
-+			ast2400_div_table,
-+			&aspeed_clk_lock);
-+	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-+}
-+
-+static void __init aspeed_ast2500_cc(struct regmap *map)
-+{
-+	struct clk_hw *hw;
-+	u32 val, freq, div;
-+
-+	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	if (val & CLKIN_25MHZ_EN)
-+		freq = 25000000;
-+	else
-+		freq = 24000000;
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-+	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+
-+	/*
-+	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-+	 * and we assume that it is enabled
-+	 */
-+	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2500_calc_pll("hpll", val);
-+
-+	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
-+	regmap_read(map, ASPEED_STRAP, &val);
-+	val = (val >> 9) & 0x7;
-+	WARN(val == 0, "strapping is zero: cannot determine ahb clock");
-+	div = 2 * (val + 1);
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-+
-+	/* APB clock clock selection register SCU08 (aka PCLK) */
-+	regmap_read(map, ASPEED_CLK_SELECTION, &val);
-+	val = (val >> 23) & 0x7;
-+	div = 4 * (val + 1);
-+	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
-+	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-+};
-+
- static void __init aspeed_cc_init(struct device_node *np)
- {
- 	struct regmap *map;
-@@ -130,6 +300,13 @@ static void __init aspeed_cc_init(struct device_node *np)
- 		return;
- 	}
- 
-+	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
-+		aspeed_ast2400_cc(map);
-+	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
-+		aspeed_ast2500_cc(map);
-+	else
-+		pr_err("unknown platform, failed to add clocks\n");
-+
- 	aspeed_clk_data->num = ASPEED_NUM_CLKS;
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
- 	if (ret)
--- 
-2.14.1
+Why do you directly access parent's driver data? You just need the
+device node of mmsys, maybe you could refer to [1].
+
+[1]
+https://elixir.free-electrons.com/linux/latest/source/drivers/reset/reset-berlin.c#L78
+
+Regards,
+CK
+
+> +		private->data = (struct mtk_mmsys_driver_data *)
+> +				platform_get_device_id(pdev)->driver_data;
+> +		private->config_regs =
+> +			syscon_node_to_regmap(mmsys_private->of_node);
+> +		parent_node = mmsys_private->of_node->parent;
+> +	} else {
+> +		private->config_regs = syscon_node_to_regmap(dev->of_node);
+> +		if (IS_ERR(private->config_regs))
+> +			return PTR_ERR(private->config_regs);
+> +		parent_node = dev->of_node->parent;
+> +	}
+>  
+>  	/* Iterate over sibling DISP function blocks */
+> -	for_each_child_of_node(dev->of_node->parent, node) {
+> +	for_each_child_of_node(parent_node, node) {
+>  		const struct of_device_id *of_id;
+>  		enum mtk_ddp_comp_type comp_type;
+>  		int comp_id;
+> @@ -553,13 +566,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+>  			 mtk_drm_sys_resume);
+>  
+>  static const struct of_device_id mtk_drm_of_ids[] = {
+> -	{ .compatible = "mediatek,mt2701-mmsys",
+> -	  .data = &mt2701_mmsys_driver_data},
+>  	{ .compatible = "mediatek,mt8173-mmsys",
+>  	  .data = &mt8173_mmsys_driver_data},
+>  	{ }
+>  };
+>  
+> +static const struct platform_device_id mtk_drm_ids[] = {
+> +	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
+> +
+>  static struct platform_driver mtk_drm_platform_driver = {
+>  	.probe	= mtk_drm_probe,
+>  	.remove	= mtk_drm_remove,
+> @@ -568,6 +585,7 @@ static struct platform_driver mtk_drm_platform_driver = {
+>  		.of_match_table = mtk_drm_of_ids,
+>  		.pm     = &mtk_drm_pm_ops,
+>  	},
+> +	.id_table = mtk_drm_ids,
+>  };
+>  
+>  static struct platform_driver * const mtk_drm_drivers[] = {
