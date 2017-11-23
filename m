@@ -1,53 +1,46 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 6 Nov 2017 16:15:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kaihua Zhong <zhongkaihua@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
-	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
-	leo.yan@linaro.org, zhangfei.gao@linaro.org, guodong.xu@linaro.org,
-	chenjun14@huawei.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, suzhuangluan@hisilicon.com,
-	xuezhiliang@hisilicon.com, kevin.wangtao@hisilicon.com
-Subject: Re: [PATCH 2/3] clk: hisilicon: Add support for Hi3660 stub clocks
-Message-ID: <20171106221543.5sejgabzvgcxy6sx@rob-hp-laptop>
-References: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
- <1509693907-90682-3-git-send-email-zhongkaihua@huawei.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 2/8] mfd: mtk-mmsys: Add mmsys driver
+To: CK Hu <ck.hu@mediatek.com>
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ p.zabel@pengutronix.de, airlied@linux.ie, robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ lee.jones@linaro.org, davem@davemloft.net, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
+ sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+ <20171114214114.15793-3-mbrugger@suse.com>
+ <1511427867.8489.9.camel@mtksdaap41>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <f65015fa-7103-30bc-2660-7401037f7e12@gmail.com>
+Date: Thu, 23 Nov 2017 19:37:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1509693907-90682-3-git-send-email-zhongkaihua@huawei.com>
+In-Reply-To: <1511427867.8489.9.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 03, 2017 at 03:25:06PM +0800, Kaihua Zhong wrote:
-> Hi3660 has four stub clocks, which are big and LITTLE cluster clocks,
-> GPU clock and DDR clock.  These clocks ask MCU for frequency scaling
-> by sending message through mailbox.
-> 
-> This commit adds support for stub clocks, it requests the dedicated
-> mailbox channel at initialization; then later uses this channel to send
-> message to MCU to execute frequency scaling. The four stub clocks share
-> the same mailbox channel, but every stub clock has its own command id so
-> MCU can distinguish the requirement coming for which clock.
-> 
-> A shared memory is used to present effective frequency value, so the
-> clock driver uses I/O mapping for the memory and reads back rate value.
-> 
-> Reviewed-by: Leo Yan <leo.yan@linaro.org>
-> Signed-off-by: Kai Zhao <zhaokai1@hisilicon.com>
-> Signed-off-by: Kevin Wang <kevin.wangtao@hisilicon.com>
-> Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
-> Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
-> ---
->  drivers/clk/hisilicon/Kconfig            |   6 +
->  drivers/clk/hisilicon/Makefile           |   1 +
->  drivers/clk/hisilicon/clk-hi3660-stub.c  | 195 +++++++++++++++++++++++++++++++
 
->  include/dt-bindings/clock/hi3660-clock.h |   7 ++
 
-This belongs in the binding doc patch. But no need to respin just for 
-that. 
+On 11/23/2017 10:04 AM, CK Hu wrote:
 
->  4 files changed, 209 insertions(+)
->  create mode 100644 drivers/clk/hisilicon/clk-hi3660-stub.c
+>> +static const struct of_device_id of_match_mmsys[] = {
+>> +	{ .compatible = "mediatek,mt2701-mmsys",
+> 
+> Because this driver replace the original "mediatek,mt2701-mmsys" driver,
+> could you modify the binding document of "mediatek,mt2701-mmsys" [1]?
+> 
+> [1]
+> https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> 
+
+Well we are actually no replacing the compatible but keeping it. But yes, the
+documentation should be updated.
+
+Apart right now we have the definition twice. The other location is here:
+Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+
+Regards,
+Matthias
