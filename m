@@ -1,106 +1,83 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 08/12] dt-bindings: Add Spreadtrum clock binding documentation
-Date: Mon, 20 Nov 2017 14:01:33 +0800
-Message-ID: <20171120060137.27380-9-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1511428377.7685.9.camel@pengutronix.de>
+Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
+ lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger
+	 <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 10:12:57 +0100
+In-Reply-To: <20171114214114.15793-4-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-4-mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a new binding with its documentation for Spreadtrum clock
-sub-framework.
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> With the mtk-mmsys MFD device in place, we switch the probing for
+> mt2701 from device-tree to mfd.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index dd249cf5121e..5a263aa3ab6e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -21,6 +21,7 @@
+>  #include <drm/drm_of.h>
+>  #include <linux/component.h>
+>  #include <linux/iommu.h>
+> +#include <linux/mfd/mmsys.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+>  
+>  static int mtk_drm_probe(struct platform_device *pdev)
+>  {
+> +	struct mmsys_dev *mmsys_private;
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_drm_private *private;
+> -	struct device_node *node;
+> +	struct device_node *node, *parent_node;
+>  	struct component_match *match = NULL;
+>  	int ret;
+>  	int i;
+> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+>  	private->data = of_device_get_match_data(dev);
+>  
+> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
+> -	if (IS_ERR(private->config_regs))
+> -		return PTR_ERR(private->config_regs);
+> +	/* Check if called from mfd */
+> +	if (!dev->of_node) {
+> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
+> +		private->data = (struct mtk_mmsys_driver_data *)
+> +				platform_get_device_id(pdev)->driver_data;
+> +		private->config_regs =
+> +			syscon_node_to_regmap(mmsys_private->of_node);
+> +		parent_node = mmsys_private->of_node->parent;
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sprd.txt | 63 ++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+I think this could be just:
 
-diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
-new file mode 100644
-index 0000000..e9d179e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd.txt
-@@ -0,0 +1,63 @@
-+Spreadtrum Clock Binding
-+------------------------
-+
-+Required properties:
-+- compatible: should contain the following compatible strings:
-+	- "sprd,sc9860-pmu-gate"
-+	- "sprd,sc9860-pll"
-+	- "sprd,sc9860-ap-clk"
-+	- "sprd,sc9860-aon-prediv"
-+	- "sprd,sc9860-apahb-gate"
-+	- "sprd,sc9860-aon-gate"
-+	- "sprd,sc9860-aonsecure-clk"
-+	- "sprd,sc9860-agcp-gate"
-+	- "sprd,sc9860-gpu-clk"
-+	- "sprd,sc9860-vsp-clk"
-+	- "sprd,sc9860-vsp-gate"
-+	- "sprd,sc9860-cam-clk"
-+	- "sprd,sc9860-cam-gate"
-+	- "sprd,sc9860-disp-clk"
-+	- "sprd,sc9860-disp-gate"
-+	- "sprd,sc9860-apapb-gate"
-+
-+- #clock-cells: must be 1
-+
-+- clocks : Should be the input parent clock(s) phandle for the clock, this
-+	   property here just simply shows which clock group the clocks'
-+	   parents are in, since each clk node would represent many clocks
-+	   which are defined in the driver.  The detailed dependency
-+	   relationship (i.e. how many parents and which are the parents)
-+	   are implemented in driver code.
-+
-+Optional properties:
-+
-+- reg:	Contain the registers base address and length. It must be configured
-+	only if no 'sprd,syscon' under the node.
-+
-+- sprd,syscon: phandle to the syscon which is in the same address area with
-+	       the clock, and so we can get regmap for the clocks from the
-+	       syscon device.
-+
-+Example:
-+
-+	pmu_gate: pmu-gate {
-+		compatible = "sprd,sc9860-pmu-gate";
-+		sprd,syscon = <&pmu_regs>;
-+		clocks = <&ext_26m>;
-+		#clock-cells = <1>;
-+	};
-+
-+	pll: pll {
-+		compatible = "sprd,sc9860-pll";
-+		sprd,syscon = <&ana_regs>;
-+		clocks = <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ap_clk: clock-controller@20000000 {
-+		compatible = "sprd,sc9860-ap-clk";
-+		reg = <0 0x20000000 0 0x400>;
-+		clocks = <&ext_26m>, <&pll 0>,
-+			 <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
--- 
-2.7.4
+		mmsys_node = pdev->dev.parent->of_node;
+		private->data = (struct mtk_mmsys_driver_data *)> +	
+			platform_get_device_id(pdev)->driver_data;
+		private->config_regs = syscon_node_to_regmap(mmsys_node);
+		parent_node = mmsys_node->parent;
+
+regards
+Philipp
