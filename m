@@ -1,49 +1,130 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:49846 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753313AbdK0QUL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 11:20:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
- <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 28 Nov 2017 00:19:44 +0800
-Message-ID: <CAGb2v67iWKJXE8oVEgTQcamaG-UKkunCLJbZWZyM3SPSHkU7BA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1511427282.7685.1.camel@pengutronix.de>
+Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
+ lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger
+	 <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 09:54:42 +0100
+In-Reply-To: <20171114214114.15793-2-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-2-mbrugger@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 27, 2017 at 11:41 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add support for the A83T display pipeline.
->
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Hi Matthias,
+
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> The mmsys memory space is shared between the drm and the
+> clk driver. Use regmap to access it.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 > ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>  5 files changed, 26 insertions(+), 27 deletions(-)
+[...]
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 8130f3dab661..1227d6db07da 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -185,16 +185,16 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>  	return value;
+>  }
+>  
+> -static void mtk_ddp_sout_sel(void __iomem *config_regs,
+> +static void mtk_ddp_sout_sel(struct regmap *config_regs,
+>  			     enum mtk_ddp_comp_id cur,
+>  			     enum mtk_ddp_comp_id next)
+>  {
+>  	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
+> -		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+> -			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+> +		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
+> +				BLS_TO_DSI_RDMA1_TO_DPI1);
+>  }
+>  
+> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+>  			      enum mtk_ddp_comp_id cur,
+>  			      enum mtk_ddp_comp_id next)
+>  {
+> @@ -202,20 +202,22 @@ void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+>  
+>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) | value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg |= value;
+> +		regmap_write(config_regs, addr, reg);
 
-Rob mentioned that he'd like to see these multiple one-liners be
-in a separate patch.
+You can use
 
->  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
->  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
->  4 files changed, 14 insertions(+)
+		regmap_update_bits(config_regs, addr, value, value);
 
-Also not sure why you have two patches with the same subject.
+here and drop the local variable reg.
 
-ChenYu
+>  	}
+>  
+>  	mtk_ddp_sout_sel(config_regs, cur, next);
+>  
+>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) | value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg |= value;
+> +		regmap_write(config_regs, addr, reg);
+
+		regmap_update_bits(config_regs, addr, value, value);
+
+>  	}
+>  }
+>  
+> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+>  				   enum mtk_ddp_comp_id cur,
+>  				   enum mtk_ddp_comp_id next)
+>  {
+> @@ -223,14 +225,16 @@ void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+>  
+>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) & ~value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg &= ~value;
+> +		regmap_write(config_regs, addr, reg);
+
+		regmap_update_bits(config_regs, addr, value, 0);
+
+>  	}
+>  
+>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) & ~value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg &= ~value;
+> +		regmap_write(config_regs, addr, reg);
+
+		regmap_update_bits(config_regs, addr, value, 0);
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
