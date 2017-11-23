@@ -1,146 +1,205 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs3.siol.net ([213.250.19.136]:47491 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751427AbdK1Wds (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Nov 2017 17:33:48 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
-Date: Tue, 28 Nov 2017 23:33:44 +0100
-Message-ID: <1722782.9j9JEoLEfc@jernej-laptop>
-In-Reply-To: <20171128220014.w35rcliusubfdvoe@flea.home>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <2908242.WKit1ZIWoJ@jernej-laptop> <20171128220014.w35rcliusubfdvoe@flea.home>
-MIME-Version: 1.0
+Return-Path: <ck.hu@mediatek.com>
+Message-ID: <1511415849.20405.1.camel@mtksdaap41>
+Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
+From: CK Hu <ck.hu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
+	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 13:44:09 +0800
+In-Reply-To: <20171114214114.15793-2-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-2-mbrugger@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+MIME-Version: 1.0
+Return-Path: ck.hu@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi!
+Hi, Matthias:
 
-Dne torek, 28. november 2017 ob 23:00:14 CET je Maxime Ripard napisal(a):
-> On Tue, Nov 28, 2017 at 04:48:55PM +0100, Jernej Škrabec wrote:
-> > > On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
-> > > > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard
-> > 
-> > napisal(a):
-> > > > > Add support for the A83T display pipeline.
-> > > > > 
-> > > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > > > ---
-> > > > > 
-> > > > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3
-> > > > >  +++
-> > > > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2
-> > > > >  ++
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5
-> > > > >  +++++
-> > > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4
-> > > > >  ++++
-> > > > >  4 files changed, 14 insertions(+)
-> > > > > 
-> > > > > diff --git
-> > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > index
-> > > > > d4259a4f5171..d6b52e5c48c0 100644
-> > > > > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > 
-> > > > > @@ -93,6 +93,7 @@ Required properties:
-> > > > >     * allwinner,sun6i-a31s-tcon
-> > > > >     * allwinner,sun7i-a20-tcon
-> > > > >     * allwinner,sun8i-a33-tcon
-> > > > > 
-> > > > > +   * allwinner,sun8i-a83t-tcon-lcd
-> > > > > 
-> > > > >     * allwinner,sun8i-v3s-tcon
-> > > > >   
-> > > > >   - reg: base address and size of memory-mapped region
-> > > > >   - interrupts: interrupt associated to this IP
-> > > > > 
-> > > > > @@ -224,6 +225,7 @@ supported.
-> > > > > 
-> > > > >  Required properties:
-> > > > >    - compatible: value must be one of:
-> > > > > +    * allwinner,sun8i-a83t-de2-mixer
-> > > > 
-> > > > What will be the name of the second mixer, once support for HDMI is
-> > > > added?
-> > > > Should we start directly with 0 and 1 postfix ?
-> > > 
-> > > What are the differences exactly without the two mixers?
-> > 
-> > Mixer properties:
-> > - mixer index (0 or 1), important for determining CCSC base (see my
-> > patches)
-> Is that the only thing we need to determine?
-
-For now, mixer index is important only for determining CCSC base in conjuction 
-with VEP capability. Obviously, I can't exclude that there is some other case 
-where that mixer index is needed.
-
-Can't we just add reg property for that?
-
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> The mmsys memory space is shared between the drm and the
+> clk driver. Use regmap to access it.
 > 
-> > - number of VI planes (usually 1)
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+
+Acked-by: CK Hu <ck.hu@mediatek.com>
+
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>  5 files changed, 26 insertions(+), 27 deletions(-)
 > 
-> Usually or always?
-
-V3s mixer has 2 VI channels and others have 1.
-
-(Channel is better term, since is used throughout BSP code)
-
-> 
-> > - number of UI planes (usually 1 or 3)
-> 
-> Same question.
-
-For now, most SoCs (I didn't check all) have 3 UI channels on first mixer and 1 
-UI channel on second mixer. Except V3s, which have only one mixer with 1 UI 
-channel.
-
-> 
-> > - writeback support (yes/no)
-> > - scale line buffer length (2048 or 4096)
-> > - smart backligth support (yes/no)
-> > 
-> > channel properties (for both, VI and UI):
-> > - scaler support (yes/no, usually yes)
-
-Again, V3s is exception here. Scaler is not supported on UI channel, but other 
-SoCs have scalers on all channels.
-
-Disclaimer: I didn't check DE2 capabilities of all SoCs, only few populars.
-
-Best regards,
-Jernej
-
-> > - overlay count (seems to be always 4)
-> > - VEP support (yes/no)
-> > 
-> > Those are properties found in BSP de_feat.c, so I guess that's enough to
-> > make any kind of decision in the code.
-> > 
-> > Usually, but we can't count on that, first mixer has 1 VI and 3 UI planes
-> > and second mixer has 1 VI and 1 UI plane.
-> 
-> Right. So that would be easy to support using a property as well. The
-> only difference would be the CSC base.
-> 
-> Maxime
-> 
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
-
-
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> index 658b8dd45b83..4c65873b4867 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> @@ -33,7 +33,7 @@
+>   * @enabled: records whether crtc_enable succeeded
+>   * @planes: array of 4 drm_plane structures, one for each overlay plane
+>   * @pending_planes: whether any plane has pending changes to be applied
+> - * @config_regs: memory mapped mmsys configuration register space
+> + * @config_regs: regmap mapped mmsys configuration register space
+>   * @mutex: handle to one of the ten disp_mutex streams
+>   * @ddp_comp_nr: number of components in ddp_comp
+>   * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
+> @@ -48,7 +48,7 @@ struct mtk_drm_crtc {
+>  	struct drm_plane		planes[OVL_LAYER_NR];
+>  	bool				pending_planes;
+>  
+> -	void __iomem			*config_regs;
+> +	struct regmap			*config_regs;
+>  	struct mtk_disp_mutex		*mutex;
+>  	unsigned int			ddp_comp_nr;
+>  	struct mtk_ddp_comp		**ddp_comp;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 8130f3dab661..1227d6db07da 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -185,16 +185,16 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>  	return value;
+>  }
+>  
+> -static void mtk_ddp_sout_sel(void __iomem *config_regs,
+> +static void mtk_ddp_sout_sel(struct regmap *config_regs,
+>  			     enum mtk_ddp_comp_id cur,
+>  			     enum mtk_ddp_comp_id next)
+>  {
+>  	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
+> -		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+> -			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+> +		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
+> +				BLS_TO_DSI_RDMA1_TO_DPI1);
+>  }
+>  
+> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+>  			      enum mtk_ddp_comp_id cur,
+>  			      enum mtk_ddp_comp_id next)
+>  {
+> @@ -202,20 +202,22 @@ void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+>  
+>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) | value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg |= value;
+> +		regmap_write(config_regs, addr, reg);
+>  	}
+>  
+>  	mtk_ddp_sout_sel(config_regs, cur, next);
+>  
+>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) | value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg |= value;
+> +		regmap_write(config_regs, addr, reg);
+>  	}
+>  }
+>  
+> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+>  				   enum mtk_ddp_comp_id cur,
+>  				   enum mtk_ddp_comp_id next)
+>  {
+> @@ -223,14 +225,16 @@ void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+>  
+>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) & ~value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg &= ~value;
+> +		regmap_write(config_regs, addr, reg);
+>  	}
+>  
+>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>  	if (value) {
+> -		reg = readl_relaxed(config_regs + addr) & ~value;
+> -		writel_relaxed(reg, config_regs + addr);
+> +		regmap_read(config_regs, addr, &reg);
+> +		reg &= ~value;
+> +		regmap_write(config_regs, addr, reg);
+>  	}
+>  }
+>  
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+> index f9a799168077..32e12f33b76a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+> @@ -20,10 +20,10 @@ struct regmap;
+>  struct device;
+>  struct mtk_disp_mutex;
+>  
+> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+>  			      enum mtk_ddp_comp_id cur,
+>  			      enum mtk_ddp_comp_id next);
+> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+>  				   enum mtk_ddp_comp_id cur,
+>  				   enum mtk_ddp_comp_id next);
+>  
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index b2ad19bd1e00..dd249cf5121e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -21,6 +21,7 @@
+>  #include <drm/drm_of.h>
+>  #include <linux/component.h>
+>  #include <linux/iommu.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pm_runtime.h>
+> @@ -393,7 +394,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_drm_private *private;
+> -	struct resource *mem;
+>  	struct device_node *node;
+>  	struct component_match *match = NULL;
+>  	int ret;
+> @@ -407,14 +407,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+>  	private->data = of_device_get_match_data(dev);
+>  
+> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	private->config_regs = devm_ioremap_resource(dev, mem);
+> -	if (IS_ERR(private->config_regs)) {
+> -		ret = PTR_ERR(private->config_regs);
+> -		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> +	private->config_regs = syscon_node_to_regmap(dev->of_node);
+> +	if (IS_ERR(private->config_regs))
+> +		return PTR_ERR(private->config_regs);
+>  
+>  	/* Iterate over sibling DISP function blocks */
+>  	for_each_child_of_node(dev->of_node->parent, node) {
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> index 4edc0023684c..86cec19193c4 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> @@ -44,7 +44,7 @@ struct mtk_drm_private {
+>  
+>  	struct device_node *mutex_node;
+>  	struct device *mutex_dev;
+> -	void __iomem *config_regs;
+> +	struct regmap *config_regs;
+>  	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
+>  	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
+>  	const struct mtk_mmsys_driver_data *data;
