@@ -1,38 +1,92 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 10 Nov 2017 15:11:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V4 09/12] clk: sprd: Add dt-bindings include file for
- SC9860
-Message-ID: <20171110211154.z2j5emtcdef7xqv2@rob-hp-laptop>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
- <20171110063607.3250-10-chunyan.zhang@spreadtrum.com>
+Return-Path: <ck.hu@mediatek.com>
+Message-ID: <1511427087.8489.4.camel@mtksdaap41>
+Subject: Re: [PATCH 6/8] drm/mediatek: Add mfd support for mt8173
+From: CK Hu <ck.hu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
+	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 16:51:27 +0800
+In-Reply-To: <20171114214114.15793-7-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-7-mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171110063607.3250-10-chunyan.zhang@spreadtrum.com>
+Return-Path: ck.hu@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 10, 2017 at 02:36:04PM +0800, Chunyan Zhang wrote:
-> This file defines all SC9860 clock indexes, it should be included in the
-> device tree in which there's device using the clocks.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  include/dt-bindings/clock/sprd,sc9860-clk.h | 408 ++++++++++++++++++++++++++++
->  1 file changed, 408 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
+Hi, Matthias:
 
-Acked-by: Rob Herring <robh@kernel.org>
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> Use the MFD device for SoC mt8173. Probing via devicetree
+> is no longer needed for any SoC, so delete it.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+
+Acked-by: CK Hu <ck.hu@mediatek.com>
+
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 28 +++++++---------------------
+>  1 file changed, 7 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index 5a263aa3ab6e..1eb02acf229a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -409,20 +409,12 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+>  	private->data = of_device_get_match_data(dev);
+>  
+> -	/* Check if called from mfd */
+> -	if (!dev->of_node) {
+> -		mmsys_private = dev_get_drvdata(pdev->dev.parent);
+> -		private->data = (struct mtk_mmsys_driver_data *)
+> -				platform_get_device_id(pdev)->driver_data;
+> -		private->config_regs =
+> -			syscon_node_to_regmap(mmsys_private->of_node);
+> -		parent_node = mmsys_private->of_node->parent;
+> -	} else {
+> -		private->config_regs = syscon_node_to_regmap(dev->of_node);
+> -		if (IS_ERR(private->config_regs))
+> -			return PTR_ERR(private->config_regs);
+> -		parent_node = dev->of_node->parent;
+> -	}
+> +	mmsys_private = dev_get_drvdata(pdev->dev.parent);
+> +	private->data = (struct mtk_mmsys_driver_data *)
+> +			platform_get_device_id(pdev)->driver_data;
+> +	private->config_regs =
+> +		syscon_node_to_regmap(mmsys_private->of_node);
+> +	parent_node = mmsys_private->of_node->parent;
+>  
+>  	/* Iterate over sibling DISP function blocks */
+>  	for_each_child_of_node(parent_node, node) {
+> @@ -565,14 +557,9 @@ static int mtk_drm_sys_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+>  			 mtk_drm_sys_resume);
+>  
+> -static const struct of_device_id mtk_drm_of_ids[] = {
+> -	{ .compatible = "mediatek,mt8173-mmsys",
+> -	  .data = &mt8173_mmsys_driver_data},
+> -	{ }
+> -};
+> -
+>  static const struct platform_device_id mtk_drm_ids[] = {
+>  	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
+> +	{ "drm-mt8173-mm", (kernel_ulong_t)&mt8173_mmsys_driver_data },
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
+> @@ -582,7 +569,6 @@ static struct platform_driver mtk_drm_platform_driver = {
+>  	.remove	= mtk_drm_remove,
+>  	.driver	= {
+>  		.name	= "mediatek-drm",
+> -		.of_match_table = mtk_drm_of_ids,
+>  		.pm     = &mtk_drm_pm_ops,
+>  	},
+>  	.id_table = mtk_drm_ids,
