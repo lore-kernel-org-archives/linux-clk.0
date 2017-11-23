@@ -1,80 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:41794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751976AbdK1RtJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Nov 2017 12:49:09 -0500
-MIME-Version: 1.0
-In-Reply-To: <583a46dd967456aac07fb29529f74d91a10bdfeb.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
- <583a46dd967456aac07fb29529f74d91a10bdfeb.1511797218.git-series.maxime.ripard@free-electrons.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 28 Nov 2017 11:48:47 -0600
-Message-ID: <CAL_Jsq+PHzDGE_RreBmVZV+sg3dh5OG2vWZU+eobxF514Fpo_w@mail.gmail.com>
-Subject: Re: [PATCH v2 01/18] dt-bindings: panel: lvds: Document power-supply property
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
+Return-Path: <ck.hu@mediatek.com>
+Message-ID: <1511426820.8489.2.camel@mtksdaap41>
+Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
+From: CK Hu <ck.hu@mediatek.com>
+To: Matthias Brugger <mbrugger@suse.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<sean.wang@mediatek.com>, <airlied@linux.ie>, <gregkh@linuxfoundation.org>,
+	<mturquette@baylibre.com>, <rdunlap@infradead.org>, <sboyd@codeaurora.org>,
+	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
+	<linux-clk@vger.kernel.org>, <pi-cheng.chen@linaro.org>,
+	<robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<laurent.pinchart@ideasonboard.com>, <p.zabel@pengutronix.de>,
+	<ulrich.hecht+renesas@gmail.com>, <mchehab@kernel.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date: Thu, 23 Nov 2017 16:47:00 +0800
+In-Reply-To: <66be07f1-c084-8db1-c845-86b2057a0d5d@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-4-mbrugger@suse.com>
+	 <1511416092.20405.4.camel@mtksdaap41>
+	 <66be07f1-c084-8db1-c845-86b2057a0d5d@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+MIME-Version: 1.0
+Return-Path: ck.hu@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Please CC DT list.
+Hi, Matthias:
 
-On Mon, Nov 27, 2017 at 9:41 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The power-supply property is used by a vast majority of panels, including
-> panel-simple. Let's document it as a common property
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/display/panel/panel-common.txt | 6 ++++++
->  Documentation/devicetree/bindings/display/panel/panel-lvds.txt   | 1 +
->  2 files changed, 7 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> index ec52c472c845..125ea68052af 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> @@ -78,6 +78,12 @@ used for panels that implement compatible control signals.
->    while active. Active high reset signals can be supported by inverting the
->    GPIO specifier polarity flag.
->
-> +Power
-> +-----
-> +
-> +- power-supply: many display panels need an additional power supply in
-> +  order to be fully powered-up. For such panels, power-supply contains
-> +  a phandle to the regulator powering the panel.
->
->  Backlight
->  ---------
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
-> index b938269f841e..250850a2150b 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
-> @@ -32,6 +32,7 @@ Optional properties:
->  - label: See panel-common.txt.
->  - gpios: See panel-common.txt.
->  - backlight: See panel-common.txt.
-> +- power-supply: See panel-common.txt.
+On Thu, 2017-11-23 at 09:30 +0100, Matthias Brugger wrote:
+> 
+> On 11/23/2017 06:48 AM, CK Hu wrote:
+> > Hi, Matthias:
+> > 
+> > On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> >> With the mtk-mmsys MFD device in place, we switch the probing for
+> >> mt2701 from device-tree to mfd.
+> >>
+> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> >> ---
+> >>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
+> >>  1 file changed, 25 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> index dd249cf5121e..5a263aa3ab6e 100644
+> >> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> @@ -21,6 +21,7 @@
+> >>  #include <drm/drm_of.h>
+> >>  #include <linux/component.h>
+> >>  #include <linux/iommu.h>
+> >> +#include <linux/mfd/mmsys.h>
+> >>  #include <linux/mfd/syscon.h>
+> >>  #include <linux/of_address.h>
+> >>  #include <linux/of_platform.h>
+> >> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+> >>  
+> >>  static int mtk_drm_probe(struct platform_device *pdev)
+> >>  {
+> >> +	struct mmsys_dev *mmsys_private;
+> >>  	struct device *dev = &pdev->dev;
+> >>  	struct mtk_drm_private *private;
+> >> -	struct device_node *node;
+> >> +	struct device_node *node, *parent_node;
+> >>  	struct component_match *match = NULL;
+> >>  	int ret;
+> >>  	int i;
+> >> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+> >>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+> >>  	private->data = of_device_get_match_data(dev);
+> >>  
+> >> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
+> >> -	if (IS_ERR(private->config_regs))
+> >> -		return PTR_ERR(private->config_regs);
+> >> +	/* Check if called from mfd */
+> >> +	if (!dev->of_node) {
+> >> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
+> > 
+> > Why do you directly access parent's driver data? You just need the
+> > device node of mmsys, maybe you could refer to [1].
+> > 
+> > [1]
+> > https://elixir.free-electrons.com/linux/latest/source/drivers/reset/reset-berlin.c#L78
+> > 
+> 
+> The difference is, that the driver you mentioned gets probed via device tree
+> matching, while we get invoked here through the id_table. So there is no device
+> node (the if actually checkes for pdev->dev.of_node to identify exactly this case).
+> 
+> Regards,
+> Matthias
 
-simple-panel.txt should do the same.
+Yes, you are right. So
 
-Really, I'd like to see panel-common.txt and simple-panel.txt merged
-and simple-panel.txt removed altogether. But there are a lot of
-references back to simple-panel.txt. A given panel still needs to say
-what common properties it uses or doesn't use. Omitting a property
-like power-supply is ambiguous and can either mean "I only have 1
-supply" or "I haven't thought about supplies yet there are more than
-1".
+Acked-by: CK Hu <ck.hu@mediatek.com>
 
-Rob
+Regards,
+CK
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
