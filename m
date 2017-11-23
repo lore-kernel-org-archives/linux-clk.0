@@ -1,41 +1,84 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:53824 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933262AbdKAVNA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Nov 2017 17:13:00 -0400
-Date: Wed, 1 Nov 2017 16:12:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 01/10] dt-bindings: fix the binding of Allwinner DE2
- CCU of A83T and H3
-Message-ID: <20171101211258.m7lk4s2glhxhs7el@rob-hp-laptop>
-References: <20171027150658.18509-1-icenowy@aosc.io>
- <20171027150658.18509-2-icenowy@aosc.io>
+Return-Path: <mbrugger@suse.com>
+Subject: Re: [PATCH 3/8] drm/mediatek: mt2701: switch to mfd probing.
+To: CK Hu <ck.hu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ p.zabel@pengutronix.de, airlied@linux.ie, robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ lee.jones@linaro.org, davem@davemloft.net, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
+ sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20171114214114.15793-1-mbrugger@suse.com>
+ <20171114214114.15793-4-mbrugger@suse.com>
+ <1511416092.20405.4.camel@mtksdaap41>
+From: Matthias Brugger <mbrugger@suse.com>
+Message-ID: <66be07f1-c084-8db1-c845-86b2057a0d5d@suse.com>
+Date: Thu, 23 Nov 2017 09:30:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171027150658.18509-2-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1511416092.20405.4.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 27, 2017 at 11:06:49PM +0800, Icenowy Zheng wrote:
-> The DE2 CCU is different on A83T and H3 -- the parent of the clocks on
-> A83T is PLL_DE but on H3 it's the DE module clock. This is not noticed
-> when I develop the DE2 CCU driver.
-> 
-> Fix the binding by using different compatibles for A83T and H3, adding
-> notes for the PLL_DE usage on A83T, and change the binding example's
-> compatible from A83T to H3 (as it specifies the DE module clock).
-> 
-> Fixes: ed74f8a8a679 ("dt-bindings: add binding for the Allwinner DE2 CCU")
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
 
+On 11/23/2017 06:48 AM, CK Hu wrote:
+> Hi, Matthias:
+> 
+> On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+>> With the mtk-mmsys MFD device in place, we switch the probing for
+>> mt2701 from device-tree to mfd.
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> ---
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 32 +++++++++++++++++++++++++-------
+>>  1 file changed, 25 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index dd249cf5121e..5a263aa3ab6e 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -21,6 +21,7 @@
+>>  #include <drm/drm_of.h>
+>>  #include <linux/component.h>
+>>  #include <linux/iommu.h>
+>> +#include <linux/mfd/mmsys.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_platform.h>
+>> @@ -392,9 +393,10 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+>>  
+>>  static int mtk_drm_probe(struct platform_device *pdev)
+>>  {
+>> +	struct mmsys_dev *mmsys_private;
+>>  	struct device *dev = &pdev->dev;
+>>  	struct mtk_drm_private *private;
+>> -	struct device_node *node;
+>> +	struct device_node *node, *parent_node;
+>>  	struct component_match *match = NULL;
+>>  	int ret;
+>>  	int i;
+>> @@ -407,12 +409,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>>  	INIT_WORK(&private->commit.work, mtk_atomic_work);
+>>  	private->data = of_device_get_match_data(dev);
+>>  
+>> -	private->config_regs = syscon_node_to_regmap(dev->of_node);
+>> -	if (IS_ERR(private->config_regs))
+>> -		return PTR_ERR(private->config_regs);
+>> +	/* Check if called from mfd */
+>> +	if (!dev->of_node) {
+>> +		mmsys_private = dev_get_drvdata(pdev->dev.parent);
+> 
+> Why do you directly access parent's driver data? You just need the
+> device node of mmsys, maybe you could refer to [1].
+> 
+> [1]
+> https://elixir.free-electrons.com/linux/latest/source/drivers/reset/reset-berlin.c#L78
+> 
+
+The difference is, that the driver you mentioned gets probed via device tree
+matching, while we get invoked here through the id_table. So there is no device
+node (the if actually checkes for pdev->dev.of_node to identify exactly this case).
+
+Regards,
+Matthias
