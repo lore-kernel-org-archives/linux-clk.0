@@ -1,76 +1,204 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1510051139.1328.52.camel@baylibre.com>
-Subject: Re: [PATCH v3 1/4] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	 <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 07 Nov 2017 11:38:59 +0100
-In-Reply-To: <20171107054142.7935-1-yixun.lan@amlogic.com>
-References: <20171107054142.7935-1-yixun.lan@amlogic.com>
+Return-Path: <ck.hu@mediatek.com>
+Message-ID: <1511427867.8489.9.camel@mtksdaap41>
+Subject: Re: [PATCH 2/8] mfd: mtk-mmsys: Add mmsys driver
+From: CK Hu <ck.hu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
+	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 17:04:27 +0800
+In-Reply-To: <20171114214114.15793-3-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-3-mbrugger@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+MIME-Version: 1.0
+Return-Path: ck.hu@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-11-07 at 13:41 +0800, Yixun Lan wrote:
-> According to the datasheet, in Meson-GXBB/GXL series,
-> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+Hi, Matthias:
+
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> The MMSYS subsystem includes clocks and drm components.
+> This patch adds a MFD device to probe both drivers from the same
+> device tree compatible.
 > 
-> Test passed at gxl-s905x-p212 board.
-> 
-> The following published datasheets are wrong and should be updated
-> [1] GXBB v1.1.4, page 57
-> http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
-> [2] GXL v0.3_20170314, page
-> http://www.mediafire.com/file/5bpt054va5ut7v9/S905X_Datasheet_V0.3_20170314pub
-> licversion-Wesion.pdf
-
-You may mention those links in the cover letter, since mediafire links are
-unlikely to last, better no mentioning them here. The version is enough.
-
-> 
-> Fixes: 7ba64d82b358 ("gxbb: clk: Adjust MESON_GATE macro to be shared..")
-
-The commit where the issue is introduced is actually
-Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver") 
-
-Yes there has been a rework afterward, but the problem you are fixing originate
-from that commit.
-
-
-> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 > ---
->  drivers/clk/meson/gxbb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/mfd/Kconfig       |  9 +++++
+>  drivers/mfd/Makefile      |  2 ++
+>  drivers/mfd/mtk-mmsys.c   | 91 +++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/mmsys.h | 18 ++++++++++
+>  4 files changed, 120 insertions(+)
+>  create mode 100644 drivers/mfd/mtk-mmsys.c
+>  create mode 100644 include/linux/mfd/mmsys.h
 > 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b2d1e8ed7152..92168348ffa6 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
->  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
->  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
->  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
-> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
->  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
->  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
->  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,
-> 9);
->  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
->  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
->  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
-> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
->  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
->  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
->  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index fc5e4fef89d2..3250ce5d205a 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -368,6 +368,15 @@ config MFD_MC13XXX_I2C
+>  	help
+>  	  Select this if your MC13xxx is connected via an I2C bus.
+>  
+> +config MFD_MEDIATEK_MMSYS
+> +	tristate "Mediatek MMSYS interface"
+> +	select MDF_CORE
+> +	select REGMAP_MMIO
+> +	help
+> +	  Select this if you have a MMSYS subsystem in your SoC. The
+> +	  MMSYS subsystem has at least a clock driver part and some
+> +	  DRM components.
+> +
+>  config MFD_MXS_LRADC
+>  	tristate "Freescale i.MX23/i.MX28 LRADC"
+>  	depends on ARCH_MXS || COMPILE_TEST
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 8703ff17998e..d4fc99df784c 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -100,6 +100,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+>  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+>  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+>  
+> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
+> +
+>  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+>  
+>  obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+> new file mode 100644
+> index 000000000000..102b491aa28f
+> --- /dev/null
+> +++ b/drivers/mfd/mtk-mmsys.c
+> @@ -0,0 +1,91 @@
+> +/*
+> + * mtk-mmsys.c  --  Mediatek MMSYS multi-function driver
+> + *
+> + *  Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
+> + *
+> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
+> + *
+> + * For licencing details see kernel-base/COPYING
+> + *
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/mmsys.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +enum {
+> +	MMSYS_MT2701 = 1,
+> +};
+> +
+> +static const struct mfd_cell mmsys_mt2701_devs[] = {
+> +	{ .name = "clk-mt2701-mm", },
+> +	{ .name = "drm-mt2701-mm", },
+> +};
+> +
+> +static int mmsys_probe(struct platform_device *pdev)
+> +{
+> +	struct mmsys_dev *private;
+> +	const struct mfd_cell *mmsys_cells;
+> +	int nr_cells;
+> +	long id;
+> +	int ret;
+> +
+> +	id = (long) of_device_get_match_data(&pdev->dev);
+> +	if (!id) {
+> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	switch (id) {
+> +	case MMSYS_MT2701:
+> +		mmsys_cells = mmsys_mt2701_devs;
+> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+> +		break;
+> +	default:
+> +		return -ENODEV;
+> +	}
+> +
+> +	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
+> +	if (!private)
+> +		return -ENOMEM;
+> +
+> +	private->dev = &pdev->dev;
+> +	dev_set_drvdata(private->dev, private);
+> +
+> +	private->of_node = pdev->dev.of_node;
+> +
+> +	ret = devm_mfd_add_devices(private->dev, 0, mmsys_cells, nr_cells,
+> +					NULL, 0, NULL);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +};
+> +
+> +static const struct of_device_id of_match_mmsys[] = {
+> +	{ .compatible = "mediatek,mt2701-mmsys",
+
+Because this driver replace the original "mediatek,mt2701-mmsys" driver,
+could you modify the binding document of "mediatek,mt2701-mmsys" [1]?
+
+[1]
+https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+
+Regards,
+CK
+
+> +	  .data = (void *) MMSYS_MT2701,
+> +	},
+> +	{ /* sentinel */ },
+> +};
+> +
+> +static struct platform_driver mmsys_drv = {
+> +	.probe = mmsys_probe,
+> +	.driver = {
+> +		.name = "mediatek-mmysys",
+> +		.of_match_table = of_match_ptr(of_match_mmsys),
+> +	},
+> +};
+> +
+> +builtin_platform_driver(mmsys_drv);
+> +
+> +MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/mmsys.h b/include/linux/mfd/mmsys.h
+> new file mode 100644
+> index 000000000000..274b9ee03ada
+> --- /dev/null
+> +++ b/include/linux/mfd/mmsys.h
+> @@ -0,0 +1,18 @@
+> +/* Header of MMSYS MFD core driver for Mediatek platforms
+> + *
+> + * Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it under
+> + * the terms of the GNU General Public License version 2 as published by the
+> + * Free Software Foundation.
+> + */
+> +
+> +#ifndef __MEDIATEK_MMSYS__H__
+> +#define __MEDIATEK_MMSYS__H__
+> +
+> +struct mmsys_dev {
+> +	struct device		*dev;
+> +	struct device_node	*of_node;
+> +};
+> +
+> +#endif
