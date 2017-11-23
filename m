@@ -1,40 +1,33 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-Date: Sun, 5 Nov 2017 17:37:26 +0100
-From: Mylene JOSSERAND <mylene.josserand@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org,
- mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: a83t: Fix i2c buses bits
-Message-ID: <20171105173726.7be83f08@dell-desktop.home>
-In-Reply-To: <20171103151100.GR11011@codeaurora.org>
-References: <20171103105747.26335-1-mylene.josserand@free-electrons.com>
-	<20171103151100.GR11011@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1511428383.7685.10.camel@pengutronix.de>
+Subject: Re: [PATCH 5/8] mfd: mtk-mmsys: Add mt8173 nodes
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
+ lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger
+	 <mbrugger@suse.com>
+Date: Thu, 23 Nov 2017 10:13:03 +0100
+In-Reply-To: <20171114214114.15793-6-mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-6-mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> Add devices for the mt8173 SoC.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 
-Le Fri, 3 Nov 2017 08:11:00 -0700,
-Stephen Boyd <sboyd@codeaurora.org> a =C3=A9crit :
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-> On 11/03, Myl=C3=A8ne Josserand wrote:
-> > i2c1 and i2c2 bits for CCU are not bit 0 but bit 1 and bit 2.
-> > Because of that, the i2c0 (bit 0) was not correctly configured.
-> > Fixed the correct bits for i2c1 and i2c2.
-> >=20
-> > Signed-off-by: Myl=C3=A8ne Josserand
-> > <mylene.josserand@free-electrons.com> --- =20
->=20
-> Please add a Fixes tag.
->=20
-
-Sure, I will resend the patch with a Fixes tag.
-
-Thank you,
-
---=20
-Myl=C3=A8ne Josserand, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+regards
+Philipp
