@@ -1,51 +1,45 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-In-Reply-To: <20171107140942.29243-1-yixun.lan@amlogic.com>
-References: <20171107140942.29243-1-yixun.lan@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 7 Nov 2017 22:36:00 +0100
-Message-ID: <CAFBinCB=2pb9dZkpSqdVAiumkSCzgaW0oejftjZNP7aYbiQJuw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] fix the clock setting for SAR ADC
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-	Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org,
-	linux-iio@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44402 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752257AbdKXG4D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:56:03 -0500
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
+        slemieux.tyco@gmail.com, vireshk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
+Date: Fri, 24 Nov 2017 12:25:30 +0530
+Message-Id: <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yixun,
+pr_err() messages should end with a new-line to avoid other messages
+being concatenated.
 
-On Tue, Nov 7, 2017 at 3:09 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
-> patch [1/4]:
->   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
-> the published datasheets[4] also has wrong description about this.
->   This patch should be explicitly merged *before* other patches.
->
-> patch [2-4/4]:
->   Drop the "sana" clock from SAR ADC module,
-I agree with Jerome that patch 2/4 should be applied last.
-when I wrote the driver I couldn't get it to work on my GXBB board
-(which unfortunately has died since then) because the clocks were
-disabled (they weren't enabled by the bootloader). people who are
-using an old .dtb would get the same problem again until the clock
-driver is merged
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/spear/clk-frac-synth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->   From the hardware perspective, the SAR ADC module doesn't
-> require "sana" clock to wrok. This should apply to all SoC,
-> including meson6,8, GXBB, GXL..
-thank you for clarifying this!
+diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
+index 58d678b..cbdf43a 100644
+--- a/drivers/clk/spear/clk-frac-synth.c
++++ b/drivers/clk/spear/clk-frac-synth.c
+@@ -131,7 +131,7 @@ struct clk *clk_register_frac(const char *name, const char *parent_name,
+ 	struct clk *clk;
+ 
+ 	if (!name || !parent_name || !reg || !rtbl || !rtbl_cnt) {
+-		pr_err("Invalid arguments passed");
++		pr_err("Invalid arguments passed\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-- 
+1.9.1
 
-> Note: the whole patchset series has been tested at GXL-P212 board,
-> we haven't got any meson6,8 board to test, so I would appreciate
-> if someone (Martin?) could help to confirm it works there.
-I can test this on a Meson8b and a Meson8m2 board on the weekend -
-I'll let you know about the results
-
-
-Regards
-Martin
