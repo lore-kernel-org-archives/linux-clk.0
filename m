@@ -1,30 +1,61 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.15, part 2
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc
-	<linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <48933534-41b1-82e3-5090-018acc7ed2a7@samsung.com>
-Date: Thu, 02 Nov 2017 17:24:50 +0100
-MIME-version: 1.0
-In-reply-to: <20171031215141.GF30645@codeaurora.org>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20171016102923epcas1p445d71065cec89b9f62b9f02a5446c2dc@epcas1p4.samsung.com>
-	<148bdf52-8e47-7696-f42d-98625d9dc43e@samsung.com>
-	<20171031215141.GF30645@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43004 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752994AbdKXG4L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:56:11 -0500
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
+        slemieux.tyco@gmail.com, vireshk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 5/6] clk: h8s2678: pr_err() strings should end with newlines
+Date: Fri, 24 Nov 2017 12:25:32 +0530
+Message-Id: <1f71746f971b6969882e2d7827334b416178d898.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/31/2017 10:51 PM, Stephen Boyd wrote:
-> Did you change keys recently? My older version of gnupg chokes on
-> your signature which is slightly concerning. The other PR didn't
-> have problems.
+pr_err() messages should end with a new-line to avoid other messages
+being concatenated.
 
-I thought I didn't, In fact I moved the key from one machine to the other
-recently, but both pull requests should be signed in same way. Let me
-have a closer look.
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/h8300/clk-h8s2678.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index fc24b0b..b68045d 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -93,7 +93,7 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+ 	if (!num_parents) {
+-		pr_err("%s: no parent found", clk_name);
++		pr_err("%s: no parent found\n", clk_name);
+ 		return;
+ 	}
+ 
+@@ -104,13 +104,13 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 
+ 	pll_clock->sckcr = of_iomap(node, 0);
+ 	if (pll_clock->sckcr == NULL) {
+-		pr_err("%s: failed to map divide register", clk_name);
++		pr_err("%s: failed to map divide register\n", clk_name);
+ 		goto free_clock;
+ 	}
+ 
+ 	pll_clock->pllcr = of_iomap(node, 1);
+ 	if (pll_clock->pllcr == NULL) {
+-		pr_err("%s: failed to map multiply register", clk_name);
++		pr_err("%s: failed to map multiply register\n", clk_name);
+ 		goto unmap_sckcr;
+ 	}
+ 
 -- 
-Thanks,
-Sylwester
+1.9.1
+
