@@ -1,78 +1,56 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1509959454.1328.8.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	 <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 06 Nov 2017 10:10:54 +0100
-In-Reply-To: <20171106075212.14275-1-yixun.lan@amlogic.com>
-References: <20171106075212.14275-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+ ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
+ vireshk@kernel.org
+Subject: [PATCH 1/6] clk: stm32f4: pr_err() strings should end with newlines
+Date: Fri, 24 Nov 2017 12:25:28 +0530
+Message-Id: <d5b9943c076a8ad168d9b0b3ba3aec7c9b8d7d06.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-11-06 at 15:52 +0800, Yixun Lan wrote:
-> According to the datasheet, in Meson-GXBB/GXL series,
-> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
-> 
-> Test passed at gxl_skt dev board.
-I think this refer to a board naming used in amlogic vendor kernel ?
-Would you mind telling what it is ?
+pr_err() messages should end with a new-line to avoid other messages
+being concatenated.
 
-> 
-> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/clk-stm32f4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Subject is missing "v2" tag and a reference to the previous message:
-20171103181703.30434-1-yixun.lan@amlogic.com
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 96c6b6b..da44f8d 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -1424,7 +1424,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+-		pr_err("%s: unable to map resource", np->name);
++		pr_err("%s: unable to map resource\n", np->name);
+ 		return;
+ 	}
+ 
+-- 
+1.9.1
 
-> 
-> ---
-> I think this error was introduced by a copy & paste from meson8 code?
-> and we didn't notice them due to the SANA clock is also enabled by
-> DTS (so SAR_ADC works fine)?
-> ---
->  drivers/clk/meson/gxbb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b2d1e8ed7152..92168348ffa6 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
->  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
->  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
->  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
-> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
->  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
->  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
->  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,
-> 9);
->  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
->  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
->  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
-> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
 
-The value currently used in the driver are with respect to the
-Datasheet of GXBB (v1.1.4) and GXL (S905X - V0.3-20170314), which are available
-to the public at http://http://linux-meson.com
-
-the adc driver is claiming both clock, so this patch should not change anything
-to the adc operation.
-
-* Is this patch fixing any issue ?
-* Is it an error in the published datasheets ?
-
->  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
->  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
->  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
