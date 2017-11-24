@@ -1,83 +1,39 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-To: Jon Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
- <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
- <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
- <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <17a79383-0642-5cc6-7b3f-9d302f027b4b@gmail.com>
-Date: Thu, 30 Nov 2017 19:45:48 +0300
-MIME-Version: 1.0
-In-Reply-To: <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36437 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbdKXGzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Nov 2017 01:55:53 -0500
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, ysato@users.sourceforge.jp, vz@mleia.com,
+        slemieux.tyco@gmail.com, vireshk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/6] clk: pr_err() strings should end with newlines
+Date: Fri, 24 Nov 2017 12:25:27 +0530
+Message-Id: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.11.2017 19:39, Jon Hunter wrote:
-> 
-> On 30/11/17 13:24, Dmitry Osipenko wrote:
->> On 30.11.2017 14:31, Jon Hunter wrote:
->>>
->>> On 29/11/17 23:13, Dmitry Osipenko wrote:
->>>> On 30.11.2017 01:55, Jon Hunter wrote:
->>>
->>> ...
->>>
->>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
->>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
->>>> caused trouble on Tegra114/124.
->>>
->>> Please share the exact change you would like me to test and I will.
->>
->> Please try this:
-> 
-> I tried the patch, but this does not work for Tegra124 it still hangs.
-> Tracing the clk calls the last thing I see is ...
-> 
-> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
-> [    2.694403] clk_prepare: hclk_div
-> [    2.695929] clk_prepare_complete: hclk_div
-> [    2.700027] clk_prepare: hclk
-> [    2.702947] clk_prepare_complete: hclk
-> [    2.706673] clk_prepare: pclk_div
-> [    2.709986] clk_prepare_complete: pclk_div
-> [    2.714039] clk_prepare: pclk
-> [    2.716985] clk_prepare_complete: pclk
-> [    2.720739] clk_prepare: apbdma
-> [    2.723833] clk_prepare_complete: apbdma
-> [    2.727736] clk_enable: hclk_div
-> [    2.730940] clk_enable_complete: hclk_div
-> [    2.734926] clk_enable: hclk
-> [    2.737788] clk_enable_complete: hclk
-> [    2.741426] clk_enable: pclk_div
-> [    2.744633] clk_enable_complete: pclk_div
-> [    2.748619] clk_enable: pclk
-> [    2.751481] clk_enable_complete: pclk
-> [    2.755120] clk_enable: apbdma
-> [    2.758153] clk_enable_complete: apbdma
-> [    2.762390] clk_disable: apbdma
-> [    2.765088] clk_disable_complete: apbdma
-> [    2.768986] clk
-> 
-> So I believe this change is correct and that Peter's analysis on IRC
-> seems correct, that this change has exposed another issue with the clock
-> driver.
-> 
+pr_err() messages should end with a new-line to avoid other messages
+being concatenated.
 
-Could you please show the /sys/kernel/debug/clk/clk_summary?
+Arvind Yadav (6):
+  [PATCH 1/6] clk: stm32f4: pr_err() strings should end with newlines
+  [PATCH 2/6] clk: lpc32xx: pr_err() strings should end with newlines
+  [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
+  [PATCH 4/6] SPEAr: clk: pr_err() strings should end with newlines
+  [PATCH 5/6] clk: h8s2678: pr_err() strings should end with newlines
+  [PATCH 6/6] clk: h8300: pr_err() strings should end with newlines
 
-> Peter, can you summarise which other clocks should be made critical?
-> 
+ drivers/clk/clk-stm32f4.c          | 2 +-
+ drivers/clk/h8300/clk-div.c        | 4 ++--
+ drivers/clk/h8300/clk-h8s2678.c    | 6 +++---
+ drivers/clk/nxp/clk-lpc32xx.c      | 4 ++--
+ drivers/clk/spear/clk-frac-synth.c | 2 +-
+ drivers/clk/spear/clk-gpt-synth.c  | 2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+1.9.1
+
