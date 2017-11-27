@@ -1,55 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources active during system suspend
-Date: Thu,  9 Nov 2017 14:27:02 +0100
-Message-Id: <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs2.siol.net ([213.250.19.135]:55118 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752395AbdK0QHI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Nov 2017 11:07:08 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 05/18] drm/sun4i: Force the mixer rate at 150MHz
+Date: Mon, 27 Nov 2017 17:07:04 +0100
+Message-ID: <9630064.mDmGGWOQGt@jernej-laptop>
+In-Reply-To: <55becb3a86a0a28ccca3f7c831ac6f6cf4854390.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <55becb3a86a0a28ccca3f7c831ac6f6cf4854390.1511797218.git-series.maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
-Domain and to be used as a wakeup source, it must be kept active during
-system suspend.
+Hi Maxime,
 
-Currently this is handled in device-specific drivers by explicitly
-increasing the use count of the module clock when the device is
-configured as a wakeup source.  However, the proper way to prevent the
-device from being stopped is to inform this requirement to the genpd
-core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+Dne ponedeljek, 27. november 2017 ob 16:41:29 CET je Maxime Ripard napisal(a):
+> It seems like the mixer can only run properly when clocked at 150MHz. In
+> order to have something more robust than simply a fire-and-forget
+> assigned-clocks-rate, let's put that in the code.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> b/drivers/gpu/drm/sun4i/sun8i_mixer.c index cb193c5f1686..c0cdccf772a2
+> 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -315,6 +315,13 @@ static int sun8i_mixer_bind(struct device *dev, struct
+> device *master, }
+>  	clk_prepare_enable(mixer->mod_clk);
+> 
+> +	/*
+> +	 * It seems that we need to enforce that rate for whatever
+> +	 * reason for the mixer to be functional. Make sure it's the
+> +	 * case.
+> +	 */
+> +	clk_set_rate(mixer->mod_clk, 150000000);
+> +
 
-Note that this will only affect devices configured as wakeup sources.
+H3 mixer works at much higher rate and if we want to support tv out, it must 
+be dividable by 432 MHz, so either 432 MHz or maybe even 864 MHz.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Integrate "soc: renesas: rcar-sysc: Use GENPD_FLAG_ACTIVE_WAKEUP",
----
- drivers/soc/renesas/rcar-sysc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We talked about that few months ago.
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index c8406e81640f6560..ac4df1c43b2fbdbe 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -224,7 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 
- 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
- 		/* Enable Clock Domain for I/O devices */
--		genpd->flags |= GENPD_FLAG_PM_CLK;
-+		genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
- 		if (has_cpg_mstp) {
- 			genpd->attach_dev = cpg_mstp_attach_dev;
- 			genpd->detach_dev = cpg_mstp_detach_dev;
--- 
-2.7.4
+I guess this should be read from mixer configuration structure.
+
+Best regards,
+Jernej
+
+>  	list_add_tail(&mixer->engine.list, &drv->engine_list);
+> 
+>  	/* Reset the registers */
+> --
+> git-series 0.9.1
+
+
