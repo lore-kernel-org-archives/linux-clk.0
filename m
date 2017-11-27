@@ -1,44 +1,111 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, <devicetree@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	<khilman@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 0/2] add clk controller driver for Meson-AXG SoC
-Date: Mon, 6 Nov 2017 15:31:34 +0800
-Message-ID: <20171106073134.13830-1-yixun.lan@amlogic.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 02/18] drm/panel: lvds: Add support for the power-supply
+ property
+Date: Mon, 27 Nov 2017 16:41:26 +0100
+Message-Id: <56a41d54acf87cdb2dc6f7e816f13816a66e2697.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-patch 1: add driver for the clk controller which found in Meson AXG
+A significant number of panels need to power up a regulator in order to
+operate properly. Add support for the power-supply property to enable and
+disable such a regulator whenever needed.
 
-  Note, we deliberately create a seperate source file for the Meson AXG
-series, instead of sharing code with previous GXBB/GXL - the file axg.c
-It would help us maintaining the code more easily.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/panel/panel-lvds.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-patch 2: describe the DT info for Meson AXG
-
-Qiufang Dai (2):
-  clk: meson-axg: add clock controller drivers
-  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-
- arch/arm64/Kconfig.platforms               |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi |  16 +
- drivers/clk/meson/Kconfig                  |   8 +
- drivers/clk/meson/Makefile                 |   1 +
- drivers/clk/meson/axg.c                    | 948 +++++++++++++++++++++++++++++
- drivers/clk/meson/axg.h                    | 127 ++++
- include/dt-bindings/clock/axg-clkc.h       |  72 +++
- 7 files changed, 1173 insertions(+)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
-
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index e2d57c01200b..57e38a9e7ab4 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+ #include <drm/drmP.h>
+@@ -39,6 +40,7 @@ struct panel_lvds {
+ 	bool data_mirror;
+ 
+ 	struct backlight_device *backlight;
++	struct regulator *supply;
+ 
+ 	struct gpio_desc *enable_gpio;
+ 	struct gpio_desc *reset_gpio;
+@@ -69,6 +71,9 @@ static int panel_lvds_unprepare(struct drm_panel *panel)
+ 	if (lvds->enable_gpio)
+ 		gpiod_set_value_cansleep(lvds->enable_gpio, 0);
+ 
++	if (lvds->supply)
++		regulator_disable(lvds->supply);
++
+ 	return 0;
+ }
+ 
+@@ -76,6 +81,17 @@ static int panel_lvds_prepare(struct drm_panel *panel)
+ {
+ 	struct panel_lvds *lvds = to_panel_lvds(panel);
+ 
++	if (lvds->supply) {
++		int err;
++
++		err = regulator_enable(lvds->supply);
++		if (err < 0) {
++			dev_err(lvds->dev, "failed to enable supply: %d\n",
++				err);
++			return err;
++		}
++	}
++
+ 	if (lvds->enable_gpio)
+ 		gpiod_set_value_cansleep(lvds->enable_gpio, 1);
+ 
+@@ -196,6 +212,13 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	lvds->supply = devm_regulator_get_optional(lvds->dev, "power");
++	if (IS_ERR(lvds->supply)) {
++		ret = PTR_ERR(lvds->supply);
++		dev_err(lvds->dev, "failed to request regulator: %d\n", ret);
++		return ret;
++	}
++
+ 	/* Get GPIOs and backlight controller. */
+ 	lvds->enable_gpio = devm_gpiod_get_optional(lvds->dev, "enable",
+ 						     GPIOD_OUT_LOW);
 -- 
-2.14.1
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
