@@ -1,205 +1,251 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v6 3/5] clk: aspeed: Add platform driver and register PLLs
-Date: Tue, 28 Nov 2017 17:49:06 +1030
-Message-Id: <20171128071908.12279-4-joel@jms.id.au>
-In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
-References: <20171128071908.12279-1-joel@jms.id.au>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V6 02/12] clk: sprd: Add common infrastructure
+Date: Mon, 27 Nov 2017 18:01:05 +0800
+Message-ID: <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This registers a platform driver to set up all of the non-core clocks.
+Added Spreadtrum's clock driver framework together with common
+structures and interface functions.
 
-The clocks that have configurable rates are now registered.
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
---
-v6:
- - Add Andrew's reviewed-by
-v5:
- - Remove eclk configuration. We do not have enough information to
- correctly implement the mux and divisor, so it will have to be
- implemented in the future
-v4:
- - Add eclk div table to fix ast2500 calculation
- - Add defines to document the BIT() macros
- - Pass dev where we can when registering clocks
- - Check for errors when registering clk_hws
-v3:
- - Fix bclk and eclk calculation
- - Separate out ast2400 and ast25000 for pll calculation
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- drivers/clk/clk-aspeed.c | 130 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 130 insertions(+)
+ drivers/clk/Kconfig       |  1 +
+ drivers/clk/Makefile      |  1 +
+ drivers/clk/sprd/Kconfig  |  4 ++
+ drivers/clk/sprd/Makefile |  3 ++
+ drivers/clk/sprd/common.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/common.h | 52 +++++++++++++++++++++++++
+ 6 files changed, 160 insertions(+)
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 9742f1d0977f..839243691b26 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -5,6 +5,8 @@
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -105,6 +107,18 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-+static const struct clk_div_table ast2500_mac_div_table[] = {
-+	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1c4e1aa..ce1a32be 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -236,6 +236,7 @@ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
++source "drivers/clk/sprd/Kconfig"
+ source "drivers/clk/sunxi-ng/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7f761b..d880d13 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
++obj-$(CONFIG_ARCH_SPRD)			+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
+diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
+new file mode 100644
+index 0000000..67a3287
+--- /dev/null
++++ b/drivers/clk/sprd/Kconfig
+@@ -0,0 +1,4 @@
++config SPRD_COMMON_CLK
++	tristate "Clock support for Spreadtrum SoCs"
++	depends on ARCH_SPRD || COMPILE_TEST
++	default ARCH_SPRD
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+new file mode 100644
+index 0000000..74f4b80
+--- /dev/null
++++ b/drivers/clk/sprd/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
++
++clk-sprd-y	+= common.o
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+new file mode 100644
+index 0000000..4e38b74a
+--- /dev/null
++++ b/drivers/clk/sprd/common.c
+@@ -0,0 +1,99 @@
++/*
++ * Spreadtrum clock infrastructure
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++#include "common.h"
++
++static const struct regmap_config sprdclk_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xffff,
++	.fast_io	= true,
 +};
 +
- static const struct clk_div_table ast2400_div_table[] = {
- 	{ 0x0, 2 },
- 	{ 0x1, 4 },
-@@ -170,6 +184,122 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
- 			mult, div);
- }
- 
-+struct aspeed_clk_soc_data {
-+	const struct clk_div_table *div_table;
-+	const struct clk_div_table *mac_div_table;
-+	struct clk_hw *(*calc_pll)(const char *name, u32 val);
-+};
-+
-+static const struct aspeed_clk_soc_data ast2500_data = {
-+	.div_table = ast2500_div_table,
-+	.mac_div_table = ast2500_mac_div_table,
-+	.calc_pll = aspeed_ast2500_calc_pll,
-+};
-+
-+static const struct aspeed_clk_soc_data ast2400_data = {
-+	.div_table = ast2400_div_table,
-+	.mac_div_table = ast2400_div_table,
-+	.calc_pll = aspeed_ast2400_calc_pll,
-+};
-+
-+static int aspeed_clk_probe(struct platform_device *pdev)
++static void sprd_clk_set_regmap(const struct sprd_clk_desc *desc,
++			 struct regmap *regmap)
 +{
-+	const struct aspeed_clk_soc_data *soc_data;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	struct clk_hw *hw;
-+	u32 val, rate;
++	int i;
++	struct sprd_clk_common *cclk;
 +
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "no syscon regmap\n");
-+		return PTR_ERR(map);
++	for (i = 0; i < desc->num_clk_clks; i++) {
++		cclk = desc->clk_clks[i];
++		if (!cclk)
++			continue;
++
++		cclk->regmap = regmap;
++	}
++}
++
++int sprd_clk_regmap_init(struct platform_device *pdev,
++			 const struct sprd_clk_desc *desc)
++{
++	void __iomem *base;
++	struct device_node *node = pdev->dev.of_node;
++	struct regmap *regmap = NULL;
++
++	if (of_find_property(node, "sprd,syscon", NULL)) {
++		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
++		if (IS_ERR(regmap)) {
++			pr_err("%s: failed to get syscon regmap\n", __func__);
++			return PTR_ERR(regmap);
++		}
++	} else {
++		base = of_iomap(node, 0);
++		regmap = devm_regmap_init_mmio(&pdev->dev, base,
++					       &sprdclk_regmap_config);
++		if (IS_ERR(regmap)) {
++			pr_err("failed to init regmap.\n");
++			return PTR_ERR(regmap);
++		}
 +	}
 +
-+	/* SoC generations share common layouts but have different divisors */
-+	soc_data = of_device_get_match_data(dev);
-+	if (!soc_data) {
-+		dev_err(dev, "no match data for platform\n");
-+		return -EINVAL;
-+	}
-+
-+	/* UART clock div13 setting */
-+	regmap_read(map, ASPEED_MISC_CTRL, &val);
-+	if (val & UART_DIV13_EN)
-+		rate = 24000000 / 13;
-+	else
-+		rate = 24000000;
-+	/* TODO: Find the parent data for the uart clock */
-+	hw = clk_hw_register_fixed_rate(dev, "uart", NULL, 0, rate);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_UART] = hw;
-+
-+	/*
-+	 * Memory controller (M-PLL) PLL. This clock is configured by the
-+	 * bootloader, and is exposed to Linux as a read-only clock rate.
-+	 */
-+	regmap_read(map, ASPEED_MPLL_PARAM, &val);
-+	hw = soc_data->calc_pll("mpll", val);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_MPLL] =	hw;
-+
-+	/* SD/SDIO clock divider (TODO: There's a gate too) */
-+	hw = clk_hw_register_divider_table(dev, "sdio", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 12, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_SDIO] = hw;
-+
-+	/* MAC AHB bus clock divider */
-+	hw = clk_hw_register_divider_table(dev, "mac", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 16, 3, 0,
-+			soc_data->mac_div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_MAC] = hw;
-+
-+	/* LPC Host (LHCLK) clock divider */
-+	hw = clk_hw_register_divider_table(dev, "lhclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION, 20, 3, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_LHCLK] = hw;
-+
-+	/* P-Bus (BCLK) clock divider */
-+	hw = clk_hw_register_divider_table(dev, "bclk", "hpll", 0,
-+			scu_base + ASPEED_CLK_SELECTION_2, 0, 2, 0,
-+			soc_data->div_table,
-+			&aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
++	sprd_clk_set_regmap(desc, regmap);
 +
 +	return 0;
++}
++EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
++
++int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
++{
++	int i, ret = 0;
++	struct clk_hw *hw;
++
++	for (i = 0; i < clkhw->num; i++) {
++
++		hw = clkhw->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "Couldn't register clock %d - %s\n",
++				i, hw->init->name);
++			return ret;
++		}
++	}
++
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++				     clkhw);
++	if (ret)
++		dev_err(dev, "Failed to add clock provider.\n");
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sprd_clk_probe);
++
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
+new file mode 100644
+index 0000000..8cd774e
+--- /dev/null
++++ b/drivers/clk/sprd/common.h
+@@ -0,0 +1,52 @@
++/*
++ * Spreadtrum clock infrastructure
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_CLK_COMMON_H_
++#define _SPRD_CLK_COMMON_H_
++
++#include <linux/clk-provider.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++#include "../clk_common.h"
++
++struct device_node;
++
++struct sprd_clk_common {
++	struct regmap	*regmap;
++	u32		reg;
++	struct clk_hw	hw;
 +};
 +
-+static const struct of_device_id aspeed_clk_dt_ids[] = {
-+	{ .compatible = "aspeed,ast2400-scu", .data = &ast2400_data },
-+	{ .compatible = "aspeed,ast2500-scu", .data = &ast2500_data },
-+	{ }
++struct sprd_clk_desc {
++	struct sprd_clk_common		**clk_clks;
++	unsigned long			num_clk_clks;
++	struct clk_hw_onecell_data      *hw_clks;
 +};
 +
-+static struct platform_driver aspeed_clk_driver = {
-+	.probe  = aspeed_clk_probe,
-+	.driver = {
-+		.name = "aspeed-clk",
-+		.of_match_table = aspeed_clk_dt_ids,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(aspeed_clk_driver);
++#define sprd_regmap_read(map, reg, val)				\
++({								\
++	(map) ? regmap_read((map), (reg), (val)) : (-EINVAL);	\
++})
 +
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
++#define sprd_regmap_write(map, reg, val)			\
++({								\
++	(map) ? regmap_write((map), (reg), (val)) : (-EINVAL);	\
++})
++
++static inline struct sprd_clk_common *
++	hw_to_sprd_clk_common(const struct clk_hw *hw)
++{
++	return container_of(hw, struct sprd_clk_common, hw);
++}
++int sprd_clk_regmap_init(struct platform_device *pdev,
++			 const struct sprd_clk_desc *desc);
++int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw);
++
++#endif /* _SPRD_CLK_COMMON_H_ */
 -- 
-2.14.1
+2.7.4
