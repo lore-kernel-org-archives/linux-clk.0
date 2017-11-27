@@ -1,33 +1,152 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:22:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] CLK: SPEAr: make structure field and function
- argument as const
-Message-ID: <20171102062243.GS30645@codeaurora.org>
-References: <1508251114-7042-1-git-send-email-bhumirks@gmail.com>
- <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+Date: Mon, 27 Nov 2017 17:01:49 +0100
+Message-ID: <2744508.m82qQEPny3@jernej-laptop>
+In-Reply-To: <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1508251114-7042-2-git-send-email-bhumirks@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
+ David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/17, Bhumika Goyal wrote:
-> Make the masks field of clk_aux structure const as it do not modify the
-> fields of the aux_clk_masks structure it points to.
+Hi Maxime,
+
+Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard napisal(a):
+> Add support for the A83T display pipeline.
 > 
-> Make the struct aux_clk_masks *aux argument of the function
-> clk_register_aux as const as the argument is only stored in the masks
-> field of a clk_aux structure which is now made const.
-> 
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
+>  4 files changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> d4259a4f5171..d6b52e5c48c0 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -93,6 +93,7 @@ Required properties:
+>     * allwinner,sun6i-a31s-tcon
+>     * allwinner,sun7i-a20-tcon
+>     * allwinner,sun8i-a33-tcon
+> +   * allwinner,sun8i-a83t-tcon-lcd
+>     * allwinner,sun8i-v3s-tcon
+>   - reg: base address and size of memory-mapped region
+>   - interrupts: interrupt associated to this IP
+> @@ -224,6 +225,7 @@ supported.
+> 
+>  Required properties:
+>    - compatible: value must be one of:
+> +    * allwinner,sun8i-a83t-de2-mixer
 
-Applied to clk-next
+What will be the name of the second mixer, once support for HDMI is added? 
+Should we start directly with 0 and 1 postfix ?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>      * allwinner,sun8i-v3s-de2-mixer
+>    - reg: base address and size of the memory-mapped region.
+>    - clocks: phandles to the clocks feeding the mixer
+> @@ -253,6 +255,7 @@ Required properties:
+>      * allwinner,sun6i-a31s-display-engine
+>      * allwinner,sun7i-a20-display-engine
+>      * allwinner,sun8i-a33-display-engine
+> +    * allwinner,sun8i-a83t-display-engine
+>      * allwinner,sun8i-v3s-display-engine
+> 
+>    - allwinner,pipelines: list of phandle to the display engine
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> b/drivers/gpu/drm/sun4i/sun4i_drv.c index 75c76cdd82bc..c418be2f22be 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -193,6 +193,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node
+> *node) of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+>  		of_device_is_compatible(node, "allwinner,sun7i-a20-tcon") ||
+>  		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
+> +		of_device_is_compatible(node, "allwinner,sun8i-a83t-tcon-lcd") ||
+>  		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+>  }
+> 
+> @@ -353,6 +354,7 @@ static const struct of_device_id sun4i_drv_of_table[] =
+> { { .compatible = "allwinner,sun6i-a31s-display-engine" },
+>  	{ .compatible = "allwinner,sun7i-a20-display-engine" },
+>  	{ .compatible = "allwinner,sun8i-a33-display-engine" },
+> +	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
+>  	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+>  	{ }
+>  };
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 46ce6daa0b1a..871df75793a9
+> 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -1132,6 +1132,10 @@ static const struct sun4i_tcon_quirks
+> sun8i_a33_quirks = { .has_lvds_pll		= true,
+>  };
+> 
+> +static const struct sun4i_tcon_quirks sun8i_a83t_quirks = {
+> +	/* nothing is supported */
+> +};
+> +
+>  static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+>  	/* nothing is supported */
+>  };
+> @@ -1143,6 +1147,7 @@ static const struct of_device_id sun4i_tcon_of_table[]
+> = { { .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks
+> }, { .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
+> { .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+> +	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data =
+> &sun8i_a83t_quirks }, { .compatible = "allwinner,sun8i-v3s-tcon", .data =
+> &sun8i_v3s_quirks }, { }
+>  };
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> b/drivers/gpu/drm/sun4i/sun8i_mixer.c index 44d5e639ebb2..5a1376965270
+> 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -395,6 +395,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg
+> = {
+> 
+>  static const struct of_device_id sun8i_mixer_of_table[] = {
+>  	{
+> +		.compatible = "allwinner,sun8i-a83t-de2-mixer",
+> +		.data = &sun8i_v3s_mixer_cfg,
+> +	},
+> +	{
+
+Maybe you want to squash 12 patch since this works only by luck.
+
+Best regards,
+Jernej
+
+>  		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+>  		.data = &sun8i_v3s_mixer_cfg,
+>  	},
+> --
+> git-series 0.9.1
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
