@@ -1,130 +1,69 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 4 Nov 2017 15:11:29 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-	rdunlap@infradead.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, liuwei@actions-semi.com
-Subject: Re: [PATCH 3/3] Documentation: add Actions S900 clock bindings
-Message-ID: <20171104094129.GB18680@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
- <5c55d704-6414-13d7-1311-64b425d4404a@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <5c55d704-6414-13d7-1311-64b425d4404a@suse.de>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1511790489.30519.11.camel@baylibre.com>
+Subject: Re: [PATCH v2 0/2] add clk controller driver for Meson-AXG SoC
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
+ <qiufang.dai@amlogic.com>, linux-amlogic@lists.infradead.org,
+ devicetree@vger.kernel.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Mon, 27 Nov 2017 14:48:09 +0100
+In-Reply-To: <20171127094844.16742-1-yixun.lan@amlogic.com>
+References: <20171127094844.16742-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andreas,
-On Sat, Nov 04, 2017 at 04:55:04PM +0800, Andreas Färber wrote:
-> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
-> > This patch adds clock bindings for Actions Semi S900 SoC.
+On Mon, 2017-11-27 at 17:48 +0800, Yixun Lan wrote:
+> Add driver for the clk controller which found in Meson AXG SoC
 > 
-> "This patch"
->
-Ack. 
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > new file mode 100644
-> > index 0000000..951d6ad
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > @@ -0,0 +1,47 @@
-> > +* Actions s900 Clock Controller
-> 
-> Please consistently spell it S900 here and below - it looks especially
-> odd when you upper-case all other words.
-> 
-Ack.
-> > +
-> > +The Actions s900 clock controller generates and supplies clock to various
-> > +controllers within the SoC. The clock binding described here is applicable to
-> > +s900 SoC.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: should be "actions,s900-clock"
-> 
-> What about "actions,s900-cmu" as in Clock Management Unit? (manual
-> version 1.0 section 1.5, page 6)
-> 
-"cmu" makes sense, will change it.
-> > +- reg: physical base address of the controller and length of memory mapped
-> > +  region.
-> > +- #clock-cells: should be 1.
-> > +
-> > +Each clock is assigned an identifier and client nodes can use this identifier
-> 
-> ", and"?
-> 
-Ack.
-> > +to specify the clock which they consume.
-> > +
-> > +All available clocks are defined as preprocessor macros in
-> > +dt-bindings/clock/actions,s900-clock.h header and can be used in device
-> > +tree sources.
-> 
-> As Rob pointed out, missing here.
-> 
-Will add this header to dt-bindings patch in next revision.
-> > +
-> > +External clocks:
-> > +
-> > +The hosc clock used as input for the plls is generated outside the SoC. It is
-> > +expected that it is defined using standard clock bindings as "hosc".
-> > +
-> > +Actions s900 Clock Controller also require two more clocks:
-> > + - "losc" - internal low frequency oscillator
-> > + - "diff_24M" - internal differential 24MHz clock
-> > +
-> > +Example: Clock controller node:
-> > +
-> > +        clock: clock-controller@e0160000 {
-> > +		compatible = "actions,s900-clock";
-> > +		reg = <0 0xe0160000 0 0x1000>;
-> > +		#clock-cells = <1>;
-> > +	};
-> 
-> Spaces vs. tab indentation.
-> 
-Ack.
-> Regarding the question in the dts patch, I think cmu would be a better
-> label here and there.
-> 
-Yeah. Will use cmu.
-> > +
-> > +Example: UART controller node that consumes clock generated by the clock
-> > +controller:
-> > +
-> > +	serial5: uart@e012a000 {
-> > +		compatible = "actions,s900-uart", "actions,owl-uart";
-> > +		reg = <0x0 0xe012a000 0x0 0x2000>;
-> > +		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> > +		clocks = <&clock CLK_UART5>;
-> > +		clock-names = "uart";
-> 
-> Better not use a clock name here that is not defined in the uart binding.
-> 
-Agree.
+>   Note, we deliberately create a seperate source file for the Meson AXG
+> series, instead of sharing code with previous GXBB/GXL - the file axg.c
+> It would help us maintaining the code more easily.
 
-Thanks,
-Mani
-> > +	};
+But this will be the last meson SoC added this way. We need factor the code the
+between meson8, gx and axg series since there is a lot of duplication there.
+
 > 
-> Regards,
-> Andreas
+> Changes since v1 [1]:
+>  - rework register definion, use '(offset << 2)' to better match
+
+As previously discussed, please drop these calculations and just write what the
+offset actually are. Putting one comment at the top, explaining the translation,
+would be nice though. 
+
+>    the description from data sheet
+>  - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
+>  - rebase code to v4.15-rc1
 > 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+> [1] 
+>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
+>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
+>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
+> 
+> 
+> Qiufang Dai (2):
+
+First patch of the series should be adding the compatible documentation, which
+is missing here (unless it has gone through another channel and I missed it)
+
+>   clk: meson-axg: add clock controller drivers
+>   arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+> 
+>  arch/arm64/Kconfig.platforms               |   1 +
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi |  15 +
+>  drivers/clk/meson/Kconfig                  |   8 +
+>  drivers/clk/meson/Makefile                 |   1 +
+>  drivers/clk/meson/axg.c                    | 948
+> +++++++++++++++++++++++++++++
+>  drivers/clk/meson/axg.h                    | 126 ++++
+>  include/dt-bindings/clock/axg-clkc.h       |  72 +++
+>  7 files changed, 1171 insertions(+)
+>  create mode 100644 drivers/clk/meson/axg.c
+>  create mode 100644 drivers/clk/meson/axg.h
+>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+> 
