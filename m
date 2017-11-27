@@ -1,38 +1,66 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1511789830.30519.3.camel@baylibre.com>
-Subject: Re: [PATCH v4 1/4] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Carlo Caione <carlo@caione.org>,
- Kevin Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 27 Nov 2017 14:37:10 +0100
-In-Reply-To: <20171107141223.1507-1-yixun.lan@amlogic.com>
-References: <20171107141223.1507-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 14/18] ARM: dts: sun8i: a83t: Enable the PWM
+Date: Mon, 27 Nov 2017 16:41:38 +0100
+Message-Id: <257f6ffb088c1d165c3fdc6a2b2283e493cbaa16.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-11-07 at 22:12 +0800, Yixun Lan wrote:
-> According to the datasheet, in Meson-GXBB/GXL series,
-> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
-> 
-> Test passed at gxl-s905x-p212 board.
-> 
-> The following published datasheets are wrong and should be updated
-> [1] GXBB v1.1.4
-> [2] GXL v0.3_20170314
-> 
-> Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
-> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
+The A83T has the same PWM block than the H3. Add it to our DT.
 
-Applied fixes/drivers
-Thanks
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi |  9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 0a91f5c17f51..2cb71e460ea2 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -497,6 +497,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		pwm: pwm@1c21400 {
++			compatible = "allwinner,sun8i-a83t-pwm",
++				     "allwinner,sun8i-h3-pwm";
++			reg = <0x01c21400 0x400>;
++			clocks = <&osc24M>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		uart0: serial@1c28000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x01c28000 0x400>;
+-- 
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
