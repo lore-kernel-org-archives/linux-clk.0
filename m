@@ -1,226 +1,63 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V4 05/12] clk: sprd: add mux clock support
-Date: Fri, 10 Nov 2017 14:36:00 +0800
-Message-ID: <20171110063607.3250-6-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
-References: <20171110063607.3250-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:32915 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752847AbdK0PmD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 10:42:03 -0500
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        jernej.skrabec@siol.net, stable@vger.kernel.org
+Subject: [PATCH v2 04/18] drm/sun4i: Fix error path handling
+Date: Mon, 27 Nov 2017 16:41:28 +0100
+Message-Id: <9dcb9aab9969c28dd32f8c3599091e3c4c4682ca.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock multiplexor support for Spreadtrum platforms,
-the mux clocks also can be found in sprd composite clocks, so
-provides two helpers that can be reused later on.
+The commit 4c7f16d14a33 ("drm/sun4i: Fix TCON clock and regmap
+initialization sequence") moved a bunch of logic around, but forgot to
+update the gotos after the introduction of the err_free_dotclock label.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+It means that if we fail later that the one introduced in that commit,
+we'll just to the old label which isn't free the clock we created. This
+will result in a breakage as soon as someone tries to do something with
+that clock, since its resources will have been long reclaimed.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 4c7f16d14a33 ("drm/sun4i: Fix TCON clock and regmap initialization sequence")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/sprd/Makefile |  1 +
- drivers/clk/sprd/mux.c    | 86 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/mux.h    | 78 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 165 insertions(+)
- create mode 100644 drivers/clk/sprd/mux.c
- create mode 100644 drivers/clk/sprd/mux.h
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 8cd5592..cee36b5 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index e122f5b2a395..f4284b51bdca 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -724,12 +724,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	if (IS_ERR(tcon->crtc)) {
+ 		dev_err(dev, "Couldn't create our CRTC\n");
+ 		ret = PTR_ERR(tcon->crtc);
+-		goto err_free_clocks;
++		goto err_free_dotclock;
+ 	}
  
- clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
-+clk-sprd-y	+= mux.o
-diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
-new file mode 100644
-index 0000000..dacb5b4
---- /dev/null
-+++ b/drivers/clk/sprd/mux.c
-@@ -0,0 +1,86 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "mux.h"
-+
-+DEFINE_SPINLOCK(sprd_mux_lock);
-+EXPORT_SYMBOL_GPL(sprd_mux_lock);
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_ssel *mux)
-+{
-+	unsigned int reg;
-+	u8 parent;
-+	int num_parents;
-+	int i;
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	parent = reg >> mux->shift;
-+	parent &= (1 << mux->width) - 1;
-+
-+	if (!mux->table)
-+		return parent;
-+
-+	num_parents = clk_hw_get_num_parents(&common->hw);
-+
-+	for (i = 0; i < num_parents - 1; i++)
-+		if (parent >= mux->table[i] && parent < mux->table[i + 1])
-+			return i;
-+
-+	return num_parents - 1;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
-+
-+static u8 sprd_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_ssel *mux,
-+			       u8 index)
-+{
-+	unsigned long flags = 0;
-+	unsigned int reg;
-+
-+	if (mux->table)
-+		index = mux->table[index];
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
-+	sprd_regmap_write(common->regmap, common->reg,
-+			  reg | (index << mux->shift));
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
-+
-+static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+const struct clk_ops sprd_mux_ops = {
-+	.get_parent = sprd_mux_get_parent,
-+	.set_parent = sprd_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_mux_ops);
-diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
-new file mode 100644
-index 0000000..72a3f78
---- /dev/null
-+++ b/drivers/clk/sprd/mux.h
-@@ -0,0 +1,78 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_MUX_H_
-+#define _SPRD_MUX_H_
-+
-+#include "common.h"
-+
-+/**
-+ * struct sprd_mux_ssel - Mux clock's source select bits in its register
-+ * @shift: Bit offset of the divider in its register
-+ * @width: Width of the divider field in its register
-+ * @table: For some mux clocks, not all sources are used on some special
-+ *	   chips, this matches the value of mux clock's register and the
-+ *	   sources which are used for this mux clock
-+ */
-+struct sprd_mux_ssel {
-+	u8		shift;
-+	u8		width;
-+	const u8	*table;
-+};
-+
-+struct sprd_mux {
-+	struct sprd_mux_ssel mux;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define _SPRD_MUX_CLK(_shift, _width, _table)		\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.table	= _table,			\
-+	}
-+
-+#define SPRD_MUX_CLK_TABLE(_struct, _name, _parents, _table,		\
-+				     _reg, _shift, _width,		\
-+				     _flags)				\
-+	struct sprd_mux _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
-+		.common	= {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_mux_lock,		\
-+			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-+						       _parents,	\
-+						       &sprd_mux_ops,	\
-+						       _flags),		\
-+		}							\
-+	}
-+
-+#define SPRD_MUX_CLK(_struct, _name, _parents, _reg,		\
-+		     _shift, _width, _flags)			\
-+	SPRD_MUX_CLK_TABLE(_struct, _name, _parents, NULL,	\
-+			   _reg, _shift, _width, _flags)
-+
-+static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_mux, common);
-+}
-+
-+extern const struct clk_ops sprd_mux_ops;
-+extern spinlock_t sprd_mux_lock;
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_ssel *mux);
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_ssel *mux,
-+			       u8 index);
-+
-+#endif /* _SPRD_MUX_H_ */
+ 	ret = sun4i_rgb_init(drm, tcon);
+ 	if (ret < 0)
+-		goto err_free_clocks;
++		goto err_free_dotclock;
+ 
+ 	if (tcon->quirks->needs_de_be_mux) {
+ 		/*
 -- 
-2.7.4
+git-series 0.9.1
