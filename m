@@ -1,54 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:49846 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753313AbdK0QUL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 11:20:11 -0500
 MIME-Version: 1.0
-In-Reply-To: <20171106214335.qvuvcwahemnpwftt@rob-hp-laptop>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
- <20171102065626.21835-10-chunyan.zhang@spreadtrum.com> <20171106214335.qvuvcwahemnpwftt@rob-hp-laptop>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 9 Nov 2017 16:18:48 +0800
-Message-ID: <CAAfSe-tadvpgJ0OC00Ccc+y+84t90dArfAu9ASOG77Hnw9Z=RA@mail.gmail.com>
-Subject: Re: [PATCH V3 09/11] clk: sprd: add clocks support for SC9860
-To: Rob Herring <robh@kernel.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+In-Reply-To: <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 28 Nov 2017 00:19:44 +0800
+Message-ID: <CAGb2v67iWKJXE8oVEgTQcamaG-UKkunCLJbZWZyM3SPSHkU7BA@mail.gmail.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orson.zhai@spreadtrum.com>
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob and Stephen,
-
-On 7 November 2017 at 05:43, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Nov 02, 2017 at 02:56:24PM +0800, Chunyan Zhang wrote:
->> This patch added the list of clocks for Spreadtrum's SC9860 SoC,
->> together with clock initialization code.
->>
->> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->> ---
->>  drivers/clk/sprd/Kconfig                    |   10 +
->>  drivers/clk/sprd/Makefile                   |    3 +
->>  drivers/clk/sprd/sc9860-clk.c               | 1987 +++++++++++++++++++++++++++
->>  include/dt-bindings/clock/sprd,sc9860-clk.h |  408 ++++++
+On Mon, Nov 27, 2017 at 11:41 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Add support for the A83T display pipeline.
 >
-> This belongs in the binding doc patch.
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
 
-I noticed that this kind of files were submitted in driver patch
-before when adding a new driver, how about I just put it into a single
-patch in the next version?
+Rob mentioned that he'd like to see these multiple one-liners be
+in a separate patch.
 
-Thanks,
-Chunyan
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
+>  4 files changed, 14 insertions(+)
 
->
-> Rob
+Also not sure why you have two patches with the same subject.
+
+ChenYu
