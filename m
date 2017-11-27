@@ -1,95 +1,183 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-References: <20171106075212.14275-1-yixun.lan@amlogic.com>
- <1509959454.1328.8.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin
- Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <9b1f5cb5-9029-8865-a867-54d819b42e1a@amlogic.com>
-Date: Mon, 6 Nov 2017 17:38:12 +0800
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V6 12/12] arm64: dts: add clocks for SC9860
+Date: Mon, 27 Nov 2017 18:01:15 +0800
+Message-ID: <20171127100115.20655-13-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <1509959454.1328.8.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome:
+Some clocks on SC9860 are in the same address area with syscon devices,
+those are what have a property of 'sprd,syscon' which would refer to
+syscon devices, others would have a reg property indicated their address
+ranges.
 
-On 11/06/17 17:10, Jerome Brunet wrote:
-> On Mon, 2017-11-06 at 15:52 +0800, Yixun Lan wrote:
->> According to the datasheet, in Meson-GXBB/GXL series,
->> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
->> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
->>
->> Test passed at gxl_skt dev board.
-> I think this refer to a board naming used in amlogic vendor kernel ?
-> Would you mind telling what it is ?
-> 
->>
->> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> 
-> Subject is missing "v2" tag and a reference to the previous message:
-> 20171103181703.30434-1-yixun.lan@amlogic.com
-> 
-Ok..
-I was considering this patch as a new one, so didn't add a v2 tag
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |   2 +-
+ 2 files changed, 116 insertions(+), 1 deletion(-)
 
->>
->> ---
->> I think this error was introduced by a copy & paste from meson8 code?
->> and we didn't notice them due to the SANA clock is also enabled by
->> DTS (so SAR_ADC works fine)?
->> ---
->>  drivers/clk/meson/gxbb.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->> index b2d1e8ed7152..92168348ffa6 100644
->> --- a/drivers/clk/meson/gxbb.c
->> +++ b/drivers/clk/meson/gxbb.c
->> @@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
->>  static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
->>  static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
->>  static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
->> -static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
->> +static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
->>  static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
->>  static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
->>  static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
->> @@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,
->> 9);
->>  static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
->>  static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
->>  static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
->> -static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
->> +static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
-> 
-> The value currently used in the driver are with respect to the
-> Datasheet of GXBB (v1.1.4) and GXL (S905X - V0.3-20170314), which are available
-> to the public at http://http://linux-meson.com
-> 
-> the adc driver is claiming both clock, so this patch should not change anything
-> to the adc operation.
-> 
-> * Is this patch fixing any issue ?
-this will remove the un-used 'sana' clock from saradc,
-to reflect how the hardware actually work..
-
-there is no function changed
-
-> * Is it an error in the published datasheets ?
-then, I think the published datasheet need to be updated.
-
-> 
->>  static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
->>  static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
->>  static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
-> 
-> .
-> 
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..bf03da4 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,120 @@
+ 	};
+ 
+ 	soc {
++		pmu_gate: pmu-gate {
++			compatible = "sprd,sc9860-pmu-gate";
++			sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
++			clocks = <&ext_26m>;
++			#clock-cells = <1>;
++		};
++
++		pll: pll {
++			compatible = "sprd,sc9860-pll";
++			sprd,syscon = <&ana_regs>; /* 0x40400000 */
++			clocks = <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		ap_clk: clock-controller@20000000 {
++			compatible = "sprd,sc9860-ap-clk";
++			reg = <0 0x20000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_prediv: aon-prediv {
++			compatible = "sprd,sc9860-aon-prediv";
++			reg = <0 0x402d0000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		apahb_gate: apahb-gate {
++			compatible = "sprd,sc9860-apahb-gate";
++			sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_gate: aon-gate {
++			compatible = "sprd,sc9860-aon-gate";
++			sprd,syscon = <&aon_regs>; /* 0x402e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aonsecure_clk: clock-controller@40880000 {
++			compatible = "sprd,sc9860-aonsecure-clk";
++			reg = <0 0x40880000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		agcp_gate: agcp-gate {
++			compatible = "sprd,sc9860-agcp-gate";
++			sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		gpu_clk: clock-controller@60200000 {
++			compatible = "sprd,sc9860-gpu-clk";
++			reg = <0 0x60200000 0 0x400>;
++			clocks = <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_clk: clock-controller@61000000 {
++			compatible = "sprd,sc9860-vsp-clk";
++			reg = <0 0x61000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_gate: vsp-gate {
++			compatible = "sprd,sc9860-vsp-gate";
++			sprd,syscon = <&vsp_regs>; /* 0x61100000 */
++			clocks = <&vsp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_clk: clock-controller@62000000 {
++			compatible = "sprd,sc9860-cam-clk";
++			reg = <0 0x62000000 0 0x4000>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_gate: cam-gate {
++			compatible = "sprd,sc9860-cam-gate";
++			sprd,syscon = <&cam_regs>; /* 0x62100000 */
++			clocks = <&cam_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_clk: clock-controller@63000000 {
++			compatible = "sprd,sc9860-disp-clk";
++			reg = <0 0x63000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_gate: disp-gate {
++			compatible = "sprd,sc9860-disp-gate";
++			sprd,syscon = <&disp_regs>; /* 0x63100000 */
++			clocks = <&disp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		apapb_gate: apapb-gate {
++			compatible = "sprd,sc9860-apapb-gate";
++			sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
++			clocks = <&ap_clk 0>;
++			#clock-cells = <1>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 6ea3a75..eb004bb 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -110,6 +110,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
+ 	};
+ };
+-- 
+2.7.4
