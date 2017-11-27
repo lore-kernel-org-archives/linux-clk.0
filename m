@@ -1,52 +1,149 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 28 Nov 2017 10:30:22 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
-Message-ID: <20171128163022.7b7wvfqedkhhnaj6@rob-hp-laptop>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-3-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171128125330.363-3-yixun.lan@amlogic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        jernej.skrabec@siol.net
+Subject: [PATCH v2 13/18] ARM: dts: sun8i: a83t: Add display pipeline
+Date: Mon, 27 Nov 2017 16:41:37 +0100
+Message-Id: <ed812fdb9ed5a807b9a468c9d8c263032612d020.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 28, 2017 at 08:53:29PM +0800, Yixun Lan wrote:
-> From: Qiufang Dai <qiufang.dai@amlogic.com>
-> 
-> Add clock controller drivers for Amlogic Meson-AXG SoC.
-> 
-> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  arch/arm64/Kconfig.platforms         |   1 +
->  drivers/clk/meson/Kconfig            |   8 +
->  drivers/clk/meson/Makefile           |   1 +
->  drivers/clk/meson/axg.c              | 948 +++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/axg.h              | 126 +++++
+The display pipeline on the A83T is mainly composed of the mixers and
+TCONs, plus various encoders.
 
->  include/dt-bindings/clock/axg-clkc.h |  72 +++
+Let's add the first mixer and TCON to the DTSI since the only board I have
+can use only the LVDS output on the first TCON. The other parts will be
+added eventually.
 
-This belongs in the binding patch.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 79 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 79 insertions(+)
 
-Otherwise, 
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-
->  6 files changed, 1156 insertions(+)
->  create mode 100644 drivers/clk/meson/axg.c
->  create mode 100644 drivers/clk/meson/axg.h
->  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 19acae1b4089..0a91f5c17f51 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -45,8 +45,10 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ #include <dt-bindings/clock/sun8i-a83t-ccu.h>
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/reset/sun8i-a83t-ccu.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun8i-r-ccu.h>
+ 
+ / {
+@@ -151,6 +153,12 @@
+ 		};
+ 	};
+ 
++	de: display-engine {
++		compatible = "allwinner,sun8i-a83t-display-engine";
++		allwinner,pipelines = <&mixer0>;
++		status = "disabled";
++	};
++
+ 	memory {
+ 		reg = <0x40000000 0x80000000>;
+ 		device_type = "memory";
+@@ -162,6 +170,44 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		display_clocks: clock@1000000 {
++			compatible = "allwinner,sun8i-a83t-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_PLL_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-a83t-de2-mixer";
++			reg = <0x01100000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&display_clocks CLK_MIXER0>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_MIXER0>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
+@@ -177,6 +223,39 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun8i-a83t-tcon-lcd";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
++			clock-names = "ahb", "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
++			reset-names = "lcd", "lvds";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun8i-a83t-mmc",
+ 				     "allwinner,sun7i-a20-mmc";
+-- 
+git-series 0.9.1
