@@ -1,238 +1,77 @@
-Return-Path: <julien.thierry@arm.com>
-Subject: Re: [PATCH V3 05/11] clk: sprd: add mux clock support
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Mark Brown <broonie@kernel.org>,
- Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
- Ben Li <ben.li@spreadtrum.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Orson Zhai <orson.zhai@spreadtrum.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
- <20171102065626.21835-6-chunyan.zhang@spreadtrum.com>
-From: Julien Thierry <julien.thierry@arm.com>
-Message-ID: <532aed43-03bf-ea26-bdc2-d7deb1093f53@arm.com>
-Date: Thu, 2 Nov 2017 18:11:05 +0000
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 01/18] dt-bindings: panel: lvds: Document power-supply
+ property
+Date: Mon, 27 Nov 2017 16:41:25 +0100
+Message-Id: <583a46dd967456aac07fb29529f74d91a10bdfeb.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ icenowy@aosc.io
 MIME-Version: 1.0
-In-Reply-To: <20171102065626.21835-6-chunyan.zhang@spreadtrum.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The power-supply property is used by a vast majority of panels, including
+panel-simple. Let's document it as a common property
 
-On 02/11/17 06:56, Chunyan Zhang wrote:
-> This patch adds clock multiplexor support for Spreadtrum platforms,
-> the mux clocks also can be found in sprd composite clocks, so
-> provides two helpers that can be reused later on.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->   drivers/clk/sprd/Makefile |  1 +
->   drivers/clk/sprd/mux.c    | 89 +++++++++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/sprd/mux.h    | 65 ++++++++++++++++++++++++++++++++++
->   3 files changed, 155 insertions(+)
->   create mode 100644 drivers/clk/sprd/mux.c
->   create mode 100644 drivers/clk/sprd/mux.h
-> 
-> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> index 8cd5592..cee36b5 100644
-> --- a/drivers/clk/sprd/Makefile
-> +++ b/drivers/clk/sprd/Makefile
-> @@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
->   
->   clk-sprd-y	+= common.o
->   clk-sprd-y	+= gate.o
-> +clk-sprd-y	+= mux.o
-> diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
-> new file mode 100644
-> index 0000000..5a344e0
-> --- /dev/null
-> +++ b/drivers/clk/sprd/mux.c
-> @@ -0,0 +1,89 @@
-> +/*
-> + * Spreadtrum multiplexer clock driver
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "mux.h"
-> +
-> +DEFINE_SPINLOCK(sprd_mux_lock);
-> +EXPORT_SYMBOL_GPL(sprd_mux_lock);
-> +
-> +u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-> +			      const struct sprd_mux_internal *mux)
-> +{
-> +	unsigned int reg;
-> +	u8 parent;
-> +	int num_parents;
-> +	int i;
-> +
-> +	sprd_regmap_read(common->regmap, common->reg, &reg);
-> +	parent = reg >> mux->shift;
-> +	parent &= (1 << mux->width) - 1;
-> +
-> +	if (mux->table) {
-> +		num_parents = clk_hw_get_num_parents(&common->hw);
-> +
-> +		for (i = 0; i < num_parents; i++)
-> +			if (parent == mux->table[i] ||
-> +			    (i < (num_parents - 1) && parent > mux->table[i] &&
-> +			     parent < mux->table[i + 1]))
-> +				return i;
-> +		if (i == num_parents)
-> +			return i - 1;
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/panel/panel-common.txt | 6 ++++++
+ Documentation/devicetree/bindings/display/panel/panel-lvds.txt   | 1 +
+ 2 files changed, 7 insertions(+)
 
-The if branch is not necessary since you only get there when the loop 
-has finished, so the condition is always true. And the loop can be 
-simplified to:
-
-for (i = 0; i < num_parents - 1; i++)
-	if (parent >= mux->table[i] &&  parent < mux->table[i + 1])
-		return i;
-
-return num_parents;
-
-
-> +	}
-> +
-> +	return parent;
-> +}
-> +EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
-> +
-> +static u8 sprd_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-> +
-> +	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
-> +}
-> +
-> +int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-> +			       const struct sprd_mux_internal *mux,
-> +			       u8 index)
-> +{
-> +	unsigned long flags = 0;
-> +	unsigned int reg;
-> +
-> +	if (mux->table)
-> +		index = mux->table[index];
-> +
-> +	spin_lock_irqsave(common->lock, flags);
-> +
-> +	sprd_regmap_read(common->regmap, common->reg, &reg);
-> +	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
-> +	sprd_regmap_write(common->regmap, common->reg,
-> +			  reg | (index << mux->shift));
-> +
-> +	spin_unlock_irqrestore(common->lock, flags);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
-> +
-> +static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-> +
-> +	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
-> +}
-> +
-> +const struct clk_ops sprd_mux_ops = {
-> +	.get_parent = sprd_mux_get_parent,
-> +	.set_parent = sprd_mux_set_parent,
-> +	.determine_rate = __clk_mux_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(sprd_mux_ops);
-
-Same as with the other patch, I'd recommend have one set of ops for 
-direct mux and another one for a mux using a table to map the parents. 
-Keeping functions for both modes separate.
-
-Cheers,
-
-> diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
-> new file mode 100644
-> index 0000000..148ca8c
-> --- /dev/null
-> +++ b/drivers/clk/sprd/mux.h
-> @@ -0,0 +1,65 @@
-> +/*
-> + * Spreadtrum multiplexer clock driver
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#ifndef _SPRD_MUX_H_
-> +#define _SPRD_MUX_H_
-> +
-> +#include "common.h"
-> +
-> +struct sprd_mux_internal {
-> +	u8		shift;
-> +	u8		width;
-> +	const u8	*table;
-> +};
-> +
-> +struct sprd_mux {
-> +	struct sprd_mux_internal mux;
-> +	struct sprd_clk_common	common;
-> +};
-> +
-> +#define _SPRD_MUX_CLK(_shift, _width, _table)		\
-> +	{						\
-> +		.shift	= _shift,			\
-> +		.width	= _width,			\
-> +		.table	= _table,			\
-> +	}
-> +
-> +#define SPRD_MUX_CLK(_struct, _name, _parents, _table,			\
-> +				     _reg, _shift, _width,		\
-> +				     _flags)				\
-> +	struct sprd_mux _struct = {					\
-> +		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
-> +		.common	= {						\
-> +			.regmap		= NULL,				\
-> +			.reg		= _reg,				\
-> +			.lock		= &sprd_mux_lock,		\
-> +			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-> +						       _parents,	\
-> +						       &sprd_mux_ops,	\
-> +						       _flags),		\
-> +		}							\
-> +	}
-> +
-> +static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
-> +{
-> +	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-> +
-> +	return container_of(common, struct sprd_mux, common);
-> +}
-> +
-> +extern const struct clk_ops sprd_mux_ops;
-> +extern spinlock_t sprd_mux_lock;
-> +
-> +u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-> +			      const struct sprd_mux_internal *mux);
-> +int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-> +			       const struct sprd_mux_internal *mux,
-> +			       u8 index);
-> +
-> +#endif /* _SPRD_MUX_H_ */
-> 
-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+index ec52c472c845..125ea68052af 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
++++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+@@ -78,6 +78,12 @@ used for panels that implement compatible control signals.
+   while active. Active high reset signals can be supported by inverting the
+   GPIO specifier polarity flag.
+ 
++Power
++-----
++
++- power-supply: many display panels need an additional power supply in
++  order to be fully powered-up. For such panels, power-supply contains
++  a phandle to the regulator powering the panel.
+ 
+ Backlight
+ ---------
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+index b938269f841e..250850a2150b 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
++++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+@@ -32,6 +32,7 @@ Optional properties:
+ - label: See panel-common.txt.
+ - gpios: See panel-common.txt.
+ - backlight: See panel-common.txt.
++- power-supply: See panel-common.txt.
+ - data-mirror: If set, reverse the bit order described in the data mappings
+   below on all data lanes, transmitting bits for slots 6 to 0 instead of
+   0 to 6.
 -- 
-Julien Thierry
+git-series 0.9.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
