@@ -1,27 +1,26 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
         Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 09/12] clk: sprd: Add dt-bindings include file for SC9860
-Date: Mon, 20 Nov 2017 14:01:34 +0800
-Message-ID: <20171120060137.27380-10-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V6 09/12] clk: sprd: Add dt-bindings include file for SC9860
+Date: Mon, 27 Nov 2017 18:01:12 +0800
+Message-ID: <20171127100115.20655-10-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 This file defines all SC9860 clock indexes, it should be included in the
