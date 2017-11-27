@@ -1,123 +1,150 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs2.siol.net ([213.250.19.135]:50534 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752499AbdK1Ps7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Nov 2017 10:48:59 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
+Received: from smtp.codeaurora.org ([198.145.29.96]:32894 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752399AbdK0WWl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 17:22:41 -0500
+Date: Mon, 27 Nov 2017 14:22:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
-Date: Tue, 28 Nov 2017 16:48:55 +0100
-Message-ID: <2908242.WKit1ZIWoJ@jernej-laptop>
-In-Reply-To: <20171128090223.mqp3v2t6koyu6hk4@flea.home>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <2744508.m82qQEPny3@jernej-laptop> <20171128090223.mqp3v2t6koyu6hk4@flea.home>
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+Message-ID: <20171127222238.GF18379@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
+ <CAF6AEGsw2=nERuJ8UCBr_kTBS0TigaA9LL1Hxw3JmNiu4oycOA@mail.gmail.com>
+ <CAFp+6iGyB-iVb+vyDr6Dzk1FG6baiNy_kZWjB3sm_GViDh6rnQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAFp+6iGyB-iVb+vyDr6Dzk1FG6baiNy_kZWjB3sm_GViDh6rnQ@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Dne torek, 28. november 2017 ob 10:02:23 CET je Maxime Ripard napisal(a):
+On 11/15, Vivek Gautam wrote:
 > Hi,
 > 
-> On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
-> > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard 
-napisal(a):
-> > > Add support for the A83T display pipeline.
-> > > 
-> > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > ---
-> > > 
-> > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
-> > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
-> > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
-> > >  4 files changed, 14 insertions(+)
-> > > 
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> > > d4259a4f5171..d6b52e5c48c0 100644
-> > > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > 
-> > > @@ -93,6 +93,7 @@ Required properties:
-> > >     * allwinner,sun6i-a31s-tcon
-> > >     * allwinner,sun7i-a20-tcon
-> > >     * allwinner,sun8i-a33-tcon
-> > > 
-> > > +   * allwinner,sun8i-a83t-tcon-lcd
-> > > 
-> > >     * allwinner,sun8i-v3s-tcon
-> > >   
-> > >   - reg: base address and size of memory-mapped region
-> > >   - interrupts: interrupt associated to this IP
-> > > 
-> > > @@ -224,6 +225,7 @@ supported.
-> > > 
-> > >  Required properties:
-> > >    - compatible: value must be one of:
-> > > +    * allwinner,sun8i-a83t-de2-mixer
-> > 
-> > What will be the name of the second mixer, once support for HDMI is added?
-> > Should we start directly with 0 and 1 postfix ?
 > 
-> What are the differences exactly without the two mixers?
-
-Mixer properties:
-- mixer index (0 or 1), important for determining CCSC base (see my patches)
-- number of VI planes (usually 1)
-- number of UI planes (usually 1 or 3)
-- writeback support (yes/no)
-- scale line buffer length (2048 or 4096)
-- smart backligth support (yes/no)
-
-channel properties (for both, VI and UI):
-- scaler support (yes/no, usually yes)
-- overlay count (seems to be always 4)
-- VEP support (yes/no)
-
-Those are properties found in BSP de_feat.c, so I guess that's enough to make 
-any kind of decision in the code.
-
-Usually, but we can't count on that, first mixer has 1 VI and 3 UI planes and 
-second mixer has 1 VI and 1 UI plane.
-
-Best regards,
-Jernej
-
+> On Mon, Aug 7, 2017 at 5:59 PM, Rob Clark <robdclark@gmail.com> wrote:
+> > On Mon, Aug 7, 2017 at 4:27 AM, Vivek Gautam
+> > <vivek.gautam@codeaurora.org> wrote:
+> >> On Thu, Jul 13, 2017 at 5:20 PM, Rob Clark <robdclark@gmail.com> wrote:
+> >>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+> >>>> Hi Vivek,
+> >>>>
+> >>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+> >>>>> Hi Stephen,
+> >>>>>
+> >>>>>
+> >>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+> >>>>>> On 07/06, Vivek Gautam wrote:
+> >>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+> >>>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+> >>>>>>>                    size_t size)
+> >>>>>>>   {
+> >>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+> >>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> >>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+> >>>>>>> +    size_t ret;
+> >>>>>>>         if (!ops)
+> >>>>>>>           return 0;
+> >>>>>>>   -    return ops->unmap(ops, iova, size);
+> >>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+> >>>>>> Can these map/unmap ops be called from an atomic context? I seem
+> >>>>>> to recall that being a problem before.
+> >>>>>
+> >>>>> That's something which was dropped in the following patch merged in master:
+> >>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+> >>>>>
+> >>>>> Looks like we don't  need locks here anymore?
+> >>>>
+> >>>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+> >>>>  from unmap. Somehow looks like some path in the master using that
+> >>>>  should have enabled the pm ?
+> >>>>
+> >>>
+> >>> Yes, there are a bunch of scenarios where unmap can happen with
+> >>> disabled master (but not in atomic context).
+> >>
+> >> I would like to understand whether there is a situation where an unmap is
+> >> called in atomic context without an enabled master?
+> >>
+> >> Let's say we have the case where all the unmap calls in atomic context happen
+> >> only from the master's context (in which case the device link should
+> >> take care of
+> >> the pm state of smmu), and the only unmap that happen in non-atomic context
+> >> is the one with master disabled. In such a case doesn it make sense to
+> >> distinguish
+> >> the atomic/non-atomic context and add pm_runtime_get_sync()/put_sync() only
+> >> for the non-atomic context since that would be the one with master disabled.
+> >>
+> >
+> > At least drm/msm needs to hold obj->lock (a mutex) in unmap, so it
+> > won't unmap anything in atomic ctx (but it can unmap w/ master
+> > disabled).  I can't really comment about other non-gpu drivers.  It
+> > seems like a reasonable constraint that either master is enabled or
+> > not in atomic ctx.
+> >
+> > Currently we actually wrap unmap w/ pm_runtime_get/put_sync(), but I'd
+> > like to drop that to avoid powering up the gpu.
 > 
-> I was hoping to be able to cover them all using properties, indices
-> are usually pretty badly received in compatibles.
+> Since the deferring the TLB maintenance doesn't look like the best approach [1],
+> how about if we try to power-up only the smmu from different client
+> devices such as,
+> GPU in the unmap path. Then we won't need to add pm_runtime_get/put() calls in
+> arm_smmu_unmap().
 > 
-> > >  static const struct of_device_id sun8i_mixer_of_table[] = {
-> > >  
-> > >  	{
-> > > 
-> > > +		.compatible = "allwinner,sun8i-a83t-de2-mixer",
-> > > +		.data = &sun8i_v3s_mixer_cfg,
-> > > +	},
-> > > +	{
-> > 
-> > Maybe you want to squash 12 patch since this works only by luck.
+> The client device can use something like - pm_runtime_get_supplier() since
+> we already have the device link in place with this patch series. This should
+> power-on the supplier (which is smmu) without turning on the consumer
+> (such as GPU).
 > 
-> Yeah, I totally meant to do that :)
+> pm_runtime_get_supplier() however is not exported at this moment.
+> Will it be useful to export this API and use it in the drivers.
 > 
-> Thanks!
-> Maxime
-> 
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
 
+I'm not sure pm_runtime_get_supplier() is correct either. That
+feels like we're relying on the GPU driver knowing the internal
+details of how the device links are configured.
 
+Is there some way to have the GPU driver know in its runtime PM
+resume hook that it doesn't need to be powered on because it
+isn't actively drawing anything or processing commands? I'm
+thinking of the code calling pm_runtime_get() as proposed around
+the IOMMU unmap path in the GPU driver and then having the
+runtime PM resume hook in the GPU driver return some special
+value to indicate that it didn't really resume because it didn't
+need to and to treat the device as runtime suspended but not
+return an error. Then the runtime PM core can keep track of that
+and try to power the GPU on again when another pm_runtime_get()
+is called on the GPU device.
+
+This keeps the consumer API the same, always pm_runtime_get(),
+but leaves the device driver logic of what to do when the GPU
+doesn't need to power on to the runtime PM hook where the driver
+has all the information.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
