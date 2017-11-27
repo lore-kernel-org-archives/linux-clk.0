@@ -1,98 +1,38 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V3 02/11] dt-bindings: Add Spreadtrum clock binding documentation
-Date: Thu, 2 Nov 2017 14:56:17 +0800
-Message-ID: <20171102065626.21835-3-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1511789830.30519.3.camel@baylibre.com>
+Subject: Re: [PATCH v4 1/4] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
+  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 27 Nov 2017 14:37:10 +0100
+In-Reply-To: <20171107141223.1507-1-yixun.lan@amlogic.com>
+References: <20171107141223.1507-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a new binding with its documentation for Spreadtrum clock
-sub-framework.
+On Tue, 2017-11-07 at 22:12 +0800, Yixun Lan wrote:
+> According to the datasheet, in Meson-GXBB/GXL series,
+> The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+> while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+> 
+> Test passed at gxl-s905x-p212 board.
+> 
+> The following published datasheets are wrong and should be updated
+> [1] GXBB v1.1.4
+> [2] GXL v0.3_20170314
+> 
+> Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+> Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- Documentation/devicetree/bindings/clock/sprd.txt | 55 ++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
-new file mode 100644
-index 0000000..5c09529
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd.txt
-@@ -0,0 +1,55 @@
-+Spreadtrum Clock Binding
-+------------------------
-+
-+Required properties:
-+- compatible: should contain the following compatible strings:
-+	- "sprd,sc9860-pmu-gate"
-+	- "sprd,sc9860-pll"
-+	- "sprd,sc9860-ap-clk"
-+	- "sprd,sc9860-aon-prediv"
-+	- "sprd,sc9860-apahb-gate"
-+	- "sprd,sc9860-aon-gate"
-+	- "sprd,sc9860-aonsecure-clk"
-+	- "sprd,sc9860-agcp-gate"
-+	- "sprd,sc9860-gpu-clk"
-+	- "sprd,sc9860-vsp-clk"
-+	- "sprd,sc9860-vsp-gate"
-+	- "sprd,sc9860-cam-clk"
-+	- "sprd,sc9860-cam-gate"
-+	- "sprd,sc9860-disp-clk"
-+	- "sprd,sc9860-disp-gate"
-+	- "sprd,sc9860-apapb-gate"
-+
-+- #clock-cells: must be 1
-+
-+- clocks : shall be the input parent clock(s) phandle for the clock.
-+
-+Optional properties:
-+
-+- reg:	Contain the registers base address and length. It must be configured only if no 'sprd,syscon' under the node.
-+
-+- sprd,syscon: phandle to the syscon which is in the same address area with the clock.
-+
-+Example:
-+
-+	pmu_gate: pmu-gate {
-+		compatible = "sprd,sc9860-pmu-gate";
-+		sprd,syscon = <&pmu_apb>;
-+		clocks = <&ext_26m>;
-+		#clock-cells = <1>;
-+	};
-+
-+	pll: pll {
-+		compatible = "sprd,sc9860-pll";
-+		sprd,syscon = <&ana_apb>;
-+		clocks = <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ap_clk: clock-controller@20000000 {
-+		compatible = "sprd,sc9860-ap-clk";
-+		reg = <0 0x20000000 0 0x400>;
-+		clocks = <&ext_26m>, <&pll 0>,
-+			 <&pmu_gate 0>;
-+		#clock-cells = <1>;
-+	};
--- 
-2.7.4
+Applied fixes/drivers
+Thanks
