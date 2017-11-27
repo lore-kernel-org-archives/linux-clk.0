@@ -1,30 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 1 Nov 2017 23:46:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3] clk: qcom: Elaborate on "active" clocks in the RPM
- clock bindings
-Message-ID: <20171102064651.GF30645@codeaurora.org>
-References: <20171013112635.32296-1-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171013112635.32296-1-linus.walleij@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        jernej.skrabec@siol.net
+Subject: [PATCH v2 05/18] drm/sun4i: Force the mixer rate at 150MHz
+Date: Mon, 27 Nov 2017 16:41:29 +0100
+Message-Id: <55becb3a86a0a28ccca3f7c831ac6f6cf4854390.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/13, Linus Walleij wrote:
-> The concept of "active" clocks is just explained in a bried comment in the
-> device driver, let's explain it a bit more in the device tree bindings
-> so everyone understands this.
-> 
-> Cc: devicetree@vger.kernel.org
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+It seems like the mixer can only run properly when clocked at 150MHz. In
+order to have something more robust than simply a fire-and-forget
+assigned-clocks-rate, let's put that in the code.
 
-Applied to clk-next
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index cb193c5f1686..c0cdccf772a2 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -315,6 +315,13 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 	}
+ 	clk_prepare_enable(mixer->mod_clk);
+ 
++	/*
++	 * It seems that we need to enforce that rate for whatever
++	 * reason for the mixer to be functional. Make sure it's the
++	 * case.
++	 */
++	clk_set_rate(mixer->mod_clk, 150000000);
++
+ 	list_add_tail(&mixer->engine.list, &drv->engine_list);
+ 
+ 	/* Reset the registers */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
