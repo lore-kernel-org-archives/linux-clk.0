@@ -1,101 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V3 10/11] arm64: dts: add syscon for whale2 platform
-Date: Thu, 2 Nov 2017 14:56:25 +0800
-Message-ID: <20171102065626.21835-11-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-References: <20171102065626.21835-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        jernej.skrabec@siol.net
+Subject: [PATCH v2 17/18] ARM: dts: sun8i: a711: Reinstate the PMIC compatible
+Date: Mon, 27 Nov 2017 16:41:41 +0100
+Message-Id: <97e9c55836808d869f962c376f30d17b774f2251.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the SoC of Whale2 families (e.g. SC9860) are in the same
-address area with syscon devices, the proper syscon node will be
-quoted under the definitions of those clocks in DT.
+When we added the regulator support in commit 90c5d7cdae64 ("ARM: dts:
+sun8i: a711: Add regulator support"), we also dropped the PMIC's
+compatible. Since it's not in the PMIC DTSI, unlike most other PMIC
+DTSI, it obviously wasn't probing anymore.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Re-add it so that everything works again.
+
+Fixes: 90c5d7cdae64 ("ARM: dts: sun8i: a711: Add regulator support")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 7c217c5..a9995fa 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -17,6 +17,51 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+index 98715538932f..a021ee6da396 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -146,6 +146,7 @@
+ 	status = "okay";
  
-+		ap_ahb: syscon@20210000 {
-+			compatible = "syscon";
-+			reg = <0 0x20210000 0 0x10000>;
-+		};
-+
-+		pmu_apb: syscon@402b0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402b0000 0 0x10000>;
-+		};
-+
-+		aon_apb: syscon@402e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402e0000 0 0x10000>;
-+		};
-+
-+		ana_apb: syscon@40400000 {
-+			compatible = "syscon";
-+			reg = <0 0x40400000 0 0x10000>;
-+		};
-+
-+		agcp_ahb: syscon@415e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x415e0000 0 0x1000000>;
-+		};
-+
-+		vsp_ahb: syscon@61100000 {
-+			compatible = "syscon";
-+			reg = <0 0x61100000 0 0x10000>;
-+		};
-+
-+		cam_ahb: syscon@62100000 {
-+			compatible = "syscon";
-+			reg = <0 0x62100000 0 0x10000>;
-+		};
-+
-+		disp_ahb: syscon@63100000 {
-+			compatible = "syscon";
-+			reg = <0 0x63100000 0 0x10000>;
-+		};
-+
-+		ap_apb: syscon@70b00000 {
-+			compatible = "syscon";
-+			reg = <0 0x70b00000 0 0x40000>;
-+		};
-+
- 		ap-apb {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
-@@ -59,7 +104,6 @@
- 				status = "disabled";
- 			};
- 		};
--
- 	};
- 
- 	ext_26m: ext-26m {
+ 	axp81x: pmic@3a3 {
++		compatible = "x-powers,axp813";
+ 		reg = <0x3a3>;
+ 		interrupt-parent = <&r_intc>;
+ 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
 -- 
-2.7.4
+git-series 0.9.1
