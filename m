@@ -1,90 +1,176 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v7 1/6] dt-bindings: soc: add MT2712 power dt-bindings
-Date: Tue, 28 Nov 2017 15:28:17 +0800
-Message-ID: <1511854102-23195-3-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V6 06/12] clk: sprd: add composite clock support
+Date: Mon, 27 Nov 2017 18:01:09 +0800
+Message-ID: <20171127100115.20655-7-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add power dt-bindings for MT2712.
+This patch introduced composite driver for Spreadtrum's SoCs. The
+functions of this composite clock simply consist of divider and
+mux clocks.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
- include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 include/dt-bindings/power/mt2712-power.h
+ drivers/clk/sprd/Makefile    |  1 +
+ drivers/clk/sprd/composite.c | 62 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/composite.h | 53 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 40056f7..76bf45b 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -12,11 +12,13 @@ power/power_domain.txt. It provides the power domains defined in
- - include/dt-bindings/power/mt8173-power.h
- - include/dt-bindings/power/mt6797-power.h
- - include/dt-bindings/power/mt2701-power.h
-+- include/dt-bindings/power/mt2712-power.h
- - include/dt-bindings/power/mt7622-power.h
- 
- Required properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2701-scpsys"
-+	- "mediatek,mt2712-scpsys"
- 	- "mediatek,mt6797-scpsys"
- 	- "mediatek,mt7622-scpsys"
- 	- "mediatek,mt8173-scpsys"
-@@ -27,6 +29,7 @@ Required properties:
-                       These are clocks which hardware needs to be
-                       enabled before enabling certain power domains.
- 	Required clocks for MT2701: "mm", "mfg", "ethif"
-+	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
- 	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT7622: "hif_sel"
- 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
-diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 80e6039..2262e76 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
+ clk-sprd-y	+= div.o
++clk-sprd-y	+= composite.o
+diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
 new file mode 100644
-index 0000000..92b46d7
+index 0000000..218e17c
 --- /dev/null
-+++ b/include/dt-bindings/power/mt2712-power.h
-@@ -0,0 +1,26 @@
++++ b/drivers/clk/sprd/composite.c
+@@ -0,0 +1,62 @@
 +/*
-+ * Copyright (C) 2017 MediaTek Inc.
++ * Spreadtrum composite clock driver
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-+ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
++ * SPDX-License-Identifier: GPL-2.0
 + */
 +
-+#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
-+#define _DT_BINDINGS_POWER_MT2712_POWER_H
++#include <linux/clk-provider.h>
 +
-+#define MT2712_POWER_DOMAIN_MM		0
-+#define MT2712_POWER_DOMAIN_VDEC	1
-+#define MT2712_POWER_DOMAIN_VENC	2
-+#define MT2712_POWER_DOMAIN_ISP		3
-+#define MT2712_POWER_DOMAIN_AUDIO	4
-+#define MT2712_POWER_DOMAIN_USB		5
-+#define MT2712_POWER_DOMAIN_USB2	6
-+#define MT2712_POWER_DOMAIN_MFG		7
++#include "composite.h"
 +
-+#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
++static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_round_rate(&cc->common, &cc->div,
++					 rate, parent_rate);
++}
++
++static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
++}
++
++static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_set_rate(&cc->common, &cc->div,
++				       rate, parent_rate);
++}
++
++static u8 sprd_comp_get_parent(struct clk_hw *hw)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
++}
++
++static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
++}
++
++const struct clk_ops sprd_comp_ops = {
++	.get_parent	= sprd_comp_get_parent,
++	.set_parent	= sprd_comp_set_parent,
++
++	.round_rate	= sprd_comp_round_rate,
++	.recalc_rate	= sprd_comp_recalc_rate,
++	.set_rate	= sprd_comp_set_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_comp_ops);
+diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
+new file mode 100644
+index 0000000..b337bda
+--- /dev/null
++++ b/drivers/clk/sprd/composite.h
+@@ -0,0 +1,53 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_COMPOSITE_H_
++#define _SPRD_COMPOSITE_H_
++
++#include "common.h"
++#include "mux.h"
++#include "div.h"
++
++struct sprd_comp {
++	struct sprd_mux_ssel	mux;
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,	\
++			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
++	struct sprd_comp _struct = {					\
++		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
++		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
++		.common = {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parent,		\
++						       &sprd_comp_ops,	\
++						       _flags),		\
++			 }						\
++	}
++
++#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,	\
++			_mwidth, _dshift, _dwidth, _flags)	\
++	SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg,	\
++			    NULL, _mshift, _mwidth,		\
++			    _dshift, _dwidth, _flags)
++
++static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_comp, common);
++}
++
++extern const struct clk_ops sprd_comp_ops;
++
++#endif /* _SPRD_COMPOSITE_H_ */
 -- 
-1.9.1
+2.7.4
