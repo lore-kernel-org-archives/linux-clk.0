@@ -1,58 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Nov 2017 08:16:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: tegra: Add sor1_out clock
-Message-ID: <20171103151644.GT11011@codeaurora.org>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
- <20171102081648.GJ11011@codeaurora.org>
- <20171102084605.GA29341@ulmo>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 00/18] drm/sun4i: Add A83t LVDS support
+Date: Mon, 27 Nov 2017 17:20:52 +0100
+Message-ID: <2681268.ePd4u43rOS@jernej-laptop>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171102084605.GA29341@ulmo>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/02, Thierry Reding wrote:
-> On Thu, Nov 02, 2017 at 01:16:48AM -0700, Stephen Boyd wrote:
-> > On 09/01, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > The sor1_src clock implemented on Tegra210 is modelled the wrong way
-> > > around, which causes some issues with HDMI and DP support. This clock
-> > > implementation is provided by BPMP on Tegra186, which models this in
-> > > a more correct way. Since this introduces incompatibilities between
-> > > the two SoC generations which we want to avoid, the Tegra210 will be
-> > > fixed in subsequent patches.
-> > > 
-> > > This change adds sor1_out as an alias for sor1_src.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > 
-> > Applied to clk-next
-> 
-> Hi Stephen,
-> 
-> sorry for not having been clear about this. This patch and the  2-4 are
-> part of the pull request I sent out earlier (and for which I have an
-> updated one to fix the regression I mentioned last week). I'd prefer to
-> send this to you via pull request because there is a dependency on this
-> from the ARM SoC tree (for a DT change).
-> 
+Hi,
 
-Sure I can back out the changes. Next time please indicate your
-merge path/strategy in some sort of cover letter so I can ignore
-changes in the review queue. Also, if you pick up a patch from
-the list please send a note that you applied it to your tree so I
-know to wait for a PR later.
+Dne ponedeljek, 27. november 2017 ob 16:41:24 CET je Maxime Ripard napisal(a):
+> Hi,
+> 
+> Here is an attempt at supporting the LVDS output in our DRM driver. This
+> has been tested on the A83T (with DE2), but since everything is basically
+> in the TCON, it should also be usable on the older SoCs with minor
+> modifications.
+> 
+> This was the occasion to refactor a bunch of things. The most notable ones
+> would be the documentation, and split of the UI layers in the mixer code,
 
-Is the PR coming soon? I forgot about it because we were waiting
-for the second one.
+I'm just about to send my series of patches which would add full support for 
+UI and VI planes (multi planes, HW scaling, all color formats). It would clash 
+with your patches 6, 7 and 8.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Preview of my work as a single patch can be seen here:
+https://github.com/jernejsk/linux-1/commit/
+8fdef3b510b567bfe81c87b0c3e73ddcf4f5b711
+
+How would you like to handle that? Some changes are similar, but I don't see a 
+point rebasing my patches atop of yours.
+
+Since I'm almost done, I will just send them and we can discuss them then.
+
+Best regards,
+Jernej
+
+> and the switch to kfifo for our endpoint parsing code in the driver that
+> fixes an issue introduced by the switch to BFS.
+> 
+> Let me know what you think,
+> Maxime
