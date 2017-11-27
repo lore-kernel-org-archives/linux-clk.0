@@ -1,215 +1,166 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1511428145.7685.7.camel@pengutronix.de>
-Subject: Re: [PATCH 2/8] mfd: mtk-mmsys: Add mmsys driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
- ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
- lee.jones@linaro.org
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	Matthias Brugger
-	 <mbrugger@suse.com>
-Date: Thu, 23 Nov 2017 10:09:05 +0100
-In-Reply-To: <20171114214114.15793-3-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-3-mbrugger@suse.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:44963 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752915AbdK0Xn2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 18:43:28 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171127222238.GF18379@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
+ <CAF6AEGsw2=nERuJ8UCBr_kTBS0TigaA9LL1Hxw3JmNiu4oycOA@mail.gmail.com>
+ <CAFp+6iGyB-iVb+vyDr6Dzk1FG6baiNy_kZWjB3sm_GViDh6rnQ@mail.gmail.com> <20171127222238.GF18379@codeaurora.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 27 Nov 2017 18:43:26 -0500
+Message-ID: <CAF6AEGtq2_tMBd1U_t19s8Eg7+-RPQ+E_pCZCd75iFs6_bx53A@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matthias,
+On Mon, Nov 27, 2017 at 5:22 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/15, Vivek Gautam wrote:
+>> Hi,
+>>
+>>
+>> On Mon, Aug 7, 2017 at 5:59 PM, Rob Clark <robdclark@gmail.com> wrote:
+>> > On Mon, Aug 7, 2017 at 4:27 AM, Vivek Gautam
+>> > <vivek.gautam@codeaurora.org> wrote:
+>> >> On Thu, Jul 13, 2017 at 5:20 PM, Rob Clark <robdclark@gmail.com> wrote:
+>> >>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> >>>> Hi Vivek,
+>> >>>>
+>> >>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>> >>>>> Hi Stephen,
+>> >>>>>
+>> >>>>>
+>> >>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>> >>>>>> On 07/06, Vivek Gautam wrote:
+>> >>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>> >>>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>> >>>>>>>                    size_t size)
+>> >>>>>>>   {
+>> >>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>> >>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>> >>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>> >>>>>>> +    size_t ret;
+>> >>>>>>>         if (!ops)
+>> >>>>>>>           return 0;
+>> >>>>>>>   -    return ops->unmap(ops, iova, size);
+>> >>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>> >>>>>> Can these map/unmap ops be called from an atomic context? I seem
+>> >>>>>> to recall that being a problem before.
+>> >>>>>
+>> >>>>> That's something which was dropped in the following patch merged in master:
+>> >>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>> >>>>>
+>> >>>>> Looks like we don't  need locks here anymore?
+>> >>>>
+>> >>>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>> >>>>  from unmap. Somehow looks like some path in the master using that
+>> >>>>  should have enabled the pm ?
+>> >>>>
+>> >>>
+>> >>> Yes, there are a bunch of scenarios where unmap can happen with
+>> >>> disabled master (but not in atomic context).
+>> >>
+>> >> I would like to understand whether there is a situation where an unmap is
+>> >> called in atomic context without an enabled master?
+>> >>
+>> >> Let's say we have the case where all the unmap calls in atomic context happen
+>> >> only from the master's context (in which case the device link should
+>> >> take care of
+>> >> the pm state of smmu), and the only unmap that happen in non-atomic context
+>> >> is the one with master disabled. In such a case doesn it make sense to
+>> >> distinguish
+>> >> the atomic/non-atomic context and add pm_runtime_get_sync()/put_sync() only
+>> >> for the non-atomic context since that would be the one with master disabled.
+>> >>
+>> >
+>> > At least drm/msm needs to hold obj->lock (a mutex) in unmap, so it
+>> > won't unmap anything in atomic ctx (but it can unmap w/ master
+>> > disabled).  I can't really comment about other non-gpu drivers.  It
+>> > seems like a reasonable constraint that either master is enabled or
+>> > not in atomic ctx.
+>> >
+>> > Currently we actually wrap unmap w/ pm_runtime_get/put_sync(), but I'd
+>> > like to drop that to avoid powering up the gpu.
+>>
+>> Since the deferring the TLB maintenance doesn't look like the best approach [1],
+>> how about if we try to power-up only the smmu from different client
+>> devices such as,
+>> GPU in the unmap path. Then we won't need to add pm_runtime_get/put() calls in
+>> arm_smmu_unmap().
+>>
+>> The client device can use something like - pm_runtime_get_supplier() since
+>> we already have the device link in place with this patch series. This should
+>> power-on the supplier (which is smmu) without turning on the consumer
+>> (such as GPU).
+>>
+>> pm_runtime_get_supplier() however is not exported at this moment.
+>> Will it be useful to export this API and use it in the drivers.
+>>
+>
+> I'm not sure pm_runtime_get_supplier() is correct either. That
+> feels like we're relying on the GPU driver knowing the internal
+> details of how the device links are configured.
+>
 
-On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> The MMSYS subsystem includes clocks and drm components.
-> This patch adds a MFD device to probe both drivers from the same
-> device tree compatible.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  drivers/mfd/Kconfig       |  9 +++++
->  drivers/mfd/Makefile      |  2 ++
->  drivers/mfd/mtk-mmsys.c   | 91 +++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/mmsys.h | 18 ++++++++++
->  4 files changed, 120 insertions(+)
->  create mode 100644 drivers/mfd/mtk-mmsys.c
->  create mode 100644 include/linux/mfd/mmsys.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index fc5e4fef89d2..3250ce5d205a 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -368,6 +368,15 @@ config MFD_MC13XXX_I2C
->  	help
->  	  Select this if your MC13xxx is connected via an I2C bus.
->  
-> +config MFD_MEDIATEK_MMSYS
-> +	tristate "Mediatek MMSYS interface"
-> +	select MDF_CORE
-> +	select REGMAP_MMIO
-> +	help
-> +	  Select this if you have a MMSYS subsystem in your SoC. The
-> +	  MMSYS subsystem has at least a clock driver part and some
-> +	  DRM components.
-> +
->  config MFD_MXS_LRADC
->  	tristate "Freescale i.MX23/i.MX28 LRADC"
->  	depends on ARCH_MXS || COMPILE_TEST
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 8703ff17998e..d4fc99df784c 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -100,6 +100,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
->  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
->  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
->  
-> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
-> +
->  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
->  
->  obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-> new file mode 100644
-> index 000000000000..102b491aa28f
-> --- /dev/null
-> +++ b/drivers/mfd/mtk-mmsys.c
-> @@ -0,0 +1,91 @@
-> +/*
-> + * mtk-mmsys.c  --  Mediatek MMSYS multi-function driver
-> + *
-> + *  Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
-> + *
-> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
-> + *
-> + * For licencing details see kernel-base/COPYING
-> + *
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/mmsys.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +enum {
-> +	MMSYS_MT2701 = 1,
-> +};
-> +
-> +static const struct mfd_cell mmsys_mt2701_devs[] = {
-> +	{ .name = "clk-mt2701-mm", },
-> +	{ .name = "drm-mt2701-mm", },
-> +};
-> +
-> +static int mmsys_probe(struct platform_device *pdev)
-> +{
-> +	struct mmsys_dev *private;
-> +	const struct mfd_cell *mmsys_cells;
-> +	int nr_cells;
-> +	long id;
-> +	int ret;
-> +
-> +	id = (long) of_device_get_match_data(&pdev->dev);
-> +	if (!id) {
-> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	switch (id) {
-> +	case MMSYS_MT2701:
-> +		mmsys_cells = mmsys_mt2701_devs;
-> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
-> +		break;
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
-> +	if (!private)
-> +		return -ENOMEM;
-> +
-> +	private->dev = &pdev->dev;
-> +	dev_set_drvdata(private->dev, private);
-> +
-> +	private->of_node = pdev->dev.of_node;
+what does pm_runtime_get_supplier() do if IOMMU driver hasn't setup
+device-link?  If it is a no-op, then I guess the GPU driver calling
+pm_runtime_get_supplier() seems reasonable, and less annoying than
+having special cases in pm_resume path.. I don't feel too bad about
+having "just in case" get/put_supplier() calls in the unmap path.
 
-This seems superfluous to me. The of_node can be obtained from the
-device, and the device itself is already needed to get to the drvdata.
+Also, presumably we still want to avoid powering up GPU even if we
+short circuit the firmware loading and rest of "booting up the GPU"..
+since presumably the GPU draws somewhat more power than the IOMMU..
+having the pm_resume/suspend path know about the diff between waking
+up / suspending the iommu and itself doesn't really feel less-bad than
+just doing "just in case" get/put_supplier() calls.
 
-Instead of
+BR,
+-R
 
-	mmsys_private = drv_get_drvdata(pdev->dev.parent);
-	mmsys_dev = mmsys_private.dev;
-	mmsys_of_node = mmsys_private.of_node;
-
-couldn't the mfd children just do
-
-	mmsys_dev = pdev->dev.parent;
-	mmsys_of_node = pdev->dev.parent->of_node;
-
-?
-
-> +
-> +	ret = devm_mfd_add_devices(private->dev, 0, mmsys_cells, nr_cells,
-> +					NULL, 0, NULL);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +};
-> +
-> +static const struct of_device_id of_match_mmsys[] = {
-> +	{ .compatible = "mediatek,mt2701-mmsys",
-> +	  .data = (void *) MMSYS_MT2701,
-> +	},
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static struct platform_driver mmsys_drv = {
-> +	.probe = mmsys_probe,
-> +	.driver = {
-> +		.name = "mediatek-mmysys",
-> +		.of_match_table = of_match_ptr(of_match_mmsys),
-> +	},
-> +};
-> +
-> +builtin_platform_driver(mmsys_drv);
-> +
-> +MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/mmsys.h b/include/linux/mfd/mmsys.h
-> new file mode 100644
-> index 000000000000..274b9ee03ada
-> --- /dev/null
-> +++ b/include/linux/mfd/mmsys.h
-> @@ -0,0 +1,18 @@
-> +/* Header of MMSYS MFD core driver for Mediatek platforms
-> + *
-> + * Copyright (c) 2017 Matthias Brugger <matthias.bgg@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it under
-> + * the terms of the GNU General Public License version 2 as published by the
-> + * Free Software Foundation.
-> + */
-> +
-> +#ifndef __MEDIATEK_MMSYS__H__
-> +#define __MEDIATEK_MMSYS__H__
-> +
-> +struct mmsys_dev {
-> +	struct device		*dev;
-> +	struct device_node	*of_node;
-> +};
-
-This wouldn't be needed, then.
-
-regards
-Philipp
+> Is there some way to have the GPU driver know in its runtime PM
+> resume hook that it doesn't need to be powered on because it
+> isn't actively drawing anything or processing commands? I'm
+> thinking of the code calling pm_runtime_get() as proposed around
+> the IOMMU unmap path in the GPU driver and then having the
+> runtime PM resume hook in the GPU driver return some special
+> value to indicate that it didn't really resume because it didn't
+> need to and to treat the device as runtime suspended but not
+> return an error. Then the runtime PM core can keep track of that
+> and try to power the GPU on again when another pm_runtime_get()
+> is called on the GPU device.
+>
+> This keeps the consumer API the same, always pm_runtime_get(),
+> but leaves the device driver logic of what to do when the GPU
+> doesn't need to power on to the runtime PM hook where the driver
+> has all the information.
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
