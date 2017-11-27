@@ -1,32 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 01:16:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: tegra: Use tegra_clk_register_periph_data()
-Message-ID: <20171102081653.GL11011@codeaurora.org>
-References: <20170901145343.19890-1-thierry.reding@gmail.com>
- <20170901145343.19890-3-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170901145343.19890-3-thierry.reding@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        jernej.skrabec@siol.net
+Subject: [PATCH v2 12/18] drm/sun4i: Add A83T support
+Date: Mon, 27 Nov 2017 16:41:36 +0100
+Message-Id: <3a7cfb438e479000986948caf3c14461be6bbe40.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/01, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Instead of open-coding the same pattern repeatedly, reuse the newly
-> introduced tegra_clk_register_periph_data() helper that will unpack
-> the initialization structure.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
+Add support for the A83T display pipeline.
 
-Applied to clk-next
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 5a1376965270..83b83e070fd5 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -388,6 +388,11 @@ static int sun8i_mixer_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct sun8i_mixer_cfg sun8i_a83t_mixer_cfg = {
++	.vi_num = 1,
++	.ui_num = 3,
++};
++
+ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.vi_num = 2,
+ 	.ui_num = 1,
+@@ -396,7 +401,7 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-de2-mixer",
+-		.data = &sun8i_v3s_mixer_cfg,
++		.data = &sun8i_a83t_mixer_cfg,
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
