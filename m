@@ -1,93 +1,43 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	arnd@arndb.de,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 2/3] arm64: dts: actions: Add S900 clock management unit nodes
-Date: Tue,  7 Nov 2017 01:15:51 +0530
-Message-Id: <1509997552-29718-3-git-send-email-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
-References: <1509997552-29718-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v7 0/6] Mediatek MT2712 clock and scpsys support 
+Date: Tue, 28 Nov 2017 15:28:15 +0800
+Message-ID: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Actions Semi S900 Clock Management Unit (CMU) nodes
+This series is based on v4.15-rc1 and composed of
+scpsys control (PATCH 1-4) and device tree (PATCH 5-6)
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
-Changes in v2:
+changes since v6:
+- Rebase to v4.15-rc1.
 
-1. Fixed commit message
-2. Changed "diff_24M" to "diff24M"
-3. Changed clock-controller node name to "cmu"
-4. Added clocks property
-5. Moved "cmu" node under "soc" node
-6. Sorted headers in alphabetical order
+changes since v5:
+- Refine bus protection with proper variable name
+  and better implementation for the if statement.
 
- arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+changes since v4:
+- Refine scpsys and infracfg for bus protection by passing 
+  a boolean flag to determine the register update method
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 11406f6..bc0963e 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -4,6 +4,7 @@
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
- 
-+#include <dt-bindings/clock/actions,s900-cmu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -88,6 +89,18 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
-+
-+	diff24M: diff24M {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -154,6 +167,13 @@
- 			status = "disabled";
- 		};
- 
-+		cmu: clock-controller@e0160000 {
-+			compatible = "actions,s900-cmu";
-+			reg = <0 0xe0160000 0 0x1000>;
-+			clocks = <&hosc>, <&losc>;
-+			#clock-cells = <1>;
-+		};
-+
- 		timer: timer@e0228000 {
- 			compatible = "actions,s900-timer";
- 			reg = <0x0 0xe0228000 0x0 0x8000>;
--- 
-2.7.4
+changes since v3:
+- Rebase to v4.14-rc1.
+
+changes since v2:
+- ensure the clocks used by clocksource driver are registered
+  before clocksource init() by using CLK_OF_DECLARE()
+- correct the frequency of clk32k/clkrtc_ext/clkrtc_int
+
+changes since v1:
+- Rebase to v4.13-next-soc.
+- Refine scpsys and infracfg for bus protection.
