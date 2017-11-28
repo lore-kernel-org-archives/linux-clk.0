@@ -1,70 +1,177 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:19700 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752555AbdK1XRB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 18:17:01 -0500
-Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
-To: Rob Herring <robh@kernel.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-3-yixun.lan@amlogic.com>
- <20171128163022.7b7wvfqedkhhnaj6@rob-hp-laptop>
-CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <1811d609-36bc-290c-6405-80121e4de8bb@amlogic.com>
-Date: Wed, 29 Nov 2017 07:16:52 +0800
-MIME-Version: 1.0
-In-Reply-To: <20171128163022.7b7wvfqedkhhnaj6@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v6 5/5] clk: aspeed: Add reset controller
+Date: Tue, 28 Nov 2017 17:49:08 +1030
+Message-Id: <20171128071908.12279-6-joel@jms.id.au>
+In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
+References: <20171128071908.12279-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
+There are some resets that are not associated with gates. These are
+represented by a reset controller.
 
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v5:
+  - Add Andrew's Reviewed-by
+v3:
+  - Add named initalisers for the reset defines
+  - Add define for ADC
+---
+ drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h | 10 ++++
+ 2 files changed, 91 insertions(+), 1 deletion(-)
 
-HI Rob
-
-On 11/29/17 00:30, Rob Herring wrote:
-> On Tue, Nov 28, 2017 at 08:53:29PM +0800, Yixun Lan wrote:
->> From: Qiufang Dai <qiufang.dai@amlogic.com>
->>
->> Add clock controller drivers for Amlogic Meson-AXG SoC.
->>
->> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  arch/arm64/Kconfig.platforms         |   1 +
->>  drivers/clk/meson/Kconfig            |   8 +
->>  drivers/clk/meson/Makefile           |   1 +
->>  drivers/clk/meson/axg.c              | 948 +++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/axg.h              | 126 +++++
-> 
->>  include/dt-bindings/clock/axg-clkc.h |  72 +++
-> 
-> This belongs in the binding patch.
-> 
-is it Ok to keep it in this patch?
-the initial idea to do this is to keep the commit bisectable..
-
-> Otherwise, 
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> 
->>  6 files changed, 1156 insertions(+)
->>  create mode 100644 drivers/clk/meson/axg.c
->>  create mode 100644 drivers/clk/meson/axg.h
->>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
-> 
-> .
-> 
-
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index b5dc3e298693..f2722be17ede 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -8,6 +8,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -266,6 +267,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.is_enabled = aspeed_clk_is_enabled,
+ };
+ 
++/**
++ * struct aspeed_reset - Aspeed reset controller
++ * @map: regmap to access the containing system controller
++ * @rcdev: reset controller device
++ */
++struct aspeed_reset {
++	struct regmap			*map;
++	struct reset_controller_dev	rcdev;
++};
++
++#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++
++static const u8 aspeed_resets[] = {
++	[ASPEED_RESET_XDMA]	= 25,
++	[ASPEED_RESET_MCTP]	= 24,
++	[ASPEED_RESET_ADC]	= 23,
++	[ASPEED_RESET_JTAG_MASTER] = 22,
++	[ASPEED_RESET_MIC]	= 18,
++	[ASPEED_RESET_PWM]	=  9,
++	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_I2C]	=  2,
++	[ASPEED_RESET_AHB]	=  1,
++};
++
++static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++}
++
++static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 rst = BIT(aspeed_resets[id]);
++
++	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++}
++
++static int aspeed_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
++	u32 val, rst = BIT(aspeed_resets[id]);
++	int ret;
++
++	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	if (ret)
++		return ret;
++
++	return !!(val & rst);
++}
++
++static const struct reset_control_ops aspeed_reset_ops = {
++	.assert = aspeed_reset_assert,
++	.deassert = aspeed_reset_deassert,
++	.status = aspeed_reset_status,
++};
++
+ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+@@ -307,10 +370,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+ 	struct device *dev = &pdev->dev;
++	struct aspeed_reset *ar;
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
+-	int i;
++	int i, ret;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -318,6 +382,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
+ 	}
+ 
++	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
++	if (!ar)
++		return -ENOMEM;
++
++	ar->map = map;
++	ar->rcdev.owner = THIS_MODULE;
++	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
++	ar->rcdev.ops = &aspeed_reset_ops;
++	ar->rcdev.of_node = dev->of_node;
++
++	ret = devm_reset_controller_register(dev, &ar->rcdev);
++	if (ret) {
++		dev_err(dev, "could not register reset controller\n");
++		return ret;
++	}
++
+ 	/* SoC generations share common layouts but have different divisors */
+ 	soc_data = of_device_get_match_data(dev);
+ 	if (!soc_data) {
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index 9e170fb9a0da..fe46ab69da5c 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -41,4 +41,14 @@
+ 
+ #define ASPEED_NUM_CLKS			35
+ 
++#define ASPEED_RESET_XDMA		0
++#define ASPEED_RESET_MCTP		1
++#define ASPEED_RESET_ADC		2
++#define ASPEED_RESET_JTAG_MASTER	3
++#define ASPEED_RESET_MIC		4
++#define ASPEED_RESET_PWM		5
++#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_I2C		7
++#define ASPEED_RESET_AHB		8
++
+ #endif
+-- 
+2.14.1
