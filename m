@@ -1,56 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 00:25:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [PATCH] clk: imx: clk-imx6ul: allow lcdif_pre_sel to change
- parent rate
-Message-ID: <20171102072550.GQ30645@codeaurora.org>
-References: <20171012132935.3508-1-p.zabel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38167 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbdK1G6a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 01:58:30 -0500
+Received: by mail-wm0-f66.google.com with SMTP id n74so13945016wmi.3
+        for <linux-clk@vger.kernel.org>; Mon, 27 Nov 2017 22:58:30 -0800 (PST)
+To: Sudeep Holla <sudeep.holla@arm.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH] clk: fix compile testing of scpi clk driver
+Cc: linux-clk@vger.kernel.org,
+        kbuild test robot <fengguang.wu@intel.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Message-ID: <24058ecb-9f12-f7e1-503d-bd98eb894c6c@gmail.com>
+Date: Tue, 28 Nov 2017 07:58:23 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171012132935.3508-1-p.zabel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/12, Philipp Zabel wrote:
-> Allowing the lcdif_pre_sel to propagate rate changes to its parent PLL
-> allows more fine grained control over the LCDIF pixel clock rate.
-> 
-> For example, the Innovision AT043TN24 LCD panel described in the
-> imx6ul-14x14-evk device tree requires a 9 MHz pixel clock.
-> Before this patch, the lcdif_pre_sel clock rate is fixed, and just
-> setting the lcdif_pred and lcdif_podf dividers only allows to get as
-> close as about 8.44 MHz:
-> 
->     pll3                                  1            1   480000000 0 0
->        pll3_bypass                        1            1   480000000 0 0
-> 	  pll3_usb_otg                    1            1   480000000 0 0
-> 	     pll3_pfd1_540m               1            1   540000000 0 0
-> 		lcdif_pre_sel             1            1   540000000 0 0
-> 		   lcdif_pred             1            1    67500000 0 0
-> 		      lcdif_podf           1            1     8437500 0 0
-> 			 lcdif_pix           1            1     8437500 0 0
-> 
-> Once lcdif_pre_sel is allowed to propagate rate requests to its parent,
-> the actual pixel clock matches the requested value:
-> 
->     pll3                                  1            1   480000000 0 0
->        pll3_bypass                        1            1   480000000 0 0
-> 	  pll3_usb_otg                    1            1   480000000 0 0
-> 	     pll3_pfd1_540m               1            1   288000000 0 0
-> 		lcdif_pre_sel             1            1   288000000 0 0
-> 		   lcdif_pred             1            1    36000000 0 0
-> 		      lcdif_podf           1            1     9000000 0 0
->                          lcdif_pix           1            1     9000000 0 0
-> 
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
+We now have a hard dependency on ARM_SCPI_PROTOCOL and may end up with
+the following error:
+ERROR: "get_scpi_ops" [drivers/clk/clk-scpi.ko] undefined!
+Fix this by removing COMPILE_TEST from COMMON_CLK_SCPI dependencies.
 
-Applied to clk-next
+Fixes: f7fee8be06a6 "firmware: arm_scpi: remove default for get_scpi_ops if not reachable"
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/clk/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1c4e1aa67..fe6fd705f 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -64,7 +64,7 @@ config COMMON_CLK_HI655X
+ 
+ config COMMON_CLK_SCPI
+ 	tristate "Clock driver controlled via SCPI interface"
+-	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
++	depends on ARM_SCPI_PROTOCOL
+ 	  ---help---
+ 	  This driver provides support for clocks that are controlled
+ 	  by firmware that implements the SCPI interface.
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
+
