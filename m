@@ -1,55 +1,213 @@
-Return-Path: <zhongkaihua@huawei.com>
-From: Kaihua Zhong <zhongkaihua@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <xuejiancheng@hisilicon.com>, <wenpan@hisilicon.com>,
-	<leo.yan@linaro.org>, <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
-	<zhongkaihua@huawei.com>, <chenjun14@huawei.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
-	<kevin.wangtao@hisilicon.com>
-Subject: [PATCH 1/3] dt-bindings: clk: Hi3660: Document stub clock
-Date: Fri, 3 Nov 2017 15:25:05 +0800
-Message-ID: <1509693907-90682-2-git-send-email-zhongkaihua@huawei.com>
-In-Reply-To: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
-References: <1509693907-90682-1-git-send-email-zhongkaihua@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v6 4/5] clk: aspeed: Register gated clocks
+Date: Tue, 28 Nov 2017 17:49:07 +1030
+Message-Id: <20171128071908.12279-5-joel@jms.id.au>
+In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
+References: <20171128071908.12279-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Leo Yan <leo.yan@linaro.org>
+The majority of the clocks in the system are gates paired with a reset
+controller that holds the IP in reset.
 
-Document the DT binding for stub clock which is used for CPU,
-GPU and DDR frequency scaling.
+This borrows from clk_hw_register_gate, but registers two 'gates', one
+to control the clock enable register and the other to control the reset
+IP. This allows us to enforce the ordering:
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+ 1. Place IP in reset
+ 2. Enable clock
+ 3. Delay
+ 4. Release reset
+
+There are some gates that do not have an associated reset; these are
+handled by using -1 as the index for the reset.
+
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- Documentation/devicetree/bindings/clock/hi3660-clock.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+v5:
+  - Add Andrew's Reviewed-by
+v4:
+ - Drop useless 'disable clock' comment
+ - Drop CLK_IS_BASIC flag
+ - Fix 'there are a number of clocks...' comment
+ - Pass device to clk registration functions
+ - Check for errors when registering clk_hws
+v3:
+ - Remove gates offset as gates are now at the start of the list
+---
+ drivers/clk/clk-aspeed.c | 131 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 131 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/hi3660-clock.txt b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-index 0035a7e..946da7c 100644
---- a/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi3660-clock.txt
-@@ -13,12 +13,18 @@ Required Properties:
- 	- "hisilicon,hi3660-pmuctrl"
- 	- "hisilicon,hi3660-sctrl"
- 	- "hisilicon,hi3660-iomcu"
-+	- "hisilicon,hi3660-stub-clk"
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 839243691b26..b5dc3e298693 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -202,6 +202,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
+ 	.calc_pll = aspeed_ast2400_calc_pll,
+ };
  
- - reg: physical base address of the controller and length of memory mapped
-   region.
- 
- - #clock-cells: should be 1.
- 
-+Optional Properties:
++static int aspeed_clk_enable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++	u32 rst = BIT(gate->reset_idx);
 +
-+- mboxes: Phandle to the mailbox for sending message to MCU.
-+            (See: ../mailbox/hisilicon,hi3660-mailbox.txt for more info)
++	spin_lock_irqsave(gate->lock, flags);
 +
- Each clock is assigned an identifier and client nodes use this identifier
- to specify the clock which they consume.
++	if (gate->reset_idx >= 0) {
++		/* Put IP in reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
++
++		/* Delay 100us */
++		udelay(100);
++	}
++
++	/* Enable clock */
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
++
++	if (gate->reset_idx >= 0) {
++		/* Delay 10ms */
++		/* TODO: can we sleep here? */
++		msleep(10);
++
++		/* Take IP out of reset */
++		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
++	}
++
++	spin_unlock_irqrestore(gate->lock, flags);
++
++	return 0;
++}
++
++static void aspeed_clk_disable(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	unsigned long flags;
++	u32 clk = BIT(gate->clock_idx);
++
++	spin_lock_irqsave(gate->lock, flags);
++
++	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
++
++	spin_unlock_irqrestore(gate->lock, flags);
++}
++
++static int aspeed_clk_is_enabled(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	u32 clk = BIT(gate->clock_idx);
++	u32 reg;
++
++	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
++
++	return (reg & clk) ? 0 : 1;
++}
++
++static const struct clk_ops aspeed_clk_gate_ops = {
++	.enable = aspeed_clk_enable,
++	.disable = aspeed_clk_disable,
++	.is_enabled = aspeed_clk_is_enabled,
++};
++
++static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		struct regmap *map, u8 clock_idx, u8 reset_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	struct aspeed_clk_gate *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &aspeed_clk_gate_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->map = map;
++	gate->clock_idx = clock_idx;
++	gate->reset_idx = reset_idx;
++	gate->flags = clk_gate_flags;
++	gate->lock = lock;
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
+ static int aspeed_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct aspeed_clk_soc_data *soc_data;
+@@ -209,6 +310,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 	struct regmap *map;
+ 	struct clk_hw *hw;
+ 	u32 val, rate;
++	int i;
+ 
+ 	map = syscon_node_to_regmap(dev->of_node);
+ 	if (IS_ERR(map)) {
+@@ -281,6 +383,35 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hw);
+ 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
+ 
++	/*
++	 * TODO: There are a number of clocks that not included in this driver
++	 * as more information is required:
++	 *   D2-PLL
++	 *   D-PLL
++	 *   YCLK
++	 *   RGMII
++	 *   RMII
++	 *   UART[1..5] clock source mux
++	 *   Video Engine (ECLK) mux and clock divider
++	 */
++
++	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
++		const struct aspeed_gate_data *gd = &aspeed_gates[i];
++
++		hw = aspeed_clk_hw_register_gate(dev,
++				gd->name,
++				gd->parent_name,
++				gd->flags,
++				map,
++				gd->clock_idx,
++				gd->reset_idx,
++				CLK_GATE_SET_TO_DISABLE,
++				&aspeed_clk_lock);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++		aspeed_clk_data->hws[i] = hw;
++	}
++
+ 	return 0;
+ };
  
 -- 
-1.9.1
+2.14.1
