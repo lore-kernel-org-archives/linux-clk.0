@@ -1,9 +1,9 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:37337 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:54617 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933106AbdK2PzP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Nov 2017 10:55:15 -0500
-Date: Wed, 29 Nov 2017 16:55:13 +0100
+        with ESMTP id S1750907AbdK1JCf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 04:02:35 -0500
+Date: Tue, 28 Nov 2017 10:02:23 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
 Cc: Daniel Vetter <daniel.vetter@intel.com>,
@@ -14,89 +14,81 @@ Cc: Daniel Vetter <daniel.vetter@intel.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         plaes@plaes.org, icenowy@aosc.io,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 05/18] drm/sun4i: Force the mixer rate at 150MHz
-Message-ID: <20171129155513.vf3i7lkticvucr3s@flea.lan>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+Message-ID: <20171128090223.mqp3v2t6koyu6hk4@flea.home>
 References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
- <9630064.mDmGGWOQGt@jernej-laptop>
- <20171128085826.snmflonvbic5put3@flea.home>
- <2326800.o3FEWRaSfH@jernej-laptop>
+ <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <2744508.m82qQEPny3@jernej-laptop>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q46wa4n5scekor7b"
-In-Reply-To: <2326800.o3FEWRaSfH@jernej-laptop>
+        protocol="application/pgp-signature"; boundary="2jvhs2ny2qmgiaxy"
+In-Reply-To: <2744508.m82qQEPny3@jernej-laptop>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---q46wa4n5scekor7b
+--2jvhs2ny2qmgiaxy
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 28, 2017 at 10:56:31PM +0100, Jernej =C5=A0krabec wrote:
-> Hi!
->=20
-> Dne torek, 28. november 2017 ob 09:58:26 CET je Maxime Ripard napisal(a):
-> > On Mon, Nov 27, 2017 at 05:07:04PM +0100, Jernej =C5=A0krabec wrote:
-> > > Hi Maxime,
-> > >=20
-> > > Dne ponedeljek, 27. november 2017 ob 16:41:29 CET je Maxime Ripard=20
-> napisal(a):
-> > > > It seems like the mixer can only run properly when clocked at 150MH=
-z. In
-> > > > order to have something more robust than simply a fire-and-forget
-> > > > assigned-clocks-rate, let's put that in the code.
-> > > >=20
-> > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > > ---
-> > > >=20
-> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 7 +++++++
-> > > >  1 file changed, 7 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index cb193c5f1686..c0cdccf77=
-2a2
-> > > > 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > @@ -315,6 +315,13 @@ static int sun8i_mixer_bind(struct device *dev,
-> > > > struct
-> > > > device *master, }
-> > > >=20
-> > > >  	clk_prepare_enable(mixer->mod_clk);
-> > > >=20
-> > > > +	/*
-> > > > +	 * It seems that we need to enforce that rate for whatever
-> > > > +	 * reason for the mixer to be functional. Make sure it's the
-> > > > +	 * case.
-> > > > +	 */
-> > > > +	clk_set_rate(mixer->mod_clk, 150000000);
-> > > > +
-> > >=20
-> > > H3 mixer works at much higher rate and if we want to support tv out, =
-it
-> > > must be dividable by 432 MHz, so either 432 MHz or maybe even 864 MHz.
-> > >=20
-> > > We talked about that few months ago.
-> > >=20
-> > > I guess this should be read from mixer configuration structure.
+Hi,
+
+On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej =C5=A0krabec wrote:
+> Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard napisa=
+l(a):
+> > Add support for the A83T display pipeline.
 > >=20
-> > That works for me. Actually, I didn't need it at all for the LVDS
-> > output on the A83t, the default seems to work just fine. Do you know
-> > what it's related to? Maybe we can make that a bit more dynamic?
+> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+> >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
+> >  4 files changed, 14 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.=
+txt
+> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> > d4259a4f5171..d6b52e5c48c0 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > @@ -93,6 +93,7 @@ Required properties:
+> >     * allwinner,sun6i-a31s-tcon
+> >     * allwinner,sun7i-a20-tcon
+> >     * allwinner,sun8i-a33-tcon
+> > +   * allwinner,sun8i-a83t-tcon-lcd
+> >     * allwinner,sun8i-v3s-tcon
+> >   - reg: base address and size of memory-mapped region
+> >   - interrupts: interrupt associated to this IP
+> > @@ -224,6 +225,7 @@ supported.
+> >=20
+> >  Required properties:
+> >    - compatible: value must be one of:
+> > +    * allwinner,sun8i-a83t-de2-mixer
 >=20
-> There doesn't seem to be any rule to determine which frequency is best, e=
-xcept=20
-> on H3. Obviously, it must be high enough to process data for current=20
-> resolution, which means 150 MHz should be just enough for 1920x1080@60Hz.=
- I=20
-> guess we should just check BSP configuration and use same rate since AW=
-=20
-> engineers may know something we don't.
+> What will be the name of the second mixer, once support for HDMI is added=
+?=20
+> Should we start directly with 0 and 1 postfix ?
 
-Yeah, that makes sense. And the fact that it's in the kernel allows us
-to change for something smarter when we want (and if we need) to.
+What are the differences exactly without the two mixers?
 
+I was hoping to be able to cover them all using properties, indices
+are usually pretty badly received in compatibles.
+
+> >  static const struct of_device_id sun8i_mixer_of_table[] =3D {
+> >  	{
+> > +		.compatible =3D "allwinner,sun8i-a83t-de2-mixer",
+> > +		.data =3D &sun8i_v3s_mixer_cfg,
+> > +	},
+> > +	{
+>=20
+> Maybe you want to squash 12 patch since this works only by luck.
+
+Yeah, I totally meant to do that :)
+
+Thanks!
 Maxime
 
 --=20
@@ -104,24 +96,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---q46wa4n5scekor7b
+--2jvhs2ny2qmgiaxy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAloe2F4ACgkQ0rTAlCFN
-r3S8pQ//SmNLII+a7hIG4jg5fhyeOAyY2Gq+dH+hthRZNvUQ47IFmO5Y6uMmO6pS
-2ugcLuvrfh0dmU0Udez10PokTS8ki936eHEetRUP+An10B+FX4vvmvPSg+JXUO6B
-AcykVRWnH1cYYYAcTimYlC2jV32sLaGbvm8hBcuBRVB7ZqVqE2Oot7PY+J2dLbNV
-KeLzBQ9w8kCdcNZmFhCnfnEpvtYzTCGY4ZqwXwiQXcV1ELDftfjd+e/ZZy64/kVh
-3DMIcYUlMxYd6NCrBi7Bvy/0NfLFUgxJxmQnCY0+L1/SpgRBYQwVPrZBVprchaZk
-NQdY9hIT0gjAJTubNTHq9s8QVVpvPhzmhm8fQVSnz9fhPwy76UvMxnvGnG1CLs7x
-C3RfsHG4plIrFkYWb3dwG4svM/4/qFxMRA5uYNm5RLRKY6bT22MXxTL0R5/MtGzw
-8EUrOBNhGOwpMqHI8K16B1wphHv9htHEVaWnwJzNNZbJzWuLGefviI7LdMjsCkaJ
-JUjYSecvr9eCqDdWH+fZEB6qhCHpgaB6noe3PpIFA+qYI9RnWEiC2rsjtEvu345C
-kofZ/g0YTenYHnO1A2pFnmCWNCcGUqmEnR6Qs9Qg5aipTidoR+yhGUL+Ot8ZeMXU
-8C6fv7O0PP6eLcX77fHJVBsK1gU+ARBRmERFdTkRPBQ6fu/utbE=
-=dXSq
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlodJhsACgkQ0rTAlCFN
+r3TaTg/9FA/Swsxs9c3eVGs+2Z6OuXlfOk1vV0T6Cyvl1beXzEeDflDODZ1sUsVx
+u7WzZ26J5tpWqJD4JbafKZ+EfnVTTw4JkdOvC/ECuLWN5yQFEmddm76X8mcatbMt
+tGyOLyk/ijgLxQwULE4rFo9aocHNBuJsRMt7UH9jyXGMfrXDk5zlPNbN4ley1cz2
+QEjjz8Unkh7Ayzl2L0EO3ZatP3vwbt+aFvQVEqTh/ajP2yAVy+G9QE11khTgJ6rB
+aLR2JX2baofSVmEudY0aPeszlgp/aBdoEalvgcBbU5JmgU9X2tSIw/pCuxwTCwBV
+a/cHvyjuI7K3fAHtZHWJsVoAl1tDkcFDDyCgPaJkxcYVLa0BBg7oO6fRkeLeEnCV
+JjUdzZvvyftupCjJU1V4OPxMPUhaWEwP8dQewWiI0/OAwpDVFyPbgBx3zBY0GjDt
+ILw3nIChu3Z1ipPFtoyPZmWGrJ+rTS5AE9I1fH6pdTCsJ60RW1iYlv4v6sFyTkJb
+bKrwUwDxlRnAcUrd9v3oXzz9QV39QzMI94DMgXyniVzmTFkzQpT40sghygge/VYn
+261WvIk7sSdvUjcmytawWdNXt3cRhfDqAohoypnBJ4pHKh1n0TfRnkdKCzb5G9ZX
++zthArS3XylVcdfEOg4V3ot6gBJh22CSGfIkfDz+nf6Uhxlewh8=
+=qCXp
 -----END PGP SIGNATURE-----
 
---q46wa4n5scekor7b--
+--2jvhs2ny2qmgiaxy--
