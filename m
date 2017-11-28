@@ -1,46 +1,81 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 2/8] mfd: mtk-mmsys: Add mmsys driver
-To: CK Hu <ck.hu@mediatek.com>
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- p.zabel@pengutronix.de, airlied@linux.ie, robh+dt@kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- lee.jones@linaro.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
- sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
- <20171114214114.15793-3-mbrugger@suse.com>
- <1511427867.8489.9.camel@mtksdaap41>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <f65015fa-7103-30bc-2660-7401037f7e12@gmail.com>
-Date: Thu, 23 Nov 2017 19:37:12 +0100
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v2 0/2] add clk controller driver for Meson-AXG SoC
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+References: <20171127094844.16742-1-yixun.lan@amlogic.com>
+ <1511790489.30519.11.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <78b268eb-6aff-a9c4-e358-f91069e12da5@amlogic.com>
+Date: Tue, 28 Nov 2017 20:47:09 +0800
 MIME-Version: 1.0
-In-Reply-To: <1511427867.8489.9.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1511790489.30519.11.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi jerome:
 
 
-On 11/23/2017 10:04 AM, CK Hu wrote:
-
->> +static const struct of_device_id of_match_mmsys[] = {
->> +	{ .compatible = "mediatek,mt2701-mmsys",
+On 11/27/17 21:48, Jerome Brunet wrote:
+> On Mon, 2017-11-27 at 17:48 +0800, Yixun Lan wrote:
+>> Add driver for the clk controller which found in Meson AXG SoC
+>>
+>>   Note, we deliberately create a seperate source file for the Meson AXG
+>> series, instead of sharing code with previous GXBB/GXL - the file axg.c
+>> It would help us maintaining the code more easily.
 > 
-> Because this driver replace the original "mediatek,mt2701-mmsys" driver,
-> could you modify the binding document of "mediatek,mt2701-mmsys" [1]?
+> But this will be the last meson SoC added this way. We need factor the code the
+> between meson8, gx and axg series since there is a lot of duplication there.
 > 
-> [1]
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>>
+>> Changes since v1 [1]:
+>>  - rework register definion, use '(offset << 2)' to better match
 > 
+> As previously discussed, please drop these calculations and just write what the
+> offset actually are. Putting one comment at the top, explaining the translation,
+> would be nice though. 
+> 
+can drop the calculations, but there is already a comment at top here..
 
-Well we are actually no replacing the compatible but keeping it. But yes, the
-documentation should be updated.
+>>    the description from data sheet
+>>  - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
+>>  - rebase code to v4.15-rc1
+>>
+>> [1] 
+>>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
+>>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
+>>   http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
+>>
+>>
+>> Qiufang Dai (2):
+> 
+> First patch of the series should be adding the compatible documentation, which
+> is missing here (unless it has gone through another channel and I missed it)
+> 
+I missed the dt-binding, will fix in next version
 
-Apart right now we have the definition twice. The other location is here:
-Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-
-Regards,
-Matthias
+>>   clk: meson-axg: add clock controller drivers
+>>   arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+>>
+>>  arch/arm64/Kconfig.platforms               |   1 +
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi |  15 +
+>>  drivers/clk/meson/Kconfig                  |   8 +
+>>  drivers/clk/meson/Makefile                 |   1 +
+>>  drivers/clk/meson/axg.c                    | 948
+>> +++++++++++++++++++++++++++++
+>>  drivers/clk/meson/axg.h                    | 126 ++++
+>>  include/dt-bindings/clock/axg-clkc.h       |  72 +++
+>>  7 files changed, 1171 insertions(+)
+>>  create mode 100644 drivers/clk/meson/axg.c
+>>  create mode 100644 drivers/clk/meson/axg.h
+>>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+>>
+> 
+> .
+> 
