@@ -1,57 +1,36 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v7 3/6] soc: mediatek: add dependent clock jpgdec/audio for scpsys
-Date: Tue, 28 Nov 2017 15:28:19 +0800
-Message-ID: <1511854102-23195-5-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 28 Nov 2017 09:29:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Carlo Caione <carlo@caione.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: add compatible variant for
+ the Meson-AXG
+Message-ID: <20171128152920.yz6v7blobxsylqgz@rob-hp-laptop>
+References: <20171128125330.363-1-yixun.lan@amlogic.com>
+ <20171128125330.363-2-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171128125330.363-2-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-There are dependent clock jpgdec/audio in scpsys on MT2712,
-and will exist three dependent clocks on MT2712 VDEC.
+On Tue, Nov 28, 2017 at 08:53:28PM +0800, Yixun Lan wrote:
+> Update the documentation to support clock driver for the Amlogic's
+> Meson-AXG SoC.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 4c484b1..c0f3219 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -84,6 +84,8 @@ enum clk_id {
- 	CLK_ETHIF,
- 	CLK_VDEC,
- 	CLK_HIFSEL,
-+	CLK_JPGDEC,
-+	CLK_AUDIO,
- 	CLK_MAX,
- };
- 
-@@ -96,10 +98,12 @@ enum clk_id {
- 	"ethif",
- 	"vdec",
- 	"hif_sel",
-+	"jpgdec",
-+	"audio",
- 	NULL,
- };
- 
--#define MAX_CLKS	2
-+#define MAX_CLKS	3
- 
- struct scp_domain_data {
- 	const char *name;
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
