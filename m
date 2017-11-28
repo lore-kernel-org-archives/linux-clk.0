@@ -1,150 +1,67 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 4 Nov 2017 14:49:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-	rdunlap@infradead.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, liuwei@actions-semi.com
-Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
-Message-ID: <20171104091949.GB14705@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
- <7c87aee4-dde4-ab3d-06b0-75f3686ab5dd@suse.de>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v7 0/6] Mediatek MT2712 clock and scpsys support
+Date: Tue, 28 Nov 2017 15:28:16 +0800
+Message-ID: <1511854102-23195-2-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <7c87aee4-dde4-ab3d-06b0-75f3686ab5dd@suse.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andreas,
-On Sat, Nov 04, 2017 at 04:36:30PM +0800, Andreas Färber wrote:
-> Hi Mani,
-> 
-> Still on travels, but some quick comments:
-> 
-> Please compare the CC list from my patch series - you seem to be missing
-> some Actions Semi people.
-> 
-Sure will do.
-> Am 01.11.2017 um 03:54 schrieb Manivannan Sadhasivam:
-> > This patch adds clock driver for Actions Semi OWL
-> > series S900 SoC.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  MAINTAINERS                                    |   5 +
-> >  drivers/clk/Makefile                           |   1 +
-> >  drivers/clk/owl/Makefile                       |   2 +
-> >  drivers/clk/owl/clk-factor.c                   | 270 ++++++++++++
-> >  drivers/clk/owl/clk-pll.c                      | 346 +++++++++++++++
-> >  drivers/clk/owl/clk-s900.c                     | 587 +++++++++++++++++++++++++
-> >  drivers/clk/owl/clk.c                          | 318 ++++++++++++++
-> >  drivers/clk/owl/clk.h                          | 301 +++++++++++++
-> 
-> Taking into account previous arm/DT side comments I received, we should
-> use clk/actions/ rather than clk/owl/. We can still use owl- or -owl
-> inside actions/ if necessary.
-> 
-Initially I thought about using actions/ but looking at the frequently added
-supports like Socionext (they used Uniphier), I decided to use the SoC series
-name.
+This series is based on v4.15-rc1 and composed of
+scpsys control (PATCH 1-4) and device tree (PATCH 5-6)
 
-But anyway, we can go for the vendor name actions/ and use owl- prefix for
-the source files. 
-> >  include/dt-bindings/clock/actions,s900-clock.h | 141 ++++++
-> >  9 files changed, 1971 insertions(+)
-> >  create mode 100644 drivers/clk/owl/Makefile
-> >  create mode 100644 drivers/clk/owl/clk-factor.c
-> >  create mode 100644 drivers/clk/owl/clk-pll.c
-> >  create mode 100644 drivers/clk/owl/clk-s900.c
-> >  create mode 100644 drivers/clk/owl/clk.c
-> >  create mode 100644 drivers/clk/owl/clk.h
-> >  create mode 100644 include/dt-bindings/clock/actions,s900-clock.h
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 2d3d750..beae8aa 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1098,6 +1098,11 @@ F:	arch/arm/mach-*/
-> >  F:	arch/arm/plat-*/
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
-> >  
-> > +ARM/ACTIONS SEMI SoC CLOCK SUPPORT
-> > +L:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> You're not a mailing list. If you want to be the maintainer (M:), fine
-> with me, but I'd like to be CC'ed please - either via R: here or by
-> extending the section below.
-> 
-Sure. Will add you as the Designated Reviewer (R:).
-> > +S:	Maintained
-> > +F:	drivers/clk/owl/
-> 
-> This is lacking the binding.
-> 
-My bad. Will add it.
-> > +
-> >  ARM/ACTIONS SEMI ARCHITECTURE
-> >  M:	Andreas Färber <afaerber@suse.de>
-> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index c99f363..821c1e1 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -75,6 +75,7 @@ endif
-> >  obj-y					+= mvebu/
-> >  obj-$(CONFIG_ARCH_MXS)			+= mxs/
-> >  obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
-> > +obj-$(CONFIG_ARCH_ACTIONS)		+= owl/
-> >  obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
-> >  obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
-> >  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
-> > diff --git a/drivers/clk/owl/Makefile b/drivers/clk/owl/Makefile
-> > new file mode 100644
-> > index 0000000..dbba0af
-> > --- /dev/null
-> > +++ b/drivers/clk/owl/Makefile
-> > @@ -0,0 +1,2 @@
-> > +obj-y				+= clk.o clk-pll.o clk-factor.o
-> > +obj-$(CONFIG_ARCH_ACTIONS)	+= clk-s900.o
-> 
-> $(CONFIG_ARCH_ACTIONS) is superfluous here.
-> 
-Okay. Since, we haven't added ARCH_ACTIONS to defconfig yet I intentionally
-made this conditional compilation.
+changes since v6:
+- Rebase to v4.15-rc1.
 
-Would like a suggestion from you on this!
-> > diff --git a/drivers/clk/owl/clk-factor.c b/drivers/clk/owl/clk-factor.c
-> > new file mode 100644
-> > index 0000000..6429acd
-> > --- /dev/null
-> > +++ b/drivers/clk/owl/clk-factor.c
-> > @@ -0,0 +1,270 @@
-> > +/*
-> > + * Copyright (c) 2014 Actions Semi Inc.
-> > + * David Liu <liuwei@actions-semi.com>
-> > + *
-> > + * Copyright (c) 2017 Linaro Ltd.
-> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > + *
-> > + * This program is free software: you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License v2 as published by
-> > + * the Free Software Foundation.
-> 
-> I had found that S500 code was licensed under GPLv2+ but some S900 parts
-> were GPLv2 only. I personally have a bias towards GPLv2+ - any chance we
-> can use that here?
-> 
-If Actions Semi people don't have any objections for sure we can go for GPLv2+.
-> Implementation not yet reviewed.
-> 
-> Regards,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+changes since v5:
+- Refine bus protection with proper variable name
+  and better implementation for the if statement.
+
+changes since v4:
+- Refine scpsys and infracfg for bus protection by passing
+  a boolean flag to determine the register update method
+
+changes since v3:
+- Rebase to v4.14-rc1.
+
+changes since v2:
+- ensure the clocks used by clocksource driver are registered
+  before clocksource init() by using CLK_OF_DECLARE()
+- correct the frequency of clk32k/clkrtc_ext/clkrtc_int
+
+changes since v1:
+- Rebase to v4.13-next-soc.
+- Refine scpsys and infracfg for bus protection.
+
+*** BLURB HERE ***
+
+Weiyi Lu (6):
+  dt-bindings: soc: add MT2712 power dt-bindings
+  soc: mediatek: extend bus protection API
+  soc: mediatek: add dependent clock jpgdec/audio for scpsys
+  soc: mediatek: add MT2712 scpsys support
+  arm: dts: mt2712: Add clock controller device nodes
+  arm: dts: Add power controller device node of MT2712
+
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |   3 +
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi          | 131 +++++++++++++++++++
+ drivers/soc/mediatek/mtk-infracfg.c                |  26 +++-
+ drivers/soc/mediatek/mtk-scpsys.c                  | 140 ++++++++++++++++++---
+ include/dt-bindings/power/mt2712-power.h           |  26 ++++
+ include/linux/soc/mediatek/infracfg.h              |   7 +-
+ 6 files changed, 311 insertions(+), 22 deletions(-)
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
+
+-- 
+1.9.1
