@@ -1,141 +1,94 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13407 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753928AbdKPPdS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:18 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 2/8] clk: tegra: DT align parameter for CVB calculation
-Date: Thu, 16 Nov 2017 17:33:03 +0200
-Message-ID: <1510846389-28712-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+Received: from hermes.aosc.io ([199.195.250.187]:53009 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932170AbdK1LuW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Nov 2017 06:50:22 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Tue, 28 Nov 2017 19:50:19 +0800
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+In-Reply-To: <20171128090223.mqp3v2t6koyu6hk4@flea.home>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <2744508.m82qQEPny3@jernej-laptop>
+ <20171128090223.mqp3v2t6koyu6hk4@flea.home>
+Message-ID: <2edae31575bbdb5abe989ad3b9d403a7@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When using a PWM controlled regulator, the voltage step and offset are
-determined by the regulator type in use. This is specified in DT rather
-than fixed in the CVB table. Hence pass this information to the CVB table
-calculation function. For backwards compatibility the table values are used
-if the corresponding parameter is 0.
+在 2017-11-28 17:02，Maxime Ripard 写道：
+> Hi,
+> 
+> On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
+>> Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard 
+>> napisal(a):
+>> > Add support for the A83T display pipeline.
+>> >
+>> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+>> >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
+>> >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
+>> >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
+>> >  4 files changed, 14 insertions(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+>> > d4259a4f5171..d6b52e5c48c0 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > @@ -93,6 +93,7 @@ Required properties:
+>> >     * allwinner,sun6i-a31s-tcon
+>> >     * allwinner,sun7i-a20-tcon
+>> >     * allwinner,sun8i-a33-tcon
+>> > +   * allwinner,sun8i-a83t-tcon-lcd
+>> >     * allwinner,sun8i-v3s-tcon
+>> >   - reg: base address and size of memory-mapped region
+>> >   - interrupts: interrupt associated to this IP
+>> > @@ -224,6 +225,7 @@ supported.
+>> >
+>> >  Required properties:
+>> >    - compatible: value must be one of:
+>> > +    * allwinner,sun8i-a83t-de2-mixer
+>> 
+>> What will be the name of the second mixer, once support for HDMI is 
+>> added?
+>> Should we start directly with 0 and 1 postfix ?
+> 
+> What are the differences exactly without the two mixers?
+> 
+> I was hoping to be able to cover them all using properties, indices
+> are usually pretty badly received in compatibles.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
- drivers/clk/tegra/cvb.c                    | 17 +++++++++++++----
- drivers/clk/tegra/cvb.h                    |  5 +++--
- 3 files changed, 37 insertions(+), 8 deletions(-)
+1. VEP is only available on the VI channel in mixer0. (VEP may mean
+Video Enhance Processor)
+2. Smart Backlight is only available in mixer0's on SoCs with LCD.
+3. Writeback function is only available in mixer0.
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 1976e96..b587f6b 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 	const struct of_device_id *of_id;
- 	const struct dfll_fcpu_data *fcpu_data;
-+	struct rail_alignment align;
- 
- 	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
- 	fcpu_data = of_id->data;
-@@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
-+					&align.offset_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"offset uv not found, default to table value\n");
-+		align.offset_uv = 0;
-+	}
-+
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-+					&align.step_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"step uv not found, default to table value\n");
-+		align.step_uv = 0;
-+	}
-+
- 	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
- 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
--					   process_id, speedo_id, speedo_value,
--					   soc->max_freq);
-+					   &align, process_id, speedo_id,
-+					   speedo_value, soc->max_freq);
-+	soc->alignment = align;
-+
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7..7ed1fbe 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -62,11 +62,19 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
- }
- 
- static int build_opp_table(struct device *dev, const struct cvb_table *table,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align = &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
- 
-+	if (!align->step_uv)
-+		align->step_uv = table->alignment.step_uv;
-+	if (!align->step_uv)
-+		return -EINVAL;
-+
-+	if (!align->offset_uv)
-+		align->offset_uv = table->alignment.offset_uv;
-+
- 	min_mv = round_voltage(table->min_millivolts, align, UP);
- 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
- 
-@@ -109,8 +117,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
-  */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
- {
- 	size_t i;
- 	int ret;
-@@ -124,7 +133,7 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
- 		if (table->process_id != -1 && table->process_id != process_id)
- 			continue;
- 
--		ret = build_opp_table(dev, table, speedo_value, max_freq);
-+		ret = build_opp_table(dev, table, align, speedo_value, max_freq);
- 		return ret ? ERR_PTR(ret) : table;
- 	}
- 
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f0779..cfa110f 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -59,8 +59,9 @@ struct cvb_table {
- 
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
--- 
-1.9.1
-
+> 
+>> >  static const struct of_device_id sun8i_mixer_of_table[] = {
+>> >  	{
+>> > +		.compatible = "allwinner,sun8i-a83t-de2-mixer",
+>> > +		.data = &sun8i_v3s_mixer_cfg,
+>> > +	},
+>> > +	{
+>> 
+>> Maybe you want to squash 12 patch since this works only by luck.
+> 
+> Yeah, I totally meant to do that :)
+> 
+> Thanks!
+> Maxime
