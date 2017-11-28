@@ -1,30 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:58:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, trivial@kernel.org
-Subject: Re: [PATCH 4/4] clk-u300: Fix a typo in two comment lines
-Message-ID: <20171114015804.GF11955@codeaurora.org>
-References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
- <c113ba39-e9b4-a4e5-6fa1-f83c9b59a4d5@users.sourceforge.net>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 3/3] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+Date: Tue, 28 Nov 2017 20:53:30 +0800
+Message-ID: <20171128125330.363-4-yixun.lan@amlogic.com>
+In-Reply-To: <20171128125330.363-1-yixun.lan@amlogic.com>
+References: <20171128125330.363-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <c113ba39-e9b4-a4e5-6fa1-f83c9b59a4d5@users.sourceforge.net>
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 19:57:50 +0200
-> 
-> Add a missing character in these descriptions.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-Applied to clk-next
+Try to add Hiubus DT info, and also enable clock DT info
+for the Amlogic's Meson-AXG SoC.
 
+Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index b932a784b02a..36a2e98338a8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/axg-clkc.h>
+ 
+ / {
+ 	compatible = "amlogic,meson-axg";
+@@ -148,6 +149,20 @@
+ 			#address-cells = <0>;
+ 		};
+ 
++		hiubus: hiubus@ff63c000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xff63c000 0x0 0x1c00>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
++
++			clkc: clock-controller@0 {
++				compatible = "amlogic,axg-clkc";
++				#clock-cells = <1>;
++				reg = <0x0 0x0 0x0 0x320>;
++			};
++		};
++
+ 		mailbox: mailbox@ff63dc00 {
+ 			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
+ 			reg = <0 0xff63dc00 0 0x400>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
