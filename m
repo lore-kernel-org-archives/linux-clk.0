@@ -1,215 +1,151 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:45707 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbdK1WAQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 17:00:16 -0500
+Date: Tue, 28 Nov 2017 23:00:14 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V5 04/12] clk: sprd: add mux clock support
-Date: Mon, 20 Nov 2017 14:01:29 +0800
-Message-ID: <20171120060137.27380-5-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
-References: <20171120060137.27380-1-chunyan.zhang@spreadtrum.com>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+Message-ID: <20171128220014.w35rcliusubfdvoe@flea.home>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <2744508.m82qQEPny3@jernej-laptop>
+ <20171128090223.mqp3v2t6koyu6hk4@flea.home>
+ <2908242.WKit1ZIWoJ@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="p2xotp675tdanwch"
+In-Reply-To: <2908242.WKit1ZIWoJ@jernej-laptop>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock multiplexor support for Spreadtrum platforms,
-the mux clocks also can be found in sprd composite clocks, so
-provides two helpers that can be reused later on.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile |  1 +
- drivers/clk/sprd/mux.c    | 78 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/mux.h    | 76 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 155 insertions(+)
- create mode 100644 drivers/clk/sprd/mux.c
- create mode 100644 drivers/clk/sprd/mux.h
+--p2xotp675tdanwch
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 8cd5592..cee36b5 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
- 
- clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
-+clk-sprd-y	+= mux.o
-diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
-new file mode 100644
-index 0000000..05ef9f0
---- /dev/null
-+++ b/drivers/clk/sprd/mux.c
-@@ -0,0 +1,78 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "mux.h"
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_ssel *mux)
-+{
-+	unsigned int reg;
-+	u8 parent;
-+	int num_parents;
-+	int i;
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	parent = reg >> mux->shift;
-+	parent &= (1 << mux->width) - 1;
-+
-+	if (!mux->table)
-+		return parent;
-+
-+	num_parents = clk_hw_get_num_parents(&common->hw);
-+
-+	for (i = 0; i < num_parents - 1; i++)
-+		if (parent >= mux->table[i] && parent < mux->table[i + 1])
-+			return i;
-+
-+	return num_parents - 1;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
-+
-+static u8 sprd_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_ssel *mux,
-+			       u8 index)
-+{
-+	unsigned int reg;
-+
-+	if (mux->table)
-+		index = mux->table[index];
-+
-+	sprd_regmap_read(common->regmap, common->reg, &reg);
-+	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
-+	sprd_regmap_write(common->regmap, common->reg,
-+			  reg | (index << mux->shift));
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
-+
-+static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+const struct clk_ops sprd_mux_ops = {
-+	.get_parent = sprd_mux_get_parent,
-+	.set_parent = sprd_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_mux_ops);
-diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
-new file mode 100644
-index 0000000..683d63a
---- /dev/null
-+++ b/drivers/clk/sprd/mux.h
-@@ -0,0 +1,76 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_MUX_H_
-+#define _SPRD_MUX_H_
-+
-+#include "common.h"
-+
-+/**
-+ * struct sprd_mux_ssel - Mux clock's source select bits in its register
-+ * @shift: Bit offset of the divider in its register
-+ * @width: Width of the divider field in its register
-+ * @table: For some mux clocks, not all sources are used on some special
-+ *	   chips, this matches the value of mux clock's register and the
-+ *	   sources which are used for this mux clock
-+ */
-+struct sprd_mux_ssel {
-+	u8		shift;
-+	u8		width;
-+	const u8	*table;
-+};
-+
-+struct sprd_mux {
-+	struct sprd_mux_ssel mux;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define _SPRD_MUX_CLK(_shift, _width, _table)		\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.table	= _table,			\
-+	}
-+
-+#define SPRD_MUX_CLK_TABLE(_struct, _name, _parents, _table,		\
-+				     _reg, _shift, _width,		\
-+				     _flags)				\
-+	struct sprd_mux _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
-+		.common	= {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-+						       _parents,	\
-+						       &sprd_mux_ops,	\
-+						       _flags),		\
-+		}							\
-+	}
-+
-+#define SPRD_MUX_CLK(_struct, _name, _parents, _reg,		\
-+		     _shift, _width, _flags)			\
-+	SPRD_MUX_CLK_TABLE(_struct, _name, _parents, NULL,	\
-+			   _reg, _shift, _width, _flags)
-+
-+static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_mux, common);
-+}
-+
-+extern const struct clk_ops sprd_mux_ops;
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_ssel *mux);
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_ssel *mux,
-+			       u8 index);
-+
-+#endif /* _SPRD_MUX_H_ */
--- 
-2.7.4
+
+
+On Tue, Nov 28, 2017 at 04:48:55PM +0100, Jernej =C5=A0krabec wrote:
+> > On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej =C5=A0krabec wrote:
+> > > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard=20
+> napisal(a):
+> > > > Add support for the A83T display pipeline.
+> > > >=20
+> > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > > ---
+> > > >=20
+> > > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 =
++++
+> > > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 =
+++
+> > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 =
++++++
+> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 =
+++++
+> > > >  4 files changed, 14 insertions(+)
+> > > >=20
+> > > > diff --git
+> > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt ind=
+ex
+> > > > d4259a4f5171..d6b52e5c48c0 100644
+> > > > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > >=20
+> > > > @@ -93,6 +93,7 @@ Required properties:
+> > > >     * allwinner,sun6i-a31s-tcon
+> > > >     * allwinner,sun7i-a20-tcon
+> > > >     * allwinner,sun8i-a33-tcon
+> > > >=20
+> > > > +   * allwinner,sun8i-a83t-tcon-lcd
+> > > >=20
+> > > >     * allwinner,sun8i-v3s-tcon
+> > > >  =20
+> > > >   - reg: base address and size of memory-mapped region
+> > > >   - interrupts: interrupt associated to this IP
+> > > >=20
+> > > > @@ -224,6 +225,7 @@ supported.
+> > > >=20
+> > > >  Required properties:
+> > > >    - compatible: value must be one of:
+> > > > +    * allwinner,sun8i-a83t-de2-mixer
+> > >=20
+> > > What will be the name of the second mixer, once support for HDMI is a=
+dded?
+> > > Should we start directly with 0 and 1 postfix ?
+> >=20
+> > What are the differences exactly without the two mixers?
+>=20
+> Mixer properties:
+> - mixer index (0 or 1), important for determining CCSC base (see my patch=
+es)
+
+Is that the only thing we need to determine?
+
+> - number of VI planes (usually 1)
+
+Usually or always?
+
+> - number of UI planes (usually 1 or 3)
+
+Same question.
+
+> - writeback support (yes/no)
+> - scale line buffer length (2048 or 4096)
+> - smart backligth support (yes/no)
+>=20
+> channel properties (for both, VI and UI):
+> - scaler support (yes/no, usually yes)
+> - overlay count (seems to be always 4)
+> - VEP support (yes/no)
+>=20
+> Those are properties found in BSP de_feat.c, so I guess that's enough to =
+make=20
+> any kind of decision in the code.
+>=20
+> Usually, but we can't count on that, first mixer has 1 VI and 3 UI planes=
+ and=20
+> second mixer has 1 VI and 1 UI plane.
+
+Right. So that would be easy to support using a property as well. The
+only difference would be the CSC base.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--p2xotp675tdanwch
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlod3GkACgkQ0rTAlCFN
+r3QbJw//Ua/0uSmn61/4S5wshtrd9LD1GdRuJkpZueBdqUIplRj5HcpWLG7BBnBu
+wyOK/j9UE7M85fti3BrYLnISJh3OOE1dvu683TwblY2GYTg7WJatCpGZq/MNkmDX
+Mu9QfQDDKvKWk4WCGn8zRK/bozhTrMvnFT/7YWODMEa/ommx7cw+R9zUOiCkdYsf
+10jnRkP6DBMlOhOkGds1bPapTL+qn+e9dJxKHPNsp8jw9a9cBkUBsaUIuII10iTg
+zNpFmIAqHcbnkH1Bq2rA/anm0wROaDTJ4HlvqPaPAvGvDhwK/aHCGDyH5DK8XeGh
+kFJcb3rWR01dEUfCCXmdMocPT94tJeA+X0IFqRVdFnuAnsxFxDxc3Iq6emudyJ+V
+MTkt6nsXU5CueU+6JgTS6Tl6P5Wv53wq6KXzNfjKBjUprpdkSvcDhACKdZcfealo
+I84AwRr8IiCsiyfdbwOzjANZEkzvdtiaRdgDtejyR5AeIR7+oYJoCyb1Q8EwMzgn
+46Y7YZMSmGSdEc06LwiX9FZBbKuhZ092lTP9HgFutFynDymDlGROBGkVlrXLGtnQ
+UlvudmWLV4s2lpqFdE2r1VnNfFnJptCS6AkdzRQ9PAK3T8/XF4bClswGePnqOTzZ
+HPIviU+PWuKKSVP194gOhEdeYiFeofnXCjTW5DUA1JTYM98pKHc=
+=rYFk
+-----END PGP SIGNATURE-----
+
+--p2xotp675tdanwch--
