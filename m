@@ -1,57 +1,57 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH 8/8] MAINTAINERS: update Mediatek Soc entry
-Date: Tue, 14 Nov 2017 22:41:14 +0100
-Message-Id: <20171114214114.15793-9-mbrugger@suse.com>
-In-Reply-To: <20171114214114.15793-1-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v7 3/6] soc: mediatek: add dependent clock jpgdec/audio for scpsys
+Date: Tue, 28 Nov 2017 15:28:19 +0800
+Message-ID: <1511854102-23195-5-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Mediatek SoCs include several soc specific drivers as well
-as a mfd device. Add these to the maintainers file.
+There are dependent clock jpgdec/audio in scpsys on MT2712,
+and will exist three dependent clocks on MT2712 VDEC.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/mediatek/mtk-scpsys.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2811a211632c..586797908865 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1606,6 +1606,8 @@ F:	arch/arm/boot/dts/mt7*
- F:	arch/arm/boot/dts/mt8*
- F:	arch/arm/mach-mediatek/
- F:	arch/arm64/boot/dts/mediatek/
-+F:	drivers/soc/mediatek/
-+F:	drivers/mfd/mtk-mmsys.c
- N:	mtk
- K:	mediatek
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 4c484b1..c0f3219 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -84,6 +84,8 @@ enum clk_id {
+ 	CLK_ETHIF,
+ 	CLK_VDEC,
+ 	CLK_HIFSEL,
++	CLK_JPGDEC,
++	CLK_AUDIO,
+ 	CLK_MAX,
+ };
  
+@@ -96,10 +98,12 @@ enum clk_id {
+ 	"ethif",
+ 	"vdec",
+ 	"hif_sel",
++	"jpgdec",
++	"audio",
+ 	NULL,
+ };
+ 
+-#define MAX_CLKS	2
++#define MAX_CLKS	3
+ 
+ struct scp_domain_data {
+ 	const char *name;
 -- 
-2.14.2
+1.9.1
