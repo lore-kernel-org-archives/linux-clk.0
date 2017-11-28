@@ -1,50 +1,68 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-To: Jon Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
- <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
- <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
- <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
- <17a79383-0642-5cc6-7b3f-9d302f027b4b@gmail.com>
- <43e293c3-daf2-7b2e-2524-f14de3811f44@nvidia.com>
- <6378f92d-54a9-590a-5fdb-88a7bfa96fc1@gmail.com>
- <e73fb625-58bc-8ccf-4c71-00b457da6a05@nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <dad412e5-9e89-297f-9c11-667b18340ef7@gmail.com>
-Date: Thu, 30 Nov 2017 20:49:15 +0300
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/3] add clk controller driver for Meson-AXG SoC
+Date: Tue, 28 Nov 2017 20:53:27 +0800
+Message-ID: <20171128125330.363-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <e73fb625-58bc-8ccf-4c71-00b457da6a05@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.11.2017 20:22, Jon Hunter wrote:
-> 
-> On 30/11/17 16:53, Dmitry Osipenko wrote:
-> 
-> ...
-> 
->>>> Could you please show the /sys/kernel/debug/clk/clk_summary?
->>>
->>> With what patches present?
->>>
->> linux-next without any additional patches
-> 
-> Here you go. This is from Tegra124 Jetson TK1 ...
-> 
+Add driver for the clk controller which found in Meson AXG SoC
 
-[snip]
+  Note, we deliberately create a seperate source file for the Meson AXG
+series, instead of sharing code with previous GXBB/GXL - the file axg.c
+It would help us maintaining the code more easily.
 
-Thanks, looks fine. Yeah, PCLK definitely must be critical, along with EMC.
+Changes since v2 [2]:
+ - drop register offset calculation
+ - update dt-bindings for new compatible variant
+
+Changes since v1 [1]:
+ - rework register definion, use '(offset << 2)' to better match
+   the description from data sheet
+ - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
+ - rebase code to v4.15-rc1
+
+[2]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
+
+[1] 
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
+
+
+Qiufang Dai (2):
+  clk: meson-axg: add clock controller drivers
+  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+
+Yixun Lan (1):
+  dt-bindings: clock: add compatible variant for the Meson-AXG
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
+ arch/arm64/Kconfig.platforms                       |   1 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  15 +
+ drivers/clk/meson/Kconfig                          |   8 +
+ drivers/clk/meson/Makefile                         |   1 +
+ drivers/clk/meson/axg.c                            | 948 +++++++++++++++++++++
+ drivers/clk/meson/axg.h                            | 126 +++
+ include/dt-bindings/clock/axg-clkc.h               |  72 ++
+ 8 files changed, 1176 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/meson/axg.c
+ create mode 100644 drivers/clk/meson/axg.h
+ create mode 100644 include/dt-bindings/clock/axg-clkc.h
+
+-- 
+2.15.0
