@@ -1,89 +1,146 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1510052597.1328.69.camel@baylibre.com>
-Subject: Re: [PATCH v3 0/4] fix the clock setting for SAR ADC
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, devicetree@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	 <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 07 Nov 2017 12:03:17 +0100
-In-Reply-To: <20171107053646.31087-1-yixun.lan@amlogic.com>
-References: <20171107053646.31087-1-yixun.lan@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs3.siol.net ([213.250.19.136]:47491 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751427AbdK1Wds (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Nov 2017 17:33:48 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+Date: Tue, 28 Nov 2017 23:33:44 +0100
+Message-ID: <1722782.9j9JEoLEfc@jernej-laptop>
+In-Reply-To: <20171128220014.w35rcliusubfdvoe@flea.home>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <2908242.WKit1ZIWoJ@jernej-laptop> <20171128220014.w35rcliusubfdvoe@flea.home>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-11-07 at 13:36 +0800, Yixun Lan wrote:
-> patch [1/4]:
->   Fix wrong SARADC/SANA clock gate bit in Meson-GXBB/GXL,
-> the published datasheet also has wrong description about this.
-> 
-> patch [2-4/4]:
->   Drop the "sana" clock from SAR ADC module,
-> 
->   From the hardware perspective, the SAR ADC module doesn't
-> require "sana" clock to wrok. This should apply to all SoC,
-> including meson6,8, GXBB, GXL..
-> 
-> Note: the whole patchset series has been tested at GXL-P212 board,
-> we haven't got any meson6,8 board to test, so I would appreciate
-> if someone (Martin?) could help to confirm it works there.
->  
-> Changes since v2 at [2] :
->   - explicitly point out 'sana' clock is not required for saradc, and drop
-> them
->   - update comments, as the published datasheet is wrong
->  
-> Changes since v1 at [1] :
->   - correct SAR ADC/SANA clock gate bit
-> 
-> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005221.ht
-> ml
-> [2] http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005242.ht
-> ml
-> 
+Hi!
 
-Those patches should go through different trees. To avoid causing a (temporary)
-regression, the clk patch absolutely needs to be merged before any other patches
-is merged.
+Dne torek, 28. november 2017 ob 23:00:14 CET je Maxime Ripard napisal(a):
+> On Tue, Nov 28, 2017 at 04:48:55PM +0100, Jernej Škrabec wrote:
+> > > On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
+> > > > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard
+> > 
+> > napisal(a):
+> > > > > Add support for the A83T display pipeline.
+> > > > > 
+> > > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > > > ---
+> > > > > 
+> > > > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3
+> > > > >  +++
+> > > > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2
+> > > > >  ++
+> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5
+> > > > >  +++++
+> > > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4
+> > > > >  ++++
+> > > > >  4 files changed, 14 insertions(+)
+> > > > > 
+> > > > > diff --git
+> > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > index
+> > > > > d4259a4f5171..d6b52e5c48c0 100644
+> > > > > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > 
+> > > > > @@ -93,6 +93,7 @@ Required properties:
+> > > > >     * allwinner,sun6i-a31s-tcon
+> > > > >     * allwinner,sun7i-a20-tcon
+> > > > >     * allwinner,sun8i-a33-tcon
+> > > > > 
+> > > > > +   * allwinner,sun8i-a83t-tcon-lcd
+> > > > > 
+> > > > >     * allwinner,sun8i-v3s-tcon
+> > > > >   
+> > > > >   - reg: base address and size of memory-mapped region
+> > > > >   - interrupts: interrupt associated to this IP
+> > > > > 
+> > > > > @@ -224,6 +225,7 @@ supported.
+> > > > > 
+> > > > >  Required properties:
+> > > > >    - compatible: value must be one of:
+> > > > > +    * allwinner,sun8i-a83t-de2-mixer
+> > > > 
+> > > > What will be the name of the second mixer, once support for HDMI is
+> > > > added?
+> > > > Should we start directly with 0 and 1 postfix ?
+> > > 
+> > > What are the differences exactly without the two mixers?
+> > 
+> > Mixer properties:
+> > - mixer index (0 or 1), important for determining CCSC base (see my
+> > patches)
+> Is that the only thing we need to determine?
 
-I can take the clk patch as a fix for v4.15. It's too late for v4.14 but it's
-not big deal, I suppose the long term kernel will pick it up later on.
+For now, mixer index is important only for determining CCSC base in conjuction 
+with VEP capability. Obviously, I can't exclude that there is some other case 
+where that mixer index is needed.
 
-Once the sana clock is indeed *the* sana clock, which of IIO or DT patch is
-merged first does not matter, the sana clock is optional.
-
-BTW, the cover letter and the IIO patch are missing the IIO maintainer and
-mailing list. According to MAINTAINERS, you are missing:
-
-* Jonathan Cameron <jic23@kernel.org>
-* linux-iio@vger.kernel.org
-
-Please resend with the warning note above (so other maintainers are aware of
-dependency), the correction applied to patch 1 commit log and the missing
-recipients.
+Can't we just add reg property for that?
 
 > 
-> Xingyu Chen (3):
->   iio: adc: meson-saradc: remove irrelevant clock "sana"
->   dt-bindings: iio: adc: update the doc for SAR ADC
->   ARM64: dts: meson: drop "sana" clock from SAR ADC
+> > - number of VI planes (usually 1)
 > 
-> Yixun Lan (1):
->   clk: meson: gxbb: fix wrong clock for SARADC/SANA
+> Usually or always?
+
+V3s mixer has 2 VI channels and others have 1.
+
+(Channel is better term, since is used throughout BSP code)
+
 > 
->  .../bindings/iio/adc/amlogic,meson-saradc.txt        |  1 -
->  arch/arm/boot/dts/meson8.dtsi                        |  5 ++---
->  arch/arm/boot/dts/meson8b.dtsi                       |  5 ++---
->  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi          |  3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi           |  3 +--
->  drivers/clk/meson/gxbb.c                             |  4 ++--
->  drivers/iio/adc/meson_saradc.c                       | 20 -----------------
-> ---
->  7 files changed, 8 insertions(+), 33 deletions(-)
+> > - number of UI planes (usually 1 or 3)
 > 
+> Same question.
+
+For now, most SoCs (I didn't check all) have 3 UI channels on first mixer and 1 
+UI channel on second mixer. Except V3s, which have only one mixer with 1 UI 
+channel.
+
+> 
+> > - writeback support (yes/no)
+> > - scale line buffer length (2048 or 4096)
+> > - smart backligth support (yes/no)
+> > 
+> > channel properties (for both, VI and UI):
+> > - scaler support (yes/no, usually yes)
+
+Again, V3s is exception here. Scaler is not supported on UI channel, but other 
+SoCs have scalers on all channels.
+
+Disclaimer: I didn't check DE2 capabilities of all SoCs, only few populars.
+
+Best regards,
+Jernej
+
+> > - overlay count (seems to be always 4)
+> > - VEP support (yes/no)
+> > 
+> > Those are properties found in BSP de_feat.c, so I guess that's enough to
+> > make any kind of decision in the code.
+> > 
+> > Usually, but we can't count on that, first mixer has 1 VI and 3 UI planes
+> > and second mixer has 1 VI and 1 UI plane.
+> 
+> Right. So that would be easy to support using a property as well. The
+> only difference would be the CSC base.
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
+
+
