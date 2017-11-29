@@ -1,34 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Nov 2017 17:59:22 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk/spear: Delete five error messages for a failed
- memory allocation
-Message-ID: <20171114015922.GP11955@codeaurora.org>
-References: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35763 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbdK2SPl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Nov 2017 13:15:41 -0500
+Date: Wed, 29 Nov 2017 19:08:05 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 4/5] ARM: dts: exynos: Add Exynos4412 ISP clock
+ controller
+Message-ID: <20171129180805.yn35ib7ierqcd4bl@kozik-lap>
+References: <20171011092515.1698-1-m.szyprowski@samsung.com>
+ <CGME20171011092522eucas1p13c442dd9daa51e610618b39ee436e100@eucas1p1.samsung.com>
+ <20171011092515.1698-5-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171011092515.1698-5-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 18:00:21 +0200
+On Wed, Oct 11, 2017 at 11:25:14AM +0200, Marek Szyprowski wrote:
+> Exynos4412 ISP clock controller is located in the SOC area, which belongs
+> to ISP power domain. This patch instantiates a separate clock driver
+> for those clocks, updates all clients of ISP clocks and ensures that the
+> driver is properly integrated in ISP power domin.
 > 
-> Omit extra messages for a memory allocation failure in these functions.
+> This finally solves all the mysterious freezes in accessing ISP clocks
+> when ISP power domain is disabled.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+>  arch/arm/boot/dts/exynos4412.dtsi | 71 ++++++++++++++++++++++++---------------
+>  1 file changed, 44 insertions(+), 27 deletions(-)
+> 
 
-Applied to clk-next
+Thanks, applied.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
+
