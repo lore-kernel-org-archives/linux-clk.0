@@ -1,54 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:32931 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbdK0Pl7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Nov 2017 10:41:59 -0500
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        jernej.skrabec@siol.net
-Subject: [PATCH v2 15/18] ARM: dts: sun8i: a83t: Add LVDS pins group
-Date: Mon, 27 Nov 2017 16:41:39 +0100
-Message-Id: <8aa6ab23aaf36493c8f0bbef54043c030e1d4eff.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+Message-ID: <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+Date: Wed, 29 Nov 2017 18:08:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T has an LVDS bus that can be connected to a panel or a bridge. Add
-the pinctrl group for it.
+On 29.11.2017 13:12, Jon Hunter wrote:
+> 
+> On 29/11/17 00:09, Dmitry Osipenko wrote:
+>> On 29.11.2017 02:30, Dmitry Osipenko wrote:
+>>> On 23.10.2017 14:12, Jon Hunter wrote:
+>>>> Commit a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+>>>> fixed the parent clock for APBDMA, but the consequence of this that
+>>>> after probing the APBDMA device, the APB Clock (or PCLK) is now
+>>>> disabled. Disabling the APB clock causes accesses to any other device
+>>>> on the APB to hang and prevent Tegra from booting.
+>>>>
+>>>> Currently, the APB clock is registered with the flag "CLK_IGNORE_UNUSED"
+>>>> to prevent the clock being disabled if unused on boot. However, even
+>>>> if it is used, it still needs to be always kept enabled and so update
+>>>> the flag for the APB clock to be "CLK_IS_CRITICAL".
+>>>>
+>>>> Fixes: a140614373ae ("clk: tegra: Correct parent of the APBDMA clock")
+>>>>
+>>>> Suggested-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-tegra-super-gen4.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+>>>> index 4f6fd307cb70..10047107c1dc 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+>>>> @@ -166,7 +166,7 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
+>>>>  				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
+>>>>  				   &sysrate_lock);
+>>>>  	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
+>>>> -				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
+>>>> +				CLK_IS_CRITICAL, clk_base + SYSTEM_CLK_RATE,
+>>>>  				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
+>>>>  	*dt_clk = clk;
+>>>>  }
+>>>>
+>>>
+>>> Unfortunately this patch somehow breaks Tegra20, getting a hang during boot. For
+>>> now I don't know what's the cause of the issue, may take a more detailed look
+>>> soon. If you have any suggestions, please tell.
+>>>
+>>
+>> It looks like that with CLK_IS_CRITICAL flag, pclk is getting enabled before
+>> clock rate is setup and in result it is enabled with some invalid rate config.
+> 
+> What Tegra20 platform? I have not seen any issues with booting Tegra20
+> trimslice with v4.15-rc1 or next-20171129. I am surprised this clock
+> would not have been enabled by the bootloader and hence rate set correctly.
+> 
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+It is not an upstream'ed device and it uses proprietary bootloader. But turned
+out it is unrelated.. the actual problem is that with the offending patch
+applied, for some reason PLL_M is now getting disabled on SCLK reparent, PLL_M
+is a critical clock that feeds EMC and marking it as CLK_IS_CRITICAL fixes issue
+for me.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 2cb71e460ea2..b4615f150dbf 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -415,6 +415,12 @@
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
-+			lcd_lvds_pins: lcd-lvds-pins {
-+				pins = "PD18", "PD19", "PD20", "PD21", "PD22",
-+				       "PD23", "PD24", "PD25", "PD26", "PD27";
-+				function = "lvds0";
-+			};
-+
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0", "PF1", "PF2",
- 				       "PF3", "PF4", "PF5";
--- 
-git-series 0.9.1
+Jon, could you please try to revert "Mark APB clock as critical" patch, mark the
+PLL_M as critical and re-test?
