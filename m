@@ -1,92 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:7841 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbdLABZX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Nov 2017 20:25:23 -0500
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 0/4] add clk controller driver for Meson-AXG SoC
-Date: Fri, 1 Dec 2017 09:24:48 +0800
-Message-ID: <20171201012452.27086-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 29 Nov 2017 11:35:36 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: meson-axg: add clock DT info for
+ Meson AXG SoC
+Message-ID: <20171129193536.GB19419@codeaurora.org>
+References: <20171128125330.363-1-yixun.lan@amlogic.com>
+ <20171128125330.363-4-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171128125330.363-4-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add driver for the clk controller which found in Meson AXG SoC
+On 11/28, Yixun Lan wrote:
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index b932a784b02a..36a2e98338a8 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -7,6 +7,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/axg-clkc.h>
+>  
+>  / {
+>  	compatible = "amlogic,meson-axg";
+> @@ -148,6 +149,20 @@
+>  			#address-cells = <0>;
+>  		};
+>  
+> +		hiubus: hiubus@ff63c000 {
 
-  Note, we deliberately create a seperate source file for the Meson AXG
-series, instead of sharing code with previous GXBB/GXL - the file axg.c
-It would help us maintaining the code more easily.
+Maybe just call the node "bus@ff63c000"?
 
-Changes since v3 [3]:
- - separate dt-bindings header file
- - adjust license note as standard way
- - replace of_iomap with platform/devm API
- - add Rob's Ack to Patch 1,4
-
-Changes since v2 [2]:
- - drop register offset calculation
- - update dt-bindings for new compatible variant
-
-Changes since v1 [1]:
- - rework register definion, use '(offset << 2)' to better match
-   the description from data sheet
- - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
- - rebase code to v4.15-rc1
-
-[3]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005487.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005488.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005489.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005490.html
-
-[2]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
-
-[1] 
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
-
-
-
-Qiufang Dai (3):
-  clk: meson-axg: add clocks dt-bindings required header
-  clk: meson-axg: add clock controller drivers
-  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-
-Yixun Lan (1):
-  dt-bindings: clock: add compatible variant for the Meson-AXG
-
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  15 +
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/axg.c                            | 944 +++++++++++++++++++++
- drivers/clk/meson/axg.h                            | 126 +++
- include/dt-bindings/clock/axg-clkc.h               |  71 ++
- 8 files changed, 1171 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff63c000 0x0 0x1c00>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+> +
+> +			clkc: clock-controller@0 {
+> +				compatible = "amlogic,axg-clkc";
+> +				#clock-cells = <1>;
+> +				reg = <0x0 0x0 0x0 0x320>;
+> +			};
+> +		};
+> +
+>  		mailbox: mailbox@ff63dc00 {
+>  			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
+>  			reg = <0 0xff63dc00 0 0x400>;
+> -- 
+> 2.15.0
+> 
 
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
