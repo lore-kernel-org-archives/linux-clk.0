@@ -1,135 +1,83 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 11/18] drm/sun4i: Add A83T support
-Date: Mon, 27 Nov 2017 16:41:35 +0100
-Message-Id: <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <17a79383-0642-5cc6-7b3f-9d302f027b4b@gmail.com>
+Date: Thu, 30 Nov 2017 19:45:48 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the A83T display pipeline.
+On 30.11.2017 19:39, Jon Hunter wrote:
+> 
+> On 30/11/17 13:24, Dmitry Osipenko wrote:
+>> On 30.11.2017 14:31, Jon Hunter wrote:
+>>>
+>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+>>>
+>>> ...
+>>>
+>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+>>>> caused trouble on Tegra114/124.
+>>>
+>>> Please share the exact change you would like me to test and I will.
+>>
+>> Please try this:
+> 
+> I tried the patch, but this does not work for Tegra124 it still hangs.
+> Tracing the clk calls the last thing I see is ...
+> 
+> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+> [    2.694403] clk_prepare: hclk_div
+> [    2.695929] clk_prepare_complete: hclk_div
+> [    2.700027] clk_prepare: hclk
+> [    2.702947] clk_prepare_complete: hclk
+> [    2.706673] clk_prepare: pclk_div
+> [    2.709986] clk_prepare_complete: pclk_div
+> [    2.714039] clk_prepare: pclk
+> [    2.716985] clk_prepare_complete: pclk
+> [    2.720739] clk_prepare: apbdma
+> [    2.723833] clk_prepare_complete: apbdma
+> [    2.727736] clk_enable: hclk_div
+> [    2.730940] clk_enable_complete: hclk_div
+> [    2.734926] clk_enable: hclk
+> [    2.737788] clk_enable_complete: hclk
+> [    2.741426] clk_enable: pclk_div
+> [    2.744633] clk_enable_complete: pclk_div
+> [    2.748619] clk_enable: pclk
+> [    2.751481] clk_enable_complete: pclk
+> [    2.755120] clk_enable: apbdma
+> [    2.758153] clk_enable_complete: apbdma
+> [    2.762390] clk_disable: apbdma
+> [    2.765088] clk_disable_complete: apbdma
+> [    2.768986] clk
+> 
+> So I believe this change is correct and that Peter's analysis on IRC
+> seems correct, that this change has exposed another issue with the clock
+> driver.
+> 
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
- drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
- drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
- 4 files changed, 14 insertions(+)
+Could you please show the /sys/kernel/debug/clk/clk_summary?
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index d4259a4f5171..d6b52e5c48c0 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -93,6 +93,7 @@ Required properties:
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun7i-a20-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-a83t-tcon-lcd
-    * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-@@ -224,6 +225,7 @@ supported.
- 
- Required properties:
-   - compatible: value must be one of:
-+    * allwinner,sun8i-a83t-de2-mixer
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-@@ -253,6 +255,7 @@ Required properties:
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun7i-a20-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-a83t-display-engine
-     * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 75c76cdd82bc..c418be2f22be 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -193,6 +193,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun7i-a20-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-a83t-tcon-lcd") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
- }
- 
-@@ -353,6 +354,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
- 	{ .compatible = "allwinner,sun7i-a20-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-+	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 46ce6daa0b1a..871df75793a9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1132,6 +1132,10 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
- 	.has_lvds_pll		= true,
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_a83t_quirks = {
-+	/* nothing is supported */
-+};
-+
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
- 	/* nothing is supported */
- };
-@@ -1143,6 +1147,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 44d5e639ebb2..5a1376965270 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -395,6 +395,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer",
-+		.data = &sun8i_v3s_mixer_cfg,
-+	},
-+	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
--- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Peter, can you summarise which other clocks should be made critical?
+> 
