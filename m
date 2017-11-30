@@ -1,49 +1,77 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/3] dt-bindings: clock: add compatible variant for the Meson-AXG
-Date: Tue, 28 Nov 2017 20:53:28 +0800
-Message-ID: <20171128125330.363-2-yixun.lan@amlogic.com>
-In-Reply-To: <20171128125330.363-1-yixun.lan@amlogic.com>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
+Return-Path: <benjamin.gaignard@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <CAOFm3uGMHrNyov=BkrXbJQeHnMgZCHK7ogTru8Bj9An7aTz9DQ@mail.gmail.com>
+References: <20171130084108.23083-1-benjamin.gaignard@st.com>
+ <CAOFm3uG_7kChnvxW0SbHSMP5q_KSZeaNxjkKb774ZmcwukJ_Mw@mail.gmail.com>
+ <CA+M3ks41cBBqDrEGFZm5yGO0j8funfTAaTf_u2cJoD1p3XpQUQ@mail.gmail.com> <CAOFm3uGMHrNyov=BkrXbJQeHnMgZCHK7ogTru8Bj9An7aTz9DQ@mail.gmail.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Thu, 30 Nov 2017 14:05:54 +0100
+Message-ID: <CA+M3ks4pva9Kg+gj44KeUrDcKf9tn5O-0VkTv5uUebJ=812E3Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: stm32-h7: fix copyright
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>,
+	linux-clk@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+	Benjamin Gaignard <benjamin.gaignard@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the documentation to support clock driver for the Amlogic's
-Meson-AXG SoC.
+2017-11-30 13:56 GMT+01:00 Philippe Ombredanne <pombredanne@nexb.com>:
+> On Thu, Nov 30, 2017 at 1:47 PM, Benjamin Gaignard
+> <benjamin.gaignard@linaro.org> wrote:
+>> 2017-11-30 12:28 GMT+01:00 Philippe Ombredanne <pombredanne@nexb.com>:
+>>> On Thu, Nov 30, 2017 at 9:41 AM, Benjamin Gaignard
+>>> <benjamin.gaignard@linaro.org> wrote:
+>>>> Uniformize STMicroelectronics copyrights header
+>>>> Add SPDX identifier
+>>>>
+>>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+>>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>>> CC: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>> ---
+>>>>  drivers/clk/clk-stm32h7.c | 19 +++----------------
+>>>>  1 file changed, 3 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+>>>> index 61c3e40507d3..db2b162c0d4c 100644
+>>>> --- a/drivers/clk/clk-stm32h7.c
+>>>> +++ b/drivers/clk/clk-stm32h7.c
+>>>> @@ -1,20 +1,7 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>>  /*
+>>>> - * Copyright (C) Gabriel Fernandez 2017
+>>>> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>> - *
+>>>> - * License terms: GPL V2.0.
+>>>> - *
+>>>> - * This program is free software; you can redistribute it and/or modify it
+>>>> - * under the terms and conditions of the GNU General Public License,
+>>>> - * version 2, as published by the Free Software Foundation.
+>>>> - *
+>>>> - * This program is distributed in the hope it will be useful, but WITHOUT
+>>>> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>>>> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+>>>> - * more details.
+>>>> - *
+>>>> - * You should have received a copy of the GNU General Public License along with
+>>>> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+>>>> + * Copyright (C) STMicroelectronics 2017
+>>>> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+>>>>   */
+>>>>
+>>>>  #include <linux/clk.h>
+>>>
+>>> Awesome! Don't you like it when you remove this type of things?
+>>
+>> Yes but is also means that many other STM files need to be updated...
+>
+> Sure thing. I have a FLOSS tool to help with this FWIW. I would be
+> glad to help as needed.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Do you have a link to this tool ?
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index 924040769186..e2b377ed6f91 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -5,8 +5,11 @@ controllers within the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
--	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
-+- compatible: should be:
-+		"amlogic,gxbb-clkc" for GXBB SoC,
-+		"amlogic,gxl-clkc" for GXL and GXM SoC,
-+		"amlogic,axg-clkc" for AXG SoC.
-+
- - reg: physical base address of the clock controller and length of memory
-        mapped region.
- 
--- 
-2.15.0
+>
+> --
+> Cordially
+> Philippe Ombredanne
