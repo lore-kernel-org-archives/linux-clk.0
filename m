@@ -1,205 +1,90 @@
-Return-Path: <ck.hu@mediatek.com>
-Message-ID: <1511415849.20405.1.camel@mtksdaap41>
-Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
-From: CK Hu <ck.hu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
-	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
-	<sean.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Matthias Brugger <mbrugger@suse.com>
-Date: Thu, 23 Nov 2017 13:44:09 +0800
-In-Reply-To: <20171114214114.15793-2-mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-2-mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <17a79383-0642-5cc6-7b3f-9d302f027b4b@gmail.com>
+ <43e293c3-daf2-7b2e-2524-f14de3811f44@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6378f92d-54a9-590a-5fdb-88a7bfa96fc1@gmail.com>
+Date: Thu, 30 Nov 2017 19:53:46 +0300
 MIME-Version: 1.0
-Return-Path: ck.hu@mediatek.com
+In-Reply-To: <43e293c3-daf2-7b2e-2524-f14de3811f44@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Matthias:
-
-On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> The mmsys memory space is shared between the drm and the
-> clk driver. Use regmap to access it.
+On 30.11.2017 19:51, Jon Hunter wrote:
 > 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-
-Acked-by: CK Hu <ck.hu@mediatek.com>
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
->  5 files changed, 26 insertions(+), 27 deletions(-)
+> On 30/11/17 16:45, Dmitry Osipenko wrote:
+>> On 30.11.2017 19:39, Jon Hunter wrote:
+>>>
+>>> On 30/11/17 13:24, Dmitry Osipenko wrote:
+>>>> On 30.11.2017 14:31, Jon Hunter wrote:
+>>>>>
+>>>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+>>>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+>>>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+>>>>>> caused trouble on Tegra114/124.
+>>>>>
+>>>>> Please share the exact change you would like me to test and I will.
+>>>>
+>>>> Please try this:
+>>>
+>>> I tried the patch, but this does not work for Tegra124 it still hangs.
+>>> Tracing the clk calls the last thing I see is ...
+>>>
+>>> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+>>> [    2.694403] clk_prepare: hclk_div
+>>> [    2.695929] clk_prepare_complete: hclk_div
+>>> [    2.700027] clk_prepare: hclk
+>>> [    2.702947] clk_prepare_complete: hclk
+>>> [    2.706673] clk_prepare: pclk_div
+>>> [    2.709986] clk_prepare_complete: pclk_div
+>>> [    2.714039] clk_prepare: pclk
+>>> [    2.716985] clk_prepare_complete: pclk
+>>> [    2.720739] clk_prepare: apbdma
+>>> [    2.723833] clk_prepare_complete: apbdma
+>>> [    2.727736] clk_enable: hclk_div
+>>> [    2.730940] clk_enable_complete: hclk_div
+>>> [    2.734926] clk_enable: hclk
+>>> [    2.737788] clk_enable_complete: hclk
+>>> [    2.741426] clk_enable: pclk_div
+>>> [    2.744633] clk_enable_complete: pclk_div
+>>> [    2.748619] clk_enable: pclk
+>>> [    2.751481] clk_enable_complete: pclk
+>>> [    2.755120] clk_enable: apbdma
+>>> [    2.758153] clk_enable_complete: apbdma
+>>> [    2.762390] clk_disable: apbdma
+>>> [    2.765088] clk_disable_complete: apbdma
+>>> [    2.768986] clk
+>>>
+>>> So I believe this change is correct and that Peter's analysis on IRC
+>>> seems correct, that this change has exposed another issue with the clock
+>>> driver.
+>>>
+>>
+>> Could you please show the /sys/kernel/debug/clk/clk_summary?
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index 658b8dd45b83..4c65873b4867 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -33,7 +33,7 @@
->   * @enabled: records whether crtc_enable succeeded
->   * @planes: array of 4 drm_plane structures, one for each overlay plane
->   * @pending_planes: whether any plane has pending changes to be applied
-> - * @config_regs: memory mapped mmsys configuration register space
-> + * @config_regs: regmap mapped mmsys configuration register space
->   * @mutex: handle to one of the ten disp_mutex streams
->   * @ddp_comp_nr: number of components in ddp_comp
->   * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
-> @@ -48,7 +48,7 @@ struct mtk_drm_crtc {
->  	struct drm_plane		planes[OVL_LAYER_NR];
->  	bool				pending_planes;
->  
-> -	void __iomem			*config_regs;
-> +	struct regmap			*config_regs;
->  	struct mtk_disp_mutex		*mutex;
->  	unsigned int			ddp_comp_nr;
->  	struct mtk_ddp_comp		**ddp_comp;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 8130f3dab661..1227d6db07da 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -185,16 +185,16 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
->  	return value;
->  }
->  
-> -static void mtk_ddp_sout_sel(void __iomem *config_regs,
-> +static void mtk_ddp_sout_sel(struct regmap *config_regs,
->  			     enum mtk_ddp_comp_id cur,
->  			     enum mtk_ddp_comp_id next)
->  {
->  	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
-> -		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
-> -			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-> +		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
-> +				BLS_TO_DSI_RDMA1_TO_DPI1);
->  }
->  
-> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
->  			      enum mtk_ddp_comp_id cur,
->  			      enum mtk_ddp_comp_id next)
->  {
-> @@ -202,20 +202,22 @@ void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
->  
->  	value = mtk_ddp_mout_en(cur, next, &addr);
->  	if (value) {
-> -		reg = readl_relaxed(config_regs + addr) | value;
-> -		writel_relaxed(reg, config_regs + addr);
-> +		regmap_read(config_regs, addr, &reg);
-> +		reg |= value;
-> +		regmap_write(config_regs, addr, reg);
->  	}
->  
->  	mtk_ddp_sout_sel(config_regs, cur, next);
->  
->  	value = mtk_ddp_sel_in(cur, next, &addr);
->  	if (value) {
-> -		reg = readl_relaxed(config_regs + addr) | value;
-> -		writel_relaxed(reg, config_regs + addr);
-> +		regmap_read(config_regs, addr, &reg);
-> +		reg |= value;
-> +		regmap_write(config_regs, addr, reg);
->  	}
->  }
->  
-> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
->  				   enum mtk_ddp_comp_id cur,
->  				   enum mtk_ddp_comp_id next)
->  {
-> @@ -223,14 +225,16 @@ void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
->  
->  	value = mtk_ddp_mout_en(cur, next, &addr);
->  	if (value) {
-> -		reg = readl_relaxed(config_regs + addr) & ~value;
-> -		writel_relaxed(reg, config_regs + addr);
-> +		regmap_read(config_regs, addr, &reg);
-> +		reg &= ~value;
-> +		regmap_write(config_regs, addr, reg);
->  	}
->  
->  	value = mtk_ddp_sel_in(cur, next, &addr);
->  	if (value) {
-> -		reg = readl_relaxed(config_regs + addr) & ~value;
-> -		writel_relaxed(reg, config_regs + addr);
-> +		regmap_read(config_regs, addr, &reg);
-> +		reg &= ~value;
-> +		regmap_write(config_regs, addr, reg);
->  	}
->  }
->  
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-> index f9a799168077..32e12f33b76a 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-> @@ -20,10 +20,10 @@ struct regmap;
->  struct device;
->  struct mtk_disp_mutex;
->  
-> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
->  			      enum mtk_ddp_comp_id cur,
->  			      enum mtk_ddp_comp_id next);
-> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
->  				   enum mtk_ddp_comp_id cur,
->  				   enum mtk_ddp_comp_id next);
->  
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index b2ad19bd1e00..dd249cf5121e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -21,6 +21,7 @@
->  #include <drm/drm_of.h>
->  #include <linux/component.h>
->  #include <linux/iommu.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
-> @@ -393,7 +394,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct mtk_drm_private *private;
-> -	struct resource *mem;
->  	struct device_node *node;
->  	struct component_match *match = NULL;
->  	int ret;
-> @@ -407,14 +407,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  	INIT_WORK(&private->commit.work, mtk_atomic_work);
->  	private->data = of_device_get_match_data(dev);
->  
-> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	private->config_regs = devm_ioremap_resource(dev, mem);
-> -	if (IS_ERR(private->config_regs)) {
-> -		ret = PTR_ERR(private->config_regs);
-> -		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> +	private->config_regs = syscon_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(private->config_regs))
-> +		return PTR_ERR(private->config_regs);
->  
->  	/* Iterate over sibling DISP function blocks */
->  	for_each_child_of_node(dev->of_node->parent, node) {
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> index 4edc0023684c..86cec19193c4 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> @@ -44,7 +44,7 @@ struct mtk_drm_private {
->  
->  	struct device_node *mutex_node;
->  	struct device *mutex_dev;
-> -	void __iomem *config_regs;
-> +	struct regmap *config_regs;
->  	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
->  	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
->  	const struct mtk_mmsys_driver_data *data;
+> With what patches present?
+> 
+
+linux-next without any additional patches
