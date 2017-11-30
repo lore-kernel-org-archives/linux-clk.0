@@ -1,200 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Nov 2017 00:50:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	dongas86@gmail.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH V2 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Message-ID: <20171102075039.GU30645@codeaurora.org>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
- <1499946435-7177-2-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <17a79383-0642-5cc6-7b3f-9d302f027b4b@gmail.com>
+ <43e293c3-daf2-7b2e-2524-f14de3811f44@nvidia.com>
+ <6378f92d-54a9-590a-5fdb-88a7bfa96fc1@gmail.com>
+ <e73fb625-58bc-8ccf-4c71-00b457da6a05@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <dad412e5-9e89-297f-9c11-667b18340ef7@gmail.com>
+Date: Thu, 30 Nov 2017 20:49:15 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499946435-7177-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <e73fb625-58bc-8ccf-4c71-00b457da6a05@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Dong Aisheng wrote:
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index 9bb472c..55f8c41 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -123,6 +123,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
->  	struct clk_divider *divider = to_clk_divider(hw);
->  	unsigned int div;
->  
-> +	if (flags & CLK_DIVIDER_ZERO_GATE && !val)
-> +		return 0;
-> +
->  	div = _get_div(table, val, flags, divider->width);
->  	if (!div) {
->  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
-> @@ -141,8 +144,13 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
->  	struct clk_divider *divider = to_clk_divider(hw);
->  	unsigned int val;
->  
-> -	val = clk_readl(divider->reg) >> divider->shift;
-> -	val &= div_mask(divider->width);
-> +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
-> +	    !clk_hw_is_enabled(hw)) {
+On 30.11.2017 20:22, Jon Hunter wrote:
+> 
+> On 30/11/17 16:53, Dmitry Osipenko wrote:
+> 
+> ...
+> 
+>>>> Could you please show the /sys/kernel/debug/clk/clk_summary?
+>>>
+>>> With what patches present?
+>>>
+>> linux-next without any additional patches
+> 
+> Here you go. This is from Tegra124 Jetson TK1 ...
+> 
 
-This seems racy. Are we holding the register lock here?
+[snip]
 
-> +		val = divider->cached_val;
-> +	} else {
-> +		val = clk_readl(divider->reg) >> divider->shift;
-> +		val &= div_mask(divider->width);
-> +	}
->  
->  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
->  				   divider->flags);
-> @@ -392,6 +400,12 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
->  	value = divider_get_val(rate, parent_rate, divider->table,
->  				divider->width, divider->flags);
->  
-> +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
-> +	    !clk_hw_is_enabled(hw)) {
-
-Same racy comment here.
-
-> +		divider->cached_val = value;
-> +		return 0;
-> +	}
-> +
->  	if (divider->lock)
->  		spin_lock_irqsave(divider->lock, flags);
->  	else
-> @@ -414,10 +428,85 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return 0;
->  }
->  
-> +static int clk_divider_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	unsigned long flags = 0;
-> +	u32 val;
-> +
-> +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> +		return 0;
-
-This is not good. We will always jump to these functions on
-enable/disable for a divider although 99.9% of all dividers that
-exist won't need to run this code at all.
-
-Can you please move this logic into your own divider
-implementation? The flag can be added to the generic layer if
-necessary but I'd prefer to see this logic kept in the driver
-that uses it. If we get more than one driver doing the cached
-divider thing then we can think about moving it to the more
-generic place like here, but for now we should be able to keep
-this contained away from the basic types and handled by the
-quirky driver that needs it.
-
-> +
-> +	if (!divider->cached_val) {
-> +		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (divider->lock)
-> +		spin_lock_irqsave(divider->lock, flags);
-> +	else
-> +		__acquire(divider->lock);
-> +
-> +	/* restore div val */
-> +	val = clk_readl(divider->reg);
-> +	val |= divider->cached_val << divider->shift;
-> +	clk_writel(val, divider->reg);
-> +
-> +	if (divider->lock)
-> +		spin_unlock_irqrestore(divider->lock, flags);
-> +	else
-> +		__release(divider->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void clk_divider_disable(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	unsigned long flags = 0;
-> +	u32 val;
-> +
-> +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> +		return;
-> +
-> +	if (divider->lock)
-> +		spin_lock_irqsave(divider->lock, flags);
-> +	else
-> +		__acquire(divider->lock);
-> +
-> +	/* store the current div val */
-> +	val = clk_readl(divider->reg) >> divider->shift;
-> +	val &= div_mask(divider->width);
-> +	divider->cached_val = val;
-> +	clk_writel(0, divider->reg);
-> +
-> +	if (divider->lock)
-> +		spin_unlock_irqrestore(divider->lock, flags);
-> +	else
-> +		__release(divider->lock);
-> +}
-> +
-> +static int clk_divider_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	u32 val;
-> +
-> +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> +		return __clk_get_enable_count(hw->clk);
-
-The plan was to delete this API once OMAP stopped using it.
-clk_hw_is_enabled() doesn't work?
-
-> +
-> +	val = clk_readl(divider->reg) >> divider->shift;
-> +	val &= div_mask(divider->width);
-> +
-> +	return val ? 1 : 0;
-> +}
-> +
->  const struct clk_ops clk_divider_ops = {
->  	.recalc_rate = clk_divider_recalc_rate,
->  	.round_rate = clk_divider_round_rate,
->  	.set_rate = clk_divider_set_rate,
-> +	.enable = clk_divider_enable,
-> +	.disable = clk_divider_disable,
-> +	.is_enabled = clk_divider_is_enabled,
->  };
->  EXPORT_SYMBOL_GPL(clk_divider_ops);
->  
-> @@ -436,6 +525,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
->  	struct clk_divider *div;
->  	struct clk_hw *hw;
->  	struct clk_init_data init;
-> +	u32 val;
->  	int ret;
->  
->  	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-> @@ -468,6 +558,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
->  	div->hw.init = &init;
->  	div->table = table;
->  
-> +	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
-> +		val = clk_readl(reg) >> shift;
-> +		val &= div_mask(width);
-> +		div->cached_val = val;
-> +	}
-
-What if it isn't on? Setting cached_val to 0 is ok?
-
-> +
->  	/* register the clock */
->  	hw = &div->hw;
->  	ret = clk_hw_register(dev, hw);
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks, looks fine. Yeah, PCLK definitely must be critical, along with EMC.
