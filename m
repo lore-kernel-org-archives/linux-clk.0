@@ -1,90 +1,54 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20171102000616.ug7s7s6fmnubq7y5@rob-hp-laptop>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-2-git-send-email-manivannan.sadhasivam@linaro.org> <20171102000616.ug7s7s6fmnubq7y5@rob-hp-laptop>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Thu, 2 Nov 2017 23:25:43 +0530
-Message-ID: <CAOZjjh=zCEEcKVN9Lop2Mhkcw79GP=XcN=J1f2wevnq8OHv0Uw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: actions: add s900 clock controller nodes
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, mchehab@kernel.org,
-	rdunlap@infradead.org, Daniel Thompson <daniel.thompson@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>, liuwei@actions-semi.com
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>
+Subject: [PATCH 0/3] Add DVFS support on CPU clock for Armada 37xx
+Date: Thu, 30 Nov 2017 14:40:26 +0100
+Message-Id: <20171130134029.20751-1-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi,
 
-On 2 November 2017 at 05:36, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Nov 01, 2017 at 01:24:21AM +0530, Manivannan Sadhasivam wrote:
->> This patch adds clock controller nodes for Actions Semi s900 SoC
->>
->> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> ---
->>  arch/arm64/boot/dts/actions/s900.dtsi | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
->> index 11406f6..c099ef1 100644
->> --- a/arch/arm64/boot/dts/actions/s900.dtsi
->> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
->> @@ -5,6 +5,7 @@
->>   */
->>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/actions,s900-clock.h>
->>
->>  / {
->>       compatible = "actions,s900";
->> @@ -88,6 +89,24 @@
->>               #clock-cells = <0>;
->>       };
->>
->> +     losc: losc {
->> +             compatible = "fixed-clock";
->> +             clock-frequency = <32768>;
->> +             #clock-cells = <0>;
->> +     };
->> +
->> +     diff_24M: diff_24M {
->> +             compatible = "fixed-clock";
->> +             clock-frequency = <24000000>;
->> +             #clock-cells = <0>;
->> +     };
->
-> These 2 are inputs to the clock ctrlr? The clock controller should have
-> a clocks property then.
->
-Actually losc and hosc (already defined) are the sources to the clock
-controller.
-There isn't much documentation about diff_24M clock which seems to be only
-sourcing eDP. Since, the vendor driver defined these 3 clocks (losc,
-hosc, diff_24M)
-as fixed rate clocks I have added them in the device tree as
-"fixed-clock" nodes.
+This small series is needed to use DVFS on Armada 37xx. When DVFS is
+enabled the CPU clock setting is done using an other set of registers
+from the North Bridge Power Management block.
 
-So, as per your suggestion I will add hosc and losc as clock providers for the
-clock controller like below in next revision:
+The series adds the possibility to modify the CPU frequency using the
+associate load level matching the target frequency. However
+configuring the frequencies for each load is done by the cpufreq
+driver submitted in a separate series.
 
-clocks = <&hosc>,  <&losc>;
+Obviously having both series (cpufreq and clk) is needed to support
+DVFS on Armada 37xx, but there is no dependencies between the series
+(for building or at runtime).
 
 Thanks,
-Mani
->> +
->> +     clock: clock-controller@e0160000 {
->> +             compatible = "actions,s900-clock";
->> +             reg = <0 0xe0160000 0 0x1000>;
->> +             #clock-cells = <1>;
->> +     };
->> +
->>       soc {
->>               compatible = "simple-bus";
->>               #address-cells = <2>;
->> --
->> 2.7.4
->>
+
+Gregory
+
+Gregory CLEMENT (3):
+  clk: mvebu: armada-37xx-periph: cosmetic changes
+  clk: mvebu: armada-37xx-periph: prepare cpu clk to be used with DVFS
+  clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks
+
+ drivers/clk/mvebu/armada-37xx-periph.c | 310 +++++++++++++++++++++++++++++++--
+ 1 file changed, 293 insertions(+), 17 deletions(-)
+
+-- 
+2.15.0
