@@ -1,69 +1,110 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH 2/3] clk: owl: add clock driver for Actions S900 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- rdunlap@infradead.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- liuwei@actions-semi.com
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-3-git-send-email-manivannan.sadhasivam@linaro.org>
- <7c87aee4-dde4-ab3d-06b0-75f3686ab5dd@suse.de>
- <20171104091949.GB14705@linaro.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <25a2e233-f565-8baa-17e2-9c867bbbe9d0@suse.de>
-Date: Sat, 4 Nov 2017 17:30:36 +0800
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20171104091949.GB14705@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171130121451.6710-1-m.szyprowski@samsung.com>
+References: <CGME20171130121511eucas1p1832c1f6e5bc9e263860e40478efca132@eucas1p1.samsung.com>
+ <20171130121451.6710-1-m.szyprowski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Nov 2017 14:24:49 +0100
+Message-ID: <CAPDyKFquGA49j5YaO2wohatwaU7fF4RDUYOgKGx-OX1g74Uk-A@mail.gmail.com>
+Subject: Re: [PATCH] clk: Manage proper runtime PM state in clk_change_rate()
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 30 November 2017 at 13:14, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> clk_change_rate() propagates rate change down to all its children. Such
+> operation requires managing proper runtime PM state of each child, what
+> was missing. Add needed calls to clk_pm_runtime*() to ensure that
+> set_rate() clock callback is called on runtime active clock.
+>
+> This fixes following issue found on Exynos5433 TM2 board with devfreq
+> enabled:
+>
+> Synchronous External Abort: synchronous external abort (0x96000210) at 0xffffff80093f5600
+> Internal error: : 96000210 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 0 PID: 5 Comm: kworker/u16:0 Not tainted 4.15.0-rc1-next-20171129+ #4
+> Hardware name: Samsung TM2 board (DT)
+> Workqueue: devfreq_wq devfreq_monitor
+> task: ffffffc0ca96b600 task.stack: ffffff80093a8000
+> pstate: a0000085 (NzCv daIf -PAN -UAO)
+> pc : clk_divider_set_rate+0x54/0x118
+> lr : clk_divider_set_rate+0x44/0x118
+> ...
+> Process kworker/u16:0 (pid: 5, stack limit = 0xffffff80093a8000)
+> Call trace:
+>  clk_divider_set_rate+0x54/0x118
+>  clk_change_rate+0xfc/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_change_rate+0x1f0/0x4e0
+>  clk_core_set_rate_nolock+0x138/0x148
+>  clk_set_rate+0x28/0x50
+>  exynos_bus_passive_target+0x6c/0x11c
+>  update_devfreq_passive+0x58/0xb4
+>  devfreq_passive_notifier_call+0x50/0x5c
+>  notifier_call_chain+0x4c/0x88
+>  __srcu_notifier_call_chain+0x54/0x80
+>  srcu_notifier_call_chain+0x14/0x1c
+>  update_devfreq+0x100/0x1b4
+>  devfreq_monitor+0x2c/0x88
+>  process_one_work+0x148/0x3d8
+>  worker_thread+0x13c/0x3f8
+>  kthread+0x100/0x12c
+>  ret_from_fork+0x10/0x18
+>
+> Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Am 04.11.2017 um 17:19 schrieb Manivannan Sadhasivam:
->>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->>> index c99f363..821c1e1 100644
->>> --- a/drivers/clk/Makefile
->>> +++ b/drivers/clk/Makefile
->>> @@ -75,6 +75,7 @@ endif
->>>  obj-y					+= mvebu/
->>>  obj-$(CONFIG_ARCH_MXS)			+= mxs/
->>>  obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
->>> +obj-$(CONFIG_ARCH_ACTIONS)		+= owl/
->>>  obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
->>>  obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
->>>  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
->>> diff --git a/drivers/clk/owl/Makefile b/drivers/clk/owl/Makefile
->>> new file mode 100644
->>> index 0000000..dbba0af
->>> --- /dev/null
->>> +++ b/drivers/clk/owl/Makefile
->>> @@ -0,0 +1,2 @@
->>> +obj-y				+= clk.o clk-pll.o clk-factor.o
->>> +obj-$(CONFIG_ARCH_ACTIONS)	+= clk-s900.o
->>
->> $(CONFIG_ARCH_ACTIONS) is superfluous here.
->>
-> Okay. Since, we haven't added ARCH_ACTIONS to defconfig yet I intentionally
-> made this conditional compilation.
-> 
-> Would like a suggestion from you on this!
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-My point was that the ../Makefile already uses $(CONFIG_ARCH_ACTIONS),
-so $(CONFIG_ARCH_ACTIONS) can never be n here.
+Kind regards
+Uffe
 
-Instead you should probably either use $(CONFIG_ARM64) or better some
-new Kconfig option (CONFIG_CLK_OWL_S900?), so that we don't
-unnecessarily compile S900 on 32-bit arm and S500 on arm64.
-
-Another point: What about S700? Does it need to duplicate clk-s900.c or
-can we share any code between the two?
-
-Cheers,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+> ---
+> For some unknown reason handling of this case was missing in the initial
+> patch, which added runtime PM support for clock core. Even tests in
+> linux-next did not revealed this issue. This patch finaly fixes it,
+> as it is now easy to trigger it with v4.15-rc1.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> ---
+>  drivers/clk/clk.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 647d056df88c..8a1860a36c77 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1564,6 +1564,9 @@ static void clk_change_rate(struct clk_core *core)
+>                 best_parent_rate = core->parent->rate;
+>         }
+>
+> +       if (clk_pm_runtime_get(core))
+> +               return;
+> +
+>         if (core->flags & CLK_SET_RATE_UNGATE) {
+>                 unsigned long flags;
+>
+> @@ -1634,6 +1637,8 @@ static void clk_change_rate(struct clk_core *core)
+>         /* handle the new child who might not be in core->children yet */
+>         if (core->new_child)
+>                 clk_change_rate(core->new_child);
+> +
+> +       clk_pm_runtime_put(core);
+>  }
+>
+>  static int clk_core_set_rate_nolock(struct clk_core *core,
+> --
+> 2.15.0
+>
