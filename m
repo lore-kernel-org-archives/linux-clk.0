@@ -1,101 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:37844 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753161AbdK1PqW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Nov 2017 10:46:22 -0500
-Date: Tue, 28 Nov 2017 16:46:10 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 00/18] drm/sun4i: Add A83t LVDS support
-Message-ID: <20171128154610.62mnmaqkvaxksggy@flea.home>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
- <2681268.ePd4u43rOS@jernej-laptop>
+Return-Path: <pombredanne@nexb.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i663vzhvtvlyqyzr"
-In-Reply-To: <2681268.ePd4u43rOS@jernej-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CA+M3ks41cBBqDrEGFZm5yGO0j8funfTAaTf_u2cJoD1p3XpQUQ@mail.gmail.com>
+References: <20171130084108.23083-1-benjamin.gaignard@st.com>
+ <CAOFm3uG_7kChnvxW0SbHSMP5q_KSZeaNxjkKb774ZmcwukJ_Mw@mail.gmail.com> <CA+M3ks41cBBqDrEGFZm5yGO0j8funfTAaTf_u2cJoD1p3XpQUQ@mail.gmail.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Thu, 30 Nov 2017 13:56:28 +0100
+Message-ID: <CAOFm3uGMHrNyov=BkrXbJQeHnMgZCHK7ogTru8Bj9An7aTz9DQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: stm32-h7: fix copyright
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>,
+	linux-clk@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+	Benjamin Gaignard <benjamin.gaignard@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Nov 30, 2017 at 1:47 PM, Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
+> 2017-11-30 12:28 GMT+01:00 Philippe Ombredanne <pombredanne@nexb.com>:
+>> On Thu, Nov 30, 2017 at 9:41 AM, Benjamin Gaignard
+>> <benjamin.gaignard@linaro.org> wrote:
+>>> Uniformize STMicroelectronics copyrights header
+>>> Add SPDX identifier
+>>>
+>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>> CC: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>> ---
+>>>  drivers/clk/clk-stm32h7.c | 19 +++----------------
+>>>  1 file changed, 3 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+>>> index 61c3e40507d3..db2b162c0d4c 100644
+>>> --- a/drivers/clk/clk-stm32h7.c
+>>> +++ b/drivers/clk/clk-stm32h7.c
+>>> @@ -1,20 +1,7 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>>  /*
+>>> - * Copyright (C) Gabriel Fernandez 2017
+>>> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>> - *
+>>> - * License terms: GPL V2.0.
+>>> - *
+>>> - * This program is free software; you can redistribute it and/or modify it
+>>> - * under the terms and conditions of the GNU General Public License,
+>>> - * version 2, as published by the Free Software Foundation.
+>>> - *
+>>> - * This program is distributed in the hope it will be useful, but WITHOUT
+>>> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>>> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+>>> - * more details.
+>>> - *
+>>> - * You should have received a copy of the GNU General Public License along with
+>>> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+>>> + * Copyright (C) STMicroelectronics 2017
+>>> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+>>>   */
+>>>
+>>>  #include <linux/clk.h>
+>>
+>> Awesome! Don't you like it when you remove this type of things?
+>
+> Yes but is also means that many other STM files need to be updated...
 
---i663vzhvtvlyqyzr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure thing. I have a FLOSS tool to help with this FWIW. I would be
+glad to help as needed.
 
-Hi Jernej,
-
-On Mon, Nov 27, 2017 at 05:20:52PM +0100, Jernej =C5=A0krabec wrote:
-> Hi,
->=20
-> Dne ponedeljek, 27. november 2017 ob 16:41:24 CET je Maxime Ripard napisa=
-l(a):
-> > Hi,
-> >=20
-> > Here is an attempt at supporting the LVDS output in our DRM driver. This
-> > has been tested on the A83T (with DE2), but since everything is basical=
-ly
-> > in the TCON, it should also be usable on the older SoCs with minor
-> > modifications.
-> >=20
-> > This was the occasion to refactor a bunch of things. The most notable o=
-nes
-> > would be the documentation, and split of the UI layers in the mixer cod=
-e,
->=20
-> I'm just about to send my series of patches which would add full support =
-for=20
-> UI and VI planes (multi planes, HW scaling, all color formats). It would =
-clash=20
-> with your patches 6, 7 and 8.
->=20
-> Preview of my work as a single patch can be seen here:
-> https://github.com/jernejsk/linux-1/commit/
-> 8fdef3b510b567bfe81c87b0c3e73ddcf4f5b711
->=20
-> How would you like to handle that? Some changes are similar, but I don't =
-see a=20
-> point rebasing my patches atop of yours.
->=20
-> Since I'm almost done, I will just send them and we can discuss them then.
-
-Yeah, I had a quick look at it and it doesn't look like it conflicts
-too much. I'll have a closer look as soon as I can, but I guess we can
-just go in parallel and whoever hits first wins.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---i663vzhvtvlyqyzr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlodhL8ACgkQ0rTAlCFN
-r3TUeg/8C6Qm+SuJ7QPqIl+VN/EUKP6v70ZJbdBl6pEXh9yxuXiPTkXhOerAVJXJ
-mZPL4iVXN+bItp0Gda1dah5lgC6k3mrTZubluP9tUsEtuklBDD5oHx5nD8cEtnNX
-wrU/LbZS59T6unDNlTzHWIEXshcKrX+BHnZp//8qUw9jlfL6aSKcrM4cmEbpc2Tr
-O3ka8OT3U+JBEIPGLxYc1G3P3FgEaCU4Bglqa6DUmN0P7B5puBahu2MVATVGNeBQ
-h1WXpYEAf+G0whBPCatZkCIVX/XutifuiAKLBiGURcbNa/S1TDZKGEVoFp1sWE3E
-VGp64nwSEVJo3fMxyukl/4EVopHbu9t0QDtpNWxg2JLczBwQRv13qKDW6pI5q/Hf
-GZC0hhL1XUcTIrW3d0J30ipdrDQjfY4frfKV6mlyv0Mc4/ixsATTj39vkGGZ22ft
-oL1vyQUBU3aRmvKoFZ1djsvr9g9iHySRzg2hbfNvU81yviYxjQehBCToVQzgmm9z
-yLZcIbtV/3G5t2Ap3JXuu/TKrFsznsNciKQcns5MRJZidPIwhinVwmOSsN95juap
-g77jOQR+0okB91m+jZxY7eX0gMhU+0uq4xk9BiYqD/rbrEfRrM3b0IYrK7pVghDM
-FRW2Ab89qu8Vc9QOhI7ZT5LLK5xIyffDz7JgC3PDS4BPSLQIKhw=
-=W068
------END PGP SIGNATURE-----
-
---i663vzhvtvlyqyzr--
+-- 
+Cordially
+Philippe Ombredanne
