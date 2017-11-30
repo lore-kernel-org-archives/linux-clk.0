@@ -1,112 +1,94 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Fri, 3 Nov 2017 00:17:40 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/3] Documentation: add Actions S900 clock bindings
-Message-ID: <20171102184738.GA16359@linaro.org>
-References: <1509479663-8985-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1509479663-8985-4-git-send-email-manivannan.sadhasivam@linaro.org>
- <20171102000448.hd3syjfviyy5wwqy@rob-hp-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:35346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751303AbdK3T5b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Nov 2017 14:57:31 -0500
 MIME-Version: 1.0
-In-Reply-To: <20171102000448.hd3syjfviyy5wwqy@rob-hp-laptop>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- daniel.thompson@linaro.org, davem@davemloft.net, mturquette@baylibre.com,
- rdunlap@infradead.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- amit.kucheria@linaro.org, afaerber@suse.de, liuwei@actions-semi.com,
- mchehab@kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20171130153002.3vuqenr72dippg27@flea.lan>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <583a46dd967456aac07fb29529f74d91a10bdfeb.1511797218.git-series.maxime.ripard@free-electrons.com>
+ <CAL_Jsq+PHzDGE_RreBmVZV+sg3dh5OG2vWZU+eobxF514Fpo_w@mail.gmail.com> <20171130153002.3vuqenr72dippg27@flea.lan>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 30 Nov 2017 13:57:09 -0600
+Message-ID: <CAL_JsqLNxTGuu7FmOOgN3e2+CbV=DTeb=kJf7RqUdtGU=yuueA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/18] dt-bindings: panel: lvds: Document power-supply property
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Priit Laes <plaes@plaes.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 01, 2017 at 07:04:48PM -0500, Rob Herring wrote:
-> On Wed, Nov 01, 2017 at 01:24:23AM +0530, Manivannan Sadhasivam wrote:
-> > This patch adds clock bindings for Actions Semi S900 SoC.
-> 
-> "dt-bindings: clock: " for the subject.
-> 
-> This patch should come before the dts and driver changes.
+On Thu, Nov 30, 2017 at 9:30 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi Rob,
 >
-Ack. Will incorporate in next revision.
+> On Tue, Nov 28, 2017 at 11:48:47AM -0600, Rob Herring wrote:
+>> Please CC DT list.
+>>
+>> On Mon, Nov 27, 2017 at 9:41 AM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > The power-supply property is used by a vast majority of panels, including
+>> > panel-simple. Let's document it as a common property
+>> >
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  Documentation/devicetree/bindings/display/panel/panel-common.txt | 6 ++++++
+>> >  Documentation/devicetree/bindings/display/panel/panel-lvds.txt   | 1 +
+>> >  2 files changed, 7 insertions(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+>> > index ec52c472c845..125ea68052af 100644
+>> > --- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
+>> > +++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+>> > @@ -78,6 +78,12 @@ used for panels that implement compatible control signals.
+>> >    while active. Active high reset signals can be supported by inverting the
+>> >    GPIO specifier polarity flag.
+>> >
+>> > +Power
+>> > +-----
+>> > +
+>> > +- power-supply: many display panels need an additional power supply in
+>> > +  order to be fully powered-up. For such panels, power-supply contains
+>> > +  a phandle to the regulator powering the panel.
+>> >
+>> >  Backlight
+>> >  ---------
+>> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+>> > index b938269f841e..250850a2150b 100644
+>> > --- a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+>> > +++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+>> > @@ -32,6 +32,7 @@ Optional properties:
+>> >  - label: See panel-common.txt.
+>> >  - gpios: See panel-common.txt.
+>> >  - backlight: See panel-common.txt.
+>> > +- power-supply: See panel-common.txt.
+>>
+>> simple-panel.txt should do the same.
+>
+> I'll make simple-panel do that then
+>
+>> Really, I'd like to see panel-common.txt and simple-panel.txt merged
+>> and simple-panel.txt removed altogether. But there are a lot of
+>> references back to simple-panel.txt. A given panel still needs to say
+>> what common properties it uses or doesn't use. Omitting a property
+>> like power-supply is ambiguous and can either mean "I only have 1
+>> supply" or "I haven't thought about supplies yet there are more than
+>> 1".
+>
+> While I agree with you here, and in general, power-supply should be
+> mandatory, do you expect me to fix all the panel bindings as part of
+> this serie?
 
-Thanks,
-Mani 
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../bindings/clock/actions,s900-clock.txt          | 47 ++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/actions,s900-clock.txt b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > new file mode 100644
-> > index 0000000..951d6ad
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/actions,s900-clock.txt
-> > @@ -0,0 +1,47 @@
-> > +* Actions s900 Clock Controller
-> > +
-> > +The Actions s900 clock controller generates and supplies clock to various
-> > +controllers within the SoC. The clock binding described here is applicable to
-> > +s900 SoC.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: should be "actions,s900-clock"
-> > +- reg: physical base address of the controller and length of memory mapped
-> > +  region.
-> > +- #clock-cells: should be 1.
-> > +
-> > +Each clock is assigned an identifier and client nodes can use this identifier
-> > +to specify the clock which they consume.
-> > +
-> > +All available clocks are defined as preprocessor macros in
-> > +dt-bindings/clock/actions,s900-clock.h header and can be used in device
-> > +tree sources.
-> > +
-> > +External clocks:
-> > +
-> > +The hosc clock used as input for the plls is generated outside the SoC. It is
-> > +expected that it is defined using standard clock bindings as "hosc".
-> > +
-> > +Actions s900 Clock Controller also require two more clocks:
-> > + - "losc" - internal low frequency oscillator
-> > + - "diff_24M" - internal differential 24MHz clock
-> > +
-> > +Example: Clock controller node:
-> > +
-> > +        clock: clock-controller@e0160000 {
-> > +		compatible = "actions,s900-clock";
-> > +		reg = <0 0xe0160000 0 0x1000>;
-> > +		#clock-cells = <1>;
-> > +	};
-> > +
-> > +Example: UART controller node that consumes clock generated by the clock
-> > +controller:
-> > +
-> > +	serial5: uart@e012a000 {
-> 
-> serial@...
-> 
-> > +		compatible = "actions,s900-uart", "actions,owl-uart";
-> > +		reg = <0x0 0xe012a000 0x0 0x2000>;
-> > +		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> > +		clocks = <&clock CLK_UART5>;
-> > +		clock-names = "uart";
-> > +	};
-> > -- 
-> > 2.7.4
-> > 
+No, certainly not.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Rob
