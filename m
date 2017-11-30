@@ -1,54 +1,72 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        jernej.skrabec@siol.net
-Subject: [PATCH v2 03/18] dt-bindings: display: sun4i-drm: Add LVDS properties
-Date: Mon, 27 Nov 2017 16:41:27 +0100
-Message-Id: <334876623ff427d34495571a8deae30d28c62f16.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: rockchip: protect cpu and ddr clks
+Date: Thu, 30 Nov 2017 10:35:15 +0800
+Message-Id: <20171130023515.27833-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks and resets supposed to drive the LVDS logic in the display
-engine have been overlooked when the driver was first introduced.
+These clks can never be turned off, so protect them as what we do in
+the sunxi clock-tree.
 
-Add those additional resources to the binding, and we'll deal with the ABI
-stability in the code.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 8 +++++++-
- 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 50cc72ee1168..d4259a4f5171 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -121,6 +121,14 @@ Required properties:
- On SoCs other than the A33 and V3s, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
+ drivers/clk/rockchip/clk-cpu.c | 5 +++++
+ drivers/clk/rockchip/clk-ddr.c | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 32c19c0f1e14..b741c23a18d1 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -36,6 +36,7 @@
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/clk.h>
++#include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include "clk.h"
  
-+On SoCs that support LVDS (all SoCs but the A13, H3, H5 and V3s), you
-+need one more reset line:
-+   - 'lvds': The reset line driving the LVDS logic
-+
-+And on the SoCs newer than the A31 (sun6i and sun8i families), you
-+need one more clock line:
-+   - 'lvds-pll': The PLL that can be used to drive the LVDS clock
-+
- DRC
- ---
+@@ -334,6 +335,10 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 		goto free_rate_table;
+ 	}
  
++	/* Protect CPU clock */
++	__clk_get(cclk);
++	clk_prepare_enable(cclk);
++
+ 	return cclk;
+ 
+ free_rate_table:
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+index e8075359366b..9f85335d92f2 100644
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/arm-smccc.h>
+ #include <linux/clk.h>
++#include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -147,5 +148,9 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+ 	if (IS_ERR(clk))
+ 		kfree(ddrclk);
+ 
++	/* Protect DDR clock */
++	__clk_get(clk);
++	clk_prepare_enable(clk);
++
+ 	return clk;
+ }
 -- 
-git-series 0.9.1
+2.11.0
