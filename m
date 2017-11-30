@@ -1,123 +1,230 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6612 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753928AbdKPPdT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Nov 2017 10:33:19 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 1/8] clk: tegra: dfll registration for multiple SoCs
-Date: Thu, 16 Nov 2017 17:33:02 +0200
-Message-ID: <1510846389-28712-2-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20171128125330.363-1-yixun.lan@amlogic.com>
+ <20171128125330.363-3-yixun.lan@amlogic.com>
+ <20171129193433.GA19419@codeaurora.org>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Rob
+ Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael
+ Turquette <mturquette@baylibre.com>, Carlo Caione <carlo@caione.org>, Qiufang
+ Dai <qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
+Date: Thu, 30 Nov 2017 14:01:18 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171129193433.GA19419@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-In a future patch, support for the DFLL in Tegra210 will be introduced.
-This requires support for more than 1 set of CVB and CPU max frequency
-tables.
+Hi Stephen
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 10 deletions(-)
+On 11/30/17 03:34, Stephen Boyd wrote:
+> On 11/28, Yixun Lan wrote:
+>> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+>> new file mode 100644
+>> index 000000000000..51c5b4062715
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/axg.c
+>> @@ -0,0 +1,948 @@
+>> +/*
+>> + * AmLogic Meson-AXG Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2016 Baylibre SAS.
+>> + * Author: Michael Turquette <mturquette@baylibre.com>
+>> + *
+>> + * Copyright (c) 2017 Amlogic, inc.
+>> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0+
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/init.h>
+>> +
+>> +#include "clkc.h"
+>> +#include "axg.h"
+>> +
+>> +static DEFINE_SPINLOCK(clk_lock);
+> 
+> meson_axg_clk_lock?
+> 
+em... I'd leave it unchanged
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index ad1c1cc..1976e96 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -21,6 +21,7 @@
- #include <linux/err.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <soc/tegra/fuse.h>
- 
-@@ -28,8 +29,15 @@
- #include "clk-dfll.h"
- #include "cvb.h"
- 
-+struct dfll_fcpu_data {
-+	const unsigned long *cpu_max_freq_table;
-+	unsigned int cpu_max_freq_table_size;
-+	const struct cvb_table *cpu_cvb_tables;
-+	unsigned int cpu_cvb_tables_size;
-+};
-+
- /* Maximum CPU frequency, indexed by CPU speedo id */
--static const unsigned long cpu_max_freq_table[] = {
-+static const unsigned long tegra124_cpu_max_freq_table[] = {
- 	[0] = 2014500000UL,
- 	[1] = 2320500000UL,
- 	[2] = 2116500000UL,
-@@ -82,16 +90,36 @@
- 	},
- };
- 
-+static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
-+	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
-+	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-+	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
-+	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
-+};
-+
-+static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-+	{
-+		.compatible = "nvidia,tegra124-dfll",
-+		.data = &tegra124_dfll_fcpu_data,
-+	},
-+	{ },
-+};
-+
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- {
- 	int process_id, speedo_id, speedo_value, err;
- 	struct tegra_dfll_soc_data *soc;
-+	const struct of_device_id *of_id;
-+	const struct dfll_fcpu_data *fcpu_data;
-+
-+	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-+	fcpu_data = of_id->data;
- 
- 	process_id = tegra_sku_info.cpu_process_id;
- 	speedo_id = tegra_sku_info.cpu_speedo_id;
- 	speedo_value = tegra_sku_info.cpu_speedo_value;
- 
--	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-+	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
- 		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
- 			speedo_id);
- 		return -ENODEV;
-@@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	soc->max_freq = cpu_max_freq_table[speedo_id];
-+	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
--	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
--					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-+	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-+					   fcpu_data->cpu_cvb_tables_size,
- 					   process_id, speedo_id, speedo_value,
- 					   soc->max_freq);
- 	if (IS_ERR(soc->cvb)) {
-@@ -144,11 +172,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
--	{ .compatible = "nvidia,tegra124-dfll", },
--	{ },
--};
--
- static const struct dev_pm_ops tegra124_dfll_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
- 			   tegra_dfll_runtime_resume, NULL)
--- 
-1.9.1
+because the spinlock will be used at macro MESON_GATE() [1] which
+defined at drivers/clk/meson/clkc.h, and it assume using the generic
+name 'clk_lock', change name will break the code..
 
+and besides it's already defined as static, so I see no problem here
+
+
+[1]
+#define MESON_GATE(_name, _reg, _bit)                                   \
+struct clk_gate _name = {                                               \
+        .reg = (void __iomem *) _reg,                                   \
+        .bit_idx = (_bit),                                              \
+        .lock = &clk_lock,
+
+[2]
+drivers/clk/meson/gxbb.c
+drivers/clk/meson/meson8b.c
+
+>> +
+>> +static const struct pll_rate_table sys_pll_rate_table[] = {
+>> +	PLL_RATE(24000000, 56, 1, 2),
+>> +	PLL_RATE(48000000, 64, 1, 2),
+>> +	PLL_RATE(72000000, 72, 1, 2),
+>> +	PLL_RATE(96000000, 64, 1, 2),
+>> +	PLL_RATE(120000000, 80, 1, 2),
+>> +	PLL_RATE(144000000, 96, 1, 2),
+>> +	PLL_RATE(168000000, 56, 1, 1),
+>> +	PLL_RATE(192000000, 64, 1, 1),
+>> +	PLL_RATE(216000000, 72, 1, 1),
+>> +	PLL_RATE(240000000, 80, 1, 1),
+> [...]
+>> +
+>> +static const struct clkc_data axg_clkc_data = {
+>> +	.clk_gates = axg_clk_gates,
+>> +	.clk_gates_count = ARRAY_SIZE(axg_clk_gates),
+>> +	.clk_mplls = axg_clk_mplls,
+>> +	.clk_mplls_count = ARRAY_SIZE(axg_clk_mplls),
+>> +	.clk_plls = axg_clk_plls,
+>> +	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
+>> +	.clk_muxes = axg_clk_muxes,
+>> +	.clk_muxes_count = ARRAY_SIZE(axg_clk_muxes),
+>> +	.clk_dividers = axg_clk_dividers,
+>> +	.clk_dividers_count = ARRAY_SIZE(axg_clk_dividers),
+>> +	.hw_onecell_data = &axg_hw_onecell_data,
+>> +};
+>> +
+>> +static const struct of_device_id clkc_match_table[] = {
+>> +	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
+>> +	{},
+> 
+> Nitpick: Drop the comma. Nothing comes after this.
+> 
+sure, can do
+
+>> +};
+>> +
+>> +static int axg_clkc_probe(struct platform_device *pdev)
+>> +{
+>> +	const struct clkc_data *clkc_data;
+>> +	void __iomem *clk_base;
+>> +	int ret, clkid, i;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	clkc_data = of_device_get_match_data(&pdev->dev);
+>> +	if (!clkc_data)
+>> +		return -EINVAL;
+>> +
+>> +	/*  Generic clocks and PLLs */
+>> +	clk_base = of_iomap(dev->of_node, 0);
+> 
+> Use platform device APIs for ioremapping?
+> 
+I assume you are referring to 'platform_get_resource +
+devm_ioremap_resource' ?
+
+the idea sounds good to me.
+
+
+>> +	if (!clk_base) {
+>> +		pr_err("%s: Unable to map clk base\n", __func__);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/* Populate base address for PLLs */
+>> +	for (i = 0; i < clkc_data->clk_plls_count; i++)
+>> +		clkc_data->clk_plls[i]->base = clk_base;
+>> +
+>> +	/* Populate base address for MPLLs */
+>> +	for (i = 0; i < clkc_data->clk_mplls_count; i++)
+>> +		clkc_data->clk_mplls[i]->base = clk_base;
+>> +
+>> +	/* Populate base address for gates */
+>> +	for (i = 0; i < clkc_data->clk_gates_count; i++)
+>> +		clkc_data->clk_gates[i]->reg = clk_base +
+>> +			(u64)clkc_data->clk_gates[i]->reg;
+>> +
+>> +	/* Populate base address for muxes */
+>> +	for (i = 0; i < clkc_data->clk_muxes_count; i++)
+>> +		clkc_data->clk_muxes[i]->reg = clk_base +
+>> +			(u64)clkc_data->clk_muxes[i]->reg;
+>> +
+>> +	/* Populate base address for dividers */
+>> +	for (i = 0; i < clkc_data->clk_dividers_count; i++)
+>> +		clkc_data->clk_dividers[i]->reg = clk_base +
+>> +			(u64)clkc_data->clk_dividers[i]->reg;
+>> +
+>> +	/*
+>> +	 * register all clks
+>> +	 */
+> 
+> Yes, that's obvious..
+> 
+will drop at next version
+
+>> +	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
+>> +		/* array might be sparse */
+>> +		if (!clkc_data->hw_onecell_data->hws[clkid])
+>> +			continue;
+>> +
+>> +		ret = devm_clk_hw_register(dev,
+>> +					clkc_data->hw_onecell_data->hws[clkid]);
+>> +		if (ret)
+>> +			goto iounmap;
+>> +	}
+>> +
+>> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>> +			clkc_data->hw_onecell_data);
+>> +
+>> +iounmap:
+>> +	iounmap(clk_base);
+can also drop this once convert to devm_ API
+
+>> +	return ret;
+>> +}
+>> +
+>> +static struct platform_driver axg_driver = {
+>> +	.probe		= axg_clkc_probe,
+>> +	.driver		= {
+>> +		.name	= "axg-clkc",
+>> +		.of_match_table = clkc_match_table,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(axg_driver);
+>> diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
+>> new file mode 100644
+>> index 000000000000..d2c0f49ba0df
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/axg-clkc.h
+>> @@ -0,0 +1,72 @@
+>> +/*
+>> + * Meson-AXG clock tree IDs
+>> + *
+>> + * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
+>> + *
+>> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> 
+> There's a standard way to add these it seems. They should be the
+> first line in the file and look like
+> 
+> /* SPDX-License-Identifier: */
+> 
+> for header files and 
+> 
+> // SPDX-License-Identifier: 
+> 
+> for C files.
+> 
+
+thanks for the suggestion, will update at next version
