@@ -1,152 +1,103 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
-Date: Mon, 27 Nov 2017 17:01:49 +0100
-Message-ID: <2744508.m82qQEPny3@jernej-laptop>
-In-Reply-To: <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
- <1c4f6b275597dec7d97b5c1d9f749ba27c0610f3.1511797218.git-series.maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, plaes@plaes.org,
- David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>
+Subject: [PATCH 1/3] clk: mvebu: armada-37xx-periph: cosmetic changes
+Date: Thu, 30 Nov 2017 14:40:27 +0100
+Message-Id: <20171130134029.20751-2-gregory.clement@free-electrons.com>
+In-Reply-To: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+This patches fixes few cosmetic issues such as alignment, blank lines
+and required space.
 
-Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard napisal(a):
-> Add support for the A83T display pipeline.
-> 
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
->  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 2 ++
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                            | 5 +++++
->  drivers/gpu/drm/sun4i/sun8i_mixer.c                           | 4 ++++
->  4 files changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> d4259a4f5171..d6b52e5c48c0 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -93,6 +93,7 @@ Required properties:
->     * allwinner,sun6i-a31s-tcon
->     * allwinner,sun7i-a20-tcon
->     * allwinner,sun8i-a33-tcon
-> +   * allwinner,sun8i-a83t-tcon-lcd
->     * allwinner,sun8i-v3s-tcon
->   - reg: base address and size of memory-mapped region
->   - interrupts: interrupt associated to this IP
-> @@ -224,6 +225,7 @@ supported.
-> 
->  Required properties:
->    - compatible: value must be one of:
-> +    * allwinner,sun8i-a83t-de2-mixer
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-What will be the name of the second mixer, once support for HDMI is added? 
-Should we start directly with 0 and 1 postfix ?
-
->      * allwinner,sun8i-v3s-de2-mixer
->    - reg: base address and size of the memory-mapped region.
->    - clocks: phandles to the clocks feeding the mixer
-> @@ -253,6 +255,7 @@ Required properties:
->      * allwinner,sun6i-a31s-display-engine
->      * allwinner,sun7i-a20-display-engine
->      * allwinner,sun8i-a33-display-engine
-> +    * allwinner,sun8i-a83t-display-engine
->      * allwinner,sun8i-v3s-display-engine
-> 
->    - allwinner,pipelines: list of phandle to the display engine
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> b/drivers/gpu/drm/sun4i/sun4i_drv.c index 75c76cdd82bc..c418be2f22be 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -193,6 +193,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node
-> *node) of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
->  		of_device_is_compatible(node, "allwinner,sun7i-a20-tcon") ||
->  		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-> +		of_device_is_compatible(node, "allwinner,sun8i-a83t-tcon-lcd") ||
->  		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
->  }
-> 
-> @@ -353,6 +354,7 @@ static const struct of_device_id sun4i_drv_of_table[] =
-> { { .compatible = "allwinner,sun6i-a31s-display-engine" },
->  	{ .compatible = "allwinner,sun7i-a20-display-engine" },
->  	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-> +	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
->  	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
->  	{ }
->  };
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 46ce6daa0b1a..871df75793a9
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -1132,6 +1132,10 @@ static const struct sun4i_tcon_quirks
-> sun8i_a33_quirks = { .has_lvds_pll		= true,
->  };
-> 
-> +static const struct sun4i_tcon_quirks sun8i_a83t_quirks = {
-> +	/* nothing is supported */
-> +};
-> +
->  static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
->  	/* nothing is supported */
->  };
-> @@ -1143,6 +1147,7 @@ static const struct of_device_id sun4i_tcon_of_table[]
-> = { { .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks
-> }, { .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
-> { .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-> +	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data =
-> &sun8i_a83t_quirks }, { .compatible = "allwinner,sun8i-v3s-tcon", .data =
-> &sun8i_v3s_quirks }, { }
->  };
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> b/drivers/gpu/drm/sun4i/sun8i_mixer.c index 44d5e639ebb2..5a1376965270
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -395,6 +395,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg
-> = {
-> 
->  static const struct of_device_id sun8i_mixer_of_table[] = {
->  	{
-> +		.compatible = "allwinner,sun8i-a83t-de2-mixer",
-> +		.data = &sun8i_v3s_mixer_cfg,
-> +	},
-> +	{
-
-Maybe you want to squash 12 patch since this works only by luck.
-
-Best regards,
-Jernej
-
->  		.compatible = "allwinner,sun8i-v3s-de2-mixer",
->  		.data = &sun8i_v3s_mixer_cfg,
->  	},
-> --
-> git-series 0.9.1
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index cecb0fdfaef6..6dae21ced18a 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -79,6 +79,7 @@ static const struct clk_div_table clk_table2[] = {
+ 	{ .val = 1, .div = 4, },
+ 	{ .val = 0, .div = 0, }, /* last entry */
+ };
++
+ static const struct clk_ops clk_double_div_ops;
+ 
+ #define PERIPH_GATE(_name, _bit)		\
+@@ -217,7 +218,7 @@ PERIPH_CLK_FULL(counter, 23, 20, DIV_SEL0, 23, clk_table6);
+ PERIPH_CLK_FULL_DD(eip97, 24, 24, DIV_SEL2, DIV_SEL2, 22, 19);
+ PERIPH_CLK_MUX_DIV(cpu, 22, DIV_SEL0, 28, clk_table6);
+ 
+-static struct clk_periph_data data_nb[] ={
++static struct clk_periph_data data_nb[] = {
+ 	REF_CLK_FULL_DD(mmc),
+ 	REF_CLK_FULL_DD(sata_host),
+ 	REF_CLK_FULL_DD(sec_at),
+@@ -281,7 +282,7 @@ static unsigned int get_div(void __iomem *reg, int shift)
+ }
+ 
+ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+-		unsigned long parent_rate)
++						unsigned long parent_rate)
+ {
+ 	struct clk_double_div *double_div = to_clk_double_div(hw);
+ 	unsigned int div;
+@@ -303,6 +304,7 @@ static const struct of_device_id armada_3700_periph_clock_of_match[] = {
+ 	.data = data_sb, },
+ 	{ }
+ };
++
+ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+ 					 void __iomem *reg, spinlock_t *lock,
+ 					 struct device *dev, struct clk_hw **hw)
+@@ -355,9 +357,9 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+ 	}
+ 
+ 	*hw = clk_hw_register_composite(dev, data->name, data->parent_names,
+-				       data->num_parents, mux_hw,
+-				       mux_ops, rate_hw, rate_ops,
+-				       gate_hw, gate_ops, CLK_IGNORE_UNUSED);
++					data->num_parents, mux_hw,
++					mux_ops, rate_hw, rate_ops,
++					gate_hw, gate_ops, CLK_IGNORE_UNUSED);
+ 
+ 	if (IS_ERR(*hw))
+ 		return PTR_ERR(*hw);
+@@ -406,12 +408,11 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ 		if (armada_3700_add_composite_clk(&data[i], reg,
+ 						  &driver_data->lock, dev, hw))
+ 			dev_err(dev, "Can't register periph clock %s\n",
+-			       data[i].name);
+-
++				data[i].name);
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+-				  driver_data->hw_data);
++				     driver_data->hw_data);
+ 	if (ret) {
+ 		for (i = 0; i < num_periph; i++)
+ 			clk_hw_unregister(driver_data->hw_data->hws[i]);
+-- 
+2.15.0
