@@ -1,234 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59054 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbdLLMcS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:18 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH 10/10] DT: QCOM: Add thermal mitigation to msm8996
-Date: Tue, 12 Dec 2017 14:31:37 +0200
-Message-Id: <1513081897-31612-11-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v5 10/10] clk: fix set_rate_range when current rate is out of range
+Date: Fri,  1 Dec 2017 22:52:00 +0100
+Message-Id: <20171201215200.23523-11-jbrunet@baylibre.com>
+In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add thermal mitigation configuration to msm8996.
-With the cpufreq-dt OPP table the CPU frequency may be
-scaled and therefore throttled by the thermal config.
+Calling clk_core_set_rate() with core->req_rate is basically a no-op
+because of the early bail-out mechanism.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+This may leave the clock in inconsistent state if the rate is out the
+requested range. Calling clk_core_set_rate() with the closest rate
+limit could solve the problem but:
+- The underlying determine_rate() callback needs to account for this
+  corner case (rounding within the range, if possible)
+- if only round_rate() is available, we rely on luck unfortunately.
+
+Fixes: 1c8e600440c7 ("clk: Add rate constraints to clocks")
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 98 +++++++++++++++++++++++++++++++----
- 1 file changed, 87 insertions(+), 11 deletions(-)
+ drivers/clk/clk.c | 37 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 8beea7e..6fa061f 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/thermal/thermal.h>
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index edd965d8f41d..369933831705 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2010,6 +2010,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
+ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ {
+ 	int ret = 0;
++	unsigned long old_min, old_max, rate;
  
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -88,6 +89,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -102,6 +107,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
+ 	if (!clk)
+ 		return 0;
+@@ -2026,10 +2027,38 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 	if (clk->exclusive_count)
+ 		clk_core_rate_unprotect(clk->core);
  
-@@ -112,6 +121,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -126,6 +139,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -336,18 +353,33 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu_alert0: trip0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit0: trip1 {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
+-	if (min != clk->min_rate || max != clk->max_rate) {
+-		clk->min_rate = min;
+-		clk->max_rate = max;
+-		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++	/* Save the current values in case we need to rollback the change */
++	old_min = clk->min_rate;
++	old_max = clk->max_rate;
++	clk->min_rate = min;
++	clk->max_rate = max;
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal1 {
-@@ -357,18 +389,33 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu_alert1: trip0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit1: trip1 {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++	rate = clk_core_get_rate_nolock(clk->core);
++	if (rate < min || rate > max) {
++		/*
++		 * FIXME:
++		 * We are in bit of trouble here, current rate is outside the
++		 * the requested range. We are going try to request appropriate
++		 * range boundary but there is a catch. It may fail for the
++		 * usual reason (clock broken, clock protected, etc) but also
++		 * because:
++		 * - round_rate() was not favorable and fell on the wrong
++		 *   side of the boundary
++		 * - the determine_rate() callback does not really check for
++		 *   this corner case when determining the rate
++		 */
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal2 {
-@@ -378,18 +425,32 @@
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
--				cpu_alert2: trip0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit2: trip1 {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal3 {
-@@ -399,18 +460,33 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu_alert3: trip0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
- 				cpu_crit3: trip1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++		if (rate < min)
++			rate = min;
++		else
++			rate = max;
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
++		ret = clk_core_set_rate_nolock(clk->core, rate);
++		if (ret) {
++			/* rollback the changes */
++			clk->min_rate = old_min;
++			clk->max_rate = old_max;
++		}
+ 	}
  
+ 	if (clk->exclusive_count)
 -- 
-1.9.1
-
+2.14.3
