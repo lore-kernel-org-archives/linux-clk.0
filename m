@@ -1,157 +1,49 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 01/12] drivers: move clock common macros out from vendor directories
-Date: Thu, 7 Dec 2017 20:57:04 +0800
-Message-ID: <20171207125715.16160-2-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v5 01/10] clk: fix incorrect usage of ENOSYS
+Date: Fri,  1 Dec 2017 22:51:51 +0100
+Message-Id: <20171201215200.23523-2-jbrunet@baylibre.com>
+In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These macros are used by more than one SoC vendor platforms, avoid to
-have many copies of these code, this patch moves them to the common
-header file which every clock drivers can access to.
+ENOSYS is special and should only be used for incorrect syscall number.
+It does not seem to be the case here.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Reported by checkpatch.pl while working on clock protection.
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/sunxi-ng/ccu_common.h | 29 -----------------------------
- drivers/clk/zte/clk.h             | 18 ------------------
- include/linux/clk-provider.h      | 38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 38 insertions(+), 47 deletions(-)
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index 5d684ce..568cfae 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -31,35 +31,6 @@
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 647d056df88c..5fe9e63b15c6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1888,7 +1888,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
  
- struct device_node;
+ 	/* verify ops for for multi-parent clks */
+ 	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+-		ret = -ENOSYS;
++		ret = -EPERM;
+ 		goto out;
+ 	}
  
--#define CLK_HW_INIT(_name, _parent, _ops, _flags)			\
--	&(struct clk_init_data) {					\
--		.flags		= _flags,				\
--		.name		= _name,				\
--		.parent_names	= (const char *[]) { _parent },		\
--		.num_parents	= 1,					\
--		.ops 		= _ops,					\
--	}
--
--#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)		\
--	&(struct clk_init_data) {					\
--		.flags		= _flags,				\
--		.name		= _name,				\
--		.parent_names	= _parents,				\
--		.num_parents	= ARRAY_SIZE(_parents),			\
--		.ops 		= _ops,					\
--	}
--
--#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
--			_div, _mult, _flags)				\
--	struct clk_fixed_factor _struct = {				\
--		.div		= _div,					\
--		.mult		= _mult,				\
--		.hw.init	= CLK_HW_INIT(_name,			\
--					      _parent,			\
--					      &clk_fixed_factor_ops,	\
--					      _flags),			\
--	}
--
- struct ccu_common {
- 	void __iomem	*base;
- 	u16		reg;
-diff --git a/drivers/clk/zte/clk.h b/drivers/clk/zte/clk.h
-index 4df0f12..f1041e3 100644
---- a/drivers/clk/zte/clk.h
-+++ b/drivers/clk/zte/clk.h
-@@ -14,24 +14,6 @@
- 
- #define PNAME(x) static const char *x[]
- 
--#define CLK_HW_INIT(_name, _parent, _ops, _flags)			\
--	&(struct clk_init_data) {					\
--		.flags		= _flags,				\
--		.name		= _name,				\
--		.parent_names	= (const char *[]) { _parent },		\
--		.num_parents	= 1,					\
--		.ops		= _ops,					\
--	}
--
--#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)		\
--	&(struct clk_init_data) {					\
--		.flags		= _flags,				\
--		.name		= _name,				\
--		.parent_names	= _parents,				\
--		.num_parents	= ARRAY_SIZE(_parents),			\
--		.ops		= _ops,					\
--	}
--
- struct zx_pll_config {
- 	unsigned long rate;
- 	u32 cfg0;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7c925e6..26ea037 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -806,6 +806,44 @@ extern struct of_device_id __clk_of_table;
- 	}								\
- 	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
- 
-+#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= (const char *[]) { _parent },	\
-+		.num_parents	= 1,				\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
-+	(&(struct clk_init_data) {			\
-+		.flags          = _flags,		\
-+		.name           = _name,		\
-+		.parent_names   = NULL,			\
-+		.num_parents    = 0,			\
-+		.ops            = _ops,			\
-+	})
-+
-+#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
-+			_div, _mult, _flags)				\
-+	struct clk_fixed_factor _struct = {				\
-+		.div		= _div,					\
-+		.mult		= _mult,				\
-+		.hw.init	= CLK_HW_INIT(_name,			\
-+					      _parent,			\
-+					      &clk_fixed_factor_ops,	\
-+					      _flags),			\
-+	}
-+
- #ifdef CONFIG_OF
- int of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
 -- 
-2.7.4
+2.14.3
