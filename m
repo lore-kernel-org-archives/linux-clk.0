@@ -1,133 +1,90 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-Date: Tue, 19 Dec 2017 21:25:00 +0530
-Message-Id: <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 1 Dec 2017 10:48:18 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Dmitry Osipenko <digetx@gmail.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Message-ID: <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+> 
+> On 30/11/17 13:24, Dmitry Osipenko wrote:
+> > On 30.11.2017 14:31, Jon Hunter wrote:
+> >>
+> >> On 29/11/17 23:13, Dmitry Osipenko wrote:
+> >>> On 30.11.2017 01:55, Jon Hunter wrote:
+> >>
+> >> ...
+> >>
+> >>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+> >>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+> >>> caused trouble on Tegra114/124.
+> >>
+> >> Please share the exact change you would like me to test and I will.
+> > 
+> > Please try this:
+> 
+> I tried the patch, but this does not work for Tegra124 it still hangs.
+> Tracing the clk calls the last thing I see is ...
+> 
+> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+> [    2.694403] clk_prepare: hclk_div
+> [    2.695929] clk_prepare_complete: hclk_div
+> [    2.700027] clk_prepare: hclk
+> [    2.702947] clk_prepare_complete: hclk
+> [    2.706673] clk_prepare: pclk_div
+> [    2.709986] clk_prepare_complete: pclk_div
+> [    2.714039] clk_prepare: pclk
+> [    2.716985] clk_prepare_complete: pclk
+> [    2.720739] clk_prepare: apbdma
+> [    2.723833] clk_prepare_complete: apbdma
+> [    2.727736] clk_enable: hclk_div
+> [    2.730940] clk_enable_complete: hclk_div
+> [    2.734926] clk_enable: hclk
+> [    2.737788] clk_enable_complete: hclk
+> [    2.741426] clk_enable: pclk_div
+> [    2.744633] clk_enable_complete: pclk_div
+> [    2.748619] clk_enable: pclk
+> [    2.751481] clk_enable_complete: pclk
+> [    2.755120] clk_enable: apbdma
+> [    2.758153] clk_enable_complete: apbdma
+> [    2.762390] clk_disable: apbdma
+> [    2.765088] clk_disable_complete: apbdma
+> [    2.768986] clk
+> 
+> So I believe this change is correct and that Peter's analysis on IRC
+> seems correct, that this change has exposed another issue with the clock
+> driver.
+> 
+> Peter, can you summarise which other clocks should be made critical?
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/arm/msm/qcom,pvs.txt       | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,pvs.txt
+The following clocks should be critical:
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,pvs.txt b/Documentation/devicetree/bindings/arm/msm/qcom,pvs.txt
-new file mode 100644
-index 0000000..260f537
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,pvs.txt
-@@ -0,0 +1,91 @@
-+Qualcomm Process Voltage Scaling Tables
-+
-+The node name is required to be "qcom,pvs". There shall only be one
-+such node present in the root of the tree.
-+
-+PROPERTIES
-+
-+- qcom,pvs-format-a or qcom,pvs-format-b:
-+	Usage: required
-+	Value type: <empty>
-+	Definition: Indicates where and how to read and interpret the efuse registers.
-+		    Based on that the opp-microvolt-<name> is extended with the right
-+		    speedXX-PVSXX-versionXX string. The cpu opp-table should be populated
-+		    with the operating-points-v2 binding and each opp must have the voltage
-+		    specified for all combinations of opp-microvolt-<speedXX-pvsXX-versionXX>.
-+
-+Example:
-+
-+	cpu@0 {
-+		compatible = "qcom,krait";
-+		enable-method = "qcom,kpss-acc-v1";
-+		device_type = "cpu";
-+		reg = <0>;
-+		qcom,acc = <&acc0>;
-+		qcom,saw = <&saw0>;
-+		clocks = <&kraitcc 0>;
-+		clock-names = "cpu";
-+		cpu-supply = <&smb208_s2a>;
-+		operating-points-v2 = <&cpu_opp_table>;
-+	};
-+
-+	qcom,pvs {
-+		qcom,pvs-format-a;
-+	};
-+
-+
-+	cpu_opp_table: opp_table {
-+		compatible = "operating-points-v2";
-+
-+		/*
-+		 * Missing opp-shared property means CPUs switch DVFS states
-+		 * independently.
-+		 */
-+
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1250000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1175000>;
-+			opp-microvolt-speed0-pvs2-v0 = <1125000>;
-+			opp-microvolt-speed0-pvs3-v0 = <1050000>;
-+
-+		};
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1100000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1025000>;
-+			opp-microvolt-speed0-pvs2-v0 = <995000>;
-+			opp-microvolt-speed0-pvs3-v0 = <900000>;
-+
-+		};
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1000000>;
-+			opp-microvolt-speed0-pvs1-v0 = <925000>;
-+			opp-microvolt-speed0-pvs2-v0 = <875000>;
-+			opp-microvolt-speed0-pvs3-v0 = <800000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1150000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1075000>;
-+			opp-microvolt-speed0-pvs2-v0 = <1025000>;
-+			opp-microvolt-speed0-pvs3-v0 = <950000>;
-+
-+		};
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1050000>;
-+			opp-microvolt-speed0-pvs1-v0 = <975000>;
-+			opp-microvolt-speed0-pvs2-v0 = <925000>;
-+			opp-microvolt-speed0-pvs3-v0 = <850000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1200000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1125000>;
-+			opp-microvolt-speed0-pvs2-v0 = <1075000>;
-+			opp-microvolt-speed0-pvs3-v0 = <1000000>;
-+		};
-+	};
-+
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+pclk
+hclk
+sclk
+emc
+mc
+pll_p
+
+I think that's it.
+
+Peter.
