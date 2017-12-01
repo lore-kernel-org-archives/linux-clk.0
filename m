@@ -1,67 +1,109 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [RFC PATCH V1 2/2] clk: add lock for clk_core_is_enabled
-Date: Fri, 22 Dec 2017 17:46:05 +0800
-Message-ID: <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
-References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Dec 2017 08:39:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
+Message-ID: <20171201163903.GF19419@codeaurora.org>
+References: <20171128125330.363-1-yixun.lan@amlogic.com>
+ <20171128125330.363-3-yixun.lan@amlogic.com>
+ <20171129193433.GA19419@codeaurora.org>
+ <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to design doc, .is_enabled should be protected by enable lock.
-Then users don't have to protect it against enable/disable operation
-in clock drivers.
+On 11/30, Yixun Lan wrote:
+> Hi Stephen
+> 
+> On 11/30/17 03:34, Stephen Boyd wrote:
+> > On 11/28, Yixun Lan wrote:
+> >> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> >> new file mode 100644
+> >> index 000000000000..51c5b4062715
+> >> --- /dev/null
+> >> +++ b/drivers/clk/meson/axg.c
+> >> @@ -0,0 +1,948 @@
+> >> +/*
+> >> + * AmLogic Meson-AXG Clock Controller Driver
+> >> + *
+> >> + * Copyright (c) 2016 Baylibre SAS.
+> >> + * Author: Michael Turquette <mturquette@baylibre.com>
+> >> + *
+> >> + * Copyright (c) 2017 Amlogic, inc.
+> >> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+> >> + *
+> >> + * SPDX-License-Identifier: GPL-2.0+
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> >> +#include <linux/clk-provider.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/of_device.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <linux/init.h>
+> >> +
+> >> +#include "clkc.h"
+> >> +#include "axg.h"
+> >> +
+> >> +static DEFINE_SPINLOCK(clk_lock);
+> > 
+> > meson_axg_clk_lock?
+> > 
+> em... I'd leave it unchanged
+> 
+> because the spinlock will be used at macro MESON_GATE() [1] which
+> defined at drivers/clk/meson/clkc.h, and it assume using the generic
+> name 'clk_lock', change name will break the code..
+> 
+> and besides it's already defined as static, so I see no problem here
 
-See: Documentation/clk.txt
-"The enable lock is a spinlock and is held across calls to the .enable,
-.disable and .is_enabled operations."
+The problem is lockdep debugging and ctags/grep on the source
+code. clk_lock is very generic when it should be more specific so
+we can find this lock later on from a lockdep report with a
+simple search of the code.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Maybe make another patch to rename it to meson_clk_lock so the
+macro doesn't have to change too much, and we get it slightly
+more unique. Looks like v4l2 also has a clk_lock.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e24968f..d6e2d5c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -198,14 +198,19 @@ static bool clk_core_is_prepared(struct clk_core *core)
- 
- static bool clk_core_is_enabled(struct clk_core *core)
- {
-+	unsigned long flags;
- 	bool ret = false;
- 
-+	flags = clk_enable_lock();
-+
- 	/*
- 	 * .is_enabled is only mandatory for clocks that gate
- 	 * fall back to software usage counter if .is_enabled is missing
- 	 */
--	if (!core->ops->is_enabled)
-+	if (!core->ops->is_enabled) {
-+		clk_enable_unlock(flags);
- 		return core->enable_count;
-+	}
- 
- 	/*
- 	 * Check if clock controller's device is runtime active before
-@@ -230,6 +235,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
- 	if (core->dev)
- 		pm_runtime_put(core->dev);
- 
-+	clk_enable_unlock(flags);
-+
- 	return ret;
- }
- 
+> 
+> >> +};
+> >> +
+> >> +static int axg_clkc_probe(struct platform_device *pdev)
+> >> +{
+> >> +	const struct clkc_data *clkc_data;
+> >> +	void __iomem *clk_base;
+> >> +	int ret, clkid, i;
+> >> +	struct device *dev = &pdev->dev;
+> >> +
+> >> +	clkc_data = of_device_get_match_data(&pdev->dev);
+> >> +	if (!clkc_data)
+> >> +		return -EINVAL;
+> >> +
+> >> +	/*  Generic clocks and PLLs */
+> >> +	clk_base = of_iomap(dev->of_node, 0);
+> > 
+> > Use platform device APIs for ioremapping?
+> > 
+> I assume you are referring to 'platform_get_resource +
+> devm_ioremap_resource' ?
+> 
+> the idea sounds good to me.
+
+Yes.
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
