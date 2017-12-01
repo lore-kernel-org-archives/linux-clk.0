@@ -1,66 +1,50 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 14/18] ARM: dts: sun8i: a83t: Enable the PWM
-Date: Mon, 27 Nov 2017 16:41:38 +0100
-Message-Id: <257f6ffb088c1d165c3fdc6a2b2283e493cbaa16.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- jernej.skrabec@siol.net, plaes@plaes.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/4] dt-bindings: clock: add compatible variant for the Meson-AXG
+Date: Fri, 1 Dec 2017 09:24:49 +0800
+Message-ID: <20171201012452.27086-2-yixun.lan@amlogic.com>
+In-Reply-To: <20171201012452.27086-1-yixun.lan@amlogic.com>
+References: <20171201012452.27086-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T has the same PWM block than the H3. Add it to our DT.
+Update the documentation to support clock driver for the Amlogic's
+Meson-AXG SoC.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi |  9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 0a91f5c17f51..2cb71e460ea2 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -497,6 +497,15 @@
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index 924040769186..e2b377ed6f91 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -5,8 +5,11 @@ controllers within the SoC.
  
-+		pwm: pwm@1c21400 {
-+			compatible = "allwinner,sun8i-a83t-pwm",
-+				     "allwinner,sun8i-h3-pwm";
-+			reg = <0x01c21400 0x400>;
-+			clocks = <&osc24M>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
+ Required Properties:
+ 
+-- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
+-	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
++- compatible: should be:
++		"amlogic,gxbb-clkc" for GXBB SoC,
++		"amlogic,gxl-clkc" for GXL and GXM SoC,
++		"amlogic,axg-clkc" for AXG SoC.
 +
- 		uart0: serial@1c28000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x01c28000 0x400>;
+ - reg: physical base address of the clock controller and length of memory
+        mapped region.
+ 
 -- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.15.0
