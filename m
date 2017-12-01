@@ -1,70 +1,83 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Akinobu Mita <akinobu.mita@gmail.com>
-Subject: [PATCH 12/33] clk: cdce925: remove unnecessary long casts on return
-Date: Sat, 30 Dec 2017 01:12:51 +0000
-Message-Id: <1514596392-22270-13-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+MIME-Version: 1.0
+In-Reply-To: <1511807134.6812.10.camel@baylibre.com>
+References: <1511807134.6812.10.camel@baylibre.com>
+Date: Fri, 1 Dec 2017 08:45:35 -0800
+Message-ID: <CAEG3pNAFcvLS_5NCNotcWWK4Uj5pob015Z5xBPo0ciMffrqZWg@mail.gmail.com>
+Subject: Re: [GIT PULL] : clk: implement clock rate protection mechanism
+From: Michael Turquette <mturquette@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to the old function signature of clk_ops->round_rate the cdce925
-round_rate functions end up doing a cast of an internal unsigned long to a
-long. After updating clk_ops->round_rate() to be an unsigned long though
-the cast isn't necessary.
+Hi Jerome,
 
-Remove the extraneous cast from:
+On Mon, Nov 27, 2017 at 10:25 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> Dear clock maintainers,
+>
+> Below is a request to pull the v4 of the clock protect patchset [0].
+> I have done the documentation correction requested by Mike,
+> added his Ack and Maxime's Tested-By.
 
-- cdce925_pll_round_rate
-- cdce925_clk_round_rate
-- cdce925_clk_y1_round_rate
+Pulled.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-cdce925.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Regards,
+Mike
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index 341e744..eecc262 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -149,7 +149,7 @@ static unsigned long cdce925_pll_round_rate(struct clk_hw *hw,
- 	u16 n, m;
- 
- 	cdce925_pll_find_rate(rate, *parent_rate, &n, &m);
--	return (long)cdce925_pll_calculate_rate(*parent_rate, n, m);
-+	return cdce925_pll_calculate_rate(*parent_rate, n, m);
- }
- 
- static int cdce925_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -449,7 +449,7 @@ static unsigned long cdce925_clk_round_rate(struct clk_hw *hw,
- 	}
- 
- 	if (divider)
--		return (long)(l_parent_rate / divider);
-+		return l_parent_rate / divider;
- 	return 0;
- }
- 
-@@ -497,7 +497,7 @@ static unsigned long cdce925_clk_y1_round_rate(struct clk_hw *hw,
- 	u16 divider = cdce925_y1_calc_divider(rate, l_parent_rate);
- 
- 	if (divider)
--		return (long)(l_parent_rate / divider);
-+		return l_parent_rate / divider;
- 	return 0;
- }
- 
--- 
-2.7.4
+>
+> Cheers
+> Jerome
+>
+> [0]: https://lkml.kernel.org/r/20170924200030.6227-1-jbrunet@baylibre.com
+>
+> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+>
+>   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://github.com/jeromebrunet/linux.git tags/clk-protect-v4.15-rc1-v4
+>
+> for you to fetch changes up to 3e127536c3642adb18cc09d82f93aa31e8364d9d:
+>
+>   clk: fix set_rate_range when current rate is out of range (2017-11-27 17:20:12 +0100)
+>
+> ----------------------------------------------------------------
+> This patchset introduce clock protection to the CCF core. This can then
+> be used for:
+>
+> * Provide a way for a consumer to claim exclusivity over the rate control
+>   of a provider. Some clock consumers require that a clock rate must not
+>   deviate from its selected frequency. There can be several reasons for
+>   this, not least of which is that some hardware may not be able to
+>   handle or recover from a glitch caused by changing the clock rate while
+>   the hardware is in operation. For such HW, The ability to get exclusive
+>   control of a clock's rate, and release that exclusivity, could be seen
+>   as a fundamental clock rate control primitive. The exclusivity is not
+>   preemptible, so when claimed more than once, is rate is effectively
+>   locked.
+>
+> * Provide a similar functionality to providers themselves, fixing
+>   CLK_SET_RATE_GATE flag (enforce clock gating along the tree). While
+>   there might still be a few platforms relying the broken implementation,
+>   tests done has shown this change to be pretty safe.
+>
+> ----------------------------------------------------------------
+> Jerome Brunet (10):
+>       clk: fix incorrect usage of ENOSYS
+>       clk: take the prepare lock out of clk_core_set_parent
+>       clk: add clk_core_set_phase_nolock function
+>       clk: rework calls to round and determine rate callbacks
+>       clk: use round rate to bail out early in set_rate
+>       clk: add clock protection mechanism to clk core
+>       clk: cosmetic changes to clk_summary debugfs entry
+>       clk: fix CLK_SET_RATE_GATE with clock rate protection
+>       clk: add clk_rate_exclusive api
+>       clk: fix set_rate_range when current rate is out of range
+>
+>  drivers/clk/clk.c            | 509 +++++++++++++++++++++++++++++++++++++------
+>  include/linux/clk-provider.h |   1 +
+>  include/linux/clk.h          |  62 ++++++
+>  3 files changed, 502 insertions(+), 70 deletions(-)
