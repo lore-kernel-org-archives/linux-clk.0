@@ -1,36 +1,95 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 Dec 2017 15:28:54 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Cai Li <cai.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V2] clk: fix a panic error caused by accessing NULL
- pointer
-Message-ID: <20171205232854.GC4283@codeaurora.org>
-References: <20171121092438.19316-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171121092438.19316-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v5 03/10] clk: add clk_core_set_phase_nolock function
+Date: Fri,  1 Dec 2017 22:51:53 +0100
+Message-Id: <20171201215200.23523-4-jbrunet@baylibre.com>
+In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/21, Chunyan Zhang wrote:
-> From: Cai Li <cai.li@spreadtrum.com>
-> 
-> In some cases the clock parent would be set NULL when doing re-parent,
-> it will cause a NULL pointer accessing if clk_set trace event is
-> enabled.
-> 
-> This patch sets the parent as "none" if the input parameter is NULL.
-> 
-> Fixes: dfc202ead312 (clk: Add tracepoints for hardware operations)
-> Signed-off-by: Cai Li <cai.li@spreadtrum.com>
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
+Create a core function for set_phase, as it is done for set_rate and
+set_parent.
 
-Applied to clk-fixes
+This rework is done to ease the integration of "protected" clock
+functionality.
 
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e60b2a26b10b..7946a069ba2e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1966,6 +1966,25 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
++static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
++{
++	int ret = -EINVAL;
++
++	lockdep_assert_held(&prepare_lock);
++
++	if (!core)
++		return 0;
++
++	trace_clk_set_phase(core, degrees);
++
++	if (core->ops->set_phase)
++		ret = core->ops->set_phase(core->hw, degrees);
++
++	trace_clk_set_phase_complete(core, degrees);
++
++	return ret;
++}
++
+ /**
+  * clk_set_phase - adjust the phase shift of a clock signal
+  * @clk: clock signal source
+@@ -1988,7 +2007,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+  */
+ int clk_set_phase(struct clk *clk, int degrees)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (!clk)
+ 		return 0;
+@@ -1999,17 +2018,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 		degrees += 360;
+ 
+ 	clk_prepare_lock();
+-
+-	trace_clk_set_phase(clk->core, degrees);
+-
+-	if (clk->core->ops->set_phase)
+-		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
+-
+-	trace_clk_set_phase_complete(clk->core, degrees);
+-
+-	if (!ret)
+-		clk->core->phase = degrees;
+-
++	ret = clk_core_set_phase_nolock(clk->core, degrees);
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.3
