@@ -1,53 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52433 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751733AbdLVMY7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Dec 2017 07:24:59 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 03/11] clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
-Date: Fri, 22 Dec 2017 20:22:35 +0800
-Message-Id: <20171222122243.25735-4-icenowy@aosc.io>
-In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v5 08/10] clk: fix CLK_SET_RATE_GATE with clock rate protection
+Date: Fri,  1 Dec 2017 22:51:58 +0100
+Message-Id: <20171201215200.23523-9-jbrunet@baylibre.com>
+In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks of A64/H5 SoCs in the DE2 CCU is the same as the clocks in H3
-DE2 CCU rather than the A83T DE2 CCU (the parent of them is the DE
-module clock).
+Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+clock tree
 
-Fix this by change the clock descriptions to use the clocks of H3.
-
-Fixes: 763c5bd045b1 ("clk: sunxi-ng: add support for DE2 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 2db5d4e00ea7..468d1abaf0ee 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -177,10 +177,10 @@ static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f6fe5e5595ca..1af843ae20ff 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -605,6 +605,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
+ 		return;
  
- static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
--	.ccu_clks	= sun8i_a83t_de2_clks,
--	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
-+	.ccu_clks	= sun8i_h3_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_h3_de2_clks),
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_unprotect(core);
++
+ 	if (--core->prepare_count > 0)
+ 		return;
  
--	.hw_clks	= &sun8i_a83t_de2_hw_clks,
-+	.hw_clks	= &sun8i_h3_de2_hw_clks,
+@@ -679,6 +682,16 @@ static int clk_core_prepare(struct clk_core *core)
  
- 	.resets		= sun50i_a64_de2_resets,
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
+ 	core->prepare_count++;
+ 
++	/*
++	 * CLK_SET_RATE_GATE is a special case of clock protection
++	 * Instead of a consumer claiming exclusive rate control, it is
++	 * actually the provider which prevents any consumer from making any
++	 * operation which could result in a rate change or rate glitch while
++	 * the clock is prepared.
++	 */
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_protect(core);
++
+ 	return 0;
+ unprepare:
+ 	clk_core_unprepare(core->parent);
+@@ -1780,9 +1793,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (clk_core_rate_is_protected(core))
+ 		return -EBUSY;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
 -- 
-2.14.2
-
+2.14.3
