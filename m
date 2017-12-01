@@ -1,36 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 15:53:44 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: jassisinghbrar@gmail.com, bjorn.andersson@linaro.org,
-	mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
-Message-ID: <20171228235344.GY7997@codeaurora.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
- <20171222004904.GA7997@codeaurora.org>
- <1ea1fa92-de78-c4df-469c-3f36f5f62497@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1ea1fa92-de78-c4df-469c-3f36f5f62497@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v10 2/6] mailbox: qcom: Create APCS child device for clock controller
+Date: Fri,  1 Dec 2017 19:02:20 +0200
+Message-Id: <20171201170224.25053-3-georgi.djakov@linaro.org>
+In-Reply-To: <20171201170224.25053-1-georgi.djakov@linaro.org>
+References: <20171201170224.25053-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Georgi Djakov wrote:
-> On 22.12.17 г. 2:49, Stephen Boyd wrote:
-> > On 12/05, Georgi Djakov wrote:
-> >> This patchset adds support for the A53 CPU clock on MSM8916 platforms
-> >> and allows scaling of the CPU frequency on msm8916 based platforms.
-> > 
-> > Ok. I will apply just the clk ones? Patches 3,4, and 6?
-> > 
-> 
-> Yes, i think this would be best. The rest should go through the mailbox tree.
-> 
+There is a clock controller functionality provided by the APCS hardware
+block of msm8916 devices. The device-tree would represent an APCS node
+with both mailbox and clock provider properties.
+Create a platform child device for the clock controller functionality so
+the driver can probe and use APCS as parent.
 
-Ok. I made some changes. I'll comment one patch too. But I
-applied them to clk-next.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index ab344bc6fa63..57bde0dfd12f 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -29,6 +29,7 @@ struct qcom_apcs_ipc {
+ 
+ 	struct regmap *regmap;
+ 	unsigned long offset;
++	struct platform_device *clk;
+ };
+ 
+ static const struct regmap_config apcs_regmap_config = {
+@@ -96,6 +97,14 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
++		apcs->clk = platform_device_register_data(&pdev->dev,
++							  "qcom-apcs-msm8916-clk",
++							  -1, NULL, 0);
++		if (IS_ERR(apcs->clk))
++			dev_err(&pdev->dev, "failed to register APCS clk\n");
++	}
++
+ 	platform_set_drvdata(pdev, apcs);
+ 
+ 	return 0;
+@@ -104,8 +113,10 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
+ {
+ 	struct qcom_apcs_ipc *apcs = platform_get_drvdata(pdev);
++	struct platform_device *clk = apcs->clk;
+ 
+ 	mbox_controller_unregister(&apcs->mbox);
++	platform_device_unregister(clk);
+ 
+ 	return 0;
+ }
