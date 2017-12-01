@@ -1,70 +1,225 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 20 Dec 2017 12:46:12 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources
- active during system suspend
-Message-ID: <20171220114611.nd4y7ja6cyu7o4lo@verge.net.au>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
- <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
- <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
- <CAMuHMdU2CUE_68ZoQ5ssKaXYJ0L_P0gSTqVFS1GGa_cY7e-8cA@mail.gmail.com>
- <20171220102305.pibdggkfycmj63l4@verge.net.au>
- <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v10 6/6] clk: qcom: Add APCS clock controller support
+Date: Fri,  1 Dec 2017 19:02:24 +0200
+Message-Id: <20171201170224.25053-7-georgi.djakov@linaro.org>
+In-Reply-To: <20171201170224.25053-1-georgi.djakov@linaro.org>
+References: <20171201170224.25053-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 11:28:43AM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Wed, Dec 20, 2017 at 11:23 AM, Simon Horman <horms@verge.net.au> wrote:
-> > On Mon, Dec 18, 2017 at 12:22:17PM +0100, Geert Uytterhoeven wrote:
-> >> On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >> > On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> >> >> If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
-> >> >> Domain and to be used as a wakeup source, it must be kept active during
-> >> >> system suspend.
-> >> >>
-> >> >> Currently this is handled in device-specific drivers by explicitly
-> >> >> increasing the use count of the module clock when the device is
-> >> >> configured as a wakeup source.  However, the proper way to prevent the
-> >> >> device from being stopped is to inform this requirement to the genpd
-> >> >> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
-> >> >>
-> >> >> Note that this will only affect devices configured as wakeup sources.
-> >> >>
-> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> >
-> >> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >>
-> >> Thank you!
-> >>
-> >> Simon: can you please queue this up for v4.16?
-> >> I have queued the other 2 clock patches in clk-renesas-for-v4.16, and sent
-> >> a PR for it.
-> >
-> > Thanks, I have applied this patch to the soc-for-v4.16 branch.
-> > It is currently not based v4.15-rc1. Let me know if it should
-> > be rebased on top of your pull request for clk-renesas-for-v4.16.
-> 
-> If the base is not v4.15-rc1, what is it? GENPD_FLAG_ACTIVE_WAKEUP was
-> introduced in v4.15-rc1, so it won't compile based on v4.14.
+Add a driver for the APCS clock controller. It is part of the APCS
+hardware block, which among other things implements also a combined
+mux and half integer divider functionality. It can choose between a
+fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
+divider can be set both at the same time.
 
-Sorry, I typed my message incorrectly. The base _is_ v4.15-rc1.
+This is required for enabling CPU frequency scaling on MSM8916-based
+platforms.
 
-> There's no dependency on the clock drivers, so no need to base on
-> top of clk-renesas-for-v4.16.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/Kconfig        |  11 +++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/apcs-msm8916.c | 149 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 drivers/clk/qcom/apcs-msm8916.c
 
-Thanks, got it.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 81ac7b9378fe..255023b439c9 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -22,6 +22,17 @@ config QCOM_A53PLL
+ 	  Say Y if you want to support higher CPU frequencies on MSM8916
+ 	  devices.
+ 
++config QCOM_CLK_APCS_MSM8916
++	bool "MSM8916 APCS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	depends on QCOM_APCS_IPC
++	default ARCH_QCOM
++	help
++	  Support for the APCS Clock Controller on msm8916 devices. The
++	  APCS is managing the mux and divider which feeds the CPUs.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as msm8916.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7c51d877f967..0408cebf38d4 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -34,5 +34,6 @@ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
++obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+new file mode 100644
+index 000000000000..f71039ff2347
+--- /dev/null
++++ b/drivers/clk/qcom/apcs-msm8916.c
+@@ -0,0 +1,149 @@
++/*
++ * Qualcomm APCS clock controller driver
++ *
++ * Copyright (c) 2017, Linaro Limited
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/mailbox_controller.h>
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include "clk-regmap.h"
++#include "clk-regmap-mux-div.h"
++
++enum {
++	P_GPLL0,
++	P_A53PLL,
++};
++
++static const struct parent_map gpll0_a53cc_map[] = {
++	{ P_GPLL0, 4 },
++	{ P_A53PLL, 5 },
++};
++
++static const char * const gpll0_a53cc[] = {
++	"gpll0_vote",
++	"a53pll",
++};
++
++/*
++ * We use the notifier function for switching to a temporary safe configuration
++ * (mux and divider), while the A53 PLL is reconfigured.
++ */
++static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
++			     void *data)
++{
++	int ret = 0;
++	struct clk_regmap_mux_div *md = container_of(nb,
++						     struct clk_regmap_mux_div,
++						     clk_nb);
++	if (event == PRE_RATE_CHANGE)
++		/* set the mux and divider to safe frequency (400mhz) */
++		ret = __mux_div_set_src_div(md, 4, 3);
++
++	return notifier_from_errno(ret);
++}
++
++static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = pdev->dev.parent;
++	struct device_node *np = dev->of_node;
++	struct clk_regmap_mux_div *a53cc;
++	struct regmap *regmap;
++	struct clk_init_data init = { };
++	int ret;
++
++	regmap = dev_get_regmap(dev, NULL);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		dev_err(dev, "failed to get regmap: %d\n", ret);
++		return ret;
++	}
++
++	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
++	if (!a53cc)
++		return -ENOMEM;
++
++	init.name = "a53mux";
++	init.parent_names = gpll0_a53cc;
++	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
++	init.ops = &clk_regmap_mux_div_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++
++	a53cc->clkr.hw.init = &init;
++	a53cc->clkr.regmap = regmap;
++	a53cc->reg_offset = 0x50;
++	a53cc->hid_width = 5;
++	a53cc->hid_shift = 0;
++	a53cc->src_width = 3;
++	a53cc->src_shift = 8;
++	a53cc->parent_map = gpll0_a53cc_map;
++
++	a53cc->pclk = devm_clk_get(dev, NULL);
++	if (IS_ERR(a53cc->pclk)) {
++		ret = PTR_ERR(a53cc->pclk);
++		dev_err(dev, "failed to get clk: %d\n", ret);
++		return ret;
++	}
++
++	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
++	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
++	if (ret) {
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		goto err;
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get,
++				     &a53cc->clkr.hw);
++	if (ret) {
++		dev_err(dev, "failed to add clock provider: %d\n", ret);
++		goto err;
++	}
++
++	platform_set_drvdata(pdev, a53cc);
++
++	return 0;
++
++err:
++	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
++	return ret;
++}
++
++static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
++{
++	struct clk_regmap_mux_div *a53cc = platform_get_drvdata(pdev);
++
++	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static struct platform_driver qcom_apcs_msm8916_clk_driver = {
++	.probe = qcom_apcs_msm8916_clk_probe,
++	.remove = qcom_apcs_msm8916_clk_remove,
++	.driver = {
++		.name = "qcom-apcs-msm8916-clk",
++	},
++};
++module_platform_driver(qcom_apcs_msm8916_clk_driver);
++
++MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Qualcomm MSM8916 APCS clock driver");
