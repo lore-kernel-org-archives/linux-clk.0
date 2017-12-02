@@ -1,35 +1,141 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 16:34:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 1/3] clk: at91: pmc: Wait for clocks when resuming
-Message-ID: <20171222003408.GV7997@codeaurora.org>
-References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
- <20171211165535.5126-2-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs2.siol.net ([213.250.19.135]:41429 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752310AbdLBV6m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 2 Dec 2017 16:58:42 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        plaes@plaes.org, icenowy@aosc.io,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
+Date: Sat, 02 Dec 2017 22:58:36 +0100
+Message-ID: <2942946.00TBF2OOZN@jernej-laptop>
+In-Reply-To: <20171130153312.plmh2wr4n5njhlvb@flea.lan>
+References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <1722782.9j9JEoLEfc@jernej-laptop> <20171130153312.plmh2wr4n5njhlvb@flea.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171211165535.5126-2-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/11, Romain Izard wrote:
-> Wait for the syncronization of all clocks when resuming, not only the
-> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-> when interrupts are masked, which is the case in here.
+Dne četrtek, 30. november 2017 ob 16:33:12 CET je Maxime Ripard napisal(a):
+> On Tue, Nov 28, 2017 at 11:33:44PM +0100, Jernej Škrabec wrote:
+> > Hi!
+> > 
+> > Dne torek, 28. november 2017 ob 23:00:14 CET je Maxime Ripard napisal(a):
+> > > On Tue, Nov 28, 2017 at 04:48:55PM +0100, Jernej Škrabec wrote:
+> > > > > On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
+> > > > > > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard
+> > > > 
+> > > > napisal(a):
+> > > > > > > Add support for the A83T display pipeline.
+> > > > > > > 
+> > > > > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > > > > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > > > > > ---
+> > > > > > > 
+> > > > > > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt |
+> > > > > > >  3
+> > > > > > >  +++
+> > > > > > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             |
+> > > > > > >  2
+> > > > > > >  ++
+> > > > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            |
+> > > > > > >  5
+> > > > > > >  +++++
+> > > > > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           |
+> > > > > > >  4
+> > > > > > >  ++++
+> > > > > > >  4 files changed, 14 insertions(+)
+> > > > > > > 
+> > > > > > > diff --git
+> > > > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > > > index
+> > > > > > > d4259a4f5171..d6b52e5c48c0 100644
+> > > > > > > ---
+> > > > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > > > +++
+> > > > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > > > > > 
+> > > > > > > @@ -93,6 +93,7 @@ Required properties:
+> > > > > > >     * allwinner,sun6i-a31s-tcon
+> > > > > > >     * allwinner,sun7i-a20-tcon
+> > > > > > >     * allwinner,sun8i-a33-tcon
+> > > > > > > 
+> > > > > > > +   * allwinner,sun8i-a83t-tcon-lcd
+> > > > > > > 
+> > > > > > >     * allwinner,sun8i-v3s-tcon
+> > > > > > >   
+> > > > > > >   - reg: base address and size of memory-mapped region
+> > > > > > >   - interrupts: interrupt associated to this IP
+> > > > > > > 
+> > > > > > > @@ -224,6 +225,7 @@ supported.
+> > > > > > > 
+> > > > > > >  Required properties:
+> > > > > > >    - compatible: value must be one of:
+> > > > > > > +    * allwinner,sun8i-a83t-de2-mixer
+> > > > > > 
+> > > > > > What will be the name of the second mixer, once support for HDMI
+> > > > > > is
+> > > > > > added?
+> > > > > > Should we start directly with 0 and 1 postfix ?
+> > > > > 
+> > > > > What are the differences exactly without the two mixers?
+> > > > 
+> > > > Mixer properties:
+> > > > - mixer index (0 or 1), important for determining CCSC base (see my
+> > > > patches)
+> > > 
+> > > Is that the only thing we need to determine?
+> > 
+> > For now, mixer index is important only for determining CCSC base in
+> > conjuction with VEP capability. Obviously, I can't exclude that there is
+> > some other case where that mixer index is needed.
 > 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
+> That's unfortunate...
 
-Applied to clk-next
+I take a deeper look today about that issue and it seems that mixer index is 
+really needed only here. I did only regex search and not line by line check, 
+so take this with grain of salt.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Additionally, it seems that this comparison is kind of a hack for V3s. Channel 
+output CSC is done through VEP (video enhancement processor, maybe?) unit. 
+Those units are only on VI channels. But every SoC with DE2 I checked except 
+V3s have 1 VI channel and VEP enabled on first mixer. V3s on the other hand 
+have 2 VI channels and no VEP, but same addresses should work for channel 
+output CSC according to the code. Of course, that is only a theory, but if you 
+want, we can go with quirks structure. Or better yet, with quirk property, 
+since there may be some (future?) SoC with two mixers and no VEP unit 
+supported.
+
+BTW, how should be DE3 on H6 handled in the future? Registers offsets seems to 
+be same within same DE2 and DE3 units, just extended. However, some base 
+addresses are different, for example, those connected to VEP. I don't think 
+new driver is needed, just some quirks structure which would tell DE version.
+
+Best regards,
+Jernej
+
+> 
+> > Can't we just add reg property for that?
+> 
+> No, reg is here specifically for the bus address, not for an index,
+> and in general, indices are poorly perceived and have been subject to
+> a lot of debate in the past. Hence why I'd really like to avoid any
+> solution looking like this. But I guess we don't really have the
+> choice either.
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
+
+
