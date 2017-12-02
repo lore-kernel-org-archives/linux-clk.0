@@ -1,77 +1,95 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,
-  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni
- <thomas.petazzoni@free-electrons.com>,
-  linux-arm-kernel@lists.infradead.org,  Antoine Tenart
- <antoine.tenart@free-electrons.com>,  =?utf-8?Q?Miqu=C3=A8l?= Raynal
- <miquel.raynal@free-electrons.com>,  Nadav Haklai <nadavh@marvell.com>,
-  Victor Gu <xigu@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson
- Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Neta Zur
- Hershkovits <neta@marvell.com>
-Subject: Re: [PATCH 0/3] Add DVFS support on CPU clock for Armada 37xx
-References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
-	<20171221231341.GC7997@codeaurora.org>
-Date: Fri, 22 Dec 2017 11:02:04 +0100
-In-Reply-To: <20171221231341.GC7997@codeaurora.org> (Stephen Boyd's message of
-	"Thu, 21 Dec 2017 15:13:41 -0800")
-Message-ID: <87shc3dqsj.fsf@free-electrons.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Jon Hunter <jonathanh@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
+ <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
+ <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
+Date: Sat, 2 Dec 2017 15:47:32 +0300
 MIME-Version: 1.0
+In-Reply-To: <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-=20
- On jeu., d=C3=A9c. 21 2017, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On 01.12.2017 11:48, Peter De Schrijver wrote:
+> On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+>>
+>> On 30/11/17 13:24, Dmitry Osipenko wrote:
+>>> On 30.11.2017 14:31, Jon Hunter wrote:
+>>>>
+>>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+>>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+>>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+>>>>> caused trouble on Tegra114/124.
+>>>>
+>>>> Please share the exact change you would like me to test and I will.
+>>>
+>>> Please try this:
+>>
+>> I tried the patch, but this does not work for Tegra124 it still hangs.
+>> Tracing the clk calls the last thing I see is ...
+>>
+>> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+>> [    2.694403] clk_prepare: hclk_div
+>> [    2.695929] clk_prepare_complete: hclk_div
+>> [    2.700027] clk_prepare: hclk
+>> [    2.702947] clk_prepare_complete: hclk
+>> [    2.706673] clk_prepare: pclk_div
+>> [    2.709986] clk_prepare_complete: pclk_div
+>> [    2.714039] clk_prepare: pclk
+>> [    2.716985] clk_prepare_complete: pclk
+>> [    2.720739] clk_prepare: apbdma
+>> [    2.723833] clk_prepare_complete: apbdma
+>> [    2.727736] clk_enable: hclk_div
+>> [    2.730940] clk_enable_complete: hclk_div
+>> [    2.734926] clk_enable: hclk
+>> [    2.737788] clk_enable_complete: hclk
+>> [    2.741426] clk_enable: pclk_div
+>> [    2.744633] clk_enable_complete: pclk_div
+>> [    2.748619] clk_enable: pclk
+>> [    2.751481] clk_enable_complete: pclk
+>> [    2.755120] clk_enable: apbdma
+>> [    2.758153] clk_enable_complete: apbdma
+>> [    2.762390] clk_disable: apbdma
+>> [    2.765088] clk_disable_complete: apbdma
+>> [    2.768986] clk
+>>
+>> So I believe this change is correct and that Peter's analysis on IRC
+>> seems correct, that this change has exposed another issue with the clock
+>> driver.
+>>
+>> Peter, can you summarise which other clocks should be made critical?
+> 
+> The following clocks should be critical:
+> 
+> pclk
+> hclk
+> sclk
+> emc
+> mc
+> pll_p
+> 
+> I think that's it.
 
-> On 11/30, Gregory CLEMENT wrote:
->> Hi,
->>=20
->> This small series is needed to use DVFS on Armada 37xx. When DVFS is
->> enabled the CPU clock setting is done using an other set of registers
->> from the North Bridge Power Management block.
->>=20
->> The series adds the possibility to modify the CPU frequency using the
->> associate load level matching the target frequency. However
->> configuring the frequencies for each load is done by the cpufreq
->> driver submitted in a separate series.
->>=20
->> Obviously having both series (cpufreq and clk) is needed to support
->> DVFS on Armada 37xx, but there is no dependencies between the series
->> (for building or at runtime).
->>=20
->
-> Are you relying on the clk API returning an error to detect if
-> DVFS is present or not? Just curious why that part of the code
-> was there.
-
-The cpufreq framework rely on the clk framwork to setup the clk
-frequency of the CPU. For this hardware when DVFS is enabled the we
-don't directly control the frequency of the CPUs but the "load
-level". And it is during the initialization that we associate CPU
-frequency to a load level.
-
-The clk part is there to setup this load level for the hardware but by
-still using the frequency as an entry point as it was what is expected
-by the kernel. So cpufreq will ask a frequency depending of its policy,
-then the clk driver will setup the load level matching this frequency.
-
-And to answer your specific question we don't rely on the clk API
-returning an error to detect if DVFS is present or not. For this we
-directly read the DVFS bit exposed through the syscon.
-
-Gregory
-
->
-> --=20
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Could you please elaborate why pll_p should be critical? Is it applicable to all
+Tegra generations?
