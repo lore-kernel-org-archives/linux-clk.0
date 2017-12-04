@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 06/12] clk: sprd: add composite clock support
-Date: Thu, 7 Dec 2017 20:57:09 +0800
-Message-ID: <20171207125715.16160-7-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] [PATCH 2/2] clk: sunxi-ng: sun50i: a64: Add 2x
+ fixed post-divider to MMC module clocks
+To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20171204051912.7485-1-wens@csie.org>
+ <20171204051912.7485-3-wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <d39b26fb-8d8c-1a97-2b36-ae6a365e29ca@arm.com>
+Date: Mon, 4 Dec 2017 23:18:15 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20171204051912.7485-3-wens@csie.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduced composite driver for Spreadtrum's SoCs. The
-functions of this composite clock simply consist of divider and
-mux clocks.
+On 04/12/17 05:19, Chen-Yu Tsai wrote:
+> On the A64, the MMC module clocks are fixed in the new timing mode,
+> i.e. they do not have a bit to select the mode. These clocks have
+> a 2x divider somewhere between the clock and the MMC module.
+> 
+> To be consistent with other SoCs supporting the new timing mode,
+> we model the 2x divider as a fixed post-divider on the MMC module
+> clocks.
+> 
+> This patch adds the post-dividers to the MMC clocks.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile    |  1 +
- drivers/clk/sprd/composite.c | 60 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/composite.h | 51 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 112 insertions(+)
- create mode 100644 drivers/clk/sprd/composite.c
- create mode 100644 drivers/clk/sprd/composite.h
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 80e6039..2262e76 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
- clk-sprd-y	+= div.o
-+clk-sprd-y	+= composite.o
-diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
-new file mode 100644
-index 0000000..ebb6448
---- /dev/null
-+++ b/drivers/clk/sprd/composite.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum composite clock driver
-+//
-+// Copyright (C) 2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#include <linux/clk-provider.h>
-+
-+#include "composite.h"
-+
-+static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_round_rate(&cc->common, &cc->div,
-+					 rate, parent_rate);
-+}
-+
-+static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
-+}
-+
-+static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_div_helper_set_rate(&cc->common, &cc->div,
-+				       rate, parent_rate);
-+}
-+
-+static u8 sprd_comp_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
-+}
-+
-+static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_comp *cc = hw_to_sprd_comp(hw);
-+
-+	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
-+}
-+
-+const struct clk_ops sprd_comp_ops = {
-+	.get_parent	= sprd_comp_get_parent,
-+	.set_parent	= sprd_comp_set_parent,
-+
-+	.round_rate	= sprd_comp_round_rate,
-+	.recalc_rate	= sprd_comp_recalc_rate,
-+	.set_rate	= sprd_comp_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_comp_ops);
-diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
-new file mode 100644
-index 0000000..0984e9e
---- /dev/null
-+++ b/drivers/clk/sprd/composite.h
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum composite clock driver
-+//
-+// Copyright (C) 2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#ifndef _SPRD_COMPOSITE_H_
-+#define _SPRD_COMPOSITE_H_
-+
-+#include "common.h"
-+#include "mux.h"
-+#include "div.h"
-+
-+struct sprd_comp {
-+	struct sprd_mux_ssel	mux;
-+	struct sprd_div_internal	div;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,	\
-+			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
-+	struct sprd_comp _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
-+		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
-+						       _parent,		\
-+						       &sprd_comp_ops,	\
-+						       _flags),		\
-+			 }						\
-+	}
-+
-+#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,	\
-+			_mwidth, _dshift, _dwidth, _flags)	\
-+	SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg,	\
-+			    NULL, _mshift, _mwidth,		\
-+			    _dshift, _dwidth, _flags)
-+
-+static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_comp, common);
-+}
-+
-+extern const struct clk_ops sprd_comp_ops;
-+
-+#endif /* _SPRD_COMPOSITE_H_ */
--- 
-2.7.4
+Cheers,
+Andre
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
+>  1 file changed, 37 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> index 2bb4cabf802f..ee9c12cf3f08 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> @@ -400,28 +400,45 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents, 0x080,
+>  				  BIT(31),	/* gate */
+>  				  0);
+>  
+> +/*
+> + * MMC clocks are the new timing mode (see A83T & H3) variety, but without
+> + * the mode switch. This means they have a 2x post divider between the clock
+> + * and the MMC module. This is not documented in the manual, but is taken
+> + * into consideration when setting the mmc module clocks in the BSP kernel.
+> + * Without it, MMC performance is degraded.
+> + *
+> + * We model it here to be consistent with other SoCs supporting this mode.
+> + * The alternative would be to add the 2x multiplier when setting the MMC
+> + * module clock in the MMC driver, just for the A64.
+> + */
+>  static const char * const mmc_default_parents[] = { "osc24M", "pll-periph0-2x",
+>  						    "pll-periph1-2x" };
+> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_default_parents, 0x088,
+> -				  0, 4,		/* M */
+> -				  16, 2,	/* P */
+> -				  24, 2,	/* mux */
+> -				  BIT(31),	/* gate */
+> -				  0);
+> -
+> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_default_parents, 0x08c,
+> -				  0, 4,		/* M */
+> -				  16, 2,	/* P */
+> -				  24, 2,	/* mux */
+> -				  BIT(31),	/* gate */
+> -				  0);
+> -
+> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_default_parents, 0x090,
+> -				  0, 4,		/* M */
+> -				  16, 2,	/* P */
+> -				  24, 2,	/* mux */
+> -				  BIT(31),	/* gate */
+> -				  0);
+> +static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0",
+> +					  mmc_default_parents, 0x088,
+> +					  0, 4,		/* M */
+> +					  16, 2,	/* P */
+> +					  24, 2,	/* mux */
+> +					  BIT(31),	/* gate */
+> +					  2,		/* post-div */
+> +					  0);
+> +
+> +static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1",
+> +					  mmc_default_parents, 0x08c,
+> +					  0, 4,		/* M */
+> +					  16, 2,	/* P */
+> +					  24, 2,	/* mux */
+> +					  BIT(31),	/* gate */
+> +					  2,		/* post-div */
+> +					  0);
+> +
+> +static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2",
+> +					  mmc_default_parents, 0x090,
+> +					  0, 4,		/* M */
+> +					  16, 2,	/* P */
+> +					  24, 2,	/* mux */
+> +					  BIT(31),	/* gate */
+> +					  2,		/* post-div */
+> +					  0);
+>  
+>  static const char * const ts_parents[] = { "osc24M", "pll-periph0", };
+>  static SUNXI_CCU_MP_WITH_MUX_GATE(ts_clk, "ts", ts_parents, 0x098,
+> 
