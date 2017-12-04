@@ -1,29 +1,40 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 18:08:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: axi-clkgen: Round closest in round_rate() and
- recalc_rate()
-Message-ID: <20171222020831.GI7997@codeaurora.org>
-References: <20170905093241.18582-1-lars@metafoo.de>
- <20170905093241.18582-2-lars@metafoo.de>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 4 Dec 2017 15:37:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Carlo Caione <carlo@caione.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] clk: meson-axg: add clocks dt-bindings required
+ header
+Message-ID: <20171204213728.e6hzl5wubfkx6fmt@rob-hp-laptop>
+References: <20171201012452.27086-1-yixun.lan@amlogic.com>
+ <20171201012452.27086-3-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170905093241.18582-2-lars@metafoo.de>
+In-Reply-To: <20171201012452.27086-3-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/05, Lars-Peter Clausen wrote:
-> To minimize the rounding error round to the closest integer when
-> calculating the result in the recalc_rate() and set_rate() callbacks.
+On Fri, Dec 01, 2017 at 09:24:50AM +0800, Yixun Lan wrote:
+> From: Qiufang Dai <qiufang.dai@amlogic.com>
 > 
-> Also in order to improve precision multiply first and then divide.
+> Add the required header for the clocks ID dt-bindings
+> exported from various subsystem in the Meson-AXG SoC.
 > 
-> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 > ---
+>  include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>                                                                                
