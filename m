@@ -1,85 +1,147 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.sig21.net ([80.244.240.74]:57023 "EHLO mail.sig21.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751529AbdLMLhZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Dec 2017 06:37:25 -0500
-Date: Wed, 13 Dec 2017 12:13:05 +0100
-From: Johannes Stezenbach <js@sig21.net>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
-Message-ID: <20171213111305.GA20260@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <20170925191749.2oamusbajgs6clcg@sig21.net>
- <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
- <34396652.fljU28PShI@aspire.rjw.lan>
- <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] [PATCH 1/2] clk: sunxi-ng: Support fixed
+ post-dividers on MP style clocks
+To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20171204051912.7485-1-wens@csie.org>
+ <20171204051912.7485-2-wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <b961a1b6-f0e4-68e3-ab77-b0010dab63ff@arm.com>
+Date: Mon, 4 Dec 2017 23:18:03 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171204051912.7485-2-wens@csie.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 13, 2017 at 09:53:21AM +0100, Hans de Goede wrote:
-> On 13-12-17 01:00, Rafael J. Wysocki wrote:
-> > On Monday, September 25, 2017 9:21:09 PM CET Johannes Stezenbach wrote:
-> > > SATA controller is enabled on Asus E200HA even though the
-> > > machine doesn't use it (it has eMMC storage), however
-> > > SATA being on blocks S0ix entry so we need to disable it.
-> > > 
-> > > Signed-off-by: Johannes Stezenbach <js@sig21.net>
-> > 
-> > Mika, Andy, Hans, any comments on this one?
+Hi Chen-Yu,
+
+On 04/12/17 05:19, Chen-Yu Tsai wrote:
+> On the A64, the MMC module clocks are fixed in the new timing mode,
+> i.e. they do not have a bit to select the mode. These clocks have
+> a 2x divider somewhere between the clock and the MMC module.
 > 
-> Seems sensible to me, I'm afraid we may need the same quirk on
-> other devices, but I see no way around this.
+> To be consistent with other SoCs supporting the new timing mode,
+> we model the 2x divider as a fixed post-divider on the MMC module
+> clocks.
 > 
-> Although, maybe we need to have a specialized (derived)
-> ahci driver for these Atom SoCs and in there if no
-> disk is detected do this through the clock framework?
+> To do this, we first add fixed post-divider to the MP style clocks,
+> which the MMC module clocks are.
 > 
-> That may be better then a long list of quirks.
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu_mp.c | 20 ++++++++++++++++++--
+>  drivers/clk/sunxi-ng/ccu_mp.h | 24 ++++++++++++++++++++++++
+>  2 files changed, 42 insertions(+), 2 deletions(-)
 > 
-> Johannes, question how did you test this and figure out
-> which clocks to disable, a quick howto on this, I think
-> a patch adding a little howto / README as say
-> Documentation/power/intel-S0ix-debugging.txt
-> documenting this would be great. I'm certainly interested
-> in trying to reproduce this on some of my own Bay Trail and
-> Cherry Trail devices and add fixes for those if necessary.
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+> index 688855e7dc8c..5d0af4051737 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> @@ -50,12 +50,19 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+>  	unsigned int max_m, max_p;
+>  	unsigned int m, p;
+>  
+> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate *= cmp->fixed_post_div;
 
-I put my E200HA aside due to lack of time, so it's
-unlikely I'll send documentation patches anytime soon.
+Can't you just initialise fixed_post_div to 1 normally and save the
+CCU_FEATURE_FIXED_POSTDIV?
 
-Basically everything is documented in bugzilla:
-https://bugzilla.kernel.org/show_bug.cgi?id=193891
+> +
+>  	max_m = cmp->m.max ?: 1 << cmp->m.width;
+>  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+>  
+>  	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
+> +	rate = *parent_rate / p / m;
+> +
+> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate /= cmp->fixed_post_div;
+>  
+> -	return *parent_rate / p / m;
+> +	return rate;
+>  }
+>  
+>  static void ccu_mp_disable(struct clk_hw *hw)
+> @@ -83,6 +90,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+>  					unsigned long parent_rate)
+>  {
+>  	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
+> +	unsigned long rate;
+>  	unsigned int m, p;
+>  	u32 reg;
+>  
+> @@ -101,7 +109,11 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+>  	p = reg >> cmp->p.shift;
+>  	p &= (1 << cmp->p.width) - 1;
+>  
+> -	return (parent_rate >> p) / m;
+> +	rate = (parent_rate >> p) / m;
+> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate /= cmp->fixed_post_div;
+> +
+> +	return rate;
+>  }
+>  
+>  static int ccu_mp_determine_rate(struct clk_hw *hw,
+> @@ -129,6 +141,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	max_m = cmp->m.max ?: 1 << cmp->m.width;
+>  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+>  
+> +	/* Adjust target rate according to post-dividers */
+> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate = rate * cmp->fixed_post_div;
+> +
+>  	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
+>  
+>  	spin_lock_irqsave(cmp->common.lock, flags);
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+> index aaef11d747ea..5107635e61de 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.h
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.h
+> @@ -33,9 +33,33 @@ struct ccu_mp {
+>  	struct ccu_div_internal		m;
+>  	struct ccu_div_internal		p;
+>  	struct ccu_mux_internal	mux;
+> +
+> +	unsigned int		fixed_post_div;
+> +
+>  	struct ccu_common	common;
+>  };
+>  
+> +#define SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(_struct, _name, _parents, _reg, \
+> +					   _mshift, _mwidth,		\
+> +					   _pshift, _pwidth,		\
+> +					   _muxshift, _muxwidth,	\
+> +					   _gate, _postdiv, _flags)	\
+> +	struct ccu_mp _struct = {					\
+> +		.enable	= _gate,					\
+> +		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+> +		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
+> +		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
+> +		.fixed_post_div	= _postdiv,				\
+> +		.common	= {						\
+> +			.reg		= _reg,				\
+> +			.features	= CCU_FEATURE_FIXED_POSTDIV,	\
+> +			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+> +							      _parents, \
+> +							      &ccu_mp_ops, \
+> +							      _flags),	\
+> +		}							\
+> +	}
+> +
 
-For the SATA issue I just poked wildly around in registers using
-busybox devmem, after applying S0ix blocker debug patch
-I tried to disable some devices which were printed:
-https://bugzilla.kernel.org/show_bug.cgi?id=193891#c53
-(Obviously bug 193891 is misnamed, most of what's
-discussed there doesn't directly relate to PMIC. Sorry
-for creating a mess, but my understanding of the platform
-was very low when I created it.)
+This looks suspiciously like a copy of the macro below. What about you
+define the one below as a special case of this new one above?
+Should be even more straightforward with defaulting postdiv to 1 and
+loosing the feature flags.
 
-The thing is that the public CHT datasheet (atom-z8000-datasheet-vol-1.pdf + vol-2)
-doesn't even mention SATA, and there is no PCI device for it.
-OTOH, baytrail datasheet (atom-e3800-family-datasheet.pdf)
-specifies SATA and BIT_SATA was already defined in pmc_atom.h.
+Cheers,
+Andre.
 
-Besides SATA, I also needed to disable dw DMA, using a
-hack patch or devmem, but eventually it might be solved properly:
-https://bugzilla.kernel.org/show_bug.cgi?id=196861
-
-
-Thanks,
-Johannes
+>  #define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+>  				   _mshift, _mwidth,			\
+>  				   _pshift, _pwidth,			\
+> 
