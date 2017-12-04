@@ -1,50 +1,131 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Barry Song <baohua@kernel.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Barry Song <Baohua.Song@csr.com>
-Subject: [PATCH 22/33] clk: sirf: remove unnecessary long cast on return
-Date: Sat, 30 Dec 2017 01:13:01 +0000
-Message-Id: <1514596392-22270-23-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 1/2] clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+Date: Mon,  4 Dec 2017 13:19:11 +0800
+Message-Id: <20171204051912.7485-2-wens@csie.org>
+In-Reply-To: <20171204051912.7485-1-wens@csie.org>
+References: <20171204051912.7485-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to the old function signature of clk_ops->round_rate
-pll_clk_round_rate does a cast of an internal unsigned long
-to a long. After updating clk_ops->round_rate() to be an unsigned long
-though the cast isn't necessary. Remove the cast now.
+On the A64, the MMC module clocks are fixed in the new timing mode,
+i.e. they do not have a bit to select the mode. These clocks have
+a 2x divider somewhere between the clock and the MMC module.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Barry Song <baohua@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Barry Song <Baohua.Song@csr.com>
+To be consistent with other SoCs supporting the new timing mode,
+we model the 2x divider as a fixed post-divider on the MMC module
+clocks.
+
+To do this, we first add fixed post-divider to the MP style clocks,
+which the MMC module clocks are.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sirf/clk-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu_mp.c | 20 ++++++++++++++++++--
+ drivers/clk/sunxi-ng/ccu_mp.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
-index 3ce6741..bfa3f4b 100644
---- a/drivers/clk/sirf/clk-common.c
-+++ b/drivers/clk/sirf/clk-common.c
-@@ -121,7 +121,7 @@ static unsigned long pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	dividend = (u64)fin * nf;
- 	do_div(dividend, nr * od);
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index 688855e7dc8c..5d0af4051737 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -50,12 +50,19 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 	unsigned int max_m, max_p;
+ 	unsigned int m, p;
  
--	return (long)dividend;
-+	return dividend;
++	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate *= cmp->fixed_post_div;
++
+ 	max_m = cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
+ 	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
++	rate = *parent_rate / p / m;
++
++	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate /= cmp->fixed_post_div;
+ 
+-	return *parent_rate / p / m;
++	return rate;
  }
  
- static int pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ static void ccu_mp_disable(struct clk_hw *hw)
+@@ -83,6 +90,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+ 					unsigned long parent_rate)
+ {
+ 	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
++	unsigned long rate;
+ 	unsigned int m, p;
+ 	u32 reg;
+ 
+@@ -101,7 +109,11 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+ 	p = reg >> cmp->p.shift;
+ 	p &= (1 << cmp->p.width) - 1;
+ 
+-	return (parent_rate >> p) / m;
++	rate = (parent_rate >> p) / m;
++	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate /= cmp->fixed_post_div;
++
++	return rate;
+ }
+ 
+ static int ccu_mp_determine_rate(struct clk_hw *hw,
+@@ -129,6 +141,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	max_m = cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
++	/* Adjust target rate according to post-dividers */
++	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate * cmp->fixed_post_div;
++
+ 	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
+ 
+ 	spin_lock_irqsave(cmp->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+index aaef11d747ea..5107635e61de 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.h
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -33,9 +33,33 @@ struct ccu_mp {
+ 	struct ccu_div_internal		m;
+ 	struct ccu_div_internal		p;
+ 	struct ccu_mux_internal	mux;
++
++	unsigned int		fixed_post_div;
++
+ 	struct ccu_common	common;
+ };
+ 
++#define SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(_struct, _name, _parents, _reg, \
++					   _mshift, _mwidth,		\
++					   _pshift, _pwidth,		\
++					   _muxshift, _muxwidth,	\
++					   _gate, _postdiv, _flags)	\
++	struct ccu_mp _struct = {					\
++		.enable	= _gate,					\
++		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
++		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
++		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
++		.fixed_post_div	= _postdiv,				\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FIXED_POSTDIV,	\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parents, \
++							      &ccu_mp_ops, \
++							      _flags),	\
++		}							\
++	}
++
+ #define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
+ 				   _mshift, _mwidth,			\
+ 				   _pshift, _pwidth,			\
 -- 
-2.7.4
+2.15.0
