@@ -1,65 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8431 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbdLUJC2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 04:02:28 -0500
-Date: Thu, 21 Dec 2017 11:02:22 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] clk: tegra: add fence_delay for clock registers
-Message-ID: <20171221090222.GT29417@tbergstrom-lnx.Nvidia.com>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-3-git-send-email-pdeschrijver@nvidia.com>
- <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] [PATCH 0/2] clk: sunxi-ng: sun50i: a64: Add 2x
+ fixed post-divider to MMC module clocks
+To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20171204051912.7485-1-wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <25d0eff3-a0d9-fb49-8287-e65a4a102db7@arm.com>
+Date: Mon, 4 Dec 2017 23:25:27 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20171204051912.7485-1-wens@csie.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 11:04:25PM +0000, Jon Hunter wrote:
+On 04/12/17 05:19, Chen-Yu Tsai wrote:
+> Hi,
 > 
-> On 16/11/17 14:29, Peter De Schrijver wrote:
-> > To ensure writes to clock registers have properly propagated through the
-> > clock control logic and state machines, we need to ensure the writes have
-> > been posted in the registers and wait for 1us after that.
-> 
-> Is this is all cases or just for the SLCG?
-> 
+> This is a small fix to get MMC performance up to proper speeds on the
 
-This is also needed for other registers, but I think that's outside the scope
-of this series.
+Maybe a small fix for a skilled developer, but a giant leap for all
+users ;-)
+MMC performance goes from: (4.15-rc1)
 
-Peter.
+SD: Timing buffered disk reads:   36 MB in  3.17 seconds =  11.35 MB/sec
+eMMC: Timing buffered disk reads: 66 MB in  3.03 seconds =  21.81 MB/sec
 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk.h | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index 872f118..d5badbe 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
-> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
-> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> >  
-> > +/* Combined read fence with delay */
-> > +#define fence_udelay(delay, reg)	\
-> > +	do {				\
-> > +		readl(reg);		\
-> > +		udelay(delay);		\
-> > +	} while(0)
-> > +
-> >  #endif /* TEGRA_CLK_H */
+to: (4.15-rc2 plus those two patches)
+
+SD: Timing buffered disk reads:  68 MB in  3.01 seconds =   22.61 MB/sec
+eMMC: Timing buffered disk reads: 132 MB in  3.01 seconds = 43.80 MB/sec
+
+So yes, factor of two ...
+
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+
+Given the impact I wonder if this is a candidate for stable as well.
+
+> A64. According to the BSP kernel, the MMC module clocks have a /2 fixed
+> post-divider between the clock output and the MMC module, like what
+> we've seen with the "new MMC timing mode" on the A83T, but the A64 does
+> not have the mode switch.
 > 
-> Do we plan to use this else-where or just for this WAR? I am wondering
-> if it should just go in the Tegra210 clock file.
+> Sub-par performance was observed on the Banana Pi M64 eMMC. It only
+> reached half the read throughput of other Banana Pi boards, using a
+> standard sequential readout with a large block size. After these
+> patches, the performance is up to spec.
 > 
-> Cheers
-> Jon
+> The A64 can also do DDR transfer modes, but the clock delay config
+> registers in the MMC module are different from what we've seen so
+> far.
+
+But the BSP doesn't set those as well, does it? I mean to remember that
+they were all zero, expect for HS200/HS400?
+
+Thanks!
+Andre.
+
+ One can just force enable DDR modes without tuning the delays,
+> and it does work. Proper support for this is left for another time.
 > 
-> -- 
-> nvpublic
+> 
+> ChenYu
+> 
+> Chen-Yu Tsai (2):
+>   clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+>   clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module
+>     clocks
+> 
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
+>  drivers/clk/sunxi-ng/ccu_mp.c         | 20 ++++++++++--
+>  drivers/clk/sunxi-ng/ccu_mp.h         | 24 +++++++++++++++
+>  3 files changed, 79 insertions(+), 22 deletions(-)
+> 
