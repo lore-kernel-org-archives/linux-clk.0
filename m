@@ -1,165 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35159 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751875AbdLMI4s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Dec 2017 03:56:48 -0500
-Received: by mail-wm0-f65.google.com with SMTP id f9so3522791wmh.0
-        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2017 00:56:47 -0800 (PST)
-Subject: Re: [RFC PATCH 2/2] clk: x86: Disable unused clocks to fix S0ix
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Johannes Stezenbach <js@sig21.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <1555462.9U3gvkyXAX@aspire.rjw.lan>
- <20170925192352.ihzakshd7yofowdd@sig21.net>
- <7178688.oS2VOf73im@aspire.rjw.lan>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <fb202f9b-1fa2-4b9c-de75-4431a6273d12@redhat.com>
-Date: Wed, 13 Dec 2017 09:56:45 +0100
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 4 Dec 2017 22:01:50 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh@kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v10 2/6] mailbox: qcom: Create APCS child device for
+ clock controller
+Message-ID: <20171205060150.GJ28761@minitux>
+References: <20171201170224.25053-1-georgi.djakov@linaro.org>
+ <20171201170224.25053-3-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <7178688.oS2VOf73im@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171201170224.25053-3-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri 01 Dec 09:02 PST 2017, Georgi Djakov wrote:
 
-On 13-12-17 01:01, Rafael J. Wysocki wrote:
-> On Monday, September 25, 2017 9:23:52 PM CET Johannes Stezenbach wrote:
->> d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
->> exposed an issue on Asus E200HA where BIOS enables unused
->> Atom PMC clocks which prevent the system from entering S0ix.
->> Add a quirk to disable these clocks on E200HA.
->>
->> Signed-off-by: Johannes Stezenbach <js@sig21.net>
+> There is a clock controller functionality provided by the APCS hardware
+> block of msm8916 devices. The device-tree would represent an APCS node
+> with both mailbox and clock provider properties.
+> Create a platform child device for the clock controller functionality so
+> the driver can probe and use APCS as parent.
 > 
-> Mika, Andy, Hans, any comments here?
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 
-This seems like it is papering over an issue in the
-d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
-patch to me. That patch seems like a somewhat hackish fix to
-me, it would be better to figure out which device needs the clock
-in question and fix the device's driver...
-
-And or maybe have a mask of clocks for which to do this check
-and not do it for all clocks at least? That way we can maybe
-fix both Johannes and Carlo's issue in one go without needing
-device specific quirks ?
-
-Carlo, do you remember which clock you needed this for ?
-
-Johannes, same question for you, which clock is being kept
-alive because of this ?
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
+Bjorn
 
-Hans
-
-
-
+> ---
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
->> ---
->>   drivers/clk/x86/clk-pmc-atom.c                 | 10 +++++++---
->>   drivers/platform/x86/pmc_atom.c                |  7 ++++++-
->>   include/linux/platform_data/x86/clk-pmc-atom.h |  2 ++
->>   3 files changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
->> index 08ef69945ffb..213e71b905eb 100644
->> --- a/drivers/clk/x86/clk-pmc-atom.c
->> +++ b/drivers/clk/x86/clk-pmc-atom.c
->> @@ -166,7 +166,8 @@ static const struct clk_ops plt_clk_ops = {
->>   static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
->>   					void __iomem *base,
->>   					const char **parent_names,
->> -					int num_parents)
->> +					int num_parents,
->> +					bool disable_unused)
->>   {
->>   	struct clk_plt *pclk;
->>   	struct clk_init_data init;
->> @@ -190,7 +191,7 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
->>   	 * If the clock was already enabled by the firmware mark it as critical
->>   	 * to avoid it being gated by the clock framework if no driver owns it.
->>   	 */
->> -	if (plt_clk_is_enabled(&pclk->hw))
->> +	if (!disable_unused && plt_clk_is_enabled(&pclk->hw))
->>   		init.flags |= CLK_IS_CRITICAL;
->>   
->>   	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
->> @@ -324,6 +325,7 @@ static int plt_clk_probe(struct platform_device *pdev)
->>   	struct clk_plt_data *data;
->>   	unsigned int i;
->>   	int err;
->> +	bool disable_unused;
->>   
->>   	pmc_data = dev_get_platdata(&pdev->dev);
->>   	if (!pmc_data || !pmc_data->clks)
->> @@ -337,9 +339,11 @@ static int plt_clk_probe(struct platform_device *pdev)
->>   	if (IS_ERR(parent_names))
->>   		return PTR_ERR(parent_names);
->>   
->> +	disable_unused = !!(pmc_data->flags & PMC_CLK_DATA_DISABLE_UNUSED);
->>   	for (i = 0; i < PMC_CLK_NUM; i++) {
->>   		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
->> -						 parent_names, data->nparents);
->> +						 parent_names, data->nparents,
->> +						 disable_unused);
->>   		if (IS_ERR(data->clks[i])) {
->>   			err = PTR_ERR(data->clks[i]);
->>   			goto err_unreg_clk_plt;
->> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
->> index b5dd38712268..d81ada1a6f27 100644
->> --- a/drivers/platform/x86/pmc_atom.c
->> +++ b/drivers/platform/x86/pmc_atom.c
->> @@ -59,7 +59,8 @@ static struct pmc_dev pmc_device;
->>   static u32 acpi_base_addr;
->>   
->>   static u32 quirks;
->> -#define QUIRK_DISABLE_SATA BIT(0)
->> +#define QUIRK_DISABLE_SATA		BIT(0)
->> +#define QUIRK_DISABLE_UNUSED_CLOCKS	BIT(1)
->>   
->>   static const struct pmc_clk byt_clks[] = {
->>   	{
->> @@ -447,6 +448,8 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
->>   
->>   	clk_data->base = pmc_regmap; /* offset is added by client */
->>   	clk_data->clks = pmc_data->clks;
->> +	if (quirks & QUIRK_DISABLE_UNUSED_CLOCKS)
->> +		clk_data->flags = PMC_CLK_DATA_DISABLE_UNUSED;
->>   
->>   	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
->>   					       PLATFORM_DEVID_NONE,
->> @@ -517,6 +520,8 @@ static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
->>   {
->>   	pr_info("pmc: Asus E200HA detected\n");
->>   	quirks |= QUIRK_DISABLE_SATA;
->> +	/* BIOS enables some clocks at boot which are not needed but block S0ix */
->> +	quirks |= QUIRK_DISABLE_UNUSED_CLOCKS;
->>   	return 1;
->>   }
->>   
->> diff --git a/include/linux/platform_data/x86/clk-pmc-atom.h b/include/linux/platform_data/x86/clk-pmc-atom.h
->> index 3ab892208343..e481878ef238 100644
->> --- a/include/linux/platform_data/x86/clk-pmc-atom.h
->> +++ b/include/linux/platform_data/x86/clk-pmc-atom.h
->> @@ -37,6 +37,8 @@ struct pmc_clk {
->>    * @clks:	pointer to set of registered clocks, typically 0..5
->>    */
->>   struct pmc_clk_data {
->> +	int flags;
->> +#define PMC_CLK_DATA_DISABLE_UNUSED 1
->>   	void __iomem *base;
->>   	const struct pmc_clk *clks;
->>   };
->>
-> 
-> 
+> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> index ab344bc6fa63..57bde0dfd12f 100644
+> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> @@ -29,6 +29,7 @@ struct qcom_apcs_ipc {
+>  
+>  	struct regmap *regmap;
+>  	unsigned long offset;
+> +	struct platform_device *clk;
+>  };
+>  
+>  static const struct regmap_config apcs_regmap_config = {
+> @@ -96,6 +97,14 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+> +		apcs->clk = platform_device_register_data(&pdev->dev,
+> +							  "qcom-apcs-msm8916-clk",
+> +							  -1, NULL, 0);
+> +		if (IS_ERR(apcs->clk))
+> +			dev_err(&pdev->dev, "failed to register APCS clk\n");
+> +	}
+> +
+>  	platform_set_drvdata(pdev, apcs);
+>  
+>  	return 0;
+> @@ -104,8 +113,10 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  static int qcom_apcs_ipc_remove(struct platform_device *pdev)
+>  {
+>  	struct qcom_apcs_ipc *apcs = platform_get_drvdata(pdev);
+> +	struct platform_device *clk = apcs->clk;
+>  
+>  	mbox_controller_unregister(&apcs->mbox);
+> +	platform_device_unregister(clk);
+>  
+>  	return 0;
+>  }
