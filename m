@@ -1,113 +1,102 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 5 Dec 2017 11:06:35 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Jon Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 3/6] clk: meson-axg: add clocks dt-bindings required header
-Date: Mon, 11 Dec 2017 22:13:45 +0800
-Message-ID: <20171211141348.22048-4-yixun.lan@amlogic.com>
-In-Reply-To: <20171211141348.22048-1-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
+Message-ID: <20171205090635.GL32106@tbergstrom-lnx.Nvidia.com>
+References: <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
+ <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
+ <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
+ <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
+ <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
+ <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
+ <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
+ <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+ <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
+ <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <803890bc-e3fe-134a-2127-3363187d04f2@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
+On Sat, Dec 02, 2017 at 03:47:32PM +0300, Dmitry Osipenko wrote:
+> On 01.12.2017 11:48, Peter De Schrijver wrote:
+> > On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
+> >>
+> >> On 30/11/17 13:24, Dmitry Osipenko wrote:
+> >>> On 30.11.2017 14:31, Jon Hunter wrote:
+> >>>>
+> >>>> On 29/11/17 23:13, Dmitry Osipenko wrote:
+> >>>>> On 30.11.2017 01:55, Jon Hunter wrote:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
+> >>>>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
+> >>>>> caused trouble on Tegra114/124.
+> >>>>
+> >>>> Please share the exact change you would like me to test and I will.
+> >>>
+> >>> Please try this:
+> >>
+> >> I tried the patch, but this does not work for Tegra124 it still hangs.
+> >> Tracing the clk calls the last thing I see is ...
+> >>
+> >> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
+> >> [    2.694403] clk_prepare: hclk_div
+> >> [    2.695929] clk_prepare_complete: hclk_div
+> >> [    2.700027] clk_prepare: hclk
+> >> [    2.702947] clk_prepare_complete: hclk
+> >> [    2.706673] clk_prepare: pclk_div
+> >> [    2.709986] clk_prepare_complete: pclk_div
+> >> [    2.714039] clk_prepare: pclk
+> >> [    2.716985] clk_prepare_complete: pclk
+> >> [    2.720739] clk_prepare: apbdma
+> >> [    2.723833] clk_prepare_complete: apbdma
+> >> [    2.727736] clk_enable: hclk_div
+> >> [    2.730940] clk_enable_complete: hclk_div
+> >> [    2.734926] clk_enable: hclk
+> >> [    2.737788] clk_enable_complete: hclk
+> >> [    2.741426] clk_enable: pclk_div
+> >> [    2.744633] clk_enable_complete: pclk_div
+> >> [    2.748619] clk_enable: pclk
+> >> [    2.751481] clk_enable_complete: pclk
+> >> [    2.755120] clk_enable: apbdma
+> >> [    2.758153] clk_enable_complete: apbdma
+> >> [    2.762390] clk_disable: apbdma
+> >> [    2.765088] clk_disable_complete: apbdma
+> >> [    2.768986] clk
+> >>
+> >> So I believe this change is correct and that Peter's analysis on IRC
+> >> seems correct, that this change has exposed another issue with the clock
+> >> driver.
+> >>
+> >> Peter, can you summarise which other clocks should be made critical?
+> > 
+> > The following clocks should be critical:
+> > 
+> > pclk
+> > hclk
+> > sclk
+> > emc
+> > mc
+> > pll_p
+> > 
+> > I think that's it.
+> 
+> Could you please elaborate why pll_p should be critical? Is it applicable to all
+> Tegra generations?
 
-Add the required header for the clocks ID dt-bindings
-exported from various subsystem in the Meson-AXG SoC.
+There are quite many clocks relying on pll_p as their source. In theory we
+might get away with making sure all thsoe clocks are critical if needed, but
+it's usually easier to just make sure we never turn off pll_p. We should
+certainly never try to change the rate of pll_p. Obviously also osc and clk32k
+should never be turned off during runtime, but there is no hw which allows you
+to do this.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
-
-diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
-new file mode 100644
-index 000000000000..941ac70e7f30
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-clkc.h
-@@ -0,0 +1,71 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson-AXG clock tree IDs
-+ *
-+ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __AXG_CLKC_H
-+#define __AXG_CLKC_H
-+
-+#define CLKID_SYS_PLL				0
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				2
-+#define CLKID_FCLK_DIV3				3
-+#define CLKID_FCLK_DIV4				4
-+#define CLKID_FCLK_DIV5				5
-+#define CLKID_FCLK_DIV7				6
-+#define CLKID_GP0_PLL				7
-+#define CLKID_CLK81				10
-+#define CLKID_MPLL0				11
-+#define CLKID_MPLL1				12
-+#define CLKID_MPLL2				13
-+#define CLKID_MPLL3				14
-+#define CLKID_DDR				15
-+#define CLKID_AUDIO_LOCKER			16
-+#define CLKID_MIPI_DSI_HOST			17
-+#define CLKID_ISA				18
-+#define CLKID_PL301				19
-+#define CLKID_PERIPHS				20
-+#define CLKID_SPICC0				21
-+#define CLKID_I2C				22
-+#define CLKID_RNG0				23
-+#define CLKID_UART0				24
-+#define CLKID_MIPI_DSI_PHY			25
-+#define CLKID_SPICC1				26
-+#define CLKID_PCIE_A				27
-+#define CLKID_PCIE_B				28
-+#define CLKID_HIU_IFACE				29
-+#define CLKID_ASSIST_MISC			30
-+#define CLKID_SD_EMMC_B				31
-+#define CLKID_SD_EMMC_C				32
-+#define CLKID_DMA				33
-+#define CLKID_SPI				34
-+#define CLKID_AUDIO				35
-+#define CLKID_ETH				36
-+#define CLKID_UART1				37
-+#define CLKID_G2D				38
-+#define CLKID_USB0				39
-+#define CLKID_USB1				40
-+#define CLKID_RESET				41
-+#define CLKID_USB				42
-+#define CLKID_AHB_ARB0				43
-+#define CLKID_EFUSE				44
-+#define CLKID_BOOT_ROM				45
-+#define CLKID_AHB_DATA_BUS			46
-+#define CLKID_AHB_CTRL_BUS			47
-+#define CLKID_USB1_DDR_BRIDGE			48
-+#define CLKID_USB0_DDR_BRIDGE			49
-+#define CLKID_MMC_PCLK				50
-+#define CLKID_VPU_INTR				51
-+#define CLKID_SEC_AHB_AHB3_BRIDGE		52
-+#define CLKID_GIC				53
-+#define CLKID_AO_MEDIA_CPU			54
-+#define CLKID_AO_AHB_SRAM			55
-+#define CLKID_AO_AHB_BUS			56
-+#define CLKID_AO_IFACE				57
-+#define CLKID_AO_I2C				58
-+#define CLKID_SD_EMMC_B_CLK0			59
-+#define CLKID_SD_EMMC_C_CLK0			60
-+
-+#endif /* __AXG_CLKC_H */
--- 
-2.15.1
+Peter.
