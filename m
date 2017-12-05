@@ -1,73 +1,144 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 Dec 2017 15:26:46 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] clk: Manage proper runtime PM state in clk_change_rate()
-Message-ID: <20171205232646.GA4283@codeaurora.org>
-References: <CGME20171130121511eucas1p1832c1f6e5bc9e263860e40478efca132@eucas1p1.samsung.com>
- <20171130121451.6710-1-m.szyprowski@samsung.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 4 Dec 2017 22:01:30 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh@kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v10 6/6] clk: qcom: Add APCS clock controller support
+Message-ID: <20171205060129.GI28761@minitux>
+References: <20171201170224.25053-1-georgi.djakov@linaro.org>
+ <20171201170224.25053-7-georgi.djakov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171130121451.6710-1-m.szyprowski@samsung.com>
+In-Reply-To: <20171201170224.25053-7-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Marek Szyprowski wrote:
-> clk_change_rate() propagates rate change down to all its children. Such
-> operation requires managing proper runtime PM state of each child, what
-> was missing. Add needed calls to clk_pm_runtime*() to ensure that
-> set_rate() clock callback is called on runtime active clock.
-> 
-> This fixes following issue found on Exynos5433 TM2 board with devfreq
-> enabled:
-> 
-> Synchronous External Abort: synchronous external abort (0x96000210) at 0xffffff80093f5600
-> Internal error: : 96000210 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 0 PID: 5 Comm: kworker/u16:0 Not tainted 4.15.0-rc1-next-20171129+ #4
-> Hardware name: Samsung TM2 board (DT)
-> Workqueue: devfreq_wq devfreq_monitor
-> task: ffffffc0ca96b600 task.stack: ffffff80093a8000
-> pstate: a0000085 (NzCv daIf -PAN -UAO)
-> pc : clk_divider_set_rate+0x54/0x118
-> lr : clk_divider_set_rate+0x44/0x118
-> ...
-> Process kworker/u16:0 (pid: 5, stack limit = 0xffffff80093a8000)
-> Call trace:
->  clk_divider_set_rate+0x54/0x118
->  clk_change_rate+0xfc/0x4e0
->  clk_change_rate+0x1f0/0x4e0
->  clk_change_rate+0x1f0/0x4e0
->  clk_change_rate+0x1f0/0x4e0
->  clk_core_set_rate_nolock+0x138/0x148
->  clk_set_rate+0x28/0x50
->  exynos_bus_passive_target+0x6c/0x11c
->  update_devfreq_passive+0x58/0xb4
->  devfreq_passive_notifier_call+0x50/0x5c
->  notifier_call_chain+0x4c/0x88
->  __srcu_notifier_call_chain+0x54/0x80
->  srcu_notifier_call_chain+0x14/0x1c
->  update_devfreq+0x100/0x1b4
->  devfreq_monitor+0x2c/0x88
->  process_one_work+0x148/0x3d8
->  worker_thread+0x13c/0x3f8
->  kthread+0x100/0x12c
->  ret_from_fork+0x10/0x18
-> 
-> Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+On Fri 01 Dec 09:02 PST 2017, Georgi Djakov wrote:
+[..]
+> diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+> new file mode 100644
+> index 000000000000..f71039ff2347
+> --- /dev/null
+> +++ b/drivers/clk/qcom/apcs-msm8916.c
+> @@ -0,0 +1,149 @@
+> +/*
+> + * Qualcomm APCS clock controller driver
+> + *
+> + * Copyright (c) 2017, Linaro Limited
+> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
 
-Applied to clk-fixes
+The SPDX-License-Identifier should be on the first line in the file,
+commented by //
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> + */
+> +
+[..]
+> +static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = pdev->dev.parent;
+
+Call this "parent" instead.
+
+> +	struct device_node *np = dev->of_node;
+> +	struct clk_regmap_mux_div *a53cc;
+> +	struct regmap *regmap;
+> +	struct clk_init_data init = { };
+> +	int ret;
+> +
+> +	regmap = dev_get_regmap(dev, NULL);
+> +	if (IS_ERR(regmap)) {
+> +		ret = PTR_ERR(regmap);
+> +		dev_err(dev, "failed to get regmap: %d\n", ret);
+
+dev_* prints should be on &pdev->dev and not on parent device.
+
+> +		return ret;
+> +	}
+> +
+> +	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
+
+Perform this allocation on behalf of this device (i.e. &pdev->dev and
+not parent)
+
+> +	if (!a53cc)
+> +		return -ENOMEM;
+> +
+> +	init.name = "a53mux";
+> +	init.parent_names = gpll0_a53cc;
+> +	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
+> +	init.ops = &clk_regmap_mux_div_ops;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +
+> +	a53cc->clkr.hw.init = &init;
+> +	a53cc->clkr.regmap = regmap;
+> +	a53cc->reg_offset = 0x50;
+> +	a53cc->hid_width = 5;
+> +	a53cc->hid_shift = 0;
+> +	a53cc->src_width = 3;
+> +	a53cc->src_shift = 8;
+> +	a53cc->parent_map = gpll0_a53cc_map;
+> +
+> +	a53cc->pclk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(a53cc->pclk)) {
+> +		ret = PTR_ERR(a53cc->pclk);
+> +		dev_err(dev, "failed to get clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
+> +	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register clock notifier: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
+
+This you can do on the &pdev->dev, it won't find a regmap on this node
+and will try the parent.
+
+> +	if (ret) {
+> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get,
+
+Be explicit here and do parent->of_node.
+
+> +				     &a53cc->clkr.hw);
+> +	if (ret) {
+> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, a53cc);
+> +
+> +	return 0;
+> +
+> +err:
+> +	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
+> +	return ret;
+> +}
+> +
+> +static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
+> +{
+> +	struct clk_regmap_mux_div *a53cc = platform_get_drvdata(pdev);
+> +
+> +	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
+> +	of_clk_del_provider(pdev->dev.of_node);
+
+You registered the provider on pdev->dev->parent.of_node.
+
+> +
+> +	return 0;
+> +}
+> +
+
+Regards,
+Bjorn
