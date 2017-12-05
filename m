@@ -1,61 +1,225 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>
-References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
- <20171207072911.GA4283@codeaurora.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <fd7ff1b4-00c3-ce6b-9415-85799661bf8e@ti.com>
-Date: Thu, 7 Dec 2017 10:09:12 +0200
-MIME-Version: 1.0
-In-Reply-To: <20171207072911.GA4283@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org
+Cc: mturquette@baylibre.com,
+	robh@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v11 6/6] clk: qcom: Add APCS clock controller support
+Date: Tue,  5 Dec 2017 17:47:01 +0200
+Message-Id: <20171205154701.27730-7-georgi.djakov@linaro.org>
+In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/12/17 09:29, Stephen Boyd wrote:
-> On 12/05, Tero Kristo wrote:
->> Hi Stephen, Mike,
->>
->> This pull request contains the v2 of the series posted
->> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
->> Stephen's acks added to the mentioned patches, and just applied on
->> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
->> the rest of the patches also, but couldn't find any comment about
->> this anywhere.
->>
->> -Tero
->>
->> ====
->>
->> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
->>
->>    Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->>
->> are available in the git repository at:
->>
->>    https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
->>
->> for you to fetch changes up to fe7020e64f042db4b5ca50c358b232e866523447:
->>
->>    clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
->> 15:18:08 +0200)
-> 
-> Pulled into clk-next.
+Add a driver for the APCS clock controller. It is part of the APCS
+hardware block, which among other things implements also a combined
+mux and half integer divider functionality. It can choose between a
+fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
+divider can be set both at the same time.
 
-Thanks.
+This is required for enabling CPU frequency scaling on MSM8916-based
+platforms.
 
-> Did you want to sign a tag instead of
-> sending a plain branch? My ack isn't necessary on anything.
-> 
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/Kconfig        |  11 +++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/apcs-msm8916.c | 149 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 drivers/clk/qcom/apcs-msm8916.c
 
-Just a plain branch. Never signed a tag so far, do you have guidelines 
-someplace if you prefer this in future?
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 81ac7b9378fe..255023b439c9 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -22,6 +22,17 @@ config QCOM_A53PLL
+ 	  Say Y if you want to support higher CPU frequencies on MSM8916
+ 	  devices.
+ 
++config QCOM_CLK_APCS_MSM8916
++	bool "MSM8916 APCS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	depends on QCOM_APCS_IPC
++	default ARCH_QCOM
++	help
++	  Support for the APCS Clock Controller on msm8916 devices. The
++	  APCS is managing the mux and divider which feeds the CPUs.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as msm8916.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7c51d877f967..0408cebf38d4 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -34,5 +34,6 @@ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
++obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+new file mode 100644
+index 000000000000..832172c2fc8b
+--- /dev/null
++++ b/drivers/clk/qcom/apcs-msm8916.c
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Qualcomm APCS clock controller driver
++ *
++ * Copyright (c) 2017, Linaro Limited
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/mailbox_controller.h>
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include "clk-regmap.h"
++#include "clk-regmap-mux-div.h"
++
++enum {
++	P_GPLL0,
++	P_A53PLL,
++};
++
++static const struct parent_map gpll0_a53cc_map[] = {
++	{ P_GPLL0, 4 },
++	{ P_A53PLL, 5 },
++};
++
++static const char * const gpll0_a53cc[] = {
++	"gpll0_vote",
++	"a53pll",
++};
++
++/*
++ * We use the notifier function for switching to a temporary safe configuration
++ * (mux and divider), while the A53 PLL is reconfigured.
++ */
++static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
++			     void *data)
++{
++	int ret = 0;
++	struct clk_regmap_mux_div *md = container_of(nb,
++						     struct clk_regmap_mux_div,
++						     clk_nb);
++	if (event == PRE_RATE_CHANGE)
++		/* set the mux and divider to safe frequency (400mhz) */
++		ret = __mux_div_set_src_div(md, 4, 3);
++
++	return notifier_from_errno(ret);
++}
++
++static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device *parent = dev->parent;
++	struct clk_regmap_mux_div *a53cc;
++	struct regmap *regmap;
++	struct clk_init_data init = { };
++	int ret;
++
++	regmap = dev_get_regmap(parent, NULL);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		dev_err(dev, "failed to get regmap: %d\n", ret);
++		return ret;
++	}
++
++	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
++	if (!a53cc)
++		return -ENOMEM;
++
++	init.name = "a53mux";
++	init.parent_names = gpll0_a53cc;
++	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
++	init.ops = &clk_regmap_mux_div_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++
++	a53cc->clkr.hw.init = &init;
++	a53cc->clkr.regmap = regmap;
++	a53cc->reg_offset = 0x50;
++	a53cc->hid_width = 5;
++	a53cc->hid_shift = 0;
++	a53cc->src_width = 3;
++	a53cc->src_shift = 8;
++	a53cc->parent_map = gpll0_a53cc_map;
++
++	a53cc->pclk = devm_clk_get(parent, NULL);
++	if (IS_ERR(a53cc->pclk)) {
++		ret = PTR_ERR(a53cc->pclk);
++		dev_err(dev, "failed to get clk: %d\n", ret);
++		return ret;
++	}
++
++	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
++	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
++	if (ret) {
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		goto err;
++	}
++
++	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
++				     &a53cc->clkr.hw);
++	if (ret) {
++		dev_err(dev, "failed to add clock provider: %d\n", ret);
++		goto err;
++	}
++
++	platform_set_drvdata(pdev, a53cc);
++
++	return 0;
++
++err:
++	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
++	return ret;
++}
++
++static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
++{
++	struct clk_regmap_mux_div *a53cc = platform_get_drvdata(pdev);
++	struct device *parent = pdev->dev.parent;
++
++	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
++	of_clk_del_provider(parent->of_node);
++
++	return 0;
++}
++
++static struct platform_driver qcom_apcs_msm8916_clk_driver = {
++	.probe = qcom_apcs_msm8916_clk_probe,
++	.remove = qcom_apcs_msm8916_clk_remove,
++	.driver = {
++		.name = "qcom-apcs-msm8916-clk",
++	},
++};
++module_platform_driver(qcom_apcs_msm8916_clk_driver);
++
++MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Qualcomm MSM8916 APCS clock driver");
