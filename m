@@ -1,66 +1,215 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable() reentrancy
-Date: Tue, 12 Dec 2017 17:43:43 -0600
-Message-Id: <1513122223-14932-1-git-send-email-david@lechnology.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org
+Cc: mturquette@baylibre.com,
+	robh@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v11 3/6] clk: qcom: Add A53 PLL support
+Date: Tue,  5 Dec 2017 17:46:58 +0200
+Message-Id: <20171205154701.27730-4-georgi.djakov@linaro.org>
+In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-If clk_enable() is called in reentrant way and spin_trylock_irqsave() is
-not working as expected, it is possible to get a negative enable_refcnt
-which results in a missed call to spin_unlock_irqrestore().
+The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
+a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
+are connected to a mux and half-integer divider, which is feeding the
+CPU cores.
 
-It works like this:
+This patch adds support for the primary CPU PLL which generates the
+higher range of frequencies above 1GHz.
 
-1. clk_enable() is called.
-2. clk_enable_unlock() calls spin_trylock_irqsave() and sets
-   enable_refcnt = 1.
-3. Another clk_enable() is called before the first has returned
-   (reentrant), but somehow spin_trylock_irqsave() is returning true.
-   (I'm not sure how/why this is happening yet, but it is happening to me
-   with arch/arm/mach-davinci clocks that I am working on).
-4. Because spin_trylock_irqsave() returned true, enable_lock has been
-   locked twice without being unlocked and enable_refcnt = 1 is called
-   instead of enable_refcnt++.
-5. After the inner clock is enabled clk_enable_unlock() is called which
-   decrements enable_refnct to 0 and calls spin_unlock_irqrestore()
-6. The inner clk_enable() function returns.
-7. clk_enable_unlock() is called again for the outer clock. enable_refcnt
-   is decremented to -1 and spin_unlock_irqrestore() is *not* called.
-8. The outer clk_enable() function returns.
-9. Unrelated code called later issues a BUG warning about sleeping in an
-   atomic context because of the unbalanced calls for the spin lock.
-
-This patch fixes the problem of unbalanced calls by calling
-spin_unlock_irqrestore() if enable_refnct <= 0 instead of just checking if
-it is == 0.
-
-The BUG warning about sleeping in an atomic context in the unrelated code
-is eliminated with this patch, but there are still warnings printed from
-clk_enable_unlock() and clk_enable_unlock() because of the reference
-counting problems.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
+ drivers/clk/qcom/Kconfig                           |  10 ++
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/a53-pll.c                         | 110 +++++++++++++++++++++
+ 4 files changed, 143 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 647d056..bb1b1f9 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -162,7 +162,7 @@ static void clk_enable_unlock(unsigned long flags)
- 	WARN_ON_ONCE(enable_owner != current);
- 	WARN_ON_ONCE(enable_refcnt == 0);
+diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+new file mode 100644
+index 000000000000..e3fa8118eaee
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+@@ -0,0 +1,22 @@
++Qualcomm MSM8916 A53 PLL Binding
++--------------------------------
++The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
++above 1GHz.
++
++Required properties :
++- compatible : Shall contain only one of the following:
++
++		"qcom,msm8916-a53pll"
++
++- reg : shall contain base register location and length
++
++- #clock-cells : must be set to <0>
++
++Example:
++
++	a53pll: clock@b016000 {
++		compatible = "qcom,msm8916-a53pll";
++		reg = <0xb016000 0x40>;
++		#clock-cells = <0>;
++	};
++
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 9f6c278deead..81ac7b9378fe 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -12,6 +12,16 @@ config COMMON_CLK_QCOM
+ 	select REGMAP_MMIO
+ 	select RESET_CONTROLLER
  
--	if (--enable_refcnt) {
-+	if (--enable_refcnt > 0) {
- 		__release(enable_lock);
- 		return;
- 	}
--- 
-2.7.4
++config QCOM_A53PLL
++	bool "MSM8916 A53 PLL"
++	depends on COMMON_CLK_QCOM
++	default ARCH_QCOM
++	help
++	  Support for the A53 PLL on MSM8916 devices. It provides
++	  the CPU with frequencies above 1GHz.
++	  Say Y if you want to support higher CPU frequencies on MSM8916
++	  devices.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 26410d31446b..e767c60c24ec 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -32,5 +32,6 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
++obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+new file mode 100644
+index 000000000000..c18cb7614e42
+--- /dev/null
++++ b/drivers/clk/qcom/a53-pll.c
+@@ -0,0 +1,110 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Qualcomm A53 PLL driver
++ *
++ * Copyright (c) 2017, Linaro Limited
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include "clk-pll.h"
++#include "clk-regmap.h"
++
++static const struct pll_freq_tbl a53pll_freq[] = {
++	{  998400000, 52, 0x0, 0x1, 0 },
++	{ 1094400000, 57, 0x0, 0x1, 0 },
++	{ 1152000000, 62, 0x0, 0x1, 0 },
++	{ 1209600000, 63, 0x0, 0x1, 0 },
++	{ 1248000000, 65, 0x0, 0x1, 0 },
++	{ 1363200000, 71, 0x0, 0x1, 0 },
++	{ 1401600000, 73, 0x0, 0x1, 0 },
++};
++
++static const struct regmap_config a53pll_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x40,
++	.fast_io		= true,
++};
++
++static int qcom_a53pll_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static int qcom_a53pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	struct resource *res;
++	struct clk_pll *pll;
++	void __iomem *base;
++	struct clk_init_data init = { };
++	int ret;
++
++	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	pll->l_reg = 0x04;
++	pll->m_reg = 0x08;
++	pll->n_reg = 0x0c;
++	pll->config_reg = 0x14;
++	pll->mode_reg = 0x00;
++	pll->status_reg = 0x1c;
++	pll->status_bit = 16;
++	pll->freq_tbl = a53pll_freq;
++
++	init.name = "a53pll";
++	init.parent_names = (const char *[]){ "xo" };
++	init.num_parents = 1;
++	init.ops = &clk_pll_sr2_ops;
++	init.flags = CLK_IS_CRITICAL;
++	pll->clkr.hw.init = &init;
++
++	ret = devm_clk_register_regmap(dev, &pll->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		return ret;
++	}
++
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
++				     &pll->clkr.hw);
++	if (ret) {
++		dev_err(dev, "failed to add clock provider: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id qcom_a53pll_match_table[] = {
++	{ .compatible = "qcom,msm8916-a53pll" },
++	{ }
++};
++
++static struct platform_driver qcom_a53pll_driver = {
++	.probe = qcom_a53pll_probe,
++	.remove = qcom_a53pll_remove,
++	.driver = {
++		.name = "qcom-a53pll",
++		.of_match_table = qcom_a53pll_match_table,
++	},
++};
++
++builtin_platform_driver(qcom_a53pll_driver);
