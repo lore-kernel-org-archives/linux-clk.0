@@ -1,50 +1,31 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 2/6] dt-bindings: clock: add compatible variant for the Meson-AXG
-Date: Mon, 11 Dec 2017 22:13:44 +0800
-Message-ID: <20171211141348.22048-3-yixun.lan@amlogic.com>
-In-Reply-To: <20171211141348.22048-1-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+Return-Path: <BATV+8bed4c591845638e5a3f+5218+infradead.org+hch@bombadil.srs.infradead.org>
+Date: Wed, 6 Dec 2017 15:11:30 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20171206231130.GA6235@infradead.org>
+References: <20171206072402.11694-1-o.rempel@pengutronix.de>
+ <20171206072402.11694-4-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171206072402.11694-4-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the documentation to support clock driver for the Amlogic's
-Meson-AXG SoC.
+>  void (*pm_power_off_prepare)(void);
+> +EXPORT_SYMBOL(pm_power_off_prepare);
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index 924040769186..e2b377ed6f91 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -5,8 +5,11 @@ controllers within the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
--	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
-+- compatible: should be:
-+		"amlogic,gxbb-clkc" for GXBB SoC,
-+		"amlogic,gxl-clkc" for GXL and GXM SoC,
-+		"amlogic,axg-clkc" for AXG SoC.
-+
- - reg: physical base address of the clock controller and length of memory
-        mapped region.
- 
--- 
-2.15.1
+EXPORT_SYMBOL_GPL for something this deeply internal, please.
