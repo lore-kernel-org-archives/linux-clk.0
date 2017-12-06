@@ -1,81 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52803 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbdL3LdW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Dec 2017 06:33:22 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 4/6] arm64: allwinner: a64: add DE2 CCU for A64 SoC
-Date: Sat, 30 Dec 2017 19:30:41 +0800
-Message-Id: <20171230113043.30237-5-icenowy@aosc.io>
-In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
-References: <20171230113043.30237-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20171205195956.xdil2dsbtfwx35jj@flea.lan>
+References: <20171204051912.7485-1-wens@csie.org> <20171204051912.7485-3-wens@csie.org>
+ <20171205195956.xdil2dsbtfwx35jj@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 6 Dec 2017 10:30:26 +0800
+Message-ID: <CAGb2v67=2BbOGWpRyujaR-pn6ZEfb1rSRtmzP-kUzXRn_y+iNg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider
+ to MMC module clocks
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The A64 SoC features a DE2 CCU like the one in H5, but needs to claim a
-section of SRAM (SRAM C) to be accessed.
+On Wed, Dec 6, 2017 at 3:59 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Mon, Dec 04, 2017 at 01:19:12PM +0800, Chen-Yu Tsai wrote:
+>> On the A64, the MMC module clocks are fixed in the new timing mode,
+>> i.e. they do not have a bit to select the mode. These clocks have
+>> a 2x divider somewhere between the clock and the MMC module.
+>>
+>> To be consistent with other SoCs supporting the new timing mode,
+>> we model the 2x divider as a fixed post-divider on the MMC module
+>> clocks.
+>>
+>> This patch adds the post-dividers to the MMC clocks.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> I had a doubt applying that one... sorry.
+>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
+>>  1 file changed, 37 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> index 2bb4cabf802f..ee9c12cf3f08 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> @@ -400,28 +400,45 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents, 0x080,
+>>                                 BIT(31),      /* gate */
+>>                                 0);
+>>
+>> +/*
+>> + * MMC clocks are the new timing mode (see A83T & H3) variety, but without
+>> + * the mode switch. This means they have a 2x post divider between the clock
+>> + * and the MMC module. This is not documented in the manual, but is taken
+>> + * into consideration when setting the mmc module clocks in the BSP kernel.
+>> + * Without it, MMC performance is degraded.
+>> + *
+>> + * We model it here to be consistent with other SoCs supporting this mode.
+>> + * The alternative would be to add the 2x multiplier when setting the MMC
+>> + * module clock in the MMC driver, just for the A64.
+>> + */
+>>  static const char * const mmc_default_parents[] = { "osc24M", "pll-periph0-2x",
+>>                                                   "pll-periph1-2x" };
+>> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_default_parents, 0x088,
+>> -                               0, 4,         /* M */
+>> -                               16, 2,        /* P */
+>> -                               24, 2,        /* mux */
+>> -                               BIT(31),      /* gate */
+>> -                               0);
+>> -
+>> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_default_parents, 0x08c,
+>> -                               0, 4,         /* M */
+>> -                               16, 2,        /* P */
+>> -                               24, 2,        /* mux */
+>> -                               BIT(31),      /* gate */
+>> -                               0);
+>> -
+>> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_default_parents, 0x090,
+>> -                               0, 4,         /* M */
+>> -                               16, 2,        /* P */
+>> -                               24, 2,        /* mux */
+>> -                               BIT(31),      /* gate */
+>> -                               0);
+>> +static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0",
+>> +                                       mmc_default_parents, 0x088,
+>> +                                       0, 4,         /* M */
+>> +                                       16, 2,        /* P */
+>> +                                       24, 2,        /* mux */
+>> +                                       BIT(31),      /* gate */
+>> +                                       2,            /* post-div */
+>> +                                       0);
+>> +
+>> +static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1",
+>> +                                       mmc_default_parents, 0x08c,
+>> +                                       0, 4,         /* M */
+>> +                                       16, 2,        /* P */
+>> +                                       24, 2,        /* mux */
+>> +                                       BIT(31),      /* gate */
+>> +                                       2,            /* post-div */
+>> +                                       0);
+>> +
+>
+> Are you sure that the divider there for the non-eMMC clocks? Usually,
+> the new mode is only here for the eMMC, so we would divide the rate by
+> two in the non-eMMC case.
 
-Adds the device tree nodes for the SRAM controller and the DE2 CCU.
+The new mode is there for all MMC controllers. The other two MMC
+controllers even have the old/new timing mode switch. In case you
+forgot we have ".need_new_timings" set for the A64 compatible.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3:
-- Fixed the alliwnner,sram property (the 1 after SRAM phadle is missing
-  in v2).
+But to eliminate any doubts or concerns, I've rerun tests for the
+micro SD card, instead of the eMMC. And yes the results are the same,
+2x improvement (12 MB/s vs 23.7 MB/s).
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index d783d164b9c3..fb8ea7c414e1 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -130,6 +130,40 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			allwinner,sram = <&de2_sram 1>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun50i-a64-sram-controller";
-+			reg = <0x01c00000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_c: sram@18000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00018000 0x28000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00018000 0x28000>;
-+
-+				de2_sram: sram-section@0 {
-+					compatible = "allwinner,sun50i-a64-sram-c";
-+					reg = <0x0000 0x28000>;
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
--- 
-2.14.2
-
+ChenYu
