@@ -1,37 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:02:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V7 03/12] clk: sprd: add gate clock support
-Message-ID: <20171221230239.GQ7997@codeaurora.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-4-chunyan.zhang@spreadtrum.com>
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207125715.16160-4-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171205232854.GC4283@codeaurora.org>
+References: <20171121092438.19316-1-chunyan.zhang@spreadtrum.com> <20171205232854.GC4283@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 6 Dec 2017 15:51:35 +0800
+Message-ID: <CAAfSe-vVptmOYy_DpEuxTE9Oy0YXiJkWt5yXkNCipzGi9dPETw@mail.gmail.com>
+Subject: Re: [PATCH V2] clk: fix a panic error caused by accessing NULL pointer
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Cai Li <cai.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, Chunyan Zhang wrote:
-> Some clocks on the Spreadtrum's SoCs are just simple gates. Add
-> support for those clocks.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
+On 6 December 2017 at 07:28, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/21, Chunyan Zhang wrote:
+>> From: Cai Li <cai.li@spreadtrum.com>
+>>
+>> In some cases the clock parent would be set NULL when doing re-parent,
+>> it will cause a NULL pointer accessing if clk_set trace event is
+>> enabled.
+>>
+>> This patch sets the parent as "none" if the input parameter is NULL.
+>>
+>> Fixes: dfc202ead312 (clk: Add tracepoints for hardware operations)
+>> Signed-off-by: Cai Li <cai.li@spreadtrum.com>
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>
+> Applied to clk-fixes
 
-Applied to clk-next
+Thanks!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Chunyan
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
