@@ -1,86 +1,55 @@
-Return-Path: <wens@wens.csie.org>
-Date: Thu, 28 Dec 2017 16:25:24 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner clock changes for 4.16
-Message-ID: <20171228082524.GA13649@wens.csie.org>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 4/4] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+References: <20171201012452.27086-1-yixun.lan@amlogic.com>
+	<20171201012452.27086-5-yixun.lan@amlogic.com>
+Date: Wed, 06 Dec 2017 16:50:02 -0800
+In-Reply-To: <20171201012452.27086-5-yixun.lan@amlogic.com> (Yixun Lan's
+	message of "Fri, 1 Dec 2017 09:24:52 +0800")
+Message-ID: <7ho9nbmked.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
---wac7ysb48OaltWcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>
+> Try to add Hiubus DT info, and also enable clock DT info
+> for the Amlogic's Meson-AXG SoC.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index b932a784b02a..36a2e98338a8 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -7,6 +7,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/axg-clkc.h>
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+This #include will cause an unnessary dependency from the amlogic tree
+to the clock tree even though this patch is not currently using any of
+the #defines from that header.  It will simplify the dependencies if you
+drop this #include from this patch.
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+In my comment on the cover letter, I suggested adding a patch that also
+switches the UART over to the new clock provider.  That is the patch
+that should add this #include, since it will actually need #defines from
+the header.
 
-are available in the Git repository at:
+Doing it in that order means that we could merge this patch
+independently of the clock driver, and then merge the UART switch-over
+patch only after the driver (and headers) are merged.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.16
-
-for you to fetch changes up to e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4:
-
-  clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL (2017-12-08 10:08:32 +0100)
-
-----------------------------------------------------------------
-Allwinner clock changes for 4.16
-
-Fixed-post-divider support is added for two types of our clocks.
-This in turn is used to support odd clocks on some of our SoCs.
-On the A64, the MMC module clocks have a hidden post-divider.
-On the A83T, a post-divider is needed to support programming
-sigma-delta modulation with known fixed parameters from the
-BSP kernel for the audio PLL.
-
-There's also a small cleanup to use the shorter PTR_ERR_OR_ZERO
-macro in various functions.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (5):
-      clk: sunxi-ng: Support fixed post-dividers on MP style clocks
-      clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
-      clk: sunxi-ng: Support fixed post-dividers on NM style clocks
-      clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
-      clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
-
-Vasyl Gomonovych (1):
-      clk: sunxi: Use PTR_ERR_OR_ZERO()
-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 18 +++++++++--
- drivers/clk/sunxi-ng/ccu_mp.c         | 20 ++++++++++--
- drivers/clk/sunxi-ng/ccu_mp.h         | 24 +++++++++++++++
- drivers/clk/sunxi-ng/ccu_nm.c         | 50 ++++++++++++++++++++++--------
- drivers/clk/sunxi-ng/ccu_nm.h         |  2 ++
- drivers/clk/sunxi/clk-sun8i-apb0.c    |  5 +--
- 7 files changed, 134 insertions(+), 42 deletions(-)
-
---wac7ysb48OaltWcw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAlpEqnIACgkQOJpUIZwP
-JDDg3BAAsBq0RudOHnnVT9+urRjOXSEz970OAvzoQM+fJNLwyL5SElgk5hdXc7ba
-IlcJ2FQLJwFZ4DVTOHcswFkRkSOhCBoEAC1i+LKeV4MgJq/DeqqGV/EEmiqztGjs
-j4dox4SifeLQx5eqJJsnxlaEZRmPpb2HXH3/4oKV61zdh5OumGl7e4RncXZKkwGJ
-pRt8spUBGFa1O8fayQlyrRgcIcR962ZY/0BJVMO4zZUIt2ootWsLcXLmLUeX1r4r
-e4CJ3t0RChiJkglKONDa2DPt4Sk/Tk1AmwrwEf7OgsGp/vjYOBPiaWr9oeR/xOC9
-f7iA9Slkn9WOLGhWzouK6K4kMyvz9FvOTHyxLnbsuPxJcMx8JgvdkbtXFCwmCcgy
-qT4kNlVDLpy7foDEFJBPPkVAJTetzQDpYMcmcl6pVB2O2ZtIeoG5liEJKW3rKvIx
-DAOI5zz9PlDXLJv1uo9H3he4y3AQCTubzuSgVPn8XYRCFfGDE9dZKyzaU483mVC2
-WRhlVJ6VVMCI4NJu6WB2d3sxTs/OeyeJCFvtCWhennSNl7wJSw14IwFJNa1i98pv
-DCJ82vm9nm3AlqzwBlQoM5kpWVW/0TnbehMlHwzUdC+BrSrsQsmviAGfjxeynZIh
-X99F9VLklFevgz1LZGOZ6hEf7Ov4Lf1BvLdh768UB7e50u3+vF8=
-=Y7Bt
------END PGP SIGNATURE-----
-
---wac7ysb48OaltWcw--
+Kevin
