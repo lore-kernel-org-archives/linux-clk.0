@@ -1,76 +1,34 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 Dec 2017 15:28:44 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:37792 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752574AbdLGGlX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:23 -0500
+Date: Wed, 6 Dec 2017 22:41:12 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Cai Li <cai.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>
-Subject: Re: [PATCH] clk: fix a panic error caused by accessing NULL pointer
-Message-ID: <20171205232844.GB4283@codeaurora.org>
-References: <20171120033816.28414-1-chunyan.zhang@spreadtrum.com>
- <20171120191219.GD18379@codeaurora.org>
- <CAAfSe-s9qbRXBMZGbAuWXqhFr4Bt9LSv6=uvYCUW+UhdpcNKcg@mail.gmail.com>
- <CAAfSe-sd=+7BrBab_gsOK5RTe2uDx0HztC3LM1k7VbRf7azz7A@mail.gmail.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
+        vireshk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] clk: h8s2678: pr_err() strings should end with
+ newlines
+Message-ID: <20171207064112.GT4283@codeaurora.org>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+ <1f71746f971b6969882e2d7827334b416178d898.1511505932.git.arvind.yadav.cs@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-sd=+7BrBab_gsOK5RTe2uDx0HztC3LM1k7VbRf7azz7A@mail.gmail.com>
+In-Reply-To: <1f71746f971b6969882e2d7827334b416178d898.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/21, Chunyan Zhang wrote:
-> On 21 November 2017 at 16:57, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> > On 21 November 2017 at 03:12, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >> On 11/20, Chunyan Zhang wrote:
-> >>> From: Cai Li <cai.li@spreadtrum.com>
-> >>>
-> >>> In some cases the clock parent would be set NULL when doing re-parent,
-> >>> it will cause a NULL pointer accessing if clk_set trace event is enabled,
-> >>> since the trace event function would not check the input parameter.
-> >>>
-> >>> Signed-off-by: Cai Li <cai.li@spreadtrum.com>
-> >>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> >>
-> >> Fixes: tag?
-> >>
-> >>> ---
-> >>>  drivers/clk/clk.c | 9 ++++-----
-> >>>  1 file changed, 4 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >>> index c8d83ac..64efaf0 100644
-> >>> --- a/drivers/clk/clk.c
-> >>> +++ b/drivers/clk/clk.c
-> >>> @@ -1242,13 +1242,12 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
-> >>>
-> >>>       old_parent = __clk_set_parent_before(core, parent);
-> >>>
-> >>> -     trace_clk_set_parent(core, parent);
-> >>> -
-> >>>       /* change clock input source */
-> >>> -     if (parent && core->ops->set_parent)
-> >>> +     if (parent && core->ops->set_parent) {
-> >>> +             trace_clk_set_parent(core, parent);
-> >>>               ret = core->ops->set_parent(core->hw, p_index);
-> >>> -
-> >>> -     trace_clk_set_parent_complete(core, parent);
-> >>> +             trace_clk_set_parent_complete(core, parent);
-> >>> +     }
-> >>
-> >> Is the problem that parent may be NULL and the tracepoint
-> >> dereferences it?
-> >
-> > Yes, I think that probably is uncommon usage though, it revealed that
-> > the tracepoint could be stronger :)
+On 11/24, Arvind Yadav wrote:
+> pr_err() messages should end with a new-line to avoid other messages
+> being concatenated.
 > 
-> The reason we need to set the parent as NULL is to disable the clk for
-> the purpose of saving power.
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
 
-Do you have drivers calling set_parent with NULL to save power?
-Seems sort of odd. Why not do something when disabling the clk in
-clk_disable() path instead? Either way, I'll apply the patch to
-clk-fixes.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
