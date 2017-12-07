@@ -1,61 +1,87 @@
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 6 Dec 2017 23:05:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Xu YiPing <xuyiping@hisilicon.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
+	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
+	leo.yan@linaro.org, zhangfei.gao@linaro.org, guodong.xu@linaro.org,
+	zhongkaihua@huawei.com, chenjun14@huawei.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	suzhuangluan@hisilicon.com, xuezhiliang@hisilicon.com,
+	kevin.wangtao@hisilicon.com
+Subject: Re: [PATCH v3 2/3] clk: hisilicon: Add support for Hi3660 stub clocks
+Message-ID: <20171207070550.GY4283@codeaurora.org>
+References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+ <1510910852-2175-3-git-send-email-xuyiping@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <1513627578.29566.6.camel@baylibre.com>
-References: <20171218170007.28042-1-jbrunet@baylibre.com>
-	<20171218190303.GV7997@codeaurora.org>
-	<1513627578.29566.6.camel@baylibre.com>
-Date: Mon, 18 Dec 2017 12:12:51 -0800
-Message-ID: <CAEG3pNBi13BCPcftf=mj5LJh3JQQi+Q7C5QLZwoy6LG__krJXA@mail.gmail.com>
-Subject: Re: [PATCH] clk: check ops pointer on clock register
-From: Michael Turquette <mturquette@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1510910852-2175-3-git-send-email-xuyiping@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome & Stephen,
+On 11/17, Xu YiPing wrote:
+> From: Kaihua Zhong <zhongkaihua@huawei.com>
+> +
+> +static struct clk_hw *hi3660_stub_clk_hw_get(struct of_phandle_args *clkspec,
+> +					     void *data)
+> +{
+> +	unsigned int idx = clkspec->args[0];
+> +
+> +	if (idx > HI3660_CLK_STUB_NUM) {
 
-On Mon, Dec 18, 2017 at 12:06 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Mon, 2017-12-18 at 11:03 -0800, Stephen Boyd wrote:
->> On 12/18, Jerome Brunet wrote:
->> > Nothing really prevents a provider from (trying to) register a clock
->> > without providing the clock ops structure.
->> >
->> > We do check the individual fields before using them, but not the
->> > structure pointer itself. This may have the usual nasty consequences when
->> > the pointer is dereferenced, mostly likely when checking one the field
->> > during the initialization.
->>
->> Yes, that nasty consequence should be a kernel oops,
->
-> Precisely
->
->> and the
->> developer should notice that before submitting the driver for
->> inclusion.
->
-> Agreed. But people may make mistakes, which is why (at least partly) we
-> do checks, isn't it ?
+This should be >=
 
-Agreed the developers should test before submitting, but procedurally
-generated clocks (e.g. registering clocks in a loop using a
-predictable register map, etc) could lead to a situation where a
-developer doesn't test every possible iteration.
+> +	}
+> +
+> +	return &hi3660_stub_clks[idx].hw;
+> +}
+> +
+> +static int hi3660_stub_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	/* Use mailbox client without blocking */
+> +	stub_clk_chan.cl.dev = dev;
+> +	stub_clk_chan.cl.tx_done = NULL;
+> +	stub_clk_chan.cl.tx_block = false;
+> +	stub_clk_chan.cl.knows_txdone = false;
+> +
+> +	/* Allocate mailbox channel */
+> +	stub_clk_chan.mbox = mbox_request_channel(&stub_clk_chan.cl, 0);
+> +	if (IS_ERR(stub_clk_chan.mbox))
+> +		return PTR_ERR(stub_clk_chan.mbox);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	freq_reg = devm_ioremap(dev, res->start, resource_size(res));
+> +	if (IS_ERR(freq_reg))
 
-Hypothetical, but easy easy easy to fix with Jerome's patch.
+Pretty sure this returns NULL on failure, not an error pointer.
 
->
->> I don't think we really care to return an error here
->> if this happens.
->>
->
-> I don't understand why we would let a oops happen when can catch the error
-> properly ?
->
+> +		return -ENOMEM;
+> +
+> +	freq_reg += HI3660_STUB_CLOCK_DATA;
+> +
+> +	for (i = 0; i < HI3660_CLK_STUB_NUM; i++) {
+> +		ret = devm_clk_hw_register(&pdev->dev, &hi3660_stub_clks[i].hw);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(pdev->dev.of_node, hi3660_stub_clk_hw_get,
+> +				     hi3660_stub_clks);
 
-Agreed with Jerome on this one.
+This can use devm
 
-Let's flip it on its head: any downside to this patch? If not I can merge.
+> +	return ret;
+> +}
+> +
 
-Regards,
-Mike
+I fixed it all and merged into clk-next.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
