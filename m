@@ -1,193 +1,234 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-Date: Sat, 30 Dec 2017 22:01:56 +0100
-Message-Id: <20171230210203.24115-5-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V7 02/12] clk: sprd: Add common infrastructure
+Date: Thu, 7 Dec 2017 20:57:05 +0800
+Message-ID: <20171207125715.16160-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Parts of PHY code could be useful also for custom PHYs. For example,
-Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
-with few additional memory mapped registers, so most of the Synopsys PHY
-related code could be reused.
+Added Spreadtrum's clock driver framework together with common
+structures and interface functions.
 
-It turns out that even completely custom HDMI PHYs, such as the one
-found in Allwinner H3, can reuse some of those functions. This would
-suggest that (some?) functions exported in this commit are actually part
-of generic PHY interface and not really specific to Synopsys PHYs.
-
-Export useful PHY functions.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 ++++++++++++++++++++++---------
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
- include/drm/bridge/dw_hdmi.h              | 10 +++++++
- 3 files changed, 44 insertions(+), 13 deletions(-)
+ drivers/clk/Kconfig       |  1 +
+ drivers/clk/Makefile      |  1 +
+ drivers/clk/sprd/Kconfig  |  4 ++
+ drivers/clk/sprd/Makefile |  3 ++
+ drivers/clk/sprd/common.c | 96 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/common.h | 38 +++++++++++++++++++
+ 6 files changed, 143 insertions(+)
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 7ca14d7325b5..67467d0b683a 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SVSRET_MASK);
- }
- 
--static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
-+void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
- {
- 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
- 			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
- 			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
- 
--static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
-+void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
- {
- 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
- 			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
- 			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
- 
- static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
- {
-@@ -1065,6 +1067,23 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
-+void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1c4e1aa..ce1a32be 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -236,6 +236,7 @@ source "drivers/clk/mvebu/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
++source "drivers/clk/sprd/Kconfig"
+ source "drivers/clk/sunxi-ng/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7f761b..d880d13 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
++obj-$(CONFIG_ARCH_SPRD)			+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
+diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
+new file mode 100644
+index 0000000..67a3287
+--- /dev/null
++++ b/drivers/clk/sprd/Kconfig
+@@ -0,0 +1,4 @@
++config SPRD_COMMON_CLK
++	tristate "Clock support for Spreadtrum SoCs"
++	depends on ARCH_SPRD || COMPILE_TEST
++	default ARCH_SPRD
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+new file mode 100644
+index 0000000..74f4b80
+--- /dev/null
++++ b/drivers/clk/sprd/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
++
++clk-sprd-y	+= common.o
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+new file mode 100644
+index 0000000..e038b044
+--- /dev/null
++++ b/drivers/clk/sprd/common.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum clock infrastructure
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++#include "common.h"
++
++static const struct regmap_config sprdclk_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xffff,
++	.fast_io	= true,
++};
++
++static void sprd_clk_set_regmap(const struct sprd_clk_desc *desc,
++			 struct regmap *regmap)
 +{
-+	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
-+			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
-+			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
-+}
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
++	int i;
++	struct sprd_clk_common *cclk;
 +
-+void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
++	for (i = 0; i < desc->num_clk_clks; i++) {
++		cclk = desc->clk_clks[i];
++		if (!cclk)
++			continue;
++
++		cclk->regmap = regmap;
++	}
++}
++
++int sprd_clk_regmap_init(struct platform_device *pdev,
++			 const struct sprd_clk_desc *desc)
 +{
-+	hdmi_phy_test_clear(hdmi, 1);
-+	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
-+		    HDMI_PHY_I2CM_SLAVE_ADDR);
-+	hdmi_phy_test_clear(hdmi, 0);
++	void __iomem *base;
++	struct device_node *node = pdev->dev.of_node;
++	struct regmap *regmap;
++
++	if (of_find_property(node, "sprd,syscon", NULL)) {
++		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
++		if (IS_ERR_OR_NULL(regmap)) {
++			pr_err("%s: failed to get syscon regmap\n", __func__);
++			return PTR_ERR(regmap);
++		}
++	} else {
++		base = of_iomap(node, 0);
++		regmap = devm_regmap_init_mmio(&pdev->dev, base,
++					       &sprdclk_regmap_config);
++		if (IS_ERR_OR_NULL(regmap)) {
++			pr_err("failed to init regmap\n");
++			return PTR_ERR(regmap);
++		}
++	}
++
++	sprd_clk_set_regmap(desc, regmap);
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
++EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
 +
- static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
- {
- 	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
-@@ -1204,15 +1223,12 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
- 	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
--	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
--	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
-+	dw_hdmi_phy_gen2_reset(hdmi, 1);
-+	dw_hdmi_phy_gen2_reset(hdmi, 0);
- 
- 	hdmi_writeb(hdmi, HDMI_MC_HEACPHY_RST_ASSERT, HDMI_MC_HEACPHY_RST);
- 
--	hdmi_phy_test_clear(hdmi, 1);
--	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
--		    HDMI_PHY_I2CM_SLAVE_ADDR);
--	hdmi_phy_test_clear(hdmi, 0);
-+	dw_hdmi_phy_set_slave_addr(hdmi);
- 
- 	/* Write to the PHY as configured by the platform */
- 	if (pdata->configure_phy)
-@@ -1251,15 +1267,16 @@ static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
- 	dw_hdmi_phy_power_off(hdmi);
- }
- 
--static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
--						      void *data)
-+enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+					       void *data)
- {
- 	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
- 		connector_status_connected : connector_status_disconnected;
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_read_hpd);
- 
--static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
--				   bool force, bool disabled, bool rxsense)
-+void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-+			    bool force, bool disabled, bool rxsense)
- {
- 	u8 old_mask = hdmi->phy_mask;
- 
-@@ -1271,8 +1288,9 @@ static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
- 	if (old_mask != hdmi->phy_mask)
- 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_update_hpd);
- 
--static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
-+void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
- {
- 	/*
- 	 * Configure the PHY RX SENSE and HPD interrupts polarities and clear
-@@ -1291,6 +1309,7 @@ static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
- 	hdmi_writeb(hdmi, ~(HDMI_IH_PHY_STAT0_HPD | HDMI_IH_PHY_STAT0_RX_SENSE),
- 		    HDMI_IH_MUTE_PHY_STAT0);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_setup_hpd);
- 
- static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
- 	.init = dw_hdmi_phy_init,
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-index 9d90eb9c46e5..fd150430d0b3 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-@@ -950,6 +950,8 @@ enum {
- 
- /* MC_PHYRSTZ field values */
- 	HDMI_MC_PHYRSTZ_PHYRSTZ = 0x01,
-+	HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET = 0x00,
-+	HDMI_MC_PHYRSTZ_PHYRSTZ_MASK = 0x01,
- 
- /* MC_HEACPHY_RST field values */
- 	HDMI_MC_HEACPHY_RST_ASSERT = 0x1,
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 182f83283e24..f5cca4362154 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -159,5 +159,15 @@ void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
- /* PHY configuration */
- void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 			   unsigned char addr);
-+enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+					       void *data);
-+void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-+			    bool force, bool disabled, bool rxsense);
-+void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
++int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
++{
++	int i, ret;
++	struct clk_hw *hw;
 +
-+void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable);
-+void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable);
-+void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable);
-+void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi);
- 
- #endif /* __IMX_HDMI_H__ */
++	for (i = 0; i < clkhw->num; i++) {
++
++		hw = clkhw->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "Couldn't register clock %d - %s\n",
++				i, hw->init->name);
++			return ret;
++		}
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clkhw);
++	if (ret)
++		dev_err(dev, "Failed to add clock provider\n");
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sprd_clk_probe);
++
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
+new file mode 100644
+index 0000000..abd9ff5
+--- /dev/null
++++ b/drivers/clk/sprd/common.h
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum clock infrastructure
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#ifndef _SPRD_CLK_COMMON_H_
++#define _SPRD_CLK_COMMON_H_
++
++#include <linux/clk-provider.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++struct device_node;
++
++struct sprd_clk_common {
++	struct regmap	*regmap;
++	u32		reg;
++	struct clk_hw	hw;
++};
++
++struct sprd_clk_desc {
++	struct sprd_clk_common		**clk_clks;
++	unsigned long			num_clk_clks;
++	struct clk_hw_onecell_data      *hw_clks;
++};
++
++static inline struct sprd_clk_common *
++	hw_to_sprd_clk_common(const struct clk_hw *hw)
++{
++	return container_of(hw, struct sprd_clk_common, hw);
++}
++int sprd_clk_regmap_init(struct platform_device *pdev,
++			 const struct sprd_clk_desc *desc);
++int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw);
++
++#endif /* _SPRD_CLK_COMMON_H_ */
 -- 
-2.15.1
+2.7.4
