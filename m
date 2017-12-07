@@ -1,119 +1,172 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1514044041.30687.16.camel@mtkswgap22>
-Subject: Re: [PATCH] clk: mediatek: Fix all warnings for missing struct
- clk_onecell_data
-From: Sean Wang <sean.wang@mediatek.com>
-To: Jean Delvare <jdelvare@suse.de>
-CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<matthias.bgg@gmail.com>, <jamesjj.liao@mediatek.com>,
-	<weiyi.lu@mediatek.com>, <arnd@arndb.de>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kbuild-all@01.org>
-Date: Sat, 23 Dec 2017 23:47:21 +0800
-In-Reply-To: <20171223122002.2cb629d1@endymion>
-References: <a7e0a625fb6a71b7fab810f1cc8ec196b1732305.1514015506.git.sean.wang@mediatek.com>
-	 <20171223122002.2cb629d1@endymion>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V7 06/12] clk: sprd: add composite clock support
+Date: Thu, 7 Dec 2017 20:57:09 +0800
+Message-ID: <20171207125715.16160-7-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2017-12-23 at 12:20 +0100, Jean Delvare wrote:
-> Hi Sean,
-> 
-> On Sat, 23 Dec 2017 15:56:36 +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > In fact, the clk-mtk.h header is unnecessary for reset.c and thus it's
-> > safe to remove it from the file to get rid of below build warnings.
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> >    In file included from drivers/clk/mediatek/reset.c:22:0:
-> > >>drivers/clk/mediatek/clk-mtk.h:44:19: warning: 'struct clk_onecell_data'  
-> > declared inside parameter list will not be visible outside of
-> > this definition or declaration
-> >       int num, struct clk_onecell_data *clk_data);
-> >                       ^~~~~~~~~~~~~~~~
-> > drivers/clk/mediatek/clk-mtk.h:63:19: warning: 'struct clk_onecell_data'
-> > declared inside parameter list will not be visible outside of
-> > this definition or declaration
-> >       int num, struct clk_onecell_data *clk_data);
-> >                       ^~~~~~~~~~~~~~~~
-> > drivers/clk/mediatek/clk-mtk.h:145:10: warning: 'struct clk_onecell_data'
-> > declared inside parameter list will not be visible outside of
-> > this definition or declaration
-> >       struct clk_onecell_data *clk_data);
-> >              ^~~~~~~~~~~~~~~~
-> > drivers/clk/mediatek/clk-mtk.h:164:11: warning: 'struct clk_onecell_data'
-> > declared inside parameter list will not be visible outside of
-> > this definition or declaration
-> >        struct clk_onecell_data *clk_data);
-> >               ^~~~~~~~~~~~~~~~
-> > drivers/clk/mediatek/clk-mtk.h:190:12: warning: 'struct clk_onecell_data'
-> > declared inside parameter list will not be visible outside of this
-> > definition or declaration
-> >         struct clk_onecell_data *clk_data);
-> >                ^~~~~~~~~~~~~~~~
-> 
-> That's not the proper fix. The actual problem here is in clk-mtk.h,
-> which declares functions which need struct clk_onecell_data without
-> declaring that structure first. This can be fixed in 2 ways:
-> 
-> 1* #Include whatever header file provides the definition of struct
->    clk_onecell_data (I think <linux/clk-provider.h>) in clk-mtk.h
->    itself.
-> 
-> 2* As you only manipulate pointers and not the structure itself, you
->    could simply declare that this struct exists, without defining it,
->    prior to referencing it in clk-mtk.h. As easy as:
-> 
->    struct clk_onecell_data;
-> 
-> In this case option 1 seems preferable.
-> 
-> The reason why the problem is only visible in reset.c is because other
-> source files under drivers/clk/mediatek #include <linux/clk-provider.h>
-> explicitly before #including clk-mtk.h. But it only works "by
-> accident". Ideally header files should be self-sufficient, so you don't
-> depend on #include order.
-> 
+This patch introduced composite driver for Spreadtrum's SoCs. The
+functions of this composite clock simply consist of divider and
+mux clocks.
 
-agreed on above. I also prefer using option 1 to solve original issue.
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile    |  1 +
+ drivers/clk/sprd/composite.c | 60 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/composite.h | 51 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 112 insertions(+)
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
 
-> > Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > Cc: kbuild-all@01.org
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: linux-clk@vger.kernel.org
-> > ---
-> >  drivers/clk/mediatek/reset.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> > index d3551d5..70ebb2e 100644
-> > --- a/drivers/clk/mediatek/reset.c
-> > +++ b/drivers/clk/mediatek/reset.c
-> > @@ -19,8 +19,6 @@
-> >  #include <linux/reset-controller.h>
-> >  #include <linux/slab.h>
-> >  
-> > -#include "clk-mtk.h"
-> > -
-> >  struct mtk_reset {
-> >  	struct regmap *regmap;
-> >  	int regofs;
-> 
-> If the header file is indeed not needed then that's still a good
-> change, even if it doesn't fix the problem, so:
-> 
-> Reviewed-by: Jean Delvare <jdelvare@suse.de>
-
-> However the patch description should be adjusted accordingly.
-
-
-I will use another patch to remove the indeed not needed header 
-
-thanks a lot for your detailed explanation and help
-
-	Sean
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 80e6039..2262e76 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
+ clk-sprd-y	+= div.o
++clk-sprd-y	+= composite.o
+diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
+new file mode 100644
+index 0000000..ebb6448
+--- /dev/null
++++ b/drivers/clk/sprd/composite.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum composite clock driver
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#include <linux/clk-provider.h>
++
++#include "composite.h"
++
++static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_round_rate(&cc->common, &cc->div,
++					 rate, parent_rate);
++}
++
++static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
++}
++
++static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_set_rate(&cc->common, &cc->div,
++				       rate, parent_rate);
++}
++
++static u8 sprd_comp_get_parent(struct clk_hw *hw)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
++}
++
++static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
++}
++
++const struct clk_ops sprd_comp_ops = {
++	.get_parent	= sprd_comp_get_parent,
++	.set_parent	= sprd_comp_set_parent,
++
++	.round_rate	= sprd_comp_round_rate,
++	.recalc_rate	= sprd_comp_recalc_rate,
++	.set_rate	= sprd_comp_set_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_comp_ops);
+diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
+new file mode 100644
+index 0000000..0984e9e
+--- /dev/null
++++ b/drivers/clk/sprd/composite.h
+@@ -0,0 +1,51 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum composite clock driver
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#ifndef _SPRD_COMPOSITE_H_
++#define _SPRD_COMPOSITE_H_
++
++#include "common.h"
++#include "mux.h"
++#include "div.h"
++
++struct sprd_comp {
++	struct sprd_mux_ssel	mux;
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg, _table,	\
++			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
++	struct sprd_comp _struct = {					\
++		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
++		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
++		.common = {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parent,		\
++						       &sprd_comp_ops,	\
++						       _flags),		\
++			 }						\
++	}
++
++#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _mshift,	\
++			_mwidth, _dshift, _dwidth, _flags)	\
++	SPRD_COMP_CLK_TABLE(_struct, _name, _parent, _reg,	\
++			    NULL, _mshift, _mwidth,		\
++			    _dshift, _dwidth, _flags)
++
++static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_comp, common);
++}
++
++extern const struct clk_ops sprd_comp_ops;
++
++#endif /* _SPRD_COMPOSITE_H_ */
+-- 
+2.7.4
