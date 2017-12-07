@@ -1,48 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:13:41 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>
-Subject: Re: [PATCH 0/3] Add DVFS support on CPU clock for Armada 37xx
-Message-ID: <20171221231341.GC7997@codeaurora.org>
-References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: meson: make the spinlock naming more specific
+References: <20171204052739.10747-1-yixun.lan@amlogic.com>
+Date: Thu, 07 Dec 2017 12:31:16 -0800
+In-Reply-To: <20171204052739.10747-1-yixun.lan@amlogic.com> (Yixun Lan's
+	message of "Mon, 4 Dec 2017 13:27:39 +0800")
+Message-ID: <7hpo7qp9ez.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Gregory CLEMENT wrote:
-> Hi,
-> 
-> This small series is needed to use DVFS on Armada 37xx. When DVFS is
-> enabled the CPU clock setting is done using an other set of registers
-> from the North Bridge Power Management block.
-> 
-> The series adds the possibility to modify the CPU frequency using the
-> associate load level matching the target frequency. However
-> configuring the frequencies for each load is done by the cpufreq
-> driver submitted in a separate series.
-> 
-> Obviously having both series (cpufreq and clk) is needed to support
-> DVFS on Armada 37xx, but there is no dependencies between the series
-> (for building or at runtime).
-> 
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-Are you relying on the clk API returning an error to detect if
-DVFS is present or not? Just curious why that part of the code
-was there.
+> Make the spinlock more specific, so better for lockdep
+> debugging and ctags/grep.
+>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>
+> ---
+>
+> this patch try to address the issue which bring up by Stephen at [1]
+> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005534.html
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+FYI... for future reference, it's common to use a Suggested-by tag to
+give credit for these kinds of things.  e.g.:
+
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Kevin
