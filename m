@@ -1,52 +1,124 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 6 Dec 2017 22:50:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 02/15] clk: ingenic: Fix recalc_rate for clocks with fixed divider
-Date: Thu, 28 Dec 2017 14:56:21 +0100
-Message-Id: <20171228135634.30000-3-paul@crapouillou.net>
-In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V6 02/12] clk: sprd: Add common infrastructure
+Message-ID: <20171207065012.GW4283@codeaurora.org>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+ <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously, the clocks with a fixed divider would report their rate
-as being the same as the one of their parent, independently of the
-divider in use. This commit fixes this behaviour.
+On 11/27, Chunyan Zhang wrote:
+> +
+> +	sprd_clk_set_regmap(desc, regmap);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
+> +
+> +int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
+> +{
+> +	int i, ret = 0;
 
-This went unnoticed as neither the jz4740 nor the jz4780 CGU code
-have clocks with fixed dividers yet.
+ret shouldn't need to be initialized here.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/cgu.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +	struct clk_hw *hw;
+> +
+> +	for (i = 0; i < clkhw->num; i++) {
+> +
+> +		hw = clkhw->hws[i];
+> +
+> +		if (!hw)
+> +			continue;
+> +
+> +		ret = devm_clk_hw_register(dev, hw);
+> +		if (ret) {
+> +			dev_err(dev, "Couldn't register clock %d - %s\n",
+> +				i, hw->init->name);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+> +				     clkhw);
 
- v2: No changes
- v3: No changes
- v4: No changes
+You can use devm_ now for this.
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index ab393637f7b0..a2e73a6d60fd 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 		div *= clk_info->div.div;
- 
- 		rate /= div;
-+	} else if (clk_info->type & CGU_CLK_FIXDIV) {
-+		rate /= clk_info->fixdiv.div;
- 	}
- 
- 	return rate;
+> +	if (ret)
+> +		dev_err(dev, "Failed to add clock provider.\n");
+
+Please remove the full stop on error messages.
+
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(sprd_clk_probe);
+> +
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
+> new file mode 100644
+> index 0000000..8cd774e
+> --- /dev/null
+> +++ b/drivers/clk/sprd/common.h
+> @@ -0,0 +1,52 @@
+> +/*
+> + * Spreadtrum clock infrastructure
+> + *
+> + * Copyright (C) 2017 Spreadtrum, Inc.
+> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +#ifndef _SPRD_CLK_COMMON_H_
+> +#define _SPRD_CLK_COMMON_H_
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "../clk_common.h"
+> +
+> +struct device_node;
+> +
+> +struct sprd_clk_common {
+> +	struct regmap	*regmap;
+> +	u32		reg;
+> +	struct clk_hw	hw;
+> +};
+> +
+> +struct sprd_clk_desc {
+> +	struct sprd_clk_common		**clk_clks;
+> +	unsigned long			num_clk_clks;
+> +	struct clk_hw_onecell_data      *hw_clks;
+> +};
+> +
+> +#define sprd_regmap_read(map, reg, val)				\
+> +({								\
+> +	(map) ? regmap_read((map), (reg), (val)) : (-EINVAL);	\
+
+Do we sometimes not have a map? This seems overly cautious.
+
+> +})
+> +
+> +#define sprd_regmap_write(map, reg, val)			\
+> +({								\
+
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
