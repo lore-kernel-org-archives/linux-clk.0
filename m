@@ -1,50 +1,92 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1512987406.334.22.camel@baylibre.com>
-Subject: [GIT PULL] Amlogic clock driver updates for 4.16
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	 <mturquette@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
-	 <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Date: Mon, 11 Dec 2017 11:16:46 +0100
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 7 Dec 2017 16:04:49 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Xu YiPing <xuyiping@hisilicon.com>, mturquette@baylibre.com,
+	robh+dt@kernel.org, mark.rutland@arm.com, xuwei5@hisilicon.com,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
+	zhangfei.gao@linaro.org, guodong.xu@linaro.org,
+	zhongkaihua@huawei.com, chenjun14@huawei.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	suzhuangluan@hisilicon.com, xuezhiliang@hisilicon.com,
+	kevin.wangtao@hisilicon.com
+Subject: Re: [PATCH v3 2/3] clk: hisilicon: Add support for Hi3660 stub clocks
+Message-ID: <20171207080449.GB5371@leoy-linaro>
+References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+ <1510910852-2175-3-git-send-email-xuyiping@hisilicon.com>
+ <20171207070550.GY4283@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171207070550.GY4283@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear clock maintainers,
+On Wed, Dec 06, 2017 at 11:05:50PM -0800, Stephen Boyd wrote:
+> On 11/17, Xu YiPing wrote:
+> > From: Kaihua Zhong <zhongkaihua@huawei.com>
+> > +
+> > +static struct clk_hw *hi3660_stub_clk_hw_get(struct of_phandle_args *clkspec,
+> > +					     void *data)
+> > +{
+> > +	unsigned int idx = clkspec->args[0];
+> > +
+> > +	if (idx > HI3660_CLK_STUB_NUM) {
+> 
+> This should be >=
+> 
+> > +	}
+> > +
+> > +	return &hi3660_stub_clks[idx].hw;
+> > +}
+> > +
+> > +static int hi3660_stub_clk_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct resource *res;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	/* Use mailbox client without blocking */
+> > +	stub_clk_chan.cl.dev = dev;
+> > +	stub_clk_chan.cl.tx_done = NULL;
+> > +	stub_clk_chan.cl.tx_block = false;
+> > +	stub_clk_chan.cl.knows_txdone = false;
+> > +
+> > +	/* Allocate mailbox channel */
+> > +	stub_clk_chan.mbox = mbox_request_channel(&stub_clk_chan.cl, 0);
+> > +	if (IS_ERR(stub_clk_chan.mbox))
+> > +		return PTR_ERR(stub_clk_chan.mbox);
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	freq_reg = devm_ioremap(dev, res->start, resource_size(res));
+> > +	if (IS_ERR(freq_reg))
+> 
+> Pretty sure this returns NULL on failure, not an error pointer.
+> 
+> > +		return -ENOMEM;
+> > +
+> > +	freq_reg += HI3660_STUB_CLOCK_DATA;
+> > +
+> > +	for (i = 0; i < HI3660_CLK_STUB_NUM; i++) {
+> > +		ret = devm_clk_hw_register(&pdev->dev, &hi3660_stub_clks[i].hw);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	ret = of_clk_add_hw_provider(pdev->dev.of_node, hi3660_stub_clk_hw_get,
+> > +				     hi3660_stub_clks);
+> 
+> This can use devm
+> 
+> > +	return ret;
+> > +}
+> > +
+> 
+> I fixed it all and merged into clk-next.
 
-Below is a request to pull a 1st batch of Amlogic clock driver updates for this
-cycle. There is just 2 trivial changes for now. We expect/hope to have a 2nd
-batch later in this cycle
+Ah, very appreciate your help, Stephen.
 
-Cheers
-Jerome
-
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/clk-for-v4.16-1
-
-for you to fetch changes up to ed3fb5af69afc802d6e29700fff3401ba99edac1:
-
-  clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks (2017-12-08 21:37:19 +0100)
-
-----------------------------------------------------------------
-First round of meson clock for v4.16
-* Fix 2 clock gates mixed up in the datasheet
-* Remove unnecessary CLK_IGNORE_UNUSED on mmc clocks
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks
-
-Yixun Lan (1):
-      clk: meson: gxbb: fix wrong clock for SARADC/SANA
-
- drivers/clk/meson/gxbb.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+Thanks,
+Leo Yan
