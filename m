@@ -1,49 +1,231 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 15:16:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Rob Clark <robdclark@gmail.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.or, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] clk: divider: fix incorrect usage of container_of
-Message-ID: <20171228231612.GX7997@codeaurora.org>
-References: <20171221163054.13600-1-jbrunet@baylibre.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V7 03/12] clk: sprd: add gate clock support
+Date: Thu, 7 Dec 2017 20:57:06 +0800
+Message-ID: <20171207125715.16160-4-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171221163054.13600-1-jbrunet@baylibre.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/21, Jerome Brunet wrote:
-> divider_recalc_rate() is an helper function used by clock divider of
-> different types, so the structure containing the 'hw' pointer is not
-> always a 'struct clk_divider'
-> 
-> At the following line:
-> > div = _get_div(table, val, flags, divider->width);
-> 
-> in several cases, the value of 'divider->width' is garbage as the actual
-> structure behind this memory is not a 'struct clk_divider'
-> 
-> Fortunately, this width value is used by _get_val() only when
-> CLK_DIVIDER_MAX_AT_ZERO flag is set. This has never been the case so
-> far when the structure is not a 'struct clk_divider'. This is probably
-> why we did not notice this bug before
-> 
-> Fixes: afe76c8fd030 ("clk: allow a clk divider with max divisor when zero")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+Some clocks on the Spreadtrum's SoCs are just simple gates. Add
+support for those clocks.
 
-Applied to clk-next
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile |   1 +
+ drivers/clk/sprd/gate.c   | 111 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/gate.h   |  59 ++++++++++++++++++++++++
+ 3 files changed, 171 insertions(+)
+ create mode 100644 drivers/clk/sprd/gate.c
+ create mode 100644 drivers/clk/sprd/gate.h
 
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 74f4b80..8cd5592 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+ 
+ clk-sprd-y	+= common.o
++clk-sprd-y	+= gate.o
+diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
+new file mode 100644
+index 0000000..f59d193
+--- /dev/null
++++ b/drivers/clk/sprd/gate.c
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum gate clock driver
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "gate.h"
++
++static void clk_gate_toggle(const struct sprd_gate *sg, bool en)
++{
++	const struct sprd_clk_common *common = &sg->common;
++	unsigned int reg;
++	bool set = sg->flags & CLK_GATE_SET_TO_DISABLE ? true : false;
++
++	set ^= en;
++
++	regmap_read(common->regmap, common->reg, &reg);
++
++	if (set)
++		reg |= sg->enable_mask;
++	else
++		reg &= ~sg->enable_mask;
++
++	regmap_write(common->regmap, common->reg, reg);
++}
++
++static void clk_sc_gate_toggle(const struct sprd_gate *sg, bool en)
++{
++	const struct sprd_clk_common *common = &sg->common;
++	bool set = sg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++	unsigned int offset;
++
++	set ^= en;
++
++	/*
++	 * Each set/clear gate clock has three registers:
++	 * common->reg			- base register
++	 * common->reg + offset		- set register
++	 * common->reg + 2 * offset	- clear register
++	 */
++	offset = set ? sg->sc_offset : sg->sc_offset * 2;
++
++	regmap_write(common->regmap, common->reg + offset,
++			  sg->enable_mask);
++}
++
++static void sprd_gate_disable(struct clk_hw *hw)
++{
++	struct sprd_gate *sg = hw_to_sprd_gate(hw);
++
++	clk_gate_toggle(sg, false);
++}
++
++static int sprd_gate_enable(struct clk_hw *hw)
++{
++	struct sprd_gate *sg = hw_to_sprd_gate(hw);
++
++	clk_gate_toggle(sg, true);
++
++	return 0;
++}
++
++static void sprd_sc_gate_disable(struct clk_hw *hw)
++{
++	struct sprd_gate *sg = hw_to_sprd_gate(hw);
++
++	clk_sc_gate_toggle(sg, false);
++}
++
++static int sprd_sc_gate_enable(struct clk_hw *hw)
++{
++	struct sprd_gate *sg = hw_to_sprd_gate(hw);
++
++	clk_sc_gate_toggle(sg, true);
++
++	return 0;
++}
++static int sprd_gate_is_enabled(struct clk_hw *hw)
++{
++	struct sprd_gate *sg = hw_to_sprd_gate(hw);
++	struct sprd_clk_common *common = &sg->common;
++	unsigned int reg;
++
++	regmap_read(common->regmap, common->reg, &reg);
++
++	if (sg->flags & CLK_GATE_SET_TO_DISABLE)
++		reg ^= sg->enable_mask;
++
++	reg &= sg->enable_mask;
++
++	return reg ? 1 : 0;
++}
++
++const struct clk_ops sprd_gate_ops = {
++	.disable	= sprd_gate_disable,
++	.enable		= sprd_gate_enable,
++	.is_enabled	= sprd_gate_is_enabled,
++};
++EXPORT_SYMBOL_GPL(sprd_gate_ops);
++
++const struct clk_ops sprd_sc_gate_ops = {
++	.disable	= sprd_sc_gate_disable,
++	.enable		= sprd_sc_gate_enable,
++	.is_enabled	= sprd_gate_is_enabled,
++};
++EXPORT_SYMBOL_GPL(sprd_sc_gate_ops);
++
+diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
+new file mode 100644
+index 0000000..2e582c6
+--- /dev/null
++++ b/drivers/clk/sprd/gate.h
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Spreadtrum gate clock driver
++//
++// Copyright (C) 2017 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#ifndef _SPRD_GATE_H_
++#define _SPRD_GATE_H_
++
++#include "common.h"
++
++struct sprd_gate {
++	u32			enable_mask;
++	u16			flags;
++	u16			sc_offset;
++
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, _sc_offset,	\
++			     _enable_mask, _flags, _gate_flags, _ops)	\
++	struct sprd_gate _struct = {					\
++		.enable_mask	= _enable_mask,				\
++		.sc_offset	= _sc_offset,				\
++		.flags		= _gate_flags,				\
++		.common	= {						\
++			.regmap		= NULL,				\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      _ops,		\
++						      _flags),		\
++		}							\
++	}
++
++#define SPRD_GATE_CLK(_struct, _name, _parent, _reg,			\
++		      _enable_mask, _flags, _gate_flags)		\
++	SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, 0,		\
++			     _enable_mask, _flags, _gate_flags,		\
++			     &sprd_gate_ops)
++
++#define SPRD_SC_GATE_CLK(_struct, _name, _parent, _reg, _sc_offset,	\
++			 _enable_mask, _flags, _gate_flags)		\
++	SPRD_SC_GATE_CLK_OPS(_struct, _name, _parent, _reg, _sc_offset,	\
++			     _enable_mask, _flags, _gate_flags,		\
++			     &sprd_sc_gate_ops)
++
++static inline struct sprd_gate *hw_to_sprd_gate(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_gate, common);
++}
++
++extern const struct clk_ops sprd_gate_ops;
++extern const struct clk_ops sprd_sc_gate_ops;
++
++#endif /* _SPRD_GATE_H_ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
