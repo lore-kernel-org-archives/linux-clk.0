@@ -1,55 +1,31 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Jun Nie <jun.nie@linaro.org>,
-	Baoyou Xie <baoyou.xie@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 28/33] clk: zte: change zx_audio_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:13:07 +0000
-Message-Id: <1514596392-22270-29-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 6 Dec 2017 22:34:29 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: srinivas.kandagatla@linaro.org
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: msm8916: add 12.288 MHz support to codec
+ dig clk
+Message-ID: <20171207063426.GN4283@codeaurora.org>
+References: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
+ <20171206121139.18936-3-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171206121139.18936-3-srinivas.kandagatla@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On 12/06, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch adds 12.288 MHz suport to codec digital clk, this clock.
+> Some external PA requires a 12.288 MHz to work.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Applied to clk-next
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Jun Nie <jun.nie@linaro.org>
-Cc: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/zte/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/zte/clk.c b/drivers/clk/zte/clk.c
-index df91842..6afdc4a 100644
---- a/drivers/clk/zte/clk.c
-+++ b/drivers/clk/zte/clk.c
-@@ -247,7 +247,7 @@ static unsigned long zx_audio_round_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 reg;
- 
- 	if (rate * 2 > *prate)
--		return -EINVAL;
-+		return 0;
- 
- 	reg = calc_reg(*prate, rate);
- 	return calc_rate(reg, *prate);
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
