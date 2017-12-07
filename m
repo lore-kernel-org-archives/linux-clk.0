@@ -1,77 +1,102 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 26 Dec 2017 17:29:18 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com
-Subject: Re: [RFC PATCH V1 2/2] clk: add lock for clk_core_is_enabled
-Message-ID: <20171227012918.GU7997@codeaurora.org>
-References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
- <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:8653 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750919AbdLGJxq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 04:53:46 -0500
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Carlo Caione <carlo@caione.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 0/4] add clk controller driver for Meson-AXG SoC
+Date: Thu, 7 Dec 2017 17:52:56 +0800
+Message-ID: <20171207095300.15384-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Dong Aisheng wrote:
-> According to design doc, .is_enabled should be protected by enable lock.
-> Then users don't have to protect it against enable/disable operation
-> in clock drivers.
-> 
-> See: Documentation/clk.txt
-> "The enable lock is a spinlock and is held across calls to the .enable,
-> .disable and .is_enabled operations."
-> 
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/clk.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index e24968f..d6e2d5c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -198,14 +198,19 @@ static bool clk_core_is_prepared(struct clk_core *core)
->  
->  static bool clk_core_is_enabled(struct clk_core *core)
->  {
-> +	unsigned long flags;
->  	bool ret = false;
->  
-> +	flags = clk_enable_lock();
-> +
->  	/*
->  	 * .is_enabled is only mandatory for clocks that gate
->  	 * fall back to software usage counter if .is_enabled is missing
->  	 */
-> -	if (!core->ops->is_enabled)
-> +	if (!core->ops->is_enabled) {
-> +		clk_enable_unlock(flags);
->  		return core->enable_count;
-> +	}
->  
->  	/*
->  	 * Check if clock controller's device is runtime active before
-> @@ -230,6 +235,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
->  	if (core->dev)
->  		pm_runtime_put(core->dev);
->  
-> +	clk_enable_unlock(flags);
-> +
->  	return ret;
->  }
+Add driver for the clk controller which found in Meson AXG SoC
 
-It doesn't really make any sense to hold the enable lock inside
-the clk_core_is_enabled() function, unless you want to do
-something else with the information of the enable state with that
-lock held. Otherwise, seeing if a clk is enabled is a one-shot
-read of the enabled state, which could just as easily change
-after the function returns because the lock is released.
+  Note, we deliberately create a seperate source file for the Meson AXG
+series, instead of sharing code with previous GXBB/GXL - the file axg.c
+It would help us maintaining the code more easily.
 
-We should update the documentation.
+Changes since v4 [4]:
+ - use devm_ioremap instead of devm_ioremap_resource
+ - rename DT node using generic name 'bus'
+
+Changes since v3 [3]:
+ - separate dt-bindings header file
+ - adjust license note as standard way
+ - replace of_iomap with platform/devm API
+ - add Rob's Ack to Patch 1,4
+
+Changes since v2 [2]:
+ - drop register offset calculation
+ - update dt-bindings for new compatible variant
+
+Changes since v1 [1]:
+ - rework register definion, use '(offset << 2)' to better match
+   the description from data sheet
+ - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
+ - rebase code to v4.15-rc1
+
+[4]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005522.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005525.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005526.html
+
+[3]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005487.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005488.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005489.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005490.html
+
+[2]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
+
+[1] 
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
+
+
+
+Qiufang Dai (3):
+  clk: meson-axg: add clocks dt-bindings required header
+  clk: meson-axg: add clock controller drivers
+  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+
+Yixun Lan (1):
+  dt-bindings: clock: add compatible variant for the Meson-AXG
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
+ arch/arm64/Kconfig.platforms                       |   1 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  15 +
+ drivers/clk/meson/Kconfig                          |   8 +
+ drivers/clk/meson/Makefile                         |   1 +
+ drivers/clk/meson/axg.c                            | 944 +++++++++++++++++++++
+ drivers/clk/meson/axg.h                            | 126 +++
+ include/dt-bindings/clock/axg-clkc.h               |  71 ++
+ 8 files changed, 1171 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/meson/axg.c
+ create mode 100644 drivers/clk/meson/axg.h
+ create mode 100644 include/dt-bindings/clock/axg-clkc.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
+
