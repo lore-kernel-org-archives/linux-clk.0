@@ -1,37 +1,157 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 Dec 2017 23:00:29 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Xu YiPing <xuyiping@hisilicon.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
-	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
-	leo.yan@linaro.org, zhangfei.gao@linaro.org, guodong.xu@linaro.org,
-	zhongkaihua@huawei.com, chenjun14@huawei.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	suzhuangluan@hisilicon.com, xuezhiliang@hisilicon.com,
-	kevin.wangtao@hisilicon.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: clk: Hi3660: Document stub clock
-Message-ID: <20171207070029.GX4283@codeaurora.org>
-References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
- <1510910852-2175-2-git-send-email-xuyiping@hisilicon.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V7 01/12] drivers: move clock common macros out from vendor directories
+Date: Thu, 7 Dec 2017 20:57:04 +0800
+Message-ID: <20171207125715.16160-2-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1510910852-2175-2-git-send-email-xuyiping@hisilicon.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/17, Xu YiPing wrote:
-> From: Leo Yan <leo.yan@linaro.org>
-> 
-> Document the DT binding for stub clock which is used for CPU,
-> GPU and DDR frequency scaling.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+These macros are used by more than one SoC vendor platforms, avoid to
+have many copies of these code, this patch moves them to the common
+header file which every clock drivers can access to.
 
-Applied to clk-next
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sunxi-ng/ccu_common.h | 29 -----------------------------
+ drivers/clk/zte/clk.h             | 18 ------------------
+ include/linux/clk-provider.h      | 38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 38 insertions(+), 47 deletions(-)
 
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index 5d684ce..568cfae 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -31,35 +31,6 @@
+ 
+ struct device_node;
+ 
+-#define CLK_HW_INIT(_name, _parent, _ops, _flags)			\
+-	&(struct clk_init_data) {					\
+-		.flags		= _flags,				\
+-		.name		= _name,				\
+-		.parent_names	= (const char *[]) { _parent },		\
+-		.num_parents	= 1,					\
+-		.ops 		= _ops,					\
+-	}
+-
+-#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)		\
+-	&(struct clk_init_data) {					\
+-		.flags		= _flags,				\
+-		.name		= _name,				\
+-		.parent_names	= _parents,				\
+-		.num_parents	= ARRAY_SIZE(_parents),			\
+-		.ops 		= _ops,					\
+-	}
+-
+-#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
+-			_div, _mult, _flags)				\
+-	struct clk_fixed_factor _struct = {				\
+-		.div		= _div,					\
+-		.mult		= _mult,				\
+-		.hw.init	= CLK_HW_INIT(_name,			\
+-					      _parent,			\
+-					      &clk_fixed_factor_ops,	\
+-					      _flags),			\
+-	}
+-
+ struct ccu_common {
+ 	void __iomem	*base;
+ 	u16		reg;
+diff --git a/drivers/clk/zte/clk.h b/drivers/clk/zte/clk.h
+index 4df0f12..f1041e3 100644
+--- a/drivers/clk/zte/clk.h
++++ b/drivers/clk/zte/clk.h
+@@ -14,24 +14,6 @@
+ 
+ #define PNAME(x) static const char *x[]
+ 
+-#define CLK_HW_INIT(_name, _parent, _ops, _flags)			\
+-	&(struct clk_init_data) {					\
+-		.flags		= _flags,				\
+-		.name		= _name,				\
+-		.parent_names	= (const char *[]) { _parent },		\
+-		.num_parents	= 1,					\
+-		.ops		= _ops,					\
+-	}
+-
+-#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)		\
+-	&(struct clk_init_data) {					\
+-		.flags		= _flags,				\
+-		.name		= _name,				\
+-		.parent_names	= _parents,				\
+-		.num_parents	= ARRAY_SIZE(_parents),			\
+-		.ops		= _ops,					\
+-	}
+-
+ struct zx_pll_config {
+ 	unsigned long rate;
+ 	u32 cfg0;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7c925e6..26ea037 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -806,6 +806,44 @@ extern struct of_device_id __clk_of_table;
+ 	}								\
+ 	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
+ 
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= (const char *[]) { _parent },	\
++		.num_parents	= 1,				\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
++	(&(struct clk_init_data) {			\
++		.flags          = _flags,		\
++		.name           = _name,		\
++		.parent_names   = NULL,			\
++		.num_parents    = 0,			\
++		.ops            = _ops,			\
++	})
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
+ #ifdef CONFIG_OF
+ int of_clk_add_provider(struct device_node *np,
+ 			struct clk *(*clk_src_get)(struct of_phandle_args *args,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
