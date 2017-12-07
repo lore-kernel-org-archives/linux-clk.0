@@ -1,147 +1,34 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] clk: meson-axg: add clock controller drivers
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-References: <20171211064853.32111-1-yixun.lan@amlogic.com>
- <20171211064853.32111-4-yixun.lan@amlogic.com>
- <1512985560.334.17.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <a6a9454f-be94-4fee-9083-f37eae2c1749@amlogic.com>
-Date: Mon, 11 Dec 2017 18:16:52 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:36840 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbdLGGlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:07 -0500
+Date: Wed, 6 Dec 2017 22:41:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
+        vireshk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
+Message-ID: <20171207064103.GR4283@codeaurora.org>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+ <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1512985560.334.17.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Jerome:
+On 11/24, Arvind Yadav wrote:
+> pr_err() messages should end with a new-line to avoid other messages
+> being concatenated.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
 
-On 12/11/17 17:46, Jerome Brunet wrote:
-> On Mon, 2017-12-11 at 14:48 +0800, Yixun Lan wrote:
->> From: Qiufang Dai <qiufang.dai@amlogic.com>
->>
->> Add clock controller drivers for Amlogic Meson-AXG SoC.
->>
->> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
->> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  arch/arm64/Kconfig.platforms |   1 +
->>  drivers/clk/meson/Kconfig    |   8 +
->>  drivers/clk/meson/Makefile   |   1 +
->>  drivers/clk/meson/axg.c      | 944
->> +++++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/axg.h      | 126 ++++++
->>  5 files changed, 1080 insertions(+)
->>  create mode 100644 drivers/clk/meson/axg.c
->>  create mode 100644 drivers/clk/meson/axg.h
-> 
-> Overall, the changes looks good to me.
-> I still have a few comments which I'd like to see addressed quickly after this
-> series is merged
-did you say that:
- you will merge these patches now, then I could send fixes later?
+Applied to clk-next
 
-or I can send another version (v7) to address this..
-
-> 
-> [...]
-> 
->>
->> +static struct meson_clk_pll axg_fixed_pll = {
->> +	.m = {
->> +		.reg_off = HHI_MPLL_CNTL,
->> +		.shift   = 0,
->> +		.width   = 9,
->> +	},
->> +	.n = {
->> +		.reg_off = HHI_MPLL_CNTL,
->> +		.shift   = 9,
->> +		.width   = 5,
->> +	},
->> +	.od = {
->> +		.reg_off = HHI_MPLL_CNTL,
->> +		.shift   = 16,
->> +		.width   = 2,
->> +	},
->> +	.lock = &clk_lock,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fixed_pll",
->> +		.ops = &meson_clk_pll_ro_ops,
->> +		.parent_names = (const char *[]){ "xtal" },
->> +		.num_parents = 1,
->> +		.flags = CLK_GET_RATE_NOCACHE,
-> 
-> Is the rate of this clock supposed to changed by something else than
-> the CCF after boot ?
-> 
-> If not, you should drop this flag.
-> Same comment goes for axg_sys_pll and axg_gp0_pll
-> 
-we need to keep the CLK_GET_RATE_NOCACHE flag for axg_sys_pll, since the
-BL30 will change it for the frequency change.
-for the other two, we can drop them safely
-
-
->> +	},
->> +};
-> 
-> [...]
-> 
->> +/*
->> + * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
->> + * and should be modeled with their respective PLLs via the forthcoming
->> + * coordinated clock rates feature
->> + */
->> +static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
->> +static const char * const clk81_parent_names[] = {
->> +	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
->> +	"fclk_div3", "fclk_div5"
->> +};
->> +
->> +static struct clk_mux axg_mpeg_clk_sel = {
->> +	.reg = (void *)HHI_MPEG_CLK_CNTL,
->> +	.mask = 0x7,
->> +	.shift = 12,
->> +	.flags = CLK_MUX_READ_ONLY,
->> +	.table = mux_table_clk81,
->> +	.lock = &clk_lock,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "mpeg_clk_sel",
->> +		.ops = &clk_mux_ro_ops,
->> +		/*
->> +		 * bits 14:12 selects from 8 possible parents:
->> +		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
->> +		 * fclk_div4, fclk_div3, fclk_div5
->> +		 */
-> 
-> This comment is not necessary with table above.
-> 
-can drop
-
->> +		.parent_names = clk81_parent_names,
->> +		.num_parents = ARRAY_SIZE(clk81_parent_names),
->> +		.flags = CLK_SET_RATE_NO_REPARENT,
-> 
-> With ro_ops, this flag is not necessary, consider removing it.
-> 
-can drop
->> +	},
->> +};
->> +
->>
-> 
-> .
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
