@@ -1,38 +1,34 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: srinivas.kandagatla@linaro.org
-To: sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/2] clk: qcom: msm8916: fix mnd_width for codec_digcodec
-Date: Wed,  6 Dec 2017 12:11:38 +0000
-Message-Id: <20171206121139.18936-2-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
-References: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:37778 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752559AbdLGGlW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:22 -0500
+Date: Wed, 6 Dec 2017 22:41:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
+        vireshk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/6] clk: h8300: pr_err() strings should end with newlines
+Message-ID: <20171207064115.GU4283@codeaurora.org>
+References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
+ <5fe05a034e646f03e6129c7782e38e37856f80a1.1511505932.git.arvind.yadav.cs@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5fe05a034e646f03e6129c7782e38e37856f80a1.1511505932.git.arvind.yadav.cs@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 11/24, Arvind Yadav wrote:
+> pr_err() messages should end with a new-line to avoid other messages
+> being concatenated.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
 
-This patch fixes missing mnd_width for codec_digital clk, this is now set to
-8 inline with datasheet.
+Applied to clk-next
 
-Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 506e0736bf92..d973aeaab943 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1443,6 +1443,7 @@ static const struct freq_tbl ftbl_codec_clk[] = {
- 
- static struct clk_rcg2 codec_digcodec_clk_src = {
- 	.cmd_rcgr = 0x1c09c,
-+	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
- 	.freq_tbl = ftbl_codec_clk,
 -- 
-2.15.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
