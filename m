@@ -1,30 +1,35 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33624 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbdLGGed (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:34:33 -0500
+Date: Wed, 6 Dec 2017 22:34:32 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: srinivas.kandagatla@linaro.org
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: msm8916: fix mnd_width for codec_digcodec
+Message-ID: <20171207063432.GO4283@codeaurora.org>
+References: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
+ <20171206121139.18936-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20171213115748.14106-1-p.zabel@pengutronix.de>
-References: <20171213115748.14106-1-p.zabel@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 13 Dec 2017 10:10:28 -0200
-Message-ID: <CAOMZO5DNJ_9HjMPpvpDqkO2r7O8KQrMC2+GcHp9=m8WxtndJ+g@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx51: uart4, uart5 gates only exist on imx50, imx53
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chris Healy <Chris.Healy@zii.aero>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171206121139.18936-2-srinivas.kandagatla@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+On 12/06, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch fixes missing mnd_width for codec_digital clk, this is now set to
+> 8 inline with datasheet.
+> 
+> Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
-On Wed, Dec 13, 2017 at 9:57 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> i.MX51 only has 3 UARTs and no CCGR7 register. In place of the CCGR7
-> register on i.MX50/i.MX53 that contains the ipg and per clock gates
-> for UARTs 4 and 5, on i.MX51 there is the CMEOR register.
->
-> Without this patch, the code disabling the UART clocks would also clear
-> the mod_en_ov_vpu bit in the CMEOR register, among others, which causes
-> register accesses to the VPU to lock up the system.
->
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Applied to clk-next
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
