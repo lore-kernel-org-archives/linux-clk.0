@@ -1,44 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40018 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753371AbdLGOSY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 09:18:24 -0500
-Received: by mail-wm0-f65.google.com with SMTP id f206so13102713wmf.5
-        for <linux-clk@vger.kernel.org>; Thu, 07 Dec 2017 06:18:23 -0800 (PST)
-From: srinivas.kandagatla@linaro.org
-To: sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk: qcom: gcc-msm8996: always enable aggre0_noc gdsc
-Date: Thu,  7 Dec 2017 14:16:18 +0000
-Message-Id: <20171207141618.4694-1-srinivas.kandagatla@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 6 Dec 2017 23:29:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	"tony@atomide.com" <tony@atomide.com>
+Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
+Message-ID: <20171207072911.GA4283@codeaurora.org>
+References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 12/05, Tero Kristo wrote:
+> Hi Stephen, Mike,
+> 
+> This pull request contains the v2 of the series posted
+> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
+> Stephen's acks added to the mentioned patches, and just applied on
+> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
+> the rest of the patches also, but couldn't find any comment about
+> this anywhere.
+> 
+> -Tero
+> 
+> ====
+> 
+> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+> 
+>   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
+> 
+> for you to fetch changes up to fe7020e64f042db4b5ca50c358b232e866523447:
+> 
+>   clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
+> 15:18:08 +0200)
 
-bus clks which depend on this gdsc are marked as critical,
-so this patch flags this gdsc ALWAYS_ON so that bus clks status
-does not get stuck at on or off.
+Pulled into clk-next. Did you want to sign a tag instead of
+sending a plain branch? My ack isn't necessary on anything.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 0146d8853488..b2be77469693 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -3101,7 +3101,7 @@ static struct gdsc aggre0_noc_gdsc = {
- 		.name = "aggre0_noc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | ALWAYS_ON,
- };
- 
- static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
