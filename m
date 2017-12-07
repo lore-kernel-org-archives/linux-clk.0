@@ -1,111 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52541 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751592AbdLVM0u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Dec 2017 07:26:50 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 09/11] clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
-Date: Fri, 22 Dec 2017 20:22:41 +0800
-Message-Id: <20171222122243.25735-10-icenowy@aosc.io>
-In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 4/4] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+Date: Thu, 7 Dec 2017 17:53:00 +0800
+Message-ID: <20171207095300.15384-5-yixun.lan@amlogic.com>
+In-Reply-To: <20171207095300.15384-1-yixun.lan@amlogic.com>
+References: <20171207095300.15384-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64's DE2 needs to claim a section of SRAM (SRAM C) to work.
+From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-Add support for it.
+Try to add Hiubus DT info, and also enable clock DT info
+for the Amlogic's Meson-AXG SoC.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 468d1abaf0ee..38b029b7bb5a 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -17,6 +17,7 @@
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
-+#include <linux/soc/sunxi/sunxi_sram.h>
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index b932a784b02a..c2239c6d6310 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/axg-clkc.h>
  
- #include "ccu_common.h"
- #include "ccu_div.h"
-@@ -196,6 +197,11 @@ static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
- };
+ / {
+ 	compatible = "amlogic,meson-axg";
+@@ -148,6 +149,20 @@
+ 			#address-cells = <0>;
+ 		};
  
-+static bool sunxi_de2_clk_has_sram(const struct device_node *node)
-+{
-+	return of_device_is_compatible(node, "allwinner,sun50i-a64-de2-clk");
-+}
++		hiubus: bus@ff63c000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xff63c000 0x0 0x1c00>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
 +
- static int sunxi_de2_clk_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -239,11 +245,20 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	if (sunxi_de2_clk_has_sram(pdev->dev.of_node)) {
-+		ret = sunxi_sram_claim(&pdev->dev);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"Error couldn't map SRAM to device\n");
-+			return ret;
-+		}
-+	}
++			clkc: clock-controller@0 {
++				compatible = "amlogic,axg-clkc";
++				#clock-cells = <1>;
++				reg = <0x0 0x0 0x0 0x320>;
++			};
++		};
 +
- 	/* The clocks need to be enabled for us to access the registers */
- 	ret = clk_prepare_enable(bus_clk);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
--		return ret;
-+		goto err_release_sram;
- 	}
- 
- 	ret = clk_prepare_enable(mod_clk);
-@@ -272,6 +287,10 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(mod_clk);
- err_disable_bus_clk:
- 	clk_disable_unprepare(bus_clk);
-+err_release_sram:
-+	if (sunxi_de2_clk_has_sram(pdev->dev.of_node))
-+		sunxi_sram_release(&pdev->dev);
-+
- 	return ret;
- }
- 
-@@ -288,17 +307,14 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
- 		.compatible = "allwinner,sun8i-v3s-de2-clk",
- 		.data = &sun8i_v3s_de2_clk_desc,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-clk",
-+		.data = &sun50i_a64_de2_clk_desc,
-+	},
- 	{
- 		.compatible = "allwinner,sun50i-h5-de2-clk",
- 		.data = &sun50i_a64_de2_clk_desc,
- 	},
--	/*
--	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
--	 * DE2 really working.
--	 * So there's currently no A64 compatible here.
--	 * H5 shares the same reset line with A64, so here H5 is using the
--	 * clock description of A64.
--	 */
- 	{ }
- };
- 
+ 		mailbox: mailbox@ff63dc00 {
+ 			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
+ 			reg = <0 0xff63dc00 0 0x400>;
 -- 
-2.14.2
-
+2.15.0
