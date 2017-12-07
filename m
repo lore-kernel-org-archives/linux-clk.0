@@ -1,86 +1,125 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-To: Rob Herring <robh@kernel.org>
-Cc: mark.rutland@arm.com, rjw@rjwysocki.net, devicetree@vger.kernel.org,
- Viresh Kumar <viresh.kumar@linaro.org>, mturquette@baylibre.com,
- linux-pm@vger.kernel.org, sboyd@codeaurora.org, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, david.brown@linaro.org,
- linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
- <20171220032614.GQ19815@vireshk-i7>
- <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
- <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
-Date: Thu, 21 Dec 2017 17:23:01 +0530
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20171207064723.GV4283@codeaurora.org>
+References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
+ <20171127100115.20655-2-chunyan.zhang@spreadtrum.com> <20171207064723.GV4283@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 7 Dec 2017 16:08:37 +0800
+Message-ID: <CAAfSe-ufFDXTxUxTSW8Au9wdwoHKcB6RBdVdX36RrZQC4x0knw@mail.gmail.com>
+Subject: Re: [PATCH V6 01/12] drivers: move clock common macros out from
+ vendor directories
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-
-On 12/21/2017 2:48 AM, Rob Herring wrote:
-> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
->> Hi Viresh,
+On 7 December 2017 at 14:47, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/27, Chunyan Zhang wrote:
+>> These macros are used by more than one SoC vendor platforms, avoid to
+>> have many copies of these code, this patch moves them to the common
+>> clock directory which every clock drivers can access to.
 >>
->> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
->>> On 19-12-17, 21:25, Sricharan R wrote:
->>>> +	cpu@0 {
->>>> +		compatible = "qcom,krait";
->>>> +		enable-method = "qcom,kpss-acc-v1";
->>>> +		device_type = "cpu";
->>>> +		reg = <0>;
->>>> +		qcom,acc = <&acc0>;
->>>> +		qcom,saw = <&saw0>;
->>>> +		clocks = <&kraitcc 0>;
->>>> +		clock-names = "cpu";
->>>> +		cpu-supply = <&smb208_s2a>;
->>>> +		operating-points-v2 = <&cpu_opp_table>;
->>>> +	};
->>>> +
->>>> +	qcom,pvs {
->>>> +		qcom,pvs-format-a;
->>>> +	};
->>>
->>> Not sure what Rob is going to say on that :)
->>>
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>>  drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
+>>  create mode 100644 drivers/clk/clk_common.h
 >>
->>  Yes. Would be good to know the best way.
-> 
-> Seems like this should be a property of an efuse node either implied by 
-> the compatible or a separate property. What determines format A vs. B?
-> 
+>> diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
+>> new file mode 100644
+>> index 0000000..21e93d2
+>> --- /dev/null
+>> +++ b/drivers/clk/clk_common.h
+>> @@ -0,0 +1,60 @@
+>> +/*
+>> + * drivers/clk/clk_common.h
+>
+> We don't need this in the file too. Please remove this line.
+>
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>> +
+>> +#ifndef _CLK_COMMON_H_
+>> +#define _CLK_COMMON_H_
+>> +
+>> +#include <linux/clk-provider.h>
+>
+> Maybe these macros should just go into clk-provider.h?
 
- Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
- So this property (details like bitfields and register offsets that it represents)
- can be put soc specific and nvmem apis can be used to read
- the registers. Does something like below look ok ?
+Ok.  And I will also remove the same macros from sunxi-ng/ccu_common.h
+and zte/clk.h.
 
- qcom,pvs {
-	compatible = "qcom,pvs-ipq8064";
-	nvmem-cells = <&pvs_efuse>;
- }
+>
+>> +
+>> +#define CLK_HW_INIT(_name, _parent, _ops, _flags)            \
+>> +     (&(struct clk_init_data) {                              \
+>> +             .flags          = _flags,                       \
+>> +             .name           = _name,                        \
+>> +             .parent_names   = (const char *[]) { _parent }, \
+>> +             .num_parents    = 1,                            \
+>> +             .ops            = _ops,                         \
+>> +     })
+>
+> Hopefully we don't extend the init structure anymore to have
+> something else. I guess we'll do something if that happens.
+>
+>> +
+>> +#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)   \
+>> +     (&(struct clk_init_data) {                              \
+>> +             .flags          = _flags,                       \
+>> +             .name           = _name,                        \
+>> +             .parent_names   = _parents,                     \
+>> +             .num_parents    = ARRAY_SIZE(_parents),         \
+>> +             .ops            = _ops,                         \
+>> +     })
+>> +
+>> +#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
+>> +     (&(struct clk_init_data) {                      \
+>> +             .flags          = _flags,               \
+>> +             .name           = _name,                \
+>> +             .parent_names   = NULL,                 \
+>> +             .num_parents    = 0,                    \
+>> +             .ops            = _ops,                 \
+>> +     })
+>> +
+>> +#define CLK_FIXED_FACTOR(_struct, _name, _parent,                    \
+>> +                     _div, _mult, _flags)                            \
+>> +     struct clk_fixed_factor _struct = {                             \
+>> +             .div            = _div,                                 \
+>> +             .mult           = _mult,                                \
+>> +             .hw.init        = CLK_HW_INIT(_name,                    \
+>> +                                           _parent,                  \
+>> +                                           &clk_fixed_factor_ops,    \
+>> +                                           _flags),                  \
+>> +     }
+>> +
+>> +#define CLK_FIXED_RATE(_struct, _name, _flags,                               \
+>> +                    _fixed_rate, _fixed_accuracy)                    \
+>> +     struct clk_fixed_rate _struct = {                               \
+>> +             .fixed_rate     = _fixed_rate,                          \
+>> +             .fixed_accuracy = _fixed_accuracy,                      \
+>> +             .hw.init        = CLK_HW_INIT_NO_PARENT(_name,          \
+>> +                                       &clk_fixed_rate_ops,          \
+>> +                                                     _flags),        \
+>> +     }
+>
+> Maybe don't add this one? Usually fixed rate clks come from DT.
 
- qfprom: qfprom@700000 {
- 	compatible      = "qcom,qfprom";
- 	reg             = <0x00700000 0x1000>;
- 	#address-cells  = <1>;
- 	#size-cells     = <1>;
- 	ranges;
- 	pvs_efuse: pvs {
- 	reg = <0xc0 0x8>;
- 	};
- };
+Ok, will also move the fixed rate clks from our driver to DT.
 
+Thanks,
+Chunyan
 
-Regards,
- Sricharan
- 
- 
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
