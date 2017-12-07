@@ -1,38 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:02:41 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V7 04/12] clk: sprd: add mux clock support
-Message-ID: <20171221230241.GR7997@codeaurora.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-5-chunyan.zhang@spreadtrum.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
+To: Rob Herring <robh@kernel.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
+ bjorn.andersson@linaro.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+ <20171206210847.mhrsxgytl4ihwgyq@rob-hp-laptop>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <0b365abd-1683-6fcd-b013-7b517c2b9283@linaro.org>
+Date: Thu, 7 Dec 2017 18:02:36 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207125715.16160-5-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20171206210847.mhrsxgytl4ihwgyq@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, Chunyan Zhang wrote:
-> This patch adds clock multiplexor support for Spreadtrum platforms,
-> the mux clocks also can be found in sprd composite clocks, so
-> provides two helpers that can be reused later on.
+On 12/06/2017 11:08 PM, Rob Herring wrote:
+> On Tue, Dec 05, 2017 at 05:46:55PM +0200, Georgi Djakov wrote:
+>> This patchset adds support for the A53 CPU clock on MSM8916 platforms
+>> and allows scaling of the CPU frequency on msm8916 based platforms.
+>>
+>> Changes since v10 (https://lkml.org/lkml/2017/12/1/577)
+>> * Addressed Bjorn's comments on APCS clock driver.
+>> * Picked Acks from Rob and Bjorn.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
+> Errr, really?
 
-Applied to clk-next
+Oops sorry, it was a Reviewed-by for the mailbox binding change and not
+an Ack. Thank you for reviewing the constantly changing binding in this
+patchset. I hope that it will not change anymore.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+BR,
+Georgi
