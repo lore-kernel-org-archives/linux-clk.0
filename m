@@ -1,42 +1,61 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1512991637.334.28.camel@baylibre.com>
-Subject: Re: [PATCH v6 4/6] clk: meson: make the spinlock naming more
- specific
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20171211064853.32111-5-yixun.lan@amlogic.com>
-References: <20171211064853.32111-1-yixun.lan@amlogic.com>
-	 <20171211064853.32111-5-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 11 Dec 2017 12:27:17 +0100
-Mime-Version: 1.0
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org"
+	<linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>
+References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
+ <20171207072911.GA4283@codeaurora.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <fd7ff1b4-00c3-ce6b-9415-85799661bf8e@ti.com>
+Date: Thu, 7 Dec 2017 10:09:12 +0200
+MIME-Version: 1.0
+In-Reply-To: <20171207072911.GA4283@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-11 at 14:48 +0800, Yixun Lan wrote:
->                 .ops = &clk_gate_ops,
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 1629da9b4141..87f06a801a4d 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -134,7 +134,7 @@ struct meson_clk_audio_divider {
->  struct clk_gate _name = {                                              \
->         .reg = (void __iomem *) _reg,                                   \
->         .bit_idx = (_bit),                                              \
-> -       .lock = &clk_lock,                                              \
-> +       .lock = &meson_clk_lock,                                                \
+On 07/12/17 09:29, Stephen Boyd wrote:
+> On 12/05, Tero Kristo wrote:
+>> Hi Stephen, Mike,
+>>
+>> This pull request contains the v2 of the series posted
+>> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
+>> Stephen's acks added to the mentioned patches, and just applied on
+>> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
+>> the rest of the patches also, but couldn't find any comment about
+>> this anywhere.
+>>
+>> -Tero
+>>
+>> ====
+>>
+>> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+>>
+>>    Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>    https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
+>>
+>> for you to fetch changes up to fe7020e64f042db4b5ca50c358b232e866523447:
+>>
+>>    clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
+>> 15:18:08 +0200)
+> 
+> Pulled into clk-next.
 
-Something is not right here, line is over 80 characters
-Remember to run checkpatch on your series please.
+Thanks.
 
->         .hw.init = &(struct clk_init_data) {                            \
->                 .name = #_name,                                 \
->                 .ops = &clk_gate_ops,                                   \
+> Did you want to sign a tag instead of
+> sending a plain branch? My ack isn't necessary on anything.
+> 
+
+Just a plain branch. Never signed a tag so far, do you have guidelines 
+someplace if you prefer this in future?
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
