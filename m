@@ -1,34 +1,31 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 20 Dec 2017 15:14:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 12/15] devicetree: bindings: Document qcom,krait-cc
-Message-ID: <20171220211450.z2v54bfk53ktpfkz@rob-hp-laptop>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-13-git-send-email-sricharan@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 6 Dec 2017 22:32:39 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tirupathi Reddy <tirupath@codeaurora.org>
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, mark.rutland@arm.com,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: Re: [PATCH V7 2/2] dt-bindings: Add qcom spmi_pmic clock divider
+ bindings
+Message-ID: <20171207063239.GK4283@codeaurora.org>
+References: <1511255465-3984-1-git-send-email-tirupath@codeaurora.org>
+ <1511255465-3984-3-git-send-email-tirupath@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513698900-10638-13-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1511255465-3984-3-git-send-email-tirupath@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 09:24:57PM +0530, Sricharan R wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
+On 11/21, Tirupathi Reddy wrote:
+> This patch adds device tree bindings for Qualcomm SPMI PMIC
+> clock divider module.
 > 
-> The Krait clock controller controls the krait CPU and the L2 clocks
-> consisting a primary mux and secondary mux. Add document for that.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
 > ---
->  .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
