@@ -1,43 +1,44 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
- <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
- <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
- <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1469d692-077a-93c7-8722-1bf86e53f481@gmail.com>
-Date: Wed, 13 Dec 2017 00:37:28 +0300
-MIME-Version: 1.0
-In-Reply-To: <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40018 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753371AbdLGOSY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 09:18:24 -0500
+Received: by mail-wm0-f65.google.com with SMTP id f206so13102713wmf.5
+        for <linux-clk@vger.kernel.org>; Thu, 07 Dec 2017 06:18:23 -0800 (PST)
+From: srinivas.kandagatla@linaro.org
+To: sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] clk: qcom: gcc-msm8996: always enable aggre0_noc gdsc
+Date: Thu,  7 Dec 2017 14:16:18 +0000
+Message-Id: <20171207141618.4694-1-srinivas.kandagatla@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12.12.2017 18:17, Peter De Schrijver wrote:
-> On Tue, Dec 12, 2017 at 03:08:08PM +0300, Dmitry Osipenko wrote:
->> On 12.12.2017 13:02, Peter De Schrijver wrote:
->>> On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
->>>> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
->>>> clock driver doesn't provide that rate, so the requested clock is rounded
->>>> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
->>>>
->>>
->>> This seems odd. If there's no table entry, _calc_rate should kick in and
->>> calculate the parameters for 216MHz. Any idea why this is not happening?
->>
->> Actually, it is happening. Please ignore this patch.
->>
->> If PLL's rate could be calculated, why do we need the predefined tables?
-> 
-> The algorithm to calculate the PLL parameters is rather crude. It will
-> favour undershooting the rate rather than overshooting. This is fine for
-> DVFS usecases when you want to avoid a too high clock rate, but not good
-> for eg display or memory, where as close as match as possible is needed.
-Okay, thank you for the clarification.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+bus clks which depend on this gdsc are marked as critical,
+so this patch flags this gdsc ALWAYS_ON so that bus clks status
+does not get stuck at on or off.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 0146d8853488..b2be77469693 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3101,7 +3101,7 @@ static struct gdsc aggre0_noc_gdsc = {
+ 		.name = "aggre0_noc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
+-- 
+2.15.0
+
