@@ -1,58 +1,79 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.15-rc4
-Date: Thu, 21 Dec 2017 16:57:19 -0800
-Message-Id: <20171222005719.30240-1-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:38483 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753359AbdLHOWj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Dec 2017 09:22:39 -0500
+Subject: Re: [PATCH v5 2/4] clk: meson-axg: add clocks dt-bindings required
+ header
+To: Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>
+References: <20171207095300.15384-1-yixun.lan@amlogic.com>
+ <20171207095300.15384-3-yixun.lan@amlogic.com>
+ <20171207221014.6qwcb43w5hms4ma5@rob-hp-laptop>
+ <1512725587.17256.19.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Carlo Caione <carlo@caione.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <060fab5b-0832-198d-9aab-d986a909c449@amlogic.com>
+Date: Fri, 8 Dec 2017 22:22:36 +0800
 MIME-Version: 1.0
+In-Reply-To: <1512725587.17256.19.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+On 12/08/17 17:33, Jerome Brunet wrote:
+> On Thu, 2017-12-07 at 16:10 -0600, Rob Herring wrote:
+>> On Thu, Dec 07, 2017 at 05:52:58PM +0800, Yixun Lan wrote:
+>>> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>>>
+>>> Add the required header for the clocks ID dt-bindings
+>>> exported from various subsystem in the Meson-AXG SoC.
+>>>
+>>> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>> ---
+>>>  include/dt-bindings/clock/axg-clkc.h | 71
+>>> ++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 71 insertions(+)
+>>>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+>>
+>> Please add acks when posting new versions.
+>>
+>> Rob
+> 
+> Yixun, please be consistent about this. Maintainers are not going to dig
+> through your previous revision to collect Tags
+> 
+> I believe Neil acked patch 3, didn't he ?
+> 
+> Please resend your series with the Tags collected
+sorry, I missed Neil's ACK for the pacth [3/4]
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+let's just wait for a few more days, to see if there are more comments
+coming up, then I would fold them together
 
-are available in the Git repository at:
+> If not already done, please make sure patches 1-3 apply on top of rc1 and patch
+> 4 on Kevin's dt64 branch.
+> 
+the above is already base on -rc2, and patch 4 can apply to kevin's dt64
+cleanly
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+> Thanks
+> Jerome
+> 
+> .
+> 
 
-for you to fetch changes up to 61d2f2a05765a5f57149efbd93e3e81a83cbc2c1:
 
-  clk: sunxi: sun9i-mmc: Implement reset callback for reset controls (2017-12-19 11:50:46 -0800)
 
-----------------------------------------------------------------
-Here's a trio of fixes:
 
- - The runtime PM clk patches that landed this merge window forgot to
-   runtime resume devices that may be off while recalculating and setting
-   rates of child clks of whatever clk is changing rates.
-
- - We had a NULL pointer deref in an old clk tracepoint when clk_set_parent()
-   is called with a NULL parent pointer. This shouldn't really happen, but
-   it's best to avoid this regardless.
-
- - The sun9i-mmc clk driver didn't provide 'reset' support, just 'assert'
-   and 'deassert' so the MMC driver stopped probing when the probe was changed
-   to do a reset instead of assert/deassert pair. This implements the reset so
-   things work again.
-
-----------------------------------------------------------------
-Cai Li (1):
-      clk: fix a panic error caused by accessing NULL pointer
-
-Chen-Yu Tsai (1):
-      clk: sunxi: sun9i-mmc: Implement reset callback for reset controls
-
-Marek Szyprowski (1):
-      clk: Manage proper runtime PM state in clk_change_rate()
-
- drivers/clk/clk.c                 |  5 +++++
- drivers/clk/sunxi/clk-sun9i-mmc.c | 12 ++++++++++++
- include/trace/events/clk.h        |  4 ++--
- 3 files changed, 19 insertions(+), 2 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
