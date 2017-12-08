@@ -1,38 +1,37 @@
-Return-Path: <weiyongjun1@huawei.com>
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin
- Hilman <khilman@baylibre.com>, Qiufang Dai <qiufang.dai@amlogic.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH -next] clk: meson-axg: fix return value check in axg_clkc_probe()
-Date: Thu, 28 Dec 2017 02:40:49 +0000
-Message-ID: <1514428849-61681-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:43668 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753237AbdLHVB0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Dec 2017 16:01:26 -0500
+Received: by mail-wm0-f51.google.com with SMTP id n138so5209306wmg.2
+        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2017 13:01:25 -0800 (PST)
+Message-ID: <1512766881.334.0.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Fri, 08 Dec 2017 22:01:21 +0100
+In-Reply-To: <7hmv2tm4v8.fsf@baylibre.com>
+References: <20171204133428.24631-1-jbrunet@baylibre.com>
+         <7hmv2tm4v8.fsf@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In case of error, the function devm_ioremap() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+On Fri, 2017-12-08 at 10:50 -0800, Kevin Hilman wrote:
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+> 
+> > Remove CLK_IGNORE_UNUSED from mmc clocks. This was only needed while the
+> > mmc driver incorrectly used the xtal as source instead of the mmc
+> > clock. Now, the driver takes the correct clock, CCF is aware that the
+> > clock is being used and we can remove this flag.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
+> Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/meson/axg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index a66b3a5..717c02d 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -880,7 +880,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	/*  Generic clocks and PLLs */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (IS_ERR(clk_base)) {
-+	if (!clk_base) {
- 		dev_err(&pdev->dev, "Unable to map clk base\n");
- 		return -ENXIO;
- 	}
+Thanks Kevin
+Applied
