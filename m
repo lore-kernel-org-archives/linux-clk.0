@@ -1,57 +1,45 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 23/33] clk: tegra: change clk_sync_source_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:13:02 +0000
-Message-Id: <1514596392-22270-24-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v5 2/4] clk: meson-axg: add clocks dt-bindings required
+ header
+To: Rob Herring <robh@kernel.org>
+References: <20171207095300.15384-1-yixun.lan@amlogic.com>
+ <20171207095300.15384-3-yixun.lan@amlogic.com>
+ <20171207221014.6qwcb43w5hms4ma5@rob-hp-laptop>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Mark
+ Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Qiufang
+ Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <a0cd3135-4ca1-ee18-6177-b98be4f7b5bd@amlogic.com>
+Date: Fri, 8 Dec 2017 09:14:31 +0800
+MIME-Version: 1.0
+In-Reply-To: <20171207221014.6qwcb43w5hms4ma5@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/tegra/clk-audio-sync.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/08/17 06:10, Rob Herring wrote:
+> On Thu, Dec 07, 2017 at 05:52:58PM +0800, Yixun Lan wrote:
+>> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>>
+>> Add the required header for the clocks ID dt-bindings
+>> exported from various subsystem in the Meson-AXG SoC.
+>>
+>> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 71 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+> 
+> Please add acks when posting new versions.
+> 
 
-diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-index 9784d58..5fd825b 100644
---- a/drivers/clk/tegra/clk-audio-sync.c
-+++ b/drivers/clk/tegra/clk-audio-sync.c
-@@ -35,7 +35,7 @@ static unsigned long clk_sync_source_round_rate(struct clk_hw *hw,
- 	struct tegra_clk_sync_source *sync = to_clk_sync_source(hw);
- 
- 	if (rate > sync->max_rate)
--		return -EINVAL;
-+		return 0;
- 	else
- 		return rate;
- }
--- 
-2.7.4
+HI Rob
+ thanks for the suggestion, I will keep this in mind
