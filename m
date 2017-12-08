@@ -1,49 +1,82 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50370 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbdLGWyl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 17:54:41 -0500
-Date: Thu, 7 Dec 2017 14:54:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: srinivas.kandagatla@linaro.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-msm8996: always enable aggre0_noc gdsc
-Message-ID: <20171207225439.GB4283@codeaurora.org>
-References: <20171207141618.4694-1-srinivas.kandagatla@linaro.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:56122 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753331AbdLHOur (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Dec 2017 09:50:47 -0500
+Subject: Re: [PATCH v4 4/4] arm64: dts: meson-axg: add clock DT info for Meson
+ AXG SoC
+To: Kevin Hilman <khilman@baylibre.com>
+References: <20171201012452.27086-1-yixun.lan@amlogic.com>
+ <20171201012452.27086-5-yixun.lan@amlogic.com> <7ho9nbmked.fsf@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Carlo Caione <carlo@caione.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <92c1b309-15a1-4978-4f76-358fd4e22890@amlogic.com>
+Date: Fri, 8 Dec 2017 22:50:38 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207141618.4694-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <7ho9nbmked.fsf@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 12/07/17 08:50, Kevin Hilman wrote:
+> Yixun Lan <yixun.lan@amlogic.com> writes:
 > 
-> bus clks which depend on this gdsc are marked as critical,
-> so this patch flags this gdsc ALWAYS_ON so that bus clks status
-> does not get stuck at on or off.
+>> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>>
+>> Try to add Hiubus DT info, and also enable clock DT info
+>> for the Amlogic's Meson-AXG SoC.
+>>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
+>>  1 file changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> index b932a784b02a..36a2e98338a8 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> @@ -7,6 +7,7 @@
+>>  #include <dt-bindings/gpio/gpio.h>
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/clock/axg-clkc.h>
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-msm8996.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This #include will cause an unnessary dependency from the amlogic tree
+> to the clock tree even though this patch is not currently using any of
+> the #defines from that header.  It will simplify the dependencies if you
+> drop this #include from this patch.
 > 
-> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> index 0146d8853488..b2be77469693 100644
-> --- a/drivers/clk/qcom/gcc-msm8996.c
-> +++ b/drivers/clk/qcom/gcc-msm8996.c
-> @@ -3101,7 +3101,7 @@ static struct gdsc aggre0_noc_gdsc = {
->  		.name = "aggre0_noc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = VOTABLE,
-> +	.flags = VOTABLE | ALWAYS_ON,
+> In my comment on the cover letter, I suggested adding a patch that also
+> switches the UART over to the new clock provider.  That is the patch
+> that should add this #include, since it will actually need #defines from
+> the header.
+> 
+ok, make sense
+> Doing it in that order means that we could merge this patch
+> independently of the clock driver, and then merge the UART switch-over
+> patch only after the driver (and headers) are merged.
+I was planing to add UART DT part as separately patches (including the
+UARt's pinctrl part information)
 
-I dont think this flag has been added yet. Probably this needs to
-be folded into the other series?
+but as follow your suggestion, I could split the UART's clock DT info
+into separate patch, and send along with this series.
 
+> 
+> Kevin
+> 
+> .
+> 
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
