@@ -1,39 +1,37 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:02:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V7 09/12] clk: sprd: Add dt-bindings include file for
- SC9860
-Message-ID: <20171221230257.GW7997@codeaurora.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-10-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207125715.16160-10-chunyan.zhang@spreadtrum.com>
+Return-Path: <dhaval23031987@gmail.com>
+Return-Path: <dhaval23031987@gmail.com>
+From: Dhaval Shah <dhaval23031987@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	michal.simek@xilinx.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dhaval Shah <dhaval23031987@gmail.com>
+Subject: [PATCH] clkc: zynq: Missing a blank line after declarations.
+Date: Fri,  8 Dec 2017 17:45:16 +0530
+Message-Id: <20171208121516.17389-1-dhaval23031987@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, Chunyan Zhang wrote:
-> This file defines all SC9860 clock indexes, it should be included in the
-> device tree in which there's device using the clocks.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+Resolved missing a blank line after declarations checkpatch
+warnings. Issue found by checkpatch.
 
-Applied to clk-next
+Signed-off-by: Dhaval Shah <dhaval23031987@gmail.com>
+---
+ drivers/clk/zynq/clkc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 88a2cab37f62..1cd4705e405e 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -363,6 +363,7 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 	/* Peripheral clocks */
+ 	for (i = fclk0; i <= fclk3; i++) {
+ 		int enable = !!(fclk_enable & BIT(i - fclk0));
++
+ 		zynq_clk_register_fclk(i, clk_output_name[i],
+ 				SLCR_FPGA0_CLK_CTRL + 0x10 * (i - fclk0),
+ 				periph_parents, enable);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
