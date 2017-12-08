@@ -1,214 +1,81 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org,
-	robh@kernel.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v10 3/6] clk: qcom: Add A53 PLL support
-Date: Fri,  1 Dec 2017 19:02:21 +0200
-Message-Id: <20171201170224.25053-4-georgi.djakov@linaro.org>
-In-Reply-To: <20171201170224.25053-1-georgi.djakov@linaro.org>
-References: <20171201170224.25053-1-georgi.djakov@linaro.org>
+Return-Path: <absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Fri, 08 Dec 2017 21:25:07 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
+ Nayak <rnayak@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/13] Updates for QCOM Alpha PLL
+In-Reply-To: <20171207062331.GI4283@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <20171207062331.GI4283@codeaurora.org>
+Message-ID: <0fc3e5cdf9d5778655f302868154aff6@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
-a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
-are connected to a mux and half-integer divider, which is feeding the
-CPU cores.
+On 2017-12-07 11:53, Stephen Boyd wrote:
+> On 09/28, Abhishek Sahu wrote:
+>> This patch series does the miscellaneous changes in QCOM Alpha PLL
+>> operation and structure to support other types of Alpha PLL’s.
+>> 
+>> 1. It adds the pll_type which will be used for determining all
+>>    the properties of Alpha PLL.
+>> 2. It adds the support for Brammo and Huayra PLL’s for which
+>>    the support is not available in existing alpha PLL code.
+>> 3. There won’t be any change in existing users of Alpha PLL’s
+>>    since all the newly added code will be under flag for the default
+>>    PLL operations.
+>> 
+> 
+> Ok. I took a long look at this today. I rewrote a bunch of stuff.
 
-This patch adds support for the primary CPU PLL which generates the
-higher range of frequencies above 1GHz.
+  Thanks Stephen for reviewing the changes and making the code
+  cleaner. I checked all the code changes and everything looks
+  good. It will work for all of our requirement. I will check
+  with other PLL users also once and then update the patch
+  series with all your suggested code changes after complete
+  testing.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
- drivers/clk/qcom/Kconfig                           |  10 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/a53-pll.c                         | 109 +++++++++++++++++++++
- 4 files changed, 142 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+> Let me know if anything looks wrong. I'm not really interested in
+> having a type template design that causes us to jump through one
+> clk op to another set of them. I'd rather keep it flatter. I also
+> kept around the macros for the offsets and had it use a register
+> map in each struct instead. Yes, we have to go modify the PLL
+> types to point to the right register offset, but really that's
+> fine and I don't really care. We could have a default fallback
+> when the reg pointer is NULL, but I'm not sure that is useful.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-new file mode 100644
-index 000000000000..e3fa8118eaee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-@@ -0,0 +1,22 @@
-+Qualcomm MSM8916 A53 PLL Binding
-+--------------------------------
-+The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
-+above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,msm8916-a53pll"
-+
-+- reg : shall contain base register location and length
-+
-+- #clock-cells : must be set to <0>
-+
-+Example:
-+
-+	a53pll: clock@b016000 {
-+		compatible = "qcom,msm8916-a53pll";
-+		reg = <0xb016000 0x40>;
-+		#clock-cells = <0>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9f6c278deead..81ac7b9378fe 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -12,6 +12,16 @@ config COMMON_CLK_QCOM
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 
-+config QCOM_A53PLL
-+	bool "MSM8916 A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	default ARCH_QCOM
-+	help
-+	  Support for the A53 PLL on MSM8916 devices. It provides
-+	  the CPU with frequencies above 1GHz.
-+	  Say Y if you want to support higher CPU frequencies on MSM8916
-+	  devices.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 26410d31446b..e767c60c24ec 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -32,5 +32,6 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..b2bb8e9437f1
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,109 @@
-+/*
-+ * Copyright (c) 2017, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static const struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 63, 0x0, 0x1, 0 },
-+	{ 1248000000, 65, 0x0, 0x1, 0 },
-+	{ 1363200000, 71, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
-+};
-+
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
-+};
-+
-+static int qcom_a53pll_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
-+}
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	struct resource *res;
-+	struct clk_pll *pll;
-+	void __iomem *base;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04;
-+	pll->m_reg = 0x08;
-+	pll->n_reg = 0x0c;
-+	pll->config_reg = 0x14;
-+	pll->mode_reg = 0x00;
-+	pll->status_reg = 0x1c;
-+	pll->status_bit = 16;
-+	pll->freq_tbl = a53pll_freq;
-+
-+	init.name = "a53pll";
-+	init.parent_names = (const char *[]){ "xo" };
-+	init.num_parents = 1;
-+	init.ops = &clk_pll_sr2_ops;
-+	init.flags = CLK_IS_CRITICAL;
-+	pll->clkr.hw.init = &init;
-+
-+	ret = devm_clk_register_regmap(dev, &pll->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-+				     &pll->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,msm8916-a53pll" },
-+	{ }
-+};
-+
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.remove = qcom_a53pll_remove,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_a53pll_driver);
+  The main reason for going with type template design is due to
+  different register offsets. Now, if passing the register
+  offsets from pll structure is ok, then we can get rid of this
+  function indirection approach.
+
+  Adding NULL check seems to be overhead in all our register macros
+  since these PLL structure will be populated by QCOM clock drivers
+  only and now, we are making this parameter mandatory.
+
+> The alternative is to make a bunch of new ops structures that
+> passes it down into the final functions but that seemed like more
+> work for the handful of PLLs we have to worry about. You seem to
+> agree here. All told, it got cut down by 100 lines so the patches
+> got smaller.
+> 
+
+  Passing the ops into final function will be lead to again type
+  template design for passing the register offsets. Since, now we
+  have very few PLL's in current upstream code so adding register
+  offsets will be more convenient and maintainable.
+
+  Also, now the register offset is coming from our own array
+  so always we can retrieve the PLL type from that. In future,
+  if someone want to have code which requires PLL type then,
+  it can be retrieved from diff of passed pll structure
+  address and array base address.
+
+
+  Thanks,
+  Abhishek
