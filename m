@@ -1,74 +1,31 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1512987406.334.22.camel@baylibre.com>
-Cc: "linux-clk" <linux-clk@vger.kernel.org>,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- "Kevin Hilman" <khilman@baylibre.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>
-References: <1512987406.334.22.camel@baylibre.com>
-Message-ID: <151372351174.45969.9682784070292328756@resonance>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.16
-Date: Tue, 19 Dec 2017 14:45:11 -0800
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1512743261.32148.5.camel@baylibre.com>
+Subject: Re: [PATCH v5 2/4] clk: meson-axg: add clocks dt-bindings required
+ header
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
+ <khilman@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Carlo Caione <carlo@caione.org>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ Jian Hu <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <060fab5b-0832-198d-9aab-d986a909c449@amlogic.com>
+References: <20171207095300.15384-1-yixun.lan@amlogic.com>
+	 <20171207095300.15384-3-yixun.lan@amlogic.com>
+	 <20171207221014.6qwcb43w5hms4ma5@rob-hp-laptop>
+	 <1512725587.17256.19.camel@baylibre.com>
+	 <060fab5b-0832-198d-9aab-d986a909c449@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 08 Dec 2017 15:27:41 +0100
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-12-11 02:16:46)
-> Dear clock maintainers,
-> =
+On Fri, 2017-12-08 at 22:22 +0800, Yixun Lan wrote:
+> let's just wait for a few more days, to see if there are more comments
+> coming up, then I would fold them together
 
-> Below is a request to pull a 1st batch of Amlogic clock driver updates fo=
-r this
-> cycle. There is just 2 trivial changes for now. We expect/hope to have a =
-2nd
-> batch later in this cycle
-
-Applied to clk-meson
-
-Regards,
-Mike
-
-> =
-
-> Cheers
-> Jerome
-> =
-
-> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec83=
-23:
-> =
-
->   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-> =
-
-> are available in the Git repository at:
-> =
-
->   git://github.com/BayLibre/clk-meson.git tags/clk-for-v4.16-1
-> =
-
-> for you to fetch changes up to ed3fb5af69afc802d6e29700fff3401ba99edac1:
-> =
-
->   clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks (2017-12-08 21:3=
-7:19 +0100)
-> =
-
-> ----------------------------------------------------------------
-> First round of meson clock for v4.16
-> * Fix 2 clock gates mixed up in the datasheet
-> * Remove unnecessary CLK_IGNORE_UNUSED on mmc clocks
-> =
-
-> ----------------------------------------------------------------
-> Jerome Brunet (1):
->       clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks
-> =
-
-> Yixun Lan (1):
->       clk: meson: gxbb: fix wrong clock for SARADC/SANA
-> =
-
->  drivers/clk/meson/gxbb.c | 20 +++++---------------
->  1 file changed, 5 insertions(+), 15 deletions(-)
+That's up to you. Keep in mind that rc4 is coming up and I'll need some time
+to test/verify the final version 
