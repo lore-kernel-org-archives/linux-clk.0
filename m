@@ -1,67 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 26 Dec 2017 17:06:38 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexander Kochetkov <al.kochet@gmail.com>
-Cc: linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	LAK <linux-arm-kernel@lists.infradead.org>,
-	linux-rockchip@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to
- clk_hw_get_boundaries() and expose
-Message-ID: <20171227010638.GP7997@codeaurora.org>
-References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
- <1513872282-5370-2-git-send-email-al.kochet@gmail.com>
- <20171221200743.GM7997@codeaurora.org>
- <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 8 Dec 2017 10:08:53 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/3] clk: sunxi-ng: sun8i: a83t: Use sigma-delta
+ modulation for audio PLL
+Message-ID: <20171208090853.cnn52xqrpbihmpsq@flea.lan>
+References: <20171208083512.24080-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nazpecrw7tte7nfl"
+In-Reply-To: <20171208083512.24080-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/25, Alexander Kochetkov wrote:
-> 
-> > 21 дек. 2017 г., в 23:07, Stephen Boyd <sboyd@codeaurora.org> написал(а):
-> > 
-> > Can you convert to the determine_rate op instead of round_rate?
-> > That function should tell you the min/max limits so that you
-> > don't need to query that information from the core.
-> 
-> I converted rockchip_fractional_approximation() to rockchip_determine_rate() (see the patch attached).
-> If it increase parent’s clock for out of limits value, than clock request will fail with -EINVAL, like
-> with round_rate() approach.
-> 
-> The problem is that min/max limits provided to determine_rate() is for clock for which the determine_rate()
-> was called. While rockchip_determine_rate() (rockchip_fractional_approximation()) requires information
-> about parent clock limits.
 
-Are these limits the min/max limits that the parent clk can
-output at? Or the min/max limits that software has constrained on
-the clk?
+--nazpecrw7tte7nfl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> How can I know parents clock limits for current clock? Implement determine_rate() for each parent clocks
-> the same way I did for this one clock?
+On Fri, Dec 08, 2017 at 04:35:09PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> This series follows previous improvements for the other Allwinner SoCs to
+> improve audio quality, in particular the speed and pitch of audio playbac=
+k.
+> The audio PLLs in Allwinner SoCs cannot produce the correct frequency to
+> match the audio sample rate families through integer factors. As such
+> the audio is either too fast or too flow.
+>=20
+> This is dealt with by using sigma-delta modulation, a form of fractional-N
+> synthesis, on the divider. The parameters used are copied from the BSP
+> kernel.
+>=20
+> As these parameters assume that one of the untracked dividers is set to
+> 2, we first add a fixed /2 post divider to the PLL, and force the
+> untracked divider to /2. Then we introduce the sigma-delta modulation
+> parameters.
+>=20
+> This has been tested with SPDIF playback on the Cubietruck Plus, and an
+> external PCM5122 DAC from a PiFi DAC 2.0+, connected via I2S to the
+> Banana Pi M3. The I2C and I2S support used in this latter test will be
+> sent as a separate series later.
 
-If the parent can change rate, then the idea is that the child
-will calculate the limits that it can handle based on what it can
-do with the incoming min/max constraints, and then call
-__clk_determine_rate() on its parent with a request structure
-that has limits for whatever the child clk is able to handle. The
-parent can then determine a rate it can output that's within that
-range and tell the child clk if it will satisfy the constraints
-or not along with the resulting rate it will output when the
-__clk_determine_rate() function returns. I would expect the
-constraints to get closer together the higher in the tree we go.
+Applied, thanks!
+Maxime
 
-I haven't looked in detail at this
-rockchip_fractional_approximation() code, but it shouldn't be
-doing the work of both the child rate determination and the
-parent rate determination in one place. It should work with the
-parent to figure out the rate the parent can provide and then
-figure out how to achieve the desired rate from there.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--nazpecrw7tte7nfl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAloqVqIACgkQ0rTAlCFN
+r3TGYA/9EMR2C950B+0QbwAx8wp+dlkLK7HU+lST5TMHg2kJsSuHO5HXRe/1uDEe
+7iM0E7DczGGeDi+g0ghE7klmXAvQvWRceGhn7wOAKfnqV1iUNoQtnSnsk1JuhBBc
+ipVbzn9LYKFauReJ6qgonbphfmV4+UMLVxX5Hxft5xXN9BOlH4MwnEUtqjgLQ3ml
+vEM6KksSjQwZTOh4DDzLZOW3yu3wWclxZLz5OuvLMiNxMnxi2cK7dNVt/eiMXTk4
+FHIvaeSduOBPf/upwY4K0FAbqwIQpnwHt6fwD1wyaxyU53+wgy8MZif/AKpD0qzB
+AFQ4jbxV3fADSi9u1nE2eUkGBPhKD47f3RSr7R2waaqYWoc2sTeDHARKIsf6UoiH
+cVc892kmbnawpjnzbHqcqR4G91GXGsOjORTobICaH4hd3OqY/9wT4AWr0X42dy0s
+gh7GtliaD5c8f6aUuuPVgXkAGCAndAE6sMR1UzYVx0R1jlzI6OdFCSe/BWLR5Snc
+ShZiXHtkRzWzR4ifcj4eoCXCTeWPFWRtDqkvr7b/HrvfVcgrZ10VBvnFm2Vygjky
+wlFtEYRAYwFy1lYs7p5/DrOYRfYMq5uBKV//Vx63niA57pQo9KMUz1cl+DpXDBxD
+203BZSqFGVj/onv6QNj8y8tGPx/jVGisYQPmA66/elyFeQcOyVI=
+=TskE
+-----END PGP SIGNATURE-----
+
+--nazpecrw7tte7nfl--
