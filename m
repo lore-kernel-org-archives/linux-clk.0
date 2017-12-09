@@ -1,50 +1,33 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 1/6] dt-bindings: clock: add compatible variant for the Meson-AXG
-Date: Mon, 11 Dec 2017 14:48:48 +0800
-Message-ID: <20171211064853.32111-2-yixun.lan@amlogic.com>
-In-Reply-To: <20171211064853.32111-1-yixun.lan@amlogic.com>
-References: <20171211064853.32111-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:18 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] clk: qcom: support for Brammo PLL
+Message-ID: <20171209001818.GD7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-12-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1506621050-10129-12-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the documentation to support clock driver for the Amlogic's
-Meson-AXG SoC.
+On 09/28, Abhishek Sahu wrote:
+> 1. Brammo PLL does not allow configuration of VCO
+> 2. Supports the dynamic update in which the frequency can
+>    be changed dynamically without turning off the PLL
+> 3. The register offsets are different from normal Alpha PLL
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Applied to clk-next
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index 924040769186..e2b377ed6f91 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -5,8 +5,11 @@ controllers within the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
--	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
-+- compatible: should be:
-+		"amlogic,gxbb-clkc" for GXBB SoC,
-+		"amlogic,gxl-clkc" for GXL and GXM SoC,
-+		"amlogic,axg-clkc" for AXG SoC.
-+
- - reg: physical base address of the clock controller and length of memory
-        mapped region.
- 
 -- 
-2.15.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
