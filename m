@@ -1,85 +1,67 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:55 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/13] clk: qcom: support for alpha pll properties
+Message-ID: <20171209001855.GL7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-4-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <20171128071908.12279-1-joel@jms.id.au>
-References: <20171128071908.12279-1-joel@jms.id.au>
-From: Joel Stanley <joel@jms.id.au>
-Date: Wed, 6 Dec 2017 18:26:29 +1030
-Message-ID: <CACPK8XcQ_ZcgPK1PwEwCuWHQ_j5qS+PejRVhr2rYuH_Nn_nPLQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] clk: Add Aspeed clock driver
-To: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1506621050-10129-4-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello clk maintainers,
+On 09/28, Abhishek Sahu wrote:
+> Alpha PLL is a generic name used for QCOM PLL’s which uses L
+> and Alpha values for configuring the integer and fractional part.
+> QCOM SoC’s use different types of Alpha PLL’s for which basic
+> software configuration part is common with following differences.
+> 
+> 1. All These PLL’s will have same basic registers like
+>    PLL_MODE, L_VAL, ALPHA_VAL but some of the register offsets are
+>    different in each PLL type.
+> 2. PLL dynamic programming sequence will be different in some
+>    of the Alpha PLL’s
+> 3. Some of the PLL won’t have 64 bit config control, 64 bit
+>    user control, VCO configuration etc.
+> 
+> Now, this patch adds the Alpha PLL type in clock node and adds
+> alpha PLL properties structure inside clk-alpha-pll.c. This PLL
+> property will contain everything including register offsets, clock
+> operations and other properties since all these properties will be
+> fixed for Alpha PLL.
+> 
+> This allows to support other types of Alpha PLL without addition
+> of new flag and variable in structures of clk_alpha_pll.h. Also, we
+> don’t have to add operation for each Alpha PLL’s and export them.
+> 
+> In future, we can get rid of most of the flags like following
+> 
+>     struct clk_alpha_pll {
+>             #define SUPPORTS_OFFLINE_REQ    BIT(0)
+>             #define SUPPORTS_16BIT_ALPHA    BIT(1)
+>             #define SUPPORTS_FSM_MODE       BIT(2)
+>             u8 flags;
+>     };
+> 
+>     struct clk_alpha_pll_postdiv {
+>             u8 width;
+>     };
+> 
+> Since all the above properties will be always same for different
+> instances of same type of Alpha PLL’s.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Has anyone had a chance to review these patches?
+Applied to clk-next
 
-On Tue, Nov 28, 2017 at 5:49 PM, Joel Stanley <joel@jms.id.au> wrote:
-> This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
-> Aspeed.
->
-> This is v6. See patches for detailed changelogs.
->
-> v6: Added reviewed-bys
-> v5: Address review from Andrew
-> v4: Address review from Andrew and Stephen.
-> v3: Address review from Andrew and has seen more testing on hardware
-> v2: split the driver out into a series of patches to make them easier to
-> review.
->
-> All of the important clocks are supported, with most non-essential ones
-> also implemented where information is available. I am working with
-> Aspeed to clear up some of the missing information, including the
-> missing parent-sibling relationships.
->
-> We need to know the rate of the apb clock in order to correctly program
-> the clocksource driver, so the apb and it's parents are created in the
-> CLK_OF_DECLARE_DRIVER callback.
->
-> The rest of the clocks are created at normal driver probe time. I
-> followed the Gemini driver's lead with using the regmap where I could,
-> but also having a pointer to the base address for use with the common
-> clock callbacks.
->
-> The driver borrows from the clk_gate common clock infrastructure, but modifies
-> it in order to support the clock gate and reset pair that most of the clocks
-> have. This pair must be reset-ungated-released, with appropriate delays,
-> according to the datasheet.
->
-> The first patch introduces the core clock registration parts, and describes
-> the clocks. The second creates the core clocks, giving the system enough to
-> boot (but without uart). Next come the non-core clocks, and finally the reset
-> controller that is used for the few cocks that don't have a gate to go with their
-> reset pair.
->
-> Please review!
->
-> Cheers,
->
-> Joel
->
-> Joel Stanley (5):
->   clk: Add clock driver for ASPEED BMC SoCs
->   clk: aspeed: Register core clocks
->   clk: aspeed: Add platform driver and register PLLs
->   clk: aspeed: Register gated clocks
->   clk: aspeed: Add reset controller
->
->  drivers/clk/Kconfig                      |  12 +
->  drivers/clk/Makefile                     |   1 +
->  drivers/clk/clk-aspeed.c                 | 657 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/aspeed-clock.h |  54 +++
->  4 files changed, 724 insertions(+)
->  create mode 100644 drivers/clk/clk-aspeed.c
->  create mode 100644 include/dt-bindings/clock/aspeed-clock.h
->
-> --
-> 2.14.1
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
