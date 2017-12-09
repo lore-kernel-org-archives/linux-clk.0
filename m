@@ -1,124 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:54606 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756097AbdL2Ifg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Dec 2017 03:35:36 -0500
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:22 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/13] clk: qcom: support for Huayra PLL
+Message-ID: <20171209001822.GE7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-11-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171222122243.25735-10-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io> <20171222122243.25735-10-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 29 Dec 2017 16:35:06 +0800
-Message-ID: <CAGb2v65cCZFOU3uqtcpHuoaNL27tRj4ajj52YVfBePsTSTc0FQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/11] clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1506621050-10129-11-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> Allwinner A64's DE2 needs to claim a section of SRAM (SRAM C) to work.
->
-> Add support for it.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+On 09/28, Abhishek Sahu wrote:
+> Following are the major differences in Huayra PLL
+> 
+> 1. PLL Alpha Value is 16 bits
+> 2. Depending on alpha_mode, the pll_alpha_val can be treated as
+>    M/N value or as a two’s compliment number.
+> 3. Huayra PLL supports PLL dynamic programming. User can change
+>    L_VAL, without having to go through the power on sequence.
+> 
+> Since the decoding of alpha val and dynamic programming are
+> completely different from other Alpha PLL’s so this patch
+> made adds separate functions for Huayra PLL.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 32 ++++++++++++++++++++++++--------
->  1 file changed, 24 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> index 468d1abaf0ee..38b029b7bb5a 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> @@ -17,6 +17,7 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
-> +#include <linux/soc/sunxi/sunxi_sram.h>
->
->  #include "ccu_common.h"
->  #include "ccu_div.h"
-> @@ -196,6 +197,11 @@ static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
->         .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
->  };
->
-> +static bool sunxi_de2_clk_has_sram(const struct device_node *node)
-> +{
-> +       return of_device_is_compatible(node, "allwinner,sun50i-a64-de2-clk");
 
-Having to maintain a separate list is not a great idea. Please consider
-adding a de2 ccu specific structure that embeds a struct sunxi_ccu_desc,
-and also includes whatever special quirks flags this needs.
+Applied to clk-next
 
-ChenYu
-
-> +}
-> +
->  static int sunxi_de2_clk_probe(struct platform_device *pdev)
->  {
->         struct resource *res;
-> @@ -239,11 +245,20 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
->                 return ret;
->         }
->
-> +       if (sunxi_de2_clk_has_sram(pdev->dev.of_node)) {
-> +               ret = sunxi_sram_claim(&pdev->dev);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev,
-> +                               "Error couldn't map SRAM to device\n");
-> +                       return ret;
-> +               }
-> +       }
-> +
->         /* The clocks need to be enabled for us to access the registers */
->         ret = clk_prepare_enable(bus_clk);
->         if (ret) {
->                 dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
-> -               return ret;
-> +               goto err_release_sram;
->         }
->
->         ret = clk_prepare_enable(mod_clk);
-> @@ -272,6 +287,10 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
->         clk_disable_unprepare(mod_clk);
->  err_disable_bus_clk:
->         clk_disable_unprepare(bus_clk);
-> +err_release_sram:
-> +       if (sunxi_de2_clk_has_sram(pdev->dev.of_node))
-> +               sunxi_sram_release(&pdev->dev);
-> +
->         return ret;
->  }
->
-> @@ -288,17 +307,14 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
->                 .compatible = "allwinner,sun8i-v3s-de2-clk",
->                 .data = &sun8i_v3s_de2_clk_desc,
->         },
-> +       {
-> +               .compatible = "allwinner,sun50i-a64-de2-clk",
-> +               .data = &sun50i_a64_de2_clk_desc,
-> +       },
->         {
->                 .compatible = "allwinner,sun50i-h5-de2-clk",
->                 .data = &sun50i_a64_de2_clk_desc,
->         },
-> -       /*
-> -        * The Allwinner A64 SoC needs some bit to be poke in syscon to make
-> -        * DE2 really working.
-> -        * So there's currently no A64 compatible here.
-> -        * H5 shares the same reset line with A64, so here H5 is using the
-> -        * clock description of A64.
-> -        */
->         { }
->  };
->
-> --
-> 2.14.2
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
