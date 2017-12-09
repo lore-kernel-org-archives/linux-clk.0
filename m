@@ -1,42 +1,45 @@
-Return-Path: <grinberg@compulab.co.il>
-From: Igor Grinberg <grinberg@compulab.co.il>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, Haojian Zhuang <haojian.zhuang@gmail.com>, Daniel Mack <daniel@zonque.org>, linux-arm-kernel@lists.infradead.org, Igor Grinberg <grinberg@compulab.co.il>
-Subject: [PATCH] clk: pxa: unbreak lookup of CLK_POUT
-Date: Tue, 26 Dec 2017 15:30:36 +0200
-Message-Id: <20171226133036.11432-1-grinberg@compulab.co.il>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:53 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/13] clk: qcom: fix 16 bit alpha support calculation
+Message-ID: <20171209001853.GK7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-5-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1506621050-10129-5-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since switching to clk drivers, the CLK_POUT cannot be searched for by
-clk_get() API and thus it returns with ENOENT.
-Register it with the clk_lookup and thus unbreak the users of it.
+On 09/28, Abhishek Sahu wrote:
+> The alpha value calculation function has been written for 40 bit
+> alpha which is not coming properly for 16 bit
+> 
+> 1. Alpha value is being calculated on the basis of
+>    ALPHA_BITWIDTH to make the computation easy for 40 bit alpha.
+>    After calculating the 32 bit alpha, It is being converted to 40
+>    bit alpha by making making lower bits zero. But if actual alpha
+>    register width is less than ALPHA_BITWIDTH, then the actual width
+>    can be used for calculation
+> 
+> 2. During 40 bit alpha pll set rate, the lower alpha register is
+>    not being configured
+> 
+> Now the changes have been made to calculate the rate and register
+> values from alpha_width instead hardcoding it so that it can work
+> for all the cases.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Signed-off-by: Igor Grinberg <grinberg@compulab.co.il>
----
- drivers/clk/pxa/clk-pxa3xx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index 42bdaa772be0..2d126df2bccd 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -329,12 +329,16 @@ static void __init pxa3xx_dummy_clocks_init(void)
- 
- static void __init pxa3xx_base_clocks_init(void)
- {
-+	struct clk *clk;
-+
- 	pxa3xx_register_plls();
- 	pxa3xx_register_core();
- 	clk_register_clk_pxa3xx_system_bus();
- 	clk_register_clk_pxa3xx_ac97();
- 	clk_register_clk_pxa3xx_smemc();
--	clk_register_gate(NULL, "CLK_POUT", "osc_13mhz", 0, OSCC, 11, 0, NULL);
-+	clk = clk_register_gate(NULL, "CLK_POUT",
-+				"osc_13mhz", 0, OSCC, 11, 0, NULL);
-+	clk_register_clkdev(clk, "CLK_POUT", NULL);
- 	clkdev_pxa_register(CLK_OSTIMER, "OSTIMER0", NULL,
- 			    clk_register_fixed_factor(NULL, "os-timer0",
- 						      "osc_13mhz", 0, 1, 4));
 -- 
-2.13.6
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
