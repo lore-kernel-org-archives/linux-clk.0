@@ -1,97 +1,43 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:20:32 -0800
+Date: Fri, 8 Dec 2017 16:18:27 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	s.nawrocki@samsung.com, geert@linux-m68k.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 1/1] clk: bulk: add of_clk_bulk_get()
-Message-ID: <20171221232032.GD7997@codeaurora.org>
-References: <1506415441-4435-1-git-send-email-aisheng.dong@nxp.com>
- <20170929224821.GM457@codeaurora.org>
- <20171220135330.GA30461@b29396-OptiPlex-7040>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 08/13] clk: qcom: support for dynamic updating the PLL
+Message-ID: <20171209001827.GG7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-9-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171220135330.GA30461@b29396-OptiPlex-7040>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1506621050-10129-9-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/20, Dong Aisheng wrote:
-> On Fri, Sep 29, 2017 at 03:48:21PM -0700, Stephen Boyd wrote:
-> > On 09/26, Dong Aisheng wrote:
-> > > here to handle this for DT users without 'clock-names' specified.
+On 09/28, Abhishek Sahu wrote:
+> Some of the Alpha PLL’s support dynamic update in which the
+> frequency can be changed dynamically without turning off the PLL.
 > 
-> > > +#endif
-> > >  
-> > >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-> > >  {
-> > > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > > index 12c96d9..073cb3b 100644
-> > > --- a/include/linux/clk.h
-> > > +++ b/include/linux/clk.h
-> > > @@ -680,10 +680,18 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
-> > >  }
-> > >  
-> > >  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> > > +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> > > +				 struct clk_bulk_data *clks);
-> > >  struct clk *of_clk_get(struct device_node *np, int index);
-> > >  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-> > >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
-> > >  #else
-> > > +static inline int of_clk_bulk_get(struct device_node *np, int num_clks,
-> > 
-> > Do we need __must_check here too?
+> This dynamic update requires the following sequence
 > 
-> Yes, you're absolutely right.
+> 1. Write the desired values to pll_l_val and pll_alpha_val
+> 2. Toggle pll_latch_input from low to high
+> 3. Wait for pll_ack_latch to transition from low to high
+>    The new L and alpha values have been latched. It make
+>    take some time for the PLL to fully settle with these
+>    new values
+> 4. Pull pll_latch_input low
 > 
-> of_clk_bulk_get is special as it returns error, so should add __must_check.
-> 
-> > We should do the same for the
-> > other bulk get APIs. Seems we missed that part last time.
-> > 
-> 
-> Currently for !CONFIG_HAVE_CLK case, all APIs return 0.
-> !CONFIG_HAVE_CLK
-> clk_bulk_get		return 0
-> devm_clk_bulk_get	return 0
-> clk_bulk_enable		return 0
-> clk_bulk_prepare	return 0
-> 
-> Do you think we still need add __must_check for them?
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Yes, we need it even when !CONFIG_HAVE_CLK because it allows us
-to catch missing checking return values in the non-clk compile
-configurations too. More test coverage.
-
-> 
-> And for CONFIG_HAVE_CLK case, all __must_check already added.
-> 
-> int __must_check clk_bulk_get
-> int __must_check devm_clk_bulk_get
-> int __must_check clk_bulk_enable
-> int __must_check clk_bulk_prepare
-> 
-> And no need for void function.
-> void clk_bulk_put
-> void clk_bulk_unprepare
-> void clk_bulk_disable
-> 
-> > I'll fix all these things up when applying.
-> > 
-> 
-> I did not see this in latest tree.
-> Suppose i should resend it with above things fixed, right?
-> 
-
-I dropped it because it seems like maybe we don't need
-of_clk_bulk_get(), but more like clk_get_all() or something like
-that to acquire all clks for a device. It seems like it isn't DT
-specific, and so we should just provide the "all" API instead of
-some DT specific one that needs to know how many clks to get. I
-think I sent a similar reply on some other thread and added you
-to it.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
