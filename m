@@ -1,77 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:45332 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753535AbdLVCGh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 21:06:37 -0500
-Date: Thu, 21 Dec 2017 18:06:36 -0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:14 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Ilia Lin <ilialin@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, celster@codeaurora.org,
-        tfinkel@codeaurora.org
-Subject: Re: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU
- driver
-Message-ID: <20171222020636.GG7997@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
- <1513081897-31612-2-git-send-email-ilialin@codeaurora.org>
- <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/13] clk: qcom: add read-only alpha pll post divider
+ operations
+Message-ID: <20171209001814.GB7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-14-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1506621050-10129-14-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/12, Mark Rutland wrote:
-> On Tue, Dec 12, 2017 at 02:31:28PM +0200, Ilia Lin wrote:
-> > + * accesses, and system registers with respect to device memory
-> > + */
-> > +void set_l2_indirect_reg(u64 reg, u64 val)
-> > +{
-> > +	unsigned long flags;
-> > +	mb();
+On 09/28, Abhishek Sahu wrote:
+> Some of the divider settings are preconfigured and should not
+> be changed by the clock framework during frequency change. This
+> patch adds the read-only divider operation for QCOM alpha pll
+> post divider which is equivalent to generic divider operations in
+> 'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
 > 
-> We didn't need this for the PMU driver, so it's unfortuante that it now
-> has to pay the cost.
-> 
-> Can we please factor this mb() into the callers that need it?
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-+1
-
-> 
-> > +	raw_spin_lock_irqsave(&l2_access_lock, flags);
-> > +	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> > +	isb();
-> > +	write_sysreg_s(val, L2CPUSRDR_EL1);
-> > +	isb();
-> > +	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-> > +}
-> > +EXPORT_SYMBOL(set_l2_indirect_reg);
-> 
-> [...]
-> 
-> > +#ifdef CONFIG_ARCH_QCOM
-> > +void set_l2_indirect_reg(u64 reg_addr, u64 val);
-> > +u64 get_l2_indirect_reg(u64 reg_addr);
-> > +#else
-> > +static inline void set_l2_indirect_reg(u32 reg_addr, u32 val) {}
-> > +static inline u32 get_l2_indirect_reg(u32 reg_addr)
-> > +{
-> > +	return 0;
-> > +}
-> > +#endif
-> > +#endif
-> 
-> Are there any drivers that will bne built for !CONFIG_ARCH_QCOM that
-> reference this?
-> 
-> It might be better to not have the stub versions, so that we get a
-> build-error if they are erroneously used.
-> 
-
-Does that approach make COMPILE_TEST break?
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
