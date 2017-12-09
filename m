@@ -1,87 +1,112 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Tue, 19 Dec 2017 23:25:15 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 1/3] clk: at91: pmc: Wait for clocks when resuming
-Message-ID: <20171219222515.GS15162@piout.net>
-References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
- <20171211165535.5126-2-romain.izard.pro@gmail.com>
+Return-Path: <Eugeniy.Paltsev@synopsys.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "Eugeniy.Paltsev@synopsys.com"
+	<Eugeniy.Paltsev@synopsys.com>, "linux-snps-arc@lists.infradead.org"
+	<linux-snps-arc@lists.infradead.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "vladimir_zapolskiy@mentor.com"
+	<vladimir_zapolskiy@mentor.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH RESEND] CLK: ARC: Set initial pll output frequency
+ specified in device tree
+Date: Sat, 9 Dec 2017 13:50:49 +0000
+Message-ID: <1512827448.2699.72.camel@synopsys.com>
+References: <20171114122020.9800-1-Eugeniy.Paltsev@synopsys.com>
+	 <1b07abf9-c94d-1759-4182-519b77c8bb37@mentor.com>
+	 <1510694373.15407.1.camel@synopsys.com>
+	 <20171114234643.GD11955@codeaurora.org>
+In-Reply-To: <20171114234643.GD11955@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171211165535.5126-2-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/12/2017 at 17:55:33 +0100, Romain Izard wrote:
-> Wait for the syncronization of all clocks when resuming, not only the
-> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-> when interrupts are masked, which is the case in here.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
-> ---
->  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 775af473fe11..5c2b26de303e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->  	return 0;
->  }
->  
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
->  static void pmc_resume(void)
->  {
-> -	int i, ret = 0;
-> +	int i;
->  	u32 tmp;
-> +	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->  
->  	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->  	if (pmc_cache.mckr != tmp)
-> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->  			     AT91_PMC_PCR_CMD);
->  	}
->  
-> -	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-> -		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-> -					       !(tmp & AT91_PMC_LOCKU),
-> -					       10, 5000);
-> -		if (ret)
-> -			pr_crit("USB PLL didn't lock when resuming\n");
-> -	}
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
->  }
->  
->  static struct syscore_ops pmc_syscore_ops = {
-> -- 
-> 2.14.1
-> 
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+T24gVHVlLCAyMDE3LTExLTE0IGF0IDE1OjQ2IC0wODAwLCBzYm95ZEBjb2RlYXVyb3JhLm9yZyB3
+cm90ZToNCj4gT24gMTEvMTQsIEFsZXhleSBCcm9ka2luIHdyb3RlOg0KPiA+IEhpIFZsYWRpbWly
+LA0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxNy0xMS0xNCBhdCAxOTowMSArMDIwMCwgVmxhZGltaXIg
+WmFwb2xza2l5IHdyb3RlOg0KPiA+ID4gT24gMTEvMTQvMjAxNyAwMjoyMCBQTSwgRXVnZW5peSBQ
+YWx0c2V2IHdyb3RlOg0KPiA+ID4gPiANCj4gPiA+ID4gQWRkIG9wdGlvbiB0byBzZXQgaW5pdGlh
+bCBvdXRwdXQgZnJlcXVlbmN5IG9mIHBsbHMgdmlhDQo+ID4gPiA+ICJjbG9jay1mcmVxdWVuY3ki
+IHByb3BlcnR5IGluIHBsbCdzIGRldmljZSB0cmVlIG5vZGUuDQo+ID4gPiA+IFRoaXMgZnJlcXVl
+bmN5IHdpbGwgYmUgc2V0IHdoaWxlIHBsbCBkcml2ZXIgcHJvYmVkLg0KPiA+ID4gPiANCj4gPiA+
+ID4gVGhlIHVzYWdlIGV4YW1wbGUgaXMgc2V0dGluZyBDUFUgY2xvY2sgZnJlcXVlbmN5IG9uIGJv
+b3QNCj4gPiA+ID4gU2VlIGRpc2N1c3Npb246DQo+ID4gPiA+IGh0dHBzOi8vdXJsZGVmZW5zZS5w
+cm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9fd3d3Lm1haWwtMkRhcmNoaXZlLmNvbV9s
+aW51eC0yRHNucHMtMkRhcmMtNDBsaXN0cy5pbmZyYWRlYWQub3JnX21zZzAyNjg5Lmh0bWwmZD1E
+d0lDQWcmYz0NCj4gPiA+ID4gRFBMNg0KPiA+ID4gPiBfWF82SmtYRng3QVhXcUIwdGcmcj1scWRl
+ZVNTRWVzMEdGRERsNjU2ZVZpWE83YnJlUzU1eXRXa2hwazVSODFJJm09dlRGb1N2MUU4TnlRQzhu
+cWU2cHd2dVREeEd2RWVmaEFkR3dBb0FCT3JZNCZzPXNibU1uY3pkS1AzMTdiTjk3M2NabjJXY1lG
+MjlrDQo+ID4gPiA+IFZNTFcNCj4gPiA+ID4gY2hZZmhTR1QyTSZlPQ0KPiA+ID4gPiANCj4gPiA+
+ID4gU2lnbmVkLW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZAc3lub3Bz
+eXMuY29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gwqAuLi4vYmluZGluZ3MvY2xvY2svc25wcyxo
+c2RrLXBsbC1jbG9jay50eHTCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoDUgKysrKw0KPiA+ID4gPiDC
+oC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMscGxsLWNsb2NrLnR4dMKgwqDCoHzC
+oMKgNSArKysrDQo+ID4gPiA+IMKgZHJpdmVycy9jbGsvYXhzMTB4L3BsbF9jbG9jay5jwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfCAzNCArKysrKysrKysrKysrKysr
+KysrKy0tDQo+ID4gPiA+IMKgZHJpdmVycy9jbGsvY2xrLWhzZGstcGxsLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHwgMzQgKysrKysrKysrKysrKysr
+KysrKystLQ0KPiA+ID4gPiDCoDQgZmlsZXMgY2hhbmdlZCwgNzQgaW5zZXJ0aW9ucygrKSwgNCBk
+ZWxldGlvbnMoLSkNCj4gPiA+ID4gDQo+ID4gPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxoc2RrLXBsbC1jbG9jay50eHQgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxoc2RrLXBsbC1jbG9jay50
+eHQNCj4gPiA+ID4gaW5kZXggYzU2Yzc1NS4uNTcwMzA1OSAxMDA2NDQNCj4gPiA+ID4gLS0tIGEv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMsaHNkay1wbGwtY2xv
+Y2sudHh0DQo+ID4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
+bG9jay9zbnBzLGhzZGstcGxsLWNsb2NrLnR4dA0KPiA+ID4gPiBAQCAtMTMsNiArMTMsMTAgQEAg
+UmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiA+ID4gwqAtIGNsb2Nrczogc2hhbGwgYmUgdGhlIGlu
+cHV0IHBhcmVudCBjbG9jayBwaGFuZGxlIGZvciB0aGUgUExMLg0KPiA+ID4gPiDCoC0gI2Nsb2Nr
+LWNlbGxzOiBmcm9tIGNvbW1vbiBjbG9jayBiaW5kaW5nOyBTaG91bGQgYWx3YXlzIGJlIHNldCB0
+byAwLg0KPiA+ID4gPiDCoA0KPiA+ID4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiA+ID4g
+Ky0gY2xvY2stZnJlcXVlbmN5OiBvdXRwdXQgZnJlcXVlbmN5IGdlbmVyYXRlZCBieSBwbGwgaW4g
+SHogd2hpY2ggd2lsbCBiZSBzZXQNCj4gPiA+ID4gK3doaWxlIHByb2JpbmcuIFNob3VsZCBiZSBh
+IHNpbmdsZSBjZWxsLg0KPiA+ID4gPiArDQo+ID4gPiA+IMKgRXhhbXBsZToNCj4gPiA+ID4gwqAJ
+aW5wdXRfY2xrOiBpbnB1dC1jbGsgew0KPiA+ID4gPiDCoAkJY2xvY2stZnJlcXVlbmN5ID0gPDMz
+MzMzMzMzPjsNCj4gPiA+ID4gQEAgLTI1LDQgKzI5LDUgQEAgRXhhbXBsZToNCj4gPiA+ID4gwqAJ
+CXJlZyA9IDwweDAwIDB4MTA+Ow0KPiA+ID4gPiDCoAkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+
+ID4gPiDCoAkJY2xvY2tzID0gPCZpbnB1dF9jbGs+Ow0KPiA+ID4gPiArCQljbG9jay1mcmVxdWVu
+Y3kgPSA8MTAwMDAwMDAwMD47DQo+ID4gPiA+IMKgCX07DQo+ID4gPiA+IGRpZmYgLS1naXQgYS9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxwbGwtY2xvY2sudHh0
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMscGxsLWNsb2Nr
+LnR4dA0KPiA+ID4gPiBpbmRleCAxMWZlNDg3Li41OTA4Zjk5IDEwMDY0NA0KPiA+ID4gPiAtLS0g
+YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxwbGwtY2xvY2su
+dHh0DQo+ID4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9j
+ay9zbnBzLHBsbC1jbG9jay50eHQNCj4gPiA+ID4gQEAgLTEzLDYgKzEzLDEwIEBAIHJlZ2lzdGVy
+cyBhbmQgc2Vjb25kIGZvciBjb3JyZXNwb25kaW5nIExPQ0sgQ0dVIHJlZ2lzdGVyLg0KPiA+ID4g
+PiDCoC0gY2xvY2tzOiBzaGFsbCBiZSB0aGUgaW5wdXQgcGFyZW50IGNsb2NrIHBoYW5kbGUgZm9y
+IHRoZSBQTEwuDQo+ID4gPiA+IMKgLSAjY2xvY2stY2VsbHM6IGZyb20gY29tbW9uIGNsb2NrIGJp
+bmRpbmc7IFNob3VsZCBhbHdheXMgYmUgc2V0IHRvIDAuDQo+ID4gPiA+IMKgDQo+ID4gPiA+ICtP
+cHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ID4gPiArLSBjbG9jay1mcmVxdWVuY3k6IG91dHB1dCBm
+cmVxdWVuY3kgZ2VuZXJhdGVkIGJ5IHBsbCBpbiBIeiB3aGljaCB3aWxsIGJlIHNldA0KPiA+ID4g
+PiArd2hpbGUgcHJvYmluZy4gU2hvdWxkIGJlIGEgc2luZ2xlIGNlbGwuDQo+ID4gPiA+ICsNCj4g
+PiA+ID4gwqBFeGFtcGxlOg0KPiA+ID4gPiDCoAlpbnB1dC1jbGs6IGlucHV0LWNsayB7DQo+ID4g
+PiA+IMKgCQljbG9jay1mcmVxdWVuY3kgPSA8MzMzMzMzMzM+Ow0KPiA+ID4gPiBAQCAtMjUsNCAr
+MjksNSBAQCBFeGFtcGxlOg0KPiA+ID4gPiDCoAkJcmVnID0gPDB4ODAgMHgxMD4sIDwweDEwMCAw
+eDEwPjsNCj4gPiA+ID4gwqAJCSNjbG9jay1jZWxscyA9IDwwPjsNCj4gPiA+ID4gwqAJCWNsb2Nr
+cyA9IDwmaW5wdXQtY2xrPjsNCj4gPiA+ID4gKwkJY2xvY2stZnJlcXVlbmN5ID0gPDEwMDAwMDAw
+MD47DQo+ID4gPiA+IMKgCX07DQo+ID4gPiANCj4gPiA+IFlvdSBtYXkgY2hlY2sgRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Nsb2NrLWJpbmRpbmdzLnR4dA0KPiA+ID4g
+YWJvdXQgaG93IHRvIGFzc2lnbiBpbml0aWFsIGNsb2NrIHJhdGVzLCBpbiBnZW5lcmFsICdjbG9j
+ay1mcmVxdWVuY3knDQo+ID4gPiBwcm9wZXJ0eSBpcyBhIHByb3BlcnR5IG9mIGNsb2NrIGNvbnN1
+bWVycyB3aXRoIHR3byBleGNlcHRpb25zIG9mIHNpbXBsZQ0KPiA+ID4gY2xvY2sgc291cmNlcywg
+bmFtZWx5IGl0IGlzIHVzZWQgaW4gZml4ZWQgY2xvY2sgYW5kIFBXTSBjbG9jayBiaW5kaW5ncy4N
+Cj4gPiANCj4gPiBJIHRoaW5rIHRoYXQncyB3aGF0IHdlIGFncmVlZCBvbiB3aXRoIFJvYiBIZXJy
+aW5nIGJhY2sgaW4gdGhlIGRheS4NCj4gPiBIYXZlIHlvdSBjaGVja2VkIHRoaXMgcG9zdCBvZiBo
+aW0gb24gdGhlIHRvcGljPw0KPiA+IGh0dHBzOi8vdXJsZGVmZW5zZS5wcm9vZnBvaW50LmNvbS92
+Mi91cmw/dT1odHRwLTNBX19saXN0cy5pbmZyYWRlYWQub3JnX3BpcGVybWFpbF9saW51eC0yRHNu
+cHMtMkRhcmNfMjAxNy0yRFNlcHRlbWJlcl8wMDI5MDkuaHRtbCZkPUR3SURBdyZjPURQTDZfDQo+
+ID4gWF82SmtYRng3QVhXcUIwdGcmcj1abEpOMU1yaVBVVGtCS0NyUFN4NjdHbWFwbEVVR2NBRWs5
+eVB0Q0xkVVhJJm09WDBXOHA1Zk9qaXlWaEsxMjE2TGt0YjV5SDNvalRTWmhkblFoRWlJVmowayZz
+PXlHSmZIYmpIMlQ3NVllSUpMQjE0X2lEamZzS2kxRTVhYVgNCj4gPiBZdTNRSkJVSWsmZT0NCj4g
+PiANCj4gPiBKdXN0IEZZSSBpdCBhbGwgc3RhcnRlZCBmcm9tIG15IHF1ZXN0aW9uIGhlcmU6DQo+
+ID4gaHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29tL3YyL3VybD91PWh0dHAtM0FfX2xp
+c3RzLmluZnJhZGVhZC5vcmdfcGlwZXJtYWlsX2xpbnV4LTJEc25wcy0yRGFyY18yMDE3LTJEU2Vw
+dGVtYmVyXzAwMjkwMC5odG1sJmQ9RHdJREF3JmM9RFBMNl8NCj4gPiBYXzZKa1hGeDdBWFdxQjB0
+ZyZyPVpsSk4xTXJpUFVUa0JLQ3JQU3g2N0dtYXBsRVVHY0FFazl5UHRDTGRVWEkmbT1YMFc4cDVm
+T2ppeVZoSzEyMTZMa3RiNXlIM29qVFNaaGRuUWhFaUlWajBrJnM9Smt6dDJHX0o0YUU5SmZlUFBR
+NTdsZG5yRldlUzU3UmhmYw0KPiA+IE1odW45Mm9VMCZlPQ0KPiANCj4gV2h5IGNhbid0IHdlIHVz
+ZSBhc3NpZ25lZC1jbG9jay1yYXRlcz8gVGhhdCB3b3VsZCBiYXNpY2FsbHkgY2FsbA0KPiBjbGtf
+c2V0X3JhdGUoKSBvbiB0aGUgY2xrIG9uY2UgaXQncyBhZGRlZC4NCg0KVGhhbmtzIGZvciB0aGUg
+aGludCwgYXNzaWduZWQtY2xvY2stcmF0ZXMgd29ya3MgZm9yIHVzLg0KDQotLSANCsKgRXVnZW5p
+eSBQYWx0c2V2
