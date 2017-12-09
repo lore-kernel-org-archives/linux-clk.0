@@ -1,52 +1,33 @@
-Return-Path: <jassisinghbrar@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 8 Dec 2017 16:18:49 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/13] clk: qcom: flag for 64 bit CONFIG_CTL
+Message-ID: <20171209001849.GI7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <1506621050-10129-7-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171224050625.GH12655@minitux>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
- <20171205154701.27730-3-georgi.djakov@linaro.org> <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
- <20171224050625.GH12655@minitux>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Fri, 29 Dec 2017 11:44:40 +0530
-Message-ID: <CABb+yY3e1YTnf4ZYvXVzXPhOT9-6PzusDfpWRBorwd9nB97SSQ@mail.gmail.com>
-Subject: Re: [PATCH v11 2/6] mailbox: qcom: Create APCS child device for clock controller
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-	Devicetree List <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1506621050-10129-7-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bjorn,
+On 09/28, Abhishek Sahu wrote:
+> Some of the Alpha PLL’s (like Spark, Brammo PLL) do not have
+> CONFIG_CTL_U register. This patch adds the flag in properties
+> for PLL’s which have CONFIG_CTL_U register and checks the same
+> while doing PLL initial configuration.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-On Sun, Dec 24, 2017 at 10:36 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Fri 22 Dec 20:57 PST 2017, Jassi Brar wrote:
->
->> On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
->> > There is a clock controller functionality provided by the APCS hardware
->> > block of msm8916 devices. The device-tree would represent an APCS node
->> > with both mailbox and clock provider properties.
->> >
->> The spec might depict a 'clock' box and 'mailbox' box inside the
->> bigger APCS box. However, from the code I see in this patchset, they
->> are orthogonal and can & should be represented as independent DT
->> nodes.
->
-> The APCS consists of a number of different hardware blocks, one of them
-> being the "APCS global" block, which is what this node and drivers
-> relate to. On 8916 this contains both the IPC register and clock
-> control. But it's still just one block according to the hardware
-> specification.
->
-> As such DT should describe the one hardware block by one node IMHO.
->
-In my even humbler opinion, DT should describe a h/w functional unit
-which _could_ be seen as a standalone component.
-For example, if this APCS had a mac controller, would we also populate
-a netdev from mailbox driver? And what if next revision moves/drops
-this clock controller out of APCS, keeping mailbox controller exactly
-same?
+Applied to clk-next
 
-Maybe some DT maintainer could enlighten either of us.
-
-Cheers!
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
