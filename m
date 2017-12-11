@@ -1,72 +1,113 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
- david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
- <20171220032614.GQ19815@vireshk-i7>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
-Date: Wed, 20 Dec 2017 11:55:33 +0530
-MIME-Version: 1.0
-In-Reply-To: <20171220032614.GQ19815@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v5 0/6] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
+Date: Mon, 11 Dec 2017 13:16:24 +0530
+Message-Id: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Viresh,
+For certain platforms, clocks (mclk/sclk/fs) are required to be up before
+the stream start. Example: some codecs needs the mclk/sclk/fs to be
+enabled early for a successful clock synchronization. Some platforms
+require clock to be enabled at boot and be always ON.
 
-On 12/20/2017 8:56 AM, Viresh Kumar wrote:
-> On 19-12-17, 21:25, Sricharan R wrote:
->> +	cpu@0 {
->> +		compatible = "qcom,krait";
->> +		enable-method = "qcom,kpss-acc-v1";
->> +		device_type = "cpu";
->> +		reg = <0>;
->> +		qcom,acc = <&acc0>;
->> +		qcom,saw = <&saw0>;
->> +		clocks = <&kraitcc 0>;
->> +		clock-names = "cpu";
->> +		cpu-supply = <&smb208_s2a>;
->> +		operating-points-v2 = <&cpu_opp_table>;
->> +	};
->> +
->> +	qcom,pvs {
->> +		qcom,pvs-format-a;
->> +	};
-> 
-> Not sure what Rob is going to say on that :)
-> 
+By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+these clocks can be enabled early after the firmware is downloaded.
 
- Yes. Would be good to know the best way.
+With this series, a virtual clock driver is created which provides
+interface to send the required IPCs from machine driver to enable the
+clocks. NHLT is parsed during probe and the clock information is populated.
+The pointer to blob is cached and sent along with the set_dma_control IPC
+structure during the clk prepare/unprepare callback. Clocks are created for
+a ssp if the nhlt table has endpoint configuration for that particular ssp.
 
->> +
->> +
->> +	cpu_opp_table: opp_table {
->> +		compatible = "operating-points-v2";
->> +
->> +		/*
->> +		 * Missing opp-shared property means CPUs switch DVFS states
->> +		 * independently.
->> +		 */
->> +
->> +		opp-1400000000 {
->> +			opp-hz = /bits/ 64 <1400000000>;
->> +			opp-microvolt-speed0-pvs0-v0 = <1250000>;
-> 
-> Why speed0 and v0 in all the names ?
-> 
+Kabylake machine driver uses the clock interface to enable the clocks early
+as it is required by the rt5663 driver for clock synchronization.
 
- Ya, all the three (speed, pvs and version) are read from efuse. So all the three
- can vary.
+v4 -> v5
+	- Remove checks for clock enable status from machine driver since
+	  taken care in the framework already
 
-Regards,
- Sricharan
+	- Add check in the skl_clk_set_rate to avoid different rates when
+	  clock is enabled already
+
+v3 -> v4
+	- Add missing signed-offs
+
+v2 -> v3
+	- Moved the clk ops and IPCs from Skylake driver to clk driver and
+	  reordered commits accordingly
+
+	- Add the support for extended I2S blob config which supports
+	  multiple mclk dividers in NHLT
+
+	- Enable the clocks as well in DAPM PMU event instead of hw_params
+	  in machine drivers as confirmed by codec vendor
+
+	- Do not register the clk if there is no valid clock source is
+	  avail in the I2S blob
+
+	- Take care of error return in the clk driver
+
+	- Address rest of the review comments and more optimization added
+
+	- Fix the warning
+		sound/soc/intel/skylake/skl.c:724:1-3:
+		WARNING: PTR_ERR_OR_ZERO can be used
+	  reported by scripts/coccinelle/api/ptr_ret.cocci
+
+	- Modified DSP replies as human readable to ease the debugging
+
+	- Add firmware replies for MCLK/SCLK clocks if they are running
+	  already
+
+v1 -> v2
+	- Register parent clocks with skylake device.
+	  With the patch "clk: Add support for runtime PM" soon to be merged
+	  will help DSP to stay active on call to clock enable.
+	  Reference: (https://patchwork.kernel.org/patch/9911741/)
+
+	- Fix the machine driver to enable clocks early for headphone
+	  playback path as well to fix a pop noise issue
+
+Harsha Priya (1):
+  ASoC: Intel: kbl: Enable mclk and ssp sclk early
+
+Naveen M (1):
+  ASoC: Intel: eve: Enable mclk and ssp sclk early
+
+Sriram Periyasamy (2):
+  ASoC: Intel: Skylake: Add ssp clock driver
+  ASoC: Intel: Skylake: Add extended I2S config blob support in Clock
+    driver
+
+Subhransu S. Prusty (2):
+  ASoC: Intel: Skylake: Make DSP replies more human readable
+  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
+
+ sound/soc/intel/Kconfig                            |   3 +
+ sound/soc/intel/boards/Kconfig                     |   2 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c       |  95 ++++-
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  94 ++++
+ sound/soc/intel/skylake/Makefile                   |   5 +
+ sound/soc/intel/skylake/skl-i2s.h                  |  31 ++
+ sound/soc/intel/skylake/skl-messages.c             |   1 +
+ sound/soc/intel/skylake/skl-nhlt.c                 |  41 +-
+ sound/soc/intel/skylake/skl-ssp-clk.c              | 473 +++++++++++++++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.h              |  38 ++
+ sound/soc/intel/skylake/skl-sst-ipc.c              |  50 ++-
+ sound/soc/intel/skylake/skl.h                      |   6 +
+ 12 files changed, 815 insertions(+), 24 deletions(-)
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
