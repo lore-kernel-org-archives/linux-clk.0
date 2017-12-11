@@ -1,89 +1,48 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
- <20171220032614.GQ19815@vireshk-i7> <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
- <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop> <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 26 Dec 2017 11:36:34 -0600
-Message-ID: <CAL_JsqJTBgr2ctyRXGyzkRLztoy=qtvEh3AC79RjENBS=6yQRg@mail.gmail.com>
-Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 2/2] clk: tegra20: Correct PLL_C_OUT1 setup
+Date: Mon, 11 Dec 2017 21:50:12 +0300
+Message-Id: <4c15ac578fd847bc4047384ae2f8cadd6b9e9fe4.1513018140.git.digetx@gmail.com>
+In-Reply-To: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+In-Reply-To: <09480d74d240d8e77b3989cfe85e6e624eaee866.1513018140.git.digetx@gmail.com>
+References: <09480d74d240d8e77b3989cfe85e6e624eaee866.1513018140.git.digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 5:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
-> Hi Rob,
->
-> On 12/21/2017 2:48 AM, Rob Herring wrote:
->> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
->>> Hi Viresh,
->>>
->>> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
->>>> On 19-12-17, 21:25, Sricharan R wrote:
->>>>> +  cpu@0 {
->>>>> +          compatible = "qcom,krait";
->>>>> +          enable-method = "qcom,kpss-acc-v1";
->>>>> +          device_type = "cpu";
->>>>> +          reg = <0>;
->>>>> +          qcom,acc = <&acc0>;
->>>>> +          qcom,saw = <&saw0>;
->>>>> +          clocks = <&kraitcc 0>;
->>>>> +          clock-names = "cpu";
->>>>> +          cpu-supply = <&smb208_s2a>;
->>>>> +          operating-points-v2 = <&cpu_opp_table>;
->>>>> +  };
->>>>> +
->>>>> +  qcom,pvs {
->>>>> +          qcom,pvs-format-a;
->>>>> +  };
->>>>
->>>> Not sure what Rob is going to say on that :)
->>>>
->>>
->>>  Yes. Would be good to know the best way.
->>
->> Seems like this should be a property of an efuse node either implied by
->> the compatible or a separate property. What determines format A vs. B?
->>
->
->  Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
->  So this property (details like bitfields and register offsets that it represents)
->  can be put soc specific and nvmem apis can be used to read
->  the registers. Does something like below look ok ?
->
->  qcom,pvs {
->         compatible = "qcom,pvs-ipq8064";
->         nvmem-cells = <&pvs_efuse>;
->  }
+PLL_C_OUT_1 can't produce 216 MHz defined in the init_table. Let's
+set it to 240 MHz and explicitly specify HCLK rate for consistency.
 
-Why do you need this node? It doesn't look like it corresponds to a
-h/w block. It looks like you are just creating it to instantiate a
-driver.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  qfprom: qfprom@700000 {
->         compatible      = "qcom,qfprom";
-
-Either this or...
-
->         reg             = <0x00700000 0x1000>;
->         #address-cells  = <1>;
->         #size-cells     = <1>;
->         ranges;
->         pvs_efuse: pvs {
-
-a compatible here should be specific enough so the OS can know what
-the bits are.
-
->         reg = <0xc0 0x8>;
->         };
->  };
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 32763dfbfaba..c39e7e2446d8 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1026,9 +1026,9 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
+ 	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
+-	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
+-	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
+-	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 0 },
++	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
++	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 240000000, 0 },
++	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
+ 	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
+ 	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+-- 
+2.15.1
