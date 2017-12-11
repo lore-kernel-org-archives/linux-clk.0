@@ -1,87 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:54692 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751379AbdL2Ipp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Dec 2017 03:45:45 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171222122243.25735-8-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io> <20171222122243.25735-8-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 29 Dec 2017 16:45:18 +0800
-Message-ID: <CAGb2v66LGkzscbpCAwhPvA2VPL-8Qpc+e5vNFPq6vS2Hvh9DbA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/11] ARM: sunxi: h3/h5: add simplefb nodes
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v5 5/6] ASoC: Intel: Skylake: Make DSP replies more human readable
+Date: Mon, 11 Dec 2017 13:16:29 +0530
+Message-Id: <1512978390-8848-6-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> The H3/H5 SoCs have a HDMI output and a TV Composite output.
->
-> Add simplefb nodes for these outputs.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> index fcb909658cf0..31478c03790d 100644
-> --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> @@ -53,6 +53,35 @@
->         #address-cells = <1>;
->         #size-cells = <1>;
->
-> +       chosen {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges;
-> +
-> +               framebuffer-hdmi {
-> +                       compatible = "allwinner,simple-framebuffer",
-> +                                    "simple-framebuffer";
-> +                       allwinner,pipeline = "mixer0-lcd0-hdmi";
-> +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
-> +                                <&ccu CLK_BUS_TCON0>, <&ccu CLK_BUS_HDMI>,
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-Are the bus clocks necessary? It's not like simplefb is going to access
-any of the control registers.
+Add more meaning to the IPC replies for easy debugging. Replace the switch
+case with a lookup table to lookup for the IPC replies and print in human
+readable form.
 
-> +                                <&display_clocks CLK_MIXER0>,
-> +                                <&ccu CLK_TCON0>, <&ccu CLK_HDMI>,
-> +                                <&ccu CLK_HDMI_DDC>;
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+---
+ sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
 
-Is the DDC clock necessary? There's no usage of DDC with simplefb.
-
-ChenYu
-
-> +                       status = "disabled";
-> +               };
-> +
-> +               framebuffer-tve {
-> +                       compatible = "allwinner,simple-framebuffer",
-> +                                    "simple-framebuffer";
-> +                       allwinner,pipeline = "mixer1-lcd1-tve";
-> +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
-> +                                <&ccu CLK_BUS_TCON1>, <&ccu CLK_BUS_TVE>,
-> +                                <&display_clocks CLK_MIXER1>,
-> +                                <&ccu CLK_TVE>;
-> +                       status = "disabled";
-> +               };
-> +       };
-> +
->         clocks {
->                 #address-cells = <1>;
->                 #size-cells = <1>;
-> --
-> 2.14.2
->
+diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
+index 5234fafb758a..8708755a8f9a 100644
+--- a/sound/soc/intel/skylake/skl-sst-ipc.c
++++ b/sound/soc/intel/skylake/skl-sst-ipc.c
+@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
+ 	return 0;
+ }
+ 
+-static int skl_ipc_set_reply_error_code(u32 reply)
++struct skl_ipc_err_map {
++	const char *msg;
++	enum skl_ipc_glb_reply reply;
++	int err;
++};
++
++static struct skl_ipc_err_map skl_err_map[] = {
++	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
++	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
++};
++
++static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+ {
+-	switch (reply) {
+-	case IPC_GLB_REPLY_OUT_OF_MEMORY:
+-		return -ENOMEM;
++	int i;
+ 
+-	case IPC_GLB_REPLY_BUSY:
+-		return -EBUSY;
++	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
++		if (skl_err_map[i].reply == reply)
++			break;
++	}
+ 
+-	default:
++	if (i == ARRAY_SIZE(skl_err_map)) {
++		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
++				reply,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
+ 		return -EINVAL;
+ 	}
++
++	if (skl_err_map[i].err < 0)
++		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++	else
++		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++
++	return skl_err_map[i].err;
+ }
+ 
+ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+ 
+ 		}
+ 	} else {
+-		msg->errno = skl_ipc_set_reply_error_code(reply);
+-		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
+-		dev_err(ipc->dev, "FW Error Code: %u\n",
+-			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
+ 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
+ 		case IPC_GLB_LOAD_MULTIPLE_MODS:
+ 		case IPC_GLB_LOAD_LIBRARY:
+-- 
+2.7.4
