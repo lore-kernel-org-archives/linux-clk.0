@@ -1,106 +1,113 @@
-Return-Path: <amit.kucheria@verdurent.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 2/6] clk: meson-axg: add clocks dt-bindings required header
+Date: Mon, 11 Dec 2017 14:48:49 +0800
+Message-ID: <20171211064853.32111-3-yixun.lan@amlogic.com>
+In-Reply-To: <20171211064853.32111-1-yixun.lan@amlogic.com>
+References: <20171211064853.32111-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
-From: Amit Kucheria <amit.kucheria@verdurent.com>
-Date: Wed, 6 Dec 2017 11:21:21 +0530
-Message-ID: <CAHLCerMok=-0hFLm27_VzSWzC7nArmTz+shQH05DAuBr3An9qw@mail.gmail.com>
-Subject: Re: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> This patchset adds support for the A53 CPU clock on MSM8916 platforms
-> and allows scaling of the CPU frequency on msm8916 based platforms.
+From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-Though it currently needs some additional patches (that'll follow
-soon), FWIW, Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+Add the required header for the clocks ID dt-bindings
+exported from various subsystem in the Meson-AXG SoC.
 
-> Changes since v10 (https://lkml.org/lkml/2017/12/1/577)
-> * Addressed Bjorn's comments on APCS clock driver.
-> * Picked Acks from Rob and Bjorn.
->
-> Changes since v9 (https://lkml.org/lkml/2017/9/21/511)
-> * Added the clock properties to the APCS DT node, instead of adding a subnode
-> and also replaced patch "mailbox: qcom: Populate APCS child platform devices"
-> with "mailbox: qcom: Create APCS child device for clock controller".
-> * Dropped patch "mailbox: qcom: Move the apcs struct into a separate header",
-> and use dev_get_regmap(dev->parent) in the child driver.
-> * Addressed Bjorn's comments on a53-pll and apcs-clk drivers.
-> * Added SPDX copyright identifiers.
->
-> Changes since v8 (https://lkml.org/lkml/2017/6/23/476)
->  * Converted APCS mailbox driver to use regmap and to populate child
->  platform devices that will handle the rest of the functionality
->  provided by APCS block.
->  * Picked Rob's Ack for the PLL binding.
->  * Changed the APCS binding and put it into a separate patch.
->  * Addressed review comments.
->  * Minor changes.
->
-> Changes since v7 (https://lkml.org/lkml/2016/10/31/296)
->  * Add the APCS clock controller to the APCS driver to expose both the
->  mailbox and clock controller functionality as discussed earlier:
->  https://lkml.org/lkml/2016/11/14/860
->  * Changed the a53pll compatible string as suggested by Rob.
->
-> Changes since v6 (https://lkml.org/lkml/2016/9/7/347)
->  * Addressed various comments from Stephen Boyd
->
-> Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
->  * Rebase to clk-next and update according to the recent API changes.
->
-> Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
->  * Convert to builtin drivers as now __clk_lookup() is used
->
-> Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
->  * Split driver into two parts - and separate A53 PLL and
->    A53 clock controller drivers.
->  * Drop the safe switch hook patch. Add a clock notifier in
->    the clock provider to handle switching via safe mux and
->    divider configuration.
->
-> Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
->  * Drop gpll0_vote patch.
->  * Switch to the new clk_hw_* APIs.
->  * Rebase to the current clk-next.
->
-> Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
->  * Drop SR2 PLL patch, as it is already applied.
->  * Add gpll0_vote rate propagation patch.
->  * Update/rebase patches to the current clk-next.
->
-> Georgi Djakov (6):
->   mailbox: qcom: Convert APCS IPC driver to use regmap
->   mailbox: qcom: Create APCS child device for clock controller
->   clk: qcom: Add A53 PLL support
->   clk: qcom: Add regmap mux-div clocks support
->   dt-bindings: mailbox: qcom: Document the APCS clock binding
->   clk: qcom: Add APCS clock controller support
->
->  .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 ++
->  .../bindings/mailbox/qcom,apcs-kpss-global.txt     |  18 ++
->  drivers/clk/qcom/Kconfig                           |  21 ++
->  drivers/clk/qcom/Makefile                          |   3 +
->  drivers/clk/qcom/a53-pll.c                         | 110 ++++++++++
->  drivers/clk/qcom/apcs-msm8916.c                    | 149 ++++++++++++++
->  drivers/clk/qcom/clk-regmap-mux-div.c              | 229 +++++++++++++++++++++
->  drivers/clk/qcom/clk-regmap-mux-div.h              |  46 +++++
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c            |  35 +++-
->  9 files changed, 628 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->  create mode 100644 drivers/clk/qcom/a53-pll.c
->  create mode 100644 drivers/clk/qcom/apcs-msm8916.c
->  create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
->  create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axg-clkc.h
+
+diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
+new file mode 100644
+index 000000000000..941ac70e7f30
+--- /dev/null
++++ b/include/dt-bindings/clock/axg-clkc.h
+@@ -0,0 +1,71 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson-AXG clock tree IDs
++ *
++ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
++ */
++
++#ifndef __AXG_CLKC_H
++#define __AXG_CLKC_H
++
++#define CLKID_SYS_PLL				0
++#define CLKID_FIXED_PLL				1
++#define CLKID_FCLK_DIV2				2
++#define CLKID_FCLK_DIV3				3
++#define CLKID_FCLK_DIV4				4
++#define CLKID_FCLK_DIV5				5
++#define CLKID_FCLK_DIV7				6
++#define CLKID_GP0_PLL				7
++#define CLKID_CLK81				10
++#define CLKID_MPLL0				11
++#define CLKID_MPLL1				12
++#define CLKID_MPLL2				13
++#define CLKID_MPLL3				14
++#define CLKID_DDR				15
++#define CLKID_AUDIO_LOCKER			16
++#define CLKID_MIPI_DSI_HOST			17
++#define CLKID_ISA				18
++#define CLKID_PL301				19
++#define CLKID_PERIPHS				20
++#define CLKID_SPICC0				21
++#define CLKID_I2C				22
++#define CLKID_RNG0				23
++#define CLKID_UART0				24
++#define CLKID_MIPI_DSI_PHY			25
++#define CLKID_SPICC1				26
++#define CLKID_PCIE_A				27
++#define CLKID_PCIE_B				28
++#define CLKID_HIU_IFACE				29
++#define CLKID_ASSIST_MISC			30
++#define CLKID_SD_EMMC_B				31
++#define CLKID_SD_EMMC_C				32
++#define CLKID_DMA				33
++#define CLKID_SPI				34
++#define CLKID_AUDIO				35
++#define CLKID_ETH				36
++#define CLKID_UART1				37
++#define CLKID_G2D				38
++#define CLKID_USB0				39
++#define CLKID_USB1				40
++#define CLKID_RESET				41
++#define CLKID_USB				42
++#define CLKID_AHB_ARB0				43
++#define CLKID_EFUSE				44
++#define CLKID_BOOT_ROM				45
++#define CLKID_AHB_DATA_BUS			46
++#define CLKID_AHB_CTRL_BUS			47
++#define CLKID_USB1_DDR_BRIDGE			48
++#define CLKID_USB0_DDR_BRIDGE			49
++#define CLKID_MMC_PCLK				50
++#define CLKID_VPU_INTR				51
++#define CLKID_SEC_AHB_AHB3_BRIDGE		52
++#define CLKID_GIC				53
++#define CLKID_AO_MEDIA_CPU			54
++#define CLKID_AO_AHB_SRAM			55
++#define CLKID_AO_AHB_BUS			56
++#define CLKID_AO_IFACE				57
++#define CLKID_AO_I2C				58
++#define CLKID_SD_EMMC_B_CLK0			59
++#define CLKID_SD_EMMC_C_CLK0			60
++
++#endif /* __AXG_CLKC_H */
+-- 
+2.15.1
