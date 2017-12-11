@@ -1,97 +1,108 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie
-Subject: [PATCH 02/33] clk: core: update divider_round_rate functions to return unsigned long
-Date: Sat, 30 Dec 2017 01:12:41 +0000
-Message-Id: <1514596392-22270-3-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/6] add clk controller driver for Meson-AXG SoC
+Date: Mon, 11 Dec 2017 14:48:47 +0800
+Message-ID: <20171211064853.32111-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Returning a long from round_rate() class functions is rooted in the notion
-that we will propagate a negative number on some class of failure to round
-a clock rate; however this approach does not scale to 32 bit systems which
-legitimately round a clock over LONG_MAX as the returned clock rate is
-indistinguishable from an error number.
+Add driver for the clk controller which found in Meson AXG SoC
 
-A better approach is to return zero when we cannot round a clock and
-non-zero when we can - thus supporting the full range of the unsigned long
-rate input value to round_rate() functions.
+  Note, we deliberately create a seperate source file for the Meson AXG
+series, instead of sharing code with previous GXBB/GXL - the file axg.c
+It would help us maintaining the code more easily.
 
-Update the signature of divider_round_rate functions to do this now.
+Changes since v5 [5]:
+ - add Rob's Ack for patch 2, add Neil's Ack for patch 3
+ - include spinlock' name change patch, patch 4
+ - include uart_ao clock DTS patch
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-divider.c    | 10 ++++++----
- include/linux/clk-provider.h | 19 +++++++++++--------
- 2 files changed, 17 insertions(+), 12 deletions(-)
+Changes since v4 [4]:
+ - use devm_ioremap instead of devm_ioremap_resource
+ - rename DT node using generic name 'bus'
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index a26ec7c..e827304 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -332,10 +332,12 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
- 	return bestdiv;
- }
- 
--long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--			       unsigned long rate, unsigned long *prate,
--			       const struct clk_div_table *table,
--			       u8 width, unsigned long flags)
-+unsigned long divider_round_rate_parent(struct clk_hw *hw,
-+					struct clk_hw *parent,
-+					unsigned long rate,
-+					unsigned long *prate,
-+					const struct clk_div_table *table,
-+					u8 width, unsigned long flags)
- {
- 	int div;
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 79b1d6e..e763d94 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -413,10 +413,12 @@ extern const struct clk_ops clk_divider_ro_ops;
- unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 		unsigned int val, const struct clk_div_table *table,
- 		unsigned long flags);
--long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--			       unsigned long rate, unsigned long *prate,
--			       const struct clk_div_table *table,
--			       u8 width, unsigned long flags);
-+unsigned long divider_round_rate_parent(struct clk_hw *hw,
-+					struct clk_hw *parent,
-+					unsigned long rate,
-+					unsigned long *prate,
-+					const struct clk_div_table *table,
-+					u8 width, unsigned long flags);
- int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 		const struct clk_div_table *table, u8 width,
- 		unsigned long flags);
-@@ -762,10 +764,11 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- 	dst->core = src->core;
- }
- 
--static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *prate,
--				      const struct clk_div_table *table,
--				      u8 width, unsigned long flags)
-+static inline unsigned long divider_round_rate(struct clk_hw *hw,
-+					       unsigned long rate,
-+					       unsigned long *prate,
-+					       const struct clk_div_table *table,
-+					       u8 width, unsigned long flags)
- {
- 	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
- 					 rate, prate, table, width, flags);
+Changes since v3 [3]:
+ - separate dt-bindings header file
+ - adjust license note as standard way
+ - replace of_iomap with platform/devm API
+ - add Rob's Ack to Patch 1,4
+
+Changes since v2 [2]:
+ - drop register offset calculation
+ - update dt-bindings for new compatible variant
+
+Changes since v1 [1]:
+ - rework register definion, use '(offset << 2)' to better match
+   the description from data sheet
+ - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
+ - rebase code to v4.15-rc1
+
+[5]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005655.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005656.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005657.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005658.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005659.html
+
+[4]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005522.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005525.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005526.html
+
+[3]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005487.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005488.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005489.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005490.html
+
+[2]
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
+
+[1] 
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
+  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
+
+
+Qiufang Dai (3):
+  clk: meson-axg: add clocks dt-bindings required header
+  clk: meson-axg: add clock controller drivers
+  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+
+Yixun Lan (3):
+  dt-bindings: clock: add compatible variant for the Meson-AXG
+  clk: meson: make the spinlock naming more specific
+  arm64: dts: meson-axg: switch uart_ao clock to CLK81
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
+ arch/arm64/Kconfig.platforms                       |   1 +
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |   2 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +-
+ drivers/clk/meson/Kconfig                          |   8 +
+ drivers/clk/meson/Makefile                         |   1 +
+ drivers/clk/meson/axg.c                            | 944 +++++++++++++++++++++
+ drivers/clk/meson/axg.h                            | 126 +++
+ drivers/clk/meson/clkc.h                           |   2 +-
+ drivers/clk/meson/gxbb.c                           | 112 +--
+ drivers/clk/meson/meson8b.c                        |  24 +-
+ include/dt-bindings/clock/axg-clkc.h               |  71 ++
+ 12 files changed, 1242 insertions(+), 75 deletions(-)
+ create mode 100644 drivers/clk/meson/axg.c
+ create mode 100644 drivers/clk/meson/axg.h
+ create mode 100644 include/dt-bindings/clock/axg-clkc.h
+
 -- 
-2.7.4
+2.15.1
