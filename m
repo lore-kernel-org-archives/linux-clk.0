@@ -1,92 +1,42 @@
-Return-Path: <hdegoede@redhat.com>
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
-To: Johannes Stezenbach <js@sig21.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux PM list <linux-pm@vger.kernel.org>, Carlo Caione <carlo@endlessm.com>,
- Darren Hart <dvhart@infradead.org>,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- Takashi Iwai <tiwai@suse.de>,
- ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <20170925191749.2oamusbajgs6clcg@sig21.net>
- <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
- <34396652.fljU28PShI@aspire.rjw.lan>
- <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
- <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
- <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
- <20171213162206.GA7337@sig21.net>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e6aa5c55-8174-7ad9-009f-c254d3aeaf72@redhat.com>
-Date: Wed, 13 Dec 2017 17:37:15 +0100
-MIME-Version: 1.0
-In-Reply-To: <20171213162206.GA7337@sig21.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1512991637.334.28.camel@baylibre.com>
+Subject: Re: [PATCH v6 4/6] clk: meson: make the spinlock naming more
+ specific
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
+ <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20171211064853.32111-5-yixun.lan@amlogic.com>
+References: <20171211064853.32111-1-yixun.lan@amlogic.com>
+	 <20171211064853.32111-5-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 11 Dec 2017 12:27:17 +0100
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Mon, 2017-12-11 at 14:48 +0800, Yixun Lan wrote:
+>                 .ops = &clk_gate_ops,
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 1629da9b4141..87f06a801a4d 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -134,7 +134,7 @@ struct meson_clk_audio_divider {
+>  struct clk_gate _name = {                                              \
+>         .reg = (void __iomem *) _reg,                                   \
+>         .bit_idx = (_bit),                                              \
+> -       .lock = &clk_lock,                                              \
+> +       .lock = &meson_clk_lock,                                                \
 
-On 13-12-17 17:22, Johannes Stezenbach wrote:
-> Hi,
-> 
-> On Wed, Dec 13, 2017 at 05:04:34PM +0100, Hans de Goede wrote:
->> On 13-12-17 16:25, Michael Turquette wrote:
->>> On Wed, Dec 13, 2017 at 12:53 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->>>> Although, maybe we need to have a specialized (derived)
->>>> ahci driver for these Atom SoCs and in there if no
->>>> disk is detected do this through the clock framework?
->>>
->>> Yes please. x86 is already modeling some clocks properly through the
->>> clock framework. During late init we clean up any clocks that were
->>> enabled out of reset or by the firmware/bootloader but not claimed and
->>> enabled by any Linux driver. That should ideally disable this
->>> particular clock for the case when no SATA drive is present, and
->>> require no quirk logic in the driver.
->>
->> Ah so you're thinking a special ahci driver which knows about
->> the clock, yes I think that could work.
->>
->> Or maybe do a match on the CPU model and if it is know to
->> not have SATA (or not routed to the outside), disable
->> the clock? That seems better because if I understood Johannes
->> correctly there is no SATA/AHCI PCI device (so nothing for
->> a driver to bind to) but the clock is still enabled, although
->> in that case the clock framework should do the right thing
->> if we revert commit d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
-> 
-> Please don't get confused with the other thread about clocks.
-> This issue sets the "disable IP" bit, found by doing stupid
-> experiments to enable S0ix on E200HA.
+Something is not right here, line is over 80 characters
+Remember to run checkpatch on your series please.
 
-Ah my bad.
-
-> 1. no idea if Cherry Trail even has SATA IP, maybe this is a
->     meaningless bit but PMC firmware carried over from
->     Bay Trail looks at it
-
-
-There are no CHT SoCs with SATA AFAIK, but Braswell SoCs,
-which I believe is the same die do have SATA.
-
-I think the best fix here is to look at the model-string part
-of the CPU-id and do a quirk based on that, setting the "disable IP"
-bit for the SATA on all SoC models known to not have SATA
-(Z8300, Z8350, Z8500, Z8550, Z8700, Z8750).
-
-Rafael, Andy how does that sound as a solution?
-
-> 2. BIOS should have set the bit, so it is a BIOS quirk
-> 
-> 3. or maybe there is a much better solution that I don't know about
-> 
-> https://bugzilla.kernel.org/show_bug.cgi?id=193891
-> also has lspci output
-
-Regards,
-
-Hans
+>         .hw.init = &(struct clk_init_data) {                            \
+>                 .name = #_name,                                 \
+>                 .ops = &clk_gate_ops,                                   \
