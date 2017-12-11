@@ -1,204 +1,199 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Fri, 22 Dec 2017 11:34:19 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Rob Clark <robdclark@gmail.com>,
-	Alessandro Zummo <a.zummo@towertech.it>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.or,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] clk: divider: fix incorrect usage of container_of
-Message-ID: <20171222103419.GB18255@piout.net>
-References: <20171221163054.13600-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171221163054.13600-1-jbrunet@baylibre.com>
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	Harsha Priya <harshapriya.n@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v5 3/6] ASoC: Intel: kbl: Enable mclk and ssp sclk early
+Date: Mon, 11 Dec 2017 13:16:27 +0530
+Message-Id: <1512978390-8848-4-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21/12/2017 at 17:30:54 +0100, Jerome Brunet wrote:
-> divider_recalc_rate() is an helper function used by clock divider of
-> different types, so the structure containing the 'hw' pointer is not
-> always a 'struct clk_divider'
-> 
-> At the following line:
-> > div = _get_div(table, val, flags, divider->width);
-> 
-> in several cases, the value of 'divider->width' is garbage as the actual
-> structure behind this memory is not a 'struct clk_divider'
-> 
-> Fortunately, this width value is used by _get_val() only when
-> CLK_DIVIDER_MAX_AT_ZERO flag is set. This has never been the case so
-> far when the structure is not a 'struct clk_divider'. This is probably
-> why we did not notice this bug before
-> 
-> Fixes: afe76c8fd030 ("clk: allow a clk divider with max divisor when zero")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+From: Harsha Priya <harshapriya.n@intel.com>
 
-For RTC:
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+rt5663 needs mclk/sclk early to synchronize its internal clocks. Enable
+these clocks early.
 
-> ---
-> Hi Stephen, Mike,
-> 
-> In addition to clock, this patch also touch the rtc and drm directories.
-> As it is changing the API of the helper function, I have this fix in a
-> single commit to avoid breaking bisect.
-> 
-> Please let me know if you prefer to do differently.
-> 
-> Cheers
-> Jerome
-> 
-> drivers/clk/clk-divider.c                  | 7 +++----
->  drivers/clk/hisilicon/clkdivider-hi6220.c  | 2 +-
->  drivers/clk/nxp/clk-lpc32xx.c              | 2 +-
->  drivers/clk/qcom/clk-regmap-divider.c      | 2 +-
->  drivers/clk/sunxi-ng/ccu_div.c             | 2 +-
->  drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c | 2 +-
->  drivers/rtc/rtc-ac100.c                    | 6 ++++--
->  include/linux/clk-provider.h               | 2 +-
->  8 files changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index 4ed516cb7276..b49942b9fe50 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -118,12 +118,11 @@ static unsigned int _get_val(const struct clk_div_table *table,
->  unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
->  				  unsigned int val,
->  				  const struct clk_div_table *table,
-> -				  unsigned long flags)
-> +				  unsigned long flags, unsigned long width)
->  {
-> -	struct clk_divider *divider = to_clk_divider(hw);
->  	unsigned int div;
->  
-> -	div = _get_div(table, val, flags, divider->width);
-> +	div = _get_div(table, val, flags, width);
->  	if (!div) {
->  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
->  			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
-> @@ -145,7 +144,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
->  	val &= div_mask(divider->width);
->  
->  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> -				   divider->flags);
-> +				   divider->flags, divider->width);
->  }
->  
->  static bool _is_valid_table_div(const struct clk_div_table *table,
-> diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
-> index a1c1f684ad58..9f46cf9dcc65 100644
-> --- a/drivers/clk/hisilicon/clkdivider-hi6220.c
-> +++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
-> @@ -56,7 +56,7 @@ static unsigned long hi6220_clkdiv_recalc_rate(struct clk_hw *hw,
->  	val &= div_mask(dclk->width);
->  
->  	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
-> -				   CLK_DIVIDER_ROUND_CLOSEST);
-> +				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
->  }
->  
->  static long hi6220_clkdiv_round_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> index b669a5c10fee..f5d815f577e0 100644
-> --- a/drivers/clk/nxp/clk-lpc32xx.c
-> +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> @@ -956,7 +956,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
->  	val &= div_mask(divider->width);
->  
->  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> -				   divider->flags);
-> +				   divider->flags, divider->width);
->  }
->  
->  static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
-> index 53484912301e..928fcc16ee27 100644
-> --- a/drivers/clk/qcom/clk-regmap-divider.c
-> +++ b/drivers/clk/qcom/clk-regmap-divider.c
-> @@ -59,7 +59,7 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
->  	div &= BIT(divider->width) - 1;
->  
->  	return divider_recalc_rate(hw, parent_rate, div, NULL,
-> -				   CLK_DIVIDER_ROUND_CLOSEST);
-> +				   CLK_DIVIDER_ROUND_CLOSEST, divider->width);
->  }
->  
->  const struct clk_ops clk_regmap_div_ops = {
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-> index baa3cf96507b..302a18efd39f 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -71,7 +71,7 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
->  						  parent_rate);
->  
->  	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> -				  cd->div.flags);
-> +				  cd->div.flags, cd->div.width);
->  
->  	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
->  		val /= cd->fixed_post_div;
-> diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-> index fe15aa64086f..71fe60e5f01f 100644
-> --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-> @@ -698,7 +698,7 @@ static unsigned long dsi_pll_14nm_postdiv_recalc_rate(struct clk_hw *hw,
->  	val &= div_mask(width);
->  
->  	return divider_recalc_rate(hw, parent_rate, val, NULL,
-> -				   postdiv->flags);
-> +				   postdiv->flags, width);
->  }
->  
->  static long dsi_pll_14nm_postdiv_round_rate(struct clk_hw *hw,
-> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-> index 9e336184491c..0282ccc6181c 100644
-> --- a/drivers/rtc/rtc-ac100.c
-> +++ b/drivers/rtc/rtc-ac100.c
-> @@ -137,13 +137,15 @@ static unsigned long ac100_clkout_recalc_rate(struct clk_hw *hw,
->  		div = (reg >> AC100_CLKOUT_PRE_DIV_SHIFT) &
->  			((1 << AC100_CLKOUT_PRE_DIV_WIDTH) - 1);
->  		prate = divider_recalc_rate(hw, prate, div,
-> -					    ac100_clkout_prediv, 0);
-> +					    ac100_clkout_prediv, 0,
-> +					    AC100_CLKOUT_PRE_DIV_WIDTH);
->  	}
->  
->  	div = (reg >> AC100_CLKOUT_DIV_SHIFT) &
->  		(BIT(AC100_CLKOUT_DIV_WIDTH) - 1);
->  	return divider_recalc_rate(hw, prate, div, NULL,
-> -				   CLK_DIVIDER_POWER_OF_TWO);
-> +				   CLK_DIVIDER_POWER_OF_TWO,
-> +				   AC100_CLKOUT_DIV_WIDTH);
->  }
->  
->  static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 73ac87f34df9..4c4001086447 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -412,7 +412,7 @@ extern const struct clk_ops clk_divider_ro_ops;
->  
->  unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
->  		unsigned int val, const struct clk_div_table *table,
-> -		unsigned long flags);
-> +		unsigned long flags, unsigned long width);
->  long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
->  			       unsigned long rate, unsigned long *prate,
->  			       const struct clk_div_table *table,
-> -- 
-> 2.14.3
-> 
+Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+---
+ sound/soc/intel/boards/Kconfig               |  1 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c | 95 +++++++++++++++++++++++++++-
+ 2 files changed, 95 insertions(+), 1 deletion(-)
 
+diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
+index 449bc8baaa60..f62f2ab1481e 100644
+--- a/sound/soc/intel/boards/Kconfig
++++ b/sound/soc/intel/boards/Kconfig
+@@ -262,6 +262,7 @@ config SND_SOC_INTEL_KBL_RT5663_MAX98927_MACH
+ 	select SND_SOC_MAX98927
+ 	select SND_SOC_DMIC
+ 	select SND_SOC_HDAC_HDMI
++	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
+ 	help
+ 	  This adds support for ASoC Onboard Codec I2S machine driver. This will
+ 	  create an alsa sound card for RT5663 + MAX98927.
+diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+index 94a34db4f8c0..bb3e8a97df4b 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+@@ -28,6 +28,9 @@
+ #include "../../codecs/rt5663.h"
+ #include "../../codecs/hdac_hdmi.h"
+ #include "../skylake/skl.h"
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
+ 
+ #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
+ #define KBL_MAXIM_CODEC_DAI "max98927-aif1"
+@@ -48,6 +51,8 @@ struct kbl_hdmi_pcm {
+ struct kbl_rt5663_private {
+ 	struct snd_soc_jack kabylake_headset;
+ 	struct list_head hdmi_pcm_list;
++	struct clk *mclk;
++	struct clk *sclk;
+ };
+ 
+ enum {
+@@ -69,6 +74,61 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
+ 	SOC_DAPM_PIN_SWITCH("Right Spk"),
+ };
+ 
++static int platform_clock_control(struct snd_soc_dapm_widget *w,
++			struct snd_kcontrol *k, int  event)
++{
++	struct snd_soc_dapm_context *dapm = w->dapm;
++	struct snd_soc_card *card = dapm->card;
++	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
++	int ret = 0;
++
++	/*
++	 * MCLK/SCLK need to be ON early for a successful synchronization of
++	 * codec internal clock. And the clocks are turned off during
++	 * POST_PMD after the stream is stopped.
++	 */
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		/* Enable MCLK */
++		ret = clk_set_rate(priv->mclk, 24000000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
++				ret);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->mclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
++			return ret;
++		}
++
++		/* Enable SCLK */
++		ret = clk_set_rate(priv->sclk, 3072000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
++				ret);
++			clk_disable_unprepare(priv->mclk);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->sclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
++			clk_disable_unprepare(priv->mclk);
++		}
++		break;
++	case SND_SOC_DAPM_POST_PMD:
++		clk_disable_unprepare(priv->mclk);
++		clk_disable_unprepare(priv->sclk);
++		break;
++	default:
++		return 0;
++	}
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
+ 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+@@ -78,11 +138,14 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_SPK("HDMI1", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI2", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI3", NULL),
+-
++	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
++			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
++			SND_SOC_DAPM_POST_PMD),
+ };
+ 
+ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	/* HP jack connectors - unknown if we have jack detection */
++	{ "Headphone Jack", NULL, "Platform Clock" },
+ 	{ "Headphone Jack", NULL, "HPOL" },
+ 	{ "Headphone Jack", NULL, "HPOR" },
+ 
+@@ -91,6 +154,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	{ "Right Spk", NULL, "Right BE_OUT" },
+ 
+ 	/* other jacks */
++	{ "Headset Mic", NULL, "Platform Clock" },
+ 	{ "IN1P", NULL, "Headset Mic" },
+ 	{ "IN1N", NULL, "Headset Mic" },
+ 	{ "DMic", NULL, "SoC DMIC" },
+@@ -901,6 +965,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ {
+ 	struct kbl_rt5663_private *ctx;
+ 	struct skl_machine_pdata *pdata;
++	int ret;
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
+ 	if (!ctx)
+@@ -919,6 +984,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ 		dmic_constraints = pdata->dmic_num == 2 ?
+ 			&constraints_dmic_2ch : &constraints_dmic_channels;
+ 
++	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
++	if (IS_ERR(ctx->mclk)) {
++		ret = PTR_ERR(ctx->mclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_sclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
++	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
++	if (IS_ERR(ctx->sclk)) {
++		ret = PTR_ERR(ctx->sclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_sclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
+ 	return devm_snd_soc_register_card(&pdev->dev, kabylake_audio_card);
+ }
+ 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.7.4
