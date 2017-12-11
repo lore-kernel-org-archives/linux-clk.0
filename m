@@ -1,65 +1,50 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for reset controls
-Date: Mon, 18 Dec 2017 11:57:51 +0800
-Message-Id: <20171218035751.20661-1-wens@csie.org>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 2/6] dt-bindings: clock: add compatible variant for the Meson-AXG
+Date: Mon, 11 Dec 2017 22:13:44 +0800
+Message-ID: <20171211141348.22048-3-yixun.lan@amlogic.com>
+In-Reply-To: <20171211141348.22048-1-yixun.lan@amlogic.com>
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Our MMC host driver now issues a reset, instead of just deasserting
-the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
-device at probe time"). The sun9i-mmc clock driver does not support
-this, and will fail, which results in MMC not probing.
+Update the documentation to support clock driver for the Amlogic's
+Meson-AXG SoC.
 
-This patch implements the reset callback by asserting the reset control,
-then deasserting it after a small delay.
-
-Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
-Cc: <stable@vger.kernel.org> # 4.14.x
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/sunxi/clk-sun9i-mmc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
-index a1a634253d6f..f00d8758ba24 100644
---- a/drivers/clk/sunxi/clk-sun9i-mmc.c
-+++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
-@@ -16,6 +16,7 @@
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index 924040769186..e2b377ed6f91 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -5,8 +5,11 @@ controllers within the SoC.
  
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -83,9 +84,20 @@ static int sun9i_mmc_reset_deassert(struct reset_controller_dev *rcdev,
- 	return 0;
- }
+ Required Properties:
  
-+static int sun9i_mmc_reset_reset(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	sun9i_mmc_reset_assert(rcdev, id);
-+	udelay(10);
-+	sun9i_mmc_reset_deassert(rcdev, id);
+-- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
+-	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
++- compatible: should be:
++		"amlogic,gxbb-clkc" for GXBB SoC,
++		"amlogic,gxl-clkc" for GXL and GXM SoC,
++		"amlogic,axg-clkc" for AXG SoC.
 +
-+	return 0;
-+}
-+
- static const struct reset_control_ops sun9i_mmc_reset_ops = {
- 	.assert		= sun9i_mmc_reset_assert,
- 	.deassert	= sun9i_mmc_reset_deassert,
-+	.reset		= sun9i_mmc_reset_reset,
- };
+ - reg: physical base address of the clock controller and length of memory
+        mapped region.
  
- static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
 -- 
-2.15.0
+2.15.1
