@@ -1,85 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1765 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752039AbdLVGMB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Dec 2017 01:12:01 -0500
-Message-ID: <1513923116.30687.1.camel@mtkswgap22>
-Subject: Re: [clk:clk-next 130/133] drivers/clk/mediatek/clk-mtk.h:44:19:
- warning: 'struct clk_onecell_data' declared inside parameter list will not
- be visible outside of this definition or declaration
-From: Sean Wang <sean.wang@mediatek.com>
-To: kbuild test robot <fengguang.wu@intel.com>
-CC: <kbuild-all@01.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Fri, 22 Dec 2017 14:11:56 +0800
-In-Reply-To: <201712221239.y5YaQIlV%fengguang.wu@intel.com>
-References: <201712221239.y5YaQIlV%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v6 0/3] Clock patches for SAMA5D2 backup mode
+Date: Mon, 11 Dec 2017 17:55:32 +0100
+Message-Id: <20171211165535.5126-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-thanks, i will try to have a fixup
-	
-	Sean
+While the core of the backup mode for SAMA5D2 has been integrated in
+v4.13, it is far from complete. Individual controllers in the chip have
+drivers that do not support the reset of the registers during suspend,
+and they need to be adapted to handle it.
 
+The first patch uses the clock wakeup code from the prototype backup
+mode instead of the version integrated in the mainline, as the mainline
+version is not stable. During a test loop with two-second backup
+suspend, the mainline version will hang in less than one day, whereas
+the proposed version has been running the same test for more than a
+month without hanging.
 
-On Fri, 2017-12-22 at 12:42 +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> head:   813bf3417374b0f382d4bfbd712c54794d943c57
-> commit: 74cb0d6dde85fef197aca3b2976487e99934309d [130/133] clk: mediatek: fixup test-building of MediaTek clock drivers
-> config: sparc64-allmodconfig (attached as .config)
-> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 74cb0d6dde85fef197aca3b2976487e99934309d
->         # save the attached .config to linux build tree
->         make.cross ARCH=sparc64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/clk/mediatek/reset.c:22:0:
-> >> drivers/clk/mediatek/clk-mtk.h:44:19: warning: 'struct clk_onecell_data' declared inside parameter list will not be visible outside of this definition or declaration
->       int num, struct clk_onecell_data *clk_data);
->                       ^~~~~~~~~~~~~~~~
->    drivers/clk/mediatek/clk-mtk.h:63:19: warning: 'struct clk_onecell_data' declared inside parameter list will not be visible outside of this definition or declaration
->       int num, struct clk_onecell_data *clk_data);
->                       ^~~~~~~~~~~~~~~~
->    drivers/clk/mediatek/clk-mtk.h:145:10: warning: 'struct clk_onecell_data' declared inside parameter list will not be visible outside of this definition or declaration
->       struct clk_onecell_data *clk_data);
->              ^~~~~~~~~~~~~~~~
->    drivers/clk/mediatek/clk-mtk.h:164:11: warning: 'struct clk_onecell_data' declared inside parameter list will not be visible outside of this definition or declaration
->        struct clk_onecell_data *clk_data);
->               ^~~~~~~~~~~~~~~~
->    drivers/clk/mediatek/clk-mtk.h:190:12: warning: 'struct clk_onecell_data' declared inside parameter list will not be visible outside of this definition or declaration
->         struct clk_onecell_data *clk_data);
->                ^~~~~~~~~~~~~~~~
-> 
-> vim +44 drivers/clk/mediatek/clk-mtk.h
-> 
-> 4fa04380 James Liao 2015-07-10  35  
-> 4fa04380 James Liao 2015-07-10  36  #define FIXED_CLK(_id, _name, _parent, _rate) {		\
-> 4fa04380 James Liao 2015-07-10  37  		.id = _id,				\
-> 4fa04380 James Liao 2015-07-10  38  		.name = _name,				\
-> 4fa04380 James Liao 2015-07-10  39  		.parent = _parent,			\
-> 4fa04380 James Liao 2015-07-10  40  		.rate = _rate,				\
-> 4fa04380 James Liao 2015-07-10  41  	}
-> 4fa04380 James Liao 2015-07-10  42  
-> 4fa04380 James Liao 2015-07-10  43  void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
-> 4fa04380 James Liao 2015-07-10 @44  		int num, struct clk_onecell_data *clk_data);
-> 4fa04380 James Liao 2015-07-10  45  
-> 
-> :::::: The code at line 44 was first introduced by commit
-> :::::: 4fa043806a2cdbf86503068276ab9bba91a726f6 clk: mediatek: Add fixed clocks support for Mediatek SoC.
-> 
-> :::::: TO: James Liao <jamesjj.liao@mediatek.com>
-> :::::: CC: James Liao <jamesjj.liao@mediatek.com>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Changes in v2:
+* drop the IIO patch duplicating existing code
+* determine the number of programmable clocks to save dynamically
+* declare a required local variable in the tty/serial patch
 
+Changes in v3:
+* drop dev_printk changes for PMECC
+* rework the resume code for PMECC
+* improve comments on PMC clock handling
 
+Changes in v4:
+* fix a bug in the PMECC resume code
+
+Changes in v5:
+* drop all patches already taken
+* split the patch series by subsystem
+
+Changes in v6:
+* rebase on v4.15-rc3
+
+Romain Izard (3):
+  clk: at91: pmc: Wait for clocks when resuming
+  clk: at91: pmc: Save SCSR during suspend
+  clk: at91: pmc: Support backup for programmable clocks
+
+ drivers/clk/at91/clk-programmable.c |  2 ++
+ drivers/clk/at91/pmc.c              | 63 +++++++++++++++++++++++++++++++------
+ drivers/clk/at91/pmc.h              |  2 ++
+ 3 files changed, 57 insertions(+), 10 deletions(-)
+
+-- 
+2.14.1
