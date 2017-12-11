@@ -1,79 +1,147 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 18 Dec 2017 13:06:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: check ops pointer on clock register
-Message-ID: <20171218210639.GX7997@codeaurora.org>
-References: <20171218170007.28042-1-jbrunet@baylibre.com>
- <20171218190303.GV7997@codeaurora.org>
- <1513627578.29566.6.camel@baylibre.com>
- <CAEG3pNBi13BCPcftf=mj5LJh3JQQi+Q7C5QLZwoy6LG__krJXA@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v6 3/6] clk: meson-axg: add clock controller drivers
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20171211064853.32111-1-yixun.lan@amlogic.com>
+ <20171211064853.32111-4-yixun.lan@amlogic.com>
+ <1512985560.334.17.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Carlo Caione <carlo@caione.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <a6a9454f-be94-4fee-9083-f37eae2c1749@amlogic.com>
+Date: Mon, 11 Dec 2017 18:16:52 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAEG3pNBi13BCPcftf=mj5LJh3JQQi+Q7C5QLZwoy6LG__krJXA@mail.gmail.com>
+In-Reply-To: <1512985560.334.17.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/18, Michael Turquette wrote:
-> Hi Jerome & Stephen,
-> 
-> On Mon, Dec 18, 2017 at 12:06 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > On Mon, 2017-12-18 at 11:03 -0800, Stephen Boyd wrote:
-> >> On 12/18, Jerome Brunet wrote:
-> >> > Nothing really prevents a provider from (trying to) register a clock
-> >> > without providing the clock ops structure.
-> >> >
-> >> > We do check the individual fields before using them, but not the
-> >> > structure pointer itself. This may have the usual nasty consequences when
-> >> > the pointer is dereferenced, mostly likely when checking one the field
-> >> > during the initialization.
-> >>
-> >> Yes, that nasty consequence should be a kernel oops,
-> >
-> > Precisely
-> >
-> >> and the
-> >> developer should notice that before submitting the driver for
-> >> inclusion.
-> >
-> > Agreed. But people may make mistakes, which is why (at least partly) we
-> > do checks, isn't it ?
-> 
-> Agreed the developers should test before submitting, but procedurally
-> generated clocks (e.g. registering clocks in a loop using a
-> predictable register map, etc) could lead to a situation where a
-> developer doesn't test every possible iteration.
-> 
-> Hypothetical, but easy easy easy to fix with Jerome's patch.
-> 
-> >
-> >> I don't think we really care to return an error here
-> >> if this happens.
-> >>
-> >
-> > I don't understand why we would let a oops happen when can catch the error
-> > properly ?
-> >
-> 
-> Agreed with Jerome on this one.
-> 
-> Let's flip it on its head: any downside to this patch? If not I can merge.
-> 
+HI Jerome:
 
-If code is not checking return values from clk_register(), then
-an oops turns into a silently ignored error. Hunting that down is
-going to take some time vs. an oops when we attempt to call the
-clk ops that aren't there.
+On 12/11/17 17:46, Jerome Brunet wrote:
+> On Mon, 2017-12-11 at 14:48 +0800, Yixun Lan wrote:
+>> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>>
+>> Add clock controller drivers for Amlogic Meson-AXG SoC.
+>>
+>> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+>> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  arch/arm64/Kconfig.platforms |   1 +
+>>  drivers/clk/meson/Kconfig    |   8 +
+>>  drivers/clk/meson/Makefile   |   1 +
+>>  drivers/clk/meson/axg.c      | 944
+>> +++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/meson/axg.h      | 126 ++++++
+>>  5 files changed, 1080 insertions(+)
+>>  create mode 100644 drivers/clk/meson/axg.c
+>>  create mode 100644 drivers/clk/meson/axg.h
+> 
+> Overall, the changes looks good to me.
+> I still have a few comments which I'd like to see addressed quickly after this
+> series is merged
+did you say that:
+ you will merge these patches now, then I could send fixes later?
 
-The idea is fine, but I would change two things. First I would
-throw a WARN_ON() around the condition so developers notice
-quicker that something is wrong, and second I would strip off the
-'Fixes' tag because this isn't really fixing anything that we
-need to backport to stable trees. It just converts an oops into a
-warning.
+or I can send another version (v7) to address this..
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> [...]
+> 
+>>
+>> +static struct meson_clk_pll axg_fixed_pll = {
+>> +	.m = {
+>> +		.reg_off = HHI_MPLL_CNTL,
+>> +		.shift   = 0,
+>> +		.width   = 9,
+>> +	},
+>> +	.n = {
+>> +		.reg_off = HHI_MPLL_CNTL,
+>> +		.shift   = 9,
+>> +		.width   = 5,
+>> +	},
+>> +	.od = {
+>> +		.reg_off = HHI_MPLL_CNTL,
+>> +		.shift   = 16,
+>> +		.width   = 2,
+>> +	},
+>> +	.lock = &clk_lock,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fixed_pll",
+>> +		.ops = &meson_clk_pll_ro_ops,
+>> +		.parent_names = (const char *[]){ "xtal" },
+>> +		.num_parents = 1,
+>> +		.flags = CLK_GET_RATE_NOCACHE,
+> 
+> Is the rate of this clock supposed to changed by something else than
+> the CCF after boot ?
+> 
+> If not, you should drop this flag.
+> Same comment goes for axg_sys_pll and axg_gp0_pll
+> 
+we need to keep the CLK_GET_RATE_NOCACHE flag for axg_sys_pll, since the
+BL30 will change it for the frequency change.
+for the other two, we can drop them safely
+
+
+>> +	},
+>> +};
+> 
+> [...]
+> 
+>> +/*
+>> + * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
+>> + * and should be modeled with their respective PLLs via the forthcoming
+>> + * coordinated clock rates feature
+>> + */
+>> +static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+>> +static const char * const clk81_parent_names[] = {
+>> +	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+>> +	"fclk_div3", "fclk_div5"
+>> +};
+>> +
+>> +static struct clk_mux axg_mpeg_clk_sel = {
+>> +	.reg = (void *)HHI_MPEG_CLK_CNTL,
+>> +	.mask = 0x7,
+>> +	.shift = 12,
+>> +	.flags = CLK_MUX_READ_ONLY,
+>> +	.table = mux_table_clk81,
+>> +	.lock = &clk_lock,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "mpeg_clk_sel",
+>> +		.ops = &clk_mux_ro_ops,
+>> +		/*
+>> +		 * bits 14:12 selects from 8 possible parents:
+>> +		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
+>> +		 * fclk_div4, fclk_div3, fclk_div5
+>> +		 */
+> 
+> This comment is not necessary with table above.
+> 
+can drop
+
+>> +		.parent_names = clk81_parent_names,
+>> +		.num_parents = ARRAY_SIZE(clk81_parent_names),
+>> +		.flags = CLK_SET_RATE_NO_REPARENT,
+> 
+> With ro_ops, this flag is not necessary, consider removing it.
+> 
+can drop
+>> +	},
+>> +};
+>> +
+>>
+> 
+> .
+> 
