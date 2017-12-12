@@ -1,109 +1,292 @@
-MIME-Version: 1.0
-In-Reply-To: <fc15474a-9feb-1beb-3362-1e9c99f56a02@ti.com>
-References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
-	<20171207072911.GA4283@codeaurora.org>
-	<fd7ff1b4-00c3-ce6b-9415-85799661bf8e@ti.com>
-	<CAEG3pNAZKVSaU8k6QzPesF9j_ARHGuX7brJ+XzBj=Y7ON+JbYA@mail.gmail.com>
-	<20171211152914.GI24344@atomide.com>
-	<fc15474a-9feb-1beb-3362-1e9c99f56a02@ti.com>
-Date: Mon, 11 Dec 2017 09:19:00 -0800
-Message-ID: <CAEG3pNDDOcdFCqsH3849NeWucoAvKJ0iVQjxf3-E+=Wsb-j1Gg@mail.gmail.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
-From: Michael Turquette <mturquette@baylibre.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58388 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752255AbdLLMcK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:10 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 08/10] clk: qcom: Add ACD path to CPU clock driver for msm8996
+Date: Tue, 12 Dec 2017 14:31:35 +0200
+Message-Id: <1513081897-31612-9-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Dec 11, 2017 at 8:40 AM, Tero Kristo <t-kristo@ti.com> wrote:
-> On 11/12/17 17:29, Tony Lindgren wrote:
->>
->> * Michael Turquette <mturquette@baylibre.com> [171207 18:41]:
->>>
->>> Hi Tero,
->>>
->>> On Thu, Dec 7, 2017 at 12:09 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>>
->>>> On 07/12/17 09:29, Stephen Boyd wrote:
->>>>>
->>>>>
->>>>> On 12/05, Tero Kristo wrote:
->>>>>>
->>>>>>
->>>>>> Hi Stephen, Mike,
->>>>>>
->>>>>> This pull request contains the v2 of the series posted
->>>>>> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
->>>>>> Stephen's acks added to the mentioned patches, and just applied on
->>>>>> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
->>>>>> the rest of the patches also, but couldn't find any comment about
->>>>>> this anywhere.
->>>>>>
->>>>>> -Tero
->>>>>>
->>>>>> ====
->>>>>>
->>>>>> The following changes since commit
->>>>>> 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
->>>>>>
->>>>>>     Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->>>>>>
->>>>>> are available in the git repository at:
->>>>>>
->>>>>>     https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
->>>>>>
->>>>>> for you to fetch changes up to
->>>>>> fe7020e64f042db4b5ca50c358b232e866523447:
->>>>>>
->>>>>>     clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
->>>>>> 15:18:08 +0200)
->>>>>
->>>>>
->>>>>
->>>>> Pulled into clk-next.
->>>>
->>>>
->>>>
->>>> Thanks.
->>>>
->>>>> Did you want to sign a tag instead of
->>>>> sending a plain branch? My ack isn't necessary on anything.
->>>>>
->>>>
->>>> Just a plain branch. Never signed a tag so far, do you have guidelines
->>>> someplace if you prefer this in future?
->>>
->>>
->>> "git tag -s" is all you need to know. It's nice to keep that tag on
->>> your public tree until the next -rc1, but not strictly necessary.
->>>
->>> Ideally PRs should used signed tags, as it lets us verify a trusted tree.
->>
->>
->> Looks like I need to merge in Tero's commit fe7020e64f04 above for the
->> related the dts changes. Can we all consider commit fe7020e64f04
->> immutable?
->
->
-> From my point of view at least, its frozen.
+The PMUX for each duplex allows for selection of ACD clock source.
+The DVM (Dynamic Variation Monitor) will flag an error
+when a voltage droop event is detected. This flagged error
+enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
+The duplex will be provided the divided clock
+until a pre-programmed delay has expired.
 
-+1
+This change configures ACD during the probe and switches
+the PMUXes to the ACD clock source.
 
-Mike
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 122 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 106 insertions(+), 16 deletions(-)
 
->
->
-> -Tero
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
-
-
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 0d41fa9..6f89471 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -17,6 +17,7 @@
+ #include <linux/regmap.h>
+ #include <linux/clk-provider.h>
+ #include "clk-alpha-pll.h"
++#include <soc/qcom/kryo-l2-accessors.h>
+ 
+ #define VCO(a, b, c) { \
+ 	.val = a,\
+@@ -29,6 +30,27 @@
+ #define ACD_INDEX		2
+ #define ALT_INDEX		3
+ #define DIV_2_THRESHOLD		600000000
++#define PWRCL_REG_OFFSET 0x0
++#define PERFCL_REG_OFFSET 0x80000
++#define MUX_OFFSET	0x40
++#define ALT_PLL_OFFSET	0x100
++#define SSSCTL_OFFSET 0x160
++/*
++APCy_QLL_SSSCTL value:
++SACDRCLEN=1
++SSWEN=1
++SSTRTEN=1
++SSTPAPMSWEN=1
++*/
++#define SSSCTL_VAL 0xF
++
++enum {
++	APC_BASE,
++	EFUSE_BASE,
++	NUM_BASES
++};
++
++static void __iomem *vbases[NUM_BASES];
+ 
+ /* PLLs */
+ 
+@@ -43,7 +65,7 @@
+ };
+ 
+ static struct clk_alpha_pll perfcl_pll = {
+-	.offset = 0x80000,
++	.offset = PERFCL_REG_OFFSET,
+ 	.min_rate = 600000000,
+ 	.max_rate = 3000000000,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_16BIT_ALPHA
+@@ -57,7 +79,7 @@
+ };
+ 
+ static struct clk_alpha_pll pwrcl_pll = {
+-	.offset = 0x0,
++	.offset = PWRCL_REG_OFFSET,
+ 	.min_rate = 600000000,
+ 	.max_rate = 3000000000,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_16BIT_ALPHA
+@@ -89,7 +111,7 @@
+ };
+ 
+ static struct clk_alpha_pll perfcl_alt_pll = {
+-	.offset = 0x80100,
++	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+ 	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
+@@ -102,7 +124,7 @@
+ };
+ 
+ static struct clk_alpha_pll pwrcl_alt_pll = {
+-	.offset = 0x100,
++	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+ 	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
+@@ -113,6 +135,7 @@
+ 		.ops = &clk_alpha_pll_hwfsm_ops,
+ 	},
+ };
++static void qcom_cpu_clk_msm8996_acd_init(void);
+ 
+ /* Mux'es */
+ 
+@@ -196,6 +219,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		qcom_cpu_clk_msm8996_acd_init();
+ 		break;
+ 	case POST_RATE_CHANGE:
+ 		if (cnd->new_rate < DIV_2_THRESHOLD)
+@@ -203,7 +227,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 							  DIV_2_INDEX);
+ 		else
+ 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
+-							  PLL_INDEX);
++							  ACD_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -220,7 +244,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_smux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -236,7 +260,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_smux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -252,7 +276,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_pmux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
+@@ -273,7 +297,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_pmux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
+@@ -341,7 +365,17 @@ struct clk_hw_clks {
+ 						   CLK_SET_RATE_PARENT, 1, 2);
+ 	pwrcl_smux.pll = hws->hws[1];
+ 
+-	hws->num = 2;
++	hws->hws[2] = clk_hw_register_fixed_factor(dev, "perfcl_pll_acd",
++						   "perfcl_pll",
++						   CLK_SET_RATE_PARENT, 1, 1);
++	perfcl_pmux.pll = hws->hws[2];
++
++	hws->hws[3] = clk_hw_register_fixed_factor(dev, "pwrcl_pll_acd",
++						   "pwrcl_pll",
++						   CLK_SET_RATE_PARENT, 1, 1);
++	pwrcl_pmux.pll = hws->hws[3];
++
++	hws->num = 4;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(clks); i++) {
+ 		ret = devm_clk_register_regmap(dev, clks[i]);
+@@ -377,10 +411,65 @@ struct clk_hw_clks {
+ 	return ret;
+ }
+ 
++#define CPU_AFINITY_MASK 0xFFF
++#define PWRCL_CPU_REG_MASK 0x3
++#define PERFCL_CPU_REG_MASK 0x103
++
++/* ACD static settings (HMSS HPG 7.2.2) */
++#define L2ACDCR_REG 0x580ULL
++#define L2ACDTD_REG 0x581ULL
++#define L2ACDDVMRC_REG 0x584ULL
++#define L2ACDSSCR_REG 0x589ULL
++#define ACDTD_VAL 0x00006A11
++#define ACDCR_VAL 0x002C5FFD
++#define ACDSSCR_VAL 0x00000601
++#define ACDDVMRC_VAL 0x000E0F0F
++
++static DEFINE_SPINLOCK(acd_lock);
++
++static void qcom_cpu_clk_msm8996_acd_init(void)
++{
++	u64 hwid;
++	unsigned long flags;
++
++	spin_lock_irqsave(&acd_lock, flags);
++
++	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
++
++	/* Program ACD Tunable-Length Delay (TLD) */
++	set_l2_indirect_reg(L2ACDTD_REG, ACDTD_VAL);
++	/* Initial ACD for *this* cluster */
++	set_l2_indirect_reg(L2ACDDVMRC_REG, ACDDVMRC_VAL);
++	/* Program ACD soft start control bits. */
++	set_l2_indirect_reg(L2ACDSSCR_REG, ACDSSCR_VAL);
++
++	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
++		/* Enable Soft Stop/Start */
++		if (vbases[APC_BASE])
++			writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
++					PWRCL_REG_OFFSET + SSSCTL_OFFSET);
++		/* Ensure SSSCTL config goes through before enabling ACD. */
++		mb();
++		/* Program ACD control bits */
++		set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
++	}
++	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) { //else {
++		/* Program ACD control bits */
++		set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
++		/* Enable Soft Stop/Start */
++		if (vbases[APC_BASE])
++			writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
++					PERFCL_REG_OFFSET + SSSCTL_OFFSET);
++		/* Ensure SSSCTL config goes through before enabling ACD. */
++		mb();
++	}
++
++	spin_unlock_irqrestore(&acd_lock, flags);
++}
++
+ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	void __iomem *base;
+ 	struct resource *res;
+ 	struct regmap *regmap_cpu;
+ 	struct clk_hw_clks *hws;
+@@ -393,17 +482,17 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	hws = devm_kzalloc(dev, sizeof(*hws) + 2 * sizeof(struct clk_hw *),
++	hws = devm_kzalloc(dev, sizeof(*hws) + 4 * sizeof(struct clk_hw *),
+ 			   GFP_KERNEL);
+ 	if (!hws)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
++	vbases[APC_BASE] = devm_ioremap_resource(dev, res);
++	if (IS_ERR(vbases[APC_BASE]))
++		return PTR_ERR(vbases[APC_BASE]);
+ 
+-	regmap_cpu = devm_regmap_init_mmio(dev, base,
++	regmap_cpu = devm_regmap_init_mmio(dev, vbases[APC_BASE],
+ 					   &cpu_msm8996_regmap_config);
+ 	if (IS_ERR(regmap_cpu))
+ 		return PTR_ERR(regmap_cpu);
+@@ -411,6 +500,7 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	ret = qcom_cpu_clk_msm8996_register_clks(dev, hws, regmap_cpu);
+ 	if (ret)
+ 		return ret;
++	qcom_cpu_clk_msm8996_acd_init();
+ 
+ 	data->hws[0] = &pwrcl_pmux.clkr.hw;
+ 	data->hws[1] = &perfcl_pmux.clkr.hw;
 -- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+1.9.1
+
