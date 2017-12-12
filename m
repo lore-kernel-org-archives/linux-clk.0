@@ -1,48 +1,282 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 14/15] devicetree/bindings: Add GCW vendor prefix
-Date: Thu, 28 Dec 2017 14:56:33 +0100
-Message-Id: <20171228135634.30000-15-paul@crapouillou.net>
-In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58964 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752291AbdLLMcQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:16 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 09/10] DT: QCOM: Add cpufreq-dt to msm8996
+Date: Tue, 12 Dec 2017 14:31:36 +0200
+Message-Id: <1513081897-31612-10-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Game Consoles Worldwide, mostly known under the acronym GCW, is the
-creator of the GCW Zero open-source video game system.
+Add device tree frequency table for the MSM8996 to be
+used by the upstream cpufreq-dt driver with the clk-cpu-8996
+driver as infrastructure.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi       | 184 ++++++++++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c        |   3 +
+ 3 files changed, 188 insertions(+), 1 deletion(-)
 
- v2: It's 'Game Consoles Worldwide', not 'Games Consoles Worldwide'
- v3: No change
- v4: No change
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 0994bdd82cd3..f40f4da39937 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -123,6 +123,7 @@ focaltech	FocalTech Systems Co.,Ltd
- friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
- fsl	Freescale Semiconductor
- fujitsu	Fujitsu Ltd.
-+gcw Game Consoles Worldwide
- ge	General Electric Company
- geekbuying	GeekBuying
- gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index 230e9c8..da23bda 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -17,5 +17,5 @@
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. DB820c";
+-	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
++	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 4b2afcc..8beea7e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -86,6 +86,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -98,6 +100,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 			next-level-cache = <&L2_0>;
+ 		};
+ 
+@@ -106,6 +110,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -118,6 +124,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -144,6 +152,182 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1552000000 {
++			opp-hz = /bits/ 64 < 1552000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			clock-latency-ns = <200000>;
++		};
++
++	};
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index ecc56e2..0feca0e 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -95,6 +95,9 @@
+ 	{ .compatible = "xlnx,zynq-7000", },
+ 	{ .compatible = "xlnx,zynqmp", },
+ 
++	{ .compatible = "qcom,msm8996", },
++	{ .compatible = "qcom,apq8096", },
++
+ 	{ }
+ };
+ 
 -- 
-2.11.0
+1.9.1
+
