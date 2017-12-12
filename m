@@ -1,161 +1,97 @@
-MIME-Version: 1.0
-In-Reply-To: <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
-	<20170925191749.2oamusbajgs6clcg@sig21.net>
-	<20170925192109.rty2fnm7c4jnj3vx@sig21.net>
-	<34396652.fljU28PShI@aspire.rjw.lan>
-	<a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
-Date: Wed, 13 Dec 2017 07:25:28 -0800
-Message-ID: <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
-From: Michael Turquette <mturquette@baylibre.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Johannes Stezenbach <js@sig21.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	linux-clk <linux-clk@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
-	Carlo Caione <carlo@endlessm.com>, Darren Hart <dvhart@infradead.org>,
-	Enric Balletbo i Serra <enric.balletbo@collabora.com>, Takashi Iwai <tiwai@suse.de>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbdLLMcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:07 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
+Date: Tue, 12 Dec 2017 14:31:34 +0200
+Message-Id: <1513081897-31612-8-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hell Hans, all,
+The PLLs must be prepared enabled during the probe to be
+accessible by the OPPs. Otherwise an OPP may switch
+to non-enabled clock.
 
-On Wed, Dec 13, 2017 at 12:53 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 13-12-17 01:00, Rafael J. Wysocki wrote:
->>
->> On Monday, September 25, 2017 9:21:09 PM CET Johannes Stezenbach wrote:
->>>
->>> SATA controller is enabled on Asus E200HA even though the
->>> machine doesn't use it (it has eMMC storage), however
->>> SATA being on blocks S0ix entry so we need to disable it.
->>>
->>> Signed-off-by: Johannes Stezenbach <js@sig21.net>
->>
->>
->> Mika, Andy, Hans, any comments on this one?
->
->
-> Seems sensible to me, I'm afraid we may need the same quirk on
-> other devices, but I see no way around this.
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-Quirks go directly into the driver? Is there a Device Tree analogue
-for x86 that could help here?
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 79db4e8..0d41fa9 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -15,7 +15,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+-
++#include <linux/clk-provider.h>
+ #include "clk-alpha-pll.h"
+ 
+ #define VCO(a, b, c) { \
+@@ -159,7 +159,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 				    cpuclk->shift);
+ 
+ 	val = index;
+-	val = cpuclk->shift;
++	val <<= cpuclk->shift;
+ 
+ 	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
+ }
+@@ -268,7 +268,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 		},
+ 		.num_parents = 4,
+ 		.ops = &clk_cpu_8996_mux_ops,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -284,12 +284,12 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 		.parent_names = (const char *[]){
+ 			"perfcl_smux",
+ 			"perfcl_pll",
+-			"pwrcl_pll_acd",
++			"perfcl_pll_acd",
+ 			"perfcl_alt_pll",
+ 		},
+ 		.num_parents = 4,
+ 		.ops = &clk_cpu_8996_mux_ops,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -354,6 +354,18 @@ struct clk_hw_clks {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	/* Enable all PLLs and alt PLLs */
++	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
++	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
++	clk_prepare_enable(pwrcl_pll.clkr.hw.clk);
++	clk_prepare_enable(perfcl_pll.clkr.hw.clk);
++
++	/* Set initial boot frequencies for power/perf PLLs */
++	clk_set_rate(pwrcl_alt_pll.clkr.hw.clk, 652800000);
++	clk_set_rate(perfcl_alt_pll.clkr.hw.clk, 652800000);
++	clk_set_rate(pwrcl_pll.clkr.hw.clk, 652800000);
++	clk_set_rate(perfcl_pll.clkr.hw.clk, 652800000);
++
+ 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
+ 	if (ret)
+ 		return ret;
+-- 
+1.9.1
 
->
-> Although, maybe we need to have a specialized (derived)
-> ahci driver for these Atom SoCs and in there if no
-> disk is detected do this through the clock framework?
-
-Yes please. x86 is already modeling some clocks properly through the
-clock framework. During late init we clean up any clocks that were
-enabled out of reset or by the firmware/bootloader but not claimed and
-enabled by any Linux driver. That should ideally disable this
-particular clock for the case when no SATA drive is present, and
-require no quirk logic in the driver.
-
-Regards,
-Mike
-
->
-> That may be better then a long list of quirks.
->
-> Johannes, question how did you test this and figure out
-> which clocks to disable, a quick howto on this, I think
-> a patch adding a little howto / README as say
-> Documentation/power/intel-S0ix-debugging.txt
-> documenting this would be great. I'm certainly interested
-> in trying to reproduce this on some of my own Bay Trail and
-> Cherry Trail devices and add fixes for those if necessary.
->
-> Regards,
->
-> Hans
->
->
->
->
->
->>
->>> ---
->>>   drivers/platform/x86/pmc_atom.c | 33 +++++++++++++++++++++++++++++++++
->>>   1 file changed, 33 insertions(+)
->>>
->>> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
->>> index 8d13c86cc418..b5dd38712268 100644
->>> --- a/drivers/platform/x86/pmc_atom.c
->>> +++ b/drivers/platform/x86/pmc_atom.c
->>> @@ -17,6 +17,7 @@
->>>     #include <linux/debugfs.h>
->>>   #include <linux/device.h>
->>> +#include <linux/dmi.h>
->>>   #include <linux/init.h>
->>>   #include <linux/io.h>
->>>   #include <linux/platform_data/x86/clk-pmc-atom.h>
->>> @@ -57,6 +58,9 @@ struct pmc_dev {
->>>   static struct pmc_dev pmc_device;
->>>   static u32 acpi_base_addr;
->>>   +static u32 quirks;
->>> +#define QUIRK_DISABLE_SATA BIT(0)
->>> +
->>>   static const struct pmc_clk byt_clks[] = {
->>>         {
->>>                 .name = "xtal",
->>> @@ -271,6 +275,15 @@ static void pmc_hw_reg_setup(struct pmc_dev *pmc)
->>>          * - GPIO_SCORE shared IRQ
->>>          */
->>>         pmc_reg_write(pmc, PMC_S0IX_WAKE_EN, (u32)PMC_WAKE_EN_SETTING);
->>> +
->>> +       if (quirks & QUIRK_DISABLE_SATA) {
->>> +               u32 func_dis;
->>> +
->>> +               pr_info("pmc: disable SATA IP\n");
->>> +               func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
->>> +               func_dis |= BIT_SATA;
->>> +               pmc_reg_write(pmc, PMC_FUNC_DIS, func_dis);
->>> +       }
->>>   }
->>>     #ifdef CONFIG_DEBUG_FS
->>> @@ -500,6 +513,24 @@ static struct pmc_notifier_block pmc_freeze_nb = {
->>>   };
->>>   #endif
->>>   +static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
->>> +{
->>> +       pr_info("pmc: Asus E200HA detected\n");
->>> +       quirks |= QUIRK_DISABLE_SATA;
->>> +       return 1;
->>> +}
->>> +
->>> +static const struct dmi_system_id cht_table[] = {
->>> +       {
->>> +               .callback = cht_asus_e200ha_cb,
->>> +               .matches = {
->>> +                       DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
->>> +                       DMI_MATCH(DMI_PRODUCT_NAME, "E200HA"),
->>> +               },
->>> +       },
->>> +       { }
->>> +};
->>> +
->>>   static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
->>>   {
->>>         struct pmc_dev *pmc = &pmc_device;
->>> @@ -526,6 +557,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
->>>         pmc->map = map;
->>>   +     dmi_check_system(cht_table);
->>> +
->>>         /* PMC hardware registers setup */
->>>         pmc_hw_reg_setup(pmc);
->>>
->>
->>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
