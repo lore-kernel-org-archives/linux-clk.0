@@ -1,49 +1,234 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v5 05/15] devicetree: bindings: Document qcom,hfpll
-To: Rob Herring <robh@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, rjw@rjwysocki.net, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
- david.brown@linaro.org, viresh.kumar@linaro.org, andy.gross@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-6-git-send-email-sricharan@codeaurora.org>
- <20171220211147.p555i5eest3ycsbc@rob-hp-laptop>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <dbd699f1-2798-594e-b34f-39510d4e4e60@codeaurora.org>
-Date: Thu, 21 Dec 2017 14:56:49 +0530
-MIME-Version: 1.0
-In-Reply-To: <20171220211147.p555i5eest3ycsbc@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59054 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752291AbdLLMcS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:18 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 10/10] DT: QCOM: Add thermal mitigation to msm8996
+Date: Tue, 12 Dec 2017 14:31:37 +0200
+Message-Id: <1513081897-31612-11-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Add thermal mitigation configuration to msm8996.
+With the cpufreq-dt OPP table the CPU frequency may be
+scaled and therefore throttled by the thermal config.
 
-On 12/21/2017 2:41 AM, Rob Herring wrote:
-> On Tue, Dec 19, 2017 at 09:24:50PM +0530, Sricharan R wrote:
->> From: Stephen Boyd <sboyd@codeaurora.org>
->>
->> Adds bindings document for qcom,hfpll instantiated within
->> the Krait processor subsystem as separate register region.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->> ---
->>  .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-> 
-> "dt-bindings: " is the preferred subject prefix. Otherwise,
-> 
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 98 +++++++++++++++++++++++++++++++----
+ 1 file changed, 87 insertions(+), 11 deletions(-)
 
- ok, will update for the next version.
-
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
- Thanks.
-
-Regards,
- Sricharan
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 8beea7e..6fa061f 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -88,6 +89,10 @@
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -102,6 +107,10 @@
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
+ 
+@@ -112,6 +121,10 @@
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -126,6 +139,10 @@
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -336,18 +353,33 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal1 {
+@@ -357,18 +389,33 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -378,18 +425,32 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -399,18 +460,33 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+ 				cpu_crit3: trip1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
+
