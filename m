@@ -1,158 +1,65 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- David Brown <david.brown@linaro.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- Andy Gross <andy.gross@linaro.org>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
- <20171220032614.GQ19815@vireshk-i7>
- <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
- <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
- <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
- <CAL_JsqJTBgr2ctyRXGyzkRLztoy=qtvEh3AC79RjENBS=6yQRg@mail.gmail.com>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <4fdb2ab5-1dca-c44c-b647-3388a8ecea81@codeaurora.org>
-Date: Wed, 27 Dec 2017 15:50:52 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJTBgr2ctyRXGyzkRLztoy=qtvEh3AC79RjENBS=6yQRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:56890 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbdLLMbm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:31:42 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 00/10] clk: qcom: CPU clock driver for msm8996
+Date: Tue, 12 Dec 2017 14:31:27 +0200
+Message-Id: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+This series adds support for the CPU clocks on msm8996 devices.
+A previous post of RFC can be found here
+https://patchwork.kernel.org/patch/9662917/
 
-On 12/26/2017 11:06 PM, Rob Herring wrote:
-> On Thu, Dec 21, 2017 at 5:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> Hi Rob,
->>
->> On 12/21/2017 2:48 AM, Rob Herring wrote:
->>> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
->>>> Hi Viresh,
->>>>
->>>> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
->>>>> On 19-12-17, 21:25, Sricharan R wrote:
->>>>>> +  cpu@0 {
->>>>>> +          compatible = "qcom,krait";
->>>>>> +          enable-method = "qcom,kpss-acc-v1";
->>>>>> +          device_type = "cpu";
->>>>>> +          reg = <0>;
->>>>>> +          qcom,acc = <&acc0>;
->>>>>> +          qcom,saw = <&saw0>;
->>>>>> +          clocks = <&kraitcc 0>;
->>>>>> +          clock-names = "cpu";
->>>>>> +          cpu-supply = <&smb208_s2a>;
->>>>>> +          operating-points-v2 = <&cpu_opp_table>;
->>>>>> +  };
->>>>>> +
->>>>>> +  qcom,pvs {
->>>>>> +          qcom,pvs-format-a;
->>>>>> +  };
->>>>>
->>>>> Not sure what Rob is going to say on that :)
->>>>>
->>>>
->>>>  Yes. Would be good to know the best way.
->>>
->>> Seems like this should be a property of an efuse node either implied by
->>> the compatible or a separate property. What determines format A vs. B?
->>>
->>
->>  Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
->>  So this property (details like bitfields and register offsets that it represents)
->>  can be put soc specific and nvmem apis can be used to read
->>  the registers. Does something like below look ok ?
->>
->>  qcom,pvs {
->>         compatible = "qcom,pvs-ipq8064";
->>         nvmem-cells = <&pvs_efuse>;
->>  }
-> 
-> Why do you need this node? It doesn't look like it corresponds to a
-> h/w block. It looks like you are just creating it to instantiate a
-> driver.
-> 
->>  qfprom: qfprom@700000 {
->>         compatible      = "qcom,qfprom";
-> 
-> Either this or...
-> 
->>         reg             = <0x00700000 0x1000>;
->>         #address-cells  = <1>;
->>         #size-cells     = <1>;
->>         ranges;
->>         pvs_efuse: pvs {
-> 
-> a compatible here should be specific enough so the OS can know what
-> the bits are.
+Ilia Lin (5):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: qcom: clk-cpu-8996: Prepare PLLs on probe
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  DT: QCOM: Add cpufreq-dt to msm8996
+  DT: QCOM: Add thermal mitigation to msm8996
 
- Infact the above "qcom,pvs" node is required mainly to act as a consumer
- for the nvmem data provider ("qcom,qfprom") (using nvmem-cells = <&pvs_efuse>)
- Then "qfprom" can be made to contain a "format_a" or "format_b" specific cell.
+Rajendra Nayak (4):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: Add CPU clock driver for msm8996
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
 
- So all that is needed is, nvmem-cells = <&pvs_efuse_phandle> needs to be available
- somewhere. The requirement is similar what is now done by "operating-points-v2-ti-cpu"
- and the ti-cpufreq.c. There "operating-points-v2-ti-cpu" node, contains the syscon
- register to read the efuse values. Similarly does defining a new 
- "operating-points-v2-krait-cpu" which would contain the nvmem-cells property look ok ? 
- This would avoid defining a new qcom,pvs node.
- 
-	cpu@0 {
-		compatible = "qcom,krait";
-		enable-method = "qcom,kpss-acc-v1";
-		device_type = "cpu";
-		reg = <0>;
-		qcom,acc = <&acc0>;
-		qcom,saw = <&saw0>;
-		clocks = <&kraitcc 0>;
-		clock-names = "cpu";
-		cpu-supply = <&smb208_s2a>;
-		operating-points-v2 = <&cpu_opp_table>;
-	};
+Taniya Das (1):
+  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
 
-	cpu_opp_table: opp_table {
-		compatible = "operating-points-v2-krait-cpu";
-
-		nvmem-cells = <&pvs_efuse_format_a>;
-		/*
-		 * Missing opp-shared property means CPUs switch DVFS states
-		 * independently.
-		 */
-
-		opp-1400000000 {
-			opp-hz = /bits/ 64 <1400000000>;
-			opp-microvolt-speed0-pvs0-v0 = <1250000>;
-			opp-microvolt-speed0-pvs1-v0 = <1175000>;
-			opp-microvolt-speed0-pvs2-v0 = <1125000>;
-			opp-microvolt-speed0-pvs3-v0 = <1050000>;
-
-		};
-		...
-	}
- 
-	qfprom: qfprom@700000 {
-		compatible      = "qcom,qfprom";
-		reg             = <0x00700000 0x1000>;
-		#address-cells  = <1>;
-		#size-cells     = <1>;
-		ranges;
-		pvs_efuse_format_a: pvs {
-			reg = <0xc0 0x8>;
-		};
-	}
-
-Regards,
- Sricharan
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ arch/arm64/Kconfig.platforms                       |   7 +
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 282 ++++++++++-
+ drivers/clk/qcom/Kconfig                           |   8 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  72 ++-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   5 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 542 +++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/perf/qcom_l2_pmu.c                         |  48 +-
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  64 +++
+ include/soc/qcom/kryo-l2-accessors.h               |  27 +
+ 14 files changed, 1009 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+QUALCOMM ISRAEL, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
+-- 
+1.9.1
+
