@@ -1,56 +1,43 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+ <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
+ <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
+ <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1469d692-077a-93c7-8722-1bf86e53f481@gmail.com>
+Date: Wed, 13 Dec 2017 00:37:28 +0300
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
- <1510234022-29442-4-git-send-email-geert+renesas@glider.be> <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Dec 2017 12:22:17 +0100
-Message-ID: <CAMuHMdU2CUE_68ZoQ5ssKaXYJ0L_P0gSTqVFS1GGa_cY7e-8cA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources
- active during system suspend
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20171212151749.GA29158@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
->> Domain and to be used as a wakeup source, it must be kept active during
->> system suspend.
+On 12.12.2017 18:17, Peter De Schrijver wrote:
+> On Tue, Dec 12, 2017 at 03:08:08PM +0300, Dmitry Osipenko wrote:
+>> On 12.12.2017 13:02, Peter De Schrijver wrote:
+>>> On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
+>>>> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+>>>> clock driver doesn't provide that rate, so the requested clock is rounded
+>>>> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
+>>>>
+>>>
+>>> This seems odd. If there's no table entry, _calc_rate should kick in and
+>>> calculate the parameters for 216MHz. Any idea why this is not happening?
 >>
->> Currently this is handled in device-specific drivers by explicitly
->> increasing the use count of the module clock when the device is
->> configured as a wakeup source.  However, the proper way to prevent the
->> device from being stopped is to inform this requirement to the genpd
->> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+>> Actually, it is happening. Please ignore this patch.
 >>
->> Note that this will only affect devices configured as wakeup sources.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Thank you!
-
-Simon: can you please queue this up for v4.16?
-I have queued the other 2 clock patches in clk-renesas-for-v4.16, and sent
-a PR for it.
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>> If PLL's rate could be calculated, why do we need the predefined tables?
+> 
+> The algorithm to calculate the PLL parameters is rather crude. It will
+> favour undershooting the rate rather than overshooting. This is fine for
+> DVFS usecases when you want to avoid a too high clock rate, but not good
+> for eg display or memory, where as close as match as possible is needed.
+Okay, thank you for the clarification.
