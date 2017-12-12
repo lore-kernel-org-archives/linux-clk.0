@@ -1,110 +1,160 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Fri, 22 Dec 2017 10:51:47 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	s.nawrocki@samsung.com, geert@linux-m68k.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 1/1] clk: bulk: add of_clk_bulk_get()
-Message-ID: <20171222025147.GB24403@b29396-OptiPlex-7040>
-References: <1506415441-4435-1-git-send-email-aisheng.dong@nxp.com>
- <20170929224821.GM457@codeaurora.org>
- <20171220135330.GA30461@b29396-OptiPlex-7040>
- <20171221232032.GD7997@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:45360 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751234AbdLLPFv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Dec 2017 10:05:51 -0500
+Subject: Re: [PATCH 02/10] clk: qcom: Fix .set_rate to handle alpha PLLs w/wo
+ dynamic update
+To: Ilia Lin <ilialin@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, will.deacon@arm.com, tfinkel@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, celster@codeaurora.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+ <1513081897-31612-3-git-send-email-ilialin@codeaurora.org>
+From: Julien Thierry <julien.thierry@arm.com>
+Message-ID: <ee78b47f-4fdb-01eb-ba04-c1172b7b7b00@arm.com>
+Date: Tue, 12 Dec 2017 15:05:45 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171221232032.GD7997@codeaurora.org>
+In-Reply-To: <1513081897-31612-3-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 03:20:32PM -0800, Stephen Boyd wrote:
-> On 12/20, Dong Aisheng wrote:
-> > On Fri, Sep 29, 2017 at 03:48:21PM -0700, Stephen Boyd wrote:
-> > > On 09/26, Dong Aisheng wrote:
-> > > > here to handle this for DT users without 'clock-names' specified.
-> > 
-> > > > +#endif
-> > > >  
-> > > >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-> > > >  {
-> > > > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > > > index 12c96d9..073cb3b 100644
-> > > > --- a/include/linux/clk.h
-> > > > +++ b/include/linux/clk.h
-> > > > @@ -680,10 +680,18 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
-> > > >  }
-> > > >  
-> > > >  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> > > > +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> > > > +				 struct clk_bulk_data *clks);
-> > > >  struct clk *of_clk_get(struct device_node *np, int index);
-> > > >  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-> > > >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
-> > > >  #else
-> > > > +static inline int of_clk_bulk_get(struct device_node *np, int num_clks,
-> > > 
-> > > Do we need __must_check here too?
-> > 
-> > Yes, you're absolutely right.
-> > 
-> > of_clk_bulk_get is special as it returns error, so should add __must_check.
-> > 
-> > > We should do the same for the
-> > > other bulk get APIs. Seems we missed that part last time.
-> > > 
-> > 
-> > Currently for !CONFIG_HAVE_CLK case, all APIs return 0.
-> > !CONFIG_HAVE_CLK
-> > clk_bulk_get		return 0
-> > devm_clk_bulk_get	return 0
-> > clk_bulk_enable		return 0
-> > clk_bulk_prepare	return 0
-> > 
-> > Do you think we still need add __must_check for them?
+Hi,
+
+On 12/12/17 12:31, Ilia Lin wrote:
+> From: Taniya Das <tdas@codeaurora.org>
 > 
-> Yes, we need it even when !CONFIG_HAVE_CLK because it allows us
-> to catch missing checking return values in the non-clk compile
-> configurations too. More test coverage.
+> From: Taniya Das <tdas@codeaurora.org>
 > 
-
-Ok, understand.
-May cook a patch to fix them.
-
-> > 
-> > And for CONFIG_HAVE_CLK case, all __must_check already added.
-> > 
-> > int __must_check clk_bulk_get
-> > int __must_check devm_clk_bulk_get
-> > int __must_check clk_bulk_enable
-> > int __must_check clk_bulk_prepare
-> > 
-> > And no need for void function.
-> > void clk_bulk_put
-> > void clk_bulk_unprepare
-> > void clk_bulk_disable
-> > 
-> > > I'll fix all these things up when applying.
-> > > 
-> > 
-> > I did not see this in latest tree.
-> > Suppose i should resend it with above things fixed, right?
-> > 
+> Alpha PLLs which do not support dynamic update feature
+> need to be explicitly disabled before a rate change.
+> The ones which do support dynamic update do so within a
+> single vco range, so add a min/max freq check for such
+> PLLs so they fall in the vco range.
 > 
-> I dropped it because it seems like maybe we don't need
-> of_clk_bulk_get(), but more like clk_get_all() or something like
-> that to acquire all clks for a device. It seems like it isn't DT
-> specific, and so we should just provide the "all" API instead of
-> some DT specific one that needs to know how many clks to get. I
-> think I sent a similar reply on some other thread and added you
-> to it.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>   drivers/clk/qcom/clk-alpha-pll.c | 71 +++++++++++++++++++++++++++++++++-------
+>   drivers/clk/qcom/clk-alpha-pll.h |  5 +++
+>   2 files changed, 65 insertions(+), 11 deletions(-)
 > 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index 47a1da3..ecb9e7f 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -376,19 +376,46 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+>   	return alpha_pll_calc_rate(prate, l, a);
+>   }
+>   
+> -static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> -				  unsigned long prate)
+> +static int alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long prate,
+> +			      int (*enable)(struct clk_hw *hw),
+> +			      void (*disable)(struct clk_hw *hw))
+>   {
+> +	bool enabled;
 
-I probably missed it before.
-Will check later.
+Some remarks about this.
 
-Thanks for reminder.
+>   	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>   	const struct pll_vco *vco;
+>   	u32 l, off = pll->offset;
+>   	u64 a;
+>   
+>   	rate = alpha_pll_round_rate(rate, prate, &l, &a);
+> -	vco = alpha_pll_find_vco(pll, rate);
+> -	if (!vco) {
+> -		pr_err("alpha pll not in a valid vco range\n");
+> -		return -EINVAL;
+> +	enabled = clk_hw_is_enabled(hw);
 
-Regards
-Dong Aisheng
+This is not needed unless we go through the 'else' branch.
+
+> +
+> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
+> +		/*
+> +		 * PLLs which support dynamic updates support one single
+> +		 * vco range, between min_rate and max_rate supported
+> +		 */
+> +		if (rate < pll->min_rate || rate > pll->max_rate) {
+> +			pr_err("alpha pll rate outside supported min/max range\n");
+> +			return -EINVAL;
+> +		}
+> +	} else {
+> +		/*
+> +		 * All alpha PLLs which do not support dynamic update,
+> +		 * should be disabled before a vco update.
+> +		 */
+> +		if (enabled)
+> +			disable(hw);
+> +
+> +		vco = alpha_pll_find_vco(pll, rate);
+> +		if (!vco) {
+> +			pr_err("alpha pll not in a valid vco range\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
+> +				   PLL_VCO_MASK << PLL_VCO_SHIFT,
+> +				   vco->val << PLL_VCO_SHIFT);
+>   	}
+>   
+>   	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
+> @@ -401,16 +428,29 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>   		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL_U, a >> 32);
+>   	}
+>   
+> -	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
+> -			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+> -			   vco->val << PLL_VCO_SHIFT);
+> -
+>   	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
+>   			   PLL_ALPHA_EN);
+>   
+> +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
+> +		enable(hw);
+> +
+
+This condition is only "did we disable the clock and need to reenable it?".
+
+To make it clearer, I'd suggest renaming 'enabled' to something like 
+'need_reenabling' and the code look like this:
+
+static int alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+			      unsigned long prate,
+			      int (*enable)(struct clk_hw *hw),
+			      void (*disable)(struct clk_hw *hw))
+{
+	bool need_reenabling = false;
+
+	[...]
+
+	if(pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
+		[...]
+	} else {
+		if (clk_hw_is_enabled(hw)) {
+			disable(hw);
+			need_reenabling = true;
+		}
+		[...]
+	}
+
+	[...]
+
+	if (need_reenabling)
+		enable(hw);
+
+}
+
+
+Cheers,
+
+-- 
+Julien Thierry
