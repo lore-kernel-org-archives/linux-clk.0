@@ -1,128 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 0/6] add clk controller driver for Meson-AXG SoC
-Date: Mon, 11 Dec 2017 22:13:42 +0800
-Message-ID: <20171211141348.22048-1-yixun.lan@amlogic.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 12 Dec 2017 12:02:00 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Thierry
+ Reding" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
+Message-ID: <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
+References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add driver for the clk controller which found in Meson AXG SoC
+On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
+> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
+> clock driver doesn't provide that rate, so the requested clock is rounded
+> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
+> 
 
-  Note, we deliberately create a seperate source file for the Meson AXG
-series, instead of sharing code with previous GXBB/GXL - the file axg.c
-It would help us maintaining the code more easily.
+This seems odd. If there's no table entry, _calc_rate should kick in and
+calculate the parameters for 216MHz. Any idea why this is not happening?
 
-Changes since v6 [6]:
- - move the spinlock' change patch as first as the dependency
- - drop unnecessary flag CLK_GET_RATE_NOCACHE, CLK_SET_RATE_NO_REPARENT
- - drop useless comments
- - fix checkpatch issue, over 80 characters 
+Peter.
 
-Changes since v5 [5]:
- - add Rob's Ack for patch 2, add Neil's Ack for patch 3
- - include spinlock' name change patch, patch 4
- - include uart_ao clock DTS patch
-
-Changes since v4 [4]:
- - use devm_ioremap instead of devm_ioremap_resource
- - rename DT node using generic name 'bus'
-
-Changes since v3 [3]:
- - separate dt-bindings header file
- - adjust license note as standard way
- - replace of_iomap with platform/devm API
- - add Rob's Ack to Patch 1,4
-
-Changes since v2 [2]:
- - drop register offset calculation
- - update dt-bindings for new compatible variant
-
-Changes since v1 [1]:
- - rework register definion, use '(offset << 2)' to better match
-   the description from data sheet
- - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
- - rebase code to v4.15-rc1
-
-[6]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005721.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005722.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005723.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005724.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005725.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005726.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005727.html
- 
-[5]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005655.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005656.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005657.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005658.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005659.html
-
-[4]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005522.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005525.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005526.html
-
-[3]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005487.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005488.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005489.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005490.html
-
-[2]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
-
-[1] 
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
-
-Qiufang Dai (3):
-  clk: meson-axg: add clocks dt-bindings required header
-  clk: meson-axg: add clock controller drivers
-  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-
-Yixun Lan (3):
-  clk: meson: make the spinlock naming more specific
-  dt-bindings: clock: add compatible variant for the Meson-AXG
-  arm64: dts: meson-axg: switch uart_ao clock to CLK81
-
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |   2 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +-
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/axg.c                            | 936 +++++++++++++++++++++
- drivers/clk/meson/axg.h                            | 126 +++
- drivers/clk/meson/clkc.h                           |   2 +-
- drivers/clk/meson/gxbb.c                           | 112 +--
- drivers/clk/meson/meson8b.c                        |  24 +-
- include/dt-bindings/clock/axg-clkc.h               |  71 ++
- 12 files changed, 1234 insertions(+), 75 deletions(-)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
-
--- 
-2.15.1
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index cbd5a2e5c569..e33d7548a4e9 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -269,6 +269,11 @@ static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
+>  	{ 13000000,  312000000,  312, 13, 1, 12 },
+>  	{ 19200000,  312000000,  260, 16, 1,  8 },
+>  	{ 26000000,  312000000,  312, 26, 1, 12 },
+> +	/* 216 MHz */
+> +	{ 12000000, 216000000,  216,  12, 1, 12 },
+> +	{ 13000000, 216000000,  216,  13, 1, 12 },
+> +	{ 19200000, 216000000,  180,  16, 1,  8 },
+> +	{ 26000000, 216000000,  216,  26, 1, 12 },
+>  	{        0,          0,    0,  0, 0,  0 },
+>  };
+>  
+> -- 
+> 2.15.1
+> 
