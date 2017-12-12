@@ -1,90 +1,64 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Fri, 1 Dec 2017 10:48:18 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Dmitry Osipenko <digetx@gmail.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Mark APB clock as critical
-Message-ID: <20171201084818.GI32106@tbergstrom-lnx.Nvidia.com>
-References: <1508757172-13030-1-git-send-email-jonathanh@nvidia.com>
- <18f57c1f-add0-908a-6a26-7cc81f29d7d9@gmail.com>
- <f940d9f1-aaec-cf25-24d2-956df63bbbd1@gmail.com>
- <e0fa0df8-aaec-04fe-72b6-21ee1b3c9acb@nvidia.com>
- <95c14859-a2c7-1c61-adba-bd6c16155c01@gmail.com>
- <9d479a38-f40b-0e58-09c3-d06e9ee32a25@nvidia.com>
- <a96d03da-c2a3-1e44-f227-02577f972df6@gmail.com>
- <e69dc6c8-cbca-0498-c9d8-23e9a7ac1ad6@nvidia.com>
- <6264cf17-0850-37dd-ca92-9362521d2db6@gmail.com>
- <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:32844 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbdLLVYy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 16:24:54 -0500
+Received: by mail-lf0-f66.google.com with SMTP id 74so322613lfs.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2017 13:24:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <236aa250-3b9b-94de-0978-0fb8546d504d@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <20171212172635.2utwz3koyo5iwglt@plaes.org>
+References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
+ <4357a69da97f46a324eec4c766f4bc9d9e7733ff.1490545262.git-series.plaes@plaes.org>
+ <CAOi56cUjqjcZRz6VSwUWcrW=4RQyqyZHtm1vuM3HT2ypdPJ78g@mail.gmail.com> <20171212172635.2utwz3koyo5iwglt@plaes.org>
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Tue, 12 Dec 2017 13:24:52 -0800
+Message-ID: <CAOi56cUeRrKQnJ-akJPB160-60aBzy64bDgFeoqMpHRJSCnDeQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 3/6] ARM: sun4i: Convert to CCU
+To: Priit Laes <plaes@plaes.org>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 04:39:22PM +0000, Jon Hunter wrote:
-> 
-> On 30/11/17 13:24, Dmitry Osipenko wrote:
-> > On 30.11.2017 14:31, Jon Hunter wrote:
-> >>
-> >> On 29/11/17 23:13, Dmitry Osipenko wrote:
-> >>> On 30.11.2017 01:55, Jon Hunter wrote:
-> >>
-> >> ...
-> >>
-> >>> I've asked you to re-test Tegra114/124 or whatever was failing for you with the
-> >>> PLL_M being marked as critical instead of PCLK. Maybe it was PLL_M that actually
-> >>> caused trouble on Tegra114/124.
-> >>
-> >> Please share the exact change you would like me to test and I will.
-> > 
-> > Please try this:
-> 
-> I tried the patch, but this does not work for Tegra124 it still hangs.
-> Tracing the clk calls the last thing I see is ...
-> 
-> [    2.687846] tegra124-dfll 70110000.clock: couldn't get vdd_cpu regulator
-> [    2.694403] clk_prepare: hclk_div
-> [    2.695929] clk_prepare_complete: hclk_div
-> [    2.700027] clk_prepare: hclk
-> [    2.702947] clk_prepare_complete: hclk
-> [    2.706673] clk_prepare: pclk_div
-> [    2.709986] clk_prepare_complete: pclk_div
-> [    2.714039] clk_prepare: pclk
-> [    2.716985] clk_prepare_complete: pclk
-> [    2.720739] clk_prepare: apbdma
-> [    2.723833] clk_prepare_complete: apbdma
-> [    2.727736] clk_enable: hclk_div
-> [    2.730940] clk_enable_complete: hclk_div
-> [    2.734926] clk_enable: hclk
-> [    2.737788] clk_enable_complete: hclk
-> [    2.741426] clk_enable: pclk_div
-> [    2.744633] clk_enable_complete: pclk_div
-> [    2.748619] clk_enable: pclk
-> [    2.751481] clk_enable_complete: pclk
-> [    2.755120] clk_enable: apbdma
-> [    2.758153] clk_enable_complete: apbdma
-> [    2.762390] clk_disable: apbdma
-> [    2.765088] clk_disable_complete: apbdma
-> [    2.768986] clk
-> 
-> So I believe this change is correct and that Peter's analysis on IRC
-> seems correct, that this change has exposed another issue with the clock
-> driver.
-> 
-> Peter, can you summarise which other clocks should be made critical?
+On Tue, Dec 12, 2017 at 9:26 AM, Priit Laes <plaes@plaes.org> wrote:
+> On Mon, Dec 11, 2017 at 02:22:30PM -0800, Kevin Hilman wrote:
+>> On Sun, Mar 26, 2017 at 10:20 AM, Priit Laes <plaes@plaes.org> wrote:
+>> > Convert sun4i-a10.dtsi to new CCU driver.
+>> >
+>> > Signed-off-by: Priit Laes <plaes@plaes.org>
+>>
+>> I finally got around to bisecting a mainline boot failure on
+>> sun4i-a10-cubieboard that's been happening for quite a while.  Based
+>> on on kernelci.org, it showed up sometime during the v4.15 merge
+>> window[1].  It bisected down to this commit (in mainline as commit
+>> 41193869f2bdb585ce09bfdd16d9482aadd560ad).
+>>
+>> When it fails, there is no output on the serial console, so I don't
+>> know exactly how it's failing, just that it no longer boots.
+>
+> We tried out latest 4.15 with various compilers and it works:
+> - gcc version 7.1.1 20170622 (Red Hat Cross 7.1.1-3) (GCC) - A10 Gemei G9 tablet
+> - gcc 7.2.0-debian - A10 Cubieboard
 
-The following clocks should be critical:
+And you can reproduce the bug with gcc5 or gcc6?
 
-pclk
-hclk
-sclk
-emc
-mc
-pll_p
+Very strange that a DT only patch would cause a gcc related regression
+and if it does, it should be investigated.  I don't think requiring
+gcc7 is an appropriate solution.
 
-I think that's it.
+@Chen-Yu, @Maxime: are you guys OK with requiring gcc7 for working
+upstream boot for A10?
 
-Peter.
+Kevin
