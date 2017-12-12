@@ -1,239 +1,51 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<matthias.bgg@gmail.com>
-CC: <jdelvare@suse.de>, <jamesjj.liao@mediatek.com>, <weiyi.lu@mediatek.com>,
-	<arnd@arndb.de>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Wang
-	<sean.wang@mediatek.com>
-Subject: [PATCH 1/2] clk: mediatek: group drivers under indpendent menu
-Date: Wed, 20 Dec 2017 14:42:58 +0800
-Message-ID: <971cc0e25dcf32e19bdc93a2bb0dec4cbda2fce7.1513741266.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 12 Dec 2017 12:15:36 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Thierry
+ Reding" <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] clk: tegra20: Correct PLL_C_OUT1 setup
+Message-ID: <20171212101536.GY32106@tbergstrom-lnx.Nvidia.com>
+References: <09480d74d240d8e77b3989cfe85e6e624eaee866.1513018140.git.digetx@gmail.com>
+ <4c15ac578fd847bc4047384ae2f8cadd6b9e9fe4.1513018140.git.digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <4c15ac578fd847bc4047384ae2f8cadd6b9e9fe4.1513018140.git.digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Mon, Dec 11, 2017 at 09:50:12PM +0300, Dmitry Osipenko wrote:
+> PLL_C_OUT_1 can't produce 216 MHz defined in the init_table. Let's
+> set it to 240 MHz and explicitly specify HCLK rate for consistency.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Getting much MediaTek clock driver have been added to CCF, so it's
-better adding the cleanup for grouping drivers under the independent
-menu to simplify configuration selection. In addition, really trivial
-fixups for typos are added in the same patch.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/Kconfig | 96 +++++++++++++++++++++++---------------------
- 1 file changed, 50 insertions(+), 46 deletions(-)
-
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 59dc0aa..7338f81 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -1,136 +1,139 @@
- #
--# MediaTek SoC drivers
-+# MediaTek Clock Drivers
- #
-+menu "Clock driver for MediaTek SoC"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+
- config COMMON_CLK_MEDIATEK
- 	bool
- 	---help---
--	  Mediatek SoCs' clock support.
-+	  MediaTek SoCs' clock support.
- 
- config COMMON_CLK_MT2701
--	bool "Clock driver for Mediatek MT2701"
-+	bool "Clock driver for MediaTek MT2701"
- 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM
- 	---help---
--	  This driver supports Mediatek MT2701 basic clocks.
-+	  This driver supports MediaTek MT2701 basic clocks.
- 
- config COMMON_CLK_MT2701_MMSYS
--	bool "Clock driver for Mediatek MT2701 mmsys"
-+	bool "Clock driver for MediaTek MT2701 mmsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 mmsys clocks.
-+	  This driver supports MediaTek MT2701 mmsys clocks.
- 
- config COMMON_CLK_MT2701_IMGSYS
--	bool "Clock driver for Mediatek MT2701 imgsys"
-+	bool "Clock driver for MediaTek MT2701 imgsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 imgsys clocks.
-+	  This driver supports MediaTek MT2701 imgsys clocks.
- 
- config COMMON_CLK_MT2701_VDECSYS
--	bool "Clock driver for Mediatek MT2701 vdecsys"
-+	bool "Clock driver for MediaTek MT2701 vdecsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 vdecsys clocks.
-+	  This driver supports MediaTek MT2701 vdecsys clocks.
- 
- config COMMON_CLK_MT2701_HIFSYS
--	bool "Clock driver for Mediatek MT2701 hifsys"
-+	bool "Clock driver for MediaTek MT2701 hifsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 hifsys clocks.
-+	  This driver supports MediaTek MT2701 hifsys clocks.
- 
- config COMMON_CLK_MT2701_ETHSYS
--	bool "Clock driver for Mediatek MT2701 ethsys"
-+	bool "Clock driver for MediaTek MT2701 ethsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 ethsys clocks.
-+	  This driver supports MediaTek MT2701 ethsys clocks.
- 
- config COMMON_CLK_MT2701_BDPSYS
--	bool "Clock driver for Mediatek MT2701 bdpsys"
-+	bool "Clock driver for MediaTek MT2701 bdpsys"
- 	depends on COMMON_CLK_MT2701
- 	---help---
--	  This driver supports Mediatek MT2701 bdpsys clocks.
-+	  This driver supports MediaTek MT2701 bdpsys clocks.
- 
- config COMMON_CLK_MT2712
--	bool "Clock driver for Mediatek MT2712"
-+	bool "Clock driver for MediaTek MT2712"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM64
- 	---help---
--	  This driver supports Mediatek MT2712 basic clocks.
-+	  This driver supports MediaTek MT2712 basic clocks.
- 
- config COMMON_CLK_MT2712_BDPSYS
--	bool "Clock driver for Mediatek MT2712 bdpsys"
-+	bool "Clock driver for MediaTek MT2712 bdpsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 bdpsys clocks.
-+	  This driver supports MediaTek MT2712 bdpsys clocks.
- 
- config COMMON_CLK_MT2712_IMGSYS
--	bool "Clock driver for Mediatek MT2712 imgsys"
-+	bool "Clock driver for MediaTek MT2712 imgsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 imgsys clocks.
-+	  This driver supports MediaTek MT2712 imgsys clocks.
- 
- config COMMON_CLK_MT2712_JPGDECSYS
--	bool "Clock driver for Mediatek MT2712 jpgdecsys"
-+	bool "Clock driver for MediaTek MT2712 jpgdecsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 jpgdecsys clocks.
-+	  This driver supports MediaTek MT2712 jpgdecsys clocks.
- 
- config COMMON_CLK_MT2712_MFGCFG
--	bool "Clock driver for Mediatek MT2712 mfgcfg"
-+	bool "Clock driver for MediaTek MT2712 mfgcfg"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 mfgcfg clocks.
-+	  This driver supports MediaTek MT2712 mfgcfg clocks.
- 
- config COMMON_CLK_MT2712_MMSYS
--	bool "Clock driver for Mediatek MT2712 mmsys"
-+	bool "Clock driver for MediaTek MT2712 mmsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 mmsys clocks.
-+	  This driver supports MediaTek MT2712 mmsys clocks.
- 
- config COMMON_CLK_MT2712_VDECSYS
--	bool "Clock driver for Mediatek MT2712 vdecsys"
-+	bool "Clock driver for MediaTek MT2712 vdecsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 vdecsys clocks.
-+	  This driver supports MediaTek MT2712 vdecsys clocks.
- 
- config COMMON_CLK_MT2712_VENCSYS
--	bool "Clock driver for Mediatek MT2712 vencsys"
-+	bool "Clock driver for MediaTek MT2712 vencsys"
- 	depends on COMMON_CLK_MT2712
- 	---help---
--	  This driver supports Mediatek MT2712 vencsys clocks.
-+	  This driver supports MediaTek MT2712 vencsys clocks.
- 
- config COMMON_CLK_MT6797
--       bool "Clock driver for Mediatek MT6797"
-+       bool "Clock driver for MediaTek MT6797"
-        depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-        select COMMON_CLK_MEDIATEK
-        default ARCH_MEDIATEK && ARM64
-        ---help---
--         This driver supports Mediatek MT6797 basic clocks.
-+         This driver supports MediaTek MT6797 basic clocks.
- 
- config COMMON_CLK_MT6797_MMSYS
--       bool "Clock driver for Mediatek MT6797 mmsys"
-+       bool "Clock driver for MediaTek MT6797 mmsys"
-        depends on COMMON_CLK_MT6797
-        ---help---
--         This driver supports Mediatek MT6797 mmsys clocks.
-+         This driver supports MediaTek MT6797 mmsys clocks.
- 
- config COMMON_CLK_MT6797_IMGSYS
--       bool "Clock driver for Mediatek MT6797 imgsys"
-+       bool "Clock driver for MediaTek MT6797 imgsys"
-        depends on COMMON_CLK_MT6797
-        ---help---
--         This driver supports Mediatek MT6797 imgsys clocks.
-+         This driver supports MediaTek MT6797 imgsys clocks.
- 
- config COMMON_CLK_MT6797_VDECSYS
--       bool "Clock driver for Mediatek MT6797 vdecsys"
-+       bool "Clock driver for MediaTek MT6797 vdecsys"
-        depends on COMMON_CLK_MT6797
-        ---help---
--         This driver supports Mediatek MT6797 vdecsys clocks.
-+         This driver supports MediaTek MT6797 vdecsys clocks.
- 
- config COMMON_CLK_MT6797_VENCSYS
--       bool "Clock driver for Mediatek MT6797 vencsys"
-+       bool "Clock driver for MediaTek MT6797 vencsys"
-        depends on COMMON_CLK_MT6797
-        ---help---
--         This driver supports Mediatek MT6797 vencsys clocks.
-+         This driver supports MediaTek MT6797 vencsys clocks.
- 
- config COMMON_CLK_MT7622
- 	bool "Clock driver for MediaTek MT7622"
-@@ -163,17 +166,18 @@ config COMMON_CLK_MT7622_AUDSYS
- 	  to audio consumers such as I2S and TDM.
- 
- config COMMON_CLK_MT8135
--	bool "Clock driver for Mediatek MT8135"
-+	bool "Clock driver for MediaTek MT8135"
- 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM
- 	---help---
--	  This driver supports Mediatek MT8135 clocks.
-+	  This driver supports MediaTek MT8135 clocks.
- 
- config COMMON_CLK_MT8173
--	bool "Clock driver for Mediatek MT8173"
-+	bool "Clock driver for MediaTek MT8173"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
- 	---help---
--	  This driver supports Mediatek MT8173 clocks.
-+	  This driver supports MediaTek MT8173 clocks.
-+endmenu
--- 
-2.7.4
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index 32763dfbfaba..c39e7e2446d8 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -1026,9 +1026,9 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>  	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
+>  	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
+>  	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
+> -	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
+> -	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
+> -	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> +	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
+> +	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 240000000, 0 },
+> +	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
+>  	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
+>  	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
+>  	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
+> -- 
+> 2.15.1
+> 
