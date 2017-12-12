@@ -1,88 +1,113 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v7 0/5] clk: Add Aspeed clock driver
-Date: Fri, 22 Dec 2017 13:15:17 +1030
-Message-Id: <20171222024522.10362-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57752 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbdLLMcE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:04 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH 06/10] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Tue, 12 Dec 2017 14:31:33 +0200
+Message-Id: <1513081897-31612-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
-Aspeed.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Clk maintainers, this patch set requires this signed tag to be merged first:
+The CPU clock controllers primary PLL operates on a single VCO range,
+between 600Mhz and 3Ghz. However the CPUs do support OPPs with
+frequencies between 300Mhz and 600Mhz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git tags/aspeed-4.16-clk-binding
+So for frequencies above 600Mhz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300Mhz and 600Mhz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
 
-It contains a single commit on top of 4.15-rc1 that will also be merged
-via the ARM SoC tree. It has been reviewed by Arnd and Rob.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-This is v7. See patches for detailed changelogs.
-
-v7: Address reivew from Stephen and device tree changes
-v6: Added reviewed-bys 
-v5: Address review from Andrew
-v4: Address review from Andrew and Stephen. 
-v3: Address review from Andrew and has seen more testing on hardware
-v2: split the driver out into a series of patches to make them easier to
-review.
-
-All of the important clocks are supported, with most non-essential ones
-also implemented where information is available. I am working with
-Aspeed to clear up some of the missing information, including the
-missing parent-sibling relationships.
-
-We need to know the rate of the apb clock in order to correctly program
-the clocksource driver, so the apb and it's parents are created in the
-CLK_OF_DECLARE_DRIVER callback.
-
-The rest of the clocks are created at normal driver probe time. I
-followed the Gemini driver's lead with using the regmap where I could,
-but also having a pointer to the base address for use with the common
-clock callbacks.
-
-The driver borrows from the clk_gate common clock infrastructure, but modifies
-it in order to support the clock gate and reset pair that most of the clocks
-have. This pair must be reset-ungated-released, with appropriate delays,
-according to the datasheet.
-
-The first patch introduces the core clock registration parts, and describes
-the clocks. The second creates the core clocks, giving the system enough to
-boot (but without uart). Next come the non-core clocks, and finally the reset
-controller that is used for the few cocks that don't have a gate to go with their
-reset pair.
-
-Please review!
-
-Cheers,
-
-Joel
-
-
-Joel Stanley (5):
-  clk: Add clock driver for ASPEED BMC SoCs
-  clk: aspeed: Register core clocks
-  clk: aspeed: Add platform driver and register PLLs
-  clk: aspeed: Register gated clocks
-  clk: aspeed: Add reset controller
-
- drivers/clk/Kconfig      |  12 +
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-aspeed.c | 658 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 671 insertions(+)
- create mode 100644 drivers/clk/clk-aspeed.c
-
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 9bb25be..79db4e8 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -28,6 +28,7 @@
+ #define PLL_INDEX		1
+ #define ACD_INDEX		2
+ #define ALT_INDEX		3
++#define DIV_2_THRESHOLD		600000000
+ 
+ /* PLLs */
+ 
+@@ -121,6 +122,7 @@ struct clk_cpu_8996_mux {
+ 	u32	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -171,6 +173,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (!cpuclk->pll)
+ 		return -EINVAL;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
++
++		parent = cpuclk->pll_div_2;
++	}
++
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
+ 
+@@ -182,13 +191,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
+ 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -241,6 +256,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -261,6 +277,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
 -- 
-2.15.1
+1.9.1
+
