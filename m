@@ -1,66 +1,85 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 08/11] drm/sun4i: Add support for A83T second DE2 mixer
-Date: Sat, 30 Dec 2017 22:02:00 +0100
-Message-Id: <20171230210203.24115-9-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 11/11] clk: qcom: ipq8074: add misc resets for PCIE and NSS
+Date: Wed, 13 Dec 2017 19:55:42 +0530
+Message-Id: <1513175142-3702-12-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-It supports 1 VI and 1 UI plane and HW scaling on both planes.
+PCIE and NSS has MISC reset register in which single register has
+multiple reset bit. The patch adds these resets with its
+corresponding reset bits.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/qcom/gcc-ipq8074.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 2cbb2de6d39c..9b0256d31a61 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -485,6 +485,13 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
- 	.vi_num		= 1,
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 3aad6bc..0462f4a 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4653,6 +4653,48 @@ enum {
+ 	[GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x78000, 0 },
+ 	[GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x79000, 0 },
+ 	[GCC_SMMU_CATS_BCR] = { 0x7c000, 0 },
++	[GCC_UBI0_AXI_ARES] = { 0x68010, 0 },
++	[GCC_UBI0_AHB_ARES] = { 0x68010, 1 },
++	[GCC_UBI0_NC_AXI_ARES] = { 0x68010, 2 },
++	[GCC_UBI0_DBG_ARES] = { 0x68010, 3 },
++	[GCC_UBI0_CORE_CLAMP_ENABLE] = { 0x68010, 4 },
++	[GCC_UBI0_CLKRST_CLAMP_ENABLE] = { 0x68010, 5 },
++	[GCC_UBI1_AXI_ARES] = { 0x68010, 8 },
++	[GCC_UBI1_AHB_ARES] = { 0x68010, 9 },
++	[GCC_UBI1_NC_AXI_ARES] = { 0x68010, 10 },
++	[GCC_UBI1_DBG_ARES] = { 0x68010, 11 },
++	[GCC_UBI1_CORE_CLAMP_ENABLE] = { 0x68010, 12 },
++	[GCC_UBI1_CLKRST_CLAMP_ENABLE] = { 0x68010, 13 },
++	[GCC_NSS_CFG_ARES] = { 0x68010, 16 },
++	[GCC_NSS_IMEM_ARES] = { 0x68010, 17 },
++	[GCC_NSS_NOC_ARES] = { 0x68010, 18 },
++	[GCC_NSS_CRYPTO_ARES] = { 0x68010, 19 },
++	[GCC_NSS_CSR_ARES] = { 0x68010, 20 },
++	[GCC_NSS_CE_APB_ARES] = { 0x68010, 21 },
++	[GCC_NSS_CE_AXI_ARES] = { 0x68010, 22 },
++	[GCC_NSSNOC_CE_APB_ARES] = { 0x68010, 23 },
++	[GCC_NSSNOC_CE_AXI_ARES] = { 0x68010, 24 },
++	[GCC_NSSNOC_UBI0_AHB_ARES] = { 0x68010, 25 },
++	[GCC_NSSNOC_UBI1_AHB_ARES] = { 0x68010, 26 },
++	[GCC_NSSNOC_SNOC_ARES] = { 0x68010, 27 },
++	[GCC_NSSNOC_CRYPTO_ARES] = { 0x68010, 28 },
++	[GCC_NSSNOC_ATB_ARES] = { 0x68010, 29 },
++	[GCC_NSSNOC_QOSGEN_REF_ARES] = { 0x68010, 30 },
++	[GCC_NSSNOC_TIMEOUT_REF_ARES] = { 0x68010, 31 },
++	[GCC_PCIE0_PIPE_ARES] = { 0x75040, 0 },
++	[GCC_PCIE0_SLEEP_ARES] = { 0x75040, 1 },
++	[GCC_PCIE0_CORE_STICKY_ARES] = { 0x75040, 2 },
++	[GCC_PCIE0_AXI_MASTER_ARES] = { 0x75040, 3 },
++	[GCC_PCIE0_AXI_SLAVE_ARES] = { 0x75040, 4 },
++	[GCC_PCIE0_AHB_ARES] = { 0x75040, 5 },
++	[GCC_PCIE0_AXI_MASTER_STICKY_ARES] = { 0x75040, 6 },
++	[GCC_PCIE1_PIPE_ARES] = { 0x76040, 0 },
++	[GCC_PCIE1_SLEEP_ARES] = { 0x76040, 1 },
++	[GCC_PCIE1_CORE_STICKY_ARES] = { 0x76040, 2 },
++	[GCC_PCIE1_AXI_MASTER_ARES] = { 0x76040, 3 },
++	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
++	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
++	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
  };
  
-+static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -498,6 +505,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
- 		.data = &sun8i_a83t_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
-+		.data = &sun8i_a83t_mixer1_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
+ static const struct of_device_id gcc_ipq8074_match_table[] = {
 -- 
-2.15.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
