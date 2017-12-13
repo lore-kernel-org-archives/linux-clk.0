@@ -1,31 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 6 Dec 2017 22:34:29 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: srinivas.kandagatla@linaro.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: msm8916: add 12.288 MHz support to codec
- dig clk
-Message-ID: <20171207063426.GN4283@codeaurora.org>
-References: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
- <20171206121139.18936-3-srinivas.kandagatla@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.sig21.net ([80.244.240.74]:47051 "EHLO mail.sig21.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752274AbdLMLXA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Dec 2017 06:23:00 -0500
+Date: Wed, 13 Dec 2017 12:22:45 +0100
+From: Johannes Stezenbach <js@sig21.net>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] clk: x86: Disable unused clocks to fix S0ix
+Message-ID: <20171213112245.GB20260@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <1555462.9U3gvkyXAX@aspire.rjw.lan>
+ <20170925192352.ihzakshd7yofowdd@sig21.net>
+ <7178688.oS2VOf73im@aspire.rjw.lan>
+ <fb202f9b-1fa2-4b9c-de75-4431a6273d12@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171206121139.18936-3-srinivas.kandagatla@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <fb202f9b-1fa2-4b9c-de75-4431a6273d12@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/06, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Wed, Dec 13, 2017 at 09:56:45AM +0100, Hans de Goede wrote:
+> On 13-12-17 01:01, Rafael J. Wysocki wrote:
+> > On Monday, September 25, 2017 9:23:52 PM CET Johannes Stezenbach wrote:
+> > > d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
+> > > exposed an issue on Asus E200HA where BIOS enables unused
+> > > Atom PMC clocks which prevent the system from entering S0ix.
+> > > Add a quirk to disable these clocks on E200HA.
+> > > 
+> > > Signed-off-by: Johannes Stezenbach <js@sig21.net>
+> > 
+> > Mika, Andy, Hans, any comments here?
 > 
-> This patch adds 12.288 MHz suport to codec digital clk, this clock.
-> Some external PA requires a 12.288 MHz to work.
+> This seems like it is papering over an issue in the
+> d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
+> patch to me. That patch seems like a somewhat hackish fix to
+> me, it would be better to figure out which device needs the clock
+> in question and fix the device's driver...
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+> And or maybe have a mask of clocks for which to do this check
+> and not do it for all clocks at least? That way we can maybe
+> fix both Johannes and Carlo's issue in one go without needing
+> device specific quirks ?
+> 
+> Carlo, do you remember which clock you needed this for ?
+> 
+> Johannes, same question for you, which clock is being kept
+> alive because of this ?
 
-Applied to clk-next
+IIRC all of these platform clocks need to be disabled for S0ix,
+but d31fd43c0f9a keeps them all enabled (if BIOS had enabled them),
+and only the one claimed by the audio codec driver
+is disabled by it before trying to enter S0ix.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yes, my vote would be to revert d31fd43c0f9a and fix the issue
+properly, but my patch was the result of previous discussion.
+Since it's BIOS' fault to have these clocks enabled I think
+a platform quirk isn't too bad.
+
+
+Thanks,
+Johannes
