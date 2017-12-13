@@ -1,74 +1,43 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
 To: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 07/10] clk: cosmetic changes to clk_summary debugfs entry
-Date: Fri,  1 Dec 2017 22:51:57 +0100
-Message-Id: <20171201215200.23523-8-jbrunet@baylibre.com>
-In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 03/11] clk: qcom: ipq8074: fix missing GPLL0 divider width
+Date: Wed, 13 Dec 2017 19:55:34 +0530
+Message-Id: <1513175142-3702-4-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_summary debugfs entry was already well over the traditional 80
-characters per line limit but it grew even larger with the addition of
-clock protection.
+GPLL0 uses 4 bits post divider which should be specified
+in clock driver structure.
 
-   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase
-----------------------------------------------------------------------------------------------------
- wifi32k                                  1            1            0       32768          0 0
- vcpu                                     0            0            0  2016000000          0 0
- xtal                                     5            5            0    24000000          0 0
-
-This patch reduce the width a bit:
-                                 enable  prepare  protect
-   clock                          count    count    count        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- wifi32k                              1        1        0       32768          0 0
- vcpu                                 0        0        0  2016000000          0 0
- xtal                                 5        5        0    24000000          0 0
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/clk.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-ipq8074.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f69a2176cde1..f6fe5e5595ca 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2241,7 +2241,7 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	if (!c)
- 		return;
- 
--	seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
-+	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
-@@ -2268,8 +2268,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 	struct clk_core *c;
- 	struct hlist_head **lists = (struct hlist_head **)s->private;
- 
--	seq_puts(s, "   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase\n");
--	seq_puts(s, "----------------------------------------------------------------------------------------------------\n");
-+	seq_puts(s, "                                 enable  prepare  protect                               \n");
-+	seq_puts(s, "   clock                          count    count    count        rate   accuracy   phase\n");
-+	seq_puts(s, "----------------------------------------------------------------------------------------\n");
- 
- 	clk_prepare_lock();
- 
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index ed2d00f..99906f6 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -84,6 +84,7 @@ enum {
+ static struct clk_alpha_pll_postdiv gpll0 = {
+ 	.offset = 0x21000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.width = 4,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gpll0",
+ 		.parent_names = (const char *[]){
 -- 
-2.14.3
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
