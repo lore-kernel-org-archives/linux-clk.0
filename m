@@ -1,199 +1,234 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 07/11] drm/sun4i: Add support for A83T second TCON
-Date: Sat, 30 Dec 2017 22:01:59 +0100
-Message-Id: <20171230210203.24115-8-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 04/11] dt-bindings: clock: qcom: add remaining clocks for IPQ8074
+Date: Wed, 13 Dec 2017 19:55:35 +0530
+Message-Id: <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This TCON doesn't have channel 0, so quirk has_channel_0 is added in the
-process.
+This patch adds the DT bindings for following IPQ8074 clocks
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+ - General PLL’s, NSS UBI PLL and NSS Crypto PLL.
+ - 2 instances of PCIE, USB, SDCC.
+ - 2 NSS UBI core and common NSS clocks. NSS is network switching
+   system which accelerates the ethernet traffic. IPQ8074
+   NSS has two UBI cores. Some clocks are separate for each UBI core
+   and remaining NSS clocks are common.
+ - NSS ethernet port clocks. IPQ8074 has 6 ethernet ports and
+   each port uses different TX and RX clocks.
+ - Crypto engine clocks.
+ - General purpose clocks which comes over GPIO.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 46 ++++++++++++++++++++++++++++----------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 2 files changed, 35 insertions(+), 12 deletions(-)
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h | 180 +++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index b78fed809992..adfa39f372cf 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+index 370c83c..ff0b4ac 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+@@ -58,6 +58,186 @@
+ #define GCC_QPIC_AHB_CLK			41
+ #define GCC_QPIC_CLK				42
+ #define PCNOC_BFDCD_CLK_SRC			43
++#define GPLL2_MAIN				44
++#define GPLL2					45
++#define GPLL4_MAIN				46
++#define GPLL4					47
++#define GPLL6_MAIN				48
++#define GPLL6					49
++#define UBI32_PLL_MAIN				50
++#define UBI32_PLL				51
++#define NSS_CRYPTO_PLL_MAIN			52
++#define NSS_CRYPTO_PLL				53
++#define PCIE0_AXI_CLK_SRC			54
++#define PCIE0_AUX_CLK_SRC			55
++#define PCIE0_PIPE_CLK_SRC			56
++#define PCIE1_AXI_CLK_SRC			57
++#define PCIE1_AUX_CLK_SRC			58
++#define PCIE1_PIPE_CLK_SRC			59
++#define SDCC1_APPS_CLK_SRC			60
++#define SDCC1_ICE_CORE_CLK_SRC			61
++#define SDCC2_APPS_CLK_SRC			62
++#define USB0_MASTER_CLK_SRC			63
++#define USB0_AUX_CLK_SRC			64
++#define USB0_MOCK_UTMI_CLK_SRC			65
++#define USB0_PIPE_CLK_SRC			66
++#define USB1_MASTER_CLK_SRC			67
++#define USB1_AUX_CLK_SRC			68
++#define USB1_MOCK_UTMI_CLK_SRC			69
++#define USB1_PIPE_CLK_SRC			70
++#define GCC_XO_CLK_SRC				71
++#define SYSTEM_NOC_BFDCD_CLK_SRC		72
++#define NSS_CE_CLK_SRC				73
++#define NSS_NOC_BFDCD_CLK_SRC			74
++#define NSS_CRYPTO_CLK_SRC			75
++#define NSS_UBI0_CLK_SRC			76
++#define NSS_UBI0_DIV_CLK_SRC			77
++#define NSS_UBI1_CLK_SRC			78
++#define NSS_UBI1_DIV_CLK_SRC			79
++#define UBI_MPT_CLK_SRC				80
++#define NSS_IMEM_CLK_SRC			81
++#define NSS_PPE_CLK_SRC				82
++#define NSS_PORT1_RX_CLK_SRC			83
++#define NSS_PORT1_RX_DIV_CLK_SRC		84
++#define NSS_PORT1_TX_CLK_SRC			85
++#define NSS_PORT1_TX_DIV_CLK_SRC		86
++#define NSS_PORT2_RX_CLK_SRC			87
++#define NSS_PORT2_RX_DIV_CLK_SRC		88
++#define NSS_PORT2_TX_CLK_SRC			89
++#define NSS_PORT2_TX_DIV_CLK_SRC		90
++#define NSS_PORT3_RX_CLK_SRC			91
++#define NSS_PORT3_RX_DIV_CLK_SRC		92
++#define NSS_PORT3_TX_CLK_SRC			93
++#define NSS_PORT3_TX_DIV_CLK_SRC		94
++#define NSS_PORT4_RX_CLK_SRC			95
++#define NSS_PORT4_RX_DIV_CLK_SRC		96
++#define NSS_PORT4_TX_CLK_SRC			97
++#define NSS_PORT4_TX_DIV_CLK_SRC		98
++#define NSS_PORT5_RX_CLK_SRC			99
++#define NSS_PORT5_RX_DIV_CLK_SRC		100
++#define NSS_PORT5_TX_CLK_SRC			101
++#define NSS_PORT5_TX_DIV_CLK_SRC		102
++#define NSS_PORT6_RX_CLK_SRC			103
++#define NSS_PORT6_RX_DIV_CLK_SRC		104
++#define NSS_PORT6_TX_CLK_SRC			105
++#define NSS_PORT6_TX_DIV_CLK_SRC		106
++#define CRYPTO_CLK_SRC				107
++#define GP1_CLK_SRC				108
++#define GP2_CLK_SRC				109
++#define GP3_CLK_SRC				110
++#define GCC_PCIE0_AHB_CLK			111
++#define GCC_PCIE0_AUX_CLK			112
++#define GCC_PCIE0_AXI_M_CLK			113
++#define GCC_PCIE0_AXI_S_CLK			114
++#define GCC_PCIE0_PIPE_CLK			115
++#define GCC_SYS_NOC_PCIE0_AXI_CLK		116
++#define GCC_PCIE1_AHB_CLK			117
++#define GCC_PCIE1_AUX_CLK			118
++#define GCC_PCIE1_AXI_M_CLK			119
++#define GCC_PCIE1_AXI_S_CLK			120
++#define GCC_PCIE1_PIPE_CLK			121
++#define GCC_SYS_NOC_PCIE1_AXI_CLK		122
++#define GCC_USB0_AUX_CLK			123
++#define GCC_SYS_NOC_USB0_AXI_CLK		124
++#define GCC_USB0_MASTER_CLK			125
++#define GCC_USB0_MOCK_UTMI_CLK			126
++#define GCC_USB0_PHY_CFG_AHB_CLK		127
++#define GCC_USB0_PIPE_CLK			128
++#define GCC_USB0_SLEEP_CLK			129
++#define GCC_USB1_AUX_CLK			130
++#define GCC_SYS_NOC_USB1_AXI_CLK		131
++#define GCC_USB1_MASTER_CLK			132
++#define GCC_USB1_MOCK_UTMI_CLK			133
++#define GCC_USB1_PHY_CFG_AHB_CLK		134
++#define GCC_USB1_PIPE_CLK			135
++#define GCC_USB1_SLEEP_CLK			136
++#define GCC_SDCC1_AHB_CLK			137
++#define GCC_SDCC1_APPS_CLK			138
++#define GCC_SDCC1_ICE_CORE_CLK			139
++#define GCC_SDCC2_AHB_CLK			140
++#define GCC_SDCC2_APPS_CLK			141
++#define GCC_MEM_NOC_NSS_AXI_CLK			142
++#define GCC_NSS_CE_APB_CLK			143
++#define GCC_NSS_CE_AXI_CLK			144
++#define GCC_NSS_CFG_CLK				145
++#define GCC_NSS_CRYPTO_CLK			146
++#define GCC_NSS_CSR_CLK				147
++#define GCC_NSS_EDMA_CFG_CLK			148
++#define GCC_NSS_EDMA_CLK			149
++#define GCC_NSS_IMEM_CLK			150
++#define GCC_NSS_NOC_CLK				151
++#define GCC_NSS_PPE_BTQ_CLK			152
++#define GCC_NSS_PPE_CFG_CLK			153
++#define GCC_NSS_PPE_CLK				154
++#define GCC_NSS_PPE_IPE_CLK			155
++#define GCC_NSS_PTP_REF_CLK			156
++#define GCC_NSSNOC_CE_APB_CLK			157
++#define GCC_NSSNOC_CE_AXI_CLK			158
++#define GCC_NSSNOC_CRYPTO_CLK			159
++#define GCC_NSSNOC_PPE_CFG_CLK			160
++#define GCC_NSSNOC_PPE_CLK			161
++#define GCC_NSSNOC_QOSGEN_REF_CLK		162
++#define GCC_NSSNOC_SNOC_CLK			163
++#define GCC_NSSNOC_TIMEOUT_REF_CLK		164
++#define GCC_NSSNOC_UBI0_AHB_CLK			165
++#define GCC_NSSNOC_UBI1_AHB_CLK			166
++#define GCC_UBI0_AHB_CLK			167
++#define GCC_UBI0_AXI_CLK			168
++#define GCC_UBI0_NC_AXI_CLK			169
++#define GCC_UBI0_CORE_CLK			170
++#define GCC_UBI0_MPT_CLK			171
++#define GCC_UBI1_AHB_CLK			172
++#define GCC_UBI1_AXI_CLK			173
++#define GCC_UBI1_NC_AXI_CLK			174
++#define GCC_UBI1_CORE_CLK			175
++#define GCC_UBI1_MPT_CLK			176
++#define GCC_CMN_12GPLL_AHB_CLK			177
++#define GCC_CMN_12GPLL_SYS_CLK			178
++#define GCC_MDIO_AHB_CLK			179
++#define GCC_UNIPHY0_AHB_CLK			180
++#define GCC_UNIPHY0_SYS_CLK			181
++#define GCC_UNIPHY1_AHB_CLK			182
++#define GCC_UNIPHY1_SYS_CLK			183
++#define GCC_UNIPHY2_AHB_CLK			184
++#define GCC_UNIPHY2_SYS_CLK			185
++#define GCC_NSS_PORT1_RX_CLK			186
++#define GCC_NSS_PORT1_TX_CLK			187
++#define GCC_NSS_PORT2_RX_CLK			188
++#define GCC_NSS_PORT2_TX_CLK			189
++#define GCC_NSS_PORT3_RX_CLK			190
++#define GCC_NSS_PORT3_TX_CLK			191
++#define GCC_NSS_PORT4_RX_CLK			192
++#define GCC_NSS_PORT4_TX_CLK			193
++#define GCC_NSS_PORT5_RX_CLK			194
++#define GCC_NSS_PORT5_TX_CLK			195
++#define GCC_NSS_PORT6_RX_CLK			196
++#define GCC_NSS_PORT6_TX_CLK			197
++#define GCC_PORT1_MAC_CLK			198
++#define GCC_PORT2_MAC_CLK			199
++#define GCC_PORT3_MAC_CLK			200
++#define GCC_PORT4_MAC_CLK			201
++#define GCC_PORT5_MAC_CLK			202
++#define GCC_PORT6_MAC_CLK			203
++#define GCC_UNIPHY0_PORT1_RX_CLK		204
++#define GCC_UNIPHY0_PORT1_TX_CLK		205
++#define GCC_UNIPHY0_PORT2_RX_CLK		206
++#define GCC_UNIPHY0_PORT2_TX_CLK		207
++#define GCC_UNIPHY0_PORT3_RX_CLK		208
++#define GCC_UNIPHY0_PORT3_TX_CLK		209
++#define GCC_UNIPHY0_PORT4_RX_CLK		210
++#define GCC_UNIPHY0_PORT4_TX_CLK		211
++#define GCC_UNIPHY0_PORT5_RX_CLK		212
++#define GCC_UNIPHY0_PORT5_TX_CLK		213
++#define GCC_UNIPHY1_PORT5_RX_CLK		214
++#define GCC_UNIPHY1_PORT5_TX_CLK		215
++#define GCC_UNIPHY2_PORT6_RX_CLK		216
++#define GCC_UNIPHY2_PORT6_TX_CLK		217
++#define GCC_CRYPTO_AHB_CLK			218
++#define GCC_CRYPTO_AXI_CLK			219
++#define GCC_CRYPTO_CLK				220
++#define GCC_GP1_CLK				221
++#define GCC_GP2_CLK				222
++#define GCC_GP3_CLK				223
  
- 	switch (channel) {
- 	case 0:
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE,
- 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
-@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 reg, val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
-+
- 	tcon->dclk_min_div = 7;
- 	tcon->dclk_max_div = 7;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
-+
- 	tcon->dclk_min_div = 6;
- 	tcon->dclk_max_div = 127;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 	}
- 	clk_prepare_enable(tcon->clk);
- 
--	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
--	if (IS_ERR(tcon->sclk0)) {
--		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
--		return PTR_ERR(tcon->sclk0);
-+	if (tcon->quirks->has_channel_0) {
-+		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
-+		if (IS_ERR(tcon->sclk0)) {
-+			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
-+			return PTR_ERR(tcon->sclk0);
-+		}
- 	}
- 
- 	if (tcon->quirks->has_channel_1) {
-@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_dclk_create(dev, tcon);
--	if (ret) {
--		dev_err(dev, "Couldn't create our TCON dot clock\n");
--		goto err_free_clocks;
-+	if (tcon->quirks->has_channel_0) {
-+		ret = sun4i_dclk_create(dev, tcon);
-+		if (ret) {
-+			dev_err(dev, "Couldn't create our TCON dot clock\n");
-+			goto err_free_clocks;
-+		}
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
-@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	return 0;
- 
- err_free_dotclock:
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
- 	list_del(&tcon->list);
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
-@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
- }
- 
- static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun4i_a10_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun5i_a13_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.has_lvds_alt		= true,
- 	.needs_de_be_mux	= true,
-@@ -1119,26 +1133,33 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.needs_de_be_mux	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	/* Same display pipeline structure as A10 */
- 	.set_mux		= sun4i_a10_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
-+	.has_channel_0		= true,
- 	.has_lvds_alt		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
-+};
-+
-+static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
-+	.has_channel_1		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
- };
- 
- /* sun4i_drv uses this list to check if a device node is a TCON */
-@@ -1150,6 +1171,7 @@ const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
-+	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index b761c7b823c5..78d55e7cd2b3 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -172,6 +172,7 @@
- struct sun4i_tcon;
- 
- struct sun4i_tcon_quirks {
-+	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ #define GCC_BLSP1_BCR				0
+ #define GCC_BLSP1_QUP1_BCR			1
 -- 
-2.15.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
