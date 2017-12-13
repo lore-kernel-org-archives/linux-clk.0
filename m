@@ -1,76 +1,257 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 8 Dec 2017 10:08:53 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] clk: sunxi-ng: sun8i: a83t: Use sigma-delta
- modulation for audio PLL
-Message-ID: <20171208090853.cnn52xqrpbihmpsq@flea.lan>
-References: <20171208083512.24080-1-wens@csie.org>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 05/11] =?UTF-8?q?clk:=20qcom:=20ipq8074:=20add=20remain?= =?UTF-8?q?ing=20PLL=E2=80=99s?=
+Date: Wed, 13 Dec 2017 19:55:36 +0530
+Message-Id: <1513175142-3702-6-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nazpecrw7tte7nfl"
-In-Reply-To: <20171208083512.24080-1-wens@csie.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+- GPLL2, GPLL4 and GPLL6 are general PLL clocks and parent
+  for all core peripherals.
+- UBI PLL is mainly used by NSS (Network Switching System).
+  IPQ8074 has 2 instances of NSS UBI cores and UBI PLL will
+  be used to control the core frequency.
+- NSS Crypto PLL is mainly used by NSS Crypto Engine which
+  supports the multiple cryptographic algorithm used in
+  Ethernet.
+- IPQ8074 frequency plan does not require change in PLL post
+  dividers so marked the same as read-only.
 
---nazpecrw7tte7nfl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 192 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 191 insertions(+), 1 deletion(-)
 
-On Fri, Dec 08, 2017 at 04:35:09PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> This series follows previous improvements for the other Allwinner SoCs to
-> improve audio quality, in particular the speed and pitch of audio playbac=
-k.
-> The audio PLLs in Allwinner SoCs cannot produce the correct frequency to
-> match the audio sample rate families through integer factors. As such
-> the audio is either too fast or too flow.
->=20
-> This is dealt with by using sigma-delta modulation, a form of fractional-N
-> synthesis, on the divider. The parameters used are copied from the BSP
-> kernel.
->=20
-> As these parameters assume that one of the untracked dividers is set to
-> 2, we first add a fixed /2 post divider to the PLL, and force the
-> untracked divider to /2. Then we introduce the sigma-delta modulation
-> parameters.
->=20
-> This has been tested with SPDIF playback on the Cubietruck Plus, and an
-> external PCM5122 DAC from a PiFi DAC 2.0+, connected via I2S to the
-> Banana Pi M3. The I2C and I2S support used in this latter test will be
-> sent as a separate series later.
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---nazpecrw7tte7nfl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAloqVqIACgkQ0rTAlCFN
-r3TGYA/9EMR2C950B+0QbwAx8wp+dlkLK7HU+lST5TMHg2kJsSuHO5HXRe/1uDEe
-7iM0E7DczGGeDi+g0ghE7klmXAvQvWRceGhn7wOAKfnqV1iUNoQtnSnsk1JuhBBc
-ipVbzn9LYKFauReJ6qgonbphfmV4+UMLVxX5Hxft5xXN9BOlH4MwnEUtqjgLQ3ml
-vEM6KksSjQwZTOh4DDzLZOW3yu3wWclxZLz5OuvLMiNxMnxi2cK7dNVt/eiMXTk4
-FHIvaeSduOBPf/upwY4K0FAbqwIQpnwHt6fwD1wyaxyU53+wgy8MZif/AKpD0qzB
-AFQ4jbxV3fADSi9u1nE2eUkGBPhKD47f3RSr7R2waaqYWoc2sTeDHARKIsf6UoiH
-cVc892kmbnawpjnzbHqcqR4G91GXGsOjORTobICaH4hd3OqY/9wT4AWr0X42dy0s
-gh7GtliaD5c8f6aUuuPVgXkAGCAndAE6sMR1UzYVx0R1jlzI6OdFCSe/BWLR5Snc
-ShZiXHtkRzWzR4ifcj4eoCXCTeWPFWRtDqkvr7b/HrvfVcgrZ10VBvnFm2Vygjky
-wlFtEYRAYwFy1lYs7p5/DrOYRfYMq5uBKV//Vx63niA57pQo9KMUz1cl+DpXDBxD
-203BZSqFGVj/onv6QNj8y8tGPx/jVGisYQPmA66/elyFeQcOyVI=
-=TskE
------END PGP SIGNATURE-----
-
---nazpecrw7tte7nfl--
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 99906f6..ad9c920 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -91,7 +91,186 @@ enum {
+ 			"gpll0_main"
+ 		},
+ 		.num_parents = 1,
+-		.ops = &clk_alpha_pll_postdiv_ops,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++	},
++};
++
++static struct clk_alpha_pll gpll2_main = {
++	.offset = 0x4a000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.clkr = {
++		.enable_reg = 0x0b000,
++		.enable_mask = BIT(2),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpll2_main",
++			.parent_names = (const char *[]){
++				"xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_ops,
++			.flags = CLK_IS_CRITICAL,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv gpll2 = {
++	.offset = 0x4a000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.width = 4,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll2",
++		.parent_names = (const char *[]){
++			"gpll2_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_alpha_pll gpll4_main = {
++	.offset = 0x24000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.clkr = {
++		.enable_reg = 0x0b000,
++		.enable_mask = BIT(5),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpll4_main",
++			.parent_names = (const char *[]){
++				"xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_ops,
++			.flags = CLK_IS_CRITICAL,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv gpll4 = {
++	.offset = 0x24000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.width = 4,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll4",
++		.parent_names = (const char *[]){
++			"gpll4_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_alpha_pll gpll6_main = {
++	.offset = 0x37000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO],
++	.flags = SUPPORTS_DYNAMIC_UPDATE,
++	.clkr = {
++		.enable_reg = 0x0b000,
++		.enable_mask = BIT(7),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpll6_main",
++			.parent_names = (const char *[]){
++				"xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_ops,
++			.flags = CLK_IS_CRITICAL,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv gpll6 = {
++	.offset = 0x37000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_BRAMMO],
++	.width = 2,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll6",
++		.parent_names = (const char *[]){
++			"gpll6_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_fixed_factor gpll6_out_main_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "gpll6_out_main_div2",
++		.parent_names = (const char *[]){
++			"gpll6_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_fixed_factor_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_alpha_pll ubi32_pll_main = {
++	.offset = 0x25000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_HUAYRA],
++	.flags = SUPPORTS_DYNAMIC_UPDATE,
++	.clkr = {
++		.enable_reg = 0x0b000,
++		.enable_mask = BIT(6),
++		.hw.init = &(struct clk_init_data){
++			.name = "ubi32_pll_main",
++			.parent_names = (const char *[]){
++				"xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_huayra_ops,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv ubi32_pll = {
++	.offset = 0x25000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_HUAYRA],
++	.width = 2,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ubi32_pll",
++		.parent_names = (const char *[]){
++			"ubi32_pll_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_alpha_pll nss_crypto_pll_main = {
++	.offset = 0x22000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.clkr = {
++		.enable_reg = 0x0b000,
++		.enable_mask = BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "nss_crypto_pll_main",
++			.parent_names = (const char *[]){
++				"xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_ops,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv nss_crypto_pll = {
++	.offset = 0x22000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.width = 4,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "nss_crypto_pll",
++		.parent_names = (const char *[]){
++			"nss_crypto_pll_main"
++		},
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_ro_ops,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -808,12 +987,23 @@ enum {
+ 
+ static struct clk_hw *gcc_ipq8074_hws[] = {
+ 	&gpll0_out_main_div2.hw,
++	&gpll6_out_main_div2.hw,
+ 	&pcnoc_clk_src.hw,
+ };
+ 
+ static struct clk_regmap *gcc_ipq8074_clks[] = {
+ 	[GPLL0_MAIN] = &gpll0_main.clkr,
+ 	[GPLL0] = &gpll0.clkr,
++	[GPLL2_MAIN] = &gpll2_main.clkr,
++	[GPLL2] = &gpll2.clkr,
++	[GPLL4_MAIN] = &gpll4_main.clkr,
++	[GPLL4] = &gpll4.clkr,
++	[GPLL6_MAIN] = &gpll6_main.clkr,
++	[GPLL6] = &gpll6.clkr,
++	[UBI32_PLL_MAIN] = &ubi32_pll_main.clkr,
++	[UBI32_PLL] = &ubi32_pll.clkr,
++	[NSS_CRYPTO_PLL_MAIN] = &nss_crypto_pll_main.clkr,
++	[NSS_CRYPTO_PLL] = &nss_crypto_pll.clkr,
+ 	[PCNOC_BFDCD_CLK_SRC] = &pcnoc_bfdcd_clk_src.clkr,
+ 	[GCC_SLEEP_CLK_SRC] = &gcc_sleep_clk_src.clkr,
+ 	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
