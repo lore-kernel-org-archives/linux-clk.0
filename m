@@ -1,185 +1,131 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 10/11] ARM: dts: sun8i: a83t: Add HDMI display pipeline
-Date: Sat, 30 Dec 2017 22:02:02 +0100
-Message-Id: <20171230210203.24115-11-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 02/11] clk: qcom: add parent map for regmap mux
+Date: Wed, 13 Dec 2017 19:55:33 +0530
+Message-Id: <1513175142-3702-3-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
-hdmi and hdmi pinctrl entries.
+Currently the driver assumes the register configuration value
+is identical to its index in the parent map. This patch adds
+the parent map field in regmap mux clock node which contains
+the mapping of parent index with actual register configuration
+value. If regmap node contains this parent map then the
+configuration value will be taken from this
+parent map instead of simply writing the index value.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 108 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 107 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/clk-rcg.h        | 10 ----------
+ drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
+ drivers/clk/qcom/clk-regmap-mux.h |  2 ++
+ drivers/clk/qcom/common.h         | 11 ++++++++++-
+ 4 files changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 7f4955a5fab7..601d1eb5460e 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -155,7 +155,7 @@
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index a249545..2a7489a 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -26,16 +26,6 @@ struct freq_tbl {
+ };
  
- 	de: display-engine {
- 		compatible = "allwinner,sun8i-a83t-display-engine";
--		allwinner,pipelines = <&mixer0>;
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
- 		status = "disabled";
- 	};
+ /**
+- * struct parent_map - map table for PLL source select configuration values
+- * @src: source PLL
+- * @cfg: configuration value
+- */
+-struct parent_map {
+-	u8 src;
+-	u8 cfg;
+-};
+-
+-/**
+  * struct mn - M/N:D counter
+  * @mnctr_en_bit: bit to enable mn counter
+  * @mnctr_reset_bit: bit to assert mn counter reset
+diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+index cae3071..0f3a1bd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.c
++++ b/drivers/clk/qcom/clk-regmap-mux.c
+@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mask;
  
-@@ -208,6 +208,32 @@
- 			};
- 		};
++	if (mux->parent_map)
++		return qcom_find_src_index(hw, mux->parent_map, val);
++
+ 	return val;
+ }
  
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
-@@ -256,6 +282,43 @@
- 			};
- 		};
+@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+ 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+ 	unsigned int val;
  
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
++	if (mux->parent_map)
++		index = mux->parent_map[index].cfg;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun8i-a83t-mmc",
- 				     "allwinner,sun7i-a20-mmc";
-@@ -427,6 +490,11 @@
- 				drive-strength = <40>;
- 			};
+ 	val = index;
+ 	val <<= mux->shift;
  
-+			hdmi_pins: hdmi-pins {
-+				pins = "PH6", "PH7", "PH8";
-+				function = "hdmi";
-+			};
-+
- 			i2c0_pins: i2c0-pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
-@@ -685,6 +753,44 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+index 5cec761..7797cdd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.h
++++ b/drivers/clk/qcom/clk-regmap-mux.h
+@@ -16,11 +16,13 @@
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>,
-+			      <0x01ef0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
-+			reset-names = "phy", "ctrl";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hdmi_pins>;
-+			status = "disabled";
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
++#include "common.h"
+ 
+ struct clk_regmap_mux {
+ 	u32			reg;
+ 	u32			shift;
+ 	u32			width;
++	const struct parent_map	*parent_map;
+ 	struct clk_regmap	clkr;
+ };
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 23c1927..00196ee 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -20,7 +20,6 @@
+ struct regmap;
+ struct freq_tbl;
+ struct clk_hw;
+-struct parent_map;
+ 
+ #define PLL_LOCK_COUNT_SHIFT	8
+ #define PLL_LOCK_COUNT_MASK	0x3f
+@@ -39,6 +38,16 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ };
+ 
++/**
++ * struct parent_map - map table for source select configuration values
++ * @src: source
++ * @cfg: configuration value
++ */
++struct parent_map {
++	u8 src;
++	u8 cfg;
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		r_intc: interrupt-controller@1f00c00 {
- 			compatible = "allwinner,sun8i-a83t-r-intc",
- 				     "allwinner,sun6i-a31-r-intc";
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
+ extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
 -- 
-2.15.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
