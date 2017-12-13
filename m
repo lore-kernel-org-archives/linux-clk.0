@@ -1,132 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52837 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750946AbdL3Ldp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Dec 2017 06:33:45 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 6/6] arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
-Date: Sat, 30 Dec 2017 19:30:43 +0800
-Message-Id: <20171230113043.30237-7-icenowy@aosc.io>
-In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
-References: <20171230113043.30237-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 13 Dec 2017 14:30:32 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc: ALSA ML <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v5 1/6] ASoC: Intel: Skylake: Add ssp clock
+ driver
+Message-ID: <20171213223032.GO7997@codeaurora.org>
+References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+ <1512978390-8848-2-git-send-email-sriramx.periyasamy@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1512978390-8848-2-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On usual A64 board design the power of HDMI controller is connected to
-DLDO1 of the AXP803 PMIC. If this regulator is shut down, the HDMI
-output will be blank. Therefore the simplefb driver should keep this
-regulator on.
+On 12/11, Sriram Periyasamy wrote:
+> +
+> +static int skl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +					unsigned long parent_rate)
+> +{
+> +	struct skl_clk *clkdev = to_skl_clk(hw);
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	int clk_type;
+> +
+> +	if (!clkdev)
+> +		return -ENODEV;
 
-Add the regulator to all currently available A64 boards' simplefb_hdmi
-device node.
+These checks don't make sense. container_of() on clk_hw
+structures returning NULL wouldn't happen.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-New patch introduced in v4.
+> +
+> +	if (!rate)
+> +		return -EINVAL;
+> +
+> +	if (__clk_is_enabled(hw->clk) && (clkdev->rate != rate))
 
- arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts     | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts       | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts        | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts     | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts           | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts | 4 ++++
- 6 files changed, 24 insertions(+)
+Any chance you can directly read the hardware instead of going
+through the framework to find out if the clk is enabled? Seems
+circular to do it this way.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index a6975670cd1c..f98c496e1f30 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -283,6 +283,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 2beef9e6cb88..7cbbbf238f4f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -196,6 +196,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 8807664f363a..568de83427d0 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -215,6 +215,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index 240d35731d10..ce38080db324 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -192,6 +192,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 604cdaedac38..40d9802959c4 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -230,6 +230,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- /* On Exp and Euler connectors */
- &uart0 {
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index abe179de35d7..c21f2331add6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -134,6 +134,10 @@
- 	regulator-name = "vcc-wifi";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
+> +		return -EBUSY;
+> +
+> +	rcfg = skl_get_rate_cfg(clkdev->pdata->ssp_clks[clkdev->id].rate_cfg,
+> +							rate);
+> +	if (!rcfg)
+> +		return -EINVAL;
+> +
+> +	clk_type = skl_get_clk_type(clkdev->id);
+> +	if (clk_type < 0)
+> +		return clk_type;
+> +
+> +	skl_fill_clk_ipc(rcfg, clk_type);
+> +	clkdev->rate = rate;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
+> +				unsigned long parent_rate)
+> +{
+> +	struct skl_clk *clkdev = to_skl_clk(hw);
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	int clk_type;
+> +
+> +	if (!clkdev)
+> +		return 0;
+> +
+> +	if (clkdev->rate)
+> +		return clkdev->rate;
+
+Why is the rate being cached? We should always be able to
+calculate the rate based on parent_rate that gets passed to this
+function?
+
+> +
+> +	rcfg = skl_get_rate_cfg(clkdev->pdata->ssp_clks[clkdev->id].rate_cfg,
+> +					parent_rate);
+> +	if (!rcfg)
+> +		return 0;
+> +
+> +	clk_type = skl_get_clk_type(clkdev->id);
+> +	if (clk_type < 0)
+> +		return 0;
+> +
+> +	skl_fill_clk_ipc(rcfg, clk_type);
+> +	clkdev->rate = rcfg->rate;
+> +
+> +	return clkdev->rate;
+> +}
+> +
+> +/* Not supported by clk driver. Implemented to satisfy clk fw */
+> +long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *parent_rate)
+> +{
+> +	return rate;
+> +}
+
 -- 
-2.14.2
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
