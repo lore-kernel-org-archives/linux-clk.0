@@ -1,86 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 20 Dec 2017 16:23:47 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: David Lechner <david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
- reentrancy
-Message-ID: <20171220230009.GI7997@codeaurora.org>
-References: <1513122223-14932-1-git-send-email-david@lechnology.com>
- <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
- <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
- <151372258747.45969.10121622799666696251@resonance>
- <3ad110cf-95ba-0d0b-53ee-f1fa2d37d7fa@lechnology.com>
- <151379785862.37313.908268542576551305@resonance>
- <d8801fdd-8f1f-e0a2-799b-03245009f234@lechnology.com>
- <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 00/11] Add remaining clocks for QCOM IPQ8074
+Date: Wed, 13 Dec 2017 19:55:31 +0530
+Message-Id: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/20, David Lechner wrote:
-> On 12/20/2017 02:33 PM, David Lechner wrote:
-> >
-> >So, as you can see, we get 4 warnings here. There is no problem
-> >with any clock provider or consumer (as far as I can tell). The
-> >bug here is that spin_trylock_irqsave() always returns true on
-> >non-SMP systems, which messes up the reference counting.
-> >
-> >usb20_phy_clk_enable() currently works because mach-davinci does
-> >not use the common clock framework. However, I am trying to move
-> >it to the common clock framework, which is how I discovered this
-> >bug.
-> 
-> One more thing I mentioned previously, but is worth mentioning again
-> in detail is that if you enable CONFIG_DEBUG_SPINLOCK, that changes
-> the behavior of spin_trylock_irqsave() on non-SMP systems. It no
-> longer always returns true and so everything works as expected in
-> the call chain that I described previously.
-> 
-> The difference is that with CONFIG_DEBUG_SPINLOCK=n, we have
-> 
-> #define arch_spin_trylock(lock)	({ barrier(); (void)(lock); 1; })
-> 
-> But if CONFIG_DEBUG_SPINLOCK=y, then we have
-> 
-> static inline int arch_spin_trylock(arch_spinlock_t *lock)
-> {
-> 	char oldval = lock->slock;
-> 
-> 	lock->slock = 0;
-> 	barrier();
-> 
-> 	return oldval > 0;
-> }
-> 
-> This comes from include/linux/spinlock_up.h, which is included from
-> include/linux/spinlock.h
-> 
-> #ifdef CONFIG_SMP
-> # include <asm/spinlock.h>
-> #else
-> # include <linux/spinlock_up.h>
-> #endif
-> 
-> 
-> So, the question I have is: what is the actual "correct" behavior of
-> spin_trylock_irqsave()? Is it really supposed to always return true
-> when CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n or is this a bug?
+[v2]
 
-Thanks for doing the analysis in this thread.
+- Rebased and tested the patches over clk-next branch
+- Changed the PLL’s to use register offset from PLL node
 
-When CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n, spinlocks are
-compiler barriers, that's it. So even if it is a bug to always
-return true, I fail to see how we can detect that a spinlock is
-already held in this configuration and return true or false.
+[v1]
 
-I suppose the best option is to make clk_enable_lock() and
-clk_enable_unlock() into nops or pure owner/refcount/barrier
-updates when CONFIG_SMP=n. We pretty much just need the barrier
-semantics when there's only a single CPU.
+This patch series adds following IPQ8074 clocks
+
+- Remaining General PLL’s, NSS UBI PLL and NSS Crypto PLL.
+- 2 instances of PCIE, USB, SDCC.
+- 2 NSS UBI core and common NSS clocks. NSS is network.
+  switching subsystem which accelerates the ethernet traffic.
+  IPQ8074 has two UBI cores and each core uses some separate
+  core clocks and remaining common clocks.
+- NSS Crypto Engine clocks
+- NSS ethernet port clocks. IPQ8074 has 6 Ethernet ports and each
+  port uses different clocks
+- Crypto engine clocks
+- PCIE and NSS MISC resets.
+
+
+Abhishek Sahu (11):
+  clk: qcom: add read-only divider operations
+  clk: qcom: add parent map for regmap mux
+  clk: qcom: ipq8074: fix missing GPLL0 divider width
+  dt-bindings: clock: qcom: add remaining clocks for IPQ8074
+  clk: qcom: ipq8074: add remaining PLL’s
+  clk: qcom: ipq8074: add PCIE, USB and SDCC clocks
+  clk: qcom: ipq8074: add NSS clocks
+  clk: qcom: ipq8074: add NSS ethernet port clocks
+  clk: qcom: ipq8074: add GP and Crypto clocks
+  dt-bindings: clock: qcom: add misc resets for PCIE and NSS
+  clk: qcom: ipq8074: add misc resets for PCIE and NSS
+
+ drivers/clk/qcom/clk-rcg.h                   |   10 -
+ drivers/clk/qcom/clk-regmap-divider.c        |   29 +
+ drivers/clk/qcom/clk-regmap-divider.h        |    1 +
+ drivers/clk/qcom/clk-regmap-mux.c            |    6 +
+ drivers/clk/qcom/clk-regmap-mux.h            |    2 +
+ drivers/clk/qcom/common.h                    |   11 +-
+ drivers/clk/qcom/gcc-ipq8074.c               | 3750 +++++++++++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h |  222 ++
+ 8 files changed, 4019 insertions(+), 12 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
