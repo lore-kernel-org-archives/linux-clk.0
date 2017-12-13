@@ -1,85 +1,92 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
-To: Tony Lindgren <tony@atomide.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>
-References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
- <20171207072911.GA4283@codeaurora.org>
- <fd7ff1b4-00c3-ce6b-9415-85799661bf8e@ti.com>
- <CAEG3pNAZKVSaU8k6QzPesF9j_ARHGuX7brJ+XzBj=Y7ON+JbYA@mail.gmail.com>
- <20171211152914.GI24344@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <fc15474a-9feb-1beb-3362-1e9c99f56a02@ti.com>
-Date: Mon, 11 Dec 2017 18:40:04 +0200
+Return-Path: <hdegoede@redhat.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
+To: Johannes Stezenbach <js@sig21.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux PM list <linux-pm@vger.kernel.org>, Carlo Caione <carlo@endlessm.com>,
+ Darren Hart <dvhart@infradead.org>,
+ Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+ Takashi Iwai <tiwai@suse.de>,
+ ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <20170925191749.2oamusbajgs6clcg@sig21.net>
+ <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+ <34396652.fljU28PShI@aspire.rjw.lan>
+ <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
+ <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
+ <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
+ <20171213162206.GA7337@sig21.net>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e6aa5c55-8174-7ad9-009f-c254d3aeaf72@redhat.com>
+Date: Wed, 13 Dec 2017 17:37:15 +0100
 MIME-Version: 1.0
-In-Reply-To: <20171211152914.GI24344@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20171213162206.GA7337@sig21.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/12/17 17:29, Tony Lindgren wrote:
-> * Michael Turquette <mturquette@baylibre.com> [171207 18:41]:
->> Hi Tero,
->>
->> On Thu, Dec 7, 2017 at 12:09 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>> On 07/12/17 09:29, Stephen Boyd wrote:
->>>>
->>>> On 12/05, Tero Kristo wrote:
->>>>>
->>>>> Hi Stephen, Mike,
->>>>>
->>>>> This pull request contains the v2 of the series posted
->>>>> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
->>>>> Stephen's acks added to the mentioned patches, and just applied on
->>>>> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
->>>>> the rest of the patches also, but couldn't find any comment about
->>>>> this anywhere.
->>>>>
->>>>> -Tero
->>>>>
->>>>> ====
->>>>>
->>>>> The following changes since commit
->>>>> 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
->>>>>
->>>>>     Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->>>>>
->>>>> are available in the git repository at:
->>>>>
->>>>>     https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
->>>>>
->>>>> for you to fetch changes up to fe7020e64f042db4b5ca50c358b232e866523447:
->>>>>
->>>>>     clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
->>>>> 15:18:08 +0200)
->>>>
->>>>
->>>> Pulled into clk-next.
->>>
->>>
->>> Thanks.
->>>
->>>> Did you want to sign a tag instead of
->>>> sending a plain branch? My ack isn't necessary on anything.
->>>>
->>>
->>> Just a plain branch. Never signed a tag so far, do you have guidelines
->>> someplace if you prefer this in future?
->>
->> "git tag -s" is all you need to know. It's nice to keep that tag on
->> your public tree until the next -rc1, but not strictly necessary.
->>
->> Ideally PRs should used signed tags, as it lets us verify a trusted tree.
+Hi,
+
+On 13-12-17 17:22, Johannes Stezenbach wrote:
+> Hi,
 > 
-> Looks like I need to merge in Tero's commit fe7020e64f04 above for the
-> related the dts changes. Can we all consider commit fe7020e64f04 immutable?
+> On Wed, Dec 13, 2017 at 05:04:34PM +0100, Hans de Goede wrote:
+>> On 13-12-17 16:25, Michael Turquette wrote:
+>>> On Wed, Dec 13, 2017 at 12:53 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>>>> Although, maybe we need to have a specialized (derived)
+>>>> ahci driver for these Atom SoCs and in there if no
+>>>> disk is detected do this through the clock framework?
+>>>
+>>> Yes please. x86 is already modeling some clocks properly through the
+>>> clock framework. During late init we clean up any clocks that were
+>>> enabled out of reset or by the firmware/bootloader but not claimed and
+>>> enabled by any Linux driver. That should ideally disable this
+>>> particular clock for the case when no SATA drive is present, and
+>>> require no quirk logic in the driver.
+>>
+>> Ah so you're thinking a special ahci driver which knows about
+>> the clock, yes I think that could work.
+>>
+>> Or maybe do a match on the CPU model and if it is know to
+>> not have SATA (or not routed to the outside), disable
+>> the clock? That seems better because if I understood Johannes
+>> correctly there is no SATA/AHCI PCI device (so nothing for
+>> a driver to bind to) but the clock is still enabled, although
+>> in that case the clock framework should do the right thing
+>> if we revert commit d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
+> 
+> Please don't get confused with the other thread about clocks.
+> This issue sets the "disable IP" bit, found by doing stupid
+> experiments to enable S0ix on E200HA.
 
- From my point of view at least, its frozen.
+Ah my bad.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 1. no idea if Cherry Trail even has SATA IP, maybe this is a
+>     meaningless bit but PMC firmware carried over from
+>     Bay Trail looks at it
+
+
+There are no CHT SoCs with SATA AFAIK, but Braswell SoCs,
+which I believe is the same die do have SATA.
+
+I think the best fix here is to look at the model-string part
+of the CPU-id and do a quirk based on that, setting the "disable IP"
+bit for the SATA on all SoC models known to not have SATA
+(Z8300, Z8350, Z8500, Z8550, Z8700, Z8750).
+
+Rafael, Andy how does that sound as a solution?
+
+> 2. BIOS should have set the bit, so it is a BIOS quirk
+> 
+> 3. or maybe there is a much better solution that I don't know about
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=193891
+> also has lspci output
+
+Regards,
+
+Hans
