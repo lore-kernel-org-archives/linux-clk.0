@@ -1,56 +1,68 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
-References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 22 Dec 2017 13:51:05 +0100
-Message-ID: <CAPDyKFrdGEn8v3SCZueZGVoySRLX_qm3rHY6XAtTN5YgZ022GQ@mail.gmail.com>
-Subject: Re: [RFC PATCH V1 1/2] clk: use atomic runtime pm api in clk_core_is_enabled
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: linux-clk@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chris Healy <Chris.Healy@zii.aero>,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH] clk: imx51: uart4, uart5 gates only exist on imx50, imx53
+Date: Wed, 13 Dec 2017 12:57:48 +0100
+Message-Id: <20171213115748.14106-1-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22 December 2017 at 10:46, Dong Aisheng <aisheng.dong@nxp.com> wrote:
-> Current clk_pm_runtime_put is using pm_runtime_put_sync which
-> is not safe to be called in clk_core_is_enabled as it should
-> be able to run in atomic context.
->
-> Thus use pm_runtime_put instead which is atomic safe.
->
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+i.MX51 only has 3 UARTs and no CCGR7 register. In place of the CCGR7
+register on i.MX50/i.MX53 that contains the ipg and per clock gates
+for UARTs 4 and 5, on i.MX51 there is the CMEOR register.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Without this patch, the code disabling the UART clocks would also clear
+the mod_en_ov_vpu bit in the CMEOR register, among others, which causes
+register accesses to the VPU to lock up the system.
 
-Kind regards
-Uffe
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx51-imx53.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/clk/clk.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 5ec5809..e24968f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -227,7 +227,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
->
->         ret = core->ops->is_enabled(core->hw);
->  done:
-> -       clk_pm_runtime_put(core);
-> +       if (core->dev)
-> +               pm_runtime_put(core->dev);
->
->         return ret;
->  }
-> --
-> 2.7.4
->
+diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+index 7bcaf270db117..c864992e6983f 100644
+--- a/drivers/clk/imx/clk-imx51-imx53.c
++++ b/drivers/clk/imx/clk-imx51-imx53.c
+@@ -257,10 +257,6 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 	clk[IMX5_CLK_VPU_SEL]		= imx_clk_mux("vpu_sel", MXC_CCM_CBCMR, 14, 2, vpu_sel, ARRAY_SIZE(vpu_sel));
+ 	clk[IMX5_CLK_VPU_GATE]		= imx_clk_gate2("vpu_gate", "vpu_sel", MXC_CCM_CCGR5, 6);
+ 	clk[IMX5_CLK_VPU_REFERENCE_GATE] = imx_clk_gate2("vpu_reference_gate", "osc", MXC_CCM_CCGR5, 8);
+-	clk[IMX5_CLK_UART4_IPG_GATE]	= imx_clk_gate2("uart4_ipg_gate", "ipg", MXC_CCM_CCGR7, 8);
+-	clk[IMX5_CLK_UART4_PER_GATE]	= imx_clk_gate2("uart4_per_gate", "uart_root", MXC_CCM_CCGR7, 10);
+-	clk[IMX5_CLK_UART5_IPG_GATE]	= imx_clk_gate2("uart5_ipg_gate", "ipg", MXC_CCM_CCGR7, 12);
+-	clk[IMX5_CLK_UART5_PER_GATE]	= imx_clk_gate2("uart5_per_gate", "uart_root", MXC_CCM_CCGR7, 14);
+ 	clk[IMX5_CLK_GPC_DVFS]		= imx_clk_gate2("gpc_dvfs", "dummy", MXC_CCM_CCGR5, 24);
+ 
+ 	clk[IMX5_CLK_SSI_APM]		= imx_clk_mux("ssi_apm", MXC_CCM_CSCMR1, 8, 2, ssi_apm_sels, ARRAY_SIZE(ssi_apm_sels));
+@@ -361,6 +357,10 @@ static void __init mx50_clocks_init(struct device_node *np)
+ 	clk[IMX5_CLK_USB_PHY1_GATE]	= imx_clk_gate2("usb_phy1_gate", "usb_phy_sel", MXC_CCM_CCGR4, 10);
+ 	clk[IMX5_CLK_USB_PHY2_GATE]	= imx_clk_gate2("usb_phy2_gate", "usb_phy_sel", MXC_CCM_CCGR4, 12);
+ 	clk[IMX5_CLK_I2C3_GATE]		= imx_clk_gate2("i2c3_gate", "per_root", MXC_CCM_CCGR1, 22);
++	clk[IMX5_CLK_UART4_IPG_GATE]	= imx_clk_gate2("uart4_ipg_gate", "ipg", MXC_CCM_CCGR7, 8);
++	clk[IMX5_CLK_UART4_PER_GATE]	= imx_clk_gate2("uart4_per_gate", "uart_root", MXC_CCM_CCGR7, 10);
++	clk[IMX5_CLK_UART5_IPG_GATE]	= imx_clk_gate2("uart5_ipg_gate", "ipg", MXC_CCM_CCGR7, 12);
++	clk[IMX5_CLK_UART5_PER_GATE]	= imx_clk_gate2("uart5_per_gate", "uart_root", MXC_CCM_CCGR7, 14);
+ 
+ 	clk[IMX5_CLK_CKO1_SEL]		= imx_clk_mux("cko1_sel", MXC_CCM_CCOSR, 0, 4,
+ 						mx53_cko1_sel, ARRAY_SIZE(mx53_cko1_sel));
+@@ -562,6 +562,10 @@ static void __init mx53_clocks_init(struct device_node *np)
+ 	clk[IMX5_CLK_IEEE1588_PRED]	= imx_clk_divider("ieee1588_pred", "ieee1588_sel", MXC_CCM_CSCDR2, 6, 3);
+ 	clk[IMX5_CLK_IEEE1588_PODF]	= imx_clk_divider("ieee1588_podf", "ieee1588_pred", MXC_CCM_CSCDR2, 0, 6);
+ 	clk[IMX5_CLK_IEEE1588_GATE]	= imx_clk_gate2("ieee1588_serial_gate", "ieee1588_podf", MXC_CCM_CCGR7, 6);
++	clk[IMX5_CLK_UART4_IPG_GATE]	= imx_clk_gate2("uart4_ipg_gate", "ipg", MXC_CCM_CCGR7, 8);
++	clk[IMX5_CLK_UART4_PER_GATE]	= imx_clk_gate2("uart4_per_gate", "uart_root", MXC_CCM_CCGR7, 10);
++	clk[IMX5_CLK_UART5_IPG_GATE]	= imx_clk_gate2("uart5_ipg_gate", "ipg", MXC_CCM_CCGR7, 12);
++	clk[IMX5_CLK_UART5_PER_GATE]	= imx_clk_gate2("uart5_per_gate", "uart_root", MXC_CCM_CCGR7, 14);
+ 
+ 	clk[IMX5_CLK_CKO1_SEL]		= imx_clk_mux("cko1_sel", MXC_CCM_CCOSR, 0, 4,
+ 						mx53_cko1_sel, ARRAY_SIZE(mx53_cko1_sel));
+-- 
+2.11.0
