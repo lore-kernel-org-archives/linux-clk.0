@@ -1,71 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15952 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbdLUJFn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 04:05:43 -0500
-Date: Thu, 21 Dec 2017 11:05:37 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo
- Tegra210
-Message-ID: <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
- <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 13 Dec 2017 14:23:21 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/13] Updates for QCOM Alpha PLL
+Message-ID: <20171213222321.GN7997@codeaurora.org>
+References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
+ <20171207062331.GI4283@codeaurora.org>
+ <0fc3e5cdf9d5778655f302868154aff6@codeaurora.org>
+ <20171209001639.GA7997@codeaurora.org>
+ <7d231505ed928e7e377b854ebff2b40f@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <7d231505ed928e7e377b854ebff2b40f@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 10:06:13AM +0000, Jon Hunter wrote:
+On 12/11, Abhishek Sahu wrote:
+> On 2017-12-09 05:46, Stephen Boyd wrote:
+> >On 12/08, Abhishek Sahu wrote:
+> >>On 2017-12-07 11:53, Stephen Boyd wrote:
+> >>>On 09/28, Abhishek Sahu wrote:
+> >>>>This patch series does the miscellaneous changes in QCOM Alpha PLL
+> >>>>operation and structure to support other types of Alpha PLL’s.
+> >>>>
+> >>>>1. It adds the pll_type which will be used for determining all
+> >>>>   the properties of Alpha PLL.
+> >>>>2. It adds the support for Brammo and Huayra PLL’s for which
+> >>>>   the support is not available in existing alpha PLL code.
+> >>>>3. There won’t be any change in existing users of Alpha PLL’s
+> >>>>   since all the newly added code will be under flag for the default
+> >>>>   PLL operations.
+> >>>>
+> >>>
+> >>>Ok. I took a long look at this today. I rewrote a bunch of stuff.
+> >>
+> >> Thanks Stephen for reviewing the changes and making the code
+> >> cleaner. I checked all the code changes and everything looks
+> >> good. It will work for all of our requirement. I will check
+> >> with other PLL users also once and then update the patch
+> >> series with all your suggested code changes after complete
+> >> testing.
+> >
+> >Ok. Please don't resend. I've pushed out the branch to clk-next,
+> >and it can be adjusted if needed, or dropped and rewritten if
+> >something is totally busted.
 > 
-> On 16/11/17 14:29, Peter De Schrijver wrote:
-> > Apply the memory built-in self test work around when ungating certain
-> > Tegra210 power domains.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/soc/tegra/pmc.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> > index 0453ff6..4c0582d 100644
-> > --- a/drivers/soc/tegra/pmc.c
-> > +++ b/drivers/soc/tegra/pmc.c
-> > @@ -142,6 +142,7 @@ struct tegra_pmc_soc {
-> >  
-> >  	bool has_tsense_reset;
-> >  	bool has_gpu_clamps;
-> > +	bool needs_mbist_war;
-> >  
-> >  	const struct tegra_io_pad_soc *io_pads;
-> >  	unsigned int num_io_pads;
-> > @@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
-> >  
-> >  	usleep_range(10, 20);
-> >  
-> > +	if (pg->pmc->soc->needs_mbist_war)
-> > +		tegra210_handle_mbist_war(pg->id);
-> > +
-> >  	if (disable_clocks)
-> >  		tegra_powergate_disable_clocks(pg);
-> >  
-> > @@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
-> >  	.cpu_powergates = tegra210_cpu_powergates,
-> >  	.has_tsense_reset = true,
-> >  	.has_gpu_clamps = true,
-> > +	.needs_mbist_war = true,
-> >  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
-> >  	.io_pads = tegra210_io_pads,
-> >  };
+>  Thanks Stephen for your great help and support.
+>  It seems, we are getting the error in the following error with these
+>  patches because of missing EXPORT_SYMBOL_GPL for
+>  clk_alpha_pll_regs and clk_hw_is_enabled.
 > 
-> After applying this series, tegra210-smaug no longer boots (no output
-> from the console). Reverting this patch allows it to boot again. So
-> something here is not working ...
 > 
+> ERROR: "clk_alpha_pll_regs" [drivers/clk/qcom/mmcc-msm8996.ko]
+> undefined!
+> 
+> ERROR: "clk_hw_is_enabled" [drivers/clk/qcom/clk-qcom.ko] undefined!
+> 
+> Caused by commits
+> 
+>   d1506b749e92 ("clk: qcom: support for alpha pll properties")
+>   e66a4d6d0081 ("clk: qcom: support for dynamic updating the PLL")
+>   301803e6013b ("clk: qcom: support Huayra type Alpha PLL")
 
-Annoyingly I don't have smaug, only jetson TX1.. Did you try earlycon?
+Yep. I'll export the regs and remove the clk_hw_is_enabled()
+usage. Should be possible to do that inside the ops directly
+instead of going through the framework for it.
 
-Peter.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
