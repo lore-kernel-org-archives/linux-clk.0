@@ -1,72 +1,84 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org
-Cc: mturquette@baylibre.com,
-	robh@kernel.org,
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v11 5/6] dt-bindings: mailbox: qcom: Document the APCS clock binding
-Date: Tue,  5 Dec 2017 17:47:00 +0200
-Message-Id: <20171205154701.27730-6-georgi.djakov@linaro.org>
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 10/11] dt-bindings: clock: qcom: add misc resets for PCIE and NSS
+Date: Wed, 13 Dec 2017 19:55:41 +0530
+Message-Id: <1513175142-3702-11-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the binding documentation for APCS to mention that the APCS
-hardware block also expose a clock controller functionality.
+PCIE and NSS has MISC reset register in which single register has
+multiple reset bit. The patch adds the DT bindings for these MISC
+resets.
 
-The APCS clock controller is a mux and half-integer divider. It has the
-main CPU PLL as an input and provides the clock for the application CPU.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- .../bindings/mailbox/qcom,apcs-kpss-global.txt         | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h | 42 ++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-index fb961c310f44..16964f0c1773 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-@@ -15,12 +15,21 @@ platforms.
- 	Usage: required
- 	Value type: <prop-encoded-array>
- 	Definition: must specify the base address and size of the global block
-+- clocks:
-+	Usage: required if #clocks-cells property is present
-+	Value type: <phandle>
-+	Definition: phandle to the input PLL, which feeds the APCS mux/divider
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+index ff0b4ac..238f872 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+@@ -328,5 +328,47 @@
+ #define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	86
+ #define GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR	87
+ #define GCC_SMMU_CATS_BCR			88
++#define GCC_UBI0_AXI_ARES			89
++#define GCC_UBI0_AHB_ARES			90
++#define GCC_UBI0_NC_AXI_ARES			91
++#define GCC_UBI0_DBG_ARES			92
++#define GCC_UBI0_CORE_CLAMP_ENABLE		93
++#define GCC_UBI0_CLKRST_CLAMP_ENABLE		94
++#define GCC_UBI1_AXI_ARES			95
++#define GCC_UBI1_AHB_ARES			96
++#define GCC_UBI1_NC_AXI_ARES			97
++#define GCC_UBI1_DBG_ARES			98
++#define GCC_UBI1_CORE_CLAMP_ENABLE		99
++#define GCC_UBI1_CLKRST_CLAMP_ENABLE		100
++#define GCC_NSS_CFG_ARES			101
++#define GCC_NSS_IMEM_ARES			102
++#define GCC_NSS_NOC_ARES			103
++#define GCC_NSS_CRYPTO_ARES			104
++#define GCC_NSS_CSR_ARES			105
++#define GCC_NSS_CE_APB_ARES			106
++#define GCC_NSS_CE_AXI_ARES			107
++#define GCC_NSSNOC_CE_APB_ARES			108
++#define GCC_NSSNOC_CE_AXI_ARES			109
++#define GCC_NSSNOC_UBI0_AHB_ARES		110
++#define GCC_NSSNOC_UBI1_AHB_ARES		111
++#define GCC_NSSNOC_SNOC_ARES			112
++#define GCC_NSSNOC_CRYPTO_ARES			113
++#define GCC_NSSNOC_ATB_ARES			114
++#define GCC_NSSNOC_QOSGEN_REF_ARES		115
++#define GCC_NSSNOC_TIMEOUT_REF_ARES		116
++#define GCC_PCIE0_PIPE_ARES			117
++#define GCC_PCIE0_SLEEP_ARES			118
++#define GCC_PCIE0_CORE_STICKY_ARES		119
++#define GCC_PCIE0_AXI_MASTER_ARES		120
++#define GCC_PCIE0_AXI_SLAVE_ARES		121
++#define GCC_PCIE0_AHB_ARES			122
++#define GCC_PCIE0_AXI_MASTER_STICKY_ARES	123
++#define GCC_PCIE1_PIPE_ARES			124
++#define GCC_PCIE1_SLEEP_ARES			125
++#define GCC_PCIE1_CORE_STICKY_ARES		126
++#define GCC_PCIE1_AXI_MASTER_ARES		127
++#define GCC_PCIE1_AXI_SLAVE_ARES		128
++#define GCC_PCIE1_AHB_ARES			129
++#define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
  
- - #mbox-cells:
- 	Usage: required
- 	Value type: <u32>
- 	Definition: as described in mailbox.txt, must be 1
- 
-+- #clock-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: as described in clock.txt, must be 0
-+
- 
- = EXAMPLE
- The following example describes the APCS HMSS found in MSM8996 and part of the
-@@ -44,3 +53,12 @@ GLINK RPM referencing the "rpm_hlos" doorbell therein.
- 		mbox-names = "rpm_hlos";
- 	};
- 
-+Below is another example of the APCS binding on MSM8916 platforms:
-+
-+	apcs: mailbox@b011000 {
-+		compatible = "qcom,msm8916-apcs-kpss-global";
-+		reg = <0xb011000 0x1000>;
-+		#mbox-cells = <1>;
-+		clocks = <&a53pll>;
-+		#clock-cells = <0>;
-+	};
+ #endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
