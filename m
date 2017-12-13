@@ -1,95 +1,272 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
 To: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 10/10] clk: fix set_rate_range when current rate is out of range
-Date: Fri,  1 Dec 2017 22:52:00 +0100
-Message-Id: <20171201215200.23523-11-jbrunet@baylibre.com>
-In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v2 09/11] clk: qcom: ipq8074: add GP and Crypto clocks
+Date: Wed, 13 Dec 2017 19:55:40 +0530
+Message-Id: <1513175142-3702-10-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Calling clk_core_set_rate() with core->req_rate is basically a no-op
-because of the early bail-out mechanism.
+- It has 3 general purpose clock controller which supplies
+  the clock in GPIO pins.
+- It has Crypto Engine which has AXI, AHB and Core clocks.
+  Other non APSS processors can also use Crypto Engine so
+  these clocks are marked as VOTED clocks.
 
-This may leave the clock in inconsistent state if the rate is out the
-requested range. Calling clk_core_set_rate() with the closest rate
-limit could solve the problem but:
-- The underlying determine_rate() callback needs to account for this
-  corner case (rounding within the range, if possible)
-- if only round_rate() is available, we rely on luck unfortunately.
-
-Fixes: 1c8e600440c7 ("clk: Add rate constraints to clocks")
-Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/clk.c | 37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
+ drivers/clk/qcom/gcc-ipq8074.c | 199 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 199 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index edd965d8f41d..369933831705 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2010,6 +2010,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
- int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- {
- 	int ret = 0;
-+	unsigned long old_min, old_max, rate;
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index be919bb..3aad6bc 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -390,6 +390,22 @@ enum {
+ 	{ P_BIAS_PLL, 6 },
+ };
  
- 	if (!clk)
- 		return 0;
-@@ -2026,10 +2027,38 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 	if (clk->exclusive_count)
- 		clk_core_rate_unprotect(clk->core);
++static const char * const gcc_xo_gpll0_gpll6_gpll0_sleep_clk[] = {
++	"xo",
++	"gpll0",
++	"gpll6",
++	"gpll0_out_main_div2",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0, 1 },
++	{ P_GPLL6, 2 },
++	{ P_GPLL0_DIV2, 4 },
++	{ P_SLEEP_CLK, 6 },
++};
++
+ static struct clk_alpha_pll gpll0_main = {
+ 	.offset = 0x21000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+@@ -1939,6 +1955,74 @@ enum {
+ 	},
+ };
  
--	if (min != clk->min_rate || max != clk->max_rate) {
--		clk->min_rate = min;
--		clk->max_rate = max;
--		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+	/* Save the current values in case we need to rollback the change */
-+	old_min = clk->min_rate;
-+	old_max = clk->max_rate;
-+	clk->min_rate = min;
-+	clk->max_rate = max;
++static struct freq_tbl ftbl_crypto_clk_src[] = {
++	F(40000000, P_GPLL0_DIV2, 10, 0, 0),
++	F(80000000, P_GPLL0, 10, 0, 0),
++	F(100000000, P_GPLL0, 8, 0, 0),
++	F(160000000, P_GPLL0, 5, 0, 0),
++	{ }
++};
 +
-+	rate = clk_core_get_rate_nolock(clk->core);
-+	if (rate < min || rate > max) {
-+		/*
-+		 * FIXME:
-+		 * We are in bit of trouble here, current rate is outside the
-+		 * the requested range. We are going try to request appropriate
-+		 * range boundary but there is a catch. It may fail for the
-+		 * usual reason (clock broken, clock protected, etc) but also
-+		 * because:
-+		 * - round_rate() was not favorable and fell on the wrong
-+		 *   side of the boundary
-+		 * - the determine_rate() callback does not really check for
-+		 *   this corner case when determining the rate
-+		 */
++static struct clk_rcg2 crypto_clk_src = {
++	.cmd_rcgr = 0x16004,
++	.freq_tbl = ftbl_crypto_clk_src,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "crypto_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++	},
++};
 +
-+		if (rate < min)
-+			rate = min;
-+		else
-+			rate = max;
++static struct freq_tbl ftbl_gp_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	{ }
++};
 +
-+		ret = clk_core_set_rate_nolock(clk->core, rate);
-+		if (ret) {
-+			/* rollback the changes */
-+			clk->min_rate = old_min;
-+			clk->max_rate = old_max;
-+		}
- 	}
++static struct clk_rcg2 gp1_clk_src = {
++	.cmd_rcgr = 0x08004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp1_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 gp2_clk_src = {
++	.cmd_rcgr = 0x09004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp2_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 gp3_clk_src = {
++	.cmd_rcgr = 0x0a004,
++	.freq_tbl = ftbl_gp_clk_src,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll6_gpll0_sleep_clk_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gp3_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll6_gpll0_sleep_clk,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static struct clk_branch gcc_blsp1_ahb_clk = {
+ 	.halt_reg = 0x01008,
+ 	.clkr = {
+@@ -4137,6 +4221,111 @@ enum {
+ 	},
+ };
  
- 	if (clk->exclusive_count)
++static struct clk_branch gcc_crypto_ahb_clk = {
++	.halt_reg = 0x16024,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_ahb_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_crypto_axi_clk = {
++	.halt_reg = 0x16020,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(1),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_axi_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_crypto_clk = {
++	.halt_reg = 0x1601c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(2),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_crypto_clk",
++			.parent_names = (const char *[]){
++				"crypto_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp1_clk = {
++	.halt_reg = 0x08000,
++	.clkr = {
++		.enable_reg = 0x08000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp1_clk",
++			.parent_names = (const char *[]){
++				"gp1_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp2_clk = {
++	.halt_reg = 0x09000,
++	.clkr = {
++		.enable_reg = 0x09000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp2_clk",
++			.parent_names = (const char *[]){
++				"gp2_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gp3_clk = {
++	.halt_reg = 0x0a000,
++	.clkr = {
++		.enable_reg = 0x0a000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gp3_clk",
++			.parent_names = (const char *[]){
++				"gp3_clk_src"
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_hw *gcc_ipq8074_hws[] = {
+ 	&gpll0_out_main_div2.hw,
+ 	&gpll6_out_main_div2.hw,
+@@ -4233,6 +4422,10 @@ enum {
+ 	[NSS_PORT6_RX_DIV_CLK_SRC] = &nss_port6_rx_div_clk_src.clkr,
+ 	[NSS_PORT6_TX_CLK_SRC] = &nss_port6_tx_clk_src.clkr,
+ 	[NSS_PORT6_TX_DIV_CLK_SRC] = &nss_port6_tx_div_clk_src.clkr,
++	[CRYPTO_CLK_SRC] = &crypto_clk_src.clkr,
++	[GP1_CLK_SRC] = &gp1_clk_src.clkr,
++	[GP2_CLK_SRC] = &gp2_clk_src.clkr,
++	[GP3_CLK_SRC] = &gp3_clk_src.clkr,
+ 	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
+ 	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
+ 	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
+@@ -4362,6 +4555,12 @@ enum {
+ 	[GCC_UNIPHY1_PORT5_TX_CLK] = &gcc_uniphy1_port5_tx_clk.clkr,
+ 	[GCC_UNIPHY2_PORT6_RX_CLK] = &gcc_uniphy2_port6_rx_clk.clkr,
+ 	[GCC_UNIPHY2_PORT6_TX_CLK] = &gcc_uniphy2_port6_tx_clk.clkr,
++	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
++	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
++	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
++	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
++	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
++	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
 -- 
-2.14.3
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
