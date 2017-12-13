@@ -1,65 +1,147 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56890 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbdLLMbm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:31:42 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH 00/10] clk: qcom: CPU clock driver for msm8996
-Date: Tue, 12 Dec 2017 14:31:27 +0200
-Message-Id: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33081 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751882AbdLMIxZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Dec 2017 03:53:25 -0500
+Received: by mail-wm0-f67.google.com with SMTP id g130so20821308wme.0
+        for <linux-clk@vger.kernel.org>; Wed, 13 Dec 2017 00:53:24 -0800 (PST)
+Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Johannes Stezenbach <js@sig21.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <20170925191749.2oamusbajgs6clcg@sig21.net>
+ <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+ <34396652.fljU28PShI@aspire.rjw.lan>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
+Date: Wed, 13 Dec 2017 09:53:21 +0100
+MIME-Version: 1.0
+In-Reply-To: <34396652.fljU28PShI@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for the CPU clocks on msm8996 devices.
-A previous post of RFC can be found here
-https://patchwork.kernel.org/patch/9662917/
+Hi,
 
-Ilia Lin (5):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  DT: QCOM: Add cpufreq-dt to msm8996
-  DT: QCOM: Add thermal mitigation to msm8996
+On 13-12-17 01:00, Rafael J. Wysocki wrote:
+> On Monday, September 25, 2017 9:21:09 PM CET Johannes Stezenbach wrote:
+>> SATA controller is enabled on Asus E200HA even though the
+>> machine doesn't use it (it has eMMC storage), however
+>> SATA being on blocks S0ix entry so we need to disable it.
+>>
+>> Signed-off-by: Johannes Stezenbach <js@sig21.net>
+> 
+> Mika, Andy, Hans, any comments on this one?
 
-Rajendra Nayak (4):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Seems sensible to me, I'm afraid we may need the same quirk on
+other devices, but I see no way around this.
 
-Taniya Das (1):
-  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
+Although, maybe we need to have a specialized (derived)
+ahci driver for these Atom SoCs and in there if no
+disk is detected do this through the clock framework?
 
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- arch/arm64/Kconfig.platforms                       |   7 +
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 282 ++++++++++-
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  72 ++-
- drivers/clk/qcom/clk-alpha-pll.h                   |   5 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 542 +++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/perf/qcom_l2_pmu.c                         |  48 +-
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  64 +++
- include/soc/qcom/kryo-l2-accessors.h               |  27 +
- 14 files changed, 1009 insertions(+), 70 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+That may be better then a long list of quirks.
 
--- 
-QUALCOMM ISRAEL, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Johannes, question how did you test this and figure out
+which clocks to disable, a quick howto on this, I think
+a patch adding a little howto / README as say
+Documentation/power/intel-S0ix-debugging.txt
+documenting this would be great. I'm certainly interested
+in trying to reproduce this on some of my own Bay Trail and
+Cherry Trail devices and add fixes for those if necessary.
 
--- 
-1.9.1
+Regards,
 
+Hans
+
+
+
+
+> 
+>> ---
+>>   drivers/platform/x86/pmc_atom.c | 33 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 33 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+>> index 8d13c86cc418..b5dd38712268 100644
+>> --- a/drivers/platform/x86/pmc_atom.c
+>> +++ b/drivers/platform/x86/pmc_atom.c
+>> @@ -17,6 +17,7 @@
+>>   
+>>   #include <linux/debugfs.h>
+>>   #include <linux/device.h>
+>> +#include <linux/dmi.h>
+>>   #include <linux/init.h>
+>>   #include <linux/io.h>
+>>   #include <linux/platform_data/x86/clk-pmc-atom.h>
+>> @@ -57,6 +58,9 @@ struct pmc_dev {
+>>   static struct pmc_dev pmc_device;
+>>   static u32 acpi_base_addr;
+>>   
+>> +static u32 quirks;
+>> +#define QUIRK_DISABLE_SATA BIT(0)
+>> +
+>>   static const struct pmc_clk byt_clks[] = {
+>>   	{
+>>   		.name = "xtal",
+>> @@ -271,6 +275,15 @@ static void pmc_hw_reg_setup(struct pmc_dev *pmc)
+>>   	 * - GPIO_SCORE shared IRQ
+>>   	 */
+>>   	pmc_reg_write(pmc, PMC_S0IX_WAKE_EN, (u32)PMC_WAKE_EN_SETTING);
+>> +
+>> +	if (quirks & QUIRK_DISABLE_SATA) {
+>> +		u32 func_dis;
+>> +
+>> +		pr_info("pmc: disable SATA IP\n");
+>> +		func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
+>> +		func_dis |= BIT_SATA;
+>> +		pmc_reg_write(pmc, PMC_FUNC_DIS, func_dis);
+>> +	}
+>>   }
+>>   
+>>   #ifdef CONFIG_DEBUG_FS
+>> @@ -500,6 +513,24 @@ static struct pmc_notifier_block pmc_freeze_nb = {
+>>   };
+>>   #endif
+>>   
+>> +static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
+>> +{
+>> +	pr_info("pmc: Asus E200HA detected\n");
+>> +	quirks |= QUIRK_DISABLE_SATA;
+>> +	return 1;
+>> +}
+>> +
+>> +static const struct dmi_system_id cht_table[] = {
+>> +	{
+>> +		.callback = cht_asus_e200ha_cb,
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "E200HA"),
+>> +		},
+>> +	},
+>> +	{ }
+>> +};
+>> +
+>>   static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+>>   {
+>>   	struct pmc_dev *pmc = &pmc_device;
+>> @@ -526,6 +557,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+>>   
+>>   	pmc->map = map;
+>>   
+>> +	dmi_check_system(cht_table);
+>> +
+>>   	/* PMC hardware registers setup */
+>>   	pmc_hw_reg_setup(pmc);
+>>   
+>>
+> 
+> 
