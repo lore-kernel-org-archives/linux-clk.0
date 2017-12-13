@@ -1,371 +1,115 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 5/6] clocksource: Add a new timer-ingenic driver
-Date: Fri, 29 Dec 2017 13:59:41 +0100
-Message-Id: <20171229125942.27305-6-paul@crapouillou.net>
-In-Reply-To: <20171229125942.27305-1-paul@crapouillou.net>
-References: <20171229125942.27305-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:41643 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752857AbdLMABB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 19:01:01 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Johannes Stezenbach <js@sig21.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
+Date: Wed, 13 Dec 2017 01:00:19 +0100
+Message-ID: <34396652.fljU28PShI@aspire.rjw.lan>
+In-Reply-To: <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <20170925191749.2oamusbajgs6clcg@sig21.net> <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver will use the TCU (Timer Counter Unit) present on the Ingenic
-JZ47xx SoCs to provide the kernel with a clocksource and timers.
+On Monday, September 25, 2017 9:21:09 PM CET Johannes Stezenbach wrote:
+> SATA controller is enabled on Asus E200HA even though the
+> machine doesn't use it (it has eMMC storage), however
+> SATA being on blocks S0ix entry so we need to disable it.
+> 
+> Signed-off-by: Johannes Stezenbach <js@sig21.net>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- .../devicetree/bindings/timer/ingenic,tcu.txt      |  35 +++
- drivers/clocksource/Kconfig                        |   8 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/timer-ingenic.c                | 259 +++++++++++++++++++++
- 4 files changed, 303 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
- create mode 100644 drivers/clocksource/timer-ingenic.c
+Mika, Andy, Hans, any comments on this one?
 
-diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-new file mode 100644
-index 000000000000..e4944972ea53
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-@@ -0,0 +1,35 @@
-+Ingenic JZ47xx SoCs Timer/Counter Unit driver
-+---------------------------------------------
-+
-+Required properties:
-+
-+- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
-+  * ingenic,jz4740-tcu
-+  * ingenic,jz4770-tcu
-+  * ingenic,jz4780-tcu
-+- interrupt-parent : phandle of the TCU interrupt controller.
-+- interrupts : Specifies the interrupts the controller is connected to.
-+- clocks : List of phandle & clock specifiers for the TCU clocks.
-+- clock-names : List of name strings for the TCU clocks.
-+- ingenic,channels: a list of TCU channels to be used as timers.
-+
-+Example:
-+
-+/ {
-+	regmap {
-+		compatible = "simple-mfd", "syscon";
-+		reg = <0x10002000 0x1000>;
-+
-+		tcu: timer {
-+			compatible = "ingenic,jz4740-tcu";
-+
-+			clocks = <&tcu 0>, <&tcu 1>;
-+			clock-names = "timer0", "timer1";
-+
-+			interrupt-parent = <&tcu>;
-+			interrupts = <0>, <1>;
-+
-+			ingenic,channels = <0>, <1>;
-+		};
-+	};
-+};
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index c729a88007d0..7b6dedf0347d 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -583,4 +583,12 @@ config CLKSRC_ST_LPC
- 	  Enable this option to use the Low Power controller timer
- 	  as clocksource.
- 
-+config INGENIC_TIMER
-+	bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
-+	depends on MACH_INGENIC || COMPILE_TEST
-+	select CLKSRC_OF
-+	default y
-+	help
-+	  Support for the timer/counter unit of the Ingenic JZ SoCs.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 72711f1491e3..607c7de07d02 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -73,5 +73,6 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
- obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
- obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
- obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
-+obj-$(CONFIG_INGENIC_TIMER)		+= timer-ingenic.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
-diff --git a/drivers/clocksource/timer-ingenic.c b/drivers/clocksource/timer-ingenic.c
-new file mode 100644
-index 000000000000..2ec922e5fc0b
---- /dev/null
-+++ b/drivers/clocksource/timer-ingenic.c
-@@ -0,0 +1,259 @@
-+/*
-+ * Copyright (C) 2016 Paul Cercueil <paul@crapouillou.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clockchips.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/ingenic-tcu.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#define NUM_CHANNELS	8
-+
-+struct ingenic_tcu;
-+
-+struct ingenic_tcu_channel {
-+	unsigned int idx;
-+	struct clk *clk;
-+};
-+
-+struct ingenic_tcu {
-+	struct ingenic_tcu_channel channels[NUM_CHANNELS];
-+	unsigned long requested;
-+	struct regmap *map;
-+};
-+
-+struct ingenic_clock_event_device {
-+	struct clock_event_device cevt;
-+	struct ingenic_tcu_channel *channel;
-+	char name[32];
-+};
-+
-+#define ingenic_cevt(_evt) \
-+	container_of(_evt, struct ingenic_clock_event_device, cevt)
-+
-+static inline struct ingenic_tcu *to_ingenic_tcu(struct ingenic_tcu_channel *ch)
-+{
-+	return container_of(ch, struct ingenic_tcu, channels[ch->idx]);
-+}
-+
-+static int ingenic_tcu_cevt_set_state_shutdown(struct clock_event_device *evt)
-+{
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
-+
-+	regmap_write(tcu->map, REG_TECR, BIT(idx));
-+	return 0;
-+}
-+
-+static int ingenic_tcu_cevt_set_next(unsigned long next,
-+		struct clock_event_device *evt)
-+{
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
-+
-+	if (next > 0xffff)
-+		return -EINVAL;
-+
-+	regmap_write(tcu->map, REG_TDFRc(idx), (unsigned int) next);
-+	regmap_write(tcu->map, REG_TCNTc(idx), 0);
-+	regmap_write(tcu->map, REG_TESR, BIT(idx));
-+
-+	return 0;
-+}
-+
-+static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
-+{
-+	struct clock_event_device *cevt = dev_id;
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(cevt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
-+
-+	regmap_write(tcu->map, REG_TECR, BIT(idx));
-+
-+	if (cevt->event_handler)
-+		cevt->event_handler(cevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int __init ingenic_tcu_req_channel(struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	char buf[16];
-+	int err;
-+
-+	if (test_and_set_bit(channel->idx, &tcu->requested))
-+		return -EBUSY;
-+
-+	snprintf(buf, sizeof(buf), "timer%u", channel->idx);
-+	channel->clk = clk_get(NULL, buf);
-+	if (IS_ERR(channel->clk)) {
-+		err = PTR_ERR(channel->clk);
-+		goto out_release;
-+	}
-+
-+	err = clk_prepare_enable(channel->clk);
-+	if (err)
-+		goto out_clk_put;
-+
-+	return 0;
-+
-+out_clk_put:
-+	clk_put(channel->clk);
-+out_release:
-+	clear_bit(channel->idx, &tcu->requested);
-+	return err;
-+}
-+
-+static int __init ingenic_tcu_reset_channel(struct device_node *np,
-+		struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+
-+	return regmap_update_bits(tcu->map, REG_TCSRc(channel->idx),
-+				0xffff & ~TCSR_RESERVED_BITS, 0);
-+}
-+
-+static void __init ingenic_tcu_free_channel(struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+
-+	clk_disable_unprepare(channel->clk);
-+	clk_put(channel->clk);
-+	clear_bit(channel->idx, &tcu->requested);
-+}
-+
-+static const char * const ingenic_tcu_timer_names[] = {
-+	"TCU0", "TCU1", "TCU2", "TCU3", "TCU4", "TCU5", "TCU6", "TCU7",
-+};
-+
-+static int __init ingenic_tcu_setup_cevt(struct device_node *np,
-+		struct ingenic_tcu *tcu, unsigned int idx)
-+{
-+	struct ingenic_tcu_channel *channel = &tcu->channels[idx];
-+	struct ingenic_clock_event_device *jzcevt;
-+	unsigned long rate;
-+	int err, virq;
-+
-+	err = ingenic_tcu_req_channel(channel);
-+	if (err)
-+		return err;
-+
-+	err = ingenic_tcu_reset_channel(np, channel);
-+	if (err)
-+		goto err_out_free_channel;
-+
-+	rate = clk_get_rate(channel->clk);
-+	if (!rate) {
-+		err = -EINVAL;
-+		goto err_out_free_channel;
-+	}
-+
-+	jzcevt = kzalloc(sizeof(*jzcevt), GFP_KERNEL);
-+	if (!jzcevt) {
-+		err = -ENOMEM;
-+		goto err_out_free_channel;
-+	}
-+
-+	virq = irq_of_parse_and_map(np, idx);
-+	if (!virq) {
-+		err = -EINVAL;
-+		goto err_out_kfree_jzcevt;
-+	}
-+
-+	err = request_irq(virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
-+			ingenic_tcu_timer_names[idx], &jzcevt->cevt);
-+	if (err)
-+		goto err_out_irq_dispose_mapping;
-+
-+	jzcevt->channel = channel;
-+	snprintf(jzcevt->name, sizeof(jzcevt->name), "ingenic-tcu-chan%u",
-+		 channel->idx);
-+
-+	jzcevt->cevt.cpumask = cpumask_of(smp_processor_id());
-+	jzcevt->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
-+	jzcevt->cevt.name = jzcevt->name;
-+	jzcevt->cevt.rating = 200;
-+	jzcevt->cevt.set_state_shutdown = ingenic_tcu_cevt_set_state_shutdown;
-+	jzcevt->cevt.set_next_event = ingenic_tcu_cevt_set_next;
-+
-+	clockevents_config_and_register(&jzcevt->cevt, rate, 10, (1 << 16) - 1);
-+
-+	return 0;
-+
-+err_out_irq_dispose_mapping:
-+	irq_dispose_mapping(virq);
-+err_out_kfree_jzcevt:
-+	kfree(jzcevt);
-+err_out_free_channel:
-+	ingenic_tcu_free_channel(channel);
-+	return err;
-+}
-+
-+static int __init ingenic_tcu_init(struct device_node *np)
-+{
-+	struct ingenic_tcu *tcu;
-+	unsigned int i;
-+	int err, num_timers;
-+
-+	num_timers = of_property_count_elems_of_size(np, "ingenic,channels", 4);
-+	if (num_timers < 0) {
-+		pr_err("timer-ingenic: Unable to read DTS node");
-+		return num_timers;
-+	}
-+
-+	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
-+	if (!tcu)
-+		return -ENOMEM;
-+
-+	tcu->map = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(tcu->map)) {
-+		err = PTR_ERR(tcu->map);
-+		kfree(tcu);
-+		return err;
-+	}
-+
-+	for (i = 0; i < NUM_CHANNELS; i++)
-+		tcu->channels[i].idx = i;
-+
-+	for (i = 0; i < (unsigned int) num_timers; i++) {
-+		u32 channel;
-+
-+		of_property_read_u32_index(np, "ingenic,channels", i, &channel);
-+
-+		if (channel > NUM_CHANNELS) {
-+			pr_warn("timer-ingenic: requested TCU channel %u does not exist\n",
-+					channel);
-+			continue;
-+		}
-+
-+		err = ingenic_tcu_setup_cevt(np, tcu, channel);
-+		if (err) {
-+			pr_warn("timer-ingenic: Unable to init TCU channel %u: %i",
-+					channel, err);
-+			continue;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+CLOCKSOURCE_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu", ingenic_tcu_init);
-+CLOCKSOURCE_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu", ingenic_tcu_init);
-+CLOCKSOURCE_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu", ingenic_tcu_init);
--- 
-2.11.0
+> ---
+>  drivers/platform/x86/pmc_atom.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+> index 8d13c86cc418..b5dd38712268 100644
+> --- a/drivers/platform/x86/pmc_atom.c
+> +++ b/drivers/platform/x86/pmc_atom.c
+> @@ -17,6 +17,7 @@
+>  
+>  #include <linux/debugfs.h>
+>  #include <linux/device.h>
+> +#include <linux/dmi.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_data/x86/clk-pmc-atom.h>
+> @@ -57,6 +58,9 @@ struct pmc_dev {
+>  static struct pmc_dev pmc_device;
+>  static u32 acpi_base_addr;
+>  
+> +static u32 quirks;
+> +#define QUIRK_DISABLE_SATA BIT(0)
+> +
+>  static const struct pmc_clk byt_clks[] = {
+>  	{
+>  		.name = "xtal",
+> @@ -271,6 +275,15 @@ static void pmc_hw_reg_setup(struct pmc_dev *pmc)
+>  	 * - GPIO_SCORE shared IRQ
+>  	 */
+>  	pmc_reg_write(pmc, PMC_S0IX_WAKE_EN, (u32)PMC_WAKE_EN_SETTING);
+> +
+> +	if (quirks & QUIRK_DISABLE_SATA) {
+> +		u32 func_dis;
+> +
+> +		pr_info("pmc: disable SATA IP\n");
+> +		func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
+> +		func_dis |= BIT_SATA;
+> +		pmc_reg_write(pmc, PMC_FUNC_DIS, func_dis);
+> +	}
+>  }
+>  
+>  #ifdef CONFIG_DEBUG_FS
+> @@ -500,6 +513,24 @@ static struct pmc_notifier_block pmc_freeze_nb = {
+>  };
+>  #endif
+>  
+> +static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
+> +{
+> +	pr_info("pmc: Asus E200HA detected\n");
+> +	quirks |= QUIRK_DISABLE_SATA;
+> +	return 1;
+> +}
+> +
+> +static const struct dmi_system_id cht_table[] = {
+> +	{
+> +		.callback = cht_asus_e200ha_cb,
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "E200HA"),
+> +		},
+> +	},
+> +	{ }
+> +};
+> +
+>  static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  {
+>  	struct pmc_dev *pmc = &pmc_device;
+> @@ -526,6 +557,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  
+>  	pmc->map = map;
+>  
+> +	dmi_check_system(cht_table);
+> +
+>  	/* PMC hardware registers setup */
+>  	pmc_hw_reg_setup(pmc);
+>  
+> 
+
+
