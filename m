@@ -1,46 +1,37 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171205214345.812687071@cogentembedded.com>
-Date: Wed, 06 Dec 2017 00:43:35 +0300
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77970: add LVDS clock
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1513245469.32163.1.camel@baylibre.com>
+Subject: Re: [PATCH v7 2/6] dt-bindings: clock: add compatible variant for
+ the Meson-AXG
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
+ <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 14 Dec 2017 10:57:49 +0100
+In-Reply-To: <20171211141348.22048-3-yixun.lan@amlogic.com>
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	 <20171211141348.22048-3-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
-patch for some reason -- add it back...
+On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
+> Update the documentation to support clock driver for the Amlogic's
+> Meson-AXG SoC.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Applied to next/dt
 
-Fixes: 8d46e28fb508 ("clk: renesas: cpg-mssr: Add R8A77970 support")
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thx
 
----
-This patch is against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo...
-
- drivers/clk/renesas/r8a77970-cpg-mssr.c |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -105,6 +105,7 @@ static const struct mssr_mod_clk r8a7797
- 	DEF_MOD("vspd0",		 623,	R8A77970_CLK_S2D1),
- 	DEF_MOD("csi40",		 716,	R8A77970_CLK_CSI0),
- 	DEF_MOD("du0",			 724,	R8A77970_CLK_S2D1),
-+	DEF_MOD("lvds",			 727,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin3",			 808,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin2",			 809,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin1",			 810,	R8A77970_CLK_S2D1),
+> ---
+>  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
