@@ -1,54 +1,50 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 02/11] clk: sunxi-ng: a83t: Add M divider to TCON1 clock
-Date: Sat, 30 Dec 2017 22:01:54 +0100
-Message-Id: <20171230210203.24115-3-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <1510234022-29442-3-git-send-email-geert+renesas@glider.be> <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Dec 2017 16:44:23 +0100
+Message-ID: <CAMuHMdXEhDMSmL4owVYvUbJuCQ65pF+-pXpt2RhxRqa2dqL7jQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active
+ during system suspend
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-TCON1 also has M divider, contrary to TCON0.
+On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> If a device is part of the CPG/MSSR Clock Domain and to be used as a
+>> wakeup source, it must be kept active during system suspend.
+>>
+>> Currently this is handled in device-specific drivers by explicitly
+>> increasing the use count of the module clock when the device is
+>> configured as a wakeup source.  However, the proper way to prevent the
+>> device from being stopped is to inform this requirement to the genpd
+>> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+>>
+>> Note that this will only affect devices configured as wakeup sources.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Fixes: 05359be1176b ("clk: sunxi-ng: Add driver for A83T CCU")
+Thank you, queued in clk-renesas-for-v4.16.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index 04a9c33f53f0..7d08015b980d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -504,8 +504,8 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon0_clk, "tcon0", tcon0_parents,
- 				 0x118, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- 
- static const char * const tcon1_parents[] = { "pll-video1" };
--static SUNXI_CCU_MUX_WITH_GATE(tcon1_clk, "tcon1", tcon1_parents,
--				 0x11c, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M_WITH_MUX_GATE(tcon1_clk, "tcon1", tcon1_parents,
-+				 0x11c, 0, 4, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(csi_misc_clk, "csi-misc", "osc24M", 0x130, BIT(16), 0);
- 
--- 
-2.15.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
