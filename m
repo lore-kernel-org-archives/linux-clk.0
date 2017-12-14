@@ -1,74 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 26 Dec 2017 17:16:06 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: mturquette@baylibre.com, matthias.bgg@gmail.com,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kbuild-all@01.org,
-	Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH v2] clk: mediatek: Fix all warnings for missing struct
- clk_onecell_data
-Message-ID: <20171227011606.GS7997@codeaurora.org>
-References: <2a2569d80e92a45e8eef2b431abfb951853ab6e0.1514188437.git.sean.wang@mediatek.com>
+Return-Path: <hdegoede@redhat.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Johannes Stezenbach <js@sig21.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux PM list <linux-pm@vger.kernel.org>, Carlo Caione <carlo@endlessm.com>,
+ Darren Hart <dvhart@infradead.org>,
+ Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+ Takashi Iwai <tiwai@suse.de>,
+ ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+ <20170925191749.2oamusbajgs6clcg@sig21.net>
+ <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
+ <34396652.fljU28PShI@aspire.rjw.lan>
+ <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
+ <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
+ <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
+ <20171213162206.GA7337@sig21.net>
+ <e6aa5c55-8174-7ad9-009f-c254d3aeaf72@redhat.com>
+ <1513193613.7000.58.camel@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2dd8be86-496d-1136-9cc2-0e9e0ac30d41@redhat.com>
+Date: Thu, 14 Dec 2017 11:53:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2a2569d80e92a45e8eef2b431abfb951853ab6e0.1514188437.git.sean.wang@mediatek.com>
+In-Reply-To: <1513193613.7000.58.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/25, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Even though the header file linux/clk-provider.h is already being properly
-> included in clk-mtk.h, the definition of struct clk_onecell_data still
-> must depend on CONFIG_COMMON_CLK defined and thus it's possible that
-> below build warnings occur when CONFIG_COMMON_CLK is not being selected.
-> 
-> Therefore, these functions which need struct clk_onecell_data without
-> declaring that structure first requires simply declaring that this struct
-> exists prior to referencing it in clk-mtk.h
-> 
-> Changes from v1->v2:
-> enhance v1 based on two useful solutions Jean Delvare kindly suggested.
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> In file included from drivers/clk/mediatek/reset.c:22:0:
-> >>drivers/clk/mediatek/clk-mtk.h:44:19: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->   int num, struct clk_onecell_data *clk_data);
-> 		  ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:63:19: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->   int num, struct clk_onecell_data *clk_data);
-> 		  ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:145:10: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->   struct clk_onecell_data *clk_data);
-> 	 ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:164:11: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->    struct clk_onecell_data *clk_data);
-> 	  ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:190:12: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of this
-> definition or declaration
->     struct clk_onecell_data *clk_data);
-> 	   ^~~~~~~~~~~~~~~~
-> 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: kbuild-all@01.org
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Jean Delvare <jdelvare@suse.de>
-> Cc: linux-clk@vger.kernel.org
-> ---
+Hi,
 
-Applied to clk-next
+On 13-12-17 20:33, Andy Shevchenko wrote:
+> On Wed, 2017-12-13 at 17:37 +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 13-12-17 17:22, Johannes Stezenbach wrote:
+>>>
+> 
+> 
+>>> Please don't get confused with the other thread about clocks.
+>>> This issue sets the "disable IP" bit, found by doing stupid
+>>> experiments to enable S0ix on E200HA.
+>>
+>> Ah my bad.
+> 
+> Oh, perhaps I also need to refresh my memory from that buglink.
+> 
+>>> 1. no idea if Cherry Trail even has SATA IP, maybe this is a
+>>>      meaningless bit but PMC firmware carried over from
+>>>      Bay Trail looks at it
+>>
+>>
+>> There are no CHT SoCs with SATA AFAIK, but Braswell SoCs,
+>> which I believe is the same die do have SATA.
+>>
+>> I think the best fix here is to look at the model-string part
+>> of the CPU-id and do a quirk based on that, setting the "disable IP"
+>> bit for the SATA on all SoC models known to not have SATA
+>> (Z8300, Z8350, Z8500, Z8550, Z8700, Z8750).
+>>
+>> Rafael, Andy how does that sound as a solution?
+> 
+> Yeah, that bit is a property of PMC microcontroller and thus belongs to
+> its driver in Linux kernel.
+> 
+> To make it strict we need a matching property. AFAIR CPU model ID is all
+> the same for all CHT and BSW SoCs, so, can't be used to distinguish
+> them. So, you are thinking about comparing CPU model name then?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yes CPU model name.
+
+> It might work. However, SATA itself is a part of PCH, and thus can not
+> exactly be matched by CPU ID.
+
+AFAIK the PCH is integrated, at least with the Z83xx Z85xx and X87xx
+models.
+
+So using a CPU model name match seems a better solution to me
+then DMI product-name matching, as the CPU model name match should
+fix this for all devices with such a SoC.
+
+> Btw, Pentium Celeron N-series according to spec has SATA host.
+
+Right as I said the Braswell models do have SATA.
+
+Regards,
+
+Hans
