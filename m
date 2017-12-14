@@ -1,52 +1,41 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Igor Grinberg <grinberg@compulab.co.il>
-Cc: Daniel Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: pxa: ulpi: fix ulpi timeout and slowpath warn
-References: <20171226133253.11653-1-grinberg@compulab.co.il>
-Date: Thu, 28 Dec 2017 09:01:55 +0100
-In-Reply-To: <20171226133253.11653-1-grinberg@compulab.co.il> (Igor Grinberg's
-	message of "Tue, 26 Dec 2017 15:32:53 +0200")
-Message-ID: <87r2rf7024.fsf@belgarion.home>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1513245499.32163.2.camel@baylibre.com>
+Subject: Re: [PATCH v7 3/6] clk: meson-axg: add clocks dt-bindings required
+ header
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
+ <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 14 Dec 2017 10:58:19 +0100
+In-Reply-To: <20171211141348.22048-4-yixun.lan@amlogic.com>
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	 <20171211141348.22048-4-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Igor Grinberg <grinberg@compulab.co.il> writes:
+On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
+> From: Qiufang Dai <qiufang.dai@amlogic.com>
+> 
+> Add the required header for the clocks ID dt-bindings
+> exported from various subsystem in the Meson-AXG SoC.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-> Both cm-x300 and pxa3xx-ulpi use the plain clk_{en,dis}able() API.
-> With the new clocking framework this results in warnings of type:
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:714 clk_core_enable+0x90/0x9c
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc5-cm-x300+ #15
-> Hardware name: CM-X300 module
-> [<c001007c>] (unwind_backtrace) from [<c000df94>] (show_stack+0x10/0x14)
-> [<c000df94>] (show_stack) from [<c00199a8>] (__warn+0xd8/0x100)
-> [<c00199a8>] (__warn) from [<c0019a0c>] (warn_slowpath_null+0x3c/0x48)
-> [<c0019a0c>] (warn_slowpath_null) from [<c024e8c0>] (clk_core_enable+0x90/0x9c)
-> [<c024e8c0>] (clk_core_enable) from [<c024ea54>] (clk_core_enable_lock+0x18/0x2c)
-> [<c024ea54>] (clk_core_enable_lock) from [<c0016994>] (cm_x300_u2d_init+0x4c/0xe8)
-> [<c0016994>] (cm_x300_u2d_init) from [<c00163e0>] (pxa3xx_u2d_probe+0xe0/0x244)
-> [<c00163e0>] (pxa3xx_u2d_probe) from [<c0283de0>] (platform_drv_probe+0x38/0x88)
-> ...
-> ------------[ cut here ]------------
-> and alike...
->
-> And finally, it results in:
-> ------------[ cut here ]------------
-> pxa310_ulpi_poll: ULPI access timed out!
-> OTG transceiver init failed
-> ------------[ cut here ]------------
->
-> It might be that disabling the warning in kernel config would also do
-> the job, but IMO a better solution would be to switch to
-> clk_prepare_enable() and clk_disable_unprepare() APIs.
->
-> Signed-off-by: Igor Grinberg <grinberg@compulab.co.il>
-Applied to pxa/for-next, thanks.
+Applied to next/dt
 
-Cheers.
+Thx
 
---
-Robert
+> ---
+>  include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
