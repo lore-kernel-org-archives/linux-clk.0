@@ -1,125 +1,42 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 15 Dec 2017 17:09:45 -0600
+From: Rob Herring <robh@kernel.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] dt-bindings: clock: qcom: add remaining clocks
+ for IPQ8074
+Message-ID: <20171215230945.fysottb7eqtabc5c@rob-hp-laptop>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171207064723.GV4283@codeaurora.org>
-References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
- <20171127100115.20655-2-chunyan.zhang@spreadtrum.com> <20171207064723.GV4283@codeaurora.org>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 7 Dec 2017 16:08:37 +0800
-Message-ID: <CAAfSe-ufFDXTxUxTSW8Au9wdwoHKcB6RBdVdX36RrZQC4x0knw@mail.gmail.com>
-Subject: Re: [PATCH V6 01/12] drivers: move clock common macros out from
- vendor directories
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7 December 2017 at 14:47, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/27, Chunyan Zhang wrote:
->> These macros are used by more than one SoC vendor platforms, avoid to
->> have many copies of these code, this patch moves them to the common
->> clock directory which every clock drivers can access to.
->>
->> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->> ---
->>  drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 60 insertions(+)
->>  create mode 100644 drivers/clk/clk_common.h
->>
->> diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
->> new file mode 100644
->> index 0000000..21e93d2
->> --- /dev/null
->> +++ b/drivers/clk/clk_common.h
->> @@ -0,0 +1,60 @@
->> +/*
->> + * drivers/clk/clk_common.h
->
-> We don't need this in the file too. Please remove this line.
->
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->> +
->> +#ifndef _CLK_COMMON_H_
->> +#define _CLK_COMMON_H_
->> +
->> +#include <linux/clk-provider.h>
->
-> Maybe these macros should just go into clk-provider.h?
+On Wed, Dec 13, 2017 at 07:55:35PM +0530, Abhishek Sahu wrote:
+> This patch adds the DT bindings for following IPQ8074 clocks
+> 
+>  - General PLL’s, NSS UBI PLL and NSS Crypto PLL.
+>  - 2 instances of PCIE, USB, SDCC.
+>  - 2 NSS UBI core and common NSS clocks. NSS is network switching
+>    system which accelerates the ethernet traffic. IPQ8074
+>    NSS has two UBI cores. Some clocks are separate for each UBI core
+>    and remaining NSS clocks are common.
+>  - NSS ethernet port clocks. IPQ8074 has 6 ethernet ports and
+>    each port uses different TX and RX clocks.
+>  - Crypto engine clocks.
+>  - General purpose clocks which comes over GPIO.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 180 +++++++++++++++++++++++++++
+>  1 file changed, 180 insertions(+)
 
-Ok.  And I will also remove the same macros from sunxi-ng/ccu_common.h
-and zte/clk.h.
-
->
->> +
->> +#define CLK_HW_INIT(_name, _parent, _ops, _flags)            \
->> +     (&(struct clk_init_data) {                              \
->> +             .flags          = _flags,                       \
->> +             .name           = _name,                        \
->> +             .parent_names   = (const char *[]) { _parent }, \
->> +             .num_parents    = 1,                            \
->> +             .ops            = _ops,                         \
->> +     })
->
-> Hopefully we don't extend the init structure anymore to have
-> something else. I guess we'll do something if that happens.
->
->> +
->> +#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)   \
->> +     (&(struct clk_init_data) {                              \
->> +             .flags          = _flags,                       \
->> +             .name           = _name,                        \
->> +             .parent_names   = _parents,                     \
->> +             .num_parents    = ARRAY_SIZE(_parents),         \
->> +             .ops            = _ops,                         \
->> +     })
->> +
->> +#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
->> +     (&(struct clk_init_data) {                      \
->> +             .flags          = _flags,               \
->> +             .name           = _name,                \
->> +             .parent_names   = NULL,                 \
->> +             .num_parents    = 0,                    \
->> +             .ops            = _ops,                 \
->> +     })
->> +
->> +#define CLK_FIXED_FACTOR(_struct, _name, _parent,                    \
->> +                     _div, _mult, _flags)                            \
->> +     struct clk_fixed_factor _struct = {                             \
->> +             .div            = _div,                                 \
->> +             .mult           = _mult,                                \
->> +             .hw.init        = CLK_HW_INIT(_name,                    \
->> +                                           _parent,                  \
->> +                                           &clk_fixed_factor_ops,    \
->> +                                           _flags),                  \
->> +     }
->> +
->> +#define CLK_FIXED_RATE(_struct, _name, _flags,                               \
->> +                    _fixed_rate, _fixed_accuracy)                    \
->> +     struct clk_fixed_rate _struct = {                               \
->> +             .fixed_rate     = _fixed_rate,                          \
->> +             .fixed_accuracy = _fixed_accuracy,                      \
->> +             .hw.init        = CLK_HW_INIT_NO_PARENT(_name,          \
->> +                                       &clk_fixed_rate_ops,          \
->> +                                                     _flags),        \
->> +     }
->
-> Maybe don't add this one? Usually fixed rate clks come from DT.
-
-Ok, will also move the fixed rate clks from our driver to DT.
-
-Thanks,
-Chunyan
-
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Reviewed-by: Rob Herring <robh@kernel.org>
