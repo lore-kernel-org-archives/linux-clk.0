@@ -1,38 +1,78 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1512984414.334.10.camel@baylibre.com>
-Subject: Re: [PATCH v6 4/6] clk: meson: make the spinlock naming more
- specific
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 11 Dec 2017 10:26:54 +0100
-In-Reply-To: <20171211064853.32111-5-yixun.lan@amlogic.com>
-References: <20171211064853.32111-1-yixun.lan@amlogic.com>
-	 <20171211064853.32111-5-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40836 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755503AbdLOOTh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Dec 2017 09:19:37 -0500
+Received: by mail-wm0-f66.google.com with SMTP id f206so17817091wmf.5
+        for <linux-clk@vger.kernel.org>; Fri, 15 Dec 2017 06:19:36 -0800 (PST)
+Subject: Re: [PATCH v8] arm64: dts: meson-axg: switch uart_ao clock to CLK81
+To: Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20171215141741.175985-1-yixun.lan@amlogic.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <8e5247c5-4de2-daaa-505d-971e83d9b1d9@baylibre.com>
+Date: Fri, 15 Dec 2017 15:19:33 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171215141741.175985-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-11 at 14:48 +0800, Yixun Lan wrote:
-> Make the spinlock more specific, so better for lockdep
-> debugging and ctags/grep.
+On 15/12/2017 15:17, Yixun Lan wrote:
+> Switch the uart_ao pclk to CLK81 since the clock driver is ready.
 > 
-> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
 > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> 
+> ---
+> This is a fixup for the previous version
+> 
+> Changes in v8 since [1]
+>  - move clock DT info into soc.dtsi
+> 
+> [1]
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005741.html
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index 01beb211f442..d1f8043be426 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -7,6 +7,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/axg-clkc.h>
+>  
+>  / {
+>  	compatible = "amlogic,meson-axg";
+> @@ -200,7 +201,7 @@
+>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>  				reg = <0x0 0x3000 0x0 0x18>;
+>  				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+> -				clocks = <&xtal>, <&xtal>, <&xtal>;
+> +				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+>  				clock-names = "xtal", "pclk", "baud";
+>  				status = "disabled";
+>  			};
+> @@ -209,7 +210,7 @@
+>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>  				reg = <0x0 0x4000 0x0 0x18>;
+>  				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+> -				clocks = <&xtal>, <&xtal>, <&xtal>;
+> +				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+>  				clock-names = "xtal", "pclk", "baud";
+>  				status = "disabled";
+>  			};
+> 
 
-Yixun,
-
-This change is not related to the main task describe in the cover letter.
-Next time, please send it after your series, or before as a dependency to avoid
-mixing topics
-
-Thanks
-Jerome
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
