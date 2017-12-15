@@ -1,91 +1,81 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 01/11] clk: sunxi-ng: Don't set k if width is 0 for nkmp plls
-Date: Sat, 30 Dec 2017 22:01:53 +0100
-Message-Id: <20171230210203.24115-2-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Jerome Brunet <jbrunet@baylibre.com>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+ <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+Message-ID: <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
+Date: Fri, 15 Dec 2017 10:29:56 -0600
+MIME-Version: 1.0
+In-Reply-To: <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-For example, A83T have nmp plls which are modelled as nkmp plls. Since k
-is not specified, it has offset 0, shift 0 and lowest value 1. This
-means that LSB bit is always set to 1, which may change clock rate.
+On 12/12/2017 10:14 PM, David Lechner wrote:
+> On 12/12/2017 05:43 PM, David Lechner wrote:
+>> If clk_enable() is called in reentrant way and spin_trylock_irqsave() is
+>> not working as expected, it is possible to get a negative enable_refcnt
+>> which results in a missed call to spin_unlock_irqrestore().
+>>
+>> It works like this:
+>>
+>> 1. clk_enable() is called.
+>> 2. clk_enable_unlock() calls spin_trylock_irqsave() and sets
+>>     enable_refcnt = 1.
+>> 3. Another clk_enable() is called before the first has returned
+>>     (reentrant), but somehow spin_trylock_irqsave() is returning true.
+>>     (I'm not sure how/why this is happening yet, but it is happening 
+>> to me
+>>     with arch/arm/mach-davinci clocks that I am working on).
+> 
+> I think I have figured out that since CONFIG_SMP=n and 
+> CONFIG_DEBUG_SPINLOCK=n on my kernel that
+> 
+> #define arch_spin_trylock(lock)({ barrier(); (void)(lock); 1; })
+> 
+> in include/linux/spinlock_up.h is causing the problem.
+> 
+> So, basically, reentrancy of clk_enable() is broken for non-SMP systems, 
+> but I'm not sure I know how to fix it.
+> 
+> 
 
-Fix that by applying k factor only if k width is greater than 0.
+Here is what I came up with for a fix. If it looks reasonable, I will 
+resend as a proper patch.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index bb1b1f9..53fad5f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -136,12 +136,23 @@ static void clk_prepare_unlock(void)
+         mutex_unlock(&prepare_lock);
+  }
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index e58c95787f94..709f528af2b3 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
--	unsigned long n, m, k, p;
-+	unsigned long n, m, k = 1, p;
- 	u32 reg;
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
-@@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	if (!n)
- 		n++;
- 
--	k = reg >> nkmp->k.shift;
--	k &= (1 << nkmp->k.width) - 1;
--	k += nkmp->k.offset;
--	if (!k)
--		k++;
-+	if (nkmp->k.width) {
-+		k = reg >> nkmp->k.shift;
-+		k &= (1 << nkmp->k.width) - 1;
-+		k += nkmp->k.offset;
-+		if (!k)
-+			k++;
-+	}
- 
- 	m = reg >> nkmp->m.shift;
- 	m &= (1 << nkmp->m.width) - 1;
-@@ -153,12 +155,15 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
- 	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
--	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
-+	if (nkmp->k.width)
-+		reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1,
-+				nkmp->k.shift);
- 	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
- 	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
- 
- 	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
--	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
-+	if (nkmp->k.width)
-+		reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
- 	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
- 	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
- 
--- 
-2.15.1
++#ifdef CONFIG_SMP
++#define NO_SMP 0
++#else
++#define NO_SMP 1
++#endif
++
+  static unsigned long clk_enable_lock(void)
+         __acquires(enable_lock)
+  {
+-       unsigned long flags;
++       unsigned long flags = 0;
+
+-       if (!spin_trylock_irqsave(&enable_lock, flags)) {
++       /*
++        * spin_trylock_irqsave() always returns true on non-SMP system 
+(unless
++        * spin lock debugging is enabled) so don't call 
+spin_trylock_irqsave()
++        * unless we are on an SMP system.
++        */
++       if (NO_SMP || !spin_trylock_irqsave(&enable_lock, flags)) {
+                 if (enable_owner == current) {
+                         enable_refcnt++;
+                         __acquire(enable_lock);
