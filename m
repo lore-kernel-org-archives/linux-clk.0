@@ -1,29 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 18:11:05 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <ce3a@gmx.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: Re: [PATCH v2] clk: si5351: Do not enable parent clocks on probe
-Message-ID: <20171222021105.GJ7997@codeaurora.org>
-References: <1501007531-5521-1-git-send-email-ce3a@gmx.de>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu <jian.hu@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 5/6] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	<20171211141348.22048-6-yixun.lan@amlogic.com>
+Date: Fri, 15 Dec 2017 10:58:51 -0800
+In-Reply-To: <20171211141348.22048-6-yixun.lan@amlogic.com> (Yixun Lan's
+	message of "Mon, 11 Dec 2017 22:13:47 +0800")
+Message-ID: <7h7etnakd0.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501007531-5521-1-git-send-email-ce3a@gmx.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/25, Sergej Sawazki wrote:
-> The si5351 driver should not prepare or enable other clocks in the tree on
-> probe. Let the clients decide when to prepare or enable the clocks.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+Yixun Lan <yixun.lan@amlogic.com> writes:
+
+> From: Qiufang Dai <qiufang.dai@amlogic.com>
+>
+> Try to add Hiubus DT info, and also enable clock DT info
+> for the Amlogic's Meson-AXG SoC.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+
+Applied to v4.16/dt64,
+
+Thanks,
+
+Kevin
+
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index b932a784b02a..6fe5ee0c144e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -148,6 +148,20 @@
+>  			#address-cells = <0>;
+>  		};
+>  
+> +		hiubus: bus@ff63c000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff63c000 0x0 0x1c00>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+> +
+> +			clkc: clock-controller@0 {
+> +				compatible = "amlogic,axg-clkc";
+> +				#clock-cells = <1>;
+> +				reg = <0x0 0x0 0x0 0x320>;
+> +			};
+> +		};
+> +
+>  		mailbox: mailbox@ff63dc00 {
+>  			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
+>  			reg = <0 0xff63dc00 0 0x400>;
