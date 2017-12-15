@@ -1,27 +1,33 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Igor Grinberg <grinberg@compulab.co.il>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Daniel Mack <daniel@zonque.org>,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: pxa: unbreak lookup of CLK_POUT
-References: <20171226133036.11432-1-grinberg@compulab.co.il>
-Date: Thu, 28 Dec 2017 08:59:11 +0100
-In-Reply-To: <20171226133036.11432-1-grinberg@compulab.co.il> (Igor Grinberg's
-	message of "Tue, 26 Dec 2017 15:30:36 +0200")
-Message-ID: <87vagr706o.fsf@belgarion.home>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 15 Dec 2017 17:10:34 -0600
+From: Rob Herring <robh@kernel.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] dt-bindings: clock: qcom: add misc resets for
+ PCIE and NSS
+Message-ID: <20171215231034.wf6fhpbu7eqbjfp4@rob-hp-laptop>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-11-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-11-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Igor Grinberg <grinberg@compulab.co.il> writes:
+On Wed, Dec 13, 2017 at 07:55:41PM +0530, Abhishek Sahu wrote:
+> PCIE and NSS has MISC reset register in which single register has
+> multiple reset bit. The patch adds the DT bindings for these MISC
+> resets.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 42 ++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 
-> Since switching to clk drivers, the CLK_POUT cannot be searched for by
-> clk_get() API and thus it returns with ENOENT.
-> Register it with the clk_lookup and thus unbreak the users of it.
->
-> Signed-off-by: Igor Grinberg <grinberg@compulab.co.il>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-
-Cheers.
-
---
-Robert
+Reviewed-by: Rob Herring <robh@kernel.org>
