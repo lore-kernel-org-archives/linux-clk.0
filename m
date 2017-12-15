@@ -1,35 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33624 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750815AbdLGGed (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:34:33 -0500
-Date: Wed, 6 Dec 2017 22:34:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: srinivas.kandagatla@linaro.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: msm8916: fix mnd_width for codec_digcodec
-Message-ID: <20171207063432.GO4283@codeaurora.org>
-References: <20171206121139.18936-1-srinivas.kandagatla@linaro.org>
- <20171206121139.18936-2-srinivas.kandagatla@linaro.org>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>,  Neil Armstrong <narmstrong@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu <jian.hu@amlogic.com>,  linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] add clk controller driver for Meson-AXG SoC
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	<1513245826.32163.7.camel@baylibre.com>
+Date: Fri, 15 Dec 2017 12:00:45 -0800
+In-Reply-To: <1513245826.32163.7.camel@baylibre.com> (Jerome Brunet's message
+	of "Thu, 14 Dec 2017 11:03:46 +0100")
+Message-ID: <7hy3m37ocy.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171206121139.18936-2-srinivas.kandagatla@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/06, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> This patch fixes missing mnd_width for codec_digital clk, this is now set to
-> 8 inline with datasheet.
-> 
-> Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Applied to clk-next
+> On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
+>> Qiufang Dai (3):
+>>   clk: meson-axg: add clocks dt-bindings required header
+>>   clk: meson-axg: add clock controller drivers
+>>   arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+>> 
+>> Yixun Lan (3):
+>>   clk: meson: make the spinlock naming more specific
+>>   dt-bindings: clock: add compatible variant for the Meson-AXG
+>>   arm64: dts: meson-axg: switch uart_ao clock to CLK81
+>> 
+>>  .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
+>>  arch/arm64/Kconfig.platforms                       |   1 +
+>>  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |   2 +
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +-
+>>  drivers/clk/meson/Kconfig                          |   8 +
+>>  drivers/clk/meson/Makefile                         |   1 +
+>>  drivers/clk/meson/axg.c                            | 936 +++++++++++++++++++++
+>>  drivers/clk/meson/axg.h                            | 126 +++
+>>  drivers/clk/meson/clkc.h                           |   2 +-
+>>  drivers/clk/meson/gxbb.c                           | 112 +--
+>>  drivers/clk/meson/meson8b.c                        |  24 +-
+>>  include/dt-bindings/clock/axg-clkc.h               |  71 ++
+>>  12 files changed, 1234 insertions(+), 75 deletions(-)
+>>  create mode 100644 drivers/clk/meson/axg.c
+>>  create mode 100644 drivers/clk/meson/axg.h
+>>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+>
+> Kevin, 
+>
+> I took the first 4 patches through clk-meson. I left the last 2 for you.
+>
+> I have applied the DT bindings update separately.
+> Let me know if you have dependency on these new bindings and need a tag.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yes, I will need a tag on the headers since both the "switch uart_ao"
+patch and a subsequent patch to add DT for SPICC are using new clock
+IDs.
+
+Thanks,
+
+Kevin
