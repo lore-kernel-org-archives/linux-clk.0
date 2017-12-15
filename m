@@ -1,39 +1,38 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 1/1] clk: remove invalid __clk_set_parent comment in __clk_core_init
-Date: Fri, 22 Dec 2017 17:47:21 +0800
-Message-ID: <1513936041-13010-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu <jian.hu@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 6/6] arm64: dts: meson-axg: switch uart_ao clock to CLK81
+References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+	<20171211141348.22048-7-yixun.lan@amlogic.com>
+	<1513270051.2261.11.camel@baylibre.com>
+	<b4e29e22-c0e9-1085-fbb7-eabc5c361445@amlogic.com>
+Date: Fri, 15 Dec 2017 11:14:48 -0800
+In-Reply-To: <b4e29e22-c0e9-1085-fbb7-eabc5c361445@amlogic.com> (Yixun Lan's
+	message of "Fri, 15 Dec 2017 09:49:11 +0800")
+Message-ID: <7h1sjvajmf.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Those comments are invalid anymore. So remove them.
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk.c | 4 ----
- 1 file changed, 4 deletions(-)
+> On 12/15/17 00:47, Jerome Brunet wrote:
+>> On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
+>>> Switch the uart_ao pclk to CLK81 since the clock driver is ready.
+>>> Also move the clock info to the board.dts instead in the soc.dtsi.
+>> 
+>> Same comment as for ethmac, is it really wise ?
+>> Isn't the clock setup the same for the axg family ?
+>> 
+> HI Jerome:
+> yes, should be same for AXG family
+>
+>
+> HI Kevin:
+> could you take the patch [5/6]? then I just need to resend for this one
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d6e2d5c..4675adf 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2927,10 +2927,6 @@ static int __clk_core_init(struct clk_core *core)
- 		struct clk_core *parent = __clk_init_parent(orphan);
- 		unsigned long flags;
- 
--		/*
--		 * we could call __clk_set_parent, but that would result in a
--		 * redundant call to the .set_rate op, if it exists
--		 */
- 		if (parent) {
- 			/* update the clk tree topology */
- 			flags = clk_enable_lock();
--- 
-2.7.4
+Yes, I've applied PATCH 5/6.
+
+Kevin
