@@ -1,79 +1,45 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 4 Dec 2017 21:49:14 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v10 5/6] dt-bindings: mailbox: qcom: Document the APCS
- clock binding
-Message-ID: <20171205054914.GH28761@minitux>
-References: <20171201170224.25053-1-georgi.djakov@linaro.org>
- <20171201170224.25053-6-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171201170224.25053-6-georgi.djakov@linaro.org>
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 0/2] clk: qcom: MISC RCG changes for SDM845
+Date: Fri, 15 Dec 2017 14:34:02 +0530
+Message-Id: <1513328644-23346-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 01 Dec 09:02 PST 2017, Georgi Djakov wrote:
+This patch series does the miscellaneous changes for RCGs
+used in SDM845.
 
-> Update the binding documentation for APCS to mention that the APCS
-> hardware block also expose a clock controller functionality.
-> 
-> The APCS clock controller is a mux and half-integer divider. It has the
-> main CPU PLL as an input and provides the clock for the application CPU.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
 
-Nice!
+Amit Nischal (2):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+ drivers/clk/qcom/clk-rcg.h  |   8 ++-
+ drivers/clk/qcom/clk-rcg2.c | 154 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 159 insertions(+), 3 deletions(-)
 
-Regards,
-Bjorn
-
-> ---
->  .../bindings/mailbox/qcom,apcs-kpss-global.txt         | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> index fb961c310f44..16964f0c1773 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-> @@ -15,12 +15,21 @@ platforms.
->  	Usage: required
->  	Value type: <prop-encoded-array>
->  	Definition: must specify the base address and size of the global block
-> +- clocks:
-> +	Usage: required if #clocks-cells property is present
-> +	Value type: <phandle>
-> +	Definition: phandle to the input PLL, which feeds the APCS mux/divider
->  
->  - #mbox-cells:
->  	Usage: required
->  	Value type: <u32>
->  	Definition: as described in mailbox.txt, must be 1
->  
-> +- #clock-cells:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: as described in clock.txt, must be 0
-> +
->  
->  = EXAMPLE
->  The following example describes the APCS HMSS found in MSM8996 and part of the
-> @@ -44,3 +53,12 @@ GLINK RPM referencing the "rpm_hlos" doorbell therein.
->  		mbox-names = "rpm_hlos";
->  	};
->  
-> +Below is another example of the APCS binding on MSM8916 platforms:
-> +
-> +	apcs: mailbox@b011000 {
-> +		compatible = "qcom,msm8916-apcs-kpss-global";
-> +		reg = <0xb011000 0x1000>;
-> +		#mbox-cells = <1>;
-> +		clocks = <&a53pll>;
-> +		#clock-cells = <0>;
-> +	};
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
