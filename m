@@ -1,68 +1,63 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1513352509.2261.66.camel@baylibre.com>
-Subject: [GIT PULL] Amlogic clock driver updates for 4.16 - 2nd batch
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	 <mturquette@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
-	 <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Date: Fri, 15 Dec 2017 16:41:49 +0100
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 1/2] clk: qcom: Clear hardware clock control bit of RCG
+Date: Fri, 15 Dec 2017 14:34:03 +0530
+Message-Id: <1513328644-23346-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1513328644-23346-1-git-send-email-anischal@codeaurora.org>
+References: <1513328644-23346-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear clock maintainers
+For upcoming targets like SDM845, POR value of the hardware clock control
+bit is set for most of root clocks which needs to be cleared for software
+to be able to control. For older targets like MSM8996, this bit is reserved
+bit and having POR value as 0 so this patch will work for the older targets
+too. So update the configuration mask to take care of the same to clear
+hardware clock control bit.
 
-Here is a 2nd round of update for amlogic clocks. It is based on top the
-first PR sent last week.
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks for pulling
-Jerome
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bbeaf9c..ef8b14a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -42,6 +42,7 @@
+ #define CFG_MODE_SHIFT		12
+ #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
+ #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
++#define CFG_HW_CLK_CTRL_MASK	BIT(20)
 
-The following changes since commit ed3fb5af69afc802d6e29700fff3401ba99edac1:
+ #define M_REG			0x8
+ #define N_REG			0xc
+@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	}
 
-  clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks (2017-12-08 21:37:19
-+0100)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-v4.16-2
-
-for you to fetch changes up to 78b4af312f910e4f28ebf4cb0a8c1983daa16924:
-
-  clk: meson-axg: add clock controller drivers (2017-12-14 10:19:37 +0100)
-
-----------------------------------------------------------------
-Second round of meson clock updates for v4.16
-
-* Rename clock lock to help in case of lockdep issues
-* Initial axg support
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      Merge branch 'next/dt' into next/drivers
-
-Qiufang Dai (2):
-      clk: meson-axg: add clocks dt-bindings required header
-      clk: meson-axg: add clock controller drivers
-
-Yixun Lan (2):
-      clk: meson: make the spinlock naming more specific
-      dt-bindings: clock: add compatible variant for the Meson-AXG
-
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/axg.c                            | 936 +++++++++++++++++++++
- drivers/clk/meson/axg.h                            | 126 +++
- drivers/clk/meson/clkc.h                           |   2 +-
- drivers/clk/meson/gxbb.c                           | 112 +--
- drivers/clk/meson/meson8b.c                        |  24 +-
- include/dt-bindings/clock/axg-clkc.h               |  71 ++
- 10 files changed, 1217 insertions(+), 71 deletions(-)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
++	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
