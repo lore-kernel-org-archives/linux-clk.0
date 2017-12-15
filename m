@@ -1,93 +1,107 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 16:14:17 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexander Kochetkov <al.kochet@gmail.com>
-Cc: linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	LAK <linux-arm-kernel@lists.infradead.org>,
-	linux-rockchip@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to
- clk_hw_get_boundaries() and expose
-Message-ID: <20171229001417.GC7997@codeaurora.org>
-References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
- <1513872282-5370-2-git-send-email-al.kochet@gmail.com>
- <20171221200743.GM7997@codeaurora.org>
- <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com>
- <20171227010638.GP7997@codeaurora.org>
- <4B1BB338-F1F9-4231-BDCA-5FBB1F61BC44@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <4B1BB338-F1F9-4231-BDCA-5FBB1F61BC44@gmail.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1513345678.2261.60.camel@baylibre.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+Date: Fri, 15 Dec 2017 14:47:58 +0100
+In-Reply-To: <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+	 <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Alexander Kochetkov wrote:
-> Initial thread here:
-> https://www.spinics.net/lists/linux-clk/msg21682.html
-> 
-> 
-> > 27 дек. 2017 г., в 4:06, Stephen Boyd <sboyd@codeaurora.org> написал(а):
+On Tue, 2017-12-12 at 22:14 -0600, David Lechner wrote:
+> On 12/12/2017 05:43 PM, David Lechner wrote:
+> > If clk_enable() is called in reentrant way and spin_trylock_irqsave() is
+> > not working as expected, it is possible to get a negative enable_refcnt
+> > which results in a missed call to spin_unlock_irqrestore().
 > > 
-> > Are these limits the min/max limits that the parent clk can
-> > output at? Or the min/max limits that software has constrained on
-> > the clk?
+> > It works like this:
+> > 
+> > 1. clk_enable() is called.
+> > 2. clk_enable_unlock() calls spin_trylock_irqsave() and sets
+> >     enable_refcnt = 1.
+> > 3. Another clk_enable() is called before the first has returned
+> >     (reentrant), but somehow spin_trylock_irqsave() is returning true.
+> >     (I'm not sure how/why this is happening yet, but it is happening to me
+> >     with arch/arm/mach-davinci clocks that I am working on).
+> 
+> I think I have figured out that since CONFIG_SMP=n and 
+> CONFIG_DEBUG_SPINLOCK=n on my kernel that
+> 
+> #define arch_spin_trylock(lock)({ barrier(); (void)(lock); 1; })
+> 
+> in include/linux/spinlock_up.h is causing the problem.
+> 
+> So, basically, reentrancy of clk_enable() is broken for non-SMP systems, 
+> but I'm not sure I know how to fix it.
+
+Hi David,
+
+Correct me if I'm wrong but, in uni-processor mode, a call to
+spin_trylock_irqsave shall disable the preemption. see _raw_spin_trylock() in
+spinlock_api_up.h:71
+
+In this case I don't understand you could possibly get another call to
+clk_enable() ? ... unless the implementation of your clock ops re-enable the
+preemption or calls the scheduler.
+
+> 
+> 
+> > 4. Because spin_trylock_irqsave() returned true, enable_lock has been
+> >     locked twice without being unlocked and enable_refcnt = 1 is called
+> >     instead of enable_refcnt++.
+> > 5. After the inner clock is enabled clk_enable_unlock() is called which
+> >     decrements enable_refnct to 0 and calls spin_unlock_irqrestore()
+> > 6. The inner clk_enable() function returns.
+> > 7. clk_enable_unlock() is called again for the outer clock. enable_refcnt
+> >     is decremented to -1 and spin_unlock_irqrestore() is *not* called.
+> > 8. The outer clk_enable() function returns.
+> > 9. Unrelated code called later issues a BUG warning about sleeping in an
+> >     atomic context because of the unbalanced calls for the spin lock.
+> > 
+> > This patch fixes the problem of unbalanced calls by calling
+> > spin_unlock_irqrestore() if enable_refnct <= 0 instead of just checking if
+> > it is == 0.
+
+A negative ref is just illegal, which is why got this line:
+WARN_ON_ONCE(enable_refcnt != 0);
+
+If it ever happens, it means you've got a bug to fix some place else.
+Unless I missed something, the fix proposed is not right.
+
+> > 
+> > The BUG warning about sleeping in an atomic context in the unrelated code
+> > is eliminated with this patch, but there are still warnings printed from
+> > clk_enable_unlock() and clk_enable_unlock() because of the reference
+> > counting problems.
+> > 
+> > Signed-off-by: David Lechner <david@lechnology.com>
+> > ---
+> >   drivers/clk/clk.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 647d056..bb1b1f9 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -162,7 +162,7 @@ static void clk_enable_unlock(unsigned long flags)
+> >   	WARN_ON_ONCE(enable_owner != current);
+> >   	WARN_ON_ONCE(enable_refcnt == 0);
+> >   
+> > -	if (--enable_refcnt) {
+> > +	if (--enable_refcnt > 0) {
+> >   		__release(enable_lock);
+> >   		return;
+> >   	}
 > > 
 > 
-> Don’t know how to answer. For example, parent can output 768MHz,
-> but some IP work unstable with that parent rate. This issues was observed by
-> me and I didn’t get official confirmation from rockchip. So, I limit
-> such clock to 192MHz using clk_set_max_rate(). May be I have to limit clk rate
-> using another approach.
-
-I'm asking if the rate is capped on the consumer side with
-clk_set_max_rate() or if it's capped on the clk provider side to
-express a hardware constraint.
-
-> 
-> Anybody from rockchip can confirm that? Or may be contact me clarifying details?
-> 
-> > I haven't looked in detail at this
-> > rockchip_fractional_approximation() code, but it shouldn't be
-> > doing the work of both the child rate determination and the
-> > parent rate determination in one place. It should work with the
-> > parent to figure out the rate the parent can provide and then
-> > figure out how to achieve the desired rate from there.
-> 
-> Here is clock tree:
-> 
->         clock                       rate
->         -----                       ----
->         xin24m                      24000000
->           pll_gpll                    768000000
->              gpll                       768000000
->                 i2s_src              768000000
->                    i2s0_pre         192000000
->                       i2s0_frac     16384000
->                          sclk_i2s0  16384000
-> 
-> I limit i2s0_pre rate to 192MHz in order to I2S IP work properly.
-> rockchip_fractional_approximation() get called for i2s0_frac.
-> if i2s0_pre rate is 20x times less than i2s0_frac, than rockchip_fractional_approximation()
-> tries to set i2s0_pre rate to i2s_src rate. It tries to increase it’s parent rate in order
-> to maximise relation between nominator and denominator.
-> 
-> If I convert rockchip_fractional_approximation() to rockchip_determine_rate(), than I get
-> min=0, max=192MHz limits inside rockchip_determine_rate(). May be there should be
-> new logic inside clk framework based on some new clk flags, that will provide max=768MHz
-> for rockchip_determine_rate().
-> 
-> Also found, that rockchip_fractional_approximation() increase parents rate unconditionally
-> without taking into account CLK_SET_RATE_PARENT flag.
-> 
-> Stephen, thanks a lot for deep description of determine_rate() background. I’ll taking some
-> time thinking about possible solutions.
-> 
-
-Sounds like there are some things to be figured out here still. I
-can take a closer look next week. Maybe Heiko will respond before
-then.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
