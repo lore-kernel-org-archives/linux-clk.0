@@ -1,31 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 18:11:13 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <sergej@taudac.com>
-Cc: mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
-	linux@armlinux.org.uk, linux-clk@vger.kernel.org, ce3a@gmx.de,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: Re: [PATCH v2 1/2] clk: si5351: Add DT property to enable PLL reset
-Message-ID: <20171222021113.GM7997@codeaurora.org>
-References: <1505562282-9111-1-git-send-email-sergej@taudac.com>
- <1505562282-9111-2-git-send-email-sergej@taudac.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1505562282-9111-2-git-send-email-sergej@taudac.com>
+In-Reply-To: <1513627578.29566.6.camel@baylibre.com>
+References: <20171218170007.28042-1-jbrunet@baylibre.com>
+	<20171218190303.GV7997@codeaurora.org>
+	<1513627578.29566.6.camel@baylibre.com>
+Date: Mon, 18 Dec 2017 12:12:51 -0800
+Message-ID: <CAEG3pNBi13BCPcftf=mj5LJh3JQQi+Q7C5QLZwoy6LG__krJXA@mail.gmail.com>
+Subject: Re: [PATCH] clk: check ops pointer on clock register
+From: Michael Turquette <mturquette@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Sergej Sawazki wrote:
-> Add optional output clock DT property to enable PLL reset when a clock
-> output is enabled.
-> 
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
-> ---
+Hi Jerome & Stephen,
 
-Applied to clk-next
+On Mon, Dec 18, 2017 at 12:06 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Mon, 2017-12-18 at 11:03 -0800, Stephen Boyd wrote:
+>> On 12/18, Jerome Brunet wrote:
+>> > Nothing really prevents a provider from (trying to) register a clock
+>> > without providing the clock ops structure.
+>> >
+>> > We do check the individual fields before using them, but not the
+>> > structure pointer itself. This may have the usual nasty consequences when
+>> > the pointer is dereferenced, mostly likely when checking one the field
+>> > during the initialization.
+>>
+>> Yes, that nasty consequence should be a kernel oops,
+>
+> Precisely
+>
+>> and the
+>> developer should notice that before submitting the driver for
+>> inclusion.
+>
+> Agreed. But people may make mistakes, which is why (at least partly) we
+> do checks, isn't it ?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Agreed the developers should test before submitting, but procedurally
+generated clocks (e.g. registering clocks in a loop using a
+predictable register map, etc) could lead to a situation where a
+developer doesn't test every possible iteration.
+
+Hypothetical, but easy easy easy to fix with Jerome's patch.
+
+>
+>> I don't think we really care to return an error here
+>> if this happens.
+>>
+>
+> I don't understand why we would let a oops happen when can catch the error
+> properly ?
+>
+
+Agreed with Jerome on this one.
+
+Let's flip it on its head: any downside to this patch? If not I can merge.
+
+Regards,
+Mike
