@@ -1,43 +1,43 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<matthias.bgg@gmail.com>
-CC: <jdelvare@suse.de>, <jamesjj.liao@mediatek.com>, <weiyi.lu@mediatek.com>,
-	<arnd@arndb.de>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Wang
-	<sean.wang@mediatek.com>
-Subject: [PATCH] clk: mediatek: remove unnecessary include header from reset.c
-Date: Mon, 25 Dec 2017 16:31:10 +0800
-Message-ID: <b5937ad5c068eeec19005d40dbddb97e09c1b3d0.1514190227.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1513627578.29566.6.camel@baylibre.com>
+Subject: Re: [PATCH] clk: check ops pointer on clock register
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Date: Mon, 18 Dec 2017 21:06:18 +0100
+In-Reply-To: <20171218190303.GV7997@codeaurora.org>
+References: <20171218170007.28042-1-jbrunet@baylibre.com>
+	 <20171218190303.GV7997@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Mon, 2017-12-18 at 11:03 -0800, Stephen Boyd wrote:
+> On 12/18, Jerome Brunet wrote:
+> > Nothing really prevents a provider from (trying to) register a clock
+> > without providing the clock ops structure.
+> > 
+> > We do check the individual fields before using them, but not the
+> > structure pointer itself. This may have the usual nasty consequences when
+> > the pointer is dereferenced, mostly likely when checking one the field
+> > during the initialization.
+> 
+> Yes, that nasty consequence should be a kernel oops,
 
-In fact, the clk-mtk.h header is indeed not needed for reset.c and thus
-it's safe and good change to remove it from the file.
+Precisely
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Cc: Jean Delvare <jdelvare@suse.de>
----
- drivers/clk/mediatek/reset.c | 2 --
- 1 file changed, 2 deletions(-)
+> and the
+> developer should notice that before submitting the driver for
+> inclusion. 
 
-diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index d3551d5..70ebb2e 100644
---- a/drivers/clk/mediatek/reset.c
-+++ b/drivers/clk/mediatek/reset.c
-@@ -19,8 +19,6 @@
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
--#include "clk-mtk.h"
--
- struct mtk_reset {
- 	struct regmap *regmap;
- 	int regofs;
--- 
-2.7.4
+Agreed. But people may make mistakes, which is why (at least partly) we
+do checks, isn't it ?
+
+> I don't think we really care to return an error here
+> if this happens.
+> 
+
+I don't understand why we would let a oops happen when can catch the error
+properly ?
