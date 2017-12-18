@@ -1,40 +1,65 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 8 Dec 2017 16:18:22 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/13] clk: qcom: support for Huayra PLL
-Message-ID: <20171209001822.GE7997@codeaurora.org>
-References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
- <1506621050-10129-11-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1506621050-10129-11-git-send-email-absahu@codeaurora.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for reset controls
+Date: Mon, 18 Dec 2017 11:57:51 +0800
+Message-Id: <20171218035751.20661-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/28, Abhishek Sahu wrote:
-> Following are the major differences in Huayra PLL
-> 
-> 1. PLL Alpha Value is 16 bits
-> 2. Depending on alpha_mode, the pll_alpha_val can be treated as
->    M/N value or as a two’s compliment number.
-> 3. Huayra PLL supports PLL dynamic programming. User can change
->    L_VAL, without having to go through the power on sequence.
-> 
-> Since the decoding of alpha val and dynamic programming are
-> completely different from other Alpha PLL’s so this patch
-> made adds separate functions for Huayra PLL.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
+Our MMC host driver now issues a reset, instead of just deasserting
+the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
+device at probe time"). The sun9i-mmc clock driver does not support
+this, and will fail, which results in MMC not probing.
 
-Applied to clk-next
+This patch implements the reset callback by asserting the reset control,
+then deasserting it after a small delay.
 
+Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
+Cc: <stable@vger.kernel.org> # 4.14.x
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index a1a634253d6f..f00d8758ba24 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -83,9 +84,20 @@ static int sun9i_mmc_reset_deassert(struct reset_controller_dev *rcdev,
+ 	return 0;
+ }
+ 
++static int sun9i_mmc_reset_reset(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	sun9i_mmc_reset_assert(rcdev, id);
++	udelay(10);
++	sun9i_mmc_reset_deassert(rcdev, id);
++
++	return 0;
++}
++
+ static const struct reset_control_ops sun9i_mmc_reset_ops = {
+ 	.assert		= sun9i_mmc_reset_assert,
+ 	.deassert	= sun9i_mmc_reset_deassert,
++	.reset		= sun9i_mmc_reset_reset,
+ };
+ 
+ static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
