@@ -1,35 +1,37 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 14:57:17 -0800
+Date: Mon, 18 Dec 2017 13:07:09 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lori Hikichi <lori.hikichi@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Lori Hikichi <lhikichi@broadcom.com>
-Subject: Re: [PATCH v1 4/4] clk: iproc: Minor tidy up of iproc pll data
- structures
-Message-ID: <20171228225717.GW7997@codeaurora.org>
-References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
- <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for
+ reset controls
+Message-ID: <20171218210709.GY7997@codeaurora.org>
+References: <20171218035751.20661-1-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
+In-Reply-To: <20171218035751.20661-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/14, Lori Hikichi wrote:
-> From: Lori Hikichi <lhikichi@broadcom.com>
+On 12/18, Chen-Yu Tsai wrote:
+> Our MMC host driver now issues a reset, instead of just deasserting
+> the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
+> device at probe time"). The sun9i-mmc clock driver does not support
+> this, and will fail, which results in MMC not probing.
 > 
-> There were a few fields in the iproc pll data structures that were
-> holding information that was not true state information.
-> Using stack variables is sufficient and simplifies the structure.
-> There are not any functional changes in this commit.
+> This patch implements the reset callback by asserting the reset control,
+> then deasserting it after a small delay.
 > 
-> Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+> Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
+> Cc: <stable@vger.kernel.org> # 4.14.x
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
 
-Applied to clk-next
+Did you want us to pick this up into clk-fixes? It seems to be
+causing MMC to not work for some time? That sounds annoying
+enough.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
