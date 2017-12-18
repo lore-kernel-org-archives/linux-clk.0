@@ -1,37 +1,34 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 10:36:06 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 02/15] clk: ingenic: Fix recalc_rate for clocks with
- fixed divider
-Message-ID: <20171228183606.GI7997@codeaurora.org>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
- <20171228135634.30000-3-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171228135634.30000-3-paul@crapouillou.net>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1513595146.9114.3.camel@pengutronix.de>
+Subject: Re: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for
+ reset controls
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Date: Mon, 18 Dec 2017 12:05:46 +0100
+In-Reply-To: <20171218035751.20661-1-wens@csie.org>
+References: <20171218035751.20661-1-wens@csie.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Paul Cercueil wrote:
-> Previously, the clocks with a fixed divider would report their rate
-> as being the same as the one of their parent, independently of the
-> divider in use. This commit fixes this behaviour.
+On Mon, 2017-12-18 at 11:57 +0800, Chen-Yu Tsai wrote:
+> Our MMC host driver now issues a reset, instead of just deasserting
+> the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
+> device at probe time"). The sun9i-mmc clock driver does not support
+> this, and will fail, which results in MMC not probing.
 > 
-> This went unnoticed as neither the jz4740 nor the jz4780 CGU code
-> have clocks with fixed dividers yet.
+> This patch implements the reset callback by asserting the reset control,
+> then deasserting it after a small delay.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+> Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
+> Cc: <stable@vger.kernel.org> # 4.14.x
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards
+Philipp
