@@ -1,43 +1,123 @@
-Return-Path: <al.kochet@gmail.com>
-Return-Path: <al.kochet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to clk_hw_get_boundaries() and expose
-From: Alexander Kochetkov <al.kochet@gmail.com>
-In-Reply-To: <20171229001417.GC7997@codeaurora.org>
-Date: Fri, 29 Dec 2017 11:52:38 +0300
-Cc: linux-clk@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- LAK <linux-arm-kernel@lists.infradead.org>,
- linux-rockchip@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Heiko Stuebner <heiko@sntech.de>,
- Elaine Zhang <zhangqing@rock-chips.com>
-Message-Id: <C7AA677C-664F-4305-B74D-B13F3FF0A199@gmail.com>
-References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com> <1513872282-5370-2-git-send-email-al.kochet@gmail.com> <20171221200743.GM7997@codeaurora.org> <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com> <20171227010638.GP7997@codeaurora.org> <4B1BB338-F1F9-4231-BDCA-5FBB1F61BC44@gmail.com> <20171229001417.GC7997@codeaurora.org>
+Return-Path: <subhransu.s.prusty@intel.com>
+Date: Mon, 18 Dec 2017 09:27:16 +0530
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+	ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v5 1/6] ASoC: Intel: Skylake: Add ssp clock
+ driver
+Message-ID: <20171218035710.GA27559@subhransu-desktop>
+References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+ <1512978390-8848-2-git-send-email-sriramx.periyasamy@intel.com>
+ <20171213223032.GO7997@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171213223032.GO7997@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Dec 13, 2017 at 02:30:32PM -0800, Stephen Boyd wrote:
+> On 12/11, Sriram Periyasamy wrote:
+> > +
+> > +static int skl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +					unsigned long parent_rate)
+> > +{
+> > +	struct skl_clk *clkdev = to_skl_clk(hw);
+> > +	struct skl_clk_rate_cfg_table *rcfg;
+> > +	int clk_type;
+> > +
+> > +	if (!clkdev)
+> > +		return -ENODEV;
+> 
+> These checks don't make sense. container_of() on clk_hw
+> structures returning NULL wouldn't happen.
 
-> 29 =D0=B4=D0=B5=D0=BA. 2017 =D0=B3., =D0=B2 3:14, Stephen Boyd =
-<sboyd@codeaurora.org> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0):=
+Sure. will remove.
 
->=20
-> I'm asking if the rate is capped on the consumer side with
-> clk_set_max_rate() or if it's capped on the clk provider side to
-> express a hardware constraint.
-I do that using clk_set_max_rate() at provider size inside clk-rk3188.c.
+> 
+> > +
+> > +	if (!rate)
+> > +		return -EINVAL;
+> > +
+> > +	if (__clk_is_enabled(hw->clk) && (clkdev->rate != rate))
+> 
+> Any chance you can directly read the hardware instead of going
+> through the framework to find out if the clk is enabled? Seems
 
->=20
-> Sounds like there are some things to be figured out here still. I
-> can take a closer look next week. Maybe Heiko will respond before
-> then.
+No. This involves sending an IPC to DSP to enable clock and interpreting the
+return error code. I would like to avoid doing this here in set_rate.
 
-I will be very grateful for the ideas. I can continue to work on this =
-next
-week too.
+> circular to do it this way.
+> 
+> > +		return -EBUSY;
+> > +
+> > +	rcfg = skl_get_rate_cfg(clkdev->pdata->ssp_clks[clkdev->id].rate_cfg,
+> > +							rate);
+> > +	if (!rcfg)
+> > +		return -EINVAL;
+> > +
+> > +	clk_type = skl_get_clk_type(clkdev->id);
+> > +	if (clk_type < 0)
+> > +		return clk_type;
+> > +
+> > +	skl_fill_clk_ipc(rcfg, clk_type);
+> > +	clkdev->rate = rate;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static unsigned long skl_clk_recalc_rate(struct clk_hw *hw,
+> > +				unsigned long parent_rate)
+> > +{
+> > +	struct skl_clk *clkdev = to_skl_clk(hw);
+> > +	struct skl_clk_rate_cfg_table *rcfg;
+> > +	int clk_type;
+> > +
+> > +	if (!clkdev)
+> > +		return 0;
+> > +
+> > +	if (clkdev->rate)
+> > +		return clkdev->rate;
+> 
+> Why is the rate being cached? We should always be able to
+> calculate the rate based on parent_rate that gets passed to this
+> function?
 
-Happy New Year and Merry Christmas!
+Will check and get back.
 
 Regards,
-Alexander.
+Subhransu
+
+> 
+> > +
+> > +	rcfg = skl_get_rate_cfg(clkdev->pdata->ssp_clks[clkdev->id].rate_cfg,
+> > +					parent_rate);
+> > +	if (!rcfg)
+> > +		return 0;
+> > +
+> > +	clk_type = skl_get_clk_type(clkdev->id);
+> > +	if (clk_type < 0)
+> > +		return 0;
+> > +
+> > +	skl_fill_clk_ipc(rcfg, clk_type);
+> > +	clkdev->rate = rcfg->rate;
+> > +
+> > +	return clkdev->rate;
+> > +}
+> > +
+> > +/* Not supported by clk driver. Implemented to satisfy clk fw */
+> > +long skl_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +				unsigned long *parent_rate)
+> > +{
+> > +	return rate;
+> > +}
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
+-- 
