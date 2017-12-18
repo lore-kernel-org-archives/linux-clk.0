@@ -1,31 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 16:01:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: jassisinghbrar@gmail.com, bjorn.andersson@linaro.org,
-	mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v11 4/6] clk: qcom: Add regmap mux-div clocks support
-Message-ID: <20171229000112.GA7997@codeaurora.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
- <20171205154701.27730-5-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171205154701.27730-5-georgi.djakov@linaro.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: check ops pointer on clock register
+Date: Mon, 18 Dec 2017 18:00:07 +0100
+Message-Id: <20171218170007.28042-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/05, Georgi Djakov wrote:
-> Add support for hardware that can switch both parent clock and divider
-> at the same time. This avoids generating intermediate frequencies from
-> either the old parent clock and new divider or new parent clock and
-> old divider combinations.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
+Nothing really prevents a provider from (trying to) register a clock
+without providing the clock ops structure.
 
-Applied to clk-next
+We do check the individual fields before using them, but not the
+structure pointer itself. This may have the usual nasty consequences when
+the pointer is dereferenced, mostly likely when checking one the field
+during the initialization.
 
+This is fixed by returning an error on clock register if the ops pointer
+is NULL
+
+Fixes: b2476490ef11 ("clk: introduce the common clock framework")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+
+Mike, Stephen,
+
+I'm not really sure what the Fixes tag should here. From what I could
+see, we never checked the ops pointer before using it since the
+beginning of CCF.
+
+Regards
+Jerome
+
+ drivers/clk/clk.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8a1860a36c77..275b45664227 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2683,7 +2683,13 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		ret = -ENOMEM;
+ 		goto fail_name;
+ 	}
++
++	if (!hw->init->ops) {
++		ret = -EINVAL;
++		goto fail_ops;
++	}
+ 	core->ops = hw->init->ops;
++
+ 	if (dev && pm_runtime_enabled(dev))
+ 		core->dev = dev;
+ 	if (dev && dev->driver)
+@@ -2745,6 +2751,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		kfree_const(core->parent_names[i]);
+ 	kfree(core->parent_names);
+ fail_parent_names:
++fail_ops:
+ 	kfree_const(core->name);
+ fail_name:
+ 	kfree(core);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.3
