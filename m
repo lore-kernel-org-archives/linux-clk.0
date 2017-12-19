@@ -17,198 +17,404 @@ To: robh+dt@kernel.org,
 	linux-soc@vger.kernel.org,
 	linux-pm@vger.kernel.org
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 02/15] clk: mux: Split out register accessors for reuse
-Date: Tue, 19 Dec 2017 21:24:47 +0530
-Message-Id: <1513698900-10638-3-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v5 11/15] clk: qcom: Add Krait clock controller driver
+Date: Tue, 19 Dec 2017 21:24:56 +0530
+Message-Id: <1513698900-10638-12-git-send-email-sricharan@codeaurora.org>
 In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
 References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-We want to reuse the logic in clk-mux.c for other clock drivers
-that don't use readl as register accessors. Fortunately, there
-really isn't much to the mux code besides the table indirection
-and quirk flags if you assume any bit shifting and masking has
-been done already. Pull that logic out into reusable functions
-that operate on an optional table and some flags so that other
-drivers can use the same logic.
+The Krait CPU clocks are made up of a primary mux and secondary
+mux for each CPU and the L2, controlled via cp15 accessors. For
+Kraits within KPSSv1 each secondary mux accepts a different aux
+source, but on KPSSv2 each secondary mux accepts the same aux
+source.
 
-[Sricharan: Rebased for mainline]
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Cc: <devicetree@vger.kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk-mux.c        | 75 +++++++++++++++++++++++++++-----------------
- include/linux/clk-provider.h |  9 ++++--
- 2 files changed, 54 insertions(+), 30 deletions(-)
+ drivers/clk/qcom/Kconfig    |   8 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/krait-cc.c | 341 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 350 insertions(+)
+ create mode 100644 drivers/clk/qcom/krait-cc.c
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 39cabe1..22ebf99 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -26,35 +26,24 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 17dcb88..de6b60d 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -222,6 +222,14 @@ config KPSS_XCC
+ 	  if you want to support CPU frequency scaling on devices such
+ 	  as MSM8960, APQ8064, etc.
  
--static u8 clk_mux_get_parent(struct clk_hw *hw)
-+unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
-+				unsigned int *table, unsigned long flags)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
--	u32 val;
--
--	/*
--	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
--	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
--	 * to 0x7 (index starts at one)
--	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
--	 * val = 0x4 really means "bit 2, index starts at bit 0"
--	 */
--	val = clk_readl(mux->reg) >> mux->shift;
--	val &= mux->mask;
- 
--	if (mux->table) {
-+	if (table) {
- 		int i;
- 
- 		for (i = 0; i < num_parents; i++)
--			if (mux->table[i] == val)
-+			if (table[i] == val)
- 				return i;
- 		return -EINVAL;
- 	}
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-+	if (val && (flags & CLK_MUX_INDEX_BIT))
- 		val = ffs(val) - 1;
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-+	if (val && (flags & CLK_MUX_INDEX_ONE))
- 		val--;
- 
- 	if (val >= num_parents)
-@@ -62,23 +51,53 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 
- 	return val;
- }
-+EXPORT_SYMBOL_GPL(clk_mux_get_parent);
- 
--static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+static u8 _clk_mux_get_parent(struct clk_hw *hw)
- {
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
--	unsigned long flags = 0;
- 
--	if (mux->table) {
--		index = mux->table[index];
++config KRAITCC
++	tristate "Krait Clock Controller"
++	depends on COMMON_CLK_QCOM && ARM
++	select KRAIT_CLOCKS
++	help
++	  Support for the Krait CPU clocks on Qualcomm devices.
++	  Say Y if you want to support CPU frequency scaling.
++
+ config KRAIT_CLOCKS
+ 	bool
+ 	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7ad2302..6e6c700 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -39,3 +39,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+ obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+ obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
++obj-$(CONFIG_KRAITCC) += krait-cc.o
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+new file mode 100644
+index 0000000..ee864fa
+--- /dev/null
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -0,0 +1,341 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2017, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++
++#include "clk-krait.h"
++
++static unsigned int sec_mux_map[] = {
++	2,
++	0,
++};
++
++static unsigned int pri_mux_map[] = {
++	1,
++	2,
++	0,
++};
++
++static int
++krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
++{
++	struct krait_div2_clk *div;
++	struct clk_init_data init = {
++		.num_parents = 1,
++		.ops = &krait_div2_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	const char *p_names[1];
++	struct clk *clk;
++
++	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return -ENOMEM;
++
++	div->width = 2;
++	div->shift = 6;
++	div->lpl = id >= 0;
++	div->offset = offset;
++	div->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
++	if (!init.name)
++		return -ENOMEM;
++
++	init.parent_names = p_names;
++	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
++	if (!p_names[0]) {
++		kfree(init.name);
++		return -ENOMEM;
++	}
++
++	clk = devm_clk_register(dev, &div->hw);
++	kfree(p_names[0]);
++	kfree(init.name);
++
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static int
++krait_add_sec_mux(struct device *dev, int id, const char *s,
++		  unsigned int offset, bool unique_aux)
++{
++	struct krait_mux_clk *mux;
++	static const char *sec_mux_list[] = {
++		"acpu_aux",
++		"qsb",
++	};
++	struct clk_init_data init = {
++		.parent_names = sec_mux_list,
++		.num_parents = ARRAY_SIZE(sec_mux_list),
++		.ops = &krait_mux_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	struct clk *clk;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return -ENOMEM;
++
++	mux->offset = offset;
++	mux->lpl = id >= 0;
++	mux->mask = 0x3;
++	mux->shift = 2;
++	mux->parent_map = sec_mux_map;
++	mux->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
++	if (!init.name)
++		return -ENOMEM;
++
++	if (unique_aux) {
++		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
++		if (!sec_mux_list[0]) {
++			clk = ERR_PTR(-ENOMEM);
++			goto err_aux;
++		}
++	}
++
++	clk = devm_clk_register(dev, &mux->hw);
++
++	if (unique_aux)
++		kfree(sec_mux_list[0]);
++err_aux:
++	kfree(init.name);
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static struct clk *
++krait_add_pri_mux(struct device *dev, int id, const char *s,
++		  unsigned int offset)
++{
++	struct krait_mux_clk *mux;
++	const char *p_names[3];
++	struct clk_init_data init = {
++		.parent_names = p_names,
++		.num_parents = ARRAY_SIZE(p_names),
++		.ops = &krait_mux_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	struct clk *clk;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	mux->mask = 0x3;
++	mux->shift = 0;
++	mux->offset = offset;
++	mux->lpl = id >= 0;
++	mux->parent_map = pri_mux_map;
++	mux->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
++	if (!init.name)
++		return ERR_PTR(-ENOMEM);
++
++	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
++	if (!p_names[0]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p0;
++	}
++
++	p_names[1] = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
++	if (!p_names[1]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p1;
++	}
++
++	p_names[2] = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
++	if (!p_names[2]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p2;
++	}
++
++	clk = devm_clk_register(dev, &mux->hw);
++
++	kfree(p_names[2]);
++err_p2:
++	kfree(p_names[1]);
++err_p1:
++	kfree(p_names[0]);
++err_p0:
++	kfree(init.name);
++	return clk;
++}
++
++/* id < 0 for L2, otherwise id == physical CPU number */
++static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
++{
++	int ret;
++	unsigned int offset;
++	void *p = NULL;
++	const char *s;
++	struct clk *clk;
++
++	if (id >= 0) {
++		offset = 0x4501 + (0x1000 * id);
++		s = p = kasprintf(GFP_KERNEL, "%d", id);
++		if (!s)
++			return ERR_PTR(-ENOMEM);
++	} else {
++		offset = 0x500;
++		s = "_l2";
++	}
++
++	ret = krait_add_div(dev, id, s, offset);
++	if (ret) {
++		clk = ERR_PTR(ret);
++		goto err;
++	}
++
++	ret = krait_add_sec_mux(dev, id, s, offset, unique_aux);
++	if (ret) {
++		clk = ERR_PTR(ret);
++		goto err;
++	}
++
++	clk = krait_add_pri_mux(dev, id, s, offset);
++err:
++	kfree(p);
++	return clk;
++}
++
++static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
++{
++	unsigned int idx = clkspec->args[0];
++	struct clk **clks = data;
++
++	if (idx >= 5) {
++		pr_err("%s: invalid clock index %d\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return clks[idx] ? : ERR_PTR(-ENODEV);
++}
++
++static const struct of_device_id krait_cc_match_table[] = {
++	{ .compatible = "qcom,krait-cc-v1", (void *)1UL },
++	{ .compatible = "qcom,krait-cc-v2" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, krait_cc_match_table);
++
++static int krait_cc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct of_device_id *id;
++	unsigned long cur_rate, aux_rate;
++	int cpu;
++	struct clk *clk;
++	struct clk **clks;
++	struct clk *l2_pri_mux_clk;
++
++	id = of_match_device(krait_cc_match_table, dev);
++	if (!id)
++		return -ENODEV;
++
++	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
++	clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	if (!id->data) {
++		clk = clk_register_fixed_factor(dev, "acpu_aux",
++						"gpll0_vote", 0, 1, 2);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
++	}
++
++	/* Krait configurations have at most 4 CPUs and one L2 */
++	clks = devm_kcalloc(dev, 5, sizeof(*clks), GFP_KERNEL);
++	if (!clks)
++		return -ENOMEM;
++
++	for_each_possible_cpu(cpu) {
++		clk = krait_add_clks(dev, cpu, id->data);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
++		clks[cpu] = clk;
++	}
++
++	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
++	if (IS_ERR(l2_pri_mux_clk))
++		return PTR_ERR(l2_pri_mux_clk);
++	clks[4] = l2_pri_mux_clk;
++
 +	/*
-+	 * FIXME need a mux-specific flag to determine if val is bitwise or
-+	 * numeric e.g. sys_clkin_ck's clksel field is 3 bits wide,
-+	 * but ranges from 0x1 to 0x7 (index starts at one)
-+	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
-+	 * val = 0x4 really means "bit 2, index starts at bit 0"
++	 * We don't want the CPU or L2 clocks to be turned off at late init
++	 * if CPUFREQ or HOTPLUG configs are disabled. So, bump up the
++	 * refcount of these clocks. Any cpufreq/hotplug manager can assume
++	 * that the clocks have already been prepared and enabled by the time
++	 * they take over.
 +	 */
-+	val = clk_readl(mux->reg) >> mux->shift;
-+	val &= mux->mask;
++	for_each_online_cpu(cpu) {
++		clk_prepare_enable(l2_pri_mux_clk);
++		WARN(clk_prepare_enable(clks[cpu]),
++		     "Unable to turn on CPU%d clock", cpu);
++	}
 +
-+	return clk_mux_get_parent(hw, val, mux->table, mux->flags);
++	/*
++	 * Force reinit of HFPLLs and muxes to overwrite any potential
++	 * incorrect configuration of HFPLLs and muxes by the bootloader.
++	 * While at it, also make sure the cores are running at known rates
++	 * and print the current rate.
++	 *
++	 * The clocks are set to aux clock rate first to make sure the
++	 * secondary mux is not sourcing off of QSB. The rate is then set to
++	 * two different rates to force a HFPLL reinit under all
++	 * circumstances.
++	 */
++	cur_rate = clk_get_rate(l2_pri_mux_clk);
++	aux_rate = 384000000;
++	if (cur_rate == 1) {
++		pr_info("L2 @ QSB rate. Forcing new rate.\n");
++		cur_rate = aux_rate;
++	}
++	clk_set_rate(l2_pri_mux_clk, aux_rate);
++	clk_set_rate(l2_pri_mux_clk, 2);
++	clk_set_rate(l2_pri_mux_clk, cur_rate);
++	pr_info("L2 @ %lu KHz\n", clk_get_rate(l2_pri_mux_clk) / 1000);
++	for_each_possible_cpu(cpu) {
++		clk = clks[cpu];
++		cur_rate = clk_get_rate(clk);
++		if (cur_rate == 1) {
++			pr_info("CPU%d @ QSB rate. Forcing new rate.\n", cpu);
++			cur_rate = aux_rate;
++		}
++
++		clk_set_rate(clk, aux_rate);
++		clk_set_rate(clk, 2);
++		clk_set_rate(clk, cur_rate);
++		pr_info("CPU%d @ %lu KHz\n", cpu, clk_get_rate(clk) / 1000);
++	}
++
++	of_clk_add_provider(dev->of_node, krait_of_get, clks);
++
++	return 0;
 +}
 +
-+unsigned int clk_mux_reindex(u8 index, unsigned int *table,
-+			     unsigned long flags)
-+{
-+	unsigned int val = index;
++static struct platform_driver krait_cc_driver = {
++	.probe = krait_cc_probe,
++	.driver = {
++		.name = "krait-cc",
++		.of_match_table = krait_cc_match_table,
++	},
++};
++module_platform_driver(krait_cc_driver);
 +
-+	if (table) {
-+		val = table[val];
- 	} else {
--		if (mux->flags & CLK_MUX_INDEX_BIT)
--			index = 1 << index;
-+		if (flags & CLK_MUX_INDEX_BIT)
-+			val = 1 << index;
- 
--		if (mux->flags & CLK_MUX_INDEX_ONE)
--			index++;
-+		if (flags & CLK_MUX_INDEX_ONE)
-+			val++;
- 	}
- 
-+	return val;
-+}
-+EXPORT_SYMBOL_GPL(clk_mux_reindex);
-+
-+static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val;
-+	unsigned long flags = 0;
-+
-+	index = clk_mux_reindex(index, mux->table, mux->flags);
-+
- 	if (mux->lock)
- 		spin_lock_irqsave(mux->lock, flags);
- 	else
-@@ -102,14 +121,14 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- }
- 
- const struct clk_ops clk_mux_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- 	.set_parent = clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_mux_ops);
- 
- const struct clk_ops clk_mux_ro_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- };
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
-@@ -117,7 +136,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
--		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
-+		u8 clk_mux_flags, unsigned int *table, spinlock_t *lock)
- {
- 	struct clk_mux *mux;
- 	struct clk_hw *hw;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7c925e6..9578411 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -468,7 +468,7 @@ struct clk_hw *clk_hw_register_divider_table(struct device *dev,
- struct clk_mux {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
--	u32		*table;
-+	unsigned int	*table;
- 	u32		mask;
- 	u8		shift;
- 	u8		flags;
-@@ -486,6 +486,11 @@ struct clk_mux {
- extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
- 
-+unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
-+				unsigned int *table, unsigned long flags);
-+unsigned int clk_mux_reindex(u8 index, unsigned int *table,
-+			     unsigned long flags);
-+
- struct clk *clk_register_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
-@@ -506,7 +511,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
- 		void __iomem *reg, u8 shift, u32 mask,
--		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
-+		u8 clk_mux_flags, unsigned int *table, spinlock_t *lock);
- 
- void clk_unregister_mux(struct clk *clk);
- void clk_hw_unregister_mux(struct clk_hw *hw);
++MODULE_DESCRIPTION("Krait CPU Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:krait-cc");
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
