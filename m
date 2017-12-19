@@ -1,40 +1,67 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 4 Dec 2017 15:37:28 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] clk: meson-axg: add clocks dt-bindings required
- header
-Message-ID: <20171204213728.e6hzl5wubfkx6fmt@rob-hp-laptop>
-References: <20171201012452.27086-1-yixun.lan@amlogic.com>
- <20171201012452.27086-3-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171201012452.27086-3-yixun.lan@amlogic.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v5 12/15] devicetree: bindings: Document qcom,krait-cc
+Date: Tue, 19 Dec 2017 21:24:57 +0530
+Message-Id: <1513698900-10638-13-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 01, 2017 at 09:24:50AM +0800, Yixun Lan wrote:
-> From: Qiufang Dai <qiufang.dai@amlogic.com>
-> 
-> Add the required header for the clocks ID dt-bindings
-> exported from various subsystem in the Meson-AXG SoC.
-> 
-> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Acked-by: Rob Herring <robh@kernel.org>                                                                                
+The Krait clock controller controls the krait CPU and the L2 clocks
+consisting a primary mux and secondary mux. Add document for that.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+new file mode 100644
+index 0000000..874138f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+@@ -0,0 +1,22 @@
++Krait Clock Controller
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++			"qcom,krait-cc-v1"
++			"qcom,krait-cc-v2"
++
++- #clock-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 1
++
++Example:
++
++	kraitcc: clock-controller {
++		compatible = "qcom,krait-cc-v1";
++		#clock-cells = <1>;
++	};
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
