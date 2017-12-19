@@ -3,76 +3,91 @@ Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20171219083329.24746-1-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20171219083329.24746-1-jbrunet@baylibre.com>
-Message-ID: <151371269985.45969.1347953441522058335@resonance>
-Subject: Re: [PATCH v2] clk: check ops pointer on clock register
-Date: Tue, 19 Dec 2017 11:44:59 -0800
+In-Reply-To: <1513352509.2261.66.camel@baylibre.com>
+Cc: "linux-clk" <linux-clk@vger.kernel.org>,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ "Kevin Hilman" <khilman@baylibre.com>,
+ "Neil Armstrong" <narmstrong@baylibre.com>
+References: <1513352509.2261.66.camel@baylibre.com>
+Message-ID: <151372353128.45969.1867853345627459618@resonance>
+Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.16 - 2nd batch
+Date: Tue, 19 Dec 2017 14:45:31 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-12-19 00:33:29)
-> Nothing really prevents a provider from (trying to) register a clock
-> without providing the clock ops structure.
+Quoting Jerome Brunet (2017-12-15 07:41:49)
+> Dear clock maintainers
 > =
 
-> We do check the individual fields before using them, but not the
-> structure pointer itself. This may have the usual nasty consequences when
-> the pointer is dereferenced, most likely when checking one the field
-> during the initialization.
+> Here is a 2nd round of update for amlogic clocks. It is based on top the
+> first PR sent last week.
 > =
 
-> This is fixed by returning an error on clock register if the ops pointer
-> is NULL.
+> Thanks for pulling
+> Jerome
 > =
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> The following changes since commit ed3fb5af69afc802d6e29700fff3401ba99eda=
+c1:
+> =
 
-Applied to clk-check-ops-ptr
+>   clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks (2017-12-08 21:3=
+7:19
+> +0100)
+> =
+
+> are available in the Git repository at:
+> =
+
+>   git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-v4.16-2
+> =
+
+> for you to fetch changes up to 78b4af312f910e4f28ebf4cb0a8c1983daa16924:
+> =
+
+>   clk: meson-axg: add clock controller drivers (2017-12-14 10:19:37 +0100)
+
+Applied to clk-meson
 
 Regards,
 Mike
 
-> ---
-> Changes since v1:
->  * Add WARN_ON so the error cannot be silently ignored
->  * Remove fixes tag
 > =
 
->  drivers/clk/clk.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> ----------------------------------------------------------------
+> Second round of meson clock updates for v4.16
 > =
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 8a1860a36c77..211f97e8dc65 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2683,7 +2683,13 @@ struct clk *clk_register(struct device *dev, struc=
-t clk_hw *hw)
->                 ret =3D -ENOMEM;
->                 goto fail_name;
->         }
-> +
-> +       if (WARN_ON(!hw->init->ops)) {
-> +               ret =3D -EINVAL;
-> +               goto fail_ops;
-> +       }
->         core->ops =3D hw->init->ops;
-> +
->         if (dev && pm_runtime_enabled(dev))
->                 core->dev =3D dev;
->         if (dev && dev->driver)
-> @@ -2745,6 +2751,7 @@ struct clk *clk_register(struct device *dev, struct=
- clk_hw *hw)
->                 kfree_const(core->parent_names[i]);
->         kfree(core->parent_names);
->  fail_parent_names:
-> +fail_ops:
->         kfree_const(core->name);
->  fail_name:
->         kfree(core);
-> -- =
+> * Rename clock lock to help in case of lockdep issues
+> * Initial axg support
+> =
 
-> 2.14.3
->=20
+> ----------------------------------------------------------------
+> Jerome Brunet (1):
+>       Merge branch 'next/dt' into next/drivers
+> =
+
+> Qiufang Dai (2):
+>       clk: meson-axg: add clocks dt-bindings required header
+>       clk: meson-axg: add clock controller drivers
+> =
+
+> Yixun Lan (2):
+>       clk: meson: make the spinlock naming more specific
+>       dt-bindings: clock: add compatible variant for the Meson-AXG
+> =
+
+>  .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
+>  arch/arm64/Kconfig.platforms                       |   1 +
+>  drivers/clk/meson/Kconfig                          |   8 +
+>  drivers/clk/meson/Makefile                         |   1 +
+>  drivers/clk/meson/axg.c                            | 936 +++++++++++++++=
+++++++
+>  drivers/clk/meson/axg.h                            | 126 +++
+>  drivers/clk/meson/clkc.h                           |   2 +-
+>  drivers/clk/meson/gxbb.c                           | 112 +--
+>  drivers/clk/meson/meson8b.c                        |  24 +-
+>  include/dt-bindings/clock/axg-clkc.h               |  71 ++
+>  10 files changed, 1217 insertions(+), 71 deletions(-)
+>  create mode 100644 drivers/clk/meson/axg.c
+>  create mode 100644 drivers/clk/meson/axg.h
+>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
