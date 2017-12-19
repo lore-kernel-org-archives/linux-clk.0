@@ -1,191 +1,275 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v6 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-Date: Wed,  6 Dec 2017 08:24:01 +0100
-Message-Id: <20171206072402.11694-6-o.rempel@pengutronix.de>
-In-Reply-To: <20171206072402.11694-1-o.rempel@pengutronix.de>
-References: <20171206072402.11694-1-o.rempel@pengutronix.de>
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v5 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
+Date: Tue, 19 Dec 2017 21:24:59 +0530
+Message-Id: <1513698900-10638-15-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
-about state changes. In this case internal state of PMIC must be
-preconfigured for upcomming state change.
-It works fine with the current regulator framework, except with the
-power-off case.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-This patch is providing an optional pm_power_off_prepare handler
-which will configure standby state of the PMIC to disable all power lines.
+Register a cpufreq-generic device whenever we detect that a
+"qcom,krait" compatible CPU is present in DT.
 
-In my power consumption test on RIoTBoard, I got the following results:
-power off without this patch:	320 mA
-power off with this patch:	2   mA
-suspend to ram:			40  mA
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: <devicetree@vger.kernel.org>
+[Sricharan: updated to use dev_pm_opp_set_prop_name]
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ drivers/cpufreq/Kconfig.arm          |   9 ++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +-
+ drivers/cpufreq/qcom-cpufreq.c       | 171 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 183 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq.c
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 63922a2167e5..f6c276ed91d8 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/pfuze100.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
-+#include <linux/kallsyms.h>
- #include <linux/regmap.h>
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index bdce448..60f28e7 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -100,6 +100,15 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
  
- #define PFUZE_NUMREGS		128
-@@ -42,11 +43,17 @@
- 
- #define PFUZE100_COINVOL	0x1a
- #define PFUZE100_SW1ABVOL	0x20
-+#define PFUZE100_SW1ABMODE	0x23
- #define PFUZE100_SW1CVOL	0x2e
-+#define PFUZE100_SW1CMODE	0x31
- #define PFUZE100_SW2VOL		0x35
-+#define PFUZE100_SW2MODE	0x38
- #define PFUZE100_SW3AVOL	0x3c
-+#define PFUZE100_SW3AMODE	0x3f
- #define PFUZE100_SW3BVOL	0x43
-+#define PFUZE100_SW3BMODE	0x46
- #define PFUZE100_SW4VOL		0x4a
-+#define PFUZE100_SW4MODE	0x4d
- #define PFUZE100_SWBSTCON1	0x66
- #define PFUZE100_VREFDDRCON	0x6a
- #define PFUZE100_VSNVSVOL	0x6b
-@@ -57,6 +64,13 @@
- #define PFUZE100_VGEN5VOL	0x70
- #define PFUZE100_VGEN6VOL	0x71
- 
-+#define PFUZE100_SWxMODE_MASK	0xf
-+#define PFUZE100_SWxMODE_APS_APS	0x8
-+#define PFUZE100_SWxMODE_APS_OFF	0x4
++config ARM_QCOM_CPUFREQ
++	tristate "Qualcomm based"
++	depends on ARCH_QCOM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm SoC based boards.
 +
-+#define PFUZE100_VGENxLPWR	BIT(6)
-+#define PFUZE100_VGENxSTBY	BIT(5)
++	  If in doubt, say N.
 +
- enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 812f9e0..1496464 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_MEDIATEK_CPUFREQ)	+= mediatek-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+ obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
+ obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index ecc56e2..032ac4f 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,7 +118,7 @@
+ 	{ .compatible = "ti,am33xx", },
+ 	{ .compatible = "ti,am43", },
+ 	{ .compatible = "ti,dra7", },
+-
++	{ .compatible = "qcom,ipq8064", },
+ 	{ }
+ };
  
- struct pfuze_regulator {
-@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
- }
- #endif
+@@ -157,6 +157,7 @@ static int __init cpufreq_dt_platdev_init(void)
  
-+static struct pfuze_chip *syspm_pfuze_chip;
+ create_pdev:
+ 	of_node_put(np);
 +
-+static void pfuze_power_off_prepare(void)
+ 	return PTR_ERR_OR_ZERO(platform_device_register_data(NULL, "cpufreq-dt",
+ 			       -1, data,
+ 			       sizeof(struct cpufreq_dt_platform_data)));
+diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
+new file mode 100644
+index 0000000..3e5583d
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq.c
+@@ -0,0 +1,171 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include "cpufreq-dt.h"
++
++static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver)
 +{
-+	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++	void __iomem *base;
++	u32 pte_efuse;
 +
-+	/* Switch from default mode: APS/APS to APS/Off */
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	*speed = *pvs = *pvs_ver = 0;
 +
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
++	base = ioremap(0x007000c0, 4);
++	if (!base) {
++		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
++		return;
++	}
++
++	pte_efuse = readl_relaxed(base);
++	iounmap(base);
++
++	*speed = pte_efuse & 0xf;
++	if (*speed == 0xf)
++		*speed = (pte_efuse >> 4) & 0xf;
++
++	if (*speed == 0xf) {
++		*speed = 0;
++		pr_warn("Speed bin: Defaulting to %d\n", *speed);
++	} else {
++		pr_info("Speed bin: %d\n", *speed);
++	}
++
++	*pvs = (pte_efuse >> 10) & 0x7;
++	if (*pvs == 0x7)
++		*pvs = (pte_efuse >> 13) & 0x7;
++
++	if (*pvs == 0x7) {
++		*pvs = 0;
++		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
++	} else {
++		pr_info("PVS bin: %d\n", *pvs);
++	}
 +}
 +
-+static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
++static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver)
 +{
-+	if (pfuze_chip->chip_id != PFUZE100) {
-+		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
++	u32 pte_efuse, redundant_sel;
++	void __iomem *base;
++
++	*speed = 0;
++	*pvs = 0;
++	*pvs_ver = 0;
++
++	base = ioremap(0xfc4b80b0, 8);
++	if (!base) {
++		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
++		return;
++	}
++
++	pte_efuse = readl_relaxed(base);
++	redundant_sel = (pte_efuse >> 24) & 0x7;
++	*speed = pte_efuse & 0x7;
++	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
++	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
++	*pvs_ver = (pte_efuse >> 4) & 0x3;
++
++	switch (redundant_sel) {
++	case 1:
++		*speed = (pte_efuse >> 27) & 0xf;
++		break;
++	case 2:
++		*pvs = (pte_efuse >> 27) & 0xf;
++		break;
++	}
++
++	/* Check SPEED_BIN_BLOW_STATUS */
++	if (pte_efuse & BIT(3)) {
++		pr_info("Speed bin: %d\n", *speed);
++	} else {
++		pr_warn("Speed bin not set. Defaulting to 0!\n");
++		*speed = 0;
++	}
++
++	/* Check PVS_BLOW_STATUS */
++	pte_efuse = readl_relaxed(base + 0x4) & BIT(21);
++	if (pte_efuse) {
++		pr_info("PVS bin: %d\n", *pvs);
++	} else {
++		pr_warn("PVS bin not set. Defaulting to 0!\n");
++		*pvs = 0;
++	}
++
++	pr_info("PVS version: %d\n", *pvs_ver);
++	iounmap(base);
++}
++
++static int __init qcom_cpufreq_populate_opps(void)
++{
++	int speed, pvs, pvs_ver;
++	struct device_node *np;
++	struct device *dev;
++	int cpu = 0;
++	char pvs_name[] = "speedXX-pvsXX-vXX";
++
++	np = of_find_node_by_name(NULL, "qcom,pvs");
++	if (!np)
++		return -ENODEV;
++
++	if (of_property_read_bool(np, "qcom,pvs-format-a"))
++		get_krait_bin_format_a(&speed, &pvs, &pvs_ver);
++	else if (of_property_read_bool(np, "qcom,pvs-format-b"))
++		get_krait_bin_format_b(&speed, &pvs, &pvs_ver);
++	else
++		return -ENODEV;
++
++	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
++		 speed, pvs, pvs_ver);
++
++	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
++		dev = get_cpu_device(cpu);
++		if (!dev)
++			return -ENODEV;
++
++		if (IS_ERR(dev_pm_opp_set_prop_name(dev, pvs_name)))
++			pr_warn("failed to add OPP name %s\n", pvs_name);
++	}
++
++	return 0;
++}
++
++static int __init qcom_cpufreq_driver_init(void)
++{
++	struct device *cpu_dev;
++	struct device_node *np;
++	int ret;
++
++	cpu_dev = get_cpu_device(0);
++	if (!cpu_dev)
++		return -ENODEV;
++
++	np = of_node_get(cpu_dev->of_node);
++	if (!np)
++		return -ENOENT;
++
++	if (!of_device_is_compatible(np, "qcom,krait")) {
++		of_node_put(np);
 +		return -ENODEV;
 +	}
++	of_node_put(np);
 +
-+	if (pm_power_off_prepare) {
-+		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
-+		return -EBUSY;
-+	}
++	ret = qcom_cpufreq_populate_opps();
++	if (ret)
++		return ret;
 +
-+	if (syspm_pfuze_chip) {
-+		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-+		return -EBUSY;
-+	}
-+
-+	syspm_pfuze_chip = pfuze_chip;
-+	pm_power_off_prepare = pfuze_power_off_prepare;
-+
-+	return 0;
++	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
++						       -1, NULL, 0));
 +}
++module_init(qcom_cpufreq_driver_init);
 +
- static int pfuze_identify(struct pfuze_chip *pfuze_chip)
- {
- 	unsigned int value;
-@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	if (of_property_read_bool(client->dev.of_node,
-+				  "fsl,pmic-stby-poweroff"))
-+		return pfuze_power_off_prepare_init(pfuze_chip);
-+
-+	return 0;
-+}
-+
-+static int pfuze100_regulator_remove(struct i2c_client *client)
-+{
-+	if (syspm_pfuze_chip) {
-+		syspm_pfuze_chip = NULL;
-+		pm_power_off_prepare = NULL;
-+	}
-+
- 	return 0;
- }
- 
-@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
- 		.of_match_table = pfuze_dt_ids,
- 	},
- 	.probe = pfuze100_regulator_probe,
-+	.remove = pfuze100_regulator_remove,
- };
- module_i2c_driver(pfuze_driver);
- 
++MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
