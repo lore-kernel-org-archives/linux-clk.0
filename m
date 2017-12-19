@@ -1,56 +1,87 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Tue, 19 Dec 2017 23:25:15 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 1/3] clk: at91: pmc: Wait for clocks when resuming
+Message-ID: <20171219222515.GS15162@piout.net>
+References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
+ <20171211165535.5126-2-romain.izard.pro@gmail.com>
 MIME-Version: 1.0
-To: Dmitry Osipenko <digetx@gmail.com>,
- "Peter De Schrijver" <pdeschrijver@nvidia.com>,
- "Prashant Gaikwad" <pgaikwad@nvidia.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- "Jonathan Hunter" <jonathanh@nvidia.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
- <151371340146.45969.1875712520168365873@resonance>
- <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2@gmail.com>
-Message-ID: <151372175856.45969.11728164366457295655@resonance>
-Subject: Re: [PATCH v2 1/2] clk: tegra: Mark HCLK, SCLK, EMC,
- MC and PLL_P outputs as critical
-Date: Tue, 19 Dec 2017 14:15:58 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171211165535.5126-2-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dmitry Osipenko (2017-12-19 12:20:56)
-> On 19.12.2017 22:56, Michael Turquette wrote:
-> > Quoting Dmitry Osipenko (2017-12-18 19:59:06)
-> >> Machine dies if HCLK, SCLK or EMC is disabled, hence mark these clocks
-> >> as critical. Currently some of drivers do not manage clocks properly,
-> >> expecting clocks to be 'always enabled', these clocks are MC and PLL_P
-> >> outputs. Let's mark MC or PLL_P outputs as critical for now and revert
-> >> this change once drivers would be corrected.
-> > =
+On 11/12/2017 at 17:55:33 +0100, Romain Izard wrote:
+> Wait for the syncronization of all clocks when resuming, not only the
+> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
+> when interrupts are masked, which is the case in here.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-> > Are the drivers that do not manage their clocks correctly merged
-> > upstream? If so can we fix those drivers instead of marking clocks as
-> > critical?
-> =
+> ---
+>  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 775af473fe11..5c2b26de303e 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
+>  	return 0;
+>  }
+>  
+> +static bool pmc_ready(unsigned int mask)
+> +{
+> +	unsigned int status;
+> +
+> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
+> +
+> +	return ((status & mask) == mask) ? 1 : 0;
+> +}
+> +
+>  static void pmc_resume(void)
+>  {
+> -	int i, ret = 0;
+> +	int i;
+>  	u32 tmp;
+> +	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+>  
+>  	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
+>  	if (pmc_cache.mckr != tmp)
+> @@ -134,13 +144,11 @@ static void pmc_resume(void)
+>  			     AT91_PMC_PCR_CMD);
+>  	}
+>  
+> -	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
+> -		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
+> -					       !(tmp & AT91_PMC_LOCKU),
+> -					       10, 5000);
+> -		if (ret)
+> -			pr_crit("USB PLL didn't lock when resuming\n");
+> -	}
+> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
+> +		mask |= AT91_PMC_LOCKU;
+> +
+> +	while (!pmc_ready(mask))
+> +		cpu_relax();
+>  }
+>  
+>  static struct syscore_ops pmc_syscore_ops = {
+> -- 
+> 2.14.1
+> 
 
-> All the drivers are in upstream for a quite long time already. We should =
-be able
-> to correct them, but I haven't tried yet.
-> =
-
-> > If not can we annotate the flags below with a comment stating to remove
-> > the critical clock flag once the consumer driver gets a clue?
-> I'll try to take a look at how much effort it would take to correct the d=
-rivers
-> during the next few days and will send v3 with either the comment being a=
-dded or
-> 'always enabled' clocks being dropped from the patch.
-
-Great, thanks for looking into it. Critical clocks are an easy-to-abuse
-feature and we should really be using the clk.h api as much as possible
-in place of the critical clocks mechanism.
-
-Best regards,
-Mike
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
