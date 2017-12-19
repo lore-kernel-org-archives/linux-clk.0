@@ -1,105 +1,69 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 06/33] clk: at91: change clk_pll_get_best_div_mul() return logic
-Date: Sat, 30 Dec 2017 01:12:45 +0000
-Message-Id: <1514596392-22270-7-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Tue, 19 Dec 2017 23:25:26 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 2/3] clk: at91: pmc: Save SCSR during suspend
+Message-ID: <20171219222526.GT15162@piout.net>
+References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
+ <20171211165535.5126-3-romain.izard.pro@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171211165535.5126-3-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On 11/12/2017 at 17:55:34 +0100, Romain Izard wrote:
+> The contents of the System Clock Status Register (SCSR) needs to be
+> restored into the System Clock Enable Register (SCER).
+> 
+> As the bootloader will restore some clocks by itself, the issue can be
+> missed as only the USB controller, the LCD controller, the Image Sensor
+> controller and the programmable clocks will be impacted.
+> 
+> Fix the obvious typo in the suspend/resume code, as the IMR register
+> does not need to be saved twice.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+> ---
+>  drivers/clk/at91/pmc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 5c2b26de303e..07dc2861ad3f 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -86,7 +86,7 @@ static int pmc_suspend(void)
+>  {
+>  	int i;
+>  
+> -	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
+> +	regmap_read(pmcreg, AT91_PMC_SCSR, &pmc_cache.scsr);
+>  	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
+>  	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
+>  	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
+> @@ -129,7 +129,7 @@ static void pmc_resume(void)
+>  	if (pmc_cache.pllar != tmp)
+>  		pr_warn("PLLAR was not configured properly by the firmware\n");
+>  
+> -	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
+> +	regmap_write(pmcreg, AT91_PMC_SCER, pmc_cache.scsr);
+>  	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
+>  	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
+>  	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
+> -- 
+> 2.14.1
+> 
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/at91/clk-pll.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 630203e..1c90ae7 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -157,14 +157,14 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 							pll->characteristics;
- 	unsigned long bestremainder = ULONG_MAX;
- 	unsigned long maxdiv, mindiv, tmpdiv;
--	long bestrate = -ERANGE;
-+	unsigned long bestrate = 0;
- 	unsigned long bestdiv;
- 	unsigned long bestmul;
- 	int i = 0;
- 
- 	/* Check if parent_rate is a valid input rate */
- 	if (parent_rate < characteristics->input.min)
--		return -ERANGE;
-+		return 0;
- 
- 	/*
- 	 * Calculate minimum divider based on the minimum multiplier, the
-@@ -179,7 +179,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	if (parent_rate > characteristics->input.max) {
- 		tmpdiv = DIV_ROUND_UP(parent_rate, characteristics->input.max);
- 		if (tmpdiv > PLL_DIV_MAX)
--			return -ERANGE;
-+			return 0;
- 
- 		if (tmpdiv > mindiv)
- 			mindiv = tmpdiv;
-@@ -234,8 +234,8 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 			break;
- 	}
- 
--	/* We haven't found any multiplier/divider pair => return -ERANGE */
--	if (bestrate < 0)
-+	/* We haven't found any multiplier/divider pair => return 0 */
-+	if (bestrate == 0)
- 		return bestrate;
- 
- 	/* Check if bestrate is a valid output rate  */
-@@ -246,7 +246,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	}
- 
- 	if (i >= characteristics->num_output)
--		return -ERANGE;
-+		return 0;
- 
- 	if (div)
- 		*div = bestdiv;
-@@ -271,15 +271,15 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
--	long ret;
-+	unsigned long ret;
- 	u32 div;
- 	u32 mul;
- 	u32 index;
- 
- 	ret = clk_pll_get_best_div_mul(pll, rate, parent_rate,
- 				       &div, &mul, &index);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ERANGE;
- 
- 	pll->range = index;
- 	pll->div = div;
 -- 
-2.7.4
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
