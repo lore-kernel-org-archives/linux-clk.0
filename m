@@ -1,55 +1,61 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v6 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
-Date: Wed,  6 Dec 2017 08:24:00 +0100
-Message-Id: <20171206072402.11694-5-o.rempel@pengutronix.de>
-In-Reply-To: <20171206072402.11694-1-o.rempel@pengutronix.de>
-References: <20171206072402.11694-1-o.rempel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15606 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752361AbdLSXA7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 18:00:59 -0500
+Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <01f6a806-362e-1276-07d7-dfe439e92034@nvidia.com>
+Date: Tue, 19 Dec 2017 23:00:52 +0000
+MIME-Version: 1.0
+In-Reply-To: <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new optional "fsl,pmic-stby-poweroff" property.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 16/11/17 14:28, Peter De Schrijver wrote:
+> This clock is needed by the memory built-in self test work around.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
+>  include/dt-bindings/clock/tegra210-car.h |  2 +-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 6d7a613..55a5b7f 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -40,6 +40,7 @@
+>  
+>  #define CLK_SOURCE_CSITE 0x1d4
+>  #define CLK_SOURCE_EMC 0x19c
+> +#define CLK_SOURCE_LA 0x1f8
+>  
+>  #define PLLC_BASE 0x80
+>  #define PLLC_OUT 0x84
+> @@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
+>  	return 0;
+>  }
+>  
+> +static const char * const la_parents[] = {
+> +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
+> +};
+> +
+> +static struct tegra_clk_periph tegra210_la =
+> +	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
+> +
 
-diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-index 444c47831a40..197f1a52e960 100644
---- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-+++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-@@ -4,6 +4,13 @@ Required properties:
- - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
- - reg: I2C slave address
- 
-+Optional properties:
-+- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
-+  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
-+  Use this option if the SoC should be powered off by external power
-+  management IC (PMIC) on PMIC_STBY_REQ signal.
-+  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
-+
- Required child node:
- - regulators: This is the list of child nodes that specify the regulator
-   initialization data for defined regulators. Please refer to below doc
+The above are over 80 characters. I know we already have some in this
+file that are, but we should avoid it where we can.
+
+Cheers
+Jon
+
 -- 
-2.11.0
+nvpublic
