@@ -1,42 +1,41 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 7 Dec 2017 16:10:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	Jian Hu <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] clk: meson-axg: add clocks dt-bindings required
- header
-Message-ID: <20171207221014.6qwcb43w5hms4ma5@rob-hp-laptop>
-References: <20171207095300.15384-1-yixun.lan@amlogic.com>
- <20171207095300.15384-3-yixun.lan@amlogic.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: tegra: Mark HCLK, SCLK, EMC, MC and PLL_P
+ outputs as critical
+To: Michael Turquette <mturquette@baylibre.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
+ <151371340146.45969.1875712520168365873@resonance>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6e09f1cb-cb89-55a5-b7ea-52cb9f0efaf2@gmail.com>
+Date: Tue, 19 Dec 2017 23:20:56 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207095300.15384-3-yixun.lan@amlogic.com>
+In-Reply-To: <151371340146.45969.1875712520168365873@resonance>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 07, 2017 at 05:52:58PM +0800, Yixun Lan wrote:
-> From: Qiufang Dai <qiufang.dai@amlogic.com>
+On 19.12.2017 22:56, Michael Turquette wrote:
+> Quoting Dmitry Osipenko (2017-12-18 19:59:06)
+>> Machine dies if HCLK, SCLK or EMC is disabled, hence mark these clocks
+>> as critical. Currently some of drivers do not manage clocks properly,
+>> expecting clocks to be 'always enabled', these clocks are MC and PLL_P
+>> outputs. Let's mark MC or PLL_P outputs as critical for now and revert
+>> this change once drivers would be corrected.
 > 
-> Add the required header for the clocks ID dt-bindings
-> exported from various subsystem in the Meson-AXG SoC.
-> 
-> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  include/dt-bindings/clock/axg-clkc.h | 71 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+> Are the drivers that do not manage their clocks correctly merged
+> upstream? If so can we fix those drivers instead of marking clocks as
+> critical?
 
-Please add acks when posting new versions.
+All the drivers are in upstream for a quite long time already. We should be able
+to correct them, but I haven't tried yet.
 
-Rob
+> If not can we annotate the flags below with a comment stating to remove
+> the critical clock flag once the consumer driver gets a clue?
+I'll try to take a look at how much effort it would take to correct the drivers
+during the next few days and will send v3 with either the comment being added or
+'always enabled' clocks being dropped from the patch.
