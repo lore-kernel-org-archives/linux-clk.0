@@ -1,61 +1,31 @@
-Return-Path: <benh@kernel.crashing.org>
-Message-ID: <1513910633.2743.79.camel@kernel.crashing.org>
-Subject: Re: [PATCH v6 4/5] clk: aspeed: Register gated clocks
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Stephen Boyd <sboyd@codeaurora.org>, Joel Stanley <joel@jms.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette
- <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andrew
- Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>,
-        Rick Altherr
- <raltherr@google.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
- <arnd@arndb.de>
-Date: Fri, 22 Dec 2017 13:43:53 +1100
-In-Reply-To: <1513910191.2743.77.camel@kernel.crashing.org>
-References: <20171128071908.12279-1-joel@jms.id.au>
-	 <20171128071908.12279-5-joel@jms.id.au>
-	 <20171221233927.GE7997@codeaurora.org>
-	 <1513910191.2743.77.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16272 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753342AbdLSW2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 17:28:01 -0500
+Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <47980cf0-8837-bff1-a25a-1287dd96b689@nvidia.com>
+Date: Tue, 19 Dec 2017 22:27:56 +0000
+MIME-Version: 1.0
+In-Reply-To: <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-12-22 at 13:36 +1100, Benjamin Herrenschmidt wrote:
-> 
-> > No you can't sleep here. It needs to delay because this is inside
-> > spinlock_irqsave.
-> 
-> Additionally you really don't want to delay for 10ms with interrupts
-> off :-(
-> 
-> Sadly, it looks like the clk framework already calls you with spinlock
-> irqsafe, which is a rather major suckage.
-> 
-> Stephen, why is that so ? That pretty much makes it impossible to
-> do sleeping things, which prevents things like i2c based clock
-> controllers etc...
 
-I noticed we do have a few i2c based clock drivers... how are they ever
-supposed to work ? i2c bus controllers are allowed to sleep and the i2c
-core takes mutexes...
+On 16/11/17 14:28, Peter De Schrijver wrote:
+> This clock is needed by the memory built-in self test work around.
 
-> I think the clk framework needs to be overhauled to use sleeping
-> mutexes instead. Doing clock enable/disable at interrupt time is
-> a bad idea anyway.
-> 
-> 
-> In the meantime, Joel, you have little choice but do an mdelay
-> though that really sucks.
-> 
-> > > +             /* Take IP out of reset */
-> > > +             regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
-> > > +     }
-> > > +
-> > > +     spin_unlock_irqrestore(gate->lock, flags);
-> > > +
-> > > +     return 0;
-> > > +}
+Can we say what this 'LA' clock is? What does LA stand for? Looks like
+this is only used for Host1x.
+
+Cheers
+Jon
+
+-- 
+nvpublic
