@@ -1,38 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:03:16 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V7 11/12] arm64: dts: add syscon for whale2 platform
-Message-ID: <20171221230316.GY7997@codeaurora.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-12-chunyan.zhang@spreadtrum.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12777 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966628AbdLSIxv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 03:53:51 -0500
+Date: Tue, 19 Dec 2017 10:53:46 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+Message-ID: <20171219085346.GK29417@tbergstrom-lnx.Nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207125715.16160-12-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, Chunyan Zhang wrote:
-> Some clocks on SC9860 are in the same address area with syscon
-> devices, the proper syscon node will be quoted under the
-> definitions of those clocks in DT.
+Ping! Any comments on this?
+
+Peter.
+
+On Thu, Nov 16, 2017 at 04:28:58PM +0200, Peter De Schrijver wrote:
+> This patch series introduces the Memory Built-In Self Test (MBIST)
+> work around (WAR) needed when power ungating certain domains. More
+> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+> implement the WAR in the Tegra210 clock driver, because most accesses are
+> to CAR registers and for the VENC domain, we need to make sure the CSI
+> clock source is not changed during the WAR execution.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
-
-These last two can go via arm-soc?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Changes in v2:
+> * Use readl for fence_delay() rather than readl_relaxed
+> * clarify MBIST and WAR acronyms
+> 
+> Peter De Schrijver (4):
+>   clk: tegra: Add la clock for Tegra210
+>   clk: tegra: add fence_delay for clock registers
+>   clk: tegra: MBIST work around for Tegra210
+>   soc/tegra: pmc: apply MBIST work around fo Tegra210
+> 
+>  drivers/clk/tegra/clk-tegra210.c         | 371 ++++++++++++++++++++++++++++++-
+>  drivers/clk/tegra/clk.h                  |   7 +
+>  drivers/soc/tegra/pmc.c                  |   5 +
+>  include/dt-bindings/clock/tegra210-car.h |   2 +-
+>  include/linux/clk/tegra.h                |   1 +
+>  5 files changed, 383 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
