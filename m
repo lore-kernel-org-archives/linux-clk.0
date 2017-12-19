@@ -1,82 +1,33 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:56122 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753331AbdLHOur (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Dec 2017 09:50:47 -0500
-Subject: Re: [PATCH v4 4/4] arm64: dts: meson-axg: add clock DT info for Meson
- AXG SoC
-To: Kevin Hilman <khilman@baylibre.com>
-References: <20171201012452.27086-1-yixun.lan@amlogic.com>
- <20171201012452.27086-5-yixun.lan@amlogic.com> <7ho9nbmked.fsf@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <92c1b309-15a1-4978-4f76-358fd4e22890@amlogic.com>
-Date: Fri, 8 Dec 2017 22:50:38 +0800
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1688 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752904AbdLSNCe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 08:02:34 -0500
+Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <20171219085346.GK29417@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a1e42fc5-d836-d74f-bf8f-f136b51e1ed9@nvidia.com>
+Date: Tue, 19 Dec 2017 09:40:39 +0000
 MIME-Version: 1.0
-In-Reply-To: <7ho9nbmked.fsf@baylibre.com>
+In-Reply-To: <20171219085346.GK29417@tbergstrom-lnx.Nvidia.com>
 Content-Type: text/plain; charset="utf-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07/17 08:50, Kevin Hilman wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
-> 
->> From: Qiufang Dai <qiufang.dai@amlogic.com>
->>
->> Try to add Hiubus DT info, and also enable clock DT info
->> for the Amlogic's Meson-AXG SoC.
->>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> index b932a784b02a..36a2e98338a8 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> @@ -7,6 +7,7 @@
->>  #include <dt-bindings/gpio/gpio.h>
->>  #include <dt-bindings/interrupt-controller/irq.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/axg-clkc.h>
-> 
-> This #include will cause an unnessary dependency from the amlogic tree
-> to the clock tree even though this patch is not currently using any of
-> the #defines from that header.  It will simplify the dependencies if you
-> drop this #include from this patch.
-> 
-> In my comment on the cover letter, I suggested adding a patch that also
-> switches the UART over to the new clock provider.  That is the patch
-> that should add this #include, since it will actually need #defines from
-> the header.
-> 
-ok, make sense
-> Doing it in that order means that we could merge this patch
-> independently of the clock driver, and then merge the UART switch-over
-> patch only after the driver (and headers) are merged.
-I was planing to add UART DT part as separately patches (including the
-UARt's pinctrl part information)
 
-but as follow your suggestion, I could split the UART's clock DT info
-into separate patch, and send along with this series.
+On 19/12/17 08:53, Peter De Schrijver wrote:
+> Ping! Any comments on this?
+> 
+> Peter.
 
-> 
-> Kevin
-> 
-> .
-> 
+Sorry Peter, I have been planning to review and test this, but other
+things keep coming up. I will see if I can do this tomorrow.
 
+Cheers
+Jon
+
+-- 
+nvpublic
