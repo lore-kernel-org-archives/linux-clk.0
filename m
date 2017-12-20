@@ -1,92 +1,55 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 7 Dec 2017 16:04:49 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Xu YiPing <xuyiping@hisilicon.com>, mturquette@baylibre.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, xuwei5@hisilicon.com,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	xuejiancheng@hisilicon.com, wenpan@hisilicon.com,
-	zhangfei.gao@linaro.org, guodong.xu@linaro.org,
-	zhongkaihua@huawei.com, chenjun14@huawei.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	suzhuangluan@hisilicon.com, xuezhiliang@hisilicon.com,
-	kevin.wangtao@hisilicon.com
-Subject: Re: [PATCH v3 2/3] clk: hisilicon: Add support for Hi3660 stub clocks
-Message-ID: <20171207080449.GB5371@leoy-linaro>
-References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
- <1510910852-2175-3-git-send-email-xuyiping@hisilicon.com>
- <20171207070550.GY4283@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Dec 2017 15:18:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+Message-ID: <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+ <20171220032614.GQ19815@vireshk-i7>
+ <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207070550.GY4283@codeaurora.org>
+In-Reply-To: <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 06, 2017 at 11:05:50PM -0800, Stephen Boyd wrote:
-> On 11/17, Xu YiPing wrote:
-> > From: Kaihua Zhong <zhongkaihua@huawei.com>
-> > +
-> > +static struct clk_hw *hi3660_stub_clk_hw_get(struct of_phandle_args *clkspec,
-> > +					     void *data)
-> > +{
-> > +	unsigned int idx = clkspec->args[0];
-> > +
-> > +	if (idx > HI3660_CLK_STUB_NUM) {
+On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
+> Hi Viresh,
 > 
-> This should be >=
+> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
+> > On 19-12-17, 21:25, Sricharan R wrote:
+> >> +	cpu@0 {
+> >> +		compatible = "qcom,krait";
+> >> +		enable-method = "qcom,kpss-acc-v1";
+> >> +		device_type = "cpu";
+> >> +		reg = <0>;
+> >> +		qcom,acc = <&acc0>;
+> >> +		qcom,saw = <&saw0>;
+> >> +		clocks = <&kraitcc 0>;
+> >> +		clock-names = "cpu";
+> >> +		cpu-supply = <&smb208_s2a>;
+> >> +		operating-points-v2 = <&cpu_opp_table>;
+> >> +	};
+> >> +
+> >> +	qcom,pvs {
+> >> +		qcom,pvs-format-a;
+> >> +	};
+> > 
+> > Not sure what Rob is going to say on that :)
+> > 
 > 
-> > +	}
-> > +
-> > +	return &hi3660_stub_clks[idx].hw;
-> > +}
-> > +
-> > +static int hi3660_stub_clk_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct resource *res;
-> > +	unsigned int i;
-> > +	int ret;
-> > +
-> > +	/* Use mailbox client without blocking */
-> > +	stub_clk_chan.cl.dev = dev;
-> > +	stub_clk_chan.cl.tx_done = NULL;
-> > +	stub_clk_chan.cl.tx_block = false;
-> > +	stub_clk_chan.cl.knows_txdone = false;
-> > +
-> > +	/* Allocate mailbox channel */
-> > +	stub_clk_chan.mbox = mbox_request_channel(&stub_clk_chan.cl, 0);
-> > +	if (IS_ERR(stub_clk_chan.mbox))
-> > +		return PTR_ERR(stub_clk_chan.mbox);
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	freq_reg = devm_ioremap(dev, res->start, resource_size(res));
-> > +	if (IS_ERR(freq_reg))
-> 
-> Pretty sure this returns NULL on failure, not an error pointer.
-> 
-> > +		return -ENOMEM;
-> > +
-> > +	freq_reg += HI3660_STUB_CLOCK_DATA;
-> > +
-> > +	for (i = 0; i < HI3660_CLK_STUB_NUM; i++) {
-> > +		ret = devm_clk_hw_register(&pdev->dev, &hi3660_stub_clks[i].hw);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	ret = of_clk_add_hw_provider(pdev->dev.of_node, hi3660_stub_clk_hw_get,
-> > +				     hi3660_stub_clks);
-> 
-> This can use devm
-> 
-> > +	return ret;
-> > +}
-> > +
-> 
-> I fixed it all and merged into clk-next.
+>  Yes. Would be good to know the best way.
 
-Ah, very appreciate your help, Stephen.
+Seems like this should be a property of an efuse node either implied by 
+the compatible or a separate property. What determines format A vs. B?
 
-Thanks,
-Leo Yan
+Rob
