@@ -1,57 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 18:15:20 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
-Message-ID: <20171222021520.GO7997@codeaurora.org>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
- <151373031022.33554.13905466641279532222@resonance>
+Return-Path: <horms@verge.net.au>
+Date: Wed, 20 Dec 2017 12:46:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources
+ active during system suspend
+Message-ID: <20171220114611.nd4y7ja6cyu7o4lo@verge.net.au>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
+ <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
+ <CAMuHMdU2CUE_68ZoQ5ssKaXYJ0L_P0gSTqVFS1GGa_cY7e-8cA@mail.gmail.com>
+ <20171220102305.pibdggkfycmj63l4@verge.net.au>
+ <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <151373031022.33554.13905466641279532222@resonance>
+In-Reply-To: <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/19, Michael Turquette wrote:
-> Quoting Jerome Brunet (2017-12-01 13:51:50)
-> > This Patchset is related the RFC [0] and the discussion around
-> > CLK_SET_RATE_GATE available here [1]
-> > 
-> > This patchset introduce clock protection to the CCF core. This can then
-> > be used for:
-> > 
-> > * Provide a way for a consumer to claim exclusivity over the rate control
-> >   of a provider. Some clock consumers require that a clock rate must not
-> >   deviate from its selected frequency. There can be several reasons for
-> >   this, not least of which is that some hardware may not be able to
-> >   handle or recover from a glitch caused by changing the clock rate while
-> >   the hardware is in operation. For such HW, The ability to get exclusive
-> >   control of a clock's rate, and release that exclusivity, could be seen
-> >   as a fundamental clock rate control primitive. The exclusivity is not
-> >   preemptible, so when claimed more than once, is rate is effectively
-> >   locked.
-> > 
-> > * Provide a similar functionality to providers themselves, fixing
-> >   CLK_SET_RATE_GATE flag (enforce clock gating along the tree). While
-> >   there might still be a few platforms relying the broken implementation,
-> >   tests done has shown this change to be pretty safe.
+On Wed, Dec 20, 2017 at 11:28:43AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Applied to clk-protect-rate, with the exception that I did not apply
-> "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
-> qcom clk code.
+> On Wed, Dec 20, 2017 at 11:23 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Dec 18, 2017 at 12:22:17PM +0100, Geert Uytterhoeven wrote:
+> >> On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >> > On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> >> >> If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
+> >> >> Domain and to be used as a wakeup source, it must be kept active during
+> >> >> system suspend.
+> >> >>
+> >> >> Currently this is handled in device-specific drivers by explicitly
+> >> >> increasing the use count of the module clock when the device is
+> >> >> configured as a wakeup source.  However, the proper way to prevent the
+> >> >> device from being stopped is to inform this requirement to the genpd
+> >> >> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+> >> >>
+> >> >> Note that this will only affect devices configured as wakeup sources.
+> >> >>
+> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >
+> >> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>
+> >> Thank you!
+> >>
+> >> Simon: can you please queue this up for v4.16?
+> >> I have queued the other 2 clock patches in clk-renesas-for-v4.16, and sent
+> >> a PR for it.
+> >
+> > Thanks, I have applied this patch to the soc-for-v4.16 branch.
+> > It is currently not based v4.15-rc1. Let me know if it should
+> > be rebased on top of your pull request for clk-renesas-for-v4.16.
 > 
-> Stephen, do you plan to fix up the qcom clock code so that the
-> SET_RATE_GATE improvement can go in?
-> 
+> If the base is not v4.15-rc1, what is it? GENPD_FLAG_ACTIVE_WAKEUP was
+> introduced in v4.15-rc1, so it won't compile based on v4.14.
 
-I started working on it a while back. Let's see if I can finish
-it off this weekend.
+Sorry, I typed my message incorrectly. The base _is_ v4.15-rc1.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> There's no dependency on the clock drivers, so no need to base on
+> top of clk-renesas-for-v4.16.
+
+Thanks, got it.
