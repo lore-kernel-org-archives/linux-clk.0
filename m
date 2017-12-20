@@ -1,34 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:37778 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752559AbdLGGlW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:22 -0500
-Date: Wed, 6 Dec 2017 22:41:15 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
-        vireshk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 6/6] clk: h8300: pr_err() strings should end with newlines
-Message-ID: <20171207064115.GU4283@codeaurora.org>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
- <5fe05a034e646f03e6129c7782e38e37856f80a1.1511505932.git.arvind.yadav.cs@gmail.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 20 Dec 2017 11:57:12 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+Message-ID: <20171220062712.GV19815@vireshk-i7>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+ <20171220032614.GQ19815@vireshk-i7>
+ <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5fe05a034e646f03e6129c7782e38e37856f80a1.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Arvind Yadav wrote:
-> pr_err() messages should end with a new-line to avoid other messages
-> being concatenated.
+On 20-12-17, 11:55, Sricharan R wrote:
+> >> +		opp-1400000000 {
+> >> +			opp-hz = /bits/ 64 <1400000000>;
+> >> +			opp-microvolt-speed0-pvs0-v0 = <1250000>;
+> > 
+> > Why speed0 and v0 in all the names ?
+> > 
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
+>  Ya, all the three (speed, pvs and version) are read from efuse. So all the three
+>  can vary.
 
-Applied to clk-next
+Okay, so may be in the example you should have a mix of all the
+combinations to show how these things work ? You only showed values
+for a single efuse configuration currently.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+viresh
