@@ -1,78 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:31127 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751577AbdLNKLm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Dec 2017 05:11:42 -0500
-Subject: Re: [PATCH v7 0/6] add clk controller driver for Meson-AXG SoC
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
- <1513245826.32163.7.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <2428ba7e-c0c4-5f91-e575-970171195df2@amlogic.com>
-Date: Thu, 14 Dec 2017 18:11:51 +0800
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 0/6] Mediatek MT2712 clock and scpsys support
+To: Weiyi Lu <weiyi.lu@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
+References: <1511854102-23195-1-git-send-email-weiyi.lu@mediatek.com>
+ <1511854102-23195-2-git-send-email-weiyi.lu@mediatek.com>
+ <1513317052.30745.1.camel@mtksdaap41>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <a6689fc4-4415-8878-7e98-d182a755c3dd@gmail.com>
+Date: Wed, 20 Dec 2017 19:02:27 +0100
 MIME-Version: 1.0
-In-Reply-To: <1513245826.32163.7.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1513317052.30745.1.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome & Kevin
 
-On 12/14/17 18:03, Jerome Brunet wrote:
-> On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
->> Qiufang Dai (3):
->>   clk: meson-axg: add clocks dt-bindings required header
->>   clk: meson-axg: add clock controller drivers
->>   arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
+
+On 12/15/2017 06:50 AM, Weiyi Lu wrote:
+> On Tue, 2017-11-28 at 15:28 +0800, Weiyi Lu wrote:
+> 
+> Hi Matthias,
+> Just gentle ping. Many thanks.
+> 
+
+Now pushed to v4.15-next thanks
+
+
+>> This series is based on v4.15-rc1 and composed of
+>> scpsys control (PATCH 1-4) and device tree (PATCH 5-6)
 >>
->> Yixun Lan (3):
->>   clk: meson: make the spinlock naming more specific
->>   dt-bindings: clock: add compatible variant for the Meson-AXG
->>   arm64: dts: meson-axg: switch uart_ao clock to CLK81
+>> changes since v6:
+>> - Rebase to v4.15-rc1.
 >>
->>  .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
->>  arch/arm64/Kconfig.platforms                       |   1 +
->>  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts     |   2 +
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +-
->>  drivers/clk/meson/Kconfig                          |   8 +
->>  drivers/clk/meson/Makefile                         |   1 +
->>  drivers/clk/meson/axg.c                            | 936 +++++++++++++++++++++
->>  drivers/clk/meson/axg.h                            | 126 +++
->>  drivers/clk/meson/clkc.h                           |   2 +-
->>  drivers/clk/meson/gxbb.c                           | 112 +--
->>  drivers/clk/meson/meson8b.c                        |  24 +-
->>  include/dt-bindings/clock/axg-clkc.h               |  71 ++
->>  12 files changed, 1234 insertions(+), 75 deletions(-)
->>  create mode 100644 drivers/clk/meson/axg.c
->>  create mode 100644 drivers/clk/meson/axg.h
->>  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+>> changes since v5:
+>> - Refine bus protection with proper variable name
+>>   and better implementation for the if statement.
+>>
+>> changes since v4:
+>> - Refine scpsys and infracfg for bus protection by passing
+>>   a boolean flag to determine the register update method
+>>
+>> changes since v3:
+>> - Rebase to v4.14-rc1.
+>>
+>> changes since v2:
+>> - ensure the clocks used by clocksource driver are registered
+>>   before clocksource init() by using CLK_OF_DECLARE()
+>> - correct the frequency of clk32k/clkrtc_ext/clkrtc_int
+>>
+>> changes since v1:
+>> - Rebase to v4.13-next-soc.
+>> - Refine scpsys and infracfg for bus protection.
+>>
+>> *** BLURB HERE ***
+>>
+>> Weiyi Lu (6):
+>>   dt-bindings: soc: add MT2712 power dt-bindings
+>>   soc: mediatek: extend bus protection API
+>>   soc: mediatek: add dependent clock jpgdec/audio for scpsys
+>>   soc: mediatek: add MT2712 scpsys support
+>>   arm: dts: mt2712: Add clock controller device nodes
+>>   arm: dts: Add power controller device node of MT2712
+>>
+>>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |   3 +
+>>  arch/arm64/boot/dts/mediatek/mt2712e.dtsi          | 131 +++++++++++++++++++
+>>  drivers/soc/mediatek/mtk-infracfg.c                |  26 +++-
+>>  drivers/soc/mediatek/mtk-scpsys.c                  | 140 ++++++++++++++++++---
+>>  include/dt-bindings/power/mt2712-power.h           |  26 ++++
+>>  include/linux/soc/mediatek/infracfg.h              |   7 +-
+>>  6 files changed, 311 insertions(+), 22 deletions(-)
+>>  create mode 100644 include/dt-bindings/power/mt2712-power.h
+>>
 > 
-> Kevin, 
 > 
-> I took the first 4 patches through clk-meson. I left the last 2 for you.
-> 
-> I have applied the DT bindings update separately.
-> Let me know if you have dependency on these new bindings and need a tag.
-> 
-
-thanks for taking care of this..
-
-I think it's a good idea to make a tag, if peripheral driver request
-clock, then the DT part patch will need
-include/dt-bindings/clock/axg-clkc.h to build successfully.
-
-Yixun
-
