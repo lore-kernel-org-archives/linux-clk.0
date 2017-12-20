@@ -1,234 +1,239 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark
- Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 02/12] clk: sprd: Add common infrastructure
-Date: Thu, 7 Dec 2017 20:57:05 +0800
-Message-ID: <20171207125715.16160-3-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<matthias.bgg@gmail.com>
+CC: <jdelvare@suse.de>, <jamesjj.liao@mediatek.com>, <weiyi.lu@mediatek.com>,
+	<arnd@arndb.de>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Wang
+	<sean.wang@mediatek.com>
+Subject: [PATCH 1/2] clk: mediatek: group drivers under indpendent menu
+Date: Wed, 20 Dec 2017 14:42:58 +0800
+Message-ID: <971cc0e25dcf32e19bdc93a2bb0dec4cbda2fce7.1513741266.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Added Spreadtrum's clock driver framework together with common
-structures and interface functions.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Getting much MediaTek clock driver have been added to CCF, so it's
+better adding the cleanup for grouping drivers under the independent
+menu to simplify configuration selection. In addition, really trivial
+fixups for typos are added in the same patch.
+
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/clk/Kconfig       |  1 +
- drivers/clk/Makefile      |  1 +
- drivers/clk/sprd/Kconfig  |  4 ++
- drivers/clk/sprd/Makefile |  3 ++
- drivers/clk/sprd/common.c | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/common.h | 38 +++++++++++++++++++
- 6 files changed, 143 insertions(+)
- create mode 100644 drivers/clk/sprd/Kconfig
- create mode 100644 drivers/clk/sprd/Makefile
- create mode 100644 drivers/clk/sprd/common.c
- create mode 100644 drivers/clk/sprd/common.h
+ drivers/clk/mediatek/Kconfig | 96 +++++++++++++++++++++++---------------------
+ 1 file changed, 50 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa..ce1a32be 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -236,6 +236,7 @@ source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/renesas/Kconfig"
- source "drivers/clk/samsung/Kconfig"
-+source "drivers/clk/sprd/Kconfig"
- source "drivers/clk/sunxi-ng/Kconfig"
- source "drivers/clk/tegra/Kconfig"
- source "drivers/clk/ti/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f7f761b..d880d13 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-+obj-$(CONFIG_ARCH_SPRD)			+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
-diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
-new file mode 100644
-index 0000000..67a3287
---- /dev/null
-+++ b/drivers/clk/sprd/Kconfig
-@@ -0,0 +1,4 @@
-+config SPRD_COMMON_CLK
-+	tristate "Clock support for Spreadtrum SoCs"
-+	depends on ARCH_SPRD || COMPILE_TEST
-+	default ARCH_SPRD
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-new file mode 100644
-index 0000000..74f4b80
---- /dev/null
-+++ b/drivers/clk/sprd/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 59dc0aa..7338f81 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -1,136 +1,139 @@
+ #
+-# MediaTek SoC drivers
++# MediaTek Clock Drivers
+ #
++menu "Clock driver for MediaTek SoC"
++	depends on ARCH_MEDIATEK || COMPILE_TEST
 +
-+clk-sprd-y	+= common.o
-diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-new file mode 100644
-index 0000000..e038b044
---- /dev/null
-+++ b/drivers/clk/sprd/common.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum clock infrastructure
-+//
-+// Copyright (C) 2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+#include "common.h"
-+
-+static const struct regmap_config sprdclk_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xffff,
-+	.fast_io	= true,
-+};
-+
-+static void sprd_clk_set_regmap(const struct sprd_clk_desc *desc,
-+			 struct regmap *regmap)
-+{
-+	int i;
-+	struct sprd_clk_common *cclk;
-+
-+	for (i = 0; i < desc->num_clk_clks; i++) {
-+		cclk = desc->clk_clks[i];
-+		if (!cclk)
-+			continue;
-+
-+		cclk->regmap = regmap;
-+	}
-+}
-+
-+int sprd_clk_regmap_init(struct platform_device *pdev,
-+			 const struct sprd_clk_desc *desc)
-+{
-+	void __iomem *base;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct regmap *regmap;
-+
-+	if (of_find_property(node, "sprd,syscon", NULL)) {
-+		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
-+		if (IS_ERR_OR_NULL(regmap)) {
-+			pr_err("%s: failed to get syscon regmap\n", __func__);
-+			return PTR_ERR(regmap);
-+		}
-+	} else {
-+		base = of_iomap(node, 0);
-+		regmap = devm_regmap_init_mmio(&pdev->dev, base,
-+					       &sprdclk_regmap_config);
-+		if (IS_ERR_OR_NULL(regmap)) {
-+			pr_err("failed to init regmap\n");
-+			return PTR_ERR(regmap);
-+		}
-+	}
-+
-+	sprd_clk_set_regmap(desc, regmap);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
-+
-+int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
-+{
-+	int i, ret;
-+	struct clk_hw *hw;
-+
-+	for (i = 0; i < clkhw->num; i++) {
-+
-+		hw = clkhw->hws[i];
-+
-+		if (!hw)
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clkhw);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider\n");
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(sprd_clk_probe);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
-new file mode 100644
-index 0000000..abd9ff5
---- /dev/null
-+++ b/drivers/clk/sprd/common.h
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum clock infrastructure
-+//
-+// Copyright (C) 2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#ifndef _SPRD_CLK_COMMON_H_
-+#define _SPRD_CLK_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+struct device_node;
-+
-+struct sprd_clk_common {
-+	struct regmap	*regmap;
-+	u32		reg;
-+	struct clk_hw	hw;
-+};
-+
-+struct sprd_clk_desc {
-+	struct sprd_clk_common		**clk_clks;
-+	unsigned long			num_clk_clks;
-+	struct clk_hw_onecell_data      *hw_clks;
-+};
-+
-+static inline struct sprd_clk_common *
-+	hw_to_sprd_clk_common(const struct clk_hw *hw)
-+{
-+	return container_of(hw, struct sprd_clk_common, hw);
-+}
-+int sprd_clk_regmap_init(struct platform_device *pdev,
-+			 const struct sprd_clk_desc *desc);
-+int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw);
-+
-+#endif /* _SPRD_CLK_COMMON_H_ */
+ config COMMON_CLK_MEDIATEK
+ 	bool
+ 	---help---
+-	  Mediatek SoCs' clock support.
++	  MediaTek SoCs' clock support.
+ 
+ config COMMON_CLK_MT2701
+-	bool "Clock driver for Mediatek MT2701"
++	bool "Clock driver for MediaTek MT2701"
+ 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK && ARM
+ 	---help---
+-	  This driver supports Mediatek MT2701 basic clocks.
++	  This driver supports MediaTek MT2701 basic clocks.
+ 
+ config COMMON_CLK_MT2701_MMSYS
+-	bool "Clock driver for Mediatek MT2701 mmsys"
++	bool "Clock driver for MediaTek MT2701 mmsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 mmsys clocks.
++	  This driver supports MediaTek MT2701 mmsys clocks.
+ 
+ config COMMON_CLK_MT2701_IMGSYS
+-	bool "Clock driver for Mediatek MT2701 imgsys"
++	bool "Clock driver for MediaTek MT2701 imgsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 imgsys clocks.
++	  This driver supports MediaTek MT2701 imgsys clocks.
+ 
+ config COMMON_CLK_MT2701_VDECSYS
+-	bool "Clock driver for Mediatek MT2701 vdecsys"
++	bool "Clock driver for MediaTek MT2701 vdecsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 vdecsys clocks.
++	  This driver supports MediaTek MT2701 vdecsys clocks.
+ 
+ config COMMON_CLK_MT2701_HIFSYS
+-	bool "Clock driver for Mediatek MT2701 hifsys"
++	bool "Clock driver for MediaTek MT2701 hifsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 hifsys clocks.
++	  This driver supports MediaTek MT2701 hifsys clocks.
+ 
+ config COMMON_CLK_MT2701_ETHSYS
+-	bool "Clock driver for Mediatek MT2701 ethsys"
++	bool "Clock driver for MediaTek MT2701 ethsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 ethsys clocks.
++	  This driver supports MediaTek MT2701 ethsys clocks.
+ 
+ config COMMON_CLK_MT2701_BDPSYS
+-	bool "Clock driver for Mediatek MT2701 bdpsys"
++	bool "Clock driver for MediaTek MT2701 bdpsys"
+ 	depends on COMMON_CLK_MT2701
+ 	---help---
+-	  This driver supports Mediatek MT2701 bdpsys clocks.
++	  This driver supports MediaTek MT2701 bdpsys clocks.
+ 
+ config COMMON_CLK_MT2712
+-	bool "Clock driver for Mediatek MT2712"
++	bool "Clock driver for MediaTek MT2712"
+ 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK && ARM64
+ 	---help---
+-	  This driver supports Mediatek MT2712 basic clocks.
++	  This driver supports MediaTek MT2712 basic clocks.
+ 
+ config COMMON_CLK_MT2712_BDPSYS
+-	bool "Clock driver for Mediatek MT2712 bdpsys"
++	bool "Clock driver for MediaTek MT2712 bdpsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 bdpsys clocks.
++	  This driver supports MediaTek MT2712 bdpsys clocks.
+ 
+ config COMMON_CLK_MT2712_IMGSYS
+-	bool "Clock driver for Mediatek MT2712 imgsys"
++	bool "Clock driver for MediaTek MT2712 imgsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 imgsys clocks.
++	  This driver supports MediaTek MT2712 imgsys clocks.
+ 
+ config COMMON_CLK_MT2712_JPGDECSYS
+-	bool "Clock driver for Mediatek MT2712 jpgdecsys"
++	bool "Clock driver for MediaTek MT2712 jpgdecsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 jpgdecsys clocks.
++	  This driver supports MediaTek MT2712 jpgdecsys clocks.
+ 
+ config COMMON_CLK_MT2712_MFGCFG
+-	bool "Clock driver for Mediatek MT2712 mfgcfg"
++	bool "Clock driver for MediaTek MT2712 mfgcfg"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 mfgcfg clocks.
++	  This driver supports MediaTek MT2712 mfgcfg clocks.
+ 
+ config COMMON_CLK_MT2712_MMSYS
+-	bool "Clock driver for Mediatek MT2712 mmsys"
++	bool "Clock driver for MediaTek MT2712 mmsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 mmsys clocks.
++	  This driver supports MediaTek MT2712 mmsys clocks.
+ 
+ config COMMON_CLK_MT2712_VDECSYS
+-	bool "Clock driver for Mediatek MT2712 vdecsys"
++	bool "Clock driver for MediaTek MT2712 vdecsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 vdecsys clocks.
++	  This driver supports MediaTek MT2712 vdecsys clocks.
+ 
+ config COMMON_CLK_MT2712_VENCSYS
+-	bool "Clock driver for Mediatek MT2712 vencsys"
++	bool "Clock driver for MediaTek MT2712 vencsys"
+ 	depends on COMMON_CLK_MT2712
+ 	---help---
+-	  This driver supports Mediatek MT2712 vencsys clocks.
++	  This driver supports MediaTek MT2712 vencsys clocks.
+ 
+ config COMMON_CLK_MT6797
+-       bool "Clock driver for Mediatek MT6797"
++       bool "Clock driver for MediaTek MT6797"
+        depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+        select COMMON_CLK_MEDIATEK
+        default ARCH_MEDIATEK && ARM64
+        ---help---
+-         This driver supports Mediatek MT6797 basic clocks.
++         This driver supports MediaTek MT6797 basic clocks.
+ 
+ config COMMON_CLK_MT6797_MMSYS
+-       bool "Clock driver for Mediatek MT6797 mmsys"
++       bool "Clock driver for MediaTek MT6797 mmsys"
+        depends on COMMON_CLK_MT6797
+        ---help---
+-         This driver supports Mediatek MT6797 mmsys clocks.
++         This driver supports MediaTek MT6797 mmsys clocks.
+ 
+ config COMMON_CLK_MT6797_IMGSYS
+-       bool "Clock driver for Mediatek MT6797 imgsys"
++       bool "Clock driver for MediaTek MT6797 imgsys"
+        depends on COMMON_CLK_MT6797
+        ---help---
+-         This driver supports Mediatek MT6797 imgsys clocks.
++         This driver supports MediaTek MT6797 imgsys clocks.
+ 
+ config COMMON_CLK_MT6797_VDECSYS
+-       bool "Clock driver for Mediatek MT6797 vdecsys"
++       bool "Clock driver for MediaTek MT6797 vdecsys"
+        depends on COMMON_CLK_MT6797
+        ---help---
+-         This driver supports Mediatek MT6797 vdecsys clocks.
++         This driver supports MediaTek MT6797 vdecsys clocks.
+ 
+ config COMMON_CLK_MT6797_VENCSYS
+-       bool "Clock driver for Mediatek MT6797 vencsys"
++       bool "Clock driver for MediaTek MT6797 vencsys"
+        depends on COMMON_CLK_MT6797
+        ---help---
+-         This driver supports Mediatek MT6797 vencsys clocks.
++         This driver supports MediaTek MT6797 vencsys clocks.
+ 
+ config COMMON_CLK_MT7622
+ 	bool "Clock driver for MediaTek MT7622"
+@@ -163,17 +166,18 @@ config COMMON_CLK_MT7622_AUDSYS
+ 	  to audio consumers such as I2S and TDM.
+ 
+ config COMMON_CLK_MT8135
+-	bool "Clock driver for Mediatek MT8135"
++	bool "Clock driver for MediaTek MT8135"
+ 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK && ARM
+ 	---help---
+-	  This driver supports Mediatek MT8135 clocks.
++	  This driver supports MediaTek MT8135 clocks.
+ 
+ config COMMON_CLK_MT8173
+-	bool "Clock driver for Mediatek MT8173"
++	bool "Clock driver for MediaTek MT8173"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK
+ 	---help---
+-	  This driver supports Mediatek MT8173 clocks.
++	  This driver supports MediaTek MT8173 clocks.
++endmenu
 -- 
 2.7.4
