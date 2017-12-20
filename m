@@ -1,82 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52548 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756086AbdLVM05 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Dec 2017 07:26:57 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 10/11] arm64: allwinner: a64: add DE2 CCU for A64 SoC
-Date: Fri, 22 Dec 2017 20:22:42 +0800
-Message-Id: <20171222122243.25735-11-icenowy@aosc.io>
-In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Dec 2017 15:13:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 10/15] devicetree: bindings: Document qcom,kpss-gcc
+Message-ID: <20171220211328.wbhaxcisz6bzxxql@rob-hp-laptop>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-11-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513698900-10638-11-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A64 SoC features a DE2 CCU like the one in H5, but needs to claim a
-section of SRAM (SRAM C) to be accessed.
+On Tue, Dec 19, 2017 at 09:24:55PM +0530, Sricharan R wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> The ACC and GCC regions present in KPSSv1 contain registers to
+> control clocks and power to each Krait CPU and L2. Documenting
+> the bindings here.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
+>  .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 
-Adds the device tree nodes for the SRAM controller and the DE2 CCU.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3:
-- Fixed the alliwnner,sram property (the 1 after SRAM phadle is missing
-  in v2).
-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index d783d164b9c3..fb8ea7c414e1 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -130,6 +130,40 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			allwinner,sram = <&de2_sram 1>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun50i-a64-sram-controller";
-+			reg = <0x01c00000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_c: sram@18000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00018000 0x28000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00018000 0x28000>;
-+
-+				de2_sram: sram-section@0 {
-+					compatible = "allwinner,sun50i-a64-sram-c";
-+					reg = <0x0000 0x28000>;
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
--- 
-2.14.2
-
+Reviewed-by: Rob Herring <robh@kernel.org>
