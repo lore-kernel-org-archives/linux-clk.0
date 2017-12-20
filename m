@@ -1,80 +1,55 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-Date: Fri, 22 Dec 2017 10:22:30 +0530
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-	ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH v5 1/6] ASoC: Intel: Skylake: Add ssp clock
- driver
-Message-ID: <20171222045229.GC21872@subhransu-desktop>
-References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
- <1512978390-8848-2-git-send-email-sriramx.periyasamy@intel.com>
- <20171213223032.GO7997@codeaurora.org>
- <20171218035710.GA27559@subhransu-desktop>
- <20171218050109.GA27846@subhransu-desktop>
- <20171218191040.GW7997@codeaurora.org>
- <20171219054112.GB3492@subhransu-desktop>
- <20171219191727.GD7997@codeaurora.org>
- <20171220033318.GA6563@subhransu-desktop>
- <20171222020436.GF7997@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171222020436.GF7997@codeaurora.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1513791908.29566.18.camel@baylibre.com>
+Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King
+ <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Quentin
+ Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman
+ <khilman@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Date: Wed, 20 Dec 2017 18:45:08 +0100
+In-Reply-To: <151373031022.33554.13905466641279532222@resonance>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	 <151373031022.33554.13905466641279532222@resonance>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 06:04:36PM -0800, Stephen Boyd wrote:
-> On 12/20, Subhransu S. Prusty wrote:
-> > On Tue, Dec 19, 2017 at 11:17:27AM -0800, Stephen Boyd wrote:
-> > applicable here.
+On Tue, 2017-12-19 at 16:38 -0800, Michael Turquette wrote:
+> Applied to clk-protect-rate,
+
+Thx !
+
+>  with the exception that I did not apply
+> "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
+> qcom clk code.
+
+Here is a reminder of what I found at the time (so you don't to dig in your
+mailbox for it)
+
+Regressions reported by Kci on the following platforms:
+* qcom-apq8064-cm-qs600
+* qcom-apq8064-ifc6410
+
+it seems the problem is coming from the clock used by the mmc driver
+(drivers/mmc/host/mmci.c)
+
+the driver does following sequence:
+* get_clk
+* prepare_enable
+* get_rate
+* set_rate
+* ...
+
+with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
+flag so it will transmit the request to its parent.
+The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
+
 > 
-> Yeah, let's ignore a changing parent frequency. recalc_rate() is
-> also called when *this* clk rate is changed. The parent rate is
-> passed in because that's usually helpful to calculate the rate
-> that this op is supposed to return.
+> Stephen, do you plan to fix up the qcom clock code so that the
+> SET_RATE_GATE improvement can go in?
 > 
-> > 
-> > For us, recalc_rate() doesn't mean much as we can only return current rate,
-> > if it is same otherwise 0. Pls do advise in this case if the behaviour needs
-> > to change, if so how?
-> > 
-> 
-> Can the DSP tell us what the rate of the clk is? Or what the rate
-> of the clk is configured for? What is that configuration out of
-> boot when it's OFF? Typically, recalc_rate() can tell us what the
-
-No, the DSP clock is programmed using configuration parameters which are
-sent from driver. DSP doesn't have any mechanism to report the clock
-configuration back to driver. So the rate is cached.
-
-> rate of the clk is, even when its OFF, because we can read the
-> hardware and calculate the rate of the clk given the parent
-> frequency. We do have clk drivers out there that are like this
-> DSP and don't tell anything about the rate and we can't even ask.
-> In that case, we return 0 and cache the rate in the set_rate op.
-> 
-> Ideally, recalc_rate would always return the frequency of the clk
-> that's been configured in the hardware on the DSP side. If that
-> can't be done, I suppose faking it and caching the rate that the
-> set_rate op figures out would work. Or if enabling the clk let's
-> us know the rate we should cache it there too. But definitely
-
-Yes, this behavior is applicable for this driver. I will remove the
-recalculation part and resubmit the patch by returning the cached rate
-already done in set_rate.
-
-Regards,
-Subhransu
-
-> don't do any sort of rate caching in recalc_rate. It should just
-> blindly return the cached value if it can't read hardware.
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
--- 
+> Thanks,
+> Mike
