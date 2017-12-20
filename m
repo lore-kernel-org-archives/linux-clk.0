@@ -1,201 +1,111 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Jerome Brunet <jbrunet@baylibre.com>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+ <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+ <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
+ <151372258747.45969.10121622799666696251@resonance>
+From: David Lechner <david@lechnology.com>
+Message-ID: <3ad110cf-95ba-0d0b-53ee-f1fa2d37d7fa@lechnology.com>
+Date: Wed, 20 Dec 2017 12:53:27 -0600
 MIME-Version: 1.0
-In-Reply-To: <20171207125715.16160-13-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com> <20171207125715.16160-13-chunyan.zhang@spreadtrum.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 22 Dec 2017 13:31:43 +0800
-Message-ID: <CAAfSe-ubWLn9nhGiP1sk+HFbhcBM=Md7kVQBKuUNzmF3-xQjhw@mail.gmail.com>
-Subject: Re: [PATCH V7 12/12] arm64: dts: add clocks for SC9860
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>, "arm@kernel.org" <arm@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <151372258747.45969.10121622799666696251@resonance>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-+ arm@kernel.org
+On 12/19/2017 04:29 PM, Michael Turquette wrote:
+> Hi David,
+> 
+> Quoting David Lechner (2017-12-15 08:29:56)
+>> On 12/12/2017 10:14 PM, David Lechner wrote:
+>>> On 12/12/2017 05:43 PM, David Lechner wrote:
+>>>> If clk_enable() is called in reentrant way and spin_trylock_irqsave() is
+>>>> not working as expected, it is possible to get a negative enable_refcnt
+>>>> which results in a missed call to spin_unlock_irqrestore().
+>>>>
+>>>> It works like this:
+>>>>
+>>>> 1. clk_enable() is called.
+>>>> 2. clk_enable_unlock() calls spin_trylock_irqsave() and sets
+>>>>      enable_refcnt = 1.
+>>>> 3. Another clk_enable() is called before the first has returned
+>>>>      (reentrant), but somehow spin_trylock_irqsave() is returning true.
+>>>>      (I'm not sure how/why this is happening yet, but it is happening
+>>>> to me
+>>>>      with arch/arm/mach-davinci clocks that I am working on).
+>>>
+>>> I think I have figured out that since CONFIG_SMP=n and
+>>> CONFIG_DEBUG_SPINLOCK=n on my kernel that
+>>>
+>>> #define arch_spin_trylock(lock)({ barrier(); (void)(lock); 1; })
+>>>
+>>> in include/linux/spinlock_up.h is causing the problem.
+>>>
+>>> So, basically, reentrancy of clk_enable() is broken for non-SMP systems,
+>>> but I'm not sure I know how to fix it.
+>>>
+>>>
+>>
+>> Here is what I came up with for a fix. If it looks reasonable, I will
+>> resend as a proper patch.
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index bb1b1f9..53fad5f 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -136,12 +136,23 @@ static void clk_prepare_unlock(void)
+>>           mutex_unlock(&prepare_lock);
+>>    }
+>>
+>> +#ifdef CONFIG_SMP
+>> +#define NO_SMP 0
+>> +#else
+>> +#define NO_SMP 1
+>> +#endif
+>> +
+>>    static unsigned long clk_enable_lock(void)
+>>           __acquires(enable_lock)
+>>    {
+>> -       unsigned long flags;
+>> +       unsigned long flags = 0;
+>>
+>> -       if (!spin_trylock_irqsave(&enable_lock, flags)) {
+>> +       /*
+>> +        * spin_trylock_irqsave() always returns true on non-SMP system
+>> (unless
+> 
+> Ugh, wrapped lines in patch make me sad.
 
-On 7 December 2017 at 20:57, Chunyan Zhang <chunyan.zhang@spreadtrum.com> wrote:
-> Some clocks on SC9860 are in the same address area with syscon devices,
-> those are what have a property of 'sprd,syscon' which would refer to
-> syscon devices, others would have a reg property indicated their address
-> ranges.
->
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/sprd/whale2.dtsi |  18 +++++-
->  2 files changed, 131 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> index 7b7d8ce..bf03da4 100644
-> --- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> @@ -7,6 +7,7 @@
->   */
->
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/sprd,sc9860-clk.h>
->  #include "whale2.dtsi"
->
->  / {
-> @@ -183,6 +184,120 @@
->         };
->
->         soc {
-> +               pmu_gate: pmu-gate {
-> +                       compatible = "sprd,sc9860-pmu-gate";
-> +                       sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
-> +                       clocks = <&ext_26m>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               pll: pll {
-> +                       compatible = "sprd,sc9860-pll";
-> +                       sprd,syscon = <&ana_regs>; /* 0x40400000 */
-> +                       clocks = <&pmu_gate 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               ap_clk: clock-controller@20000000 {
-> +                       compatible = "sprd,sc9860-ap-clk";
-> +                       reg = <0 0x20000000 0 0x400>;
-> +                       clocks = <&ext_26m>, <&pll 0>,
-> +                                <&pmu_gate 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               aon_prediv: aon-prediv {
-> +                       compatible = "sprd,sc9860-aon-prediv";
-> +                       reg = <0 0x402d0000 0 0x400>;
-> +                       clocks = <&ext_26m>, <&pll 0>,
-> +                                <&pmu_gate 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               apahb_gate: apahb-gate {
-> +                       compatible = "sprd,sc9860-apahb-gate";
-> +                       sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
-> +                       clocks = <&aon_prediv 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               aon_gate: aon-gate {
-> +                       compatible = "sprd,sc9860-aon-gate";
-> +                       sprd,syscon = <&aon_regs>; /* 0x402e0000 */
-> +                       clocks = <&aon_prediv 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               aonsecure_clk: clock-controller@40880000 {
-> +                       compatible = "sprd,sc9860-aonsecure-clk";
-> +                       reg = <0 0x40880000 0 0x400>;
-> +                       clocks = <&ext_26m>, <&pll 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               agcp_gate: agcp-gate {
-> +                       compatible = "sprd,sc9860-agcp-gate";
-> +                       sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
-> +                       clocks = <&aon_prediv 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               gpu_clk: clock-controller@60200000 {
-> +                       compatible = "sprd,sc9860-gpu-clk";
-> +                       reg = <0 0x60200000 0 0x400>;
-> +                       clocks = <&pll 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               vsp_clk: clock-controller@61000000 {
-> +                       compatible = "sprd,sc9860-vsp-clk";
-> +                       reg = <0 0x61000000 0 0x400>;
-> +                       clocks = <&ext_26m>, <&pll 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               vsp_gate: vsp-gate {
-> +                       compatible = "sprd,sc9860-vsp-gate";
-> +                       sprd,syscon = <&vsp_regs>; /* 0x61100000 */
-> +                       clocks = <&vsp_clk 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               cam_clk: clock-controller@62000000 {
-> +                       compatible = "sprd,sc9860-cam-clk";
-> +                       reg = <0 0x62000000 0 0x4000>;
-> +                       clocks = <&ext_26m>, <&pll 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               cam_gate: cam-gate {
-> +                       compatible = "sprd,sc9860-cam-gate";
-> +                       sprd,syscon = <&cam_regs>; /* 0x62100000 */
-> +                       clocks = <&cam_clk 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               disp_clk: clock-controller@63000000 {
-> +                       compatible = "sprd,sc9860-disp-clk";
-> +                       reg = <0 0x63000000 0 0x400>;
-> +                       clocks = <&ext_26m>, <&pll 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               disp_gate: disp-gate {
-> +                       compatible = "sprd,sc9860-disp-gate";
-> +                       sprd,syscon = <&disp_regs>; /* 0x63100000 */
-> +                       clocks = <&disp_clk 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               apapb_gate: apapb-gate {
-> +                       compatible = "sprd,sc9860-apapb-gate";
-> +                       sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
-> +                       clocks = <&ap_clk 0>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
->                 funnel@10001000 { /* SoC Funnel */
->                         compatible = "arm,coresight-funnel", "arm,primecell";
->                         reg = <0 0x10001000 0 0x1000>;
-> diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-> index 6ea3a75..328009c 100644
-> --- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-> @@ -106,10 +106,24 @@
->                 };
->         };
->
-> -       ext_26m: ext-26m {
-> +       ext_32k: ext_32k {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <32768>;
-> +               clock-output-names = "ext-32k";
-> +       };
-> +
-> +       ext_26m: ext_26m {
->                 compatible = "fixed-clock";
->                 #clock-cells = <0>;
->                 clock-frequency = <26000000>;
-> -               clock-output-names = "ext_26m";
-> +               clock-output-names = "ext-26m";
-> +       };
-> +
-> +       ext_rco_100m: ext_rco_100m {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <100000000>;
-> +               clock-output-names = "ext-rco-100m";
->         };
->  };
-> --
-> 2.7.4
->
+Sorry, I was being lazy. :-/
+
+> 
+>> +        * spin lock debugging is enabled) so don't call
+>> spin_trylock_irqsave()
+>> +        * unless we are on an SMP system.
+>> +        */
+>> +       if (NO_SMP || !spin_trylock_irqsave(&enable_lock, flags)) {
+> 
+> I'm not sure that this looks reasonable. The inverse logic (NO_SMP = 0
+> being equivalent to SMP = 1) just makes things harder to read for no
+> reason.
+> 
+> More to the point, did you fix your enable/disable call imbalance? If
+> so, did you test that fix without this patch? I'd like to know if fixing
+> the enable/disable imbalance is Good Enough. I'd prefer to take only
+> that change and not this patch.
+
+Without this patch, the imbalance in calls to spin lock/unlock are 
+fixed, but I still get several WARN_ONCE_ON() because the reference 
+count becomes negative, so I would not call it Good Enough.
+
+> 
+> Best regards,
+> Mike
+> 
+>>                   if (enable_owner == current) {
+>>                           enable_refcnt++;
+>>                           __acquire(enable_lock);
+>>
