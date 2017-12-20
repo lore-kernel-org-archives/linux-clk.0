@@ -1,63 +1,59 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 01/15] clk: ingenic: Use const pointer to clk_ops in struct
-Date: Thu, 28 Dec 2017 14:56:20 +0100
-Message-Id: <20171228135634.30000-2-paul@crapouillou.net>
-In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 20 Dec 2017 08:56:14 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+Message-ID: <20171220032614.GQ19815@vireshk-i7>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The CGU common code does not modify the pointed clk_ops structure, so it
-should be marked as const.
+On 19-12-17, 21:25, Sricharan R wrote:
+> +	cpu@0 {
+> +		compatible = "qcom,krait";
+> +		enable-method = "qcom,kpss-acc-v1";
+> +		device_type = "cpu";
+> +		reg = <0>;
+> +		qcom,acc = <&acc0>;
+> +		qcom,saw = <&saw0>;
+> +		clocks = <&kraitcc 0>;
+> +		clock-names = "cpu";
+> +		cpu-supply = <&smb208_s2a>;
+> +		operating-points-v2 = <&cpu_opp_table>;
+> +	};
+> +
+> +	qcom,pvs {
+> +		qcom,pvs-format-a;
+> +	};
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ingenic/cgu.h        | 2 +-
- drivers/clk/ingenic/jz4780-cgu.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Not sure what Rob is going to say on that :)
 
- v2: New patch in this series
- v3: No change
- v4: No change
+> +
+> +
+> +	cpu_opp_table: opp_table {
+> +		compatible = "operating-points-v2";
+> +
+> +		/*
+> +		 * Missing opp-shared property means CPUs switch DVFS states
+> +		 * independently.
+> +		 */
+> +
+> +		opp-1400000000 {
+> +			opp-hz = /bits/ 64 <1400000000>;
+> +			opp-microvolt-speed0-pvs0-v0 = <1250000>;
 
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index e78b586536ea..f1527cf75b3f 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -120,7 +120,7 @@ struct ingenic_cgu_gate_info {
-  * @clk_ops: custom clock operation callbacks
-  */
- struct ingenic_cgu_custom_info {
--	struct clk_ops *clk_ops;
-+	const struct clk_ops *clk_ops;
- };
- 
- /**
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index ac3585ed8228..6427be117ff1 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -203,7 +203,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	return 0;
- }
- 
--static struct clk_ops jz4780_otg_phy_ops = {
-+static const struct clk_ops jz4780_otg_phy_ops = {
- 	.get_parent = jz4780_otg_phy_get_parent,
- 	.set_parent = jz4780_otg_phy_set_parent,
- 
+Why speed0 and v0 in all the names ?
+
 -- 
-2.11.0
+viresh
