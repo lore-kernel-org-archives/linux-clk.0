@@ -1,60 +1,70 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 5/6] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-Date: Mon, 11 Dec 2017 22:13:47 +0800
-Message-ID: <20171211141348.22048-6-yixun.lan@amlogic.com>
-In-Reply-To: <20171211141348.22048-1-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4370 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbdLTKGa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Dec 2017 05:06:30 -0500
+Subject: Re: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
+Date: Wed, 20 Dec 2017 10:06:13 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-Try to add Hiubus DT info, and also enable clock DT info
-for the Amlogic's Meson-AXG SoC.
+On 16/11/17 14:29, Peter De Schrijver wrote:
+> Apply the memory built-in self test work around when ungating certain
+> Tegra210 power domains.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 0453ff6..4c0582d 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+>  
+>  	bool has_tsense_reset;
+>  	bool has_gpu_clamps;
+> +	bool needs_mbist_war;
+>  
+>  	const struct tegra_io_pad_soc *io_pads;
+>  	unsigned int num_io_pads;
+> @@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+>  
+>  	usleep_range(10, 20);
+>  
+> +	if (pg->pmc->soc->needs_mbist_war)
+> +		tegra210_handle_mbist_war(pg->id);
+> +
+>  	if (disable_clocks)
+>  		tegra_powergate_disable_clocks(pg);
+>  
+> @@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+>  	.cpu_powergates = tegra210_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> +	.needs_mbist_war = true,
+>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+>  	.io_pads = tegra210_io_pads,
+>  };
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+After applying this series, tegra210-smaug no longer boots (no output
+from the console). Reverting this patch allows it to boot again. So
+something here is not working ...
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index b932a784b02a..6fe5ee0c144e 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -148,6 +148,20 @@
- 			#address-cells = <0>;
- 		};
- 
-+		hiubus: bus@ff63c000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff63c000 0x0 0x1c00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-+
-+			clkc: clock-controller@0 {
-+				compatible = "amlogic,axg-clkc";
-+				#clock-cells = <1>;
-+				reg = <0x0 0x0 0x0 0x320>;
-+			};
-+		};
-+
- 		mailbox: mailbox@ff63dc00 {
- 			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
- 			reg = <0 0xff63dc00 0 0x400>;
+Cheers
+Jon
+
 -- 
-2.15.1
+nvpublic
