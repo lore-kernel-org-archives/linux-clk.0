@@ -1,75 +1,289 @@
-Return-Path: <js@sig21.net>
-Date: Wed, 13 Dec 2017 17:22:06 +0100
-From: Johannes Stezenbach <js@sig21.net>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Carlo Caione <carlo@endlessm.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
-Message-ID: <20171213162206.GA7337@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
- <20170925191749.2oamusbajgs6clcg@sig21.net>
- <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
- <34396652.fljU28PShI@aspire.rjw.lan>
- <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
- <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
- <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 20 Dec 2017 09:06:08 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 14/15] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+Message-ID: <20171220033608.GR19815@vireshk-i7>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-15-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
+In-Reply-To: <1513698900-10638-15-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Wed, Dec 13, 2017 at 05:04:34PM +0100, Hans de Goede wrote:
-> On 13-12-17 16:25, Michael Turquette wrote:
-> > On Wed, Dec 13, 2017 at 12:53 AM, Hans de Goede <hdegoede@redhat.com> wrote:
-> > > Although, maybe we need to have a specialized (derived)
-> > > ahci driver for these Atom SoCs and in there if no
-> > > disk is detected do this through the clock framework?
-> > 
-> > Yes please. x86 is already modeling some clocks properly through the
-> > clock framework. During late init we clean up any clocks that were
-> > enabled out of reset or by the firmware/bootloader but not claimed and
-> > enabled by any Linux driver. That should ideally disable this
-> > particular clock for the case when no SATA drive is present, and
-> > require no quirk logic in the driver.
+On 19-12-17, 21:24, Sricharan R wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
 > 
-> Ah so you're thinking a special ahci driver which knows about
-> the clock, yes I think that could work.
+> Register a cpufreq-generic device whenever we detect that a
+> "qcom,krait" compatible CPU is present in DT.
 > 
-> Or maybe do a match on the CPU model and if it is know to
-> not have SATA (or not routed to the outside), disable
-> the clock? That seems better because if I understood Johannes
-> correctly there is no SATA/AHCI PCI device (so nothing for
-> a driver to bind to) but the clock is still enabled, although
-> in that case the clock framework should do the right thing
-> if we revert commit d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
+> Cc: <devicetree@vger.kernel.org>
+> [Sricharan: updated to use dev_pm_opp_set_prop_name]
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |   9 ++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +-
+>  drivers/cpufreq/qcom-cpufreq.c       | 171 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 183 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index bdce448..60f28e7 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -100,6 +100,15 @@ config ARM_OMAP2PLUS_CPUFREQ
+>  	depends on ARCH_OMAP2PLUS
+>  	default ARCH_OMAP2PLUS
+>  
+> +config ARM_QCOM_CPUFREQ
+> +	tristate "Qualcomm based"
 
-Please don't get confused with the other thread about clocks.
-This issue sets the "disable IP" bit, found by doing stupid
-experiments to enable S0ix on E200HA.
+Qualcomm based ... ? You want to add something after this ?
 
-1. no idea if Cherry Trail even has SATA IP, maybe this is a
-   meaningless bit but PMC firmware carried over from
-   Bay Trail looks at it
+And why tristate ? Do you really want to build a module for this ?
 
-2. BIOS should have set the bit, so it is a BIOS quirk
+> +	depends on ARCH_QCOM
+> +	select PM_OPP
+> +	help
+> +	  This adds the CPUFreq driver for Qualcomm SoC based boards.
+> +
+> +	  If in doubt, say N.
+> +
+>  config ARM_S3C_CPUFREQ
+>  	bool
+>  	help
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 812f9e0..1496464 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_MEDIATEK_CPUFREQ)	+= mediatek-cpufreq.o
+>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index ecc56e2..032ac4f 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -118,7 +118,7 @@
+>  	{ .compatible = "ti,am33xx", },
+>  	{ .compatible = "ti,am43", },
+>  	{ .compatible = "ti,dra7", },
+> -
 
-3. or maybe there is a much better solution that I don't know about
+Keep this blank line as is..
 
-https://bugzilla.kernel.org/show_bug.cgi?id=193891
-also has lspci output
+> +	{ .compatible = "qcom,ipq8064", },
 
+And add another one here.
 
-Thanks,
-Johannes
+>  	{ }
+>  };
+>  
+> @@ -157,6 +157,7 @@ static int __init cpufreq_dt_platdev_init(void)
+>  
+>  create_pdev:
+>  	of_node_put(np);
+> +
+
+Remove this.
+
+>  	return PTR_ERR_OR_ZERO(platform_device_register_data(NULL, "cpufreq-dt",
+>  			       -1, data,
+>  			       sizeof(struct cpufreq_dt_platform_data)));
+> diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
+> new file mode 100644
+> index 0000000..3e5583d
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq.c
+> @@ -0,0 +1,171 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/slab.h>
+> +#include "cpufreq-dt.h"
+> +
+> +static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver)
+> +{
+> +	void __iomem *base;
+> +	u32 pte_efuse;
+> +
+> +	*speed = *pvs = *pvs_ver = 0;
+> +
+> +	base = ioremap(0x007000c0, 4);
+> +	if (!base) {
+> +		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
+> +		return;
+> +	}
+> +
+> +	pte_efuse = readl_relaxed(base);
+> +	iounmap(base);
+> +
+> +	*speed = pte_efuse & 0xf;
+> +	if (*speed == 0xf)
+> +		*speed = (pte_efuse >> 4) & 0xf;
+> +
+> +	if (*speed == 0xf) {
+> +		*speed = 0;
+> +		pr_warn("Speed bin: Defaulting to %d\n", *speed);
+> +	} else {
+> +		pr_info("Speed bin: %d\n", *speed);
+> +	}
+> +
+> +	*pvs = (pte_efuse >> 10) & 0x7;
+> +	if (*pvs == 0x7)
+> +		*pvs = (pte_efuse >> 13) & 0x7;
+> +
+> +	if (*pvs == 0x7) {
+> +		*pvs = 0;
+> +		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
+> +	} else {
+> +		pr_info("PVS bin: %d\n", *pvs);
+> +	}
+> +}
+> +
+> +static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver)
+> +{
+> +	u32 pte_efuse, redundant_sel;
+> +	void __iomem *base;
+> +
+> +	*speed = 0;
+> +	*pvs = 0;
+> +	*pvs_ver = 0;
+> +
+> +	base = ioremap(0xfc4b80b0, 8);
+> +	if (!base) {
+> +		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
+> +		return;
+> +	}
+> +
+> +	pte_efuse = readl_relaxed(base);
+> +	redundant_sel = (pte_efuse >> 24) & 0x7;
+> +	*speed = pte_efuse & 0x7;
+> +	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
+> +	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
+> +	*pvs_ver = (pte_efuse >> 4) & 0x3;
+> +
+> +	switch (redundant_sel) {
+> +	case 1:
+> +		*speed = (pte_efuse >> 27) & 0xf;
+> +		break;
+> +	case 2:
+> +		*pvs = (pte_efuse >> 27) & 0xf;
+> +		break;
+> +	}
+> +
+> +	/* Check SPEED_BIN_BLOW_STATUS */
+> +	if (pte_efuse & BIT(3)) {
+> +		pr_info("Speed bin: %d\n", *speed);
+> +	} else {
+> +		pr_warn("Speed bin not set. Defaulting to 0!\n");
+> +		*speed = 0;
+> +	}
+> +
+> +	/* Check PVS_BLOW_STATUS */
+> +	pte_efuse = readl_relaxed(base + 0x4) & BIT(21);
+> +	if (pte_efuse) {
+> +		pr_info("PVS bin: %d\n", *pvs);
+> +	} else {
+> +		pr_warn("PVS bin not set. Defaulting to 0!\n");
+> +		*pvs = 0;
+> +	}
+> +
+> +	pr_info("PVS version: %d\n", *pvs_ver);
+> +	iounmap(base);
+> +}
+> +
+> +static int __init qcom_cpufreq_populate_opps(void)
+> +{
+> +	int speed, pvs, pvs_ver;
+> +	struct device_node *np;
+> +	struct device *dev;
+> +	int cpu = 0;
+> +	char pvs_name[] = "speedXX-pvsXX-vXX";
+> +
+> +	np = of_find_node_by_name(NULL, "qcom,pvs");
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	if (of_property_read_bool(np, "qcom,pvs-format-a"))
+> +		get_krait_bin_format_a(&speed, &pvs, &pvs_ver);
+> +	else if (of_property_read_bool(np, "qcom,pvs-format-b"))
+> +		get_krait_bin_format_b(&speed, &pvs, &pvs_ver);
+> +	else
+> +		return -ENODEV;
+> +
+> +	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
+> +		 speed, pvs, pvs_ver);
+> +
+> +	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
+> +		dev = get_cpu_device(cpu);
+> +		if (!dev)
+> +			return -ENODEV;
+> +
+> +		if (IS_ERR(dev_pm_opp_set_prop_name(dev, pvs_name)))
+> +			pr_warn("failed to add OPP name %s\n", pvs_name);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init qcom_cpufreq_driver_init(void)
+> +{
+> +	struct device *cpu_dev;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	cpu_dev = get_cpu_device(0);
+> +	if (!cpu_dev)
+> +		return -ENODEV;
+> +
+> +	np = of_node_get(cpu_dev->of_node);
+> +	if (!np)
+> +		return -ENOENT;
+> +
+> +	if (!of_device_is_compatible(np, "qcom,krait")) {
+> +		of_node_put(np);
+> +		return -ENODEV;
+> +	}
+> +	of_node_put(np);
+> +
+> +	ret = qcom_cpufreq_populate_opps();
+> +	if (ret)
+> +		return ret;
+> +
+> +	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
+> +						       -1, NULL, 0));
+> +}
+> +module_init(qcom_cpufreq_driver_init);
+
+As there is no module exit, it doesn't make sense to keep this as
+tristate.
+
+Looks mostly fine now other than these minor nits.
+
+-- 
+viresh
