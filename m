@@ -1,55 +1,42 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 4/4] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-References: <20171201012452.27086-1-yixun.lan@amlogic.com>
-	<20171201012452.27086-5-yixun.lan@amlogic.com>
-Date: Wed, 06 Dec 2017 16:50:02 -0800
-In-Reply-To: <20171201012452.27086-5-yixun.lan@amlogic.com> (Yixun Lan's
-	message of "Fri, 1 Dec 2017 09:24:52 +0800")
-Message-ID: <7ho9nbmked.fsf@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 15:12:42 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>
+Subject: Re: [PATCH 2/3] clk: mvebu: armada-37xx-periph: prepare cpu clk to
+ be used with DVFS
+Message-ID: <20171221231242.GA7997@codeaurora.org>
+References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+ <20171130134029.20751-3-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171130134029.20751-3-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
-
-> From: Qiufang Dai <qiufang.dai@amlogic.com>
->
-> Try to add Hiubus DT info, and also enable clock DT info
-> for the Amlogic's Meson-AXG SoC.
->
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+On 11/30, Gregory CLEMENT wrote:
+> When DVFS will be enabled then the cpu clk will use a different set of
+> register at run time. That means that we won't be able to use the common
+> callback and need to use our own ones.
+> 
+> This patch prepares this change by switching on our own set of callbacks
+> without modifying the behavior of the clocks.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index b932a784b02a..36a2e98338a8 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -7,6 +7,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/axg-clkc.h>
 
-This #include will cause an unnessary dependency from the amlogic tree
-to the clock tree even though this patch is not currently using any of
-the #defines from that header.  It will simplify the dependencies if you
-drop this #include from this patch.
+Applied to clk-next
 
-In my comment on the cover letter, I suggested adding a patch that also
-switches the UART over to the new clock provider.  That is the patch
-that should add this #include, since it will actually need #defines from
-the header.
-
-Doing it in that order means that we could merge this patch
-independently of the clock driver, and then merge the UART switch-over
-patch only after the driver (and headers) are merged.
-
-Kevin
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
