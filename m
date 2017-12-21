@@ -1,131 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1410 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965663AbdLSIyR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 03:54:17 -0500
-Date: Tue, 19 Dec 2017 10:54:12 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 1/8] clk: tegra: dfll registration for multiple SoCs
-Message-ID: <20171219085412.GL29417@tbergstrom-lnx.Nvidia.com>
-References: <1510846389-28712-1-git-send-email-pdeschrijver@nvidia.com>
- <1510846389-28712-2-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 15:12:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>,
+	Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>
+Subject: Re: [PATCH 3/3] clk: mvebu: armada-37xx-periph: add DVFS support for
+ cpu clocks
+Message-ID: <20171221231254.GB7997@codeaurora.org>
+References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+ <20171130134029.20751-4-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1510846389-28712-2-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171130134029.20751-4-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Ping!
-
-Any comments on this?
-
-Peter.
-
-On Thu, Nov 16, 2017 at 05:33:02PM +0200, Peter De Schrijver wrote:
-> In a future patch, support for the DFLL in Tegra210 will be introduced.
-> This requires support for more than 1 set of CVB and CPU max frequency
-> tables.
+On 11/30, Gregory CLEMENT wrote:
+> When DVFS is enabled the CPU clock setting is done using an other set of
+> registers.
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> These Power Management registers are exposed through a syscon as they
+> will also be used by other drivers such as the cpufreq.
+> 
+> This patch add the possibility to modify the CPU frequency using the
+> associate load level matching the target frequency. Then all the
+> frequency switch is handle by the hardware.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 > ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index ad1c1cc..1976e96 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -21,6 +21,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <soc/tegra/fuse.h>
->  
-> @@ -28,8 +29,15 @@
->  #include "clk-dfll.h"
->  #include "cvb.h"
->  
-> +struct dfll_fcpu_data {
-> +	const unsigned long *cpu_max_freq_table;
-> +	unsigned int cpu_max_freq_table_size;
-> +	const struct cvb_table *cpu_cvb_tables;
-> +	unsigned int cpu_cvb_tables_size;
-> +};
-> +
->  /* Maximum CPU frequency, indexed by CPU speedo id */
-> -static const unsigned long cpu_max_freq_table[] = {
-> +static const unsigned long tegra124_cpu_max_freq_table[] = {
->  	[0] = 2014500000UL,
->  	[1] = 2320500000UL,
->  	[2] = 2116500000UL,
-> @@ -82,16 +90,36 @@
->  	},
->  };
->  
-> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
-> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
-> +};
-> +
-> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> +	{
-> +		.compatible = "nvidia,tegra124-dfll",
-> +		.data = &tegra124_dfll_fcpu_data,
-> +	},
-> +	{ },
-> +};
-> +
->  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  {
->  	int process_id, speedo_id, speedo_value, err;
->  	struct tegra_dfll_soc_data *soc;
-> +	const struct of_device_id *of_id;
-> +	const struct dfll_fcpu_data *fcpu_data;
-> +
-> +	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-> +	fcpu_data = of_id->data;
->  
->  	process_id = tegra_sku_info.cpu_process_id;
->  	speedo_id = tegra_sku_info.cpu_speedo_id;
->  	speedo_value = tegra_sku_info.cpu_speedo_value;
->  
-> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
->  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
->  			speedo_id);
->  		return -ENODEV;
-> @@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
->  
-> -	soc->max_freq = cpu_max_freq_table[speedo_id];
-> +	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
->  
-> -	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
-> -					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-> +	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-> +					   fcpu_data->cpu_cvb_tables_size,
->  					   process_id, speedo_id, speedo_value,
->  					   soc->max_freq);
->  	if (IS_ERR(soc->cvb)) {
-> @@ -144,11 +172,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> -	{ .compatible = "nvidia,tegra124-dfll", },
-> -	{ },
-> -};
-> -
->  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
->  			   tegra_dfll_runtime_resume, NULL)
-> -- 
-> 1.9.1
-> 
+
+Applied to clk-next + a small fix to regmap getting to make it
+shorter.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
