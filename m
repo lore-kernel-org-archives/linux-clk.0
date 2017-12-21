@@ -1,38 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 18 Dec 2017 13:07:09 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for
- reset controls
-Message-ID: <20171218210709.GY7997@codeaurora.org>
-References: <20171218035751.20661-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1355 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752369AbdLUIzg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 03:55:36 -0500
+Date: Thu, 21 Dec 2017 10:55:31 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
+Message-ID: <20171221085531.GQ29417@tbergstrom-lnx.Nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+ <47980cf0-8837-bff1-a25a-1287dd96b689@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171218035751.20661-1-wens@csie.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <47980cf0-8837-bff1-a25a-1287dd96b689@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/18, Chen-Yu Tsai wrote:
-> Our MMC host driver now issues a reset, instead of just deasserting
-> the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
-> device at probe time"). The sun9i-mmc clock driver does not support
-> this, and will fail, which results in MMC not probing.
+On Tue, Dec 19, 2017 at 10:27:56PM +0000, Jon Hunter wrote:
 > 
-> This patch implements the reset callback by asserting the reset control,
-> then deasserting it after a small delay.
+> On 16/11/17 14:28, Peter De Schrijver wrote:
+> > This clock is needed by the memory built-in self test work around.
 > 
-> Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
-> Cc: <stable@vger.kernel.org> # 4.14.x
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
+> Can we say what this 'LA' clock is? What does LA stand for? Looks like
+> this is only used for Host1x.
+> 
 
-Did you want us to pick this up into clk-fixes? It seems to be
-causing MMC to not work for some time? That sounds annoying
-enough.
+I think it stands for Latency Allowance.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Peter.
+
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
