@@ -1,178 +1,86 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 15/15] MIPS: ingenic: Initial GCW Zero support
-Date: Thu, 28 Dec 2017 14:56:34 +0100
-Message-Id: <20171228135634.30000-16-paul@crapouillou.net>
-In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+To: Rob Herring <robh@kernel.org>
+Cc: mark.rutland@arm.com, rjw@rjwysocki.net, devicetree@vger.kernel.org,
+ Viresh Kumar <viresh.kumar@linaro.org>, mturquette@baylibre.com,
+ linux-pm@vger.kernel.org, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ linux-kernel@vger.kernel.org, david.brown@linaro.org,
+ linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+ <20171220032614.GQ19815@vireshk-i7>
+ <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
+ <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
+Date: Thu, 21 Dec 2017 17:23:01 +0530
+MIME-Version: 1.0
+In-Reply-To: <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
-handheld game console, successfully kickstarted in ~2012, running Linux.
+Hi Rob,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/Makefile |  1 +
- arch/mips/boot/dts/ingenic/gcw0.dts | 60 +++++++++++++++++++++++++++++++++++++
- arch/mips/configs/gcw0_defconfig    | 28 +++++++++++++++++
- arch/mips/jz4740/Kconfig            |  4 +++
- arch/mips/jz4740/boards.c           |  1 +
- 5 files changed, 94 insertions(+)
- create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
- create mode 100644 arch/mips/configs/gcw0_defconfig
+On 12/21/2017 2:48 AM, Rob Herring wrote:
+> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
+>> Hi Viresh,
+>>
+>> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
+>>> On 19-12-17, 21:25, Sricharan R wrote:
+>>>> +	cpu@0 {
+>>>> +		compatible = "qcom,krait";
+>>>> +		enable-method = "qcom,kpss-acc-v1";
+>>>> +		device_type = "cpu";
+>>>> +		reg = <0>;
+>>>> +		qcom,acc = <&acc0>;
+>>>> +		qcom,saw = <&saw0>;
+>>>> +		clocks = <&kraitcc 0>;
+>>>> +		clock-names = "cpu";
+>>>> +		cpu-supply = <&smb208_s2a>;
+>>>> +		operating-points-v2 = <&cpu_opp_table>;
+>>>> +	};
+>>>> +
+>>>> +	qcom,pvs {
+>>>> +		qcom,pvs-format-a;
+>>>> +	};
+>>>
+>>> Not sure what Rob is going to say on that :)
+>>>
+>>
+>>  Yes. Would be good to know the best way.
+> 
+> Seems like this should be a property of an efuse node either implied by 
+> the compatible or a separate property. What determines format A vs. B?
+> 
 
- v2: No change
- v3: No change
- v4: No change
+ Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
+ So this property (details like bitfields and register offsets that it represents)
+ can be put soc specific and nvmem apis can be used to read
+ the registers. Does something like below look ok ?
 
-diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
-index 6a31759839b4..5b1361a89e02 100644
---- a/arch/mips/boot/dts/ingenic/Makefile
-+++ b/arch/mips/boot/dts/ingenic/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
-+dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
- dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
+ qcom,pvs {
+	compatible = "qcom,pvs-ipq8064";
+	nvmem-cells = <&pvs_efuse>;
+ }
+
+ qfprom: qfprom@700000 {
+ 	compatible      = "qcom,qfprom";
+ 	reg             = <0x00700000 0x1000>;
+ 	#address-cells  = <1>;
+ 	#size-cells     = <1>;
+ 	ranges;
+ 	pvs_efuse: pvs {
+ 	reg = <0xc0 0x8>;
+ 	};
+ };
+
+
+Regards,
+ Sricharan
  
- obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
-new file mode 100644
-index 000000000000..9c9a0137ccdf
---- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/gcw0.dts
-@@ -0,0 +1,60 @@
-+/dts-v1/;
-+
-+#include "jz4770.dtsi"
-+
-+/ {
-+	compatible = "gcw,zero", "ingenic,jz4770";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:57600n8";
-+	};
-+
-+	board {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		ranges = <>;
-+
-+		otg_phy: otg-phy {
-+			compatible = "usb-nop-xceiv";
-+			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
-+			clock-names = "main_clk";
-+		};
-+	};
-+};
-+
-+&ext {
-+	clock-frequency = <12000000>;
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&cgu {
-+	/* Put high-speed peripherals under PLL1, such that we can change the
-+	 * PLL0 frequency on demand without having to suspend peripherals.
-+	 * We use a rate of 432 MHz, which is the least common multiple of
-+	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
-+	 */
-+	assigned-clocks =
-+		<&cgu JZ4770_CLK_PLL1>,
-+		<&cgu JZ4770_CLK_UHC>;
-+	assigned-clock-parents =
-+		<0>,
-+		<&cgu JZ4770_CLK_PLL1>;
-+	assigned-clock-rates =
-+		<432000000>;
-+};
-+
-+&uhc {
-+	/* The WiFi module is connected to the UHC. */
-+	status = "okay";
-+};
-diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-new file mode 100644
-index 000000000000..471497033855
---- /dev/null
-+++ b/arch/mips/configs/gcw0_defconfig
-@@ -0,0 +1,28 @@
-+CONFIG_MACH_INGENIC=y
-+CONFIG_JZ4770_GCW0=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_BOUNCE is not set
-+CONFIG_PREEMPT_VOLUNTARY=y
-+# CONFIG_SECCOMP is not set
-+CONFIG_CROSS_COMPILE="mipsel-gcw0-linux-uclibc-"
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_SUSPEND is not set
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_NETDEVICES=y
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_INGENIC=y
-+CONFIG_USB=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_TMPFS=y
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 29a9361a2b77..4dd0c446ecec 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -8,6 +8,10 @@ config JZ4740_QI_LB60
- 	bool "Qi Hardware Ben NanoNote"
- 	select MACH_JZ4740
  
-+config JZ4770_GCW0
-+	bool "Game Consoles Worldwide GCW Zero"
-+	select MACH_JZ4770
-+
- config JZ4780_CI20
- 	bool "MIPS Creator CI20"
- 	select MACH_JZ4780
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-index a3cf64cf004a..98a4d8e68cf0 100644
---- a/arch/mips/jz4740/boards.c
-+++ b/arch/mips/jz4740/boards.c
-@@ -12,5 +12,6 @@
- #include <asm/mips_machine.h>
- 
- MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
- MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
- 			"Imagination Technologies CI20", NULL);
+
 -- 
-2.11.0
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
