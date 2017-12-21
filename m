@@ -1,135 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:59510 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752851AbdLMAB7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 19:01:59 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Johannes Stezenbach <js@sig21.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] clk: x86: Disable unused clocks to fix S0ix
-Date: Wed, 13 Dec 2017 01:01:16 +0100
-Message-ID: <7178688.oS2VOf73im@aspire.rjw.lan>
-In-Reply-To: <20170925192352.ihzakshd7yofowdd@sig21.net>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net> <1555462.9U3gvkyXAX@aspire.rjw.lan> <20170925192352.ihzakshd7yofowdd@sig21.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 10:38:36 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Clark <robdclark@gmail.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.or, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] clk: divider: fix incorrect usage of container_of
+Message-ID: <20171221183836.GL7997@codeaurora.org>
+References: <20171221163054.13600-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171221163054.13600-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, September 25, 2017 9:23:52 PM CET Johannes Stezenbach wrote:
-> d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
-> exposed an issue on Asus E200HA where BIOS enables unused
-> Atom PMC clocks which prevent the system from entering S0ix.
-> Add a quirk to disable these clocks on E200HA.
+On 12/21, Jerome Brunet wrote:
+> divider_recalc_rate() is an helper function used by clock divider of
+> different types, so the structure containing the 'hw' pointer is not
+> always a 'struct clk_divider'
 > 
-> Signed-off-by: Johannes Stezenbach <js@sig21.net>
-
-Mika, Andy, Hans, any comments here?
-
+> At the following line:
+> > div = _get_div(table, val, flags, divider->width);
+> 
+> in several cases, the value of 'divider->width' is garbage as the actual
+> structure behind this memory is not a 'struct clk_divider'
+> 
+> Fortunately, this width value is used by _get_val() only when
+> CLK_DIVIDER_MAX_AT_ZERO flag is set. This has never been the case so
+> far when the structure is not a 'struct clk_divider'. This is probably
+> why we did not notice this bug before
+> 
+> Fixes: afe76c8fd030 ("clk: allow a clk divider with max divisor when zero")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  drivers/clk/x86/clk-pmc-atom.c                 | 10 +++++++---
->  drivers/platform/x86/pmc_atom.c                |  7 ++++++-
->  include/linux/platform_data/x86/clk-pmc-atom.h |  2 ++
->  3 files changed, 15 insertions(+), 4 deletions(-)
+> Hi Stephen, Mike,
 > 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 08ef69945ffb..213e71b905eb 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -166,7 +166,8 @@ static const struct clk_ops plt_clk_ops = {
->  static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
->  					void __iomem *base,
->  					const char **parent_names,
-> -					int num_parents)
-> +					int num_parents,
-> +					bool disable_unused)
->  {
->  	struct clk_plt *pclk;
->  	struct clk_init_data init;
-> @@ -190,7 +191,7 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
->  	 * If the clock was already enabled by the firmware mark it as critical
->  	 * to avoid it being gated by the clock framework if no driver owns it.
->  	 */
-> -	if (plt_clk_is_enabled(&pclk->hw))
-> +	if (!disable_unused && plt_clk_is_enabled(&pclk->hw))
->  		init.flags |= CLK_IS_CRITICAL;
->  
->  	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
-> @@ -324,6 +325,7 @@ static int plt_clk_probe(struct platform_device *pdev)
->  	struct clk_plt_data *data;
->  	unsigned int i;
->  	int err;
-> +	bool disable_unused;
->  
->  	pmc_data = dev_get_platdata(&pdev->dev);
->  	if (!pmc_data || !pmc_data->clks)
-> @@ -337,9 +339,11 @@ static int plt_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(parent_names))
->  		return PTR_ERR(parent_names);
->  
-> +	disable_unused = !!(pmc_data->flags & PMC_CLK_DATA_DISABLE_UNUSED);
->  	for (i = 0; i < PMC_CLK_NUM; i++) {
->  		data->clks[i] = plt_clk_register(pdev, i, pmc_data->base,
-> -						 parent_names, data->nparents);
-> +						 parent_names, data->nparents,
-> +						 disable_unused);
->  		if (IS_ERR(data->clks[i])) {
->  			err = PTR_ERR(data->clks[i]);
->  			goto err_unreg_clk_plt;
-> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-> index b5dd38712268..d81ada1a6f27 100644
-> --- a/drivers/platform/x86/pmc_atom.c
-> +++ b/drivers/platform/x86/pmc_atom.c
-> @@ -59,7 +59,8 @@ static struct pmc_dev pmc_device;
->  static u32 acpi_base_addr;
->  
->  static u32 quirks;
-> -#define QUIRK_DISABLE_SATA BIT(0)
-> +#define QUIRK_DISABLE_SATA		BIT(0)
-> +#define QUIRK_DISABLE_UNUSED_CLOCKS	BIT(1)
->  
->  static const struct pmc_clk byt_clks[] = {
->  	{
-> @@ -447,6 +448,8 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
->  
->  	clk_data->base = pmc_regmap; /* offset is added by client */
->  	clk_data->clks = pmc_data->clks;
-> +	if (quirks & QUIRK_DISABLE_UNUSED_CLOCKS)
-> +		clk_data->flags = PMC_CLK_DATA_DISABLE_UNUSED;
->  
->  	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
->  					       PLATFORM_DEVID_NONE,
-> @@ -517,6 +520,8 @@ static int cht_asus_e200ha_cb(const struct dmi_system_id *id)
->  {
->  	pr_info("pmc: Asus E200HA detected\n");
->  	quirks |= QUIRK_DISABLE_SATA;
-> +	/* BIOS enables some clocks at boot which are not needed but block S0ix */
-> +	quirks |= QUIRK_DISABLE_UNUSED_CLOCKS;
->  	return 1;
->  }
->  
-> diff --git a/include/linux/platform_data/x86/clk-pmc-atom.h b/include/linux/platform_data/x86/clk-pmc-atom.h
-> index 3ab892208343..e481878ef238 100644
-> --- a/include/linux/platform_data/x86/clk-pmc-atom.h
-> +++ b/include/linux/platform_data/x86/clk-pmc-atom.h
-> @@ -37,6 +37,8 @@ struct pmc_clk {
->   * @clks:	pointer to set of registered clocks, typically 0..5
->   */
->  struct pmc_clk_data {
-> +	int flags;
-> +#define PMC_CLK_DATA_DISABLE_UNUSED 1
->  	void __iomem *base;
->  	const struct pmc_clk *clks;
->  };
+> In addition to clock, this patch also touch the rtc and drm directories.
+> As it is changing the API of the helper function, I have this fix in a
+> single commit to avoid breaking bisect.
+> 
+> Please let me know if you prefer to do differently.
 > 
 
+Looks good. Thanks for catching this before it became a real
+problem. It would be good to get acks from DRM and RTC
+maintainers.
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
