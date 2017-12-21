@@ -1,32 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 8 Dec 2017 16:18:16 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/13] clk: qcom: support for 2 bit PLL post divider
-Message-ID: <20171209001816.GC7997@codeaurora.org>
-References: <1506621050-10129-1-git-send-email-absahu@codeaurora.org>
- <1506621050-10129-13-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15952 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbdLUJFn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 04:05:43 -0500
+Date: Thu, 21 Dec 2017 11:05:37 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+Message-ID: <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
+ <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1506621050-10129-13-git-send-email-absahu@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/28, Abhishek Sahu wrote:
-> Current PLL driver only supports 4 bit PLL post divider so
-> modified the PLL divider operations to support 2 bit PLL
-> post divider.
+On Wed, Dec 20, 2017 at 10:06:13AM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
+> On 16/11/17 14:29, Peter De Schrijver wrote:
+> > Apply the memory built-in self test work around when ungating certain
+> > Tegra210 power domains.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/soc/tegra/pmc.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> > index 0453ff6..4c0582d 100644
+> > --- a/drivers/soc/tegra/pmc.c
+> > +++ b/drivers/soc/tegra/pmc.c
+> > @@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+> >  
+> >  	bool has_tsense_reset;
+> >  	bool has_gpu_clamps;
+> > +	bool needs_mbist_war;
+> >  
+> >  	const struct tegra_io_pad_soc *io_pads;
+> >  	unsigned int num_io_pads;
+> > @@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+> >  
+> >  	usleep_range(10, 20);
+> >  
+> > +	if (pg->pmc->soc->needs_mbist_war)
+> > +		tegra210_handle_mbist_war(pg->id);
+> > +
+> >  	if (disable_clocks)
+> >  		tegra_powergate_disable_clocks(pg);
+> >  
+> > @@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+> >  	.cpu_powergates = tegra210_cpu_powergates,
+> >  	.has_tsense_reset = true,
+> >  	.has_gpu_clamps = true,
+> > +	.needs_mbist_war = true,
+> >  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+> >  	.io_pads = tegra210_io_pads,
+> >  };
+> 
+> After applying this series, tegra210-smaug no longer boots (no output
+> from the console). Reverting this patch allows it to boot again. So
+> something here is not working ...
+> 
 
-Applied to clk-next
+Annoyingly I don't have smaug, only jetson TX1.. Did you try earlycon?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Peter.
