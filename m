@@ -1,141 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs2.siol.net ([213.250.19.135]:41429 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752310AbdLBV6m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 2 Dec 2017 16:58:42 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        plaes@plaes.org, icenowy@aosc.io,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v2 11/18] drm/sun4i: Add A83T support
-Date: Sat, 02 Dec 2017 22:58:36 +0100
-Message-ID: <2942946.00TBF2OOZN@jernej-laptop>
-In-Reply-To: <20171130153312.plmh2wr4n5njhlvb@flea.lan>
-References: <cover.d89f3ea4e1698f9343aef4852977c80edc75f21a.1511797218.git-series.maxime.ripard@free-electrons.com> <1722782.9j9JEoLEfc@jernej-laptop> <20171130153312.plmh2wr4n5njhlvb@flea.lan>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 15:20:32 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org,
+	s.nawrocki@samsung.com, geert@linux-m68k.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V4 1/1] clk: bulk: add of_clk_bulk_get()
+Message-ID: <20171221232032.GD7997@codeaurora.org>
+References: <1506415441-4435-1-git-send-email-aisheng.dong@nxp.com>
+ <20170929224821.GM457@codeaurora.org>
+ <20171220135330.GA30461@b29396-OptiPlex-7040>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171220135330.GA30461@b29396-OptiPlex-7040>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 30. november 2017 ob 16:33:12 CET je Maxime Ripard napisal(a):
-> On Tue, Nov 28, 2017 at 11:33:44PM +0100, Jernej Škrabec wrote:
-> > Hi!
+On 12/20, Dong Aisheng wrote:
+> On Fri, Sep 29, 2017 at 03:48:21PM -0700, Stephen Boyd wrote:
+> > On 09/26, Dong Aisheng wrote:
+> > > here to handle this for DT users without 'clock-names' specified.
+> 
+> > > +#endif
+> > >  
+> > >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+> > >  {
+> > > diff --git a/include/linux/clk.h b/include/linux/clk.h
+> > > index 12c96d9..073cb3b 100644
+> > > --- a/include/linux/clk.h
+> > > +++ b/include/linux/clk.h
+> > > @@ -680,10 +680,18 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+> > >  }
+> > >  
+> > >  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+> > > +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> > > +				 struct clk_bulk_data *clks);
+> > >  struct clk *of_clk_get(struct device_node *np, int index);
+> > >  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+> > >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+> > >  #else
+> > > +static inline int of_clk_bulk_get(struct device_node *np, int num_clks,
 > > 
-> > Dne torek, 28. november 2017 ob 23:00:14 CET je Maxime Ripard napisal(a):
-> > > On Tue, Nov 28, 2017 at 04:48:55PM +0100, Jernej Škrabec wrote:
-> > > > > On Mon, Nov 27, 2017 at 05:01:49PM +0100, Jernej Škrabec wrote:
-> > > > > > Dne ponedeljek, 27. november 2017 ob 16:41:35 CET je Maxime Ripard
-> > > > 
-> > > > napisal(a):
-> > > > > > > Add support for the A83T display pipeline.
-> > > > > > > 
-> > > > > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > > > > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > > > > > ---
-> > > > > > > 
-> > > > > > >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt |
-> > > > > > >  3
-> > > > > > >  +++
-> > > > > > >  drivers/gpu/drm/sun4i/sun4i_drv.c                             |
-> > > > > > >  2
-> > > > > > >  ++
-> > > > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c                            |
-> > > > > > >  5
-> > > > > > >  +++++
-> > > > > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c                           |
-> > > > > > >  4
-> > > > > > >  ++++
-> > > > > > >  4 files changed, 14 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git
-> > > > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > > > index
-> > > > > > > d4259a4f5171..d6b52e5c48c0 100644
-> > > > > > > ---
-> > > > > > > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > > > +++
-> > > > > > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > > > > > > 
-> > > > > > > @@ -93,6 +93,7 @@ Required properties:
-> > > > > > >     * allwinner,sun6i-a31s-tcon
-> > > > > > >     * allwinner,sun7i-a20-tcon
-> > > > > > >     * allwinner,sun8i-a33-tcon
-> > > > > > > 
-> > > > > > > +   * allwinner,sun8i-a83t-tcon-lcd
-> > > > > > > 
-> > > > > > >     * allwinner,sun8i-v3s-tcon
-> > > > > > >   
-> > > > > > >   - reg: base address and size of memory-mapped region
-> > > > > > >   - interrupts: interrupt associated to this IP
-> > > > > > > 
-> > > > > > > @@ -224,6 +225,7 @@ supported.
-> > > > > > > 
-> > > > > > >  Required properties:
-> > > > > > >    - compatible: value must be one of:
-> > > > > > > +    * allwinner,sun8i-a83t-de2-mixer
-> > > > > > 
-> > > > > > What will be the name of the second mixer, once support for HDMI
-> > > > > > is
-> > > > > > added?
-> > > > > > Should we start directly with 0 and 1 postfix ?
-> > > > > 
-> > > > > What are the differences exactly without the two mixers?
-> > > > 
-> > > > Mixer properties:
-> > > > - mixer index (0 or 1), important for determining CCSC base (see my
-> > > > patches)
-> > > 
-> > > Is that the only thing we need to determine?
+> > Do we need __must_check here too?
+> 
+> Yes, you're absolutely right.
+> 
+> of_clk_bulk_get is special as it returns error, so should add __must_check.
+> 
+> > We should do the same for the
+> > other bulk get APIs. Seems we missed that part last time.
 > > 
-> > For now, mixer index is important only for determining CCSC base in
-> > conjuction with VEP capability. Obviously, I can't exclude that there is
-> > some other case where that mixer index is needed.
 > 
-> That's unfortunate...
+> Currently for !CONFIG_HAVE_CLK case, all APIs return 0.
+> !CONFIG_HAVE_CLK
+> clk_bulk_get		return 0
+> devm_clk_bulk_get	return 0
+> clk_bulk_enable		return 0
+> clk_bulk_prepare	return 0
+> 
+> Do you think we still need add __must_check for them?
 
-I take a deeper look today about that issue and it seems that mixer index is 
-really needed only here. I did only regex search and not line by line check, 
-so take this with grain of salt.
-
-Additionally, it seems that this comparison is kind of a hack for V3s. Channel 
-output CSC is done through VEP (video enhancement processor, maybe?) unit. 
-Those units are only on VI channels. But every SoC with DE2 I checked except 
-V3s have 1 VI channel and VEP enabled on first mixer. V3s on the other hand 
-have 2 VI channels and no VEP, but same addresses should work for channel 
-output CSC according to the code. Of course, that is only a theory, but if you 
-want, we can go with quirks structure. Or better yet, with quirk property, 
-since there may be some (future?) SoC with two mixers and no VEP unit 
-supported.
-
-BTW, how should be DE3 on H6 handled in the future? Registers offsets seems to 
-be same within same DE2 and DE3 units, just extended. However, some base 
-addresses are different, for example, those connected to VEP. I don't think 
-new driver is needed, just some quirks structure which would tell DE version.
-
-Best regards,
-Jernej
+Yes, we need it even when !CONFIG_HAVE_CLK because it allows us
+to catch missing checking return values in the non-clk compile
+configurations too. More test coverage.
 
 > 
-> > Can't we just add reg property for that?
+> And for CONFIG_HAVE_CLK case, all __must_check already added.
 > 
-> No, reg is here specifically for the bus address, not for an index,
-> and in general, indices are poorly perceived and have been subject to
-> a lot of debate in the past. Hence why I'd really like to avoid any
-> solution looking like this. But I guess we don't really have the
-> choice either.
+> int __must_check clk_bulk_get
+> int __must_check devm_clk_bulk_get
+> int __must_check clk_bulk_enable
+> int __must_check clk_bulk_prepare
 > 
-> Maxime
+> And no need for void function.
+> void clk_bulk_put
+> void clk_bulk_unprepare
+> void clk_bulk_disable
 > 
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+> > I'll fix all these things up when applying.
+> > 
+> 
+> I did not see this in latest tree.
+> Suppose i should resend it with above things fixed, right?
+> 
 
+I dropped it because it seems like maybe we don't need
+of_clk_bulk_get(), but more like clk_get_all() or something like
+that to acquire all clks for a device. It seems like it isn't DT
+specific, and so we should just provide the "all" API instead of
+some DT specific one that needs to know how many clks to get. I
+think I sent a similar reply on some other thread and added you
+to it.
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
