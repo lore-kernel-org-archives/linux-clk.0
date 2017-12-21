@@ -1,83 +1,47 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<matthias.bgg@gmail.com>
-CC: <jdelvare@suse.de>, <jamesjj.liao@mediatek.com>, <weiyi.lu@mediatek.com>,
-	<kevin-cw.chen@mediatek.com>, <shunli.wang@mediatek.com>,
-	<chen.zhong@mediatek.com>, <arnd@arndb.de>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH] clk: mediatek: adjust dependency of reset.c to avoid unexpectedly being built
-Date: Tue, 26 Dec 2017 11:52:31 +0800
-Message-ID: <5a6347a5196a5eba85dce9ac7c3b9392b832f1f8.1514259933.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v5 10/15] devicetree: bindings: Document qcom,kpss-gcc
+To: Rob Herring <robh@kernel.org>
+Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+ rjw@rjwysocki.net, viresh.kumar@linaro.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-11-git-send-email-sricharan@codeaurora.org>
+ <20171220211328.wbhaxcisz6bzxxql@rob-hp-laptop>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <15a73b8a-796e-cd2a-fb4c-3cb913076887@codeaurora.org>
+Date: Thu, 21 Dec 2017 14:57:25 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171220211328.wbhaxcisz6bzxxql@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-commit 74cb0d6dde8 ("clk: mediatek: fixup test-building of MediaTek clock
-drivers") can let the build system looking into the directory where the
-clock drivers resides and then allow test-building the drivers.
 
-But the change also gives rise to certain incorrect behavior which is
-reset.c being built even not depending on either COMPILE_TEST or
-ARCH_MEDIATEK alternative dependency. To get rid of reset.c being built
-unexpectedly on the other platforms, it would be a good change that the
-file should be built depending on its own specific configuration rather
-than just on generic RESET_CONTROLLER one.
+On 12/21/2017 2:43 AM, Rob Herring wrote:
+> On Tue, Dec 19, 2017 at 09:24:55PM +0530, Sricharan R wrote:
+>> From: Stephen Boyd <sboyd@codeaurora.org>
+>>
+>> The ACC and GCC regions present in KPSSv1 contain registers to
+>> control clocks and power to each Krait CPU and L2. Documenting
+>> the bindings here.
+>>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
+>>  .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
+>>  2 files changed, 39 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Jean Delvare <jdelvare@suse.de>
----
- drivers/clk/mediatek/Kconfig   | 7 +++++++
- drivers/clk/mediatek/Makefile  | 2 +-
- drivers/clk/mediatek/clk-mtk.h | 2 +-
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ Thanks !!
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 7338f81..52d880a 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -9,6 +9,13 @@ config COMMON_CLK_MEDIATEK
- 	---help---
- 	  MediaTek SoCs' clock support.
- 
-+config RESET_MEDIATEK
-+	bool "MediaTek Reset Driver"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on RESET_CONTROLLER
-+	help
-+	  This enables the reset controller driver used on MediaTek SoCs.
-+
- config COMMON_CLK_MT2701
- 	bool "Clock driver for MediaTek MT2701"
- 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index c421ffc..2a48006 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
--obj-$(CONFIG_RESET_CONTROLLER) += reset.o
-+obj-$(CONFIG_RESET_MEDIATEK) += reset.o
- obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
- obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
- obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index bf8006d..0322dec 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -229,7 +229,7 @@ void mtk_clk_register_plls(struct device_node *node,
- struct clk *mtk_clk_register_ref2usb_tx(const char *name,
- 			const char *parent_name, void __iomem *reg);
- 
--#ifdef CONFIG_RESET_CONTROLLER
-+#ifdef CONFIG_RESET_MEDIATEK
- void mtk_register_reset_controller(struct device_node *np,
- 			unsigned int num_regs, int regofs);
- #else
+Regards,
+ Sricharan
+
 -- 
-2.7.4
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
