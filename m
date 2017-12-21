@@ -1,49 +1,45 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 31/33] clk: ARC: change hsdk_pll_round_rate () return logic
-Date: Sat, 30 Dec 2017 01:13:10 +0000
-Message-Id: <1514596392-22270-32-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:5967 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbdLULIy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:08:54 -0500
+Subject: Re: [PATCH v2 3/4] clk: tegra: MBIST work around for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-4-git-send-email-pdeschrijver@nvidia.com>
+ <3d7f4e84-af44-ba3d-7910-a51a0abce136@nvidia.com>
+ <20171221094049.GX29417@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c320b903-31a0-bf8e-2d78-2296e78d31a2@nvidia.com>
+Date: Thu, 21 Dec 2017 11:08:48 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171221094049.GX29417@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+On 21/12/17 09:40, Peter De Schrijver wrote:
+> On Wed, Dec 20, 2017 at 10:03:35AM +0000, Jon Hunter wrote:
+>>
+>> On 16/11/17 14:29, Peter De Schrijver wrote:
+>>> Tegra210 has a hw bug which can cause IP blocks to lock up when ungating a
+>>> domain. The reason is that the logic responsible for resetting the memory
+>>> built-in self test mode can come up in an undefined state because it doesn't
+>>> get a clock or reset signal. Work around this by making sure the logic will
+>>> get some clock edges by ensuring the relevant clock is enabled and temporarily
+>>> override the relevant second level clock gates (SLCG).
+>>
+>> Not sure I follow the 2nd half of the above sentence.
+> 
+> The logic responsible for resetting the MBIST mode is not clocked during
+> module reset because the module SLCGs are gated while they shouldn't be.
+> 
+> Does this make it more clear? :)
+Yes thanks!
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-hsdk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jon
 
-diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
-index 62c8e18..7bff5e3 100644
---- a/drivers/clk/clk-hsdk-pll.c
-+++ b/drivers/clk/clk-hsdk-pll.c
-@@ -201,7 +201,7 @@ static unsigned long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	const struct hsdk_pll_cfg *pll_cfg = clk->pll_devdata->pll_cfg;
- 
- 	if (pll_cfg[0].rate == 0)
--		return -EINVAL;
-+		return 0;
- 
- 	best_rate = pll_cfg[0].rate;
- 
 -- 
-2.7.4
+nvpublic
