@@ -1,76 +1,61 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 4 Dec 2017 22:01:50 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v10 2/6] mailbox: qcom: Create APCS child device for
- clock controller
-Message-ID: <20171205060150.GJ28761@minitux>
-References: <20171201170224.25053-1-georgi.djakov@linaro.org>
- <20171201170224.25053-3-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1494 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751163AbdLUJA5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 04:00:57 -0500
+Date: Thu, 21 Dec 2017 11:00:52 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
+Message-ID: <20171221090052.GR29417@tbergstrom-lnx.Nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
+ <01f6a806-362e-1276-07d7-dfe439e92034@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171201170224.25053-3-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <01f6a806-362e-1276-07d7-dfe439e92034@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 01 Dec 09:02 PST 2017, Georgi Djakov wrote:
-
-> There is a clock controller functionality provided by the APCS hardware
-> block of msm8916 devices. The device-tree would represent an APCS node
-> with both mailbox and clock provider properties.
-> Create a platform child device for the clock controller functionality so
-> the driver can probe and use APCS as parent.
+On Tue, Dec 19, 2017 at 11:00:52PM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> On 16/11/17 14:28, Peter De Schrijver wrote:
+> > This clock is needed by the memory built-in self test work around.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra210.c         | 12 ++++++++++++
+> >  include/dt-bindings/clock/tegra210-car.h |  2 +-
+> >  2 files changed, 13 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 6d7a613..55a5b7f 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -40,6 +40,7 @@
+> >  
+> >  #define CLK_SOURCE_CSITE 0x1d4
+> >  #define CLK_SOURCE_EMC 0x19c
+> > +#define CLK_SOURCE_LA 0x1f8
+> >  
+> >  #define PLLC_BASE 0x80
+> >  #define PLLC_OUT 0x84
+> > @@ -2628,6 +2629,13 @@ static int tegra210_init_pllu(void)
+> >  	return 0;
+> >  }
+> >  
+> > +static const char * const la_parents[] = {
+> > +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
+> > +};
+> > +
+> > +static struct tegra_clk_periph tegra210_la =
+> > +	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
+> > +
 > 
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index ab344bc6fa63..57bde0dfd12f 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -29,6 +29,7 @@ struct qcom_apcs_ipc {
->  
->  	struct regmap *regmap;
->  	unsigned long offset;
-> +	struct platform_device *clk;
->  };
->  
->  static const struct regmap_config apcs_regmap_config = {
-> @@ -96,6 +97,14 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-> +		apcs->clk = platform_device_register_data(&pdev->dev,
-> +							  "qcom-apcs-msm8916-clk",
-> +							  -1, NULL, 0);
-> +		if (IS_ERR(apcs->clk))
-> +			dev_err(&pdev->dev, "failed to register APCS clk\n");
-> +	}
-> +
->  	platform_set_drvdata(pdev, apcs);
->  
->  	return 0;
-> @@ -104,8 +113,10 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->  {
->  	struct qcom_apcs_ipc *apcs = platform_get_drvdata(pdev);
-> +	struct platform_device *clk = apcs->clk;
->  
->  	mbox_controller_unregister(&apcs->mbox);
-> +	platform_device_unregister(clk);
->  
->  	return 0;
->  }
+> The above are over 80 characters. I know we already have some in this
+> file that are, but we should avoid it where we can.
+
+la_parents could be split, but I don't think it's any more clear if tegra210_la is split.
+
+Peter.
