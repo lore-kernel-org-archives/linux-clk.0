@@ -1,672 +1,86 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 1/6] clk: meson: make the spinlock naming more specific
-Date: Mon, 11 Dec 2017 22:13:43 +0800
-Message-ID: <20171211141348.22048-2-yixun.lan@amlogic.com>
-In-Reply-To: <20171211141348.22048-1-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12572 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbdLULIN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:08:13 -0500
+Subject: Re: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
+ <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
+ <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <dcd2616f-a4e2-a797-97d0-e1dc4379bf0a@nvidia.com>
+Date: Thu, 21 Dec 2017 11:08:07 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make the spinlock more specific, so better for lockdep
-debugging and ctags/grep.
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+On 21/12/17 09:05, Peter De Schrijver wrote:
+> On Wed, Dec 20, 2017 at 10:06:13AM +0000, Jon Hunter wrote:
+>>
+>> On 16/11/17 14:29, Peter De Schrijver wrote:
+>>> Apply the memory built-in self test work around when ungating certain
+>>> Tegra210 power domains.
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>>  drivers/soc/tegra/pmc.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 0453ff6..4c0582d 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -142,6 +142,7 @@ struct tegra_pmc_soc {
+>>>  
+>>>  	bool has_tsense_reset;
+>>>  	bool has_gpu_clamps;
+>>> +	bool needs_mbist_war;
+>>>  
+>>>  	const struct tegra_io_pad_soc *io_pads;
+>>>  	unsigned int num_io_pads;
+>>> @@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+>>>  
+>>>  	usleep_range(10, 20);
+>>>  
+>>> +	if (pg->pmc->soc->needs_mbist_war)
+>>> +		tegra210_handle_mbist_war(pg->id);
+>>> +
+>>>  	if (disable_clocks)
+>>>  		tegra_powergate_disable_clocks(pg);
+>>>  
+>>> @@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
+>>>  	.cpu_powergates = tegra210_cpu_powergates,
+>>>  	.has_tsense_reset = true,
+>>>  	.has_gpu_clamps = true,
+>>> +	.needs_mbist_war = true,
+>>>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+>>>  	.io_pads = tegra210_io_pads,
+>>>  };
+>>
+>> After applying this series, tegra210-smaug no longer boots (no output
+>> from the console). Reverting this patch allows it to boot again. So
+>> something here is not working ...
+>>
+> 
+> Annoyingly I don't have smaug, only jetson TX1.. Did you try earlycon?
 
----
+I can take a look, but one difference between TX1 and Smaug is that for
+TX1 if believe all power domains are enabled by default whereas for
+Smaug they are not. There is a workaround in the pmc driver to turn on
+the XUSB power domain if it is off and the xHCI driver is enabled (we
+plan to remove this when we figure out how to properly manage the XUSB
+powergates). So you could try manually disabling the XUSB power domains
+on TX1 and booting.
 
-this patch try to address the issue which bring up by Stephen at [1]
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005534.html
----
- drivers/clk/meson/clkc.h    |   2 +-
- drivers/clk/meson/gxbb.c    | 112 ++++++++++++++++++++++----------------------
- drivers/clk/meson/meson8b.c |  24 +++++-----
- 3 files changed, 69 insertions(+), 69 deletions(-)
+Cheers
+Jon
 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 1629da9b4141..c2ff0520ce53 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -134,7 +134,7 @@ struct meson_clk_audio_divider {
- struct clk_gate _name = { 						\
- 	.reg = (void __iomem *) _reg, 					\
- 	.bit_idx = (_bit), 						\
--	.lock = &clk_lock,						\
-+	.lock = &meson_clk_lock,					\
- 	.hw.init = &(struct clk_init_data) { 				\
- 		.name = #_name,					\
- 		.ops = &clk_gate_ops,					\
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index ae385310e980..48936fbe7fd0 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -27,7 +27,7 @@
- #include "clkc.h"
- #include "gxbb.h"
- 
--static DEFINE_SPINLOCK(clk_lock);
-+static DEFINE_SPINLOCK(meson_clk_lock);
- 
- static const struct pll_rate_table sys_pll_rate_table[] = {
- 	PLL_RATE(24000000, 56, 1, 2),
-@@ -294,7 +294,7 @@ static struct meson_clk_pll gxbb_fixed_pll = {
- 		.shift   = 16,
- 		.width   = 2,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
- 		.ops = &meson_clk_pll_ro_ops,
-@@ -330,7 +330,7 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
- 		.shift   = 22,
- 		.width   = 2,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
- 		.ops = &meson_clk_pll_ro_ops,
-@@ -358,7 +358,7 @@ static struct meson_clk_pll gxbb_sys_pll = {
- 	},
- 	.rate_table = sys_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
- 		.ops = &meson_clk_pll_ro_ops,
-@@ -399,7 +399,7 @@ static struct meson_clk_pll gxbb_gp0_pll = {
- 	},
- 	.rate_table = gxbb_gp0_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(gxbb_gp0_pll_rate_table),
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp0_pll",
- 		.ops = &meson_clk_pll_ops,
-@@ -442,7 +442,7 @@ static struct meson_clk_pll gxl_gp0_pll = {
- 	},
- 	.rate_table = gxl_gp0_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(gxl_gp0_pll_rate_table),
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp0_pll",
- 		.ops = &meson_clk_pll_ops,
-@@ -533,7 +533,7 @@ static struct meson_clk_mpll gxbb_mpll0 = {
- 		.shift   = 25,
- 		.width	 = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &meson_clk_mpll_ops,
-@@ -563,7 +563,7 @@ static struct meson_clk_mpll gxbb_mpll1 = {
- 		.shift   = 14,
- 		.width	 = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &meson_clk_mpll_ops,
-@@ -593,7 +593,7 @@ static struct meson_clk_mpll gxbb_mpll2 = {
- 		.shift   = 14,
- 		.width	 = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &meson_clk_mpll_ops,
-@@ -620,7 +620,7 @@ static struct clk_mux gxbb_mpeg_clk_sel = {
- 	.shift = 12,
- 	.flags = CLK_MUX_READ_ONLY,
- 	.table = mux_table_clk81,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_sel",
- 		.ops = &clk_mux_ro_ops,
-@@ -639,7 +639,7 @@ static struct clk_divider gxbb_mpeg_clk_div = {
- 	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
- 		.ops = &clk_divider_ops,
-@@ -653,7 +653,7 @@ static struct clk_divider gxbb_mpeg_clk_div = {
- static struct clk_gate gxbb_clk81 = {
- 	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.bit_idx = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
- 		.ops = &clk_gate_ops,
-@@ -667,7 +667,7 @@ static struct clk_mux gxbb_sar_adc_clk_sel = {
- 	.reg = (void *)HHI_SAR_CLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 9,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sar_adc_clk_sel",
- 		.ops = &clk_mux_ops,
-@@ -681,7 +681,7 @@ static struct clk_divider gxbb_sar_adc_clk_div = {
- 	.reg = (void *)HHI_SAR_CLK_CNTL,
- 	.shift = 0,
- 	.width = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sar_adc_clk_div",
- 		.ops = &clk_divider_ops,
-@@ -693,7 +693,7 @@ static struct clk_divider gxbb_sar_adc_clk_div = {
- static struct clk_gate gxbb_sar_adc_clk = {
- 	.reg = (void *)HHI_SAR_CLK_CNTL,
- 	.bit_idx = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sar_adc_clk",
- 		.ops = &clk_gate_ops,
-@@ -719,7 +719,7 @@ static struct clk_mux gxbb_mali_0_sel = {
- 	.mask = 0x7,
- 	.shift = 9,
- 	.table = mux_table_mali_0_1,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_0_sel",
- 		.ops = &clk_mux_ops,
-@@ -738,7 +738,7 @@ static struct clk_divider gxbb_mali_0_div = {
- 	.reg = (void *)HHI_MALI_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_0_div",
- 		.ops = &clk_divider_ops,
-@@ -751,7 +751,7 @@ static struct clk_divider gxbb_mali_0_div = {
- static struct clk_gate gxbb_mali_0 = {
- 	.reg = (void *)HHI_MALI_CLK_CNTL,
- 	.bit_idx = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_0",
- 		.ops = &clk_gate_ops,
-@@ -766,7 +766,7 @@ static struct clk_mux gxbb_mali_1_sel = {
- 	.mask = 0x7,
- 	.shift = 25,
- 	.table = mux_table_mali_0_1,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_1_sel",
- 		.ops = &clk_mux_ops,
-@@ -785,7 +785,7 @@ static struct clk_divider gxbb_mali_1_div = {
- 	.reg = (void *)HHI_MALI_CLK_CNTL,
- 	.shift = 16,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_1_div",
- 		.ops = &clk_divider_ops,
-@@ -798,7 +798,7 @@ static struct clk_divider gxbb_mali_1_div = {
- static struct clk_gate gxbb_mali_1 = {
- 	.reg = (void *)HHI_MALI_CLK_CNTL,
- 	.bit_idx = 24,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_1",
- 		.ops = &clk_gate_ops,
-@@ -818,7 +818,7 @@ static struct clk_mux gxbb_mali = {
- 	.mask = 1,
- 	.shift = 31,
- 	.table = mux_table_mali,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali",
- 		.ops = &clk_mux_ops,
-@@ -834,7 +834,7 @@ static struct clk_mux gxbb_cts_amclk_sel = {
- 	.shift = 9,
- 	/* Default parent unknown (register reset value: 0) */
- 	.table = (u32[]){ 1, 2, 3 },
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 		.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk_sel",
- 		.ops = &clk_mux_ops,
-@@ -851,7 +851,7 @@ static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
- 		.width   = 8,
- 	},
- 	.flags = CLK_DIVIDER_ROUND_CLOSEST,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk_div",
- 		.ops = &meson_clk_audio_divider_ops,
-@@ -864,7 +864,7 @@ static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
- static struct clk_gate gxbb_cts_amclk = {
- 	.reg = (void *) HHI_AUD_CLK_CNTL,
- 	.bit_idx = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk",
- 		.ops = &clk_gate_ops,
-@@ -880,7 +880,7 @@ static struct clk_mux gxbb_cts_mclk_i958_sel = {
- 	.shift = 25,
- 	/* Default parent unknown (register reset value: 0) */
- 	.table = (u32[]){ 1, 2, 3 },
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cts_mclk_i958_sel",
- 		.ops = &clk_mux_ops,
-@@ -894,7 +894,7 @@ static struct clk_divider gxbb_cts_mclk_i958_div = {
- 	.reg = (void *)HHI_AUD_CLK_CNTL2,
- 	.shift = 16,
- 	.width = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cts_mclk_i958_div",
-@@ -908,7 +908,7 @@ static struct clk_divider gxbb_cts_mclk_i958_div = {
- static struct clk_gate gxbb_cts_mclk_i958 = {
- 	.reg = (void *)HHI_AUD_CLK_CNTL2,
- 	.bit_idx = 24,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_mclk_i958",
- 		.ops = &clk_gate_ops,
-@@ -922,7 +922,7 @@ static struct clk_mux gxbb_cts_i958 = {
- 	.reg = (void *)HHI_AUD_CLK_CNTL2,
- 	.mask = 0x1,
- 	.shift = 27,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 		.hw.init = &(struct clk_init_data){
- 		.name = "cts_i958",
- 		.ops = &clk_mux_ops,
-@@ -940,7 +940,7 @@ static struct clk_divider gxbb_32k_clk_div = {
- 	.reg = (void *)HHI_32K_CLK_CNTL,
- 	.shift = 0,
- 	.width = 14,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "32k_clk_div",
- 		.ops = &clk_divider_ops,
-@@ -953,7 +953,7 @@ static struct clk_divider gxbb_32k_clk_div = {
- static struct clk_gate gxbb_32k_clk = {
- 	.reg = (void *)HHI_32K_CLK_CNTL,
- 	.bit_idx = 15,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "32k_clk",
- 		.ops = &clk_gate_ops,
-@@ -971,7 +971,7 @@ static struct clk_mux gxbb_32k_clk_sel = {
- 	.reg = (void *)HHI_32K_CLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 16,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 		.hw.init = &(struct clk_init_data){
- 		.name = "32k_clk_sel",
- 		.ops = &clk_mux_ops,
-@@ -997,7 +997,7 @@ static struct clk_mux gxbb_sd_emmc_a_clk0_sel = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.mask = 0x7,
- 	.shift = 9,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_a_clk0_sel",
- 		.ops = &clk_mux_ops,
-@@ -1011,7 +1011,7 @@ static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_a_clk0_div",
-@@ -1025,7 +1025,7 @@ static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
- static struct clk_gate gxbb_sd_emmc_a_clk0 = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.bit_idx = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_a_clk0",
- 		.ops = &clk_gate_ops,
-@@ -1050,7 +1050,7 @@ static struct clk_mux gxbb_sd_emmc_b_clk0_sel = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.mask = 0x7,
- 	.shift = 25,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_sel",
- 		.ops = &clk_mux_ops,
-@@ -1064,7 +1064,7 @@ static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.shift = 16,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_div",
-@@ -1078,7 +1078,7 @@ static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
- static struct clk_gate gxbb_sd_emmc_b_clk0 = {
- 	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
- 	.bit_idx = 23,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_b_clk0",
- 		.ops = &clk_gate_ops,
-@@ -1093,7 +1093,7 @@ static struct clk_mux gxbb_sd_emmc_c_clk0_sel = {
- 	.reg = (void *)HHI_NAND_CLK_CNTL,
- 	.mask = 0x7,
- 	.shift = 9,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_sel",
- 		.ops = &clk_mux_ops,
-@@ -1107,7 +1107,7 @@ static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
- 	.reg = (void *)HHI_NAND_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_div",
-@@ -1121,7 +1121,7 @@ static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
- static struct clk_gate gxbb_sd_emmc_c_clk0 = {
- 	.reg = (void *)HHI_NAND_CLK_CNTL,
- 	.bit_idx = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sd_emmc_c_clk0",
- 		.ops = &clk_gate_ops,
-@@ -1142,7 +1142,7 @@ static struct clk_mux gxbb_vpu_0_sel = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 9,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.table = mux_table_vpu,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_0_sel",
-@@ -1161,7 +1161,7 @@ static struct clk_divider gxbb_vpu_0_div = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_0_div",
- 		.ops = &clk_divider_ops,
-@@ -1174,7 +1174,7 @@ static struct clk_divider gxbb_vpu_0_div = {
- static struct clk_gate gxbb_vpu_0 = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.bit_idx = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vpu_0",
- 		.ops = &clk_gate_ops,
-@@ -1188,7 +1188,7 @@ static struct clk_mux gxbb_vpu_1_sel = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 25,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.table = mux_table_vpu,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_1_sel",
-@@ -1207,7 +1207,7 @@ static struct clk_divider gxbb_vpu_1_div = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.shift = 16,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_1_div",
- 		.ops = &clk_divider_ops,
-@@ -1220,7 +1220,7 @@ static struct clk_divider gxbb_vpu_1_div = {
- static struct clk_gate gxbb_vpu_1 = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.bit_idx = 24,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vpu_1",
- 		.ops = &clk_gate_ops,
-@@ -1234,7 +1234,7 @@ static struct clk_mux gxbb_vpu = {
- 	.reg = (void *)HHI_VPU_CLK_CNTL,
- 	.mask = 1,
- 	.shift = 31,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu",
- 		.ops = &clk_mux_ops,
-@@ -1259,7 +1259,7 @@ static struct clk_mux gxbb_vapb_0_sel = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 9,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.table = mux_table_vapb,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_0_sel",
-@@ -1278,7 +1278,7 @@ static struct clk_divider gxbb_vapb_0_div = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_0_div",
- 		.ops = &clk_divider_ops,
-@@ -1291,7 +1291,7 @@ static struct clk_divider gxbb_vapb_0_div = {
- static struct clk_gate gxbb_vapb_0 = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.bit_idx = 8,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb_0",
- 		.ops = &clk_gate_ops,
-@@ -1305,7 +1305,7 @@ static struct clk_mux gxbb_vapb_1_sel = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.mask = 0x3,
- 	.shift = 25,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.table = mux_table_vapb,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_1_sel",
-@@ -1324,7 +1324,7 @@ static struct clk_divider gxbb_vapb_1_div = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.shift = 16,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_1_div",
- 		.ops = &clk_divider_ops,
-@@ -1337,7 +1337,7 @@ static struct clk_divider gxbb_vapb_1_div = {
- static struct clk_gate gxbb_vapb_1 = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.bit_idx = 24,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb_1",
- 		.ops = &clk_gate_ops,
-@@ -1351,7 +1351,7 @@ static struct clk_mux gxbb_vapb_sel = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.mask = 1,
- 	.shift = 31,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_sel",
- 		.ops = &clk_mux_ops,
-@@ -1368,7 +1368,7 @@ static struct clk_mux gxbb_vapb_sel = {
- static struct clk_gate gxbb_vapb = {
- 	.reg = (void *)HHI_VAPBCLK_CNTL,
- 	.bit_idx = 30,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "vapb",
- 		.ops = &clk_gate_ops,
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 20ab7190d328..3ffea80c1308 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -32,7 +32,7 @@
- #include "clkc.h"
- #include "meson8b.h"
- 
--static DEFINE_SPINLOCK(clk_lock);
-+static DEFINE_SPINLOCK(meson_clk_lock);
- 
- static void __iomem *clk_base;
- 
-@@ -136,7 +136,7 @@ static struct meson_clk_pll meson8b_fixed_pll = {
- 		.shift   = 16,
- 		.width   = 2,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
- 		.ops = &meson_clk_pll_ro_ops,
-@@ -162,7 +162,7 @@ static struct meson_clk_pll meson8b_vid_pll = {
- 		.shift   = 16,
- 		.width   = 2,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vid_pll",
- 		.ops = &meson_clk_pll_ro_ops,
-@@ -190,7 +190,7 @@ static struct meson_clk_pll meson8b_sys_pll = {
- 	},
- 	.rate_table = sys_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
- 		.ops = &meson_clk_pll_ops,
-@@ -281,7 +281,7 @@ static struct meson_clk_mpll meson8b_mpll0 = {
- 		.shift   = 25,
- 		.width   = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &meson_clk_mpll_ops,
-@@ -311,7 +311,7 @@ static struct meson_clk_mpll meson8b_mpll1 = {
- 		.shift   = 14,
- 		.width   = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &meson_clk_mpll_ops,
-@@ -341,7 +341,7 @@ static struct meson_clk_mpll meson8b_mpll2 = {
- 		.shift   = 14,
- 		.width   = 1,
- 	},
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &meson_clk_mpll_ops,
-@@ -375,7 +375,7 @@ struct clk_mux meson8b_mpeg_clk_sel = {
- 	.shift = 12,
- 	.flags = CLK_MUX_READ_ONLY,
- 	.table = mux_table_clk81,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_sel",
- 		.ops = &clk_mux_ro_ops,
-@@ -395,7 +395,7 @@ struct clk_divider meson8b_mpeg_clk_div = {
- 	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.shift = 0,
- 	.width = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
- 		.ops = &clk_divider_ops,
-@@ -408,7 +408,7 @@ struct clk_divider meson8b_mpeg_clk_div = {
- struct clk_gate meson8b_clk81 = {
- 	.reg = (void *)HHI_MPEG_CLK_CNTL,
- 	.bit_idx = 7,
--	.lock = &clk_lock,
-+	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "clk81",
- 		.ops = &clk_gate_ops,
-@@ -773,7 +773,7 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
- 
- 	reset = &meson8b_clk_reset_bits[id];
- 
--	spin_lock_irqsave(&clk_lock, flags);
-+	spin_lock_irqsave(&meson_clk_lock, flags);
- 
- 	val = readl(meson8b_clk_reset->base + reset->reg);
- 	if (assert)
-@@ -782,7 +782,7 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
- 		val &= ~BIT(reset->bit_idx);
- 	writel(val, meson8b_clk_reset->base + reset->reg);
- 
--	spin_unlock_irqrestore(&clk_lock, flags);
-+	spin_unlock_irqrestore(&meson_clk_lock, flags);
- 
- 	return 0;
- }
 -- 
-2.15.1
+nvpublic
