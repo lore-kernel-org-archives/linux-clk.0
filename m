@@ -1,55 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52377 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750995AbdLVMXr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Dec 2017 07:23:47 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
-Date: Fri, 22 Dec 2017 20:22:32 +0800
-Message-Id: <20171222122243.25735-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 12:07:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexander Kochetkov <al.kochet@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to
+ clk_hw_get_boundaries() and expose
+Message-ID: <20171221200743.GM7997@codeaurora.org>
+References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
+ <1513872282-5370-2-git-send-email-al.kochet@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513872282-5370-2-git-send-email-al.kochet@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds support for the SimpleFB on Allwinner SoCs with
-"Display Engine 2.0".
+On 12/21, Alexander Kochetkov wrote:
+> In order to provide a way to know clock limits to clock providers.
+> 
+> The patch is needed for fixing commit 5d890c2df900 ("clk: rockchip:
+> add special approximation to fix up fractional clk's jitter").
+> Custom approximation function introduced by the patch, can
+> select frequency rate larger than one configured using
+> clk_set_max_rate().
+> 
+> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+> ---
 
-PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
-
-PATCH 4 adds the pipeline strings for DE2 SimpleFB.
-
-PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-for H3/H5 SoCs.
-
-PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
-
-Icenowy Zheng (11):
-  dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
-  clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
-  clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
-  dt-bindings: simplefb-sunxi: add pipelines for DE2
-  ARM: sun8i: h3/h5: add DE2 CCU device node for H3
-  arm64: allwinner: h5: add compatible string for DE2 CCU
-  ARM: sunxi: h3/h5: add simplefb nodes
-  dt-bindings: add binding for A64 DE2 CCU SRAM
-  clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
-  arm64: allwinner: a64: add DE2 CCU for A64 SoC
-  arm64: allwinner: a64: add simplefb for A64 SoC
-
- .../devicetree/bindings/clock/sun8i-de2.txt        | 10 ++-
- .../bindings/display/simple-framebuffer-sunxi.txt  |  4 +
- arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 +
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 +++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 +++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 85 +++++++++++++++++++---
- 7 files changed, 202 insertions(+), 13 deletions(-)
+Can you convert to the determine_rate op instead of round_rate?
+That function should tell you the min/max limits so that you
+don't need to query that information from the core.
 
 -- 
-2.14.2
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
