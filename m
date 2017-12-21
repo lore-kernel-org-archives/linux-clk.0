@@ -1,124 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 Dec 2017 22:50:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Return-Path: <al.kochet@gmail.com>
+Return-Path: <al.kochet@gmail.com>
+From: Alexander Kochetkov <al.kochet@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V6 02/12] clk: sprd: Add common infrastructure
-Message-ID: <20171207065012.GW4283@codeaurora.org>
-References: <20171127100115.20655-1-chunyan.zhang@spreadtrum.com>
- <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171127100115.20655-3-chunyan.zhang@spreadtrum.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Alexander Kochetkov <al.kochet@gmail.com>
+Subject: [PATCH 0/2] Fix clock rate in the rockchip_fractional_approximation()
+Date: Thu, 21 Dec 2017 19:04:40 +0300
+Message-Id: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/27, Chunyan Zhang wrote:
-> +
-> +	sprd_clk_set_regmap(desc, regmap);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(sprd_clk_regmap_init);
-> +
-> +int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
-> +{
-> +	int i, ret = 0;
+Hello!
 
-ret shouldn't need to be initialized here.
+Here are two patches fixing issue in the rockchip_fractional_approximation().
+rockchip_fractional_approximation() can select clock rate whose
+value will violate clock limit settings (i.e. one configured with 
+clk_set_max_rate() and clk_set_min_rate()).
 
-> +	struct clk_hw *hw;
-> +
-> +	for (i = 0; i < clkhw->num; i++) {
-> +
-> +		hw = clkhw->hws[i];
-> +
-> +		if (!hw)
-> +			continue;
-> +
-> +		ret = devm_clk_hw_register(dev, hw);
-> +		if (ret) {
-> +			dev_err(dev, "Couldn't register clock %d - %s\n",
-> +				i, hw->init->name);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +				     clkhw);
+rockchip_fractional_approximation() was introduced by commit 5d890c2df900
+("clk: rockchip: add special approximation to fix up fractional clk's jitter") 
+whose description states that setting denominator 20 times larger than
+numerator will generate precise clock frequency. It's strange, because
+on my custom rk3188-based board and on radxa rock I've observed strange
+hardware issues. I2S, for example, sometimes doesn't setup correct
+rate on external SCLK_I2S0. UART0, for example, started to receive '\0' 
+characters instead of valid symbols, signals on UART_RX was good.
 
-You can use devm_ now for this.
+So, I use clk_set_max_rate() to limit max value of i2s0_pre, uart0_pre,
+uart1_pre, uart2_pre, uart3_pre to value of aclk_cpu_pre. That fixes
+strange I2S and UART issues for me. If that make sense, than I can
+send the patch. But it will logically conflict with commit 5d890c2df900
+("clk: rockchip: add special approximation to fix up fractional clk's jitter").
 
-> +	if (ret)
-> +		dev_err(dev, "Failed to add clock provider.\n");
+Alexander Kochetkov (2):
+  clk: rename clk_core_get_boundaries() to clk_hw_get_boundaries() and
+    expose
+  clk: rockchip: limit clock rate in the
+    rockchip_fractional_approximation()
 
-Please remove the full stop on error messages.
-
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(sprd_clk_probe);
-> +
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/sprd/common.h b/drivers/clk/sprd/common.h
-> new file mode 100644
-> index 0000000..8cd774e
-> --- /dev/null
-> +++ b/drivers/clk/sprd/common.h
-> @@ -0,0 +1,52 @@
-> +/*
-> + * Spreadtrum clock infrastructure
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + * Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#ifndef _SPRD_CLK_COMMON_H_
-> +#define _SPRD_CLK_COMMON_H_
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "../clk_common.h"
-> +
-> +struct device_node;
-> +
-> +struct sprd_clk_common {
-> +	struct regmap	*regmap;
-> +	u32		reg;
-> +	struct clk_hw	hw;
-> +};
-> +
-> +struct sprd_clk_desc {
-> +	struct sprd_clk_common		**clk_clks;
-> +	unsigned long			num_clk_clks;
-> +	struct clk_hw_onecell_data      *hw_clks;
-> +};
-> +
-> +#define sprd_regmap_read(map, reg, val)				\
-> +({								\
-> +	(map) ? regmap_read((map), (reg), (val)) : (-EINVAL);	\
-
-Do we sometimes not have a map? This seems overly cautious.
-
-> +})
-> +
-> +#define sprd_regmap_write(map, reg, val)			\
-> +({								\
+ drivers/clk/clk.c            |   14 ++++++++------
+ drivers/clk/rockchip/clk.c   |    7 +++++++
+ include/linux/clk-provider.h |    2 ++
+ 3 files changed, 17 insertions(+), 6 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
