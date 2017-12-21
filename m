@@ -1,275 +1,53 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
-Date: Tue, 19 Dec 2017 21:24:59 +0530
-Message-Id: <1513698900-10638-15-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1539 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751389AbdLULLe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:11:34 -0500
+Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <83325ffd-5b85-6288-63ac-5a938b948300@nvidia.com>
+ <20171221093742.GW29417@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8e2266df-a1e4-b46e-3e4a-459bbe6e7b2f@nvidia.com>
+Date: Thu, 21 Dec 2017 11:11:28 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171221093742.GW29417@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
 
-Register a cpufreq-generic device whenever we detect that a
-"qcom,krait" compatible CPU is present in DT.
+On 21/12/17 09:37, Peter De Schrijver wrote:
+> On Wed, Dec 20, 2017 at 10:12:10AM +0000, Jon Hunter wrote:
+>>
+>> On 16/11/17 14:28, Peter De Schrijver wrote:
+>>> This patch series introduces the Memory Built-In Self Test (MBIST)
+>>> work around (WAR) needed when power ungating certain domains. More
+>>> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+>>> implement the WAR in the Tegra210 clock driver, because most accesses are
+>>> to CAR registers and for the VENC domain, we need to make sure the CSI
+>>> clock source is not changed during the WAR execution.
+>>
+>> In general, I don't have any problems with the proposal, as there is no
+>> great way to implement the workaround AFAICT. My only thought was if we
+>> could expose the mbist WAR as a 'reset' via the clk driver and use the
+>> reset_control_xxx APIs to request and reset the mbist? Yes there is no
+>> reset assert/deassert here, but the reset framework does have a 'reset'
+>> hook to reset logic and if we are considering these WARs to reset the
+>> mbist logic maybe it is not a complete hack/abuse of the API? Feel free
+>> to tell me to get lost if it is a naff idea.
+>>
+> 
+> You would only implement the reset method then? I guess this could be done
+> but I don't really see why this would be better than making dedicated
+> functions given that there really is only one SoC which requires this WAR.
 
-Cc: <devicetree@vger.kernel.org>
-[Sricharan: updated to use dev_pm_opp_set_prop_name]
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/cpufreq/Kconfig.arm          |   9 ++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +-
- drivers/cpufreq/qcom-cpufreq.c       | 171 +++++++++++++++++++++++++++++++++++
- 4 files changed, 183 insertions(+), 1 deletion(-)
- create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+Yes exactly. Good point, we will only ever need this for this device, so
+maybe stick with what you have.
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index bdce448..60f28e7 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -100,6 +100,15 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
- 
-+config ARM_QCOM_CPUFREQ
-+	tristate "Qualcomm based"
-+	depends on ARCH_QCOM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 812f9e0..1496464 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_MEDIATEK_CPUFREQ)	+= mediatek-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
- obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
- obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index ecc56e2..032ac4f 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,7 +118,7 @@
- 	{ .compatible = "ti,am33xx", },
- 	{ .compatible = "ti,am43", },
- 	{ .compatible = "ti,dra7", },
--
-+	{ .compatible = "qcom,ipq8064", },
- 	{ }
- };
- 
-@@ -157,6 +157,7 @@ static int __init cpufreq_dt_platdev_init(void)
- 
- create_pdev:
- 	of_node_put(np);
-+
- 	return PTR_ERR_OR_ZERO(platform_device_register_data(NULL, "cpufreq-dt",
- 			       -1, data,
- 			       sizeof(struct cpufreq_dt_platform_data)));
-diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
-new file mode 100644
-index 0000000..3e5583d
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq.c
-@@ -0,0 +1,171 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include "cpufreq-dt.h"
-+
-+static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver)
-+{
-+	void __iomem *base;
-+	u32 pte_efuse;
-+
-+	*speed = *pvs = *pvs_ver = 0;
-+
-+	base = ioremap(0x007000c0, 4);
-+	if (!base) {
-+		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
-+		return;
-+	}
-+
-+	pte_efuse = readl_relaxed(base);
-+	iounmap(base);
-+
-+	*speed = pte_efuse & 0xf;
-+	if (*speed == 0xf)
-+		*speed = (pte_efuse >> 4) & 0xf;
-+
-+	if (*speed == 0xf) {
-+		*speed = 0;
-+		pr_warn("Speed bin: Defaulting to %d\n", *speed);
-+	} else {
-+		pr_info("Speed bin: %d\n", *speed);
-+	}
-+
-+	*pvs = (pte_efuse >> 10) & 0x7;
-+	if (*pvs == 0x7)
-+		*pvs = (pte_efuse >> 13) & 0x7;
-+
-+	if (*pvs == 0x7) {
-+		*pvs = 0;
-+		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
-+	} else {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	}
-+}
-+
-+static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver)
-+{
-+	u32 pte_efuse, redundant_sel;
-+	void __iomem *base;
-+
-+	*speed = 0;
-+	*pvs = 0;
-+	*pvs_ver = 0;
-+
-+	base = ioremap(0xfc4b80b0, 8);
-+	if (!base) {
-+		pr_warn("Unable to read efuse data. Defaulting to 0!\n");
-+		return;
-+	}
-+
-+	pte_efuse = readl_relaxed(base);
-+	redundant_sel = (pte_efuse >> 24) & 0x7;
-+	*speed = pte_efuse & 0x7;
-+	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
-+	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
-+	*pvs_ver = (pte_efuse >> 4) & 0x3;
-+
-+	switch (redundant_sel) {
-+	case 1:
-+		*speed = (pte_efuse >> 27) & 0xf;
-+		break;
-+	case 2:
-+		*pvs = (pte_efuse >> 27) & 0xf;
-+		break;
-+	}
-+
-+	/* Check SPEED_BIN_BLOW_STATUS */
-+	if (pte_efuse & BIT(3)) {
-+		pr_info("Speed bin: %d\n", *speed);
-+	} else {
-+		pr_warn("Speed bin not set. Defaulting to 0!\n");
-+		*speed = 0;
-+	}
-+
-+	/* Check PVS_BLOW_STATUS */
-+	pte_efuse = readl_relaxed(base + 0x4) & BIT(21);
-+	if (pte_efuse) {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	} else {
-+		pr_warn("PVS bin not set. Defaulting to 0!\n");
-+		*pvs = 0;
-+	}
-+
-+	pr_info("PVS version: %d\n", *pvs_ver);
-+	iounmap(base);
-+}
-+
-+static int __init qcom_cpufreq_populate_opps(void)
-+{
-+	int speed, pvs, pvs_ver;
-+	struct device_node *np;
-+	struct device *dev;
-+	int cpu = 0;
-+	char pvs_name[] = "speedXX-pvsXX-vXX";
-+
-+	np = of_find_node_by_name(NULL, "qcom,pvs");
-+	if (!np)
-+		return -ENODEV;
-+
-+	if (of_property_read_bool(np, "qcom,pvs-format-a"))
-+		get_krait_bin_format_a(&speed, &pvs, &pvs_ver);
-+	else if (of_property_read_bool(np, "qcom,pvs-format-b"))
-+		get_krait_bin_format_b(&speed, &pvs, &pvs_ver);
-+	else
-+		return -ENODEV;
-+
-+	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
-+		 speed, pvs, pvs_ver);
-+
-+	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
-+		dev = get_cpu_device(cpu);
-+		if (!dev)
-+			return -ENODEV;
-+
-+		if (IS_ERR(dev_pm_opp_set_prop_name(dev, pvs_name)))
-+			pr_warn("failed to add OPP name %s\n", pvs_name);
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init qcom_cpufreq_driver_init(void)
-+{
-+	struct device *cpu_dev;
-+	struct device_node *np;
-+	int ret;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	np = of_node_get(cpu_dev->of_node);
-+	if (!np)
-+		return -ENOENT;
-+
-+	if (!of_device_is_compatible(np, "qcom,krait")) {
-+		of_node_put(np);
-+		return -ENODEV;
-+	}
-+	of_node_put(np);
-+
-+	ret = qcom_cpufreq_populate_opps();
-+	if (ret)
-+		return ret;
-+
-+	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
-+						       -1, NULL, 0));
-+}
-+module_init(qcom_cpufreq_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
+Jon
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+nvpublic
