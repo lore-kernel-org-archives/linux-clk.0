@@ -1,76 +1,86 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [linux-sunxi] [PATCH 0/2] clk: sunxi-ng: sun50i: a64: Add 2x
- fixed post-divider to MMC module clocks
-To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20171204051912.7485-1-wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Message-ID: <25d0eff3-a0d9-fb49-8287-e65a4a102db7@arm.com>
-Date: Mon, 4 Dec 2017 23:25:27 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 20 Dec 2017 16:23:47 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: David Lechner <david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+Message-ID: <20171220230009.GI7997@codeaurora.org>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+ <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+ <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
+ <151372258747.45969.10121622799666696251@resonance>
+ <3ad110cf-95ba-0d0b-53ee-f1fa2d37d7fa@lechnology.com>
+ <151379785862.37313.908268542576551305@resonance>
+ <d8801fdd-8f1f-e0a2-799b-03245009f234@lechnology.com>
+ <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
 MIME-Version: 1.0
-In-Reply-To: <20171204051912.7485-1-wens@csie.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/12/17 05:19, Chen-Yu Tsai wrote:
-> Hi,
+On 12/20, David Lechner wrote:
+> On 12/20/2017 02:33 PM, David Lechner wrote:
+> >
+> >So, as you can see, we get 4 warnings here. There is no problem
+> >with any clock provider or consumer (as far as I can tell). The
+> >bug here is that spin_trylock_irqsave() always returns true on
+> >non-SMP systems, which messes up the reference counting.
+> >
+> >usb20_phy_clk_enable() currently works because mach-davinci does
+> >not use the common clock framework. However, I am trying to move
+> >it to the common clock framework, which is how I discovered this
+> >bug.
 > 
-> This is a small fix to get MMC performance up to proper speeds on the
-
-Maybe a small fix for a skilled developer, but a giant leap for all
-users ;-)
-MMC performance goes from: (4.15-rc1)
-
-SD: Timing buffered disk reads:   36 MB in  3.17 seconds =  11.35 MB/sec
-eMMC: Timing buffered disk reads: 66 MB in  3.03 seconds =  21.81 MB/sec
-
-to: (4.15-rc2 plus those two patches)
-
-SD: Timing buffered disk reads:  68 MB in  3.01 seconds =   22.61 MB/sec
-eMMC: Timing buffered disk reads: 132 MB in  3.01 seconds = 43.80 MB/sec
-
-So yes, factor of two ...
-
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-
-Given the impact I wonder if this is a candidate for stable as well.
-
-> A64. According to the BSP kernel, the MMC module clocks have a /2 fixed
-> post-divider between the clock output and the MMC module, like what
-> we've seen with the "new MMC timing mode" on the A83T, but the A64 does
-> not have the mode switch.
+> One more thing I mentioned previously, but is worth mentioning again
+> in detail is that if you enable CONFIG_DEBUG_SPINLOCK, that changes
+> the behavior of spin_trylock_irqsave() on non-SMP systems. It no
+> longer always returns true and so everything works as expected in
+> the call chain that I described previously.
 > 
-> Sub-par performance was observed on the Banana Pi M64 eMMC. It only
-> reached half the read throughput of other Banana Pi boards, using a
-> standard sequential readout with a large block size. After these
-> patches, the performance is up to spec.
+> The difference is that with CONFIG_DEBUG_SPINLOCK=n, we have
 > 
-> The A64 can also do DDR transfer modes, but the clock delay config
-> registers in the MMC module are different from what we've seen so
-> far.
-
-But the BSP doesn't set those as well, does it? I mean to remember that
-they were all zero, expect for HS200/HS400?
-
-Thanks!
-Andre.
-
- One can just force enable DDR modes without tuning the delays,
-> and it does work. Proper support for this is left for another time.
+> #define arch_spin_trylock(lock)	({ barrier(); (void)(lock); 1; })
+> 
+> But if CONFIG_DEBUG_SPINLOCK=y, then we have
+> 
+> static inline int arch_spin_trylock(arch_spinlock_t *lock)
+> {
+> 	char oldval = lock->slock;
+> 
+> 	lock->slock = 0;
+> 	barrier();
+> 
+> 	return oldval > 0;
+> }
+> 
+> This comes from include/linux/spinlock_up.h, which is included from
+> include/linux/spinlock.h
+> 
+> #ifdef CONFIG_SMP
+> # include <asm/spinlock.h>
+> #else
+> # include <linux/spinlock_up.h>
+> #endif
 > 
 > 
-> ChenYu
-> 
-> Chen-Yu Tsai (2):
->   clk: sunxi-ng: Support fixed post-dividers on MP style clocks
->   clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module
->     clocks
-> 
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
->  drivers/clk/sunxi-ng/ccu_mp.c         | 20 ++++++++++--
->  drivers/clk/sunxi-ng/ccu_mp.h         | 24 +++++++++++++++
->  3 files changed, 79 insertions(+), 22 deletions(-)
-> 
+> So, the question I have is: what is the actual "correct" behavior of
+> spin_trylock_irqsave()? Is it really supposed to always return true
+> when CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n or is this a bug?
+
+Thanks for doing the analysis in this thread.
+
+When CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n, spinlocks are
+compiler barriers, that's it. So even if it is a bug to always
+return true, I fail to see how we can detect that a spinlock is
+already held in this configuration and return true or false.
+
+I suppose the best option is to make clk_enable_lock() and
+clk_enable_unlock() into nops or pure owner/refcount/barrier
+updates when CONFIG_SMP=n. We pretty much just need the barrier
+semantics when there's only a single CPU.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
