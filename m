@@ -1,98 +1,71 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org
-Cc: mturquette@baylibre.com,
-	robh@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
-Date: Tue,  5 Dec 2017 17:46:55 +0200
-Message-Id: <20171205154701.27730-1-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 15:39:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 4/5] clk: aspeed: Register gated clocks
+Message-ID: <20171221233927.GE7997@codeaurora.org>
+References: <20171128071908.12279-1-joel@jms.id.au>
+ <20171128071908.12279-5-joel@jms.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171128071908.12279-5-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds support for the A53 CPU clock on MSM8916 platforms
-and allows scaling of the CPU frequency on msm8916 based platforms.
+On 11/28, Joel Stanley wrote:
+> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+> index 839243691b26..b5dc3e298693 100644
+> --- a/drivers/clk/clk-aspeed.c
+> +++ b/drivers/clk/clk-aspeed.c
+> @@ -202,6 +202,107 @@ static const struct aspeed_clk_soc_data ast2400_data = {
+>  	.calc_pll = aspeed_ast2400_calc_pll,
+>  };
+>  
+> +static int aspeed_clk_enable(struct clk_hw *hw)
+> +{
+> +	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
+> +	unsigned long flags;
+> +	u32 clk = BIT(gate->clock_idx);
+> +	u32 rst = BIT(gate->reset_idx);
+> +
+> +	spin_lock_irqsave(gate->lock, flags);
+> +
+> +	if (gate->reset_idx >= 0) {
+> +		/* Put IP in reset */
+> +		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
+> +
+> +		/* Delay 100us */
+> +		udelay(100);
+> +	}
+> +
+> +	/* Enable clock */
+> +	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
+> +
+> +	if (gate->reset_idx >= 0) {
+> +		/* Delay 10ms */
+> +		/* TODO: can we sleep here? */
+> +		msleep(10);
 
-Changes since v10 (https://lkml.org/lkml/2017/12/1/577)
-* Addressed Bjorn's comments on APCS clock driver.
-* Picked Acks from Rob and Bjorn.
+No you can't sleep here. It needs to delay because this is inside
+spinlock_irqsave.
 
-Changes since v9 (https://lkml.org/lkml/2017/9/21/511)
-* Added the clock properties to the APCS DT node, instead of adding a subnode
-and also replaced patch "mailbox: qcom: Populate APCS child platform devices"
-with "mailbox: qcom: Create APCS child device for clock controller".
-* Dropped patch "mailbox: qcom: Move the apcs struct into a separate header",
-and use dev_get_regmap(dev->parent) in the child driver.
-* Addressed Bjorn's comments on a53-pll and apcs-clk drivers.
-* Added SPDX copyright identifiers.
+> +
+> +		/* Take IP out of reset */
+> +		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
+> +	}
+> +
+> +	spin_unlock_irqrestore(gate->lock, flags);
+> +
+> +	return 0;
+> +}
 
-Changes since v8 (https://lkml.org/lkml/2017/6/23/476)
- * Converted APCS mailbox driver to use regmap and to populate child
- platform devices that will handle the rest of the functionality
- provided by APCS block.
- * Picked Rob's Ack for the PLL binding.
- * Changed the APCS binding and put it into a separate patch.
- * Addressed review comments.
- * Minor changes.
-
-Changes since v7 (https://lkml.org/lkml/2016/10/31/296)
- * Add the APCS clock controller to the APCS driver to expose both the
- mailbox and clock controller functionality as discussed earlier:
- https://lkml.org/lkml/2016/11/14/860
- * Changed the a53pll compatible string as suggested by Rob.
-
-Changes since v6 (https://lkml.org/lkml/2016/9/7/347)
- * Addressed various comments from Stephen Boyd
-
-Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
- * Rebase to clk-next and update according to the recent API changes.
-
-Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
- * Convert to builtin drivers as now __clk_lookup() is used
-
-Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
- * Split driver into two parts - and separate A53 PLL and
-   A53 clock controller drivers.
- * Drop the safe switch hook patch. Add a clock notifier in
-   the clock provider to handle switching via safe mux and
-   divider configuration.
-
-Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
- * Drop gpll0_vote patch.
- * Switch to the new clk_hw_* APIs.
- * Rebase to the current clk-next.
-
-Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
- * Drop SR2 PLL patch, as it is already applied.
- * Add gpll0_vote rate propagation patch.
- * Update/rebase patches to the current clk-next.
-
-Georgi Djakov (6):
-  mailbox: qcom: Convert APCS IPC driver to use regmap
-  mailbox: qcom: Create APCS child device for clock controller
-  clk: qcom: Add A53 PLL support
-  clk: qcom: Add regmap mux-div clocks support
-  dt-bindings: mailbox: qcom: Document the APCS clock binding
-  clk: qcom: Add APCS clock controller support
-
- .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 ++
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |  18 ++
- drivers/clk/qcom/Kconfig                           |  21 ++
- drivers/clk/qcom/Makefile                          |   3 +
- drivers/clk/qcom/a53-pll.c                         | 110 ++++++++++
- drivers/clk/qcom/apcs-msm8916.c                    | 149 ++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.c              | 229 +++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h              |  46 +++++
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            |  35 +++-
- 9 files changed, 628 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
- create mode 100644 drivers/clk/qcom/apcs-msm8916.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
