@@ -1,200 +1,65 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audi o <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	Naveen M <naveen.m@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v6 4/6] ASoC: Intel: eve: Enable mclk and ssp sclk early
-Date: Tue, 26 Dec 2017 22:14:54 +0530
-Message-Id: <1514306696-7062-5-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8431 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751318AbdLUJC2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 04:02:28 -0500
+Date: Thu, 21 Dec 2017 11:02:22 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] clk: tegra: add fence_delay for clock registers
+Message-ID: <20171221090222.GT29417@tbergstrom-lnx.Nvidia.com>
+References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
+ <1510842542-16451-3-git-send-email-pdeschrijver@nvidia.com>
+ <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <9026e3d1-26aa-28fc-6098-60484957da48@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Naveen M <naveen.m@intel.com>
+On Tue, Dec 19, 2017 at 11:04:25PM +0000, Jon Hunter wrote:
+> 
+> On 16/11/17 14:29, Peter De Schrijver wrote:
+> > To ensure writes to clock registers have properly propagated through the
+> > clock control logic and state machines, we need to ensure the writes have
+> > been posted in the registers and wait for 1us after that.
+> 
+> Is this is all cases or just for the SLCG?
+> 
 
-rt5663 and rt5514 needs mclk/sclk early to synchronize its internal
-clocks.
+This is also needed for other registers, but I think that's outside the scope
+of this series.
 
-Signed-off-by: Naveen M <naveen.m@intel.com>
-Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
----
- sound/soc/intel/boards/Kconfig                     |  1 +
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 94 ++++++++++++++++++++++
- 2 files changed, 95 insertions(+)
+Peter.
 
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index f62f2ab1481e..bdddab586e95 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -275,6 +275,7 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
-         depends on X86_INTEL_LPSS && I2C && SPI
-         select SND_SOC_INTEL_SST
-         depends on SND_SOC_INTEL_SKYLAKE
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
-         select SND_SOC_RT5663
-         select SND_SOC_RT5514
-         select SND_SOC_RT5514_SPI
-diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-index 38512f0d1a73..f39f6e2f3db1 100644
---- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-@@ -30,6 +30,9 @@
- #include "../../codecs/rt5663.h"
- #include "../../codecs/hdac_hdmi.h"
- #include "../skylake/skl.h"
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- 
- #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
- #define KBL_REALTEK_DMIC_CODEC_DAI "rt5514-aif1"
-@@ -58,6 +61,8 @@ struct kbl_codec_private {
- 	struct snd_soc_jack kabylake_headset;
- 	struct list_head hdmi_pcm_list;
- 	struct snd_soc_jack kabylake_hdmi[2];
-+	struct clk *mclk;
-+	struct clk *sclk;
- };
- 
- enum {
-@@ -79,6 +84,61 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("DMIC"),
- };
- 
-+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-+			struct snd_kcontrol *k, int  event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
-+	int ret = 0;
-+
-+	/*
-+	 * MCLK/SCLK need to be ON early for a successful synchronization of
-+	 * codec internal clock. And the clocks are turned off during
-+	 * POST_PMD after the stream is stopped.
-+	 */
-+	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		/* Enable MCLK */
-+		ret = clk_set_rate(priv->mclk, 24000000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->mclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Enable SCLK */
-+		ret = clk_set_rate(priv->sclk, 3072000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
-+				ret);
-+			clk_disable_unprepare(priv->mclk);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->sclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-+			clk_disable_unprepare(priv->mclk);
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		clk_disable_unprepare(priv->mclk);
-+		clk_disable_unprepare(priv->sclk);
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-@@ -87,11 +147,15 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_MIC("DMIC", NULL),
- 	SND_SOC_DAPM_SPK("HDMI1", NULL),
- 	SND_SOC_DAPM_SPK("HDMI2", NULL),
-+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-+			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
-+			SND_SOC_DAPM_POST_PMD),
- 
- };
- 
- static const struct snd_soc_dapm_route kabylake_map[] = {
- 	/* Headphones */
-+	{ "Headphone Jack", NULL, "Platform Clock" },
- 	{ "Headphone Jack", NULL, "HPOL" },
- 	{ "Headphone Jack", NULL, "HPOR" },
- 
-@@ -100,6 +164,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
- 	{ "Right Spk", NULL, "Right BE_OUT" },
- 
- 	/* other jacks */
-+	{ "Headset Mic", NULL, "Platform Clock" },
- 	{ "IN1P", NULL, "Headset Mic" },
- 	{ "IN1N", NULL, "Headset Mic" },
- 
-@@ -648,6 +713,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- {
- 	struct kbl_codec_private *ctx;
- 	struct skl_machine_pdata *pdata;
-+	int ret = 0;
- 
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
-@@ -663,6 +729,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- 		dmic_constraints = pdata->dmic_num == 2 ?
- 			&constraints_dmic_2ch : &constraints_dmic_channels;
- 
-+	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
-+	if (IS_ERR(ctx->mclk)) {
-+		ret = PTR_ERR(ctx->mclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_mclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
-+	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
-+	if (IS_ERR(ctx->sclk)) {
-+		ret = PTR_ERR(ctx->sclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_card(&pdev->dev, &kabylake_audio_card);
- }
- 
--- 
-2.7.4
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk.h | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index 872f118..d5badbe 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -809,4 +809,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
+> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> >  
+> > +/* Combined read fence with delay */
+> > +#define fence_udelay(delay, reg)	\
+> > +	do {				\
+> > +		readl(reg);		\
+> > +		udelay(delay);		\
+> > +	} while(0)
+> > +
+> >  #endif /* TEGRA_CLK_H */
+> 
+> Do we plan to use this else-where or just for this WAR? I am wondering
+> if it should just go in the Tegra210 clock file.
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
