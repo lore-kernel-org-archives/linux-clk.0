@@ -1,36 +1,35 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 26 Dec 2017 17:38:58 -0800
+Date: Thu, 21 Dec 2017 15:02:48 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC PATCH V1 1/2] clk: use atomic runtime pm api in
- clk_core_is_enabled
-Message-ID: <20171227013858.GW7997@codeaurora.org>
-References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V7 07/12] clk: sprd: add adjustable pll support
+Message-ID: <20171221230248.GU7997@codeaurora.org>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+ <20171207125715.16160-8-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <20171207125715.16160-8-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Dong Aisheng wrote:
-> Current clk_pm_runtime_put is using pm_runtime_put_sync which
-> is not safe to be called in clk_core_is_enabled as it should
-> be able to run in atomic context.
+On 12/07, Chunyan Zhang wrote:
+> Introduced a common adjustable pll clock driver for Spreadtrum SoCs.
 > 
-> Thus use pm_runtime_put instead which is atomic safe.
-> 
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
