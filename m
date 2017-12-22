@@ -1,64 +1,204 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:32844 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752447AbdLLVYy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 16:24:54 -0500
-Received: by mail-lf0-f66.google.com with SMTP id 74so322613lfs.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Dec 2017 13:24:53 -0800 (PST)
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Fri, 22 Dec 2017 11:34:19 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Clark <robdclark@gmail.com>,
+	Alessandro Zummo <a.zummo@towertech.it>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.or,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] clk: divider: fix incorrect usage of container_of
+Message-ID: <20171222103419.GB18255@piout.net>
+References: <20171221163054.13600-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20171212172635.2utwz3koyo5iwglt@plaes.org>
-References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
- <4357a69da97f46a324eec4c766f4bc9d9e7733ff.1490545262.git-series.plaes@plaes.org>
- <CAOi56cUjqjcZRz6VSwUWcrW=4RQyqyZHtm1vuM3HT2ypdPJ78g@mail.gmail.com> <20171212172635.2utwz3koyo5iwglt@plaes.org>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Tue, 12 Dec 2017 13:24:52 -0800
-Message-ID: <CAOi56cUeRrKQnJ-akJPB160-60aBzy64bDgFeoqMpHRJSCnDeQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 3/6] ARM: sun4i: Convert to CCU
-To: Priit Laes <plaes@plaes.org>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171221163054.13600-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 12, 2017 at 9:26 AM, Priit Laes <plaes@plaes.org> wrote:
-> On Mon, Dec 11, 2017 at 02:22:30PM -0800, Kevin Hilman wrote:
->> On Sun, Mar 26, 2017 at 10:20 AM, Priit Laes <plaes@plaes.org> wrote:
->> > Convert sun4i-a10.dtsi to new CCU driver.
->> >
->> > Signed-off-by: Priit Laes <plaes@plaes.org>
->>
->> I finally got around to bisecting a mainline boot failure on
->> sun4i-a10-cubieboard that's been happening for quite a while.  Based
->> on on kernelci.org, it showed up sometime during the v4.15 merge
->> window[1].  It bisected down to this commit (in mainline as commit
->> 41193869f2bdb585ce09bfdd16d9482aadd560ad).
->>
->> When it fails, there is no output on the serial console, so I don't
->> know exactly how it's failing, just that it no longer boots.
->
-> We tried out latest 4.15 with various compilers and it works:
-> - gcc version 7.1.1 20170622 (Red Hat Cross 7.1.1-3) (GCC) - A10 Gemei G9 tablet
-> - gcc 7.2.0-debian - A10 Cubieboard
+On 21/12/2017 at 17:30:54 +0100, Jerome Brunet wrote:
+> divider_recalc_rate() is an helper function used by clock divider of
+> different types, so the structure containing the 'hw' pointer is not
+> always a 'struct clk_divider'
+> 
+> At the following line:
+> > div = _get_div(table, val, flags, divider->width);
+> 
+> in several cases, the value of 'divider->width' is garbage as the actual
+> structure behind this memory is not a 'struct clk_divider'
+> 
+> Fortunately, this width value is used by _get_val() only when
+> CLK_DIVIDER_MAX_AT_ZERO flag is set. This has never been the case so
+> far when the structure is not a 'struct clk_divider'. This is probably
+> why we did not notice this bug before
+> 
+> Fixes: afe76c8fd030 ("clk: allow a clk divider with max divisor when zero")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-And you can reproduce the bug with gcc5 or gcc6?
+For RTC:
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Very strange that a DT only patch would cause a gcc related regression
-and if it does, it should be investigated.  I don't think requiring
-gcc7 is an appropriate solution.
+> ---
+> Hi Stephen, Mike,
+> 
+> In addition to clock, this patch also touch the rtc and drm directories.
+> As it is changing the API of the helper function, I have this fix in a
+> single commit to avoid breaking bisect.
+> 
+> Please let me know if you prefer to do differently.
+> 
+> Cheers
+> Jerome
+> 
+> drivers/clk/clk-divider.c                  | 7 +++----
+>  drivers/clk/hisilicon/clkdivider-hi6220.c  | 2 +-
+>  drivers/clk/nxp/clk-lpc32xx.c              | 2 +-
+>  drivers/clk/qcom/clk-regmap-divider.c      | 2 +-
+>  drivers/clk/sunxi-ng/ccu_div.c             | 2 +-
+>  drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c | 2 +-
+>  drivers/rtc/rtc-ac100.c                    | 6 ++++--
+>  include/linux/clk-provider.h               | 2 +-
+>  8 files changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 4ed516cb7276..b49942b9fe50 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -118,12 +118,11 @@ static unsigned int _get_val(const struct clk_div_table *table,
+>  unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>  				  unsigned int val,
+>  				  const struct clk_div_table *table,
+> -				  unsigned long flags)
+> +				  unsigned long flags, unsigned long width)
+>  {
+> -	struct clk_divider *divider = to_clk_divider(hw);
+>  	unsigned int div;
+>  
+> -	div = _get_div(table, val, flags, divider->width);
+> +	div = _get_div(table, val, flags, width);
+>  	if (!div) {
+>  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+>  			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+> @@ -145,7 +144,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+>  	val &= div_mask(divider->width);
+>  
+>  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+> -				   divider->flags);
+> +				   divider->flags, divider->width);
+>  }
+>  
+>  static bool _is_valid_table_div(const struct clk_div_table *table,
+> diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
+> index a1c1f684ad58..9f46cf9dcc65 100644
+> --- a/drivers/clk/hisilicon/clkdivider-hi6220.c
+> +++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
+> @@ -56,7 +56,7 @@ static unsigned long hi6220_clkdiv_recalc_rate(struct clk_hw *hw,
+>  	val &= div_mask(dclk->width);
+>  
+>  	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
+> -				   CLK_DIVIDER_ROUND_CLOSEST);
+> +				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
+>  }
+>  
+>  static long hi6220_clkdiv_round_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+> index b669a5c10fee..f5d815f577e0 100644
+> --- a/drivers/clk/nxp/clk-lpc32xx.c
+> +++ b/drivers/clk/nxp/clk-lpc32xx.c
+> @@ -956,7 +956,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+>  	val &= div_mask(divider->width);
+>  
+>  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+> -				   divider->flags);
+> +				   divider->flags, divider->width);
+>  }
+>  
+>  static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
+> index 53484912301e..928fcc16ee27 100644
+> --- a/drivers/clk/qcom/clk-regmap-divider.c
+> +++ b/drivers/clk/qcom/clk-regmap-divider.c
+> @@ -59,7 +59,7 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
+>  	div &= BIT(divider->width) - 1;
+>  
+>  	return divider_recalc_rate(hw, parent_rate, div, NULL,
+> -				   CLK_DIVIDER_ROUND_CLOSEST);
+> +				   CLK_DIVIDER_ROUND_CLOSEST, divider->width);
+>  }
+>  
+>  const struct clk_ops clk_regmap_div_ops = {
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+> index baa3cf96507b..302a18efd39f 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.c
+> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+> @@ -71,7 +71,7 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+>  						  parent_rate);
+>  
+>  	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> -				  cd->div.flags);
+> +				  cd->div.flags, cd->div.width);
+>  
+>  	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		val /= cd->fixed_post_div;
+> diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+> index fe15aa64086f..71fe60e5f01f 100644
+> --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+> @@ -698,7 +698,7 @@ static unsigned long dsi_pll_14nm_postdiv_recalc_rate(struct clk_hw *hw,
+>  	val &= div_mask(width);
+>  
+>  	return divider_recalc_rate(hw, parent_rate, val, NULL,
+> -				   postdiv->flags);
+> +				   postdiv->flags, width);
+>  }
+>  
+>  static long dsi_pll_14nm_postdiv_round_rate(struct clk_hw *hw,
+> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+> index 9e336184491c..0282ccc6181c 100644
+> --- a/drivers/rtc/rtc-ac100.c
+> +++ b/drivers/rtc/rtc-ac100.c
+> @@ -137,13 +137,15 @@ static unsigned long ac100_clkout_recalc_rate(struct clk_hw *hw,
+>  		div = (reg >> AC100_CLKOUT_PRE_DIV_SHIFT) &
+>  			((1 << AC100_CLKOUT_PRE_DIV_WIDTH) - 1);
+>  		prate = divider_recalc_rate(hw, prate, div,
+> -					    ac100_clkout_prediv, 0);
+> +					    ac100_clkout_prediv, 0,
+> +					    AC100_CLKOUT_PRE_DIV_WIDTH);
+>  	}
+>  
+>  	div = (reg >> AC100_CLKOUT_DIV_SHIFT) &
+>  		(BIT(AC100_CLKOUT_DIV_WIDTH) - 1);
+>  	return divider_recalc_rate(hw, prate, div, NULL,
+> -				   CLK_DIVIDER_POWER_OF_TWO);
+> +				   CLK_DIVIDER_POWER_OF_TWO,
+> +				   AC100_CLKOUT_DIV_WIDTH);
+>  }
+>  
+>  static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 73ac87f34df9..4c4001086447 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -412,7 +412,7 @@ extern const struct clk_ops clk_divider_ro_ops;
+>  
+>  unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>  		unsigned int val, const struct clk_div_table *table,
+> -		unsigned long flags);
+> +		unsigned long flags, unsigned long width);
+>  long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+>  			       unsigned long rate, unsigned long *prate,
+>  			       const struct clk_div_table *table,
+> -- 
+> 2.14.3
+> 
 
-@Chen-Yu, @Maxime: are you guys OK with requiring gcc7 for working
-upstream boot for A10?
-
-Kevin
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
