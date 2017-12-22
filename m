@@ -1,225 +1,526 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org
-Cc: mturquette@baylibre.com,
-	robh@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v11 6/6] clk: qcom: Add APCS clock controller support
-Date: Tue,  5 Dec 2017 17:47:01 +0200
-Message-Id: <20171205154701.27730-7-georgi.djakov@linaro.org>
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Fri, 22 Dec 2017 11:42:05 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH V2 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Message-ID: <20171222034205.GD24403@b29396-OptiPlex-7040>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+ <1499946435-7177-2-git-send-email-aisheng.dong@nxp.com>
+ <20171102075039.GU30645@codeaurora.org>
+ <20171220142757.GB30461@b29396-OptiPlex-7040>
+ <20171222012401.GB7997@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171222012401.GB7997@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the APCS clock controller. It is part of the APCS
-hardware block, which among other things implements also a combined
-mux and half integer divider functionality. It can choose between a
-fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
-divider can be set both at the same time.
+On Thu, Dec 21, 2017 at 05:24:01PM -0800, Stephen Boyd wrote:
+> On 12/20, Dong Aisheng wrote:
+> > On Thu, Nov 02, 2017 at 12:50:39AM -0700, Stephen Boyd wrote:
+> > > On 07/13, Dong Aisheng wrote:
+> > > > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > > > index 9bb472c..55f8c41 100644
+> > > > --- a/drivers/clk/clk-divider.c
+> > > > +++ b/drivers/clk/clk-divider.c
+> > > > @@ -123,6 +123,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+> > > >  	struct clk_divider *divider = to_clk_divider(hw);
+> > > >  	unsigned int div;
+> > > >  
+> > > > +	if (flags & CLK_DIVIDER_ZERO_GATE && !val)
+> > > > +		return 0;
+> > > > +
+> > > >  	div = _get_div(table, val, flags, divider->width);
+> > > >  	if (!div) {
+> > > >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+> > > > @@ -141,8 +144,13 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+> > > >  	struct clk_divider *divider = to_clk_divider(hw);
+> > > >  	unsigned int val;
+> > > >  
+> > > > -	val = clk_readl(divider->reg) >> divider->shift;
+> > > > -	val &= div_mask(divider->width);
+> > > > +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
+> > > > +	    !clk_hw_is_enabled(hw)) {
+> > > 
+> > > This seems racy. Are we holding the register lock here?
+> > > 
+> > 
+> > Would you please clarify what type of racy you mean?
+> 
+> I mean a race between clk_enable() and clk_set_rate(). A
+> clk_enable() can happen while a rate change is going on, and then
+> the clk_hw_is_enabled() check here would be racing, unless this
+> driver specifically tries to prevent that from happening by
+> holding a spinlock somewhere.
+> 
 
-This is required for enabling CPU frequency scaling on MSM8916-based
-platforms.
+Will this race cause real problems as clk_divider_is_enabled is only
+a register read?
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/Kconfig        |  11 +++
- drivers/clk/qcom/Makefile       |   1 +
- drivers/clk/qcom/apcs-msm8916.c | 149 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 161 insertions(+)
- create mode 100644 drivers/clk/qcom/apcs-msm8916.c
+And seems either clk_hw_is_enable or __clk_is_enabled is allowed
+to be called by anywhere currently. So it may be none of calling
+in set_rate or recalc_rate issue.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 81ac7b9378fe..255023b439c9 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -22,6 +22,17 @@ config QCOM_A53PLL
- 	  Say Y if you want to support higher CPU frequencies on MSM8916
- 	  devices.
+If they may be race with clk_enable/disable function, seems they may
+be better protected by the core.
+
+And i did see some clarify in Documentation/clk.txt:
+"The enable lock is a spinlock and is held across calls to the .enable,
+.disable and .is_enabled operations. Those operations are thus not allowed to
+sleep, and calls to the clk_enable(), clk_disable() and clk_is_enabled() API
+functions are allowed in atomic context."
+
+Then how about do like below:
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8a1860a..ce5fa96 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -191,6 +191,7 @@ static bool clk_core_is_prepared(struct clk_core *core)
  
-+config QCOM_CLK_APCS_MSM8916
-+	bool "MSM8916 APCS Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	depends on QCOM_APCS_IPC
-+	default ARCH_QCOM
-+	help
-+	  Support for the APCS Clock Controller on msm8916 devices. The
-+	  APCS is managing the mux and divider which feeds the CPUs.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as msm8916.
+ static bool clk_core_is_enabled(struct clk_core *core)
+ {
++       unsigned long flags;
+        bool ret = false;
+ 
+        /*
+@@ -218,7 +219,10 @@ static bool clk_core_is_enabled(struct clk_core *core)
+                }
+        }
+ 
++       flags = clk_enable_lock();
+        ret = core->ops->is_enabled(core->hw);
++       clk_enable_unlock(flags);
 +
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 7c51d877f967..0408cebf38d4 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -34,5 +34,6 @@ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-+obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-new file mode 100644
-index 000000000000..832172c2fc8b
---- /dev/null
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm APCS clock controller driver
-+ *
-+ * Copyright (c) 2017, Linaro Limited
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
-+
-+enum {
-+	P_GPLL0,
-+	P_A53PLL,
-+};
-+
-+static const struct parent_map gpll0_a53cc_map[] = {
-+	{ P_GPLL0, 4 },
-+	{ P_A53PLL, 5 },
-+};
-+
-+static const char * const gpll0_a53cc[] = {
-+	"gpll0_vote",
-+	"a53pll",
-+};
-+
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the A53 PLL is reconfigured.
-+ */
-+static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			     void *data)
-+{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
-+	if (event == PRE_RATE_CHANGE)
-+		/* set the mux and divider to safe frequency (400mhz) */
-+		ret = __mux_div_set_src_div(md, 4, 3);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device *parent = dev->parent;
-+	struct clk_regmap_mux_div *a53cc;
-+	struct regmap *regmap;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	regmap = dev_get_regmap(parent, NULL);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		dev_err(dev, "failed to get regmap: %d\n", ret);
-+		return ret;
-+	}
-+
-+	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
-+	if (!a53cc)
-+		return -ENOMEM;
-+
-+	init.name = "a53mux";
-+	init.parent_names = gpll0_a53cc;
-+	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
-+	init.ops = &clk_regmap_mux_div_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+
-+	a53cc->clkr.hw.init = &init;
-+	a53cc->clkr.regmap = regmap;
-+	a53cc->reg_offset = 0x50;
-+	a53cc->hid_width = 5;
-+	a53cc->hid_shift = 0;
-+	a53cc->src_width = 3;
-+	a53cc->src_shift = 8;
-+	a53cc->parent_map = gpll0_a53cc_map;
-+
-+	a53cc->pclk = devm_clk_get(parent, NULL);
-+	if (IS_ERR(a53cc->pclk)) {
-+		ret = PTR_ERR(a53cc->pclk);
-+		dev_err(dev, "failed to get clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
-+	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
-+	if (ret) {
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-+				     &a53cc->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		goto err;
-+	}
-+
-+	platform_set_drvdata(pdev, a53cc);
-+
-+	return 0;
-+
-+err:
-+	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
-+	return ret;
-+}
-+
-+static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk_regmap_mux_div *a53cc = platform_get_drvdata(pdev);
-+	struct device *parent = pdev->dev.parent;
-+
-+	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
-+	of_clk_del_provider(parent->of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qcom_apcs_msm8916_clk_driver = {
-+	.probe = qcom_apcs_msm8916_clk_probe,
-+	.remove = qcom_apcs_msm8916_clk_remove,
-+	.driver = {
-+		.name = "qcom-apcs-msm8916-clk",
-+	},
-+};
-+module_platform_driver(qcom_apcs_msm8916_clk_driver);
-+
-+MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm MSM8916 APCS clock driver");
+ done:
+        clk_pm_runtime_put(core);
+
+> > 
+> > Currently it only protects register write between set_rate and enable/disable,
+> > and other register read are not protected.
+> > e.g. in recalc_rate and is_enabled.
+> 
+> If you're holding some lock that is used to protect the register
+> writes and also the clk from getting enabled/disabled during a
+> rate change then it's fine.
+> 
+
+Yes, all possible register write are protected.
+
+Regards
+Dong Aisheng
+
+> > 
+> > And i did see similar users, e.g.
+> > drivers/clk/sunxi-ng/ccu_mult.c
+> 
+> Sure. Those could also be broken. I'm not sure.
+> 
+> > 
+> > Should we still need protect them here?
+> > 
+> > > > +		val = divider->cached_val;
+> > > > +	} else {
+> > > > +		val = clk_readl(divider->reg) >> divider->shift;
+> > > > +		val &= div_mask(divider->width);
+> > > > +	}
+> > > >  
+> > > >  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+> > > >  				   divider->flags);
+> > > > @@ -392,6 +400,12 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > >  	value = divider_get_val(rate, parent_rate, divider->table,
+> > > >  				divider->width, divider->flags);
+> > > >  
+> > > > +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
+> > > > +	    !clk_hw_is_enabled(hw)) {
+> > > 
+> > > Same racy comment here.
+> > > 
+> > > > +		divider->cached_val = value;
+> > > > +		return 0;
+> > > > +	}
+> > > > +
+> > > >  	if (divider->lock)
+> > > >  		spin_lock_irqsave(divider->lock, flags);
+> > > >  	else
+> > > > @@ -414,10 +428,85 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > +static int clk_divider_enable(struct clk_hw *hw)
+> > > > +{
+> > > > +	struct clk_divider *divider = to_clk_divider(hw);
+> > > > +	unsigned long flags = 0;
+> > > > +	u32 val;
+> > > > +
+> > > > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
+> > > > +		return 0;
+> > > 
+> > > This is not good. We will always jump to these functions on
+> > > enable/disable for a divider although 99.9% of all dividers that
+> > > exist won't need to run this code at all.
+> > > 
+> > 
+> > I absolutely understand this concern.
+> > 
+> > > Can you please move this logic into your own divider
+> > > implementation? The flag can be added to the generic layer if
+> > > necessary but I'd prefer to see this logic kept in the driver
+> > > that uses it. If we get more than one driver doing the cached
+> > > divider thing then we can think about moving it to the more
+> > > generic place like here, but for now we should be able to keep
+> > > this contained away from the basic types and handled by the
+> > > quirky driver that needs it.
+> > > 
+> > 
+> > If only for above issue, how about invent a clk_divider_gate_ops
+> > to separate the users of normal divider and zero gate divider:
+> > 
+> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > index 4ed516c..b51f3f9 100644
+> > --- a/drivers/clk/clk-divider.c
+> > +++ b/drivers/clk/clk-divider.c
+> > @@ -125,6 +125,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+> >  
+> >  	div = _get_div(table, val, flags, divider->width);
+> >  	if (!div) {
+> > +		if (flags & CLK_DIVIDER_ZERO_GATE)
+> > +			return 0;
+> > +
+> >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+> >  			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+> >  			clk_hw_get_name(hw));
+> > @@ -148,6 +151,23 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+> >  				   divider->flags);
+> >  }
+> >  
+> > +static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
+> > +						  unsigned long parent_rate)
+> > +{
+> > +	struct clk_divider *divider = to_clk_divider(hw);
+> > +	unsigned int val;
+> > +
+> > +	if (!clk_hw_is_enabled(hw)) {
+> > +		val = divider->cached_val;
+> > +	} else {
+> > +		val = clk_readl(divider->reg) >> divider->shift;
+> > +		val &= div_mask(divider->width);
+> > +	}
+> > +
+> > +	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+> > +				   divider->flags);
+> > +}
+> > +
+> >  static bool _is_valid_table_div(const struct clk_div_table *table,
+> >  							 unsigned int div)
+> >  {
+> > @@ -416,6 +436,89 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+> >  	return 0;
+> >  }
+> >  
+> > +static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +				unsigned long parent_rate)
+> > +{
+> > +	struct clk_divider *divider = to_clk_divider(hw);
+> > +	int value;
+> > +
+> > +	if (!clk_hw_is_enabled(hw)) {
+> > +		value = divider_get_val(rate, parent_rate, divider->table,
+> > +					divider->width, divider->flags);
+> > +		if (value < 0)
+> > +			return value;
+> > +
+> > +		divider->cached_val = value;
+> > +
+> > +		return 0;
+> > +	}
+> > +
+> > +	return clk_divider_set_rate(hw, rate, parent_rate);
+> > +}
+> > +
+> > +static int clk_divider_enable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_divider *divider = to_clk_divider(hw);
+> > +	unsigned long uninitialized_var(flags);
+> > +	u32 val;
+> > +
+> > +	if (!divider->cached_val) {
+> > +		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (divider->lock)
+> > +		spin_lock_irqsave(divider->lock, flags);
+> > +	else
+> > +		__acquire(divider->lock);
+> > +
+> > +	/* restore div val */
+> > +	val = clk_readl(divider->reg);
+> > +	val |= divider->cached_val << divider->shift;
+> > +	clk_writel(val, divider->reg);
+> > +
+> > +	if (divider->lock)
+> > +		spin_unlock_irqrestore(divider->lock, flags);
+> > +	else
+> > +		__release(divider->lock);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void clk_divider_disable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_divider *divider = to_clk_divider(hw);
+> > +	unsigned long uninitialized_var(flags);
+> > +	u32 val;
+> > +
+> > +	if (divider->lock)
+> > +		spin_lock_irqsave(divider->lock, flags);
+> > +	else
+> > +		__acquire(divider->lock);
+> > +
+> > +	/* store the current div val */
+> > +	val = clk_readl(divider->reg) >> divider->shift;
+> > +	val &= div_mask(divider->width);
+> > +	divider->cached_val = val;
+> > +	clk_writel(0, divider->reg);
+> > +
+> > +	if (divider->lock)
+> > +		spin_unlock_irqrestore(divider->lock, flags);
+> > +	else
+> > +		__release(divider->lock);
+> > +}
+> > +
+> > +static int clk_divider_is_enabled(struct clk_hw *hw)
+> > +{
+> > +	struct clk_divider *divider = to_clk_divider(hw);
+> > +	u32 val;
+> > +
+> > +	val = clk_readl(divider->reg) >> divider->shift;
+> > +	val &= div_mask(divider->width);
+> > +
+> > +	return val ? 1 : 0;
+> > +}
+> > +
+> >  const struct clk_ops clk_divider_ops = {
+> >  	.recalc_rate = clk_divider_recalc_rate,
+> >  	.round_rate = clk_divider_round_rate,
+> > @@ -423,6 +526,16 @@ const struct clk_ops clk_divider_ops = {
+> >  };
+> >  EXPORT_SYMBOL_GPL(clk_divider_ops);
+> >  
+> > +const struct clk_ops clk_divider_gate_ops = {
+> > +	.recalc_rate = clk_divider_gate_recalc_rate,
+> > +	.round_rate = clk_divider_round_rate,
+> > +	.set_rate = clk_divider_gate_set_rate,
+> > +	.enable = clk_divider_enable,
+> > +	.disable = clk_divider_disable,
+> > +	.is_enabled = clk_divider_is_enabled,
+> > +};
+> > +EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
+> > +
+> >  const struct clk_ops clk_divider_ro_ops = {
+> >  	.recalc_rate = clk_divider_recalc_rate,
+> >  	.round_rate = clk_divider_round_rate,
+> > @@ -438,6 +551,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+> >  	struct clk_divider *div;
+> >  	struct clk_hw *hw;
+> >  	struct clk_init_data init;
+> > +	u32 val;
+> >  	int ret;
+> >  
+> >  	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+> > @@ -455,6 +569,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+> >  	init.name = name;
+> >  	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
+> >  		init.ops = &clk_divider_ro_ops;
+> > +	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
+> > +		init.ops = &clk_divider_gate_ops;
+> >  	else
+> >  		init.ops = &clk_divider_ops;
+> >  	init.flags = flags | CLK_IS_BASIC;
+> > @@ -470,6 +586,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+> >  	div->hw.init = &init;
+> >  	div->table = table;
+> >  
+> > +	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
+> > +		val = clk_readl(reg) >> shift;
+> > +		val &= div_mask(width);
+> > +		div->cached_val = val;
+> > +	}
+> > +
+> >  	/* register the clock */
+> >  	hw = &div->hw;
+> >  	ret = clk_hw_register(dev, hw);
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 7c925e6..5f33b73 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -358,6 +358,7 @@ struct clk_div_table {
+> >   * @shift:	shift to the divider bit field
+> >   * @width:	width of the divider bit field
+> >   * @table:	array of value/divider pairs, last entry should have div = 0
+> > + * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
+> >   * @lock:	register lock
+> >   *
+> >   * Clock with an adjustable divider affecting its output frequency.  Implements
+> > @@ -386,6 +387,12 @@ struct clk_div_table {
+> >   * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+> >   *	except when the value read from the register is zero, the divisor is
+> >   *	2^width of the field.
+> > + * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
+> > + *	when the value read from the register is zero, it means the divisor
+> > + *	is gated. For this case, the cached_val will be used to store the
+> > + *	intermediate div for the normal rate operation, like set_rate/get_rate/
+> > + *	recalc_rate. When the divider is ungated, the driver will actually
+> > + *	program the hardware to have the requested divider value.
+> >   */
+> >  struct clk_divider {
+> >  	struct clk_hw	hw;
+> > @@ -394,6 +401,7 @@ struct clk_divider {
+> >  	u8		width;
+> >  	u8		flags;
+> >  	const struct clk_div_table	*table;
+> > +	u32		cached_val;
+> >  	spinlock_t	*lock;
+> >  };
+> >  
+> > @@ -406,6 +414,7 @@ struct clk_divider {
+> >  #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+> >  #define CLK_DIVIDER_READ_ONLY		BIT(5)
+> >  #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
+> > +#define CLK_DIVIDER_ZERO_GATE		BIT(7)
+> >  
+> >  extern const struct clk_ops clk_divider_ops;
+> >  extern const struct clk_ops clk_divider_ro_ops;
+> > 
+> > Anyway, if you still think it's not proper, i can put it in platform
+> > driver as you wish, just in the cost of a few duplicated codes.
+> 
+> Ok. Keeping it in the basic types but split into different ops
+> path looks good.
+> 
+> > 
+> > > > +
+> > > > +	if (!divider->cached_val) {
+> > > > +		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	if (divider->lock)
+> > > > +		spin_lock_irqsave(divider->lock, flags);
+> > > > +	else
+> > > > +		__acquire(divider->lock);
+> > > > +
+> > > > +	/* restore div val */
+> > > > +	val = clk_readl(divider->reg);
+> > > > +	val |= divider->cached_val << divider->shift;
+> > > > +	clk_writel(val, divider->reg);
+> > > > +
+> > > > +	if (divider->lock)
+> > > > +		spin_unlock_irqrestore(divider->lock, flags);
+> > > > +	else
+> > > > +		__release(divider->lock);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static void clk_divider_disable(struct clk_hw *hw)
+> > > > +{
+> > > > +	struct clk_divider *divider = to_clk_divider(hw);
+> > > > +	unsigned long flags = 0;
+> > > > +	u32 val;
+> > > > +
+> > > > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
+> > > > +		return;
+> > > > +
+> > > > +	if (divider->lock)
+> > > > +		spin_lock_irqsave(divider->lock, flags);
+> > > > +	else
+> > > > +		__acquire(divider->lock);
+> > > > +
+> > > > +	/* store the current div val */
+> > > > +	val = clk_readl(divider->reg) >> divider->shift;
+> > > > +	val &= div_mask(divider->width);
+> > > > +	divider->cached_val = val;
+> > > > +	clk_writel(0, divider->reg);
+> > > > +
+> > > > +	if (divider->lock)
+> > > > +		spin_unlock_irqrestore(divider->lock, flags);
+> > > > +	else
+> > > > +		__release(divider->lock);
+> > > > +}
+> > > > +
+> > > > +static int clk_divider_is_enabled(struct clk_hw *hw)
+> > > > +{
+> > > > +	struct clk_divider *divider = to_clk_divider(hw);
+> > > > +	u32 val;
+> > > > +
+> > > > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
+> > > > +		return __clk_get_enable_count(hw->clk);
+> > > 
+> > > The plan was to delete this API once OMAP stopped using it.
+> > > clk_hw_is_enabled() doesn't work?
+> > 
+> > No, it did not work before because clk_hw_is_enabled will result
+> > in the dead loop by calling .is_enabled() callback again.
+> > 
+> > That's why __clk_get_enable_count is used instead.
+> > 
+> > However, with above new patch method, this issue was gone.
+> 
+> Great!
+> 
+> > 
+> > > 
+> > > > +
+> > > > +	val = clk_readl(divider->reg) >> divider->shift;
+> > > > +	val &= div_mask(divider->width);
+> > > > +
+> > > > +	return val ? 1 : 0;
+> > > > +}
+> > > > +
+> > > >  const struct clk_ops clk_divider_ops = {
+> > > >  	.recalc_rate = clk_divider_recalc_rate,
+> > > >  	.round_rate = clk_divider_round_rate,
+> > > >  	.set_rate = clk_divider_set_rate,
+> > > > +	.enable = clk_divider_enable,
+> > > > +	.disable = clk_divider_disable,
+> > > > +	.is_enabled = clk_divider_is_enabled,
+> > > >  };
+> > > >  EXPORT_SYMBOL_GPL(clk_divider_ops);
+> > > >  
+> > > > @@ -436,6 +525,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+> > > >  	struct clk_divider *div;
+> > > >  	struct clk_hw *hw;
+> > > >  	struct clk_init_data init;
+> > > > +	u32 val;
+> > > >  	int ret;
+> > > >  
+> > > >  	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+> > > > @@ -468,6 +558,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+> > > >  	div->hw.init = &init;
+> > > >  	div->table = table;
+> > > >  
+> > > > +	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
+> > > > +		val = clk_readl(reg) >> shift;
+> > > > +		val &= div_mask(width);
+> > > > +		div->cached_val = val;
+> > > > +	}
+> > > 
+> > > What if it isn't on? Setting cached_val to 0 is ok?
+> > > 
+> > 
+> > If it isn't on, then the cache_val should be 0.
+> > And recalc_rate will catch this case and return 0 as there's
+> > no proper pre-set rate.
+> > 
+> 
+> Ok.
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
