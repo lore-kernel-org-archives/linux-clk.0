@@ -1,86 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12572 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbdLULIN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:08:13 -0500
-Subject: Re: [PATCH v2 4/4] soc/tegra: pmc: apply MBIST work around fo
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-5-git-send-email-pdeschrijver@nvidia.com>
- <678c0758-fa91-6819-ae21-3ae1015279c1@nvidia.com>
- <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <dcd2616f-a4e2-a797-97d0-e1dc4379bf0a@nvidia.com>
-Date: Thu, 21 Dec 2017 11:08:07 +0000
+Return-Path: <subhransu.s.prusty@intel.com>
+Date: Fri, 22 Dec 2017 10:22:30 +0530
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+	ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v5 1/6] ASoC: Intel: Skylake: Add ssp clock
+ driver
+Message-ID: <20171222045229.GC21872@subhransu-desktop>
+References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+ <1512978390-8848-2-git-send-email-sriramx.periyasamy@intel.com>
+ <20171213223032.GO7997@codeaurora.org>
+ <20171218035710.GA27559@subhransu-desktop>
+ <20171218050109.GA27846@subhransu-desktop>
+ <20171218191040.GW7997@codeaurora.org>
+ <20171219054112.GB3492@subhransu-desktop>
+ <20171219191727.GD7997@codeaurora.org>
+ <20171220033318.GA6563@subhransu-desktop>
+ <20171222020436.GF7997@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171221090537.GU29417@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171222020436.GF7997@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 21/12/17 09:05, Peter De Schrijver wrote:
-> On Wed, Dec 20, 2017 at 10:06:13AM +0000, Jon Hunter wrote:
->>
->> On 16/11/17 14:29, Peter De Schrijver wrote:
->>> Apply the memory built-in self test work around when ungating certain
->>> Tegra210 power domains.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 0453ff6..4c0582d 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -142,6 +142,7 @@ struct tegra_pmc_soc {
->>>  
->>>  	bool has_tsense_reset;
->>>  	bool has_gpu_clamps;
->>> +	bool needs_mbist_war;
->>>  
->>>  	const struct tegra_io_pad_soc *io_pads;
->>>  	unsigned int num_io_pads;
->>> @@ -411,6 +412,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
->>>  
->>>  	usleep_range(10, 20);
->>>  
->>> +	if (pg->pmc->soc->needs_mbist_war)
->>> +		tegra210_handle_mbist_war(pg->id);
->>> +
->>>  	if (disable_clocks)
->>>  		tegra_powergate_disable_clocks(pg);
->>>  
->>> @@ -1712,6 +1716,7 @@ static int tegra_pmc_resume(struct device *dev)
->>>  	.cpu_powergates = tegra210_cpu_powergates,
->>>  	.has_tsense_reset = true,
->>>  	.has_gpu_clamps = true,
->>> +	.needs_mbist_war = true,
->>>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
->>>  	.io_pads = tegra210_io_pads,
->>>  };
->>
->> After applying this series, tegra210-smaug no longer boots (no output
->> from the console). Reverting this patch allows it to boot again. So
->> something here is not working ...
->>
+On Thu, Dec 21, 2017 at 06:04:36PM -0800, Stephen Boyd wrote:
+> On 12/20, Subhransu S. Prusty wrote:
+> > On Tue, Dec 19, 2017 at 11:17:27AM -0800, Stephen Boyd wrote:
+> > applicable here.
 > 
-> Annoyingly I don't have smaug, only jetson TX1.. Did you try earlycon?
+> Yeah, let's ignore a changing parent frequency. recalc_rate() is
+> also called when *this* clk rate is changed. The parent rate is
+> passed in because that's usually helpful to calculate the rate
+> that this op is supposed to return.
+> 
+> > 
+> > For us, recalc_rate() doesn't mean much as we can only return current rate,
+> > if it is same otherwise 0. Pls do advise in this case if the behaviour needs
+> > to change, if so how?
+> > 
+> 
+> Can the DSP tell us what the rate of the clk is? Or what the rate
+> of the clk is configured for? What is that configuration out of
+> boot when it's OFF? Typically, recalc_rate() can tell us what the
 
-I can take a look, but one difference between TX1 and Smaug is that for
-TX1 if believe all power domains are enabled by default whereas for
-Smaug they are not. There is a workaround in the pmc driver to turn on
-the XUSB power domain if it is off and the xHCI driver is enabled (we
-plan to remove this when we figure out how to properly manage the XUSB
-powergates). So you could try manually disabling the XUSB power domains
-on TX1 and booting.
+No, the DSP clock is programmed using configuration parameters which are
+sent from driver. DSP doesn't have any mechanism to report the clock
+configuration back to driver. So the rate is cached.
 
-Cheers
-Jon
+> rate of the clk is, even when its OFF, because we can read the
+> hardware and calculate the rate of the clk given the parent
+> frequency. We do have clk drivers out there that are like this
+> DSP and don't tell anything about the rate and we can't even ask.
+> In that case, we return 0 and cache the rate in the set_rate op.
+> 
+> Ideally, recalc_rate would always return the frequency of the clk
+> that's been configured in the hardware on the DSP side. If that
+> can't be done, I suppose faking it and caching the rate that the
+> set_rate op figures out would work. Or if enabling the clk let's
+> us know the rate we should cache it there too. But definitely
+
+Yes, this behavior is applicable for this driver. I will remove the
+recalculation part and resubmit the patch by returning the cached rate
+already done in set_rate.
+
+Regards,
+Subhransu
+
+> don't do any sort of rate caching in recalc_rate. It should just
+> blindly return the cached value if it can't read hardware.
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 
 -- 
-nvpublic
