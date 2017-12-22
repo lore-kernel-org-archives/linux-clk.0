@@ -1,59 +1,85 @@
-Return-Path: <al.kochet@gmail.com>
-Return-Path: <al.kochet@gmail.com>
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Alexander Kochetkov <al.kochet@gmail.com>
-Subject: [PATCH 2/2] clk: rockchip: limit clock rate in the rockchip_fractional_approximation()
-Date: Thu, 21 Dec 2017 19:04:42 +0300
-Message-Id: <1513872282-5370-3-git-send-email-al.kochet@gmail.com>
-In-Reply-To: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
-References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52560 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755562AbdLVM1H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Dec 2017 07:27:07 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 11/11] arm64: allwinner: a64: add simplefb for A64 SoC
+Date: Fri, 22 Dec 2017 20:22:43 +0800
+Message-Id: <20171222122243.25735-12-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-rockchip_fractional_approximation() can choose clock rate that can
-be larger than one configured using clk_set_max_rate(). Request
-to setup correct clock rate whose parent rate will be adjusted
-to out of range value will fail with -EINVAL.
+The A64 SoC features two display pipelines, one has a LCD output, the
+other has a HDMI output.
 
-Fixes: commit 5d890c2df900 ("clk: rockchip: add special approximation
-to fix up fractional clk's jitter").
+Add support for simplefb for these pipelines on A64 SoC.
 
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/rockchip/clk.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 31 +++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 35dbd63..3c1fb0d 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -175,6 +175,7 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
- 	unsigned long p_rate, p_parent_rate;
-+	unsigned long min_rate = 0, max_rate = 0;
- 	struct clk_hw *p_parent;
- 	unsigned long scale;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index fb8ea7c414e1..993f5df73e8d 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -42,9 +42,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
  
-@@ -182,6 +183,12 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
- 	if ((rate * 20 > p_rate) && (p_rate % rate != 0)) {
- 		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
- 		p_parent_rate = clk_hw_get_rate(p_parent);
-+		clk_hw_get_boundaries(clk_hw_get_parent(hw),
-+			&min_rate, &max_rate);
-+		if (p_parent_rate < min_rate)
-+			p_parent_rate = min_rate;
-+		if (p_parent_rate > max_rate)
-+			p_parent_rate = max_rate;
- 		*parent_rate = p_parent_rate;
- 	}
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
  
+ / {
+@@ -52,6 +54,35 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer-lcd {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0";
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&ccu CLK_BUS_TCON0>, <&ccu CLK_BUS_TCON0>,
++				 <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>;
++			status = "disabled";
++		};
++
++		framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-hdmi";
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&ccu CLK_BUS_TCON1>, <&ccu CLK_BUS_HDMI>,
++				 <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>;
++			status = "disabled";
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-1.7.9.5
+2.14.2
+
