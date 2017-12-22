@@ -1,147 +1,35 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [linux-sunxi] [PATCH 1/2] clk: sunxi-ng: Support fixed
- post-dividers on MP style clocks
-To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20171204051912.7485-1-wens@csie.org>
- <20171204051912.7485-2-wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Message-ID: <b961a1b6-f0e4-68e3-ab77-b0010dab63ff@arm.com>
-Date: Mon, 4 Dec 2017 23:18:03 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:34:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 1/3] clk: at91: pmc: Wait for clocks when resuming
+Message-ID: <20171222003408.GV7997@codeaurora.org>
+References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
+ <20171211165535.5126-2-romain.izard.pro@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20171204051912.7485-2-wens@csie.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171211165535.5126-2-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
-
-On 04/12/17 05:19, Chen-Yu Tsai wrote:
-> On the A64, the MMC module clocks are fixed in the new timing mode,
-> i.e. they do not have a bit to select the mode. These clocks have
-> a 2x divider somewhere between the clock and the MMC module.
+On 12/11, Romain Izard wrote:
+> Wait for the syncronization of all clocks when resuming, not only the
+> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
+> when interrupts are masked, which is the case in here.
 > 
-> To be consistent with other SoCs supporting the new timing mode,
-> we model the 2x divider as a fixed post-divider on the MMC module
-> clocks.
-> 
-> To do this, we first add fixed post-divider to the MP style clocks,
-> which the MMC module clocks are.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 > ---
->  drivers/clk/sunxi-ng/ccu_mp.c | 20 ++++++++++++++++++--
->  drivers/clk/sunxi-ng/ccu_mp.h | 24 ++++++++++++++++++++++++
->  2 files changed, 42 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-> index 688855e7dc8c..5d0af4051737 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> @@ -50,12 +50,19 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
->  	unsigned int max_m, max_p;
->  	unsigned int m, p;
->  
-> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate *= cmp->fixed_post_div;
 
-Can't you just initialise fixed_post_div to 1 normally and save the
-CCU_FEATURE_FIXED_POSTDIV?
+Applied to clk-next
 
-> +
->  	max_m = cmp->m.max ?: 1 << cmp->m.width;
->  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
->  
->  	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
-> +	rate = *parent_rate / p / m;
-> +
-> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate /= cmp->fixed_post_div;
->  
-> -	return *parent_rate / p / m;
-> +	return rate;
->  }
->  
->  static void ccu_mp_disable(struct clk_hw *hw)
-> @@ -83,6 +90,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
->  					unsigned long parent_rate)
->  {
->  	struct ccu_mp *cmp = hw_to_ccu_mp(hw);
-> +	unsigned long rate;
->  	unsigned int m, p;
->  	u32 reg;
->  
-> @@ -101,7 +109,11 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
->  	p = reg >> cmp->p.shift;
->  	p &= (1 << cmp->p.width) - 1;
->  
-> -	return (parent_rate >> p) / m;
-> +	rate = (parent_rate >> p) / m;
-> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate /= cmp->fixed_post_div;
-> +
-> +	return rate;
->  }
->  
->  static int ccu_mp_determine_rate(struct clk_hw *hw,
-> @@ -129,6 +141,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
->  	max_m = cmp->m.max ?: 1 << cmp->m.width;
->  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
->  
-> +	/* Adjust target rate according to post-dividers */
-> +	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate = rate * cmp->fixed_post_div;
-> +
->  	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
->  
->  	spin_lock_irqsave(cmp->common.lock, flags);
-> diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
-> index aaef11d747ea..5107635e61de 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mp.h
-> +++ b/drivers/clk/sunxi-ng/ccu_mp.h
-> @@ -33,9 +33,33 @@ struct ccu_mp {
->  	struct ccu_div_internal		m;
->  	struct ccu_div_internal		p;
->  	struct ccu_mux_internal	mux;
-> +
-> +	unsigned int		fixed_post_div;
-> +
->  	struct ccu_common	common;
->  };
->  
-> +#define SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(_struct, _name, _parents, _reg, \
-> +					   _mshift, _mwidth,		\
-> +					   _pshift, _pwidth,		\
-> +					   _muxshift, _muxwidth,	\
-> +					   _gate, _postdiv, _flags)	\
-> +	struct ccu_mp _struct = {					\
-> +		.enable	= _gate,					\
-> +		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
-> +		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
-> +		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-> +		.fixed_post_div	= _postdiv,				\
-> +		.common	= {						\
-> +			.reg		= _reg,				\
-> +			.features	= CCU_FEATURE_FIXED_POSTDIV,	\
-> +			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-> +							      _parents, \
-> +							      &ccu_mp_ops, \
-> +							      _flags),	\
-> +		}							\
-> +	}
-> +
-
-This looks suspiciously like a copy of the macro below. What about you
-define the one below as a special case of this new one above?
-Should be even more straightforward with defaulting postdiv to 1 and
-loosing the feature flags.
-
-Cheers,
-Andre.
-
->  #define SUNXI_CCU_MP_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
->  				   _mshift, _mwidth,			\
->  				   _pshift, _pwidth,			\
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
