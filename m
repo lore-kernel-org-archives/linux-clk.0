@@ -1,43 +1,72 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20171218190303.GV7997@codeaurora.org>
-References: <20171218170007.28042-1-jbrunet@baylibre.com> <20171218190303.GV7997@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Dec 2017 09:50:54 +0100
-Message-ID: <CAMuHMdUsiSvu7o3qELdhOhizKWaP5=M+Mr7tEXpcHFDUaEq-Pg@mail.gmail.com>
-Subject: Re: [PATCH] clk: check ops pointer on clock register
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52502 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756346AbdLVM0S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Dec 2017 07:26:18 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 07/11] ARM: sunxi: h3/h5: add simplefb nodes
+Date: Fri, 22 Dec 2017 20:22:39 +0800
+Message-Id: <20171222122243.25735-8-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Dec 18, 2017 at 8:03 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 12/18, Jerome Brunet wrote:
->> Nothing really prevents a provider from (trying to) register a clock
->> without providing the clock ops structure.
->>
->> We do check the individual fields before using them, but not the
->> structure pointer itself. This may have the usual nasty consequences when
->> the pointer is dereferenced, mostly likely when checking one the field
->> during the initialization.
->
-> Yes, that nasty consequence should be a kernel oops, and the
-> developer should notice that before submitting the driver for
-> inclusion. I don't think we really care to return an error here
-> if this happens.
+The H3/H5 SoCs have a HDMI output and a TV Composite output.
 
-+1
+Add simplefb nodes for these outputs.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-                        Geert
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index fcb909658cf0..31478c03790d 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -53,6 +53,35 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0-hdmi";
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&ccu CLK_BUS_TCON0>, <&ccu CLK_BUS_HDMI>,
++				 <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>;
++			status = "disabled";
++		};
++
++		framebuffer-tve {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-tve";
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&ccu CLK_BUS_TCON1>, <&ccu CLK_BUS_TVE>,
++				 <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TVE>;
++			status = "disabled";
++		};
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+2.14.2
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
