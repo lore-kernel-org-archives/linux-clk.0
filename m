@@ -1,67 +1,40 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Phil Elwell <phil@raspberrypi.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 08/33] clk: bcm2835: change bcm2835_pll_rate_from_divisors to return unsigned long
-Date: Sat, 30 Dec 2017 01:12:47 +0000
-Message-Id: <1514596392-22270-9-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 18:11:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <sergej@taudac.com>
+Cc: mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
+	linux@armlinux.org.uk, linux-clk@vger.kernel.org, ce3a@gmx.de,
+	Rabeeh Khoury <rabeeh@solid-run.com>
+Subject: Re: [PATCH v2 2/2] clk: si5351: Apply PLL soft reset before enabling
+ the outputs
+Message-ID: <20171222021111.GL7997@codeaurora.org>
+References: <1505562282-9111-1-git-send-email-sergej@taudac.com>
+ <1505562282-9111-3-git-send-email-sergej@taudac.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1505562282-9111-3-git-send-email-sergej@taudac.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-bcm2835_pll_rate_from_divisors() returns a value directly as the return
-value to round_rate(). clk_ops->round_rate() has been changed to an
-unsigned long so for the sake of completeness and neatness this patch
-updates the helper function to return the same data-type.
+On 09/16, Sergej Sawazki wrote:
+> The "Si5351A/B/C Data Sheet" states to apply a PLL soft reset before
+> enabling the output clocks [1]. This is required to get a deterministic
+> phase relationship between the output clocks.
+> 
+> Without resetting the PLL, the phase relationship between the clocks is
+> unpredictable. Fix this by resetting the PLL in si5351_clkout_prepare().
+> 
+> References:
+> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+>     Figure 12 ("I2C Programming Procedure")
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+> ---
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Phil Elwell <phil@raspberrypi.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/bcm/clk-bcm2835.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index c215dc9..fb2b012 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -541,8 +541,9 @@ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
- 	*fdiv = div & ((1 << A2W_PLL_FRAC_BITS) - 1);
- }
- 
--static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
--					   u32 ndiv, u32 fdiv, u32 pdiv)
-+static unsigned long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
-+						    u32 ndiv, u32 fdiv,
-+						    u32 pdiv)
- {
- 	u64 rate;
- 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
