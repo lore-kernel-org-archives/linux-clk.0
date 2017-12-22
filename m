@@ -1,67 +1,88 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 12/15] devicetree: bindings: Document qcom,krait-cc
-Date: Tue, 19 Dec 2017 21:24:57 +0530
-Message-Id: <1513698900-10638-13-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v7 0/5] clk: Add Aspeed clock driver
+Date: Fri, 22 Dec 2017 13:15:17 +1030
+Message-Id: <20171222024522.10362-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+This driver supports the ast2500, ast2400 (and derivative) BMC SoCs from
+Aspeed.
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
+Clk maintainers, this patch set requires this signed tag to be merged first:
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+  git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git tags/aspeed-4.16-clk-binding
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..874138f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,22 @@
-+Krait Clock Controller
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		#clock-cells = <1>;
-+	};
+It contains a single commit on top of 4.15-rc1 that will also be merged
+via the ARM SoC tree. It has been reviewed by Arnd and Rob.
+
+This is v7. See patches for detailed changelogs.
+
+v7: Address reivew from Stephen and device tree changes
+v6: Added reviewed-bys 
+v5: Address review from Andrew
+v4: Address review from Andrew and Stephen. 
+v3: Address review from Andrew and has seen more testing on hardware
+v2: split the driver out into a series of patches to make them easier to
+review.
+
+All of the important clocks are supported, with most non-essential ones
+also implemented where information is available. I am working with
+Aspeed to clear up some of the missing information, including the
+missing parent-sibling relationships.
+
+We need to know the rate of the apb clock in order to correctly program
+the clocksource driver, so the apb and it's parents are created in the
+CLK_OF_DECLARE_DRIVER callback.
+
+The rest of the clocks are created at normal driver probe time. I
+followed the Gemini driver's lead with using the regmap where I could,
+but also having a pointer to the base address for use with the common
+clock callbacks.
+
+The driver borrows from the clk_gate common clock infrastructure, but modifies
+it in order to support the clock gate and reset pair that most of the clocks
+have. This pair must be reset-ungated-released, with appropriate delays,
+according to the datasheet.
+
+The first patch introduces the core clock registration parts, and describes
+the clocks. The second creates the core clocks, giving the system enough to
+boot (but without uart). Next come the non-core clocks, and finally the reset
+controller that is used for the few cocks that don't have a gate to go with their
+reset pair.
+
+Please review!
+
+Cheers,
+
+Joel
+
+
+Joel Stanley (5):
+  clk: Add clock driver for ASPEED BMC SoCs
+  clk: aspeed: Register core clocks
+  clk: aspeed: Add platform driver and register PLLs
+  clk: aspeed: Register gated clocks
+  clk: aspeed: Add reset controller
+
+ drivers/clk/Kconfig      |  12 +
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-aspeed.c | 658 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 671 insertions(+)
+ create mode 100644 drivers/clk/clk-aspeed.c
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.15.1
