@@ -1,52 +1,30 @@
-Return-Path: <al.kochet@gmail.com>
-Return-Path: <al.kochet@gmail.com>
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Alexander Kochetkov <al.kochet@gmail.com>
-Subject: [PATCH 0/2] Fix clock rate in the rockchip_fractional_approximation()
-Date: Thu, 21 Dec 2017 19:04:40 +0300
-Message-Id: <1513872282-5370-1-git-send-email-al.kochet@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 18:11:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ldv-project@linuxtesting.org
+Subject: Re: [PATCH] clk: si5351: implement remove handler
+Message-ID: <20171222021108.GK7997@codeaurora.org>
+References: <1505514630-19874-1-git-send-email-khoroshilov@ispras.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1505514630-19874-1-git-send-email-khoroshilov@ispras.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello!
+On 09/16, Alexey Khoroshilov wrote:
+> The driver has no remove function, so it does not cleanup
+> resources that are not under devm management.
+> 
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
 
-Here are two patches fixing issue in the rockchip_fractional_approximation().
-rockchip_fractional_approximation() can select clock rate whose
-value will violate clock limit settings (i.e. one configured with 
-clk_set_max_rate() and clk_set_min_rate()).
-
-rockchip_fractional_approximation() was introduced by commit 5d890c2df900
-("clk: rockchip: add special approximation to fix up fractional clk's jitter") 
-whose description states that setting denominator 20 times larger than
-numerator will generate precise clock frequency. It's strange, because
-on my custom rk3188-based board and on radxa rock I've observed strange
-hardware issues. I2S, for example, sometimes doesn't setup correct
-rate on external SCLK_I2S0. UART0, for example, started to receive '\0' 
-characters instead of valid symbols, signals on UART_RX was good.
-
-So, I use clk_set_max_rate() to limit max value of i2s0_pre, uart0_pre,
-uart1_pre, uart2_pre, uart3_pre to value of aclk_cpu_pre. That fixes
-strange I2S and UART issues for me. If that make sense, than I can
-send the patch. But it will logically conflict with commit 5d890c2df900
-("clk: rockchip: add special approximation to fix up fractional clk's jitter").
-
-Alexander Kochetkov (2):
-  clk: rename clk_core_get_boundaries() to clk_hw_get_boundaries() and
-    expose
-  clk: rockchip: limit clock rate in the
-    rockchip_fractional_approximation()
-
- drivers/clk/clk.c            |   14 ++++++++------
- drivers/clk/rockchip/clk.c   |    7 +++++++
- include/linux/clk-provider.h |    2 ++
- 3 files changed, 17 insertions(+), 6 deletions(-)
+Applied to clk-next
 
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
