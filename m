@@ -1,76 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:42294 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752823AbdLGLCJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 06:02:09 -0500
-Received: by mail-wm0-f65.google.com with SMTP id l141so12295673wmg.1
-        for <linux-clk@vger.kernel.org>; Thu, 07 Dec 2017 03:02:08 -0800 (PST)
-From: srinivas.kandagatla@linaro.org
-To: sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk: qcom: gcc-msm8996: Mark aggre0 noc clks as critical
-Date: Thu,  7 Dec 2017 10:59:22 +0000
-Message-Id: <20171207105922.31986-1-srinivas.kandagatla@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:24:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] clk: qcom: ipq8074: add misc resets for PCIE
+ and NSS
+Message-ID: <20171222002411.GR7997@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-12-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-12-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 12/13, Abhishek Sahu wrote:
+> PCIE and NSS has MISC reset register in which single register has
+> multiple reset bit. The patch adds these resets with its
+> corresponding reset bits.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-aggre0 bus clks are not associated with any of the drivers, so its
-important that these clks are always on to get peripherals on this
-bus working. So mark them as critical.
+Applied to clk-next
 
-Eventually when we have a proper bus driver these clks can be marked
-appropriately.
-
-Without this patch pcie on db820c is not functional.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 7ddec886fcd3..0146d8853488 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -2891,7 +2891,7 @@ static struct clk_branch gcc_aggre0_snoc_axi_clk = {
- 			.name = "gcc_aggre0_snoc_axi_clk",
- 			.parent_names = (const char *[]){ "system_noc_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2906,7 +2906,7 @@ static struct clk_branch gcc_aggre0_cnoc_ahb_clk = {
- 			.name = "gcc_aggre0_cnoc_ahb_clk",
- 			.parent_names = (const char *[]){ "config_noc_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2921,7 +2921,7 @@ static struct clk_branch gcc_smmu_aggre0_axi_clk = {
- 			.name = "gcc_smmu_aggre0_axi_clk",
- 			.parent_names = (const char *[]){ "system_noc_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2936,7 +2936,7 @@ static struct clk_branch gcc_smmu_aggre0_ahb_clk = {
- 			.name = "gcc_smmu_aggre0_ahb_clk",
- 			.parent_names = (const char *[]){ "config_noc_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
