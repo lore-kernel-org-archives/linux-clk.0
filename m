@@ -1,43 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 26 Dec 2017 17:19:36 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: mturquette@baylibre.com, matthias.bgg@gmail.com, jdelvare@suse.de,
-	jamesjj.liao@mediatek.com, weiyi.lu@mediatek.com,
-	kevin-cw.chen@mediatek.com, shunli.wang@mediatek.com,
-	chen.zhong@mediatek.com, arnd@arndb.de,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mediatek: adjust dependency of reset.c to avoid
- unexpectedly being built
-Message-ID: <20171227011936.GT7997@codeaurora.org>
-References: <5a6347a5196a5eba85dce9ac7c3b9392b832f1f8.1514259933.git.sean.wang@mediatek.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5a6347a5196a5eba85dce9ac7c3b9392b832f1f8.1514259933.git.sean.wang@mediatek.com>
+In-Reply-To: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 22 Dec 2017 13:51:05 +0100
+Message-ID: <CAPDyKFrdGEn8v3SCZueZGVoySRLX_qm3rHY6XAtTN5YgZ022GQ@mail.gmail.com>
+Subject: Re: [RFC PATCH V1 1/2] clk: use atomic runtime pm api in clk_core_is_enabled
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/26, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> commit 74cb0d6dde8 ("clk: mediatek: fixup test-building of MediaTek clock
-> drivers") can let the build system looking into the directory where the
-> clock drivers resides and then allow test-building the drivers.
-> 
-> But the change also gives rise to certain incorrect behavior which is
-> reset.c being built even not depending on either COMPILE_TEST or
-> ARCH_MEDIATEK alternative dependency. To get rid of reset.c being built
-> unexpectedly on the other platforms, it would be a good change that the
-> file should be built depending on its own specific configuration rather
-> than just on generic RESET_CONTROLLER one.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Jean Delvare <jdelvare@suse.de>
+On 22 December 2017 at 10:46, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+> Current clk_pm_runtime_put is using pm_runtime_put_sync which
+> is not safe to be called in clk_core_is_enabled as it should
+> be able to run in atomic context.
+>
+> Thus use pm_runtime_put instead which is atomic safe.
+>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-I've typically seen vendor Kconfigs select the RESET_CONTROLLER
-framework if the vendor Kconfig is enabled. Any reason that same
-method isn't followed here?
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Kind regards
+Uffe
+
+> ---
+>  drivers/clk/clk.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 5ec5809..e24968f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -227,7 +227,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
+>
+>         ret = core->ops->is_enabled(core->hw);
+>  done:
+> -       clk_pm_runtime_put(core);
+> +       if (core->dev)
+> +               pm_runtime_put(core->dev);
+>
+>         return ret;
+>  }
+> --
+> 2.7.4
+>
