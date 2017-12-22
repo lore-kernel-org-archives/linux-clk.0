@@ -1,33 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:44540 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751937AbdLHSuI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Dec 2017 13:50:08 -0500
-Received: by mail-wm0-f53.google.com with SMTP id t8so4746030wmc.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Dec 2017 10:50:07 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks
-References: <20171204133428.24631-1-jbrunet@baylibre.com>
-Date: Fri, 08 Dec 2017 10:50:03 -0800
-In-Reply-To: <20171204133428.24631-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Mon, 4 Dec 2017 14:34:28 +0100")
-Message-ID: <7hmv2tm4v8.fsf@baylibre.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,
+  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>,
+  linux-arm-kernel@lists.infradead.org,  Antoine Tenart
+ <antoine.tenart@free-electrons.com>,  =?utf-8?Q?Miqu=C3=A8l?= Raynal
+ <miquel.raynal@free-electrons.com>,  Nadav Haklai <nadavh@marvell.com>,
+  Victor Gu <xigu@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson
+ Ding <dingwei@marvell.com>,  Hua Jing <jinghua@marvell.com>,  Neta Zur
+ Hershkovits <neta@marvell.com>
+Subject: Re: [PATCH 0/3] Add DVFS support on CPU clock for Armada 37xx
+References: <20171130134029.20751-1-gregory.clement@free-electrons.com>
+	<20171221231341.GC7997@codeaurora.org>
+Date: Fri, 22 Dec 2017 11:02:04 +0100
+In-Reply-To: <20171221231341.GC7997@codeaurora.org> (Stephen Boyd's message of
+	"Thu, 21 Dec 2017 15:13:41 -0800")
+Message-ID: <87shc3dqsj.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Hi Stephen,
+=20
+ On jeu., d=C3=A9c. 21 2017, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-> Remove CLK_IGNORE_UNUSED from mmc clocks. This was only needed while the
-> mmc driver incorrectly used the xtal as source instead of the mmc
-> clock. Now, the driver takes the correct clock, CCF is aware that the
-> clock is being used and we can remove this flag.
+> On 11/30, Gregory CLEMENT wrote:
+>> Hi,
+>>=20
+>> This small series is needed to use DVFS on Armada 37xx. When DVFS is
+>> enabled the CPU clock setting is done using an other set of registers
+>> from the North Bridge Power Management block.
+>>=20
+>> The series adds the possibility to modify the CPU frequency using the
+>> associate load level matching the target frequency. However
+>> configuring the frequencies for each load is done by the cpufreq
+>> driver submitted in a separate series.
+>>=20
+>> Obviously having both series (cpufreq and clk) is needed to support
+>> DVFS on Armada 37xx, but there is no dependencies between the series
+>> (for building or at runtime).
+>>=20
 >
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Are you relying on the clk API returning an error to detect if
+> DVFS is present or not? Just curious why that part of the code
+> was there.
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+The cpufreq framework rely on the clk framwork to setup the clk
+frequency of the CPU. For this hardware when DVFS is enabled the we
+don't directly control the frequency of the CPUs but the "load
+level". And it is during the initialization that we associate CPU
+frequency to a load level.
+
+The clk part is there to setup this load level for the hardware but by
+still using the frequency as an entry point as it was what is expected
+by the kernel. So cpufreq will ask a frequency depending of its policy,
+then the clk driver will setup the load level matching this frequency.
+
+And to answer your specific question we don't rely on the clk API
+returning an error to detect if DVFS is present or not. For this we
+directly read the DVFS bit exposed through the syscon.
+
+Gregory
+
+>
+> --=20
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
