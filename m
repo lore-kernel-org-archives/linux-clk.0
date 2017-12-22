@@ -1,61 +1,45 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.16
-Date: Fri, 15 Dec 2017 10:38:37 +0100
-Message-Id: <1513330717-16712-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <zhang.lyra@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20171221230316.GY7997@codeaurora.org>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+ <20171207125715.16160-12-chunyan.zhang@spreadtrum.com> <20171221230316.GY7997@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 22 Dec 2017 13:30:43 +0800
+Message-ID: <CAAfSe-tc6s6F-1AYEamZubJ7VfMXm-rp18c8pctE51izeHXsnA@mail.gmail.com>
+Subject: Re: [PATCH V7 11/12] arm64: dts: add syscon for whale2 platform
+To: Stephen Boyd <sboyd@codeaurora.org>, "arm@kernel.org" <arm@kernel.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On 22 December 2017 at 07:03, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 12/07, Chunyan Zhang wrote:
+>> Some clocks on SC9860 are in the same address area with syscon
+>> devices, the proper syscon node will be quoted under the
+>> definitions of those clocks in DT.
+>>
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>
+> These last two can go via arm-soc?
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+Thanks Stephen!
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+Hi Arnd, Olof
 
-are available in the git repository at:
+Could you please take the patch 11, 12 through arm-soc?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.16-tag1
+Thanks,
+Chunyan
 
-for you to fetch changes up to 7aff266552d6042b43d3d5a9b13f0009ef862033:
-
-  clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend (2017-12-14 16:40:36 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.16
-
-  - Add support for the LVDS module clock on R-Car V3M,
-  - Keep wakeup sources in Clock Domains active during system suspend,
-    which will allow removing workarounds from drivers later.
-
-Thanks for pulling!
-
-P.S. There seems to be issues with kernel.org mirrorring. I can't see my
-     tag in the public repo, but the clk-renesas-for-v4.16 branch is
-     up-to-date (last change 18 hours ago).
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      clk: renesas: mstp: Keep wakeup sources active during system suspend
-      clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend
-
-Sergei Shtylyov (1):
-      clk: renesas: r8a77970: Add LVDS clock
-
- drivers/clk/renesas/clk-mstp.c          | 2 +-
- drivers/clk/renesas/r8a77970-cpg-mssr.c | 1 +
- drivers/clk/renesas/renesas-cpg-mssr.c  | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
