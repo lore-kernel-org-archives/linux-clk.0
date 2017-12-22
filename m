@@ -1,66 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Dec 2017 08:34:37 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: meson-axg: add clock DT info for
- Meson AXG SoC
-Message-ID: <20171201163437.GE19419@codeaurora.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-4-yixun.lan@amlogic.com>
- <20171129193536.GB19419@codeaurora.org>
- <8353c264-3253-0268-91fc-8d42fbe82611@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8353c264-3253-0268-91fc-8d42fbe82611@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52489 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755486AbdLVM0C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Dec 2017 07:26:02 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 06/11] arm64: allwinner: h5: add compatible string for DE2 CCU
+Date: Fri, 22 Dec 2017 20:22:38 +0800
+Message-Id: <20171222122243.25735-7-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Yixun Lan wrote:
-> Hi Stephen
-> 
-> On 11/30/17 03:35, Stephen Boyd wrote:
-> > On 11/28, Yixun Lan wrote:
-> >> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> >> index b932a784b02a..36a2e98338a8 100644
-> >> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> >> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> >> @@ -7,6 +7,7 @@
-> >>  #include <dt-bindings/gpio/gpio.h>
-> >>  #include <dt-bindings/interrupt-controller/irq.h>
-> >>  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> +#include <dt-bindings/clock/axg-clkc.h>
-> >>  
-> >>  / {
-> >>  	compatible = "amlogic,meson-axg";
-> >> @@ -148,6 +149,20 @@
-> >>  			#address-cells = <0>;
-> >>  		};
-> >>  
-> >> +		hiubus: hiubus@ff63c000 {
-> > 
-> > Maybe just call the node "bus@ff63c000"?
-> > 
-> isn't this just a name? what's the benefits to change?
-> personally, I tend to keep it this way, because it's better map to the
-> data sheet
-> 
-> we also has 'aobus', 'cbus' scattered there..
+The DE2 CCU on Allwinner H5 SoC has a slightly different behavior than
+the one on H3, so the compatible string is not set in the common DTSI
+file.
 
-Per the ePAPR node names are supposed to be generic, like disk,
-cpu, display-controller, gpu, etc. I've never heard of a hiubus,
-so probably it's some vendor specific thing? We have the phandle
-anyway so it's not like we're losing much information here.
+Add the compatible string of H5 DE2 CCU in H5 DTSI file.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+index d9a720bff05d..e237c05cfdb4 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -98,6 +98,10 @@
+ 	compatible = "allwinner,sun50i-h5-ccu";
+ };
+ 
++&display_clocks {
++	compatible = "allwinner,sun50i-h5-de2-clk";
++};
++
+ &mmc0 {
+ 	compatible = "allwinner,sun50i-h5-mmc",
+ 		     "allwinner,sun50i-a64-mmc";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.2
+
