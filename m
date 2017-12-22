@@ -1,147 +1,248 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Wed, 20 Dec 2017 22:33:22 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH V2 02/10] clk: reparent orphans after critical clocks
- enabled
-Message-ID: <20171220143322.GC30461@b29396-OptiPlex-7040>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
- <1499946435-7177-3-git-send-email-aisheng.dong@nxp.com>
- <20171102073609.GT30645@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171102073609.GT30645@codeaurora.org>
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v7 2/5] clk: aspeed: Register core clocks
+Date: Fri, 22 Dec 2017 13:15:19 +1030
+Message-Id: <20171222024522.10362-3-joel@jms.id.au>
+In-Reply-To: <20171222024522.10362-1-joel@jms.id.au>
+References: <20171222024522.10362-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 02, 2017 at 12:36:09AM -0700, Stephen Boyd wrote:
-> On 07/13, Dong Aisheng wrote:
-> > The orphan clocks reparent operation should be moved after the critical
-> > clocks enabled, otherwise it may get a chance to disable a newly
-> > registered critical clock which triggers the following warning.
-> > 
-> > Assuming we have two clocks: A and B, B is the parent of A.
-> > Clock A has flag: CLK_OPS_PARENT_ENABLE
-> > Clock B has flag: CLK_IS_CRITICAL
-> > 
-> > Step 1:
-> > Clock A is registered, then it becomes orphan.
-> > 
-> > Step 2:
-> > Clock B is registered. Before clock B reach the critical clock enable
-> > operation, orphan A will find the newly registered parent B and do
-> > reparent operation, then parent B will be finally disabled in
-> > __clk_set_parent_after() due to CLK_OPS_PARENT_ENABLE flag as there's
-> > still no users of B which will then trigger the following warning.
-> > 
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:597 clk_core_disable+0xb4/0xe0
-> > [    0.000000] Modules linked in:
-> > [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc1-00056-gdff1f66-dirty #1373
-> > [    0.000000] Hardware name: Generic DT based system
-> > [    0.000000] Backtrace:
-> > [    0.000000] [<c010c4bc>] (dump_backtrace) from [<c010c764>] (show_stack+0x18/0x1c)
-> > [    0.000000]  r6:600000d3 r5:00000000 r4:c0e26358 r3:00000000
-> > [    0.000000] [<c010c74c>] (show_stack) from [<c040599c>] (dump_stack+0xb4/0xe8)
-> > [    0.000000] [<c04058e8>] (dump_stack) from [<c0125c94>] (__warn+0xd8/0x104)
-> > [    0.000000]  r10:c0c21cd0 r9:c048aa78 r8:00000255 r7:00000009 r6:c0c1cd90 r5:00000000
-> > [    0.000000]  r4:00000000 r3:c0e01d34
-> > [    0.000000] [<c0125bbc>] (__warn) from [<c0125d74>] (warn_slowpath_null+0x28/0x30)
-> > [    0.000000]  r9:00000000 r8:ef00bf80 r7:c165ac4c r6:ef00bf80 r5:ef00bf80 r4:ef00bf80
-> > [    0.000000] [<c0125d4c>] (warn_slowpath_null) from [<c048aa78>] (clk_core_disable+0xb4/0xe0)
-> > [    0.000000] [<c048a9c4>] (clk_core_disable) from [<c048be88>] (clk_core_disable_lock+0x20/0x2c)
-> > [    0.000000]  r4:000000d3 r3:c0e0af00
-> > [    0.000000] [<c048be68>] (clk_core_disable_lock) from [<c048c224>] (clk_core_disable_unprepare+0x14/0x28)
-> > [    0.000000]  r5:00000000 r4:ef00bf80
-> > [    0.000000] [<c048c210>] (clk_core_disable_unprepare) from [<c048c270>] (__clk_set_parent_after+0x38/0x54)
-> > [    0.000000]  r4:ef00bd80 r3:000010a0
-> > [    0.000000] [<c048c238>] (__clk_set_parent_after) from [<c048daa8>] (clk_register+0x4d0/0x648)
-> > [    0.000000]  r6:ef00d500 r5:ef00bf80 r4:ef00bd80 r3:ef00bfd4
-> > [    0.000000] [<c048d5d8>] (clk_register) from [<c048dc30>] (clk_hw_register+0x10/0x1c)
-> > [    0.000000]  r9:00000000 r8:00000003 r7:00000000 r6:00000824 r5:00000001 r4:ef00d500
-> > [    0.000000] [<c048dc20>] (clk_hw_register) from [<c048e698>] (_register_divider+0xcc/0x120)
-> > [    0.000000] [<c048e5cc>] (_register_divider) from [<c048e730>] (clk_register_divider+0x44/0x54)
-> > [    0.000000]  r10:00000004 r9:00000003 r8:00000001 r7:00000000 r6:00000003 r5:00000001
-> > [    0.000000]  r4:f0810030
-> > [    0.000000] [<c048e6ec>] (clk_register_divider) from [<c0d3ff58>] (imx7ulp_clocks_init+0x558/0xe98)
-> > [    0.000000]  r7:c0e296f8 r6:c165c808 r5:00000000 r4:c165c808
-> > [    0.000000] [<c0d3fa00>] (imx7ulp_clocks_init) from [<c0d24db0>] (of_clk_init+0x118/0x1e0)
-> > [    0.000000]  r10:00000001 r9:c0e01f68 r8:00000000 r7:c0e01f60 r6:ef7f8974 r5:ef0035c0
-> > [    0.000000]  r4:00000006
-> > [    0.000000] [<c0d24c98>] (of_clk_init) from [<c0d04a50>] (time_init+0x2c/0x38)
-> > [    0.000000]  r10:efffed40 r9:c0d61a48 r8:c0e78000 r7:c0e07900 r6:ffffffff r5:c0e78000
-> > [    0.000000]  r4:00000000
-> > [    0.000000] [<c0d04a24>] (time_init) from [<c0d00b8c>] (start_kernel+0x218/0x394)
-> > [    0.000000] [<c0d00974>] (start_kernel) from [<6000807c>] (0x6000807c)
-> > [    0.000000]  r10:00000000 r9:410fc075 r8:6000406a r7:c0e0c930 r6:c0d61a44 r5:c0e07918
-> > [    0.000000]  r4:c0e78294
-> > [    0.000000] ---[ end trace 0000000000000000 ]---
-> 
-> Please remove timestamps from logs unless they're important.
-> 
+This registers the core clocks; those which are required to calculate
+the rate of the timer peripheral so the system can load a clocksource
+driver.
 
-Got it.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v5:
+  - Add Andrew's Reviewed-by
+v4:
+  - Add defines to document the BIT() macros
+v3:
+  - Fix ast2400 ahb calculation
+  - Remove incorrect 'this is wrong' comment
+  - Separate out clkin calc to be per platform
+  - Support 48MHz clkin on ast2400
+---
+ drivers/clk/clk-aspeed.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
 
-> > 
-> > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > 
-> > ---
-> > ChangeLog:
-> > v1->v2:
-> >  * add more detailed commit messages
-> 
-> Thanks for that. We shouldn't be touching the hardware during clk
-> registration though, so something is wrong there. It seems that
-> adding the flag to enable clks when touching their registers has
-> exposed that we should just be doing the toggle of the bookeeping
-> stuff underneath the enable lock here.
-> 
-> We know that the clk isn't enabled with any sort of prepare_count
-> here so we don't need to enable anything to prevent a race. And
-> we're holding the prepare mutex so set_rate/set_parent can't race
-> here either.
-> 
-
-Well, it looks like a good suggestion and it does make sense.
-
-> Can you try this patch instead?
-> 
-> ---8<----
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c8d83acda006..416d44cc772c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2476,14 +2476,17 @@ static int __clk_core_init(struct clk_core *core)
->  	 */
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->  		struct clk_core *parent = __clk_init_parent(orphan);
-> +		unsigned long flags;
->  
->  		/*
->  		 * we could call __clk_set_parent, but that would result in a
->  		 * redundant call to the .set_rate op, if it exists
->  		 */
->  		if (parent) {
-> -			__clk_set_parent_before(orphan, parent);
-> -			__clk_set_parent_after(orphan, parent, NULL);
-> +			/* update the clk tree topology */
-> +			flags = clk_enable_lock();
-> +			clk_reparent(orphan, parent);
-> +			clk_enable_unlock(flags);
->  			__clk_recalc_accuracies(orphan);
->  			__clk_recalc_rates(orphan, 0);
->  		}
-
-
-I tested this change worked well.
-I could resent the patch with this new method later.
-
-Regards
-Dong Aisheng
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 7a86ee08ea4f..5adedda82d26 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -13,7 +13,23 @@
+ 
+ #define ASPEED_NUM_CLKS		35
+ 
++#define ASPEED_RESET_CTRL	0x04
++#define ASPEED_CLK_SELECTION	0x08
++#define ASPEED_CLK_STOP_CTRL	0x0c
++#define ASPEED_MPLL_PARAM	0x20
++#define ASPEED_HPLL_PARAM	0x24
++#define  AST2500_HPLL_BYPASS_EN	BIT(20)
++#define  AST2400_HPLL_STRAPPED	BIT(18)
++#define  AST2400_HPLL_BYPASS_EN	BIT(17)
++#define ASPEED_MISC_CTRL	0x2c
++#define  UART_DIV13_EN		BIT(12)
+ #define ASPEED_STRAP		0x70
++#define  CLKIN_25MHZ_EN		BIT(23)
++#define  AST2400_CLK_SOURCE_SEL	BIT(18)
++#define ASPEED_CLK_SELECTION_2	0xd8
++
++/* Globally visible clocks */
++static DEFINE_SPINLOCK(aspeed_clk_lock);
+ 
+ /* Keeps track of all clocks */
+ static struct clk_hw_onecell_data *aspeed_clk_data;
+@@ -91,6 +107,160 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
+ 
++static const struct clk_div_table ast2400_div_table[] = {
++	{ 0x0, 2 },
++	{ 0x1, 4 },
++	{ 0x2, 6 },
++	{ 0x3, 8 },
++	{ 0x4, 10 },
++	{ 0x5, 12 },
++	{ 0x6, 14 },
++	{ 0x7, 16 },
++	{ 0 }
++};
++
++static const struct clk_div_table ast2500_div_table[] = {
++	{ 0x0, 4 },
++	{ 0x1, 8 },
++	{ 0x2, 12 },
++	{ 0x3, 16 },
++	{ 0x4, 20 },
++	{ 0x5, 24 },
++	{ 0x6, 28 },
++	{ 0x7, 32 },
++	{ 0 }
++};
++
++static struct clk_hw *aspeed_ast2400_calc_pll(const char *name, u32 val)
++{
++	unsigned int mult, div;
++
++	if (val & AST2400_HPLL_BYPASS_EN) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
++		u32 n = (val >> 5) & 0x3f;
++		u32 od = (val >> 4) & 0x1;
++		u32 d = val & 0xf;
++
++		mult = (2 - od) * (n + 2);
++		div = d + 1;
++	}
++	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
++			mult, div);
++};
++
++static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
++{
++	unsigned int mult, div;
++
++	if (val & AST2500_HPLL_BYPASS_EN) {
++		/* Pass through mode */
++		mult = div = 1;
++	} else {
++		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
++		u32 p = (val >> 13) & 0x3f;
++		u32 m = (val >> 5) & 0xff;
++		u32 n = val & 0x1f;
++
++		mult = (m + 1) / (n + 1);
++		div = p + 1;
++	}
++
++	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
++			mult, div);
++}
++
++static void __init aspeed_ast2400_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, freq, div;
++
++	/*
++	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
++	 * strapping
++	 */
++	regmap_read(map, ASPEED_STRAP, &val);
++	if (val & CLKIN_25MHZ_EN)
++		freq = 25000000;
++	else if (val & AST2400_CLK_SOURCE_SEL)
++		freq = 48000000;
++	else
++		freq = 24000000;
++	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
++	pr_debug("clkin @%u MHz\n", freq / 1000000);
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
++
++	/*
++	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
++	 *   00: Select CPU:AHB = 1:1
++	 *   01: Select CPU:AHB = 2:1
++	 *   10: Select CPU:AHB = 4:1
++	 *   11: Select CPU:AHB = 3:1
++	 */
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 10) & 0x3;
++	div = val + 1;
++	if (div == 3)
++		div = 4;
++	else if (div == 4)
++		div = 3;
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
++			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
++			ast2400_div_table,
++			&aspeed_clk_lock);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++}
++
++static void __init aspeed_ast2500_cc(struct regmap *map)
++{
++	struct clk_hw *hw;
++	u32 val, freq, div;
++
++	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
++	regmap_read(map, ASPEED_STRAP, &val);
++	if (val & CLKIN_25MHZ_EN)
++		freq = 25000000;
++	else
++		freq = 24000000;
++	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
++	pr_debug("clkin @%u MHz\n", freq / 1000000);
++
++	/*
++	 * High-speed PLL clock derived from the crystal. This the CPU clock,
++	 * and we assume that it is enabled
++	 */
++	regmap_read(map, ASPEED_HPLL_PARAM, &val);
++	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2500_calc_pll("hpll", val);
++
++	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
++	regmap_read(map, ASPEED_STRAP, &val);
++	val = (val >> 9) & 0x7;
++	WARN(val == 0, "strapping is zero: cannot determine ahb clock");
++	div = 2 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
++
++	/* APB clock clock selection register SCU08 (aka PCLK) */
++	regmap_read(map, ASPEED_CLK_SELECTION, &val);
++	val = (val >> 23) & 0x7;
++	div = 4 * (val + 1);
++	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
++	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
++};
++
+ static void __init aspeed_cc_init(struct device_node *np)
+ {
+ 	struct regmap *map;
+@@ -132,6 +302,13 @@ static void __init aspeed_cc_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
++		aspeed_ast2400_cc(map);
++	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
++		aspeed_ast2500_cc(map);
++	else
++		pr_err("unknown platform, failed to add clocks\n");
++
+ 	aspeed_clk_data->num = ASPEED_NUM_CLKS;
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
+ 	if (ret)
+-- 
+2.15.1
