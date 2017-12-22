@@ -1,171 +1,134 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 04/15] clk: qcom: Add HFPLL driver
-Date: Tue, 19 Dec 2017 21:24:49 +0530
-Message-Id: <1513698900-10638-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+ <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+ <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
+ <151372258747.45969.10121622799666696251@resonance>
+ <3ad110cf-95ba-0d0b-53ee-f1fa2d37d7fa@lechnology.com>
+ <151379785862.37313.908268542576551305@resonance>
+ <d8801fdd-8f1f-e0a2-799b-03245009f234@lechnology.com>
+ <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
+ <20171220230009.GI7997@codeaurora.org> <20171222013915.GC7997@codeaurora.org>
+From: David Lechner <david@lechnology.com>
+Message-ID: <88c526ed-5f85-1a91-2a1d-59f9ac06559c@lechnology.com>
+Date: Fri, 22 Dec 2017 12:42:50 -0600
+MIME-Version: 1.0
+In-Reply-To: <20171222013915.GC7997@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On 12/21/2017 07:39 PM, Stephen Boyd wrote:
+> On 12/20, Stephen Boyd wrote:
+>> On 12/20, David Lechner wrote:
+>>> On 12/20/2017 02:33 PM, David Lechner wrote:
+>>>
+>>>
+>>> So, the question I have is: what is the actual "correct" behavior of
+>>> spin_trylock_irqsave()? Is it really supposed to always return true
+>>> when CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n or is this a bug?
+>>
+>> Thanks for doing the analysis in this thread.
+>>
+>> When CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n, spinlocks are
+>> compiler barriers, that's it. So even if it is a bug to always
+>> return true, I fail to see how we can detect that a spinlock is
+>> already held in this configuration and return true or false.
+>>
+>> I suppose the best option is to make clk_enable_lock() and
+>> clk_enable_unlock() into nops or pure owner/refcount/barrier
+>> updates when CONFIG_SMP=n. We pretty much just need the barrier
+>> semantics when there's only a single CPU.
+>>
+> 
+> How about this patch? It should make the trylock go away on UP
+> configs and then we keep everything else for refcount and
+> ownership. We would test enable_owner outside of any
+> irqs/preemption disabled section though. That needs a think.
+> 
+> ---8<----
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 3526bc068f30..b6f61367aa8d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -143,7 +143,8 @@ static unsigned long clk_enable_lock(void)
+>   {
+>   	unsigned long flags;
+>   
+> -	if (!spin_trylock_irqsave(&enable_lock, flags)) {
+> +	if (!IS_ENABLED(CONFIG_SMP) ||
+> +	    !spin_trylock_irqsave(&enable_lock, flags)) {
+>   		if (enable_owner == current) {
+>   			enable_refcnt++;
+>   			__acquire(enable_lock);
+> 
+> 
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
 
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+After sleeping on it, this is what I came up with. This keeps 
+enable_owner and enable_refcnt protected and basically does the same 
+thing that spin_lock_irqsave()/spin_unlock_irqrestore() would do on a UP 
+system anyway, just more explicitly.
+
 ---
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 20b5d6f..6c811bd 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -205,3 +205,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index bb1b1f9..adbace3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -136,6 +136,8 @@ static void clk_prepare_unlock(void)
+  	mutex_unlock(&prepare_lock);
+  }
+
++#ifdef CONFIG_SMP
 +
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 4795e21..4a4bf38 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -36,3 +36,4 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-new file mode 100644
-index 0000000..7443239
---- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2017, The Linux Foundation. All rights reserved.
+  static unsigned long clk_enable_lock(void)
+  	__acquires(enable_lock)
+  {
+@@ -170,6 +172,43 @@ static void clk_enable_unlock(unsigned long flags)
+  	spin_unlock_irqrestore(&enable_lock, flags);
+  }
+
++#else
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
-+
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
-+};
-+
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
++static unsigned long clk_enable_lock(void)
++	__acquires(enable_lock)
 +{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_ops_hfpll,
-+	};
++	unsigned long flags;
 +
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
++	__acquire(enable_lock);
++	local_irq_save(flags);
++	preempt_disable();
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
++	if (enable_refcnt++ == 0) {
++		WARN_ON_ONCE(enable_owner != NULL);
++		enable_owner = current;
++	} else {
++		WARN_ON_ONCE(enable_owner != current);
++	}
 +
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
++	return flags;
 +}
 +
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_hfpll_driver);
++static void clk_enable_unlock(unsigned long flags)
++	__releases(enable_lock)
++{
++	WARN_ON_ONCE(enable_owner != current);
++	WARN_ON_ONCE(enable_refcnt == 0);
 +
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
++	if (--enable_refcnt == 0)
++		enable_owner = NULL;
++
++	__release(enable_lock);
++	local_irq_restore(flags);
++	preempt_enable();
++}
++
++#endif
++
+  static bool clk_core_is_prepared(struct clk_core *core)
+  {
+  	bool ret = false;
