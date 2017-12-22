@@ -1,91 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from plaes.org ([188.166.43.21]:54041 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753332AbdLMROB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Dec 2017 12:14:01 -0500
-Date: Wed, 13 Dec 2017 17:13:58 +0000
-From: Priit Laes <plaes@plaes.org>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [linux-sunxi] [PATCH v2 3/6] ARM: sun4i: Convert to CCU
-Message-ID: <20171213171358.oocp24c2mdon45o5@plaes.org>
-References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
- <4357a69da97f46a324eec4c766f4bc9d9e7733ff.1490545262.git-series.plaes@plaes.org>
- <CAOi56cUjqjcZRz6VSwUWcrW=4RQyqyZHtm1vuM3HT2ypdPJ78g@mail.gmail.com>
- <20171212172635.2utwz3koyo5iwglt@plaes.org>
- <CAOi56cUeRrKQnJ-akJPB160-60aBzy64bDgFeoqMpHRJSCnDeQ@mail.gmail.com>
- <20171213170933.qyfn3hgnrvjpmod7@plaes.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, Dong Aisheng
+	<aisheng.dong@nxp.com>
+Subject: [PATCH 1/1] clk: remove invalid __clk_set_parent comment in __clk_core_init
+Date: Fri, 22 Dec 2017 17:47:21 +0800
+Message-ID: <1513936041-13010-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171213170933.qyfn3hgnrvjpmod7@plaes.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 13, 2017 at 05:09:33PM +0000, Priit Laes wrote:
-> On Tue, Dec 12, 2017 at 01:24:52PM -0800, Kevin Hilman wrote:
-> > On Tue, Dec 12, 2017 at 9:26 AM, Priit Laes <plaes@plaes.org> wrote:
-> > > On Mon, Dec 11, 2017 at 02:22:30PM -0800, Kevin Hilman wrote:
-> > >> On Sun, Mar 26, 2017 at 10:20 AM, Priit Laes <plaes@plaes.org> wrote:
-> > >> > Convert sun4i-a10.dtsi to new CCU driver.
-> > >> >
-> > >> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > >>
-> > >> I finally got around to bisecting a mainline boot failure on
-> > >> sun4i-a10-cubieboard that's been happening for quite a while.  Based
-> > >> on on kernelci.org, it showed up sometime during the v4.15 merge
-> > >> window[1].  It bisected down to this commit (in mainline as commit
-> > >> 41193869f2bdb585ce09bfdd16d9482aadd560ad).
-> > >>
-> > >> When it fails, there is no output on the serial console, so I don't
-> > >> know exactly how it's failing, just that it no longer boots.
-> > >
-> > > We tried out latest 4.15 with various compilers and it works:
-> > > - gcc version 7.1.1 20170622 (Red Hat Cross 7.1.1-3) (GCC) - A10 Gemei G9 tablet
-> > > - gcc 7.2.0-debian - A10 Cubieboard
-> > 
-> > And you can reproduce the bug with gcc5 or gcc6?
-> 
-> Tried following commits on Gemei G9 (A10 tablet):
-> * 4.15.0-rc3-00037-gd39a01eff9af - latest master
-> * 4.14.0-rc1-00002-g41193869f2bd - the exact commit, causing the issue.
-> 
-> With the same Linaro toolchain:
-> (gcc version 5.3.1 20160412 (Linaro GCC 5.3-2016.05))
+Those comments are invalid anymore. So remove them.
 
-And I also tried the same dtb and zImage from kernelci page [1] and it works with
-that too...
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-https://storage.kernelci.org/mainline/master/v4.15-rc3/arm/sunxi_defconfig/
-> 
-> > 
-> > Very strange that a DT only patch would cause a gcc related regression
-> > and if it does, it should be investigated.  I don't think requiring
-> > gcc7 is an appropriate solution.
-> > 
-> > @Chen-Yu, @Maxime: are you guys OK with requiring gcc7 for working
-> > upstream boot for A10?
-> > 
-> > Kevin
-> > 
-> > -- 
-> > You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> > For more options, visit https://groups.google.com/d/optout.
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d6e2d5c..4675adf 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2927,10 +2927,6 @@ static int __clk_core_init(struct clk_core *core)
+ 		struct clk_core *parent = __clk_init_parent(orphan);
+ 		unsigned long flags;
+ 
+-		/*
+-		 * we could call __clk_set_parent, but that would result in a
+-		 * redundant call to the .set_rate op, if it exists
+-		 */
+ 		if (parent) {
+ 			/* update the clk tree topology */
+ 			flags = clk_enable_lock();
+-- 
+2.7.4
