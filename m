@@ -1,49 +1,42 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 29/33] clk: axs10x: change axs10x_pll_round_rate return logic
-Date: Sat, 30 Dec 2017 01:13:08 +0000
-Message-Id: <1514596392-22270-30-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:24:02 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 06/11] clk: qcom: ipq8074: add PCIE, USB and SDCC
+ clocks
+Message-ID: <20171222002402.GN7997@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-7-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-7-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On 12/13, Abhishek Sahu wrote:
+> - It has 2 instances of PCIE which uses AXI, AHB, AUX, SYS NOC
+>   AXI and PIPE clocks.
+> - It has 2 instances of USB 3.0 which uses AUX, SLEEP, PIPE,
+>   SYS NOC, mock UTMI and master clocks.
+> - It has 2 instances of SDCC which uses APSS and AHB clock.
+>   SDCC1 requires ICE core clock also.
+> - All the PIPE clocks are external clocks which will be
+>   registered in clock framework by PHY drivers. The enabling
+>   and disabling of PIPE RCG clocks are dependent upon PHY
+>   initialization sequence so BRANCH_HALT_DELAY flag is required for
+>   these clocks.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Applied to clk-next
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/axs10x/pll_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/axs10x/pll_clock.c b/drivers/clk/axs10x/pll_clock.c
-index 27498eb..e90ae9e 100644
---- a/drivers/clk/axs10x/pll_clock.c
-+++ b/drivers/clk/axs10x/pll_clock.c
-@@ -162,7 +162,7 @@ static unsigned long axs10x_pll_round_rate(struct clk_hw *hw,
- 	const struct axs10x_pll_cfg *pll_cfg = clk->pll_cfg;
- 
- 	if (pll_cfg[0].rate == 0)
--		return -EINVAL;
-+		return 0;
- 
- 	best_rate = pll_cfg[0].rate;
- 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
