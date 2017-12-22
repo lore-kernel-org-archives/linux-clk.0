@@ -1,33 +1,86 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1] clk: tegra20: Add 216 MHz entry for PLL_X
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <adc15215591018b4a35a7d64e065f81bb09e214e.1513018125.git.digetx@gmail.com>
- <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <508cb22d-42cb-d169-dbea-0073d7a4e034@gmail.com>
-Date: Tue, 12 Dec 2017 15:08:08 +0300
-MIME-Version: 1.0
-In-Reply-To: <20171212100200.GW32106@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 05/11] ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+Date: Fri, 22 Dec 2017 20:22:37 +0800
+Message-Id: <20171222122243.25735-6-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12.12.2017 13:02, Peter De Schrijver wrote:
-> On Mon, Dec 11, 2017 at 09:50:09PM +0300, Dmitry Osipenko wrote:
->> The cpufreq driver uses 216 MHz as the lowest CPU clock frequency, but
->> clock driver doesn't provide that rate, so the requested clock is rounded
->> up to 312 MHz. Let's add entry for 216 MHz to match with cpufreq.
->>
-> 
-> This seems odd. If there's no table entry, _calc_rate should kick in and
-> calculate the parameters for 216MHz. Any idea why this is not happening?
+The DE2 in H3/H5 has a clock control unit in it, and the behavior is
+slightly different between H3 and H5.
 
-Actually, it is happening. Please ignore this patch.
+Add the common parts in H3/H5 DTSI, and add the compatible string in H3
+DTSI.
 
-If PLL's rate could be calculated, why do we need the predefined tables?
+The compatible string of H5 DE2 CCU will be added in a separated patch.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Use H3 DE2 CCU compatible as it's discovered that H3 and A83T DE2 CCU are
+  not equal.
+
+ arch/arm/boot/dts/sun8i-h3.dtsi    |  4 ++++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index b36f9f423c39..8495deecedad 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -85,6 +85,10 @@
+ 	compatible = "allwinner,sun8i-h3-ccu";
+ };
+ 
++&display_clocks {
++	compatible = "allwinner,sun8i-h3-de2-clk";
++};
++
+ &mmc0 {
+ 	compatible = "allwinner,sun7i-a20-mmc";
+ 	clocks = <&ccu CLK_BUS_MMC0>,
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 8d40c00d64bb..fcb909658cf0 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -40,9 +40,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun8i-h3-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun8i-h3-ccu.h>
+ #include <dt-bindings/reset/sun8i-r-ccu.h>
+ 
+@@ -85,6 +87,18 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		display_clocks: clock@1000000 {
++			/* compatible is in per SoC .dtsi file */
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-h3-system-controller",
+ 				"syscon";
+-- 
+2.14.2
