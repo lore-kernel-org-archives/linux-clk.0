@@ -1,45 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5967 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbdLULIy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:08:54 -0500
-Subject: Re: [PATCH v2 3/4] clk: tegra: MBIST work around for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-4-git-send-email-pdeschrijver@nvidia.com>
- <3d7f4e84-af44-ba3d-7910-a51a0abce136@nvidia.com>
- <20171221094049.GX29417@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c320b903-31a0-bf8e-2d78-2296e78d31a2@nvidia.com>
-Date: Thu, 21 Dec 2017 11:08:48 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:23:49 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 02/11] clk: qcom: add parent map for regmap mux
+Message-ID: <20171222002349.GK7997@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-3-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20171221094049.GX29417@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-3-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 21/12/17 09:40, Peter De Schrijver wrote:
-> On Wed, Dec 20, 2017 at 10:03:35AM +0000, Jon Hunter wrote:
->>
->> On 16/11/17 14:29, Peter De Schrijver wrote:
->>> Tegra210 has a hw bug which can cause IP blocks to lock up when ungating a
->>> domain. The reason is that the logic responsible for resetting the memory
->>> built-in self test mode can come up in an undefined state because it doesn't
->>> get a clock or reset signal. Work around this by making sure the logic will
->>> get some clock edges by ensuring the relevant clock is enabled and temporarily
->>> override the relevant second level clock gates (SLCG).
->>
->> Not sure I follow the 2nd half of the above sentence.
+On 12/13, Abhishek Sahu wrote:
+> Currently the driver assumes the register configuration value
+> is identical to its index in the parent map. This patch adds
+> the parent map field in regmap mux clock node which contains
+> the mapping of parent index with actual register configuration
+> value. If regmap node contains this parent map then the
+> configuration value will be taken from this
+> parent map instead of simply writing the index value.
 > 
-> The logic responsible for resetting the MBIST mode is not clocked during
-> module reset because the module SLCGs are gated while they shouldn't be.
-> 
-> Does this make it more clear? :)
-Yes thanks!
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Jon
+Applied to clk-next
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
