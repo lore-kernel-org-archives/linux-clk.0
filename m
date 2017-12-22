@@ -1,41 +1,43 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to return unsigned
- long
-To: Mikko Perttunen <cyndis@kapsi.fi>, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org,
- patches@opensource.cirrus.com, uclinux-h8-devel@lists.sourceforge.jp,
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
- linux-media@vger.kernel.org, linux-rtc@vger.kernel.org
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
- <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
- <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Message-ID: <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
-Date: Sun, 31 Dec 2017 13:40:07 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:24:14 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] dt-bindings: clock: qcom: add remaining clocks
+ for IPQ8074
+Message-ID: <20171222002414.GS7997@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/12/17 16:36, Mikko Perttunen wrote:
-> FWIW, we had this problem some years ago with the Tegra CPU clock - then 
-> it was determined that a simpler solution was to have the determine_rate 
-> callback support unsigned long rates - so clock drivers that need to 
-> return rates higher than 2^31 can instead implement the determine_rate 
-> callback. That is what's currently implemented.
+On 12/13, Abhishek Sahu wrote:
+> This patch adds the DT bindings for following IPQ8074 clocks
 > 
-> Mikko
+>  - General PLL’s, NSS UBI PLL and NSS Crypto PLL.
+>  - 2 instances of PCIE, USB, SDCC.
+>  - 2 NSS UBI core and common NSS clocks. NSS is network switching
+>    system which accelerates the ethernet traffic. IPQ8074
+>    NSS has two UBI cores. Some clocks are separate for each UBI core
+>    and remaining NSS clocks are common.
+>  - NSS ethernet port clocks. IPQ8074 has 6 ethernet ports and
+>    each port uses different TX and RX clocks.
+>  - Crypto engine clocks.
+>  - General purpose clocks which comes over GPIO.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Granted we could work around it but, having both zero and less than zero 
-indicate error means you can't support larger than LONG_MAX which is I 
-think worth fixing.
+Applied to clk-next
 
----
-bod
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
