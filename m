@@ -1,42 +1,35 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 15 Dec 2017 17:09:45 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:24:05 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Andy Gross <andy.gross@linaro.org>,
 	David Brown <david.brown@linaro.org>,
 	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 04/11] dt-bindings: clock: qcom: add remaining clocks
- for IPQ8074
-Message-ID: <20171215230945.fysottb7eqtabc5c@rob-hp-laptop>
+Subject: Re: [PATCH v2 07/11] clk: qcom: ipq8074: add NSS clocks
+Message-ID: <20171222002405.GO7997@codeaurora.org>
 References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
- <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-8-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1513175142-3702-5-git-send-email-absahu@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-8-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 13, 2017 at 07:55:35PM +0530, Abhishek Sahu wrote:
-> This patch adds the DT bindings for following IPQ8074 clocks
-> 
->  - General PLL’s, NSS UBI PLL and NSS Crypto PLL.
->  - 2 instances of PCIE, USB, SDCC.
->  - 2 NSS UBI core and common NSS clocks. NSS is network switching
->    system which accelerates the ethernet traffic. IPQ8074
->    NSS has two UBI cores. Some clocks are separate for each UBI core
->    and remaining NSS clocks are common.
->  - NSS ethernet port clocks. IPQ8074 has 6 ethernet ports and
->    each port uses different TX and RX clocks.
->  - Crypto engine clocks.
->  - General purpose clocks which comes over GPIO.
+On 12/13, Abhishek Sahu wrote:
+> IPQ8074 has NSS (Network Switching System) which has 2 UBI cores
+> and hardware crypto engine. Some clocks are separate for each UBI
+> core and remaining NSS clocks are common. The BIAS_PLL (300 Mhz)
+> and BIAS_PLL_NSS_NOC (416.5 Mhz) are external fixed clocks and
+> will be registered from dtsi or NSS driver.
 > 
 > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 > ---
->  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 180 +++++++++++++++++++++++++++
->  1 file changed, 180 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
