@@ -1,34 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 16:24:11 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] clk: qcom: ipq8074: add misc resets for PCIE
- and NSS
-Message-ID: <20171222002411.GR7997@codeaurora.org>
-References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
- <1513175142-3702-12-git-send-email-absahu@codeaurora.org>
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513175142-3702-12-git-send-email-absahu@codeaurora.org>
+Sender: joel.stan@gmail.com
+In-Reply-To: <20171221234043.GF7997@codeaurora.org>
+References: <20171128071908.12279-1-joel@jms.id.au> <CACPK8XcQ_ZcgPK1PwEwCuWHQ_j5qS+PejRVhr2rYuH_Nn_nPLQ@mail.gmail.com>
+ <20171221234043.GF7997@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Fri, 22 Dec 2017 12:12:17 +1030
+Message-ID: <CACPK8Xf51mWz7_5s_+MP6Xnmy4jEGJ72+fpejc-O7pSaAH09jQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] clk: Add Aspeed clock driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/13, Abhishek Sahu wrote:
-> PCIE and NSS has MISC reset register in which single register has
-> multiple reset bit. The patch adds these resets with its
-> corresponding reset bits.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
+On Fri, Dec 22, 2017 at 10:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 12/06, Joel Stanley wrote:
+>> Hello clk maintainers,
+>>
+>> Has anyone had a chance to review these patches?
+>>
+>
+> Besides the sleeping call that should be a delay it looks OK.
+> Send v7?
 
-Applied to clk-next
+Thanks for taking a look. I'll fix the sleep call and send it out now.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cheers,
+
+Joel
