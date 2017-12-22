@@ -1,100 +1,67 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 11/12] arm64: dts: add syscon for whale2 platform
-Date: Thu, 7 Dec 2017 20:57:14 +0800
-Message-ID: <20171207125715.16160-12-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, Dong Aisheng
+	<aisheng.dong@nxp.com>
+Subject: [RFC PATCH V1 2/2] clk: add lock for clk_core_is_enabled
+Date: Fri, 22 Dec 2017 17:46:05 +0800
+Message-ID: <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on SC9860 are in the same address area with syscon
-devices, the proper syscon node will be quoted under the
-definitions of those clocks in DT.
+According to design doc, .is_enabled should be protected by enable lock.
+Then users don't have to protect it against enable/disable operation
+in clock drivers.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+See: Documentation/clk.txt
+"The enable lock is a spinlock and is held across calls to the .enable,
+.disable and .is_enabled operations."
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 7c217c5..6ea3a75 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -17,6 +17,51 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e24968f..d6e2d5c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -198,14 +198,19 @@ static bool clk_core_is_prepared(struct clk_core *core)
  
-+		ap_ahb_regs: syscon@20210000 {
-+			compatible = "syscon";
-+			reg = <0 0x20210000 0 0x10000>;
-+		};
-+
-+		pmu_regs: syscon@402b0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402b0000 0 0x10000>;
-+		};
-+
-+		aon_regs: syscon@402e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x402e0000 0 0x10000>;
-+		};
-+
-+		ana_regs: syscon@40400000 {
-+			compatible = "syscon";
-+			reg = <0 0x40400000 0 0x10000>;
-+		};
-+
-+		agcp_regs: syscon@415e0000 {
-+			compatible = "syscon";
-+			reg = <0 0x415e0000 0 0x1000000>;
-+		};
-+
-+		vsp_regs: syscon@61100000 {
-+			compatible = "syscon";
-+			reg = <0 0x61100000 0 0x10000>;
-+		};
-+
-+		cam_regs: syscon@62100000 {
-+			compatible = "syscon";
-+			reg = <0 0x62100000 0 0x10000>;
-+		};
-+
-+		disp_regs: syscon@63100000 {
-+			compatible = "syscon";
-+			reg = <0 0x63100000 0 0x10000>;
-+		};
-+
-+		ap_apb_regs: syscon@70b00000 {
-+			compatible = "syscon";
-+			reg = <0 0x70b00000 0 0x40000>;
-+		};
-+
- 		ap-apb {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
-@@ -59,7 +104,6 @@
- 				status = "disabled";
- 			};
- 		};
--
- 	};
+ static bool clk_core_is_enabled(struct clk_core *core)
+ {
++	unsigned long flags;
+ 	bool ret = false;
  
- 	ext_26m: ext-26m {
++	flags = clk_enable_lock();
++
+ 	/*
+ 	 * .is_enabled is only mandatory for clocks that gate
+ 	 * fall back to software usage counter if .is_enabled is missing
+ 	 */
+-	if (!core->ops->is_enabled)
++	if (!core->ops->is_enabled) {
++		clk_enable_unlock(flags);
+ 		return core->enable_count;
++	}
+ 
+ 	/*
+ 	 * Check if clock controller's device is runtime active before
+@@ -230,6 +235,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	if (core->dev)
+ 		pm_runtime_put(core->dev);
+ 
++	clk_enable_unlock(flags);
++
+ 	return ret;
+ }
+ 
 -- 
 2.7.4
