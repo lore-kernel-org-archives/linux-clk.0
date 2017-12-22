@@ -1,38 +1,75 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1512987702.334.25.camel@baylibre.com>
-Subject: Re: [PATCH v6 3/6] clk: meson-axg: add clock controller drivers
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 11 Dec 2017 11:21:42 +0100
-In-Reply-To: <a6a9454f-be94-4fee-9083-f37eae2c1749@amlogic.com>
-References: <20171211064853.32111-1-yixun.lan@amlogic.com>
-	 <20171211064853.32111-4-yixun.lan@amlogic.com>
-	 <1512985560.334.17.camel@baylibre.com>
-	 <a6a9454f-be94-4fee-9083-f37eae2c1749@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: fix spin_lock/unlock imbalance on bad clk_enable()
+ reentrancy
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+References: <1513122223-14932-1-git-send-email-david@lechnology.com>
+ <32ca585d-c51d-1c85-42ba-85f0b1df0a60@lechnology.com>
+ <f6df34ba-b553-5b10-8a36-f5a043722aa6@lechnology.com>
+ <151372258747.45969.10121622799666696251@resonance>
+ <3ad110cf-95ba-0d0b-53ee-f1fa2d37d7fa@lechnology.com>
+ <151379785862.37313.908268542576551305@resonance>
+ <d8801fdd-8f1f-e0a2-799b-03245009f234@lechnology.com>
+ <749e4759-3511-92d4-a19a-0f72c31b1ee6@lechnology.com>
+ <20171220230009.GI7997@codeaurora.org> <20171222013915.GC7997@codeaurora.org>
+From: David Lechner <david@lechnology.com>
+Message-ID: <19d50bd4-20e5-9f38-2212-31deb995f674@lechnology.com>
+Date: Thu, 21 Dec 2017 21:29:51 -0600
+MIME-Version: 1.0
+In-Reply-To: <20171222013915.GC7997@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-11 at 18:16 +0800, Yixun Lan wrote:
-> > Overall, the changes looks good to me.
-> > I still have a few comments which I'd like to see addressed quickly after this
-> > series is merged
+On 12/21/2017 07:39 PM, Stephen Boyd wrote:
+> On 12/20, Stephen Boyd wrote:
+>> On 12/20, David Lechner wrote:
+>>> On 12/20/2017 02:33 PM, David Lechner wrote:
+>>>
+>>>
+>>> So, the question I have is: what is the actual "correct" behavior of
+>>> spin_trylock_irqsave()? Is it really supposed to always return true
+>>> when CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n or is this a bug?
+>>
+>> Thanks for doing the analysis in this thread.
+>>
+>> When CONFIG_DEBUG_SPINLOCK=n and CONFIG_SMP=n, spinlocks are
+>> compiler barriers, that's it. So even if it is a bug to always
+>> return true, I fail to see how we can detect that a spinlock is
+>> already held in this configuration and return true or false.
+>>
+>> I suppose the best option is to make clk_enable_lock() and
+>> clk_enable_unlock() into nops or pure owner/refcount/barrier
+>> updates when CONFIG_SMP=n. We pretty much just need the barrier
+>> semantics when there's only a single CPU.
+>>
 > 
-> did you say that:
->  you will merge these patches now, then I could send fixes later?
+> How about this patch? It should make the trylock go away on UP
+> configs and then we keep everything else for refcount and
+> ownership. We would test enable_owner outside of any
+> irqs/preemption disabled section though. That needs a think.
 > 
-> or I can send another version (v7) to address this..
+> ---8<----
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 3526bc068f30..b6f61367aa8d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -143,7 +143,8 @@ static unsigned long clk_enable_lock(void)
+>   {
+>   	unsigned long flags;
+>   
+> -	if (!spin_trylock_irqsave(&enable_lock, flags)) {
+> +	if (!IS_ENABLED(CONFIG_SMP) ||
+> +	    !spin_trylock_irqsave(&enable_lock, flags)) {
+>   		if (enable_owner == current) {
+>   			enable_refcnt++;
+>   			__acquire(enable_lock);
+> 
+> 
 
-I'm OK taking this as it is but I'd like to see the comments addressed quickly.
-Of course, If you prefer to make a v7, no one is stopping you.
+I came up with the exact same patch earlier today, but did not have a 
+chance to send it. I've tested it and it fixes the problem for me.
 
-Jerome
+I'm afraid I don't know enough about how preemption works yet to be of 
+much help to say what or if something else is needed to protect 
+enable_owner/enable_refcnt.
