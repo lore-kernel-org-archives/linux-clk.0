@@ -1,40 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 16:34:10 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/3] clk: at91: pmc: Save SCSR during suspend
-Message-ID: <20171222003410.GW7997@codeaurora.org>
-References: <20171211165535.5126-1-romain.izard.pro@gmail.com>
- <20171211165535.5126-3-romain.izard.pro@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171211165535.5126-3-romain.izard.pro@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 04/11] dt-bindings: simplefb-sunxi: add pipelines for DE2
+Date: Fri, 22 Dec 2017 20:22:36 +0800
+Message-Id: <20171222122243.25735-5-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/11, Romain Izard wrote:
-> The contents of the System Clock Status Register (SCSR) needs to be
-> restored into the System Clock Enable Register (SCER).
-> 
-> As the bootloader will restore some clocks by itself, the issue can be
-> missed as only the USB controller, the LCD controller, the Image Sensor
-> controller and the programmable clocks will be impacted.
-> 
-> Fix the obvious typo in the suspend/resume code, as the IMR register
-> does not need to be saved twice.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
+As we're going to add simplefb support for Allwinner SoCs with DE2, add
+suitable pipeline strings in the device tree binding.
 
-Applied to clk-next
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Adds Rob's ACK.
 
+ .../devicetree/bindings/display/simple-framebuffer-sunxi.txt          | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
+index a9168ae6946c..d693b8dc9a62 100644
+--- a/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
++++ b/Documentation/devicetree/bindings/display/simple-framebuffer-sunxi.txt
+@@ -15,6 +15,10 @@ Required properties:
+   "de_be1-lcd1"
+   "de_be0-lcd0-hdmi"
+   "de_be1-lcd1-hdmi"
++  "mixer0-lcd0"
++  "mixer0-lcd0-hdmi"
++  "mixer1-lcd1-hdmi"
++  "mixer1-lcd1-tve"
+ 
+ Example:
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.2
