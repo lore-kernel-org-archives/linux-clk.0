@@ -1,37 +1,82 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1513245469.32163.1.camel@baylibre.com>
-Subject: Re: [PATCH v7 2/6] dt-bindings: clock: add compatible variant for
- the Meson-AXG
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 14 Dec 2017 10:57:49 +0100
-In-Reply-To: <20171211141348.22048-3-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
-	 <20171211141348.22048-3-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52548 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756086AbdLVM05 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Dec 2017 07:26:57 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 10/11] arm64: allwinner: a64: add DE2 CCU for A64 SoC
+Date: Fri, 22 Dec 2017 20:22:42 +0800
+Message-Id: <20171222122243.25735-11-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
-> Update the documentation to support clock driver for the Amlogic's
-> Meson-AXG SoC.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+The A64 SoC features a DE2 CCU like the one in H5, but needs to claim a
+section of SRAM (SRAM C) to be accessed.
 
-Applied to next/dt
+Adds the device tree nodes for the SRAM controller and the DE2 CCU.
 
-Thx
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v3:
+- Fixed the alliwnner,sram property (the 1 after SRAM phadle is missing
+  in v2).
 
-> ---
->  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 34 +++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index d783d164b9c3..fb8ea7c414e1 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -130,6 +130,40 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		display_clocks: clock@1000000 {
++			compatible = "allwinner,sun50i-a64-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			allwinner,sram = <&de2_sram 1>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		sram-controller@1c00000 {
++			compatible = "allwinner,sun50i-a64-sram-controller";
++			reg = <0x01c00000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			sram_c: sram@18000 {
++				compatible = "mmio-sram";
++				reg = <0x00018000 0x28000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x00018000 0x28000>;
++
++				de2_sram: sram-section@0 {
++					compatible = "allwinner,sun50i-a64-sram-c";
++					reg = <0x0000 0x28000>;
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun50i-a64-system-controller",
+ 				"syscon";
+-- 
+2.14.2
+
