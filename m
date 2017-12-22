@@ -1,26 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 18:11:08 -0800
+Date: Thu, 21 Dec 2017 16:44:24 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ldv-project@linuxtesting.org
-Subject: Re: [PATCH] clk: si5351: implement remove handler
-Message-ID: <20171222021108.GK7997@codeaurora.org>
-References: <1505514630-19874-1-git-send-email-khoroshilov@ispras.ru>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, matthias.bgg@gmail.com, jdelvare@suse.de,
+	jamesjj.liao@mediatek.com, weiyi.lu@mediatek.com, arnd@arndb.de,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: mediatek: fixup test-building of MediaTek clock
+ drivers
+Message-ID: <20171222004424.GZ7997@codeaurora.org>
+References: <971cc0e25dcf32e19bdc93a2bb0dec4cbda2fce7.1513741266.git.sean.wang@mediatek.com>
+ <e39fbb5699f9978073fdd5a45173e12eff266800.1513741266.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1505514630-19874-1-git-send-email-khoroshilov@ispras.ru>
+In-Reply-To: <e39fbb5699f9978073fdd5a45173e12eff266800.1513741266.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Alexey Khoroshilov wrote:
-> The driver has no remove function, so it does not cleanup
-> resources that are not under devm management.
+On 12/20, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Found by Linux Driver Verification project (linuxtesting.org).
+> Let the build system looking into the directiory where the clock drivers
+> resides for the COMPILE_TEST alternative dependency allows test-building
+> the drivers.
 > 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 > ---
 
 Applied to clk-next
