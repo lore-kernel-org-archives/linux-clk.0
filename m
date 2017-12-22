@@ -1,45 +1,78 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: [PATCH 16/33] clk: vt8500: match temp holder variable to fn return type
-Date: Sat, 30 Dec 2017 01:12:55 +0000
-Message-Id: <1514596392-22270-17-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753535AbdLVCGh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 21:06:37 -0500
+Date: Thu, 21 Dec 2017 18:06:36 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Ilia Lin <ilialin@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        qualcomm-lt@lists.linaro.org, celster@codeaurora.org,
+        tfinkel@codeaurora.org
+Subject: Re: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU
+ driver
+Message-ID: <20171222020636.GG7997@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
+ <1513081897-31612-2-git-send-email-ilialin@codeaurora.org>
+ <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-vtwm_pll_round_rate() returns an unsigned long. This patch changes the
-internal holder variable from signed to unsigned long for the sake of
-completeness and neatness.
+On 12/12, Mark Rutland wrote:
+> On Tue, Dec 12, 2017 at 02:31:28PM +0200, Ilia Lin wrote:
+> > + * accesses, and system registers with respect to device memory
+> > + */
+> > +void set_l2_indirect_reg(u64 reg, u64 val)
+> > +{
+> > +	unsigned long flags;
+> > +	mb();
+> 
+> We didn't need this for the PMU driver, so it's unfortuante that it now
+> has to pay the cost.
+> 
+> Can we please factor this mb() into the callers that need it?
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Tony Prisk <linux@prisktech.co.nz>
----
- drivers/clk/clk-vt8500.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++1
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 750c087..a4aa0bf 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -609,7 +609,7 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	u32 filter, mul, div1, div2;
--	long round_rate;
-+	unsigned long round_rate;
- 	int ret = 1;
- 
- 	switch (pll->type) {
+> 
+> > +	raw_spin_lock_irqsave(&l2_access_lock, flags);
+> > +	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+> > +	isb();
+> > +	write_sysreg_s(val, L2CPUSRDR_EL1);
+> > +	isb();
+> > +	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+> > +}
+> > +EXPORT_SYMBOL(set_l2_indirect_reg);
+> 
+> [...]
+> 
+> > +#ifdef CONFIG_ARCH_QCOM
+> > +void set_l2_indirect_reg(u64 reg_addr, u64 val);
+> > +u64 get_l2_indirect_reg(u64 reg_addr);
+> > +#else
+> > +static inline void set_l2_indirect_reg(u32 reg_addr, u32 val) {}
+> > +static inline u32 get_l2_indirect_reg(u32 reg_addr)
+> > +{
+> > +	return 0;
+> > +}
+> > +#endif
+> > +#endif
+> 
+> Are there any drivers that will bne built for !CONFIG_ARCH_QCOM that
+> reference this?
+> 
+> It might be better to not have the stub versions, so that we get a
+> build-error if they are erroneously used.
+> 
+
+Does that approach make COMPILE_TEST break?
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
