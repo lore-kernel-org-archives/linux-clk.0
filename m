@@ -1,433 +1,119 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 07/12] clk: sprd: add adjustable pll support
-Date: Thu, 7 Dec 2017 20:57:10 +0800
-Message-ID: <20171207125715.16160-8-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52411 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751537AbdLVMYj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Dec 2017 07:24:39 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 02/11] clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+Date: Fri, 22 Dec 2017 20:22:34 +0800
+Message-Id: <20171222122243.25735-3-icenowy@aosc.io>
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduced a common adjustable pll clock driver for Spreadtrum SoCs.
+Allwinner H3 features a DE2 CCU like the one on A83T, however the
+parent of the clocks is the DE module clock, not the PLL_DE clock.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/sprd/Makefile |   1 +
- drivers/clk/sprd/pll.c    | 266 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/pll.h    | 108 +++++++++++++++++++
- 3 files changed, 375 insertions(+)
- create mode 100644 drivers/clk/sprd/pll.c
- create mode 100644 drivers/clk/sprd/pll.h
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 47 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 2262e76..d693969 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -5,3 +5,4 @@ clk-sprd-y	+= gate.o
- clk-sprd-y	+= mux.o
- clk-sprd-y	+= div.o
- clk-sprd-y	+= composite.o
-+clk-sprd-y	+= pll.o
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-new file mode 100644
-index 0000000..36b4402
---- /dev/null
-+++ b/drivers/clk/sprd/pll.c
-@@ -0,0 +1,266 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum pll clock driver
-+//
-+// Copyright (C) 2015~2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index 5cc9d9952121..2db5d4e00ea7 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -41,6 +41,8 @@ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+ 
+ static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+ 		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
++		   CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
+ 
+@@ -65,6 +67,20 @@ static struct ccu_common *sun8i_a83t_de2_clks[] = {
+ 	&wb_div_a83_clk.common,
+ };
+ 
++static struct ccu_common *sun8i_h3_de2_clks[] = {
++	&mixer0_clk.common,
++	&mixer1_clk.common,
++	&wb_clk.common,
 +
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
++	&bus_mixer0_clk.common,
++	&bus_mixer1_clk.common,
++	&bus_wb_clk.common,
 +
-+#include "pll.h"
-+
-+#define CLK_PLL_1M	1000000
-+#define CLK_PLL_10M	(CLK_PLL_1M * 10)
-+
-+#define pindex(pll, member)		\
-+	(pll->factors[member].shift / (8 * sizeof(pll->regs_num)))
-+
-+#define pshift(pll, member)		\
-+	(pll->factors[member].shift % (8 * sizeof(pll->regs_num)))
-+
-+#define pwidth(pll, member)		\
-+	pll->factors[member].width
-+
-+#define pmask(pll, member)					\
-+	((pwidth(pll, member)) ?				\
-+	GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,	\
-+	pshift(pll, member)) : 0)
-+
-+#define pinternal(pll, cfg, member)	\
-+	(cfg[pindex(pll, member)] & pmask(pll, member))
-+
-+#define pinternal_val(pll, cfg, member)	\
-+	(pinternal(pll, cfg, member) >> pshift(pll, member))
-+
-+static inline unsigned int
-+sprd_pll_read(const struct sprd_pll *pll, u8 index)
-+{
-+	const struct sprd_clk_common *common = &pll->common;
-+	unsigned int val = 0;
-+
-+	if (WARN_ON(index >= pll->regs_num))
-+		return 0;
-+
-+	regmap_read(common->regmap, common->reg + index * 4, &val);
-+
-+	return val;
-+}
-+
-+static inline void
-+sprd_pll_write(const struct sprd_pll *pll, u8 index,
-+				  u32 msk, u32 val)
-+{
-+	const struct sprd_clk_common *common = &pll->common;
-+	unsigned int offset, reg;
-+	int ret = 0;
-+
-+	if (WARN_ON(index >= pll->regs_num))
-+		return;
-+
-+	offset = common->reg + index * 4;
-+	ret = regmap_read(common->regmap, offset, &reg);
-+	if (!ret)
-+		regmap_write(common->regmap, offset, (reg & ~msk) | val);
-+}
-+
-+static unsigned long pll_get_refin(const struct sprd_pll *pll)
-+{
-+	u32 shift, mask, index, refin_id = 3;
-+	const unsigned long refin[4] = { 2, 4, 13, 26 };
-+
-+	if (pwidth(pll, PLL_REFIN)) {
-+		index = pindex(pll, PLL_REFIN);
-+		shift = pshift(pll, PLL_REFIN);
-+		mask = pmask(pll, PLL_REFIN);
-+		refin_id = (sprd_pll_read(pll, index) & mask) >> shift;
-+		if (refin_id > 3)
-+			refin_id = 3;
-+	}
-+
-+	return refin[refin_id];
-+}
-+
-+static u32 pll_get_ibias(u64 rate, const u64 *table)
-+{
-+	u32 i, num = table[0];
-+
-+	for (i = 1; i < num + 1; i++)
-+		if (rate <= table[i])
-+			break;
-+
-+	return (i == num + 1) ? num : i;
-+}
-+
-+static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
-+					   unsigned long parent_rate)
-+{
-+	u32 *cfg;
-+	u32 i, mask, regs_num = pll->regs_num;
-+	unsigned long rate, nint, kint = 0;
-+	u64 refin;
-+	u16 k1, k2;
-+
-+	cfg = kcalloc(regs_num, sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < regs_num; i++)
-+		cfg[i] = sprd_pll_read(pll, i);
-+
-+	refin = pll_get_refin(pll);
-+
-+	if (pinternal(pll, cfg, PLL_PREDIV))
-+		refin = refin * 2;
-+
-+	if (pwidth(pll, PLL_POSTDIV) &&
-+	    ((pll->fflag == 1 && pinternal(pll, cfg, PLL_POSTDIV)) ||
-+	     (!pll->fflag && !pinternal(pll, cfg, PLL_POSTDIV))))
-+		refin = refin / 2;
-+
-+	if (!pinternal(pll, cfg, PLL_DIV_S)) {
-+		rate = refin * pinternal_val(pll, cfg, PLL_N) * CLK_PLL_10M;
-+	} else {
-+		nint = pinternal_val(pll, cfg, PLL_NINT);
-+		if (pinternal(pll, cfg, PLL_SDM_EN))
-+			kint = pinternal_val(pll, cfg, PLL_KINT);
-+
-+		mask = pmask(pll, PLL_KINT);
-+
-+		k1 = pll->k1;
-+		k2 = pll->k2;
-+		rate = DIV_ROUND_CLOSEST_ULL(refin * kint * k1,
-+					 ((mask >> __ffs(mask)) + 1)) *
-+					 k2 + refin * nint * CLK_PLL_1M;
-+	}
-+
-+	return rate;
-+}
-+
-+#define SPRD_PLL_WRITE_CHECK(pll, i, mask, val)		\
-+	(((sprd_pll_read(pll, i) & mask) == val) ? 0 : (-EFAULT))
-+
-+static int _sprd_pll_set_rate(const struct sprd_pll *pll,
-+			      unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct reg_cfg *cfg;
-+	int ret = 0;
-+	u32 mask, shift, width, ibias_val, index;
-+	u32 regs_num = pll->regs_num, i = 0;
-+	unsigned long kint, nint;
-+	u64 tmp, refin, fvco = rate;
-+
-+	cfg = kcalloc(regs_num, sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg)
-+		return -ENOMEM;
-+
-+	refin = pll_get_refin(pll);
-+
-+	mask = pmask(pll, PLL_PREDIV);
-+	index = pindex(pll, PLL_PREDIV);
-+	width = pwidth(pll, PLL_PREDIV);
-+	if (width && (sprd_pll_read(pll, index) & mask))
-+		refin = refin * 2;
-+
-+	mask = pmask(pll, PLL_POSTDIV);
-+	index = pindex(pll, PLL_POSTDIV);
-+	width = pwidth(pll, PLL_POSTDIV);
-+	cfg[index].msk = mask;
-+	if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
-+		      (pll->fflag == 0 && fvco > pll->fvco)))
-+		cfg[index].val |= mask;
-+
-+	if (width && fvco <= pll->fvco)
-+		fvco = fvco * 2;
-+
-+	mask = pmask(pll, PLL_DIV_S);
-+	index = pindex(pll, PLL_DIV_S);
-+	cfg[index].val |= mask;
-+	cfg[index].msk |= mask;
-+
-+	mask = pmask(pll, PLL_SDM_EN);
-+	index = pindex(pll, PLL_SDM_EN);
-+	cfg[index].val |= mask;
-+	cfg[index].msk |= mask;
-+
-+	nint = do_div(fvco, refin * CLK_PLL_1M);
-+	mask = pmask(pll, PLL_NINT);
-+	index = pindex(pll, PLL_NINT);
-+	shift = pshift(pll, PLL_NINT);
-+	cfg[index].val |= (nint << shift) & mask;
-+	cfg[index].msk |= mask;
-+
-+	mask = pmask(pll, PLL_KINT);
-+	index = pindex(pll, PLL_KINT);
-+	width = pwidth(pll, PLL_KINT);
-+	shift = pshift(pll, PLL_KINT);
-+	tmp = fvco - refin * nint * CLK_PLL_1M;
-+	tmp = do_div(tmp, 10000) * ((mask >> shift) + 1);
-+	kint = DIV_ROUND_CLOSEST_ULL(tmp, refin * 100);
-+	cfg[index].val |= (kint << shift) & mask;
-+	cfg[index].msk |= mask;
-+
-+	ibias_val = pll_get_ibias(fvco, pll->itable);
-+
-+	mask = pmask(pll, PLL_IBIAS);
-+	index = pindex(pll, PLL_IBIAS);
-+	shift = pshift(pll, PLL_IBIAS);
-+	cfg[index].val |= ibias_val << shift & mask;
-+	cfg[index].msk |= mask;
-+
-+	for (i = 0; i < regs_num; i++) {
-+		if (cfg[i].msk) {
-+			sprd_pll_write(pll, i, cfg[i].msk, cfg[i].val);
-+			ret |= SPRD_PLL_WRITE_CHECK(pll, i, cfg[i].msk,
-+						   cfg[i].val);
-+		}
-+	}
-+
-+	if (!ret)
-+		udelay(pll->udelay);
-+
-+	return ret;
-+}
-+
-+static unsigned long sprd_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct sprd_pll *pll = hw_to_sprd_pll(hw);
-+
-+	return _sprd_pll_recalc_rate(pll, parent_rate);
-+}
-+
-+static int sprd_pll_set_rate(struct clk_hw *hw,
-+			     unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct sprd_pll *pll = hw_to_sprd_pll(hw);
-+
-+	return _sprd_pll_set_rate(pll, rate, parent_rate);
-+}
-+
-+static int sprd_pll_clk_prepare(struct clk_hw *hw)
-+{
-+	struct sprd_pll *pll = hw_to_sprd_pll(hw);
-+
-+	udelay(pll->udelay);
-+
-+	return 0;
-+}
-+
-+static long sprd_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	return rate;
-+}
-+
-+const struct clk_ops sprd_pll_ops = {
-+	.prepare = sprd_pll_clk_prepare,
-+	.recalc_rate = sprd_pll_recalc_rate,
-+	.round_rate = sprd_pll_round_rate,
-+	.set_rate = sprd_pll_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_pll_ops);
-diff --git a/drivers/clk/sprd/pll.h b/drivers/clk/sprd/pll.h
-new file mode 100644
-index 0000000..5141756
---- /dev/null
-+++ b/drivers/clk/sprd/pll.h
-@@ -0,0 +1,108 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Spreadtrum pll clock driver
-+//
-+// Copyright (C) 2015~2017 Spreadtrum, Inc.
-+// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-+
-+#ifndef _SPRD_PLL_H_
-+#define _SPRD_PLL_H_
-+
-+#include "common.h"
-+
-+struct reg_cfg {
-+	u32 val;
-+	u32 msk;
++	&mixer0_div_clk.common,
++	&mixer1_div_clk.common,
++	&wb_div_clk.common,
 +};
 +
-+struct clk_bit_field {
-+	u8 shift;
-+	u8 width;
+ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+ 	&mixer0_clk.common,
+ 	&wb_clk.common,
+@@ -93,6 +109,23 @@ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
++static struct clk_hw_onecell_data sun8i_h3_de2_hw_clks = {
++	.hws	= {
++		[CLK_MIXER0]		= &mixer0_clk.common.hw,
++		[CLK_MIXER1]		= &mixer1_clk.common.hw,
++		[CLK_WB]		= &wb_clk.common.hw,
++
++		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
++		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
++		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
++
++		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
 +};
 +
-+enum {
-+	PLL_LOCK_DONE,
-+	PLL_DIV_S,
-+	PLL_MOD_EN,
-+	PLL_SDM_EN,
-+	PLL_REFIN,
-+	PLL_IBIAS,
-+	PLL_N,
-+	PLL_NINT,
-+	PLL_KINT,
-+	PLL_PREDIV,
-+	PLL_POSTDIV,
+ static struct clk_hw_onecell_data sun8i_v3s_de2_hw_clks = {
+ 	.hws	= {
+ 		[CLK_MIXER0]		= &mixer0_clk.common.hw,
+@@ -133,6 +166,16 @@ static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
+ };
+ 
++static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
++	.ccu_clks	= sun8i_h3_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun8i_h3_de2_clks),
 +
-+	PLL_FACT_MAX
++	.hw_clks	= &sun8i_h3_de2_hw_clks,
++
++	.resets		= sun8i_a83t_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
 +};
 +
-+/*
-+ * struct sprd_pll - definition of adjustable pll clock
-+ *
-+ * @reg:	registers used to set the configuration of pll clock,
-+ *		reg[0] shows how many registers this pll clock uses.
-+ * @itable:	pll ibias table, itable[0] means how many items this
-+ *		table includes
-+ * @udelay	delay time after setting rate
-+ * @factors	used to calculate the pll clock rate
-+ * @fvco:	fvco threshold rate
-+ * @fflag:	fvco flag
-+ */
-+struct sprd_pll {
-+	u32 regs_num;
-+	const u64 *itable;
-+	const struct clk_bit_field *factors;
-+	u16 udelay;
-+	u16 k1;
-+	u16 k2;
-+	u16 fflag;
-+	u64 fvco;
-+
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_PLL_WITH_ITABLE_K_FVCO(_struct, _name, _parent, _reg,	\
-+				    _regs_num, _itable, _factors,	\
-+				    _udelay, _k1, _k2, _fflag, _fvco)	\
-+	struct sprd_pll _struct = {					\
-+		.regs_num	= _regs_num,				\
-+		.itable		= _itable,				\
-+		.factors	= _factors,				\
-+		.udelay		= _udelay,				\
-+		.k1		= _k1,					\
-+		.k2		= _k2,					\
-+		.fflag		= _fflag,				\
-+		.fvco		= _fvco,				\
-+		.common		= {					\
-+			.regmap		= NULL,				\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &sprd_pll_ops,	\
-+						      0),		\
-+		},							\
-+	}
-+
-+#define SPRD_PLL_WITH_ITABLE_K(_struct, _name, _parent, _reg,		\
-+			       _regs_num, _itable, _factors,		\
-+			       _udelay, _k1, _k2)			\
-+	SPRD_PLL_WITH_ITABLE_K_FVCO(_struct, _name, _parent, _reg,	\
-+				    _regs_num, _itable, _factors,	\
-+				    _udelay, _k1, _k2, 0, 0)
-+
-+#define SPRD_PLL_WITH_ITABLE_1K(_struct, _name, _parent, _reg,		\
-+				_regs_num, _itable, _factors, _udelay)	\
-+	SPRD_PLL_WITH_ITABLE_K_FVCO(_struct, _name, _parent, _reg,	\
-+				    _regs_num, _itable, _factors,	\
-+				    _udelay, 1000, 1000, 0, 0)
-+
-+static inline struct sprd_pll *hw_to_sprd_pll(struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_pll, common);
-+}
-+
-+extern const struct clk_ops sprd_pll_ops;
-+
-+#endif /* _SPRD_PLL_H_ */
+ static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
+ 	.ccu_clks	= sun8i_a83t_de2_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
+@@ -237,6 +280,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
+ 		.compatible = "allwinner,sun8i-a83t-de2-clk",
+ 		.data = &sun8i_a83t_de2_clk_desc,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-h3-de2-clk",
++		.data = &sun8i_h3_de2_clk_desc,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-clk",
+ 		.data = &sun8i_v3s_de2_clk_desc,
 -- 
-2.7.4
+2.14.2
+
