@@ -1,43 +1,34 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1513627578.29566.6.camel@baylibre.com>
-Subject: Re: [PATCH] clk: check ops pointer on clock register
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Date: Mon, 18 Dec 2017 21:06:18 +0100
-In-Reply-To: <20171218190303.GV7997@codeaurora.org>
-References: <20171218170007.28042-1-jbrunet@baylibre.com>
-	 <20171218190303.GV7997@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 Dec 2017 16:24:16 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] dt-bindings: clock: qcom: add misc resets for
+ PCIE and NSS
+Message-ID: <20171222002416.GT7997@codeaurora.org>
+References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+ <1513175142-3702-11-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1513175142-3702-11-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-18 at 11:03 -0800, Stephen Boyd wrote:
-> On 12/18, Jerome Brunet wrote:
-> > Nothing really prevents a provider from (trying to) register a clock
-> > without providing the clock ops structure.
-> > 
-> > We do check the individual fields before using them, but not the
-> > structure pointer itself. This may have the usual nasty consequences when
-> > the pointer is dereferenced, mostly likely when checking one the field
-> > during the initialization.
+On 12/13, Abhishek Sahu wrote:
+> PCIE and NSS has MISC reset register in which single register has
+> multiple reset bit. The patch adds the DT bindings for these MISC
+> resets.
 > 
-> Yes, that nasty consequence should be a kernel oops,
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Precisely
+Applied to clk-next
 
-> and the
-> developer should notice that before submitting the driver for
-> inclusion. 
-
-Agreed. But people may make mistakes, which is why (at least partly) we
-do checks, isn't it ?
-
-> I don't think we really care to return an error here
-> if this happens.
-> 
-
-I don't understand why we would let a oops happen when can catch the error
-properly ?
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
