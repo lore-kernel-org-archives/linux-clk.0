@@ -1,33 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 Dec 2017 15:03:01 -0800
+Date: Thu, 21 Dec 2017 18:08:28 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V7 10/12] clk: sprd: add clocks support for SC9860
-Message-ID: <20171221230301.GX7997@codeaurora.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-11-chunyan.zhang@spreadtrum.com>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: axi-clkgen: Correctly handle nocount bit in
+ recalc_rate()
+Message-ID: <20171222020828.GH7997@codeaurora.org>
+References: <20170905093241.18582-1-lars@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171207125715.16160-11-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170905093241.18582-1-lars@metafoo.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/07, Chunyan Zhang wrote:
-> This patch added the list of clocks for Spreadtrum's SC9860 SoC,
-> together with clock initialization code.
+On 09/05, Lars-Peter Clausen wrote:
+> If the nocount bit is set the divider is bypassed and the settings for the
+> divider count should be ignored and a divider value of 1 should be assumed.
+> Handle this correctly in the driver recalc_rate() callback.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> While the driver sets up the part so that the read back dividers values
+> yield the correct result the power-on reset settings of the part might not
+> reflect this and hence calling e.g. clk_get_rate() without prior calls to
+> clk_set_rate() will yield the wrong result.
+> 
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 > ---
 
 Applied to clk-next
