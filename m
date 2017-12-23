@@ -1,97 +1,28 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbdLLMcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:32:07 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-Date: Tue, 12 Dec 2017 14:31:34 +0200
-Message-Id: <1513081897-31612-8-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jassisinghbrar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20171205154701.27730-3-georgi.djakov@linaro.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org> <20171205154701.27730-3-georgi.djakov@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sat, 23 Dec 2017 10:27:28 +0530
+Message-ID: <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
+Subject: Re: [PATCH v11 2/6] mailbox: qcom: Create APCS child device for clock controller
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+	Devicetree List <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The PLLs must be prepared enabled during the probe to be
-accessible by the OPPs. Otherwise an OPP may switch
-to non-enabled clock.
+On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> There is a clock controller functionality provided by the APCS hardware
+> block of msm8916 devices. The device-tree would represent an APCS node
+> with both mailbox and clock provider properties.
+>
+The spec might depict a 'clock' box and 'mailbox' box inside the
+bigger APCS box. However, from the code I see in this patchset, they
+are orthogonal and can & should be represented as independent DT
+nodes.
+Patch-1 is ok, though.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 79db4e8..0d41fa9 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -15,7 +15,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
--
-+#include <linux/clk-provider.h>
- #include "clk-alpha-pll.h"
- 
- #define VCO(a, b, c) { \
-@@ -159,7 +159,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 				    cpuclk->shift);
- 
- 	val = index;
--	val = cpuclk->shift;
-+	val <<= cpuclk->shift;
- 
- 	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
- }
-@@ -268,7 +268,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		},
- 		.num_parents = 4,
- 		.ops = &clk_cpu_8996_mux_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 	},
- };
- 
-@@ -284,12 +284,12 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		.parent_names = (const char *[]){
- 			"perfcl_smux",
- 			"perfcl_pll",
--			"pwrcl_pll_acd",
-+			"perfcl_pll_acd",
- 			"perfcl_alt_pll",
- 		},
- 		.num_parents = 4,
- 		.ops = &clk_cpu_8996_mux_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 	},
- };
- 
-@@ -354,6 +354,18 @@ struct clk_hw_clks {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	/* Enable all PLLs and alt PLLs */
-+	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(pwrcl_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_pll.clkr.hw.clk);
-+
-+	/* Set initial boot frequencies for power/perf PLLs */
-+	clk_set_rate(pwrcl_alt_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(perfcl_alt_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(pwrcl_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(perfcl_pll.clkr.hw.clk, 652800000);
-+
- 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
- 	if (ret)
- 		return ret;
--- 
-1.9.1
-
+Thanks
