@@ -1,102 +1,43 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audi o <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v6 5/6] ASoC: Intel: Skylake: Make DSP replies more human readable
-Date: Tue, 26 Dec 2017 22:14:55 +0530
-Message-Id: <1514306696-7062-6-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33406 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751529AbdLWW2z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Dec 2017 17:28:55 -0500
+Received: by mail-wm0-f67.google.com with SMTP id g130so29094116wme.0
+        for <linux-clk@vger.kernel.org>; Sat, 23 Dec 2017 14:28:55 -0800 (PST)
+Message-ID: <1514068131.4333.1.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: mpll: use 64-bit maths in params_from_rate
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
+Cc: khilman@baylibre.com, carlo@caione.org, linux-clk@vger.kernel.org
+Date: Sat, 23 Dec 2017 23:28:51 +0100
+In-Reply-To: <20171223213832.16552-1-martin.blumenstingl@googlemail.com>
+References: <20171223213832.16552-1-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+On Sat, 2017-12-23 at 22:38 +0100, Martin Blumenstingl wrote:
+> "rem * SDM_DEN" can easily overflow on the 32-bit Meson8 and Meson8b
+> SoCs if the "remainder" (after the division operation) is greater than
+> 262143Hz. This is likely to happen since the input clock for the MPLLs
+> on Meson8 and Meson8b is "fixed_pll", which is running at a rate of
+> 2550MHz.
+> 
+> One example where this was observed to be problematic was the Ethernet
+> clock calculation (which takes MPLL2 as input). When requesting a rate
+> of 125MHz there is a remainder of 2500000Hz.
+> The resulting MPLL2 rate before this patch was 127488329Hz.
+> The resulting MPLL2 rate after this patch is 124999103Hz.
+> 
+> Commit b609338b26f5 ("clk: meson: mpll: use 64bit math in
+> rate_from_params") already fixed a similar issue in rate_from_params.
+> 
+> Fixes: 007e6e5c5f01d3 ("clk: meson: mpll: add rw operation")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Add more meaning to the IPC replies for easy debugging. Replace the switch
-case with a lookup table to lookup for the IPC replies and print in human
-readable form.
+Good catch !
 
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 5234fafb758a..8708755a8f9a 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
- 	return 0;
- }
- 
--static int skl_ipc_set_reply_error_code(u32 reply)
-+struct skl_ipc_err_map {
-+	const char *msg;
-+	enum skl_ipc_glb_reply reply;
-+	int err;
-+};
-+
-+static struct skl_ipc_err_map skl_err_map[] = {
-+	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
-+	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+};
-+
-+static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
- {
--	switch (reply) {
--	case IPC_GLB_REPLY_OUT_OF_MEMORY:
--		return -ENOMEM;
-+	int i;
- 
--	case IPC_GLB_REPLY_BUSY:
--		return -EBUSY;
-+	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
-+		if (skl_err_map[i].reply == reply)
-+			break;
-+	}
- 
--	default:
-+	if (i == ARRAY_SIZE(skl_err_map)) {
-+		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
-+				reply,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
- 		return -EINVAL;
- 	}
-+
-+	if (skl_err_map[i].err < 0)
-+		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+	else
-+		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+
-+	return skl_err_map[i].err;
- }
- 
- void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
-@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
- 
- 		}
- 	} else {
--		msg->errno = skl_ipc_set_reply_error_code(reply);
--		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
--		dev_err(ipc->dev, "FW Error Code: %u\n",
--			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
- 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
- 		case IPC_GLB_LOAD_MULTIPLE_MODS:
- 		case IPC_GLB_LOAD_LIBRARY:
--- 
-2.7.4
+Applied to next/drivers
