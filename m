@@ -1,43 +1,47 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 23 Dec 2017 21:06:26 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 03/11] clk: qcom: ipq8074: fix missing GPLL0 divider width
-Date: Wed, 13 Dec 2017 19:55:34 +0530
-Message-Id: <1513175142-3702-4-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
-References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+	Devicetree List <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v11 2/6] mailbox: qcom: Create APCS child device for
+ clock controller
+Message-ID: <20171224050625.GH12655@minitux>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+ <20171205154701.27730-3-georgi.djakov@linaro.org>
+ <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-GPLL0 uses 4 bits post divider which should be specified
-in clock driver structure.
+On Fri 22 Dec 20:57 PST 2017, Jassi Brar wrote:
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq8074.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> > There is a clock controller functionality provided by the APCS hardware
+> > block of msm8916 devices. The device-tree would represent an APCS node
+> > with both mailbox and clock provider properties.
+> >
+> The spec might depict a 'clock' box and 'mailbox' box inside the
+> bigger APCS box. However, from the code I see in this patchset, they
+> are orthogonal and can & should be represented as independent DT
+> nodes.
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index ed2d00f..99906f6 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -84,6 +84,7 @@ enum {
- static struct clk_alpha_pll_postdiv gpll0 = {
- 	.offset = 0x21000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.width = 4,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0",
- 		.parent_names = (const char *[]){
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+The APCS consists of a number of different hardware blocks, one of them
+being the "APCS global" block, which is what this node and drivers
+relate to. On 8916 this contains both the IPC register and clock
+control. But it's still just one block according to the hardware
+specification.
+
+As such DT should describe the one hardware block by one node IMHO. The
+fact that we in Linux split this into two different drivers is an
+unrelated implementation detail.
+
+Regards,
+Bjorn
