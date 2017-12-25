@@ -1,121 +1,148 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audi o <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v6 0/6] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
-Date: Tue, 26 Dec 2017 22:14:50 +0530
-Message-Id: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <al.kochet@gmail.com>
+Return-Path: <al.kochet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to clk_hw_get_boundaries() and expose
+From: Alexander Kochetkov <al.kochet@gmail.com>
+In-Reply-To: <20171221200743.GM7997@codeaurora.org>
+Date: Mon, 25 Dec 2017 12:38:10 +0300
+Cc: linux-clk@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ LAK <linux-arm-kernel@lists.infradead.org>,
+ linux-rockchip@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>
+Message-Id: <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com>
+References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com> <1513872282-5370-2-git-send-email-al.kochet@gmail.com> <20171221200743.GM7997@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-For certain platforms, clocks (mclk/sclk/fs) are required to be up before
-the stream start. Example: some codecs needs the mclk/sclk/fs to be
-enabled early for a successful clock synchronization. Some platforms
-require clock to be enabled at boot and be always ON.
 
-By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
-these clocks can be enabled early after the firmware is downloaded.
+> 21 =D0=B4=D0=B5=D0=BA. 2017 =D0=B3., =D0=B2 23:07, Stephen Boyd =
+<sboyd@codeaurora.org> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0):=
 
-With this series, a virtual clock driver is created which provides
-interface to send the required IPCs from machine driver to enable the
-clocks. NHLT is parsed during probe and the clock information is populated.
-The pointer to blob is cached and sent along with the set_dma_control IPC
-structure during the clk prepare/unprepare callback. Clocks are created for
-a ssp if the nhlt table has endpoint configuration for that particular ssp.
+>=20
+> Can you convert to the determine_rate op instead of round_rate?
+> That function should tell you the min/max limits so that you
+> don't need to query that information from the core.
 
-Kabylake machine driver uses the clock interface to enable the clocks early
-as it is required by the rt5663 driver for clock synchronization.
+I converted rockchip_fractional_approximation() to =
+rockchip_determine_rate() (see the patch attached).
+If it increase parent=E2=80=99s clock for out of limits value, than =
+clock request will fail with -EINVAL, like
+with round_rate() approach.
 
-v5 -> v6
-	- Remove unwanted checks from clk ops
+The problem is that min/max limits provided to determine_rate() is for =
+clock for which the determine_rate()
+was called. While rockchip_determine_rate() =
+(rockchip_fractional_approximation()) requires information
+about parent clock limits.
 
-	- Modify recalc_rate to return just the cached rate and remove the 
-	  rate calculations
+How can I know parents clock limits for current clock? Implement =
+determine_rate() for each parent clocks
+the same way I did for this one clock?
 
-	- Add license based on SPDX	
+Regards,
+Alexander.
 
-v4 -> v5
-	- Remove checks for clock enable status from machine driver since
-	  taken care in the framework already
-
-	- Add check in the skl_clk_set_rate to avoid different rates when
-	  clock is enabled already
-
-v3 -> v4
-	- Add missing signed-offs
-
-v2 -> v3
-	- Moved the clk ops and IPCs from Skylake driver to clk driver and
-	  reordered commits accordingly
-
-	- Add the support for extended I2S blob config which supports
-	  multiple mclk dividers in NHLT
-
-	- Enable the clocks as well in DAPM PMU event instead of hw_params
-	  in machine drivers as confirmed by codec vendor
-
-	- Do not register the clk if there is no valid clock source is
-	  avail in the I2S blob
-
-	- Take care of error return in the clk driver
-
-	- Address rest of the review comments and more optimization added
-
-	- Fix the warning
-		sound/soc/intel/skylake/skl.c:724:1-3:
-		WARNING: PTR_ERR_OR_ZERO can be used
-	  reported by scripts/coccinelle/api/ptr_ret.cocci
-
-	- Modified DSP replies as human readable to ease the debugging
-
-	- Add firmware replies for MCLK/SCLK clocks if they are running
-	  already
-
-v1 -> v2
-	- Register parent clocks with skylake device.
-	  With the patch "clk: Add support for runtime PM" soon to be merged
-	  will help DSP to stay active on call to clock enable.
-	  Reference: (https://patchwork.kernel.org/patch/9911741/)
-
-	- Fix the machine driver to enable clocks early for headphone
-	  playback path as well to fix a pop noise issue
-
-Harsha Priya (1):
-  ASoC: Intel: kbl: Enable mclk and ssp sclk early
-
-Naveen M (1):
-  ASoC: Intel: eve: Enable mclk and ssp sclk early
-
-Sriram Periyasamy (2):
-  ASoC: Intel: Skylake: Add ssp clock driver
-  ASoC: Intel: Skylake: Add extended I2S config blob support in Clock
-    driver
-
-Subhransu S. Prusty (2):
-  ASoC: Intel: Skylake: Make DSP replies more human readable
-  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
-
- sound/soc/intel/Kconfig                            |   3 +
- sound/soc/intel/boards/Kconfig                     |   2 +
- sound/soc/intel/boards/kbl_rt5663_max98927.c       |  95 ++++-
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  94 +++++
- sound/soc/intel/skylake/Makefile                   |   5 +
- sound/soc/intel/skylake/skl-i2s.h                  |  31 ++
- sound/soc/intel/skylake/skl-messages.c             |   1 +
- sound/soc/intel/skylake/skl-nhlt.c                 |  41 +-
- sound/soc/intel/skylake/skl-ssp-clk.c              | 432 +++++++++++++++++++++
- sound/soc/intel/skylake/skl-ssp-clk.h              |  38 ++
- sound/soc/intel/skylake/skl-sst-ipc.c              |  50 ++-
- sound/soc/intel/skylake/skl.h                      |   6 +
- 12 files changed, 774 insertions(+), 24 deletions(-)
- create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
-
--- 
-2.7.4
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 3c1fb0d..1e0c701 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -174,23 +174,9 @@ static void =
+rockchip_fractional_approximation(struct clk_hw *hw,
+ 		unsigned long *m, unsigned long *n)
+ {
+ 	struct clk_fractional_divider *fd =3D to_clk_fd(hw);
+-	unsigned long p_rate, p_parent_rate;
+-	unsigned long min_rate =3D 0, max_rate =3D 0;
+-	struct clk_hw *p_parent;
+ 	unsigned long scale;
+-
+-	p_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
+-	if ((rate * 20 > p_rate) && (p_rate % rate !=3D 0)) {
+-		p_parent =3D clk_hw_get_parent(clk_hw_get_parent(hw));
+-		p_parent_rate =3D clk_hw_get_rate(p_parent);
+-		clk_hw_get_boundaries(clk_hw_get_parent(hw),
+-			&min_rate, &max_rate);
+-		if (p_parent_rate < min_rate)
+-			p_parent_rate =3D min_rate;
+-		if (p_parent_rate > max_rate)
+-			p_parent_rate =3D max_rate;
+-		*parent_rate =3D p_parent_rate;
+-	}
++	unsigned long rate_orig =3D rate;
++	unsigned long parent_rate_orig =3D *parent_rate;
+=20
+ 	/*
+ 	 * Get rate closer to *parent_rate to guarantee there is no =
+overflow
+@@ -204,8 +190,36 @@ static void =
+rockchip_fractional_approximation(struct clk_hw *hw,
+ 	rational_best_approximation(rate, *parent_rate,
+ 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - =
+1, 0),
+ 			m, n);
++
++	pr_info("%s: %s: rate:%lu -> %lu parent_rate:%lu -> %lu m:%lu =
+n:%lu\n",
++		__func__, clk_hw_get_name(hw), rate_orig,  rate,
++		parent_rate_orig, *parent_rate,
++		*m, *n);
+ }
+=20
++static int rockchip_determine_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	unsigned long p_rate, p_parent_rate;
++	struct clk_hw *p_parent;
++	unsigned long best_parent_rate =3D req->best_parent_rate;
++
++	p_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
++	if ((req->rate * 20 > p_rate) && (p_rate % req->rate !=3D 0)) {
++		p_parent =3D clk_hw_get_parent(clk_hw_get_parent(hw));
++		p_parent_rate =3D clk_hw_get_rate(p_parent);
++		req->best_parent_rate =3D p_parent_rate;
++	}
++
++	pr_info("%s: %s: rate:%lu min_rate:%lu max_rate:%lu =
+best_parent_rate:%lu -> %lu best_parent_hw:%s\n",
++		__func__, clk_hw_get_name(hw), req->rate, req->min_rate, =
+req->max_rate, best_parent_rate, req->best_parent_rate,
++		req->best_parent_hw ? =
+clk_hw_get_name(req->best_parent_hw) : "<null>");
++
++	return 0;
++}
++
++static struct clk_ops rockchip_clk_fractional_divider_ops;
++
+ static struct clk *rockchip_clk_register_frac_branch(
+ 		struct rockchip_clk_provider *ctx, const char *name,
+ 		const char *const *parent_names, u8 num_parents,
+@@ -253,7 +267,8 @@ static struct clk =
+*rockchip_clk_register_frac_branch(
+ 	div->nmask =3D GENMASK(div->nwidth - 1, 0) << div->nshift;
+ 	div->lock =3D lock;
+ 	div->approximation =3D rockchip_fractional_approximation;
+-	div_ops =3D &clk_fractional_divider_ops;
++	div_ops =3D &rockchip_clk_fractional_divider_ops;
++
+=20
+ 	clk =3D clk_register_composite(NULL, name, parent_names, =
+num_parents,
+ 				     NULL, NULL,
+@@ -392,6 +407,9 @@ struct rockchip_clk_provider * __init =
+rockchip_clk_init(struct device_node *np,
+ 	ctx->grf =3D syscon_regmap_lookup_by_phandle(ctx->cru_node,
+ 						   "rockchip,grf");
+=20
++	rockchip_clk_fractional_divider_ops =3D =
+clk_fractional_divider_ops;
++	rockchip_clk_fractional_divider_ops.determine_rate =3D =
+rockchip_determine_rate;
++
+ 	return ctx;
+=20
+ err_free:
