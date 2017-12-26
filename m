@@ -1,53 +1,45 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: tegra20: Correct PLL_C_OUT1 setup
-Date: Tue, 19 Dec 2017 06:59:07 +0300
-Message-Id: <8b4c10318e696cc928ad0e528004a7aed72d6c61.1513655733.git.digetx@gmail.com>
-In-Reply-To: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
-References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
-In-Reply-To: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
-References: <10b27ad57c959b6a87f339cc2237cfe45865771d.1513655733.git.digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:34818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751318AbdLZTAo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Dec 2017 14:00:44 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171222122243.25735-2-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io> <20171222122243.25735-2-icenowy@aosc.io>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 26 Dec 2017 13:00:22 -0600
+Message-ID: <CAL_JsqLh4dgWOcsZ0aXCKvEUsANE=enPB0f-LthYOjRGZCkUfQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: fix the binding of Allwinner DE2
+ CCU of A83T and H3
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PLL_C_OUT_1 can't produce 216 MHz defined in the init_table. Let's
-set it to 240 MHz and explicitly specify HCLK rate for consistency.
+On Fri, Dec 22, 2017 at 6:22 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> The DE2 CCU is different on A83T and H3 -- the parent of the clocks on
+> A83T is PLL_DE but on H3 it's the DE module clock. This is not noticed
+> when I develop the DE2 CCU driver.
+>
+> Fix the binding by using different compatibles for A83T and H3, adding
+> notes for the PLL_DE usage on A83T, and change the binding example's
+> compatible from A83T to H3 (as it specifies the DE module clock).
+>
+> Fixes: ed74f8a8a679 ("dt-bindings: add binding for the Allwinner DE2 CCU")
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-By:  Peter De Schrijver <pdeschrijver@nvidia.com>
----
+Please add acks when posting new versions.
 
-Change log:
-v2:	No change.
-
- drivers/clk/tegra/clk-tegra20.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index d143a867968a..06c743988ae2 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1019,9 +1019,9 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
- 	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
--	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
--	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
--	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 0 },
-+	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
-+	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 240000000, 0 },
-+	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 240000000, 0 },
- 	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
- 	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
--- 
-2.15.1
+Rob
