@@ -1,93 +1,90 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1513352509.2261.66.camel@baylibre.com>
-Cc: "linux-clk" <linux-clk@vger.kernel.org>,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- "Kevin Hilman" <khilman@baylibre.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>
-References: <1513352509.2261.66.camel@baylibre.com>
-Message-ID: <151372353128.45969.1867853345627459618@resonance>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.16 - 2nd batch
-Date: Tue, 19 Dec 2017 14:45:31 -0800
+Return-Path: <grinberg@compulab.co.il>
+From: Igor Grinberg <grinberg@compulab.co.il>
+To: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Igor Grinberg <grinberg@compulab.co.il>
+Subject: [PATCH] ARM: pxa: ulpi: fix ulpi timeout and slowpath warn
+Date: Tue, 26 Dec 2017 15:32:53 +0200
+Message-Id: <20171226133253.11653-1-grinberg@compulab.co.il>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-12-15 07:41:49)
-> Dear clock maintainers
-> =
+Both cm-x300 and pxa3xx-ulpi use the plain clk_{en,dis}able() API.
+With the new clocking framework this results in warnings of type:
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:714 clk_core_enable+0x90/0x9c
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc5-cm-x300+ #15
+Hardware name: CM-X300 module
+[<c001007c>] (unwind_backtrace) from [<c000df94>] (show_stack+0x10/0x14)
+[<c000df94>] (show_stack) from [<c00199a8>] (__warn+0xd8/0x100)
+[<c00199a8>] (__warn) from [<c0019a0c>] (warn_slowpath_null+0x3c/0x48)
+[<c0019a0c>] (warn_slowpath_null) from [<c024e8c0>] (clk_core_enable+0x90/0x9c)
+[<c024e8c0>] (clk_core_enable) from [<c024ea54>] (clk_core_enable_lock+0x18/0x2c)
+[<c024ea54>] (clk_core_enable_lock) from [<c0016994>] (cm_x300_u2d_init+0x4c/0xe8)
+[<c0016994>] (cm_x300_u2d_init) from [<c00163e0>] (pxa3xx_u2d_probe+0xe0/0x244)
+[<c00163e0>] (pxa3xx_u2d_probe) from [<c0283de0>] (platform_drv_probe+0x38/0x88)
+...
+------------[ cut here ]------------
+and alike...
 
-> Here is a 2nd round of update for amlogic clocks. It is based on top the
-> first PR sent last week.
-> =
+And finally, it results in:
+------------[ cut here ]------------
+pxa310_ulpi_poll: ULPI access timed out!
+OTG transceiver init failed
+------------[ cut here ]------------
 
-> Thanks for pulling
-> Jerome
-> =
+It might be that disabling the warning in kernel config would also do
+the job, but IMO a better solution would be to switch to
+clk_prepare_enable() and clk_disable_unprepare() APIs.
 
-> The following changes since commit ed3fb5af69afc802d6e29700fff3401ba99eda=
-c1:
-> =
+Signed-off-by: Igor Grinberg <grinberg@compulab.co.il>
+---
+ arch/arm/mach-pxa/cm-x300.c     | 4 ++--
+ arch/arm/mach-pxa/pxa3xx-ulpi.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
->   clk: meson: gxbb: remove IGNORE_UNUSED from mmc clocks (2017-12-08 21:3=
-7:19
-> +0100)
-> =
-
-> are available in the Git repository at:
-> =
-
->   git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-v4.16-2
-> =
-
-> for you to fetch changes up to 78b4af312f910e4f28ebf4cb0a8c1983daa16924:
-> =
-
->   clk: meson-axg: add clock controller drivers (2017-12-14 10:19:37 +0100)
-
-Applied to clk-meson
-
-Regards,
-Mike
-
-> =
-
-> ----------------------------------------------------------------
-> Second round of meson clock updates for v4.16
-> =
-
-> * Rename clock lock to help in case of lockdep issues
-> * Initial axg support
-> =
-
-> ----------------------------------------------------------------
-> Jerome Brunet (1):
->       Merge branch 'next/dt' into next/drivers
-> =
-
-> Qiufang Dai (2):
->       clk: meson-axg: add clocks dt-bindings required header
->       clk: meson-axg: add clock controller drivers
-> =
-
-> Yixun Lan (2):
->       clk: meson: make the spinlock naming more specific
->       dt-bindings: clock: add compatible variant for the Meson-AXG
-> =
-
->  .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
->  arch/arm64/Kconfig.platforms                       |   1 +
->  drivers/clk/meson/Kconfig                          |   8 +
->  drivers/clk/meson/Makefile                         |   1 +
->  drivers/clk/meson/axg.c                            | 936 +++++++++++++++=
-++++++
->  drivers/clk/meson/axg.h                            | 126 +++
->  drivers/clk/meson/clkc.h                           |   2 +-
->  drivers/clk/meson/gxbb.c                           | 112 +--
->  drivers/clk/meson/meson8b.c                        |  24 +-
->  include/dt-bindings/clock/axg-clkc.h               |  71 ++
->  10 files changed, 1217 insertions(+), 71 deletions(-)
->  create mode 100644 drivers/clk/meson/axg.c
->  create mode 100644 drivers/clk/meson/axg.h
->  create mode 100644 include/dt-bindings/clock/axg-clkc.h
+diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+index 912e905a6af6..9ccfb10a9e0f 100644
+--- a/arch/arm/mach-pxa/cm-x300.c
++++ b/arch/arm/mach-pxa/cm-x300.c
+@@ -521,7 +521,7 @@ static int cm_x300_u2d_init(struct device *dev)
+ 			pr_err("failed to get CLK_POUT: %d\n", err);
+ 			return err;
+ 		}
+-		clk_enable(pout_clk);
++		clk_prepare_enable(pout_clk);
+ 
+ 		err = cm_x300_ulpi_phy_reset();
+ 		if (err) {
+@@ -536,7 +536,7 @@ static int cm_x300_u2d_init(struct device *dev)
+ static void cm_x300_u2d_exit(struct device *dev)
+ {
+ 	if (cpu_is_pxa310()) {
+-		clk_disable(pout_clk);
++		clk_disable_unprepare(pout_clk);
+ 		clk_put(pout_clk);
+ 	}
+ }
+diff --git a/arch/arm/mach-pxa/pxa3xx-ulpi.c b/arch/arm/mach-pxa/pxa3xx-ulpi.c
+index c00450764352..b3e2016f24b1 100644
+--- a/arch/arm/mach-pxa/pxa3xx-ulpi.c
++++ b/arch/arm/mach-pxa/pxa3xx-ulpi.c
+@@ -256,7 +256,7 @@ int pxa3xx_u2d_start_hc(struct usb_bus *host)
+ 	if (!u2d)
+ 		return 0;
+ 
+-	clk_enable(u2d->clk);
++	clk_prepare_enable(u2d->clk);
+ 
+ 	if (cpu_is_pxa310()) {
+ 		pxa310_u2d_setup_otg_hc();
+@@ -276,7 +276,7 @@ void pxa3xx_u2d_stop_hc(struct usb_bus *host)
+ 	if (cpu_is_pxa310())
+ 		pxa310_stop_otg_hc();
+ 
+-	clk_disable(u2d->clk);
++	clk_disable_unprepare(u2d->clk);
+ }
+ EXPORT_SYMBOL_GPL(pxa3xx_u2d_stop_hc);
+ 
+-- 
+2.13.6
