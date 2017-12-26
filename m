@@ -1,102 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:8653 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbdLGJxq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 04:53:46 -0500
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 0/4] add clk controller driver for Meson-AXG SoC
-Date: Thu, 7 Dec 2017 17:52:56 +0800
-Message-ID: <20171207095300.15384-1-yixun.lan@amlogic.com>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<matthias.bgg@gmail.com>
+CC: <jdelvare@suse.de>, <jamesjj.liao@mediatek.com>, <weiyi.lu@mediatek.com>,
+	<kevin-cw.chen@mediatek.com>, <shunli.wang@mediatek.com>,
+	<chen.zhong@mediatek.com>, <arnd@arndb.de>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH] clk: mediatek: adjust dependency of reset.c to avoid unexpectedly being built
+Date: Tue, 26 Dec 2017 11:52:31 +0800
+Message-ID: <5a6347a5196a5eba85dce9ac7c3b9392b832f1f8.1514259933.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add driver for the clk controller which found in Meson AXG SoC
+From: Sean Wang <sean.wang@mediatek.com>
 
-  Note, we deliberately create a seperate source file for the Meson AXG
-series, instead of sharing code with previous GXBB/GXL - the file axg.c
-It would help us maintaining the code more easily.
+commit 74cb0d6dde8 ("clk: mediatek: fixup test-building of MediaTek clock
+drivers") can let the build system looking into the directory where the
+clock drivers resides and then allow test-building the drivers.
 
-Changes since v4 [4]:
- - use devm_ioremap instead of devm_ioremap_resource
- - rename DT node using generic name 'bus'
+But the change also gives rise to certain incorrect behavior which is
+reset.c being built even not depending on either COMPILE_TEST or
+ARCH_MEDIATEK alternative dependency. To get rid of reset.c being built
+unexpectedly on the other platforms, it would be a good change that the
+file should be built depending on its own specific configuration rather
+than just on generic RESET_CONTROLLER one.
 
-Changes since v3 [3]:
- - separate dt-bindings header file
- - adjust license note as standard way
- - replace of_iomap with platform/devm API
- - add Rob's Ack to Patch 1,4
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Cc: Jean Delvare <jdelvare@suse.de>
+---
+ drivers/clk/mediatek/Kconfig   | 7 +++++++
+ drivers/clk/mediatek/Makefile  | 2 +-
+ drivers/clk/mediatek/clk-mtk.h | 2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-Changes since v2 [2]:
- - drop register offset calculation
- - update dt-bindings for new compatible variant
-
-Changes since v1 [1]:
- - rework register definion, use '(offset << 2)' to better match
-   the description from data sheet
- - drop "#include dt-bindings/clock/gxbb-aoclkc.h" from dts
- - rebase code to v4.15-rc1
-
-[4]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005522.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005525.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005526.html
-
-[3]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005487.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005488.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005489.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005490.html
-
-[2]
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005468.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005469.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005470.html
-
-[1] 
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005239.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005240.html
-  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005241.html
-
-
-
-Qiufang Dai (3):
-  clk: meson-axg: add clocks dt-bindings required header
-  clk: meson-axg: add clock controller drivers
-  arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-
-Yixun Lan (1):
-  dt-bindings: clock: add compatible variant for the Meson-AXG
-
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   7 +-
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  15 +
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/axg.c                            | 944 +++++++++++++++++++++
- drivers/clk/meson/axg.h                            | 126 +++
- include/dt-bindings/clock/axg-clkc.h               |  71 ++
- 8 files changed, 1171 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/meson/axg.c
- create mode 100644 drivers/clk/meson/axg.h
- create mode 100644 include/dt-bindings/clock/axg-clkc.h
-
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 7338f81..52d880a 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -9,6 +9,13 @@ config COMMON_CLK_MEDIATEK
+ 	---help---
+ 	  MediaTek SoCs' clock support.
+ 
++config RESET_MEDIATEK
++	bool "MediaTek Reset Driver"
++	depends on ARCH_MEDIATEK || COMPILE_TEST
++	depends on RESET_CONTROLLER
++	help
++	  This enables the reset controller driver used on MediaTek SoCs.
++
+ config COMMON_CLK_MT2701
+ 	bool "Clock driver for MediaTek MT2701"
+ 	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index c421ffc..2a48006 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
+-obj-$(CONFIG_RESET_CONTROLLER) += reset.o
++obj-$(CONFIG_RESET_MEDIATEK) += reset.o
+ obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index bf8006d..0322dec 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -229,7 +229,7 @@ void mtk_clk_register_plls(struct device_node *node,
+ struct clk *mtk_clk_register_ref2usb_tx(const char *name,
+ 			const char *parent_name, void __iomem *reg);
+ 
+-#ifdef CONFIG_RESET_CONTROLLER
++#ifdef CONFIG_RESET_MEDIATEK
+ void mtk_register_reset_controller(struct device_node *np,
+ 			unsigned int num_regs, int regofs);
+ #else
 -- 
-2.15.0
-
+2.7.4
