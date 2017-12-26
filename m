@@ -1,70 +1,89 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org,
-	robh@kernel.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v10 5/6] dt-bindings: mailbox: qcom: Document the APCS clock binding
-Date: Fri,  1 Dec 2017 19:02:23 +0200
-Message-Id: <20171201170224.25053-6-georgi.djakov@linaro.org>
-In-Reply-To: <20171201170224.25053-1-georgi.djakov@linaro.org>
-References: <20171201170224.25053-1-georgi.djakov@linaro.org>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+ <20171220032614.GQ19815@vireshk-i7> <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
+ <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop> <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 26 Dec 2017 11:36:34 -0600
+Message-ID: <CAL_JsqJTBgr2ctyRXGyzkRLztoy=qtvEh3AC79RjENBS=6yQRg@mail.gmail.com>
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the binding documentation for APCS to mention that the APCS
-hardware block also expose a clock controller functionality.
+On Thu, Dec 21, 2017 at 5:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+> Hi Rob,
+>
+> On 12/21/2017 2:48 AM, Rob Herring wrote:
+>> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
+>>> Hi Viresh,
+>>>
+>>> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
+>>>> On 19-12-17, 21:25, Sricharan R wrote:
+>>>>> +  cpu@0 {
+>>>>> +          compatible = "qcom,krait";
+>>>>> +          enable-method = "qcom,kpss-acc-v1";
+>>>>> +          device_type = "cpu";
+>>>>> +          reg = <0>;
+>>>>> +          qcom,acc = <&acc0>;
+>>>>> +          qcom,saw = <&saw0>;
+>>>>> +          clocks = <&kraitcc 0>;
+>>>>> +          clock-names = "cpu";
+>>>>> +          cpu-supply = <&smb208_s2a>;
+>>>>> +          operating-points-v2 = <&cpu_opp_table>;
+>>>>> +  };
+>>>>> +
+>>>>> +  qcom,pvs {
+>>>>> +          qcom,pvs-format-a;
+>>>>> +  };
+>>>>
+>>>> Not sure what Rob is going to say on that :)
+>>>>
+>>>
+>>>  Yes. Would be good to know the best way.
+>>
+>> Seems like this should be a property of an efuse node either implied by
+>> the compatible or a separate property. What determines format A vs. B?
+>>
+>
+>  Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
+>  So this property (details like bitfields and register offsets that it represents)
+>  can be put soc specific and nvmem apis can be used to read
+>  the registers. Does something like below look ok ?
+>
+>  qcom,pvs {
+>         compatible = "qcom,pvs-ipq8064";
+>         nvmem-cells = <&pvs_efuse>;
+>  }
 
-The APCS clock controller is a mux and half-integer divider. It has the
-main CPU PLL as an input and provides the clock for the application CPU.
+Why do you need this node? It doesn't look like it corresponds to a
+h/w block. It looks like you are just creating it to instantiate a
+driver.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../bindings/mailbox/qcom,apcs-kpss-global.txt         | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+>  qfprom: qfprom@700000 {
+>         compatible      = "qcom,qfprom";
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-index fb961c310f44..16964f0c1773 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-@@ -15,12 +15,21 @@ platforms.
- 	Usage: required
- 	Value type: <prop-encoded-array>
- 	Definition: must specify the base address and size of the global block
-+- clocks:
-+	Usage: required if #clocks-cells property is present
-+	Value type: <phandle>
-+	Definition: phandle to the input PLL, which feeds the APCS mux/divider
- 
- - #mbox-cells:
- 	Usage: required
- 	Value type: <u32>
- 	Definition: as described in mailbox.txt, must be 1
- 
-+- #clock-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: as described in clock.txt, must be 0
-+
- 
- = EXAMPLE
- The following example describes the APCS HMSS found in MSM8996 and part of the
-@@ -44,3 +53,12 @@ GLINK RPM referencing the "rpm_hlos" doorbell therein.
- 		mbox-names = "rpm_hlos";
- 	};
- 
-+Below is another example of the APCS binding on MSM8916 platforms:
-+
-+	apcs: mailbox@b011000 {
-+		compatible = "qcom,msm8916-apcs-kpss-global";
-+		reg = <0xb011000 0x1000>;
-+		#mbox-cells = <1>;
-+		clocks = <&a53pll>;
-+		#clock-cells = <0>;
-+	};
+Either this or...
+
+>         reg             = <0x00700000 0x1000>;
+>         #address-cells  = <1>;
+>         #size-cells     = <1>;
+>         ranges;
+>         pvs_efuse: pvs {
+
+a compatible here should be specific enough so the OS can know what
+the bits are.
+
+>         reg = <0xc0 0x8>;
+>         };
+>  };
