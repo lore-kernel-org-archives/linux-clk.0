@@ -1,86 +1,102 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 05/11] ARM: sun8i: h3/h5: add DE2 CCU device node for H3
-Date: Fri, 22 Dec 2017 20:22:37 +0800
-Message-Id: <20171222122243.25735-6-icenowy@aosc.io>
-In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audi o <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v6 5/6] ASoC: Intel: Skylake: Make DSP replies more human readable
+Date: Tue, 26 Dec 2017 22:14:55 +0530
+Message-Id: <1514306696-7062-6-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DE2 in H3/H5 has a clock control unit in it, and the behavior is
-slightly different between H3 and H5.
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-Add the common parts in H3/H5 DTSI, and add the compatible string in H3
-DTSI.
+Add more meaning to the IPC replies for easy debugging. Replace the switch
+case with a lookup table to lookup for the IPC replies and print in human
+readable form.
 
-The compatible string of H5 DE2 CCU will be added in a separated patch.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 ---
-Changes in v2:
-- Use H3 DE2 CCU compatible as it's discovered that H3 and A83T DE2 CCU are
-  not equal.
+ sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
 
- arch/arm/boot/dts/sun8i-h3.dtsi    |  4 ++++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 14 ++++++++++++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index b36f9f423c39..8495deecedad 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -85,6 +85,10 @@
- 	compatible = "allwinner,sun8i-h3-ccu";
- };
+diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
+index 5234fafb758a..8708755a8f9a 100644
+--- a/sound/soc/intel/skylake/skl-sst-ipc.c
++++ b/sound/soc/intel/skylake/skl-sst-ipc.c
+@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
+ 	return 0;
+ }
  
-+&display_clocks {
-+	compatible = "allwinner,sun8i-h3-de2-clk";
+-static int skl_ipc_set_reply_error_code(u32 reply)
++struct skl_ipc_err_map {
++	const char *msg;
++	enum skl_ipc_glb_reply reply;
++	int err;
 +};
 +
- &mmc0 {
- 	compatible = "allwinner,sun7i-a20-mmc";
- 	clocks = <&ccu CLK_BUS_MMC0>,
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index 8d40c00d64bb..fcb909658cf0 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -40,9 +40,11 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-h3-ccu.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun8i-h3-ccu.h>
- #include <dt-bindings/reset/sun8i-r-ccu.h>
- 
-@@ -85,6 +87,18 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			/* compatible is in per SoC .dtsi file */
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
++static struct skl_ipc_err_map skl_err_map[] = {
++	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
++	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
++};
 +
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-h3-system-controller",
- 				"syscon";
++static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+ {
+-	switch (reply) {
+-	case IPC_GLB_REPLY_OUT_OF_MEMORY:
+-		return -ENOMEM;
++	int i;
+ 
+-	case IPC_GLB_REPLY_BUSY:
+-		return -EBUSY;
++	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
++		if (skl_err_map[i].reply == reply)
++			break;
++	}
+ 
+-	default:
++	if (i == ARRAY_SIZE(skl_err_map)) {
++		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
++				reply,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
+ 		return -EINVAL;
+ 	}
++
++	if (skl_err_map[i].err < 0)
++		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++	else
++		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++
++	return skl_err_map[i].err;
+ }
+ 
+ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+ 
+ 		}
+ 	} else {
+-		msg->errno = skl_ipc_set_reply_error_code(reply);
+-		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
+-		dev_err(ipc->dev, "FW Error Code: %u\n",
+-			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
+ 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
+ 		case IPC_GLB_LOAD_MULTIPLE_MODS:
+ 		case IPC_GLB_LOAD_LIBRARY:
 -- 
-2.14.2
+2.7.4
