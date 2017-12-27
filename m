@@ -1,52 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:23884 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754538AbdLOBsu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Dec 2017 20:48:50 -0500
-Subject: Re: [PATCH v7 6/6] arm64: dts: meson-axg: switch uart_ao clock to
- CLK81
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
- <20171211141348.22048-7-yixun.lan@amlogic.com>
- <1513270051.2261.11.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <b4e29e22-c0e9-1085-fbb7-eabc5c361445@amlogic.com>
-Date: Fri, 15 Dec 2017 09:49:11 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 27 Dec 2017 10:19:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: mturquette@baylibre.com, matthias.bgg@gmail.com, jdelvare@suse.de,
+	jamesjj.liao@mediatek.com, weiyi.lu@mediatek.com,
+	kevin-cw.chen@mediatek.com, shunli.wang@mediatek.com,
+	chen.zhong@mediatek.com, arnd@arndb.de,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mediatek: adjust dependency of reset.c to avoid
+ unexpectedly being built
+Message-ID: <20171227181903.GD7997@codeaurora.org>
+References: <5a6347a5196a5eba85dce9ac7c3b9392b832f1f8.1514259933.git.sean.wang@mediatek.com>
+ <20171227011936.GT7997@codeaurora.org>
+ <1514367817.30687.59.camel@mtkswgap22>
 MIME-Version: 1.0
-In-Reply-To: <1513270051.2261.11.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514367817.30687.59.camel@mtkswgap22>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 12/15/17 00:47, Jerome Brunet wrote:
-> On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
->> Switch the uart_ao pclk to CLK81 since the clock driver is ready.
->> Also move the clock info to the board.dts instead in the soc.dtsi.
+On 12/27, Sean Wang wrote:
+> On Tue, 2017-12-26 at 17:19 -0800, Stephen Boyd wrote:
+> > On 12/26, sean.wang@mediatek.com wrote:
+> > > From: Sean Wang <sean.wang@mediatek.com>
+> > > 
+> > > commit 74cb0d6dde8 ("clk: mediatek: fixup test-building of MediaTek clock
+> > > drivers") can let the build system looking into the directory where the
+> > > clock drivers resides and then allow test-building the drivers.
+> > > 
+> > > But the change also gives rise to certain incorrect behavior which is
+> > > reset.c being built even not depending on either COMPILE_TEST or
+> > > ARCH_MEDIATEK alternative dependency. To get rid of reset.c being built
+> > > unexpectedly on the other platforms, it would be a good change that the
+> > > file should be built depending on its own specific configuration rather
+> > > than just on generic RESET_CONTROLLER one.
+> > > 
+> > > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > > Cc: Jean Delvare <jdelvare@suse.de>
+> > 
+> > I've typically seen vendor Kconfigs select the RESET_CONTROLLER
+> > framework if the vendor Kconfig is enabled. Any reason that same
+> > method isn't followed here?
+> > 
 > 
-> Same comment as for ethmac, is it really wise ?
-> Isn't the clock setup the same for the axg family ?
+> I just thought explicit dependency added in Kconfig seems a little good
+> no matter how the vendor Kconfig forces to select.
 > 
-HI Jerome:
-yes, should be same for AXG family
+> But, I believe reset controller is always present on every mediatek SoC,
+> at least it can be found on infracfg and pericfg subsystem, which is
+> really fundamental hardware block. So, it's still quite reasonable to
+> add "RESET_CONTROLLER" to vendor Kconfig.
+> 
+> Once we did it in vendor Kconfig, the Kconfig maybe could become
+> something like that.
+> 
+> config RESET_MEDIATEK
+>        bool "MediaTek Reset Driver"
+>        depends on ARCH_MEDIATEK || (RESET_CONTROLLER && COMPILE_TEST)
+>        help
+>          This enables the reset controller driver used on MediaTek SoCs.
+> 
+> where COMPILE_TEST still has to depend on RESET_CONTROLLER to avoid any
+> compiling error.
+> 
 
+Why can't we have 'select RESET_CONTROLLER' under
+COMMON_CLK_MEDIATEK? Is there something that RESET_CONTROLLER
+depends on that may not be enabled?
 
-HI Kevin:
-could you take the patch [5/6]? then I just need to resend for this one
-
-
-Yixun
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
