@@ -1,40 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:46733 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751278AbdL0EZb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Dec 2017 23:25:31 -0500
-Date: Wed, 27 Dec 2017 12:25:13 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Sergej Sawazki <sergej@taudac.com>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [RFC PATCH clk] clk: si5351: _si5351_clkout_reset_pll() can be static
-Message-ID: <20171227042513.GA56372@ivb42>
-References: <201712271259.pq3B6Kw4%fengguang.wu@intel.com>
+Return-Path: <jdelvare@suse.de>
+Date: Wed, 27 Dec 2017 13:15:50 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+ <matthias.bgg@gmail.com>, <jamesjj.liao@mediatek.com>,
+ <weiyi.lu@mediatek.com>, <arnd@arndb.de>,
+ <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: mediatek: remove unnecessary include header from
+ reset.c
+Message-ID: <20171227131550.2c65c6ff@endymion>
+In-Reply-To: <1514345580.30687.27.camel@mtkswgap22>
+References: <b5937ad5c068eeec19005d40dbddb97e09c1b3d0.1514190227.git.sean.wang@mediatek.com>
+	<20171227011021.GQ7997@codeaurora.org>
+	<1514345580.30687.27.camel@mtkswgap22>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <201712271259.pq3B6Kw4%fengguang.wu@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Sean, Stephen,
 
-Fixes: b26ff127c52c ("clk: si5351: Apply PLL soft reset before enabling the outputs")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- clk-si5351.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 27 Dec 2017 11:33:00 +0800, Sean Wang wrote:
+> On Tue, 2017-12-26 at 17:10 -0800, Stephen Boyd wrote:
+> > drivers/clk/mediatek/reset.c:64:6: warning: symbol 'mtk_register_reset_controller' was not declared. Should it be static?
+> 
+> It cannot be static since the function would be referenced in other
+> files under the same folder
+> 
+> 
+> One point I felt confused which is I didn't see the warning complains
+> when I did these build test, even I also added -Werror and -Wall to
+> build all files under driver/clk/mediatek. My toolchain is based on gcc
+> version 5.2.0 (GCC).
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 79b770f..fedaeb1 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -903,7 +903,7 @@ static int _si5351_clkout_set_disable_state(
- 	return 0;
- }
- 
--void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
-+static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
- {
- 	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
- 
+I tested and I get the warning here (gcc 4.8.5 on SUSE) but only after
+setting CONFIG_RESET_CONTROLLER=y. Without it,
+drivers/clk/mediatek/reset.o is never built, so no warning can be
+generated.
+
+> If the warning still is, the include "clk-mtk.h" should be good to stay
+> there because the declaration it needs is in the clk-mtk.h
+
+Agreed.
+
+-- 
+Jean Delvare
+SUSE L3 Support
