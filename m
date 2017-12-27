@@ -1,99 +1,42 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 13/15] MIPS: JZ4770: Workaround for corrupted DMA transfers
-Date: Thu, 28 Dec 2017 14:56:32 +0100
-Message-Id: <20171228135634.30000-14-paul@crapouillou.net>
-In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net>
- <20171228135634.30000-1-paul@crapouillou.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 26 Dec 2017 17:15:07 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, matthias.bgg@gmail.com, jdelvare@suse.de,
+	jamesjj.liao@mediatek.com, weiyi.lu@mediatek.com,
+	kevin-cw.chen@mediatek.com, shunli.wang@mediatek.com,
+	chen.zhong@mediatek.com, arnd@arndb.de,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mediatek: remove superfluous line including
+ linux/clk-provider.h
+Message-ID: <20171227011507.GR7997@codeaurora.org>
+References: <96d2fcd536d75dbbfde0aa0ad0797e80da89117b.1514191770.git.sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <96d2fcd536d75dbbfde0aa0ad0797e80da89117b.1514191770.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maarten ter Huurne <maarten@treewalker.org>
+On 12/25, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> clk-mtk.h has already included linux/clk-provider.h inside, so remove
+> the superfluous line including linux/clk-provider.h from these files which
+> also included clk-mtk.h.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Jean Delvare <jdelvare@suse.de>
+> ---
 
-We have seen MMC DMA transfers read corrupted data from SDRAM when
-a burst interval ends at physical address 0x10000000. To avoid this
-problem, we remove the final page of low memory from the memory map.
+Please don't do this. If anything, I would remove as many
+includes from clk-mtk.h as possible and forward declare the
+structures used in there so there isn't any header dependency.
+Then it becomes clear which C files are clk-provider drivers
+almost immediately because we have the include in the driver, and
+we also avoid any header dependency chains where we must include
+some header file if we want to get another header file's
+definitions.
 
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
----
- arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
- arch/mips/kernel/setup.c |  8 ++++++++
- 2 files changed, 32 insertions(+)
-
- v2: No change
- v3: No change
- v4: No change
-
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index afd84ee966e8..6948b133a15d 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -23,6 +23,7 @@
- 
- #include <asm/bootinfo.h>
- #include <asm/mips_machine.h>
-+#include <asm/page.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
- 	irqchip_init();
- }
- 
-+/*
-+ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
-+ * interval ends at physical address 0x10000000. To avoid this problem, we
-+ * remove the final page of low memory from the memory map.
-+ */
-+void __init jz4770_reserve_unsafe_for_dma(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < boot_mem_map.nr_map; i++) {
-+		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
-+
-+		if (entry->type != BOOT_MEM_RAM)
-+			continue;
-+
-+		if (entry->addr + entry->size != 0x10000000)
-+			continue;
-+
-+		entry->size -= PAGE_SIZE;
-+		break;
-+	}
-+}
-+
- static int __init jz4740_machine_setup(void)
- {
- 	mips_machine_setup();
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 85bc601e9a0d..5a2c20145aee 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -879,6 +879,14 @@ static void __init arch_mem_init(char **cmdline_p)
- 
- 	parse_early_param();
- 
-+#ifdef CONFIG_MACH_JZ4770
-+	if (current_cpu_type() == CPU_JZRISC &&
-+				mips_machtype == MACH_INGENIC_JZ4770) {
-+		extern void __init jz4770_reserve_unsafe_for_dma(void);
-+		jz4770_reserve_unsafe_for_dma();
-+	}
-+#endif
-+
- 	if (usermem) {
- 		pr_info("User-defined physical RAM map:\n");
- 		print_memory_map();
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
