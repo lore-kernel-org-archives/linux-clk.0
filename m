@@ -1,30 +1,76 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 18 Dec 2017 11:03:03 -0800
+Date: Tue, 26 Dec 2017 17:29:18 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: check ops pointer on clock register
-Message-ID: <20171218190303.GV7997@codeaurora.org>
-References: <20171218170007.28042-1-jbrunet@baylibre.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com
+Subject: Re: [RFC PATCH V1 2/2] clk: add lock for clk_core_is_enabled
+Message-ID: <20171227012918.GU7997@codeaurora.org>
+References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
+ <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171218170007.28042-1-jbrunet@baylibre.com>
+In-Reply-To: <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/18, Jerome Brunet wrote:
-> Nothing really prevents a provider from (trying to) register a clock
-> without providing the clock ops structure.
+On 12/22, Dong Aisheng wrote:
+> According to design doc, .is_enabled should be protected by enable lock.
+> Then users don't have to protect it against enable/disable operation
+> in clock drivers.
 > 
-> We do check the individual fields before using them, but not the
-> structure pointer itself. This may have the usual nasty consequences when
-> the pointer is dereferenced, mostly likely when checking one the field
-> during the initialization.
+> See: Documentation/clk.txt
+> "The enable lock is a spinlock and is held across calls to the .enable,
+> .disable and .is_enabled operations."
+> 
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/clk/clk.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index e24968f..d6e2d5c 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -198,14 +198,19 @@ static bool clk_core_is_prepared(struct clk_core *core)
+>  
+>  static bool clk_core_is_enabled(struct clk_core *core)
+>  {
+> +	unsigned long flags;
+>  	bool ret = false;
+>  
+> +	flags = clk_enable_lock();
+> +
+>  	/*
+>  	 * .is_enabled is only mandatory for clocks that gate
+>  	 * fall back to software usage counter if .is_enabled is missing
+>  	 */
+> -	if (!core->ops->is_enabled)
+> +	if (!core->ops->is_enabled) {
+> +		clk_enable_unlock(flags);
+>  		return core->enable_count;
+> +	}
+>  
+>  	/*
+>  	 * Check if clock controller's device is runtime active before
+> @@ -230,6 +235,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
+>  	if (core->dev)
+>  		pm_runtime_put(core->dev);
+>  
+> +	clk_enable_unlock(flags);
+> +
+>  	return ret;
+>  }
 
-Yes, that nasty consequence should be a kernel oops, and the
-developer should notice that before submitting the driver for
-inclusion. I don't think we really care to return an error here
-if this happens.
+It doesn't really make any sense to hold the enable lock inside
+the clk_core_is_enabled() function, unless you want to do
+something else with the information of the enable state with that
+lock held. Otherwise, seeing if a clk is enabled is a one-shot
+read of the enabled state, which could just as easily change
+after the function returns because the lock is released.
+
+We should update the documentation.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
