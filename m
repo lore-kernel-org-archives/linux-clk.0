@@ -1,244 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57036 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751547AbdLLMbq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:31:46 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Tue, 12 Dec 2017 14:31:28 +0200
-Message-Id: <1513081897-31612-2-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
+Date: Wed, 27 Dec 2017 12:10:59 +0800
+Message-ID: <4610834.pRdGNWpFpX@ice-x220i>
+In-Reply-To: <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
+References: <20171222122243.25735-1-icenowy@aosc.io> <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+在 2017年12月27日星期三 CST 下午12:09:41，Chen-Yu Tsai 写道：
+> On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > This patchset adds support for the SimpleFB on Allwinner SoCs with
+> > "Display Engine 2.0".
+> > 
+> > PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+> > 
+> > PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+> > 
+> > PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
+> > for H3/H5 SoCs.
+> > 
+> > PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
+> 
+> Changelog?
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/Kconfig.platforms         |  7 ++++
- drivers/perf/qcom_l2_pmu.c           | 48 +--------------------------
- drivers/soc/qcom/Makefile            |  1 +
- drivers/soc/qcom/kryo-l2-accessors.c | 64 ++++++++++++++++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 27 +++++++++++++++
- 5 files changed, 100 insertions(+), 47 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+They're in seperate patches.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 2401373..a6a6504 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -144,6 +144,13 @@ config ARCH_REALTEK
- 	  This enables support for the ARMv8 based Realtek chipsets,
- 	  like the RTD1295.
- 
-+config ARCH_MSM8996
-+    bool "Enable Support for Qualcomm Technologies, Inc. MSM8996"
-+	depends on ARCH_QCOM
-+	help
-+	This enables support for the MSM8996 chipset. If you do not
-+	wish to build a kernel that runs on this chipset, say 'N' here.
-+
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
- 	select ARCH_HAS_RESET_CONTROLLER
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 4fdc848..ba5f241 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -30,7 +30,7 @@
- 
- #include <asm/barrier.h>
- #include <asm/local64.h>
--#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #define MAX_L2_CTRS             9
- 
-@@ -87,9 +87,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
- 
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
--
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
- /*
-@@ -107,49 +104,6 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
--
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
--
- struct cluster_pmu;
- 
- /*
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 40c56f6..2bf8d93 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_ARCH_MSM8996) +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..6be57e6
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,64 @@
-+/*
-+ * Copyright (c) 2014-2015, 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-+
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
-+
-+/**
-+ * set_l2_indirect_reg: write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void set_l2_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
-+	mb();
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(set_l2_indirect_reg);
-+
-+/**
-+ * get_l2_indirect_reg: read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 get_l2_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(get_l2_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..2bebce1
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-+#define __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-+
-+#ifdef CONFIG_ARCH_QCOM
-+void set_l2_indirect_reg(u64 reg_addr, u64 val);
-+u64 get_l2_indirect_reg(u64 reg_addr);
-+#else
-+static inline void set_l2_indirect_reg(u32 reg_addr, u32 val) {}
-+static inline u32 get_l2_indirect_reg(u32 reg_addr)
-+{
-+	return 0;
-+}
-+#endif
-+#endif
--- 
-1.9.1
-
+> 
+> ChenYu
+> 
+> > Icenowy Zheng (11):
+> >   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
+> >   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+> >   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
+> >   dt-bindings: simplefb-sunxi: add pipelines for DE2
+> >   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+> >   arm64: allwinner: h5: add compatible string for DE2 CCU
+> >   ARM: sunxi: h3/h5: add simplefb nodes
+> >   dt-bindings: add binding for A64 DE2 CCU SRAM
+> >   clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
+> >   arm64: allwinner: a64: add DE2 CCU for A64 SoC
+> >   arm64: allwinner: a64: add simplefb for A64 SoC
+> >  
+> >  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 ++-
+> >  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 +
+> >  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 +
+> >  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 +++++++++++
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 +++++++++++++++++
+> >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 +
+> >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 85
+> >  +++++++++++++++++++--- 7 files changed, 202 insertions(+), 13
+> >  deletions(-)
+> > 
+> > --
+> > 2.14.2
