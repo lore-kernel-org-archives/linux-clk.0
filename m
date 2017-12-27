@@ -1,34 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36840 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752259AbdLGGlH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:07 -0500
-Date: Wed, 6 Dec 2017 22:41:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
-        vireshk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/6] clk: SPEAr: pr_err() strings should end with newlines
-Message-ID: <20171207064103.GR4283@codeaurora.org>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
- <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <03a5ce213323863375e1fb3f85c0c3cc8c921a41.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <4610834.pRdGNWpFpX@ice-x220i>
+References: <20171222122243.25735-1-icenowy@aosc.io> <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
+ <4610834.pRdGNWpFpX@ice-x220i>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 27 Dec 2017 12:23:53 +0800
+Message-ID: <CAGb2v658L_941_jaD0eu6fjmo1HGdjS3bU1UVw3y8RO3ZDmwyg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Arvind Yadav wrote:
-> pr_err() messages should end with a new-line to avoid other messages
-> being concatenated.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
+On Wed, Dec 27, 2017 at 12:10 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> 在 2017年12月27日星期三 CST 下午12:09:41，Chen-Yu Tsai 写道：
+>> On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> > This patchset adds support for the SimpleFB on Allwinner SoCs with
+>> > "Display Engine 2.0".
+>> >
+>> > PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+>> >
+>> > PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+>> >
+>> > PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
+>> > for H3/H5 SoCs.
+>> >
+>> > PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
+>>
+>> Changelog?
+>
+> They're in seperate patches.
 
-Applied to clk-next
+Please add them to all patches in such a case. List "none" if there
+were no changes.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ChenYu
