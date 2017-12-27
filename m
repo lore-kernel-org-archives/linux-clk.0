@@ -1,131 +1,154 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 02/11] clk: qcom: add parent map for regmap mux
-Date: Wed, 13 Dec 2017 19:55:33 +0530
-Message-Id: <1513175142-3702-3-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
-References: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <4fdb2ab5-1dca-c44c-b647-3388a8ecea81@codeaurora.org>
+References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+ <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+ <20171220032614.GQ19815@vireshk-i7> <b0d8147a-46e1-0787-ae37-9c1ef957d190@codeaurora.org>
+ <20171220211817.mpkkj747blr4qkqm@rob-hp-laptop> <864b6cfd-d3eb-d876-82e2-ebc79c5a6956@codeaurora.org>
+ <CAL_JsqJTBgr2ctyRXGyzkRLztoy=qtvEh3AC79RjENBS=6yQRg@mail.gmail.com> <4fdb2ab5-1dca-c44c-b647-3388a8ecea81@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 27 Dec 2017 15:58:36 -0600
+Message-ID: <CAL_Jsq+Jfsr3xhR=uB6zBNMA-NerzugFQa0uJ81O4QW-iTNRaA@mail.gmail.com>
+Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the driver assumes the register configuration value
-is identical to its index in the parent map. This patch adds
-the parent map field in regmap mux clock node which contains
-the mapping of parent index with actual register configuration
-value. If regmap node contains this parent map then the
-configuration value will be taken from this
-parent map instead of simply writing the index value.
+On Wed, Dec 27, 2017 at 4:20 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+> Hi Rob,
+>
+> On 12/26/2017 11:06 PM, Rob Herring wrote:
+>> On Thu, Dec 21, 2017 at 5:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>>> Hi Rob,
+>>>
+>>> On 12/21/2017 2:48 AM, Rob Herring wrote:
+>>>> On Wed, Dec 20, 2017 at 11:55:33AM +0530, Sricharan R wrote:
+>>>>> Hi Viresh,
+>>>>>
+>>>>> On 12/20/2017 8:56 AM, Viresh Kumar wrote:
+>>>>>> On 19-12-17, 21:25, Sricharan R wrote:
+>>>>>>> +  cpu@0 {
+>>>>>>> +          compatible = "qcom,krait";
+>>>>>>> +          enable-method = "qcom,kpss-acc-v1";
+>>>>>>> +          device_type = "cpu";
+>>>>>>> +          reg = <0>;
+>>>>>>> +          qcom,acc = <&acc0>;
+>>>>>>> +          qcom,saw = <&saw0>;
+>>>>>>> +          clocks = <&kraitcc 0>;
+>>>>>>> +          clock-names = "cpu";
+>>>>>>> +          cpu-supply = <&smb208_s2a>;
+>>>>>>> +          operating-points-v2 = <&cpu_opp_table>;
+>>>>>>> +  };
+>>>>>>> +
+>>>>>>> +  qcom,pvs {
+>>>>>>> +          qcom,pvs-format-a;
+>>>>>>> +  };
+>>>>>>
+>>>>>> Not sure what Rob is going to say on that :)
+>>>>>>
+>>>>>
+>>>>>  Yes. Would be good to know the best way.
+>>>>
+>>>> Seems like this should be a property of an efuse node either implied by
+>>>> the compatible or a separate property. What determines format A vs. B?
+>>>>
+>>>
+>>>  Yes, this efuse registers are part of the eeprom (qfprom) tied to the soc.
+>>>  So this property (details like bitfields and register offsets that it represents)
+>>>  can be put soc specific and nvmem apis can be used to read
+>>>  the registers. Does something like below look ok ?
+>>>
+>>>  qcom,pvs {
+>>>         compatible = "qcom,pvs-ipq8064";
+>>>         nvmem-cells = <&pvs_efuse>;
+>>>  }
+>>
+>> Why do you need this node? It doesn't look like it corresponds to a
+>> h/w block. It looks like you are just creating it to instantiate a
+>> driver.
+>>
+>>>  qfprom: qfprom@700000 {
+>>>         compatible      = "qcom,qfprom";
+>>
+>> Either this or...
+>>
+>>>         reg             = <0x00700000 0x1000>;
+>>>         #address-cells  = <1>;
+>>>         #size-cells     = <1>;
+>>>         ranges;
+>>>         pvs_efuse: pvs {
+>>
+>> a compatible here should be specific enough so the OS can know what
+>> the bits are.
+>
+>  Infact the above "qcom,pvs" node is required mainly to act as a consumer
+>  for the nvmem data provider ("qcom,qfprom") (using nvmem-cells = <&pvs_efuse>)
+>  Then "qfprom" can be made to contain a "format_a" or "format_b" specific cell.
+>
+>  So all that is needed is, nvmem-cells = <&pvs_efuse_phandle> needs to be available
+>  somewhere. The requirement is similar what is now done by "operating-points-v2-ti-cpu"
+>  and the ti-cpufreq.c. There "operating-points-v2-ti-cpu" node, contains the syscon
+>  register to read the efuse values. Similarly does defining a new
+>  "operating-points-v2-krait-cpu" which would contain the nvmem-cells property look ok ?
+>  This would avoid defining a new qcom,pvs node.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h        | 10 ----------
- drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
- drivers/clk/qcom/clk-regmap-mux.h |  2 ++
- drivers/clk/qcom/common.h         | 11 ++++++++++-
- 4 files changed, 18 insertions(+), 11 deletions(-)
+Yes, this seems reasonable.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index a249545..2a7489a 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -26,16 +26,6 @@ struct freq_tbl {
- };
- 
- /**
-- * struct parent_map - map table for PLL source select configuration values
-- * @src: source PLL
-- * @cfg: configuration value
-- */
--struct parent_map {
--	u8 src;
--	u8 cfg;
--};
--
--/**
-  * struct mn - M/N:D counter
-  * @mnctr_en_bit: bit to enable mn counter
-  * @mnctr_reset_bit: bit to assert mn counter reset
-diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
-index cae3071..0f3a1bd 100644
---- a/drivers/clk/qcom/clk-regmap-mux.c
-+++ b/drivers/clk/qcom/clk-regmap-mux.c
-@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
- 	val >>= mux->shift;
- 	val &= mask;
- 
-+	if (mux->parent_map)
-+		return qcom_find_src_index(hw, mux->parent_map, val);
-+
- 	return val;
- }
- 
-@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
- 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
- 	unsigned int val;
- 
-+	if (mux->parent_map)
-+		index = mux->parent_map[index].cfg;
-+
- 	val = index;
- 	val <<= mux->shift;
- 
-diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
-index 5cec761..7797cdd 100644
---- a/drivers/clk/qcom/clk-regmap-mux.h
-+++ b/drivers/clk/qcom/clk-regmap-mux.h
-@@ -16,11 +16,13 @@
- 
- #include <linux/clk-provider.h>
- #include "clk-regmap.h"
-+#include "common.h"
- 
- struct clk_regmap_mux {
- 	u32			reg;
- 	u32			shift;
- 	u32			width;
-+	const struct parent_map	*parent_map;
- 	struct clk_regmap	clkr;
- };
- 
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index 23c1927..00196ee 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -20,7 +20,6 @@
- struct regmap;
- struct freq_tbl;
- struct clk_hw;
--struct parent_map;
- 
- #define PLL_LOCK_COUNT_SHIFT	8
- #define PLL_LOCK_COUNT_MASK	0x3f
-@@ -39,6 +38,16 @@ struct qcom_cc_desc {
- 	size_t num_gdscs;
- };
- 
-+/**
-+ * struct parent_map - map table for source select configuration values
-+ * @src: source
-+ * @cfg: configuration value
-+ */
-+struct parent_map {
-+	u8 src;
-+	u8 cfg;
-+};
-+
- extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
- 					     unsigned long rate);
- extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>
+>         cpu@0 {
+>                 compatible = "qcom,krait";
+>                 enable-method = "qcom,kpss-acc-v1";
+>                 device_type = "cpu";
+>                 reg = <0>;
+>                 qcom,acc = <&acc0>;
+>                 qcom,saw = <&saw0>;
+>                 clocks = <&kraitcc 0>;
+>                 clock-names = "cpu";
+>                 cpu-supply = <&smb208_s2a>;
+>                 operating-points-v2 = <&cpu_opp_table>;
+>         };
+>
+>         cpu_opp_table: opp_table {
+>                 compatible = "operating-points-v2-krait-cpu";
+>
+>                 nvmem-cells = <&pvs_efuse_format_a>;
+>                 /*
+>                  * Missing opp-shared property means CPUs switch DVFS states
+>                  * independently.
+>                  */
+>
+>                 opp-1400000000 {
+>                         opp-hz = /bits/ 64 <1400000000>;
+>                         opp-microvolt-speed0-pvs0-v0 = <1250000>;
+>                         opp-microvolt-speed0-pvs1-v0 = <1175000>;
+>                         opp-microvolt-speed0-pvs2-v0 = <1125000>;
+>                         opp-microvolt-speed0-pvs3-v0 = <1050000>;
+>
+>                 };
+>                 ...
+>         }
+>
+>         qfprom: qfprom@700000 {
+>                 compatible      = "qcom,qfprom";
+>                 reg             = <0x00700000 0x1000>;
+>                 #address-cells  = <1>;
+>                 #size-cells     = <1>;
+>                 ranges;
+>                 pvs_efuse_format_a: pvs {
+>                         reg = <0xc0 0x8>;
+>                 };
+>         }
+>
+> Regards,
+>  Sricharan
+>
+> --
+> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
