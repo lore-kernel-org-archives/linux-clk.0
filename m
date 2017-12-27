@@ -1,65 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11005 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757449AbdKQJ2Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Nov 2017 04:28:16 -0500
-From: Xu YiPing <xuyiping@hisilicon.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <xuejiancheng@hisilicon.com>,
-        <wenpan@hisilicon.com>, <leo.yan@linaro.org>,
-        <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
-        <zhongkaihua@huawei.com>, <chenjun14@huawei.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
-        <kevin.wangtao@hisilicon.com>
-Subject: [PATCH v3 0/3] Add support for Hi3660 stub clock
-Date: Fri, 17 Nov 2017 17:27:29 +0800
-Message-ID: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 26 Dec 2017 17:10:21 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, matthias.bgg@gmail.com, jdelvare@suse.de,
+	jamesjj.liao@mediatek.com, weiyi.lu@mediatek.com, arnd@arndb.de,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mediatek: remove unnecessary include header from
+ reset.c
+Message-ID: <20171227011021.GQ7997@codeaurora.org>
+References: <b5937ad5c068eeec19005d40dbddb97e09c1b3d0.1514190227.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <b5937ad5c068eeec19005d40dbddb97e09c1b3d0.1514190227.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Leo Yan <leo.yan@linaro.org>
+On 12/25, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> In fact, the clk-mtk.h header is indeed not needed for reset.c and thus
+> it's safe and good change to remove it from the file.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Reviewed-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Jean Delvare <jdelvare@suse.de>
+> ---
+>  drivers/clk/mediatek/reset.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+> index d3551d5..70ebb2e 100644
+> --- a/drivers/clk/mediatek/reset.c
+> +++ b/drivers/clk/mediatek/reset.c
+> @@ -19,8 +19,6 @@
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+>  
+> -#include "clk-mtk.h"
+> -
 
-Hi3660 has stub clocks for two CPU clusters, GPU and DDR; and the stub
-clocks use the mailbox to send message to MCU for frequency scaling.
-
-This patch set adds support Hi3660 stub clock, and since it needs to
-use mailbox so this patch set has dependency with Hi3660 mailbox
-patch set [1].
-
-This patch set has been tested on Hikey960 with CPUFreq enabled.
-
-Changes from v1:
-* According to Rob suggestion, moved dt header definition into DT patch;
-* According to Julien suggestion, removed "dev" member from stub clock
-  structure and refined code for global variable "stub_clk_chan";
-* Fixed DT binding patch.
-
-[1] http://archive.armlinux.org.uk/lurker/message/20171027.061501.f895dee8.en.html
-
-
-Kaihua Zhong (2):
-  clk: hisilicon: Add support for Hi3660 stub clocks
-  arm64: dts: Hi3660: Add binding for stub clock
-
-Leo Yan (1):
-  dt-bindings: clk: Hi3660: Document stub clock
-
- .../devicetree/bindings/clock/hi3660-clock.txt     |   6 +
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   7 +
- drivers/clk/hisilicon/Kconfig                      |   6 +
- drivers/clk/hisilicon/Makefile                     |   1 +
- drivers/clk/hisilicon/clk-hi3660-stub.c            | 186 +++++++++++++++++++++
- include/dt-bindings/clock/hi3660-clock.h           |   7 +
- 6 files changed, 213 insertions(+)
- create mode 100644 drivers/clk/hisilicon/clk-hi3660-stub.c
+drivers/clk/mediatek/reset.c:64:6: warning: symbol 'mtk_register_reset_controller' was not declared. Should it be static?
 
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
