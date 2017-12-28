@@ -1,63 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:19745 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752253AbdLKHwM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Dec 2017 02:52:12 -0500
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-        Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Patches Audio <patches.audio@intel.com>,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-clk@vger.kernel.org,
-        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v5 6/6] ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
-Date: Mon, 11 Dec 2017 13:16:30 +0530
-Message-Id: <1512978390-8848-7-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Dec 2017 10:36:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 03/15] clk: ingenic: support PLLs with no bypass bit
+Message-ID: <20171228183612.GJ7997@codeaurora.org>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
+ <20171228135634.30000-4-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171228135634.30000-4-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+On 12/28, Paul Cercueil wrote:
+> The second PLL of the JZ4770 does not have a bypass bit.
+> This commit makes it possible to support it with the current common CGU
+> code.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
-If mclk/sclk is already running, FW responds with IPC reply MCLK/SCLK
-already running. Add these to the IPC reply lookup table.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- sound/soc/intel/skylake/skl-sst-ipc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 8708755a8f9a..9f3ce73593ae 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -249,6 +249,8 @@ enum skl_ipc_glb_reply {
- 	IPC_GLB_REPLY_INVALID_CONFIG_DATA_LEN = 121,
- 	IPC_GLB_REPLY_GATEWAY_NOT_INITIALIZED = 140,
- 	IPC_GLB_REPLY_GATEWAY_NOT_EXIST = 141,
-+	IPC_GLB_REPLY_SCLK_ALREADY_RUNNING = 150,
-+	IPC_GLB_REPLY_MCLK_ALREADY_RUNNING = 151,
- 
- 	IPC_GLB_REPLY_PPL_NOT_INITIALIZED = 160,
- 	IPC_GLB_REPLY_PPL_NOT_EXIST = 161,
-@@ -401,6 +403,10 @@ struct skl_ipc_err_map {
- static struct skl_ipc_err_map skl_err_map[] = {
- 	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
- 	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+	{"SCLK already running", IPC_GLB_REPLY_SCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_SCLK_ALREADY_RUNNING},
-+	{"MCLK already running", IPC_GLB_REPLY_MCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_MCLK_ALREADY_RUNNING},
- };
- 
- static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
 -- 
-2.7.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
