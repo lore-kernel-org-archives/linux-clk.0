@@ -1,59 +1,64 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 20 Dec 2017 08:56:14 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 15/15] devicetree: bindings: Document qcom,pvs
-Message-ID: <20171220032614.GQ19815@vireshk-i7>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
- <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513698900-10638-16-git-send-email-sricharan@codeaurora.org>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 12/15] MIPS: JZ4770: Work around config2 misreporting associativity
+Date: Thu, 28 Dec 2017 14:56:31 +0100
+Message-Id: <20171228135634.30000-13-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19-12-17, 21:25, Sricharan R wrote:
-> +	cpu@0 {
-> +		compatible = "qcom,krait";
-> +		enable-method = "qcom,kpss-acc-v1";
-> +		device_type = "cpu";
-> +		reg = <0>;
-> +		qcom,acc = <&acc0>;
-> +		qcom,saw = <&saw0>;
-> +		clocks = <&kraitcc 0>;
-> +		clock-names = "cpu";
-> +		cpu-supply = <&smb208_s2a>;
-> +		operating-points-v2 = <&cpu_opp_table>;
-> +	};
-> +
-> +	qcom,pvs {
-> +		qcom,pvs-format-a;
-> +	};
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-Not sure what Rob is going to say on that :)
+According to config2, the associativity would be 5-ways, but the
+documentation states 4-ways, which also matches the documented
+L2 cache size of 256 kB.
 
-> +
-> +
-> +	cpu_opp_table: opp_table {
-> +		compatible = "operating-points-v2";
-> +
-> +		/*
-> +		 * Missing opp-shared property means CPUs switch DVFS states
-> +		 * independently.
-> +		 */
-> +
-> +		opp-1400000000 {
-> +			opp-hz = /bits/ 64 <1400000000>;
-> +			opp-microvolt-speed0-pvs0-v0 = <1250000>;
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+---
+ arch/mips/mm/sc-mips.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Why speed0 and v0 in all the names ?
+ v2: No change
+ v3: No change
+ v4: Rebased on top of Linux 4.15-rc5
 
+diff --git a/arch/mips/mm/sc-mips.c b/arch/mips/mm/sc-mips.c
+index 548acb7f8557..394673991bab 100644
+--- a/arch/mips/mm/sc-mips.c
++++ b/arch/mips/mm/sc-mips.c
+@@ -16,6 +16,7 @@
+ #include <asm/mmu_context.h>
+ #include <asm/r4kcache.h>
+ #include <asm/mips-cps.h>
++#include <asm/bootinfo.h>
+ 
+ /*
+  * MIPS32/MIPS64 L2 cache handling
+@@ -220,6 +221,14 @@ static inline int __init mips_sc_probe(void)
+ 	else
+ 		return 0;
+ 
++	/*
++	 * According to config2 it would be 5-ways, but that is contradicted
++	 * by all documentation.
++	 */
++	if (current_cpu_type() == CPU_JZRISC &&
++				mips_machtype == MACH_INGENIC_JZ4770)
++		c->scache.ways = 4;
++
+ 	c->scache.waysize = c->scache.sets * c->scache.linesz;
+ 	c->scache.waybit = __ffs(c->scache.waysize);
+ 
 -- 
-viresh
+2.11.0
