@@ -1,68 +1,103 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 05/11] drm/bridge/synopsys: dw-hdmi: Add deinit callback
-Date: Sat, 30 Dec 2017 22:01:57 +0100
-Message-Id: <20171230210203.24115-6-jernej.skrabec@siol.net>
-In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+	Paul Burton <paul.burton@imgtec.com>
+Subject: [PATCH v4 07/15] MIPS: Setup boot_command_line before plat_mem_setup
+Date: Thu, 28 Dec 2017 14:56:26 +0100
+Message-Id: <20171228135634.30000-8-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some SoCs, like Allwinner A83T, have to do additional cleanup when
-HDMI driver unloads. When using DW HDMI through DRM bridge API, there is
-no place to store driver's private data so it can be accessed in unbind
-function. Because of that, add deinit function which is called at the
-very end, so drivers can do a proper cleanup.
+From: Paul Burton <paul.burton@imgtec.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Platforms using DT will typically call __dt_setup_arch from
+plat_mem_setup. This in turn calls early_init_dt_scan. When
+CONFIG_CMDLINE is set, this leads to its value being copied into
+boot_command_line by early_init_dt_scan_chosen. If this happens before
+the code setting up boot_command_line in arch_mem_init runs, that code
+will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
+boot_command_line again, duplicating it. For some command line
+parameters (eg. earlycon) this can be a problem. Set up
+boot_command_line before early_init_dt_scan_chosen gets called such that
+it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
+duplicated.
+
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
- include/drm/bridge/dw_hdmi.h              | 1 +
- 2 files changed, 4 insertions(+)
+ arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 67467d0b683a..a6fe7a323c83 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2592,6 +2592,9 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
- 		i2c_del_adapter(&hdmi->i2c->adap);
- 	else
- 		i2c_put_adapter(hdmi->ddc);
+ v2: New patch in this series
+ v3: No change
+ v4: No change
+
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 702c678de116..85bc601e9a0d 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -826,25 +826,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
+ 
+-	/* call board setup routine */
+-	plat_mem_setup();
+-
+-	/*
+-	 * Make sure all kernel memory is in the maps.  The "UP" and
+-	 * "DOWN" are opposite for initdata since if it crosses over
+-	 * into another memory section you don't want that to be
+-	 * freed when the initdata is freed.
+-	 */
+-	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+-			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+-			 BOOT_MEM_RAM);
+-	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+-			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+-			 BOOT_MEM_INIT_RAM);
+-
+-	pr_info("Determined physical RAM map:\n");
+-	print_memory_map();
+-
+ #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+ 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ #else
+@@ -872,6 +853,26 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	}
+ #endif
+ #endif
 +
-+	if (hdmi->plat_data->deinit)
-+		hdmi->plat_data->deinit(hdmi->plat_data);
- }
++	/* call board setup routine */
++	plat_mem_setup();
++
++	/*
++	 * Make sure all kernel memory is in the maps.  The "UP" and
++	 * "DOWN" are opposite for initdata since if it crosses over
++	 * into another memory section you don't want that to be
++	 * freed when the initdata is freed.
++	 */
++	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
++			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
++			 BOOT_MEM_RAM);
++	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
++			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
++			 BOOT_MEM_INIT_RAM);
++
++	pr_info("Determined physical RAM map:\n");
++	print_memory_map();
++
+ 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
  
- /* -----------------------------------------------------------------------------
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index f5cca4362154..a3218d3da61b 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -124,6 +124,7 @@ struct dw_hdmi_phy_ops {
- 
- struct dw_hdmi_plat_data {
- 	struct regmap *regm;
-+	void (*deinit)(const struct dw_hdmi_plat_data *pdata);
- 	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
- 					   const struct drm_display_mode *mode);
- 	unsigned long input_bus_format;
+ 	*cmdline_p = command_line;
 -- 
-2.15.1
+2.11.0
