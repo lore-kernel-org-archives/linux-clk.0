@@ -1,68 +1,186 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: check ops pointer on clock register
-Date: Mon, 18 Dec 2017 18:00:07 +0100
-Message-Id: <20171218170007.28042-1-jbrunet@baylibre.com>
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 04/15] clk: ingenic: Add code to enable/disable PLLs
+Date: Thu, 28 Dec 2017 14:56:23 +0100
+Message-Id: <20171228135634.30000-5-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Nothing really prevents a provider from (trying to) register a clock
-without providing the clock ops structure.
+This commit permits the PLLs to be dynamically enabled and disabled when
+their children clocks are enabled and disabled.
 
-We do check the individual fields before using them, but not the
-structure pointer itself. This may have the usual nasty consequences when
-the pointer is dereferenced, mostly likely when checking one the field
-during the initialization.
-
-This is fixed by returning an error on clock register if the ops pointer
-is NULL
-
-Fixes: b2476490ef11 ("clk: introduce the common clock framework")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
+ drivers/clk/ingenic/cgu.c | 89 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 74 insertions(+), 15 deletions(-)
 
-Mike, Stephen,
+ v2: No change
+ v3: No change
+ v4: No change
 
-I'm not really sure what the Fixes tag should here. From what I could
-see, we never checked the ops pointer before using it since the
-beginning of CCF.
-
-Regards
-Jerome
-
- drivers/clk/clk.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8a1860a36c77..275b45664227 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2683,7 +2683,13 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		ret = -ENOMEM;
- 		goto fail_name;
- 	}
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index 381c4a17a1fc..56a712c9075f 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -107,9 +107,6 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	if (bypass)
+ 		return parent_rate;
+ 
+-	if (!enable)
+-		return 0;
+-
+ 	for (od = 0; od < pll_info->od_max; od++) {
+ 		if (pll_info->od_encoding[od] == od_enc)
+ 			break;
+@@ -153,17 +150,25 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
+ 	return div_u64((u64)parent_rate * m, n * od);
+ }
+ 
+-static long
+-ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
+-		       unsigned long *prate)
++static inline const struct ingenic_cgu_clk_info *to_clk_info(
++		struct ingenic_clk *ingenic_clk)
+ {
+-	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+ 	const struct ingenic_cgu_clk_info *clk_info;
+ 
+ 	clk_info = &cgu->clock_info[ingenic_clk->idx];
+ 	BUG_ON(clk_info->type != CGU_CLK_PLL);
+ 
++	return clk_info;
++}
 +
-+	if (!hw->init->ops) {
-+		ret = -EINVAL;
-+		goto fail_ops;
-+	}
- 	core->ops = hw->init->ops;
++static long
++ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
++		       unsigned long *prate)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
 +
- 	if (dev && pm_runtime_enabled(dev))
- 		core->dev = dev;
- 	if (dev && dev->driver)
-@@ -2745,6 +2751,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		kfree_const(core->parent_names[i]);
- 	kfree(core->parent_names);
- fail_parent_names:
-+fail_ops:
- 	kfree_const(core->name);
- fail_name:
- 	kfree(core);
+ 	return ingenic_pll_calc(clk_info, req_rate, *prate, NULL, NULL, NULL);
+ }
+ 
+@@ -171,19 +176,14 @@ static int
+ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		     unsigned long parent_rate)
+ {
+-	const unsigned timeout = 100;
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+-	const struct ingenic_cgu_pll_info *pll_info;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
+ 	unsigned long rate, flags;
+-	unsigned m, n, od, i;
++	unsigned int m, n, od;
+ 	u32 ctl;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-	BUG_ON(clk_info->type != CGU_CLK_PLL);
+-	pll_info = &clk_info->pll;
+-
+ 	rate = ingenic_pll_calc(clk_info, req_rate, parent_rate,
+ 			       &m, &n, &od);
+ 	if (rate != req_rate)
+@@ -202,6 +202,26 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+ 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
+ 
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return 0;
++}
++
++static int ingenic_pll_enable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	const unsigned int timeout = 100;
++	unsigned long flags;
++	unsigned int i;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
+ 	ctl &= ~BIT(pll_info->bypass_bit);
+ 	ctl |= BIT(pll_info->enable_bit);
+ 
+@@ -223,10 +243,48 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	return 0;
+ }
+ 
++static void ingenic_pll_disable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
++	ctl &= ~BIT(pll_info->enable_bit);
++
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++}
++
++static int ingenic_pll_is_enabled(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return !!(ctl & BIT(pll_info->enable_bit));
++}
++
+ static const struct clk_ops ingenic_pll_ops = {
+ 	.recalc_rate = ingenic_pll_recalc_rate,
+ 	.round_rate = ingenic_pll_round_rate,
+ 	.set_rate = ingenic_pll_set_rate,
++
++	.enable = ingenic_pll_enable,
++	.disable = ingenic_pll_disable,
++	.is_enabled = ingenic_pll_is_enabled,
+ };
+ 
+ /*
+@@ -601,6 +659,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
+ 		}
+ 	} else if (caps & CGU_CLK_PLL) {
+ 		clk_init.ops = &ingenic_pll_ops;
++		clk_init.flags |= CLK_SET_RATE_GATE;
+ 
+ 		caps &= ~CGU_CLK_PLL;
+ 
 -- 
-2.14.3
+2.11.0
