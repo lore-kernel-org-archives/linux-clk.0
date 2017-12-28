@@ -1,101 +1,36 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v5 10/15] devicetree: bindings: Document qcom,kpss-gcc
-Date: Tue, 19 Dec 2017 21:24:55 +0530
-Message-Id: <1513698900-10638-11-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
-References: <1513698900-10638-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Dec 2017 14:57:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Lori Hikichi <lori.hikichi@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Lori Hikichi <lhikichi@broadcom.com>
+Subject: Re: [PATCH v1 4/4] clk: iproc: Minor tidy up of iproc pll data
+ structures
+Message-ID: <20171228225717.GW7997@codeaurora.org>
+References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+ <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On 08/14, Lori Hikichi wrote:
+> From: Lori Hikichi <lhikichi@broadcom.com>
+> 
+> There were a few fields in the iproc pll data structures that were
+> holding information that was not true state information.
+> Using stack variables is sufficient and simplifies the structure.
+> There are not any functional changes in this commit.
+> 
+> Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+> ---
 
-The ACC and GCC regions present in KPSSv1 contain registers to
-control clocks and power to each Krait CPU and L2. Documenting
-the bindings here.
+Applied to clk-next
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
- .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-index 1333db9..382a574 100644
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-@@ -21,10 +21,17 @@ PROPERTIES
- 		    the register region. An optional second element specifies
- 		    the base address and size of the alias register region.
- 
-+- clock-output-names:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpuX_aux where X is a
-+		    CPU number starting at 0.
-+
- Example:
- 
- 	clock-controller@2088000 {
- 		compatible = "qcom,kpss-acc-v2";
- 		reg = <0x02088000 0x1000>,
- 		      <0x02008000 0x1000>;
-+		clock-output-names = "acpu0_aux";
- 	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-new file mode 100644
-index 0000000..37fc0a4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-@@ -0,0 +1,32 @@
-+Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: should be one of the following. The generic compatible
-+			"qcom,kpss-gcc" should also be included.
-+			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: base address and size of the register region
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpu_l2_aux indicating
-+		    an L2 cache auxiliary clock.
-+
-+Example:
-+
-+	l2cc: clock-controller@2011000 {
-+		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-+		reg = <0x2011000 0x1000>;
-+		clock-output-names = "acpu_l2_aux";
-+	};
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
