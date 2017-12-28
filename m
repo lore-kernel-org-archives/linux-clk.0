@@ -1,68 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39944 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751225AbdL0EKH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Dec 2017 23:10:07 -0500
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Igor Grinberg <grinberg@compulab.co.il>
+Cc: Daniel Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: pxa: ulpi: fix ulpi timeout and slowpath warn
+References: <20171226133253.11653-1-grinberg@compulab.co.il>
+Date: Thu, 28 Dec 2017 09:01:55 +0100
+In-Reply-To: <20171226133253.11653-1-grinberg@compulab.co.il> (Igor Grinberg's
+	message of "Tue, 26 Dec 2017 15:32:53 +0200")
+Message-ID: <87r2rf7024.fsf@belgarion.home>
 MIME-Version: 1.0
-In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
-References: <20171222122243.25735-1-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 27 Dec 2017 12:09:41 +0800
-Message-ID: <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> This patchset adds support for the SimpleFB on Allwinner SoCs with
-> "Display Engine 2.0".
->
-> PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
->
-> PATCH 4 adds the pipeline strings for DE2 SimpleFB.
->
-> PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-> for H3/H5 SoCs.
->
-> PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
+Igor Grinberg <grinberg@compulab.co.il> writes:
 
-Changelog?
+> Both cm-x300 and pxa3xx-ulpi use the plain clk_{en,dis}able() API.
+> With the new clocking framework this results in warnings of type:
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:714 clk_core_enable+0x90/0x9c
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc5-cm-x300+ #15
+> Hardware name: CM-X300 module
+> [<c001007c>] (unwind_backtrace) from [<c000df94>] (show_stack+0x10/0x14)
+> [<c000df94>] (show_stack) from [<c00199a8>] (__warn+0xd8/0x100)
+> [<c00199a8>] (__warn) from [<c0019a0c>] (warn_slowpath_null+0x3c/0x48)
+> [<c0019a0c>] (warn_slowpath_null) from [<c024e8c0>] (clk_core_enable+0x90/0x9c)
+> [<c024e8c0>] (clk_core_enable) from [<c024ea54>] (clk_core_enable_lock+0x18/0x2c)
+> [<c024ea54>] (clk_core_enable_lock) from [<c0016994>] (cm_x300_u2d_init+0x4c/0xe8)
+> [<c0016994>] (cm_x300_u2d_init) from [<c00163e0>] (pxa3xx_u2d_probe+0xe0/0x244)
+> [<c00163e0>] (pxa3xx_u2d_probe) from [<c0283de0>] (platform_drv_probe+0x38/0x88)
+> ...
+> ------------[ cut here ]------------
+> and alike...
+>
+> And finally, it results in:
+> ------------[ cut here ]------------
+> pxa310_ulpi_poll: ULPI access timed out!
+> OTG transceiver init failed
+> ------------[ cut here ]------------
+>
+> It might be that disabling the warning in kernel config would also do
+> the job, but IMO a better solution would be to switch to
+> clk_prepare_enable() and clk_disable_unprepare() APIs.
+>
+> Signed-off-by: Igor Grinberg <grinberg@compulab.co.il>
+Applied to pxa/for-next, thanks.
 
-ChenYu
+Cheers.
 
->
-> Icenowy Zheng (11):
->   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
->   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
->   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
->   dt-bindings: simplefb-sunxi: add pipelines for DE2
->   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
->   arm64: allwinner: h5: add compatible string for DE2 CCU
->   ARM: sunxi: h3/h5: add simplefb nodes
->   dt-bindings: add binding for A64 DE2 CCU SRAM
->   clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
->   arm64: allwinner: a64: add DE2 CCU for A64 SoC
->   arm64: allwinner: a64: add simplefb for A64 SoC
->
->  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 ++-
->  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 +
->  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 +
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 +++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 +++++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 +
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 85 +++++++++++++++++++---
->  7 files changed, 202 insertions(+), 13 deletions(-)
->
-> --
-> 2.14.2
->
+--
+Robert
