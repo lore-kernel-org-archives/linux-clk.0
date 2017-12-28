@@ -1,70 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:13747 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752794AbdLMO3S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Dec 2017 09:29:18 -0500
-Message-ID: <1513175352.7000.7.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 2/2] clk: x86: Disable unused clocks to fix S0ix
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Johannes Stezenbach <js@sig21.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-acpi@vger.kernel.org
-Date: Wed, 13 Dec 2017 16:29:12 +0200
-In-Reply-To: <fb202f9b-1fa2-4b9c-de75-4431a6273d12@redhat.com>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
-         <1555462.9U3gvkyXAX@aspire.rjw.lan>
-         <20170925192352.ihzakshd7yofowdd@sig21.net>
-         <7178688.oS2VOf73im@aspire.rjw.lan>
-         <fb202f9b-1fa2-4b9c-de75-4431a6273d12@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Burton <paul.burton@imgtec.com>
+Subject: [PATCH v4 08/15] MIPS: ingenic: Use common cmdline handling code
+Date: Thu, 28 Dec 2017 14:56:27 +0100
+Message-Id: <20171228135634.30000-9-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-12-13 at 09:56 +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 13-12-17 01:01, Rafael J. Wysocki wrote:
-> > On Monday, September 25, 2017 9:23:52 PM CET Johannes Stezenbach
-> > wrote:
-> > > d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the
-> > > firmware"
-> > > exposed an issue on Asus E200HA where BIOS enables unused
-> > > Atom PMC clocks which prevent the system from entering S0ix.
-> > > Add a quirk to disable these clocks on E200HA.
-> > > 
-> > > Signed-off-by: Johannes Stezenbach <js@sig21.net>
-> > 
-> > Mika, Andy, Hans, any comments here?
+From: Paul Burton <paul.burton@imgtec.com>
 
-I remember discussing those in bugzilla, though I agree with Hans, it
-looks hackish still. I'm not sure on the other hand we can solve this
-properly in a meantime.
+jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
+arcs_cmdline, up to argc (in fw_arg0). The common code in
+fw_init_cmdline will do the exact same thing when run on a system where
+fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
+use it). Remove the custom implementation & use the generic code.
 
-I also have some style related comments, but they are minor. I can go
-through better review after we settle down the way we would like to fix
-the issue.
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+---
+ arch/mips/jz4740/prom.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-> This seems like it is papering over an issue in the
-> d31fd43c0f9a "clk: x86: Do not gate clocks enabled by the firmware"
-> patch to me. That patch seems like a somewhat hackish fix to
-> me, it would be better to figure out which device needs the clock
-> in question and fix the device's driver...
+ v2: No change
+ v3: No change
+ v4: No change
 
-My understanding of S0ix prerequisites is all devices in question *must*
-have drivers loaded and drivers *must* have implemented runtime PM.
-
-(Since I don't know if it's guaranteed by firmware that devices are left
-in D3 if they are not used. Besides that from the SATA case looks like
-some BIOS [hardware?] issue with power gating)
-
+diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
+index 47e857194ce6..a62dd8e6ecf9 100644
+--- a/arch/mips/jz4740/prom.c
++++ b/arch/mips/jz4740/prom.c
+@@ -20,33 +20,13 @@
+ #include <linux/serial_reg.h>
+ 
+ #include <asm/bootinfo.h>
++#include <asm/fw/fw.h>
+ #include <asm/mach-jz4740/base.h>
+ 
+-static __init void jz4740_init_cmdline(int argc, char *argv[])
+-{
+-	unsigned int count = COMMAND_LINE_SIZE - 1;
+-	int i;
+-	char *dst = &(arcs_cmdline[0]);
+-	char *src;
+-
+-	for (i = 1; i < argc && count; ++i) {
+-		src = argv[i];
+-		while (*src && count) {
+-			*dst++ = *src++;
+-			--count;
+-		}
+-		*dst++ = ' ';
+-	}
+-	if (i > 1)
+-		--dst;
+-
+-	*dst = 0;
+-}
+-
+ void __init prom_init(void)
+ {
+-	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
+ 	mips_machtype = MACH_INGENIC_JZ4740;
++	fw_init_cmdline();
+ }
+ 
+ void __init prom_free_prom_memory(void)
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.11.0
