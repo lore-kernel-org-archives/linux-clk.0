@@ -1,37 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 14:57:13 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lori Hikichi <lori.hikichi@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Simran Rai <ssimran@broadcom.com>
-Subject: Re: [PATCH v1 2/4] clk: iproc: Fix error in the pll post divider
- rate calculation
-Message-ID: <20171228225713.GU7997@codeaurora.org>
-References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
- <1502737241-2040-3-git-send-email-lori.hikichi@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502737241-2040-3-git-send-email-lori.hikichi@broadcom.com>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 02/15] clk: ingenic: Fix recalc_rate for clocks with fixed divider
+Date: Thu, 28 Dec 2017 14:56:21 +0100
+Message-Id: <20171228135634.30000-3-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/14, Lori Hikichi wrote:
-> The pll post divider code was using DIV_ROUND_UP when determining the
-> divider value best suited to produce the target frequency.
-> Using DIV_ROUND_CLOSEST will give us better divider values when
-> the division results in a small remainder.
-> Also, change the post divider clock over to the determine_rate api
-> instead of round_rate.
-> 
-> Signed-off-by: Simran Rai <ssimran@broadcom.com>
-> Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
-> ---
+Previously, the clocks with a fixed divider would report their rate
+as being the same as the one of their parent, independently of the
+divider in use. This commit fixes this behaviour.
 
-Applied to clk-next
+This went unnoticed as neither the jz4740 nor the jz4780 CGU code
+have clocks with fixed dividers yet.
 
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+ v2: No changes
+ v3: No changes
+ v4: No changes
+
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index ab393637f7b0..a2e73a6d60fd 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		div *= clk_info->div.div;
+ 
+ 		rate /= div;
++	} else if (clk_info->type & CGU_CLK_FIXDIV) {
++		rate /= clk_info->fixdiv.div;
+ 	}
+ 
+ 	return rate;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
