@@ -1,58 +1,48 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: pure.logic@nexus-software.ie,
-	Joachim Eastwood <manabian@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 19/33] clk: nxp: change lpc18xx_pll0_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:12:58 +0000
-Message-Id: <1514596392-22270-20-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 14/15] devicetree/bindings: Add GCW vendor prefix
+Date: Thu, 28 Dec 2017 14:56:33 +0100
+Message-Id: <20171228135634.30000-15-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Game Consoles Worldwide, mostly known under the acronym GCW, is the
+creator of the GCW Zero open-source video game system.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Joachim Eastwood <manabian@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-index e08bad9..396d4f7 100644
---- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-@@ -381,13 +381,13 @@ static unsigned long lpc18xx_pll0_round_rate(struct clk_hw *hw,
- 
- 	if (*prate < rate) {
- 		pr_warn("%s: pll dividers not supported\n", __func__);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	m = DIV_ROUND_UP_ULL(*prate, rate * 2);
- 	if (m <= 0 && m > LPC18XX_PLL0_MSEL_MAX) {
- 		pr_warn("%s: unable to support rate %lu\n", __func__, rate);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	return 2 * *prate * m;
+ v2: It's 'Game Consoles Worldwide', not 'Games Consoles Worldwide'
+ v3: No change
+ v4: No change
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 0994bdd82cd3..f40f4da39937 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -123,6 +123,7 @@ focaltech	FocalTech Systems Co.,Ltd
+ friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
+ fsl	Freescale Semiconductor
+ fujitsu	Fujitsu Ltd.
++gcw Game Consoles Worldwide
+ ge	General Electric Company
+ geekbuying	GeekBuying
+ gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
 -- 
-2.7.4
+2.11.0
