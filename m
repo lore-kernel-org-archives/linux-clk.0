@@ -1,49 +1,30 @@
-Return-Path: <pombredanne@nexb.com>
-MIME-Version: 1.0
-In-Reply-To: <20171228135634.30000-7-paul@crapouillou.net>
-References: <20170702163016.6714-2-paul@crapouillou.net> <20171228135634.30000-1-paul@crapouillou.net>
- <20171228135634.30000-7-paul@crapouillou.net>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Fri, 29 Dec 2017 13:55:12 +0100
-Message-ID: <CAOFm3uEbEx+HTsOANchqiReuDBa96O0Y-V-igLGWPF-OxQ2jtw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/15] clk: Add Ingenic jz4770 CGU driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Maarten ter Huurne <maarten@treewalker.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 00/15] Ingenic JZ4770 and GCW Zero support
+Date: Thu, 28 Dec 2017 14:56:19 +0100
+Message-Id: <20171228135634.30000-1-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-2-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Mr Crapouillou-Cercueil-Sir,
+Hi,
 
-On Thu, Dec 28, 2017 at 2:56 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-> Add support for the clocks provided by the CGU in the Ingenic JZ4770
-> SoC.
+This is my v4 of my patch series to support the JZ4770 SoC from Ingenic
+as well as the GCW Zero handheld console.
 
-<snip>
+Not much changed since v3, I dropped the three serial-related patches
+(07-08-09/18) as I will submit them separately. The only other change is
+that I rebased the patch series on top of v4.15-rc5.
 
-> --- /dev/null
-> +++ b/drivers/clk/ingenic/jz4770-cgu.c
-> @@ -0,0 +1,487 @@
-> +/*
-> + * JZ4770 SoC CGU driver
-> + *
-> + * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 or later
-> + * as published by the Free Software Foundation.
-> + */
-
-Do you mind using a simpler one-line SPDX identifier instead of this
-fine but clearly crapouillish legalese boilerplate? Unless you are
-trying to turn the kernel in a legal compendium, of course ;)
-
-This is documented in Thomas doc patches. This would apply to your
-entire patch set.
-Thank you for your kind consideration!
--- 
-Cordially
-Philippe Ombredanne
+Regards,
+-Paul Cercueil
