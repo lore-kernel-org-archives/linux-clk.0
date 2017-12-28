@@ -1,458 +1,90 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Wed, 20 Dec 2017 22:27:58 +0800
-From: Dong Aisheng <dongas86@gmail.com>
+Return-Path: <al.kochet@gmail.com>
+Return-Path: <al.kochet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 1/2] clk: rename clk_core_get_boundaries() to clk_hw_get_boundaries() and expose
+From: Alexander Kochetkov <al.kochet@gmail.com>
+In-Reply-To: <20171227010638.GP7997@codeaurora.org>
+Date: Thu, 28 Dec 2017 15:41:20 +0300
+Cc: linux-clk@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ LAK <linux-arm-kernel@lists.infradead.org>,
+ linux-rockchip@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>
+Message-Id: <4B1BB338-F1F9-4231-BDCA-5FBB1F61BC44@gmail.com>
+References: <1513872282-5370-1-git-send-email-al.kochet@gmail.com> <1513872282-5370-2-git-send-email-al.kochet@gmail.com> <20171221200743.GM7997@codeaurora.org> <8EC4D15B-4A89-43FA-953E-95AF81417067@gmail.com> <20171227010638.GP7997@codeaurora.org>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH V2 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Message-ID: <20171220142757.GB30461@b29396-OptiPlex-7040>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
- <1499946435-7177-2-git-send-email-aisheng.dong@nxp.com>
- <20171102075039.GU30645@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171102075039.GU30645@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 02, 2017 at 12:50:39AM -0700, Stephen Boyd wrote:
-> On 07/13, Dong Aisheng wrote:
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index 9bb472c..55f8c41 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -123,6 +123,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
-> >  	struct clk_divider *divider = to_clk_divider(hw);
-> >  	unsigned int div;
-> >  
-> > +	if (flags & CLK_DIVIDER_ZERO_GATE && !val)
-> > +		return 0;
-> > +
-> >  	div = _get_div(table, val, flags, divider->width);
-> >  	if (!div) {
-> >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
-> > @@ -141,8 +144,13 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
-> >  	struct clk_divider *divider = to_clk_divider(hw);
-> >  	unsigned int val;
-> >  
-> > -	val = clk_readl(divider->reg) >> divider->shift;
-> > -	val &= div_mask(divider->width);
-> > +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
-> > +	    !clk_hw_is_enabled(hw)) {
-> 
-> This seems racy. Are we holding the register lock here?
-> 
+Initial thread here:
+https://www.spinics.net/lists/linux-clk/msg21682.html
 
-Would you please clarify what type of racy you mean?
 
-Currently it only protects register write between set_rate and enable/disable,
-and other register read are not protected.
-e.g. in recalc_rate and is_enabled.
+> 27 =D0=B4=D0=B5=D0=BA. 2017 =D0=B3., =D0=B2 4:06, Stephen Boyd =
+<sboyd@codeaurora.org> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0):=
 
-And i did see similar users, e.g.
-drivers/clk/sunxi-ng/ccu_mult.c
+>=20
+> Are these limits the min/max limits that the parent clk can
+> output at? Or the min/max limits that software has constrained on
+> the clk?
+>=20
 
-Should we still need protect them here?
+Don=E2=80=99t know how to answer. For example, parent can output 768MHz,
+but some IP work unstable with that parent rate. This issues was =
+observed by
+me and I didn=E2=80=99t get official confirmation from rockchip. So, I =
+limit
+such clock to 192MHz using clk_set_max_rate(). May be I have to limit =
+clk rate
+using another approach.
 
-> > +		val = divider->cached_val;
-> > +	} else {
-> > +		val = clk_readl(divider->reg) >> divider->shift;
-> > +		val &= div_mask(divider->width);
-> > +	}
-> >  
-> >  	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> >  				   divider->flags);
-> > @@ -392,6 +400,12 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  	value = divider_get_val(rate, parent_rate, divider->table,
-> >  				divider->width, divider->flags);
-> >  
-> > +	if ((divider->flags & CLK_DIVIDER_ZERO_GATE) &&
-> > +	    !clk_hw_is_enabled(hw)) {
-> 
-> Same racy comment here.
-> 
-> > +		divider->cached_val = value;
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (divider->lock)
-> >  		spin_lock_irqsave(divider->lock, flags);
-> >  	else
-> > @@ -414,10 +428,85 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  	return 0;
-> >  }
-> >  
-> > +static int clk_divider_enable(struct clk_hw *hw)
-> > +{
-> > +	struct clk_divider *divider = to_clk_divider(hw);
-> > +	unsigned long flags = 0;
-> > +	u32 val;
-> > +
-> > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> > +		return 0;
-> 
-> This is not good. We will always jump to these functions on
-> enable/disable for a divider although 99.9% of all dividers that
-> exist won't need to run this code at all.
-> 
+Anybody from rockchip can confirm that? Or may be contact me clarifying =
+details?
 
-I absolutely understand this concern.
+> I haven't looked in detail at this
+> rockchip_fractional_approximation() code, but it shouldn't be
+> doing the work of both the child rate determination and the
+> parent rate determination in one place. It should work with the
+> parent to figure out the rate the parent can provide and then
+> figure out how to achieve the desired rate from there.
 
-> Can you please move this logic into your own divider
-> implementation? The flag can be added to the generic layer if
-> necessary but I'd prefer to see this logic kept in the driver
-> that uses it. If we get more than one driver doing the cached
-> divider thing then we can think about moving it to the more
-> generic place like here, but for now we should be able to keep
-> this contained away from the basic types and handled by the
-> quirky driver that needs it.
-> 
+Here is clock tree:
 
-If only for above issue, how about invent a clk_divider_gate_ops
-to separate the users of normal divider and zero gate divider:
+        clock                       rate
+        -----                       ----
+        xin24m                      24000000
+          pll_gpll                    768000000
+             gpll                       768000000
+                i2s_src              768000000
+                   i2s0_pre         192000000
+                      i2s0_frac     16384000
+                         sclk_i2s0  16384000
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 4ed516c..b51f3f9 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -125,6 +125,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 
- 	div = _get_div(table, val, flags, divider->width);
- 	if (!div) {
-+		if (flags & CLK_DIVIDER_ZERO_GATE)
-+			return 0;
-+
- 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
- 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
- 			clk_hw_get_name(hw));
-@@ -148,6 +151,23 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 				   divider->flags);
- }
- 
-+static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int val;
-+
-+	if (!clk_hw_is_enabled(hw)) {
-+		val = divider->cached_val;
-+	} else {
-+		val = clk_readl(divider->reg) >> divider->shift;
-+		val &= div_mask(divider->width);
-+	}
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags);
-+}
-+
- static bool _is_valid_table_div(const struct clk_div_table *table,
- 							 unsigned int div)
- {
-@@ -416,6 +436,89 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	int value;
-+
-+	if (!clk_hw_is_enabled(hw)) {
-+		value = divider_get_val(rate, parent_rate, divider->table,
-+					divider->width, divider->flags);
-+		if (value < 0)
-+			return value;
-+
-+		divider->cached_val = value;
-+
-+		return 0;
-+	}
-+
-+	return clk_divider_set_rate(hw, rate, parent_rate);
-+}
-+
-+static int clk_divider_enable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long uninitialized_var(flags);
-+	u32 val;
-+
-+	if (!divider->cached_val) {
-+		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* restore div val */
-+	val = clk_readl(divider->reg);
-+	val |= divider->cached_val << divider->shift;
-+	clk_writel(val, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static void clk_divider_disable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long uninitialized_var(flags);
-+	u32 val;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* store the current div val */
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+	divider->cached_val = val;
-+	clk_writel(0, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+}
-+
-+static int clk_divider_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+
-+	return val ? 1 : 0;
-+}
-+
- const struct clk_ops clk_divider_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -423,6 +526,16 @@ const struct clk_ops clk_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_divider_ops);
- 
-+const struct clk_ops clk_divider_gate_ops = {
-+	.recalc_rate = clk_divider_gate_recalc_rate,
-+	.round_rate = clk_divider_round_rate,
-+	.set_rate = clk_divider_gate_set_rate,
-+	.enable = clk_divider_enable,
-+	.disable = clk_divider_disable,
-+	.is_enabled = clk_divider_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
-+
- const struct clk_ops clk_divider_ro_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -438,6 +551,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	struct clk_divider *div;
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	u32 val;
- 	int ret;
- 
- 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-@@ -455,6 +569,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	init.name = name;
- 	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
- 		init.ops = &clk_divider_ro_ops;
-+	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
-+		init.ops = &clk_divider_gate_ops;
- 	else
- 		init.ops = &clk_divider_ops;
- 	init.flags = flags | CLK_IS_BASIC;
-@@ -470,6 +586,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	div->hw.init = &init;
- 	div->table = table;
- 
-+	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
-+		val = clk_readl(reg) >> shift;
-+		val &= div_mask(width);
-+		div->cached_val = val;
-+	}
-+
- 	/* register the clock */
- 	hw = &div->hw;
- 	ret = clk_hw_register(dev, hw);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7c925e6..5f33b73 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -358,6 +358,7 @@ struct clk_div_table {
-  * @shift:	shift to the divider bit field
-  * @width:	width of the divider bit field
-  * @table:	array of value/divider pairs, last entry should have div = 0
-+ * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
-  * @lock:	register lock
-  *
-  * Clock with an adjustable divider affecting its output frequency.  Implements
-@@ -386,6 +387,12 @@ struct clk_div_table {
-  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-  *	except when the value read from the register is zero, the divisor is
-  *	2^width of the field.
-+ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
-+ *	when the value read from the register is zero, it means the divisor
-+ *	is gated. For this case, the cached_val will be used to store the
-+ *	intermediate div for the normal rate operation, like set_rate/get_rate/
-+ *	recalc_rate. When the divider is ungated, the driver will actually
-+ *	program the hardware to have the requested divider value.
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
-@@ -394,6 +401,7 @@ struct clk_divider {
- 	u8		width;
- 	u8		flags;
- 	const struct clk_div_table	*table;
-+	u32		cached_val;
- 	spinlock_t	*lock;
- };
- 
-@@ -406,6 +414,7 @@ struct clk_divider {
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
-+#define CLK_DIVIDER_ZERO_GATE		BIT(7)
- 
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
+I limit i2s0_pre rate to 192MHz in order to I2S IP work properly.
+rockchip_fractional_approximation() get called for i2s0_frac.
+if i2s0_pre rate is 20x times less than i2s0_frac, than =
+rockchip_fractional_approximation()
+tries to set i2s0_pre rate to i2s_src rate. It tries to increase it=E2=80=99=
+s parent rate in order
+to maximise relation between nominator and denominator.
 
-Anyway, if you still think it's not proper, i can put it in platform
-driver as you wish, just in the cost of a few duplicated codes.
+If I convert rockchip_fractional_approximation() to =
+rockchip_determine_rate(), than I get
+min=3D0, max=3D192MHz limits inside rockchip_determine_rate(). May be =
+there should be
+new logic inside clk framework based on some new clk flags, that will =
+provide max=3D768MHz
+for rockchip_determine_rate().
 
-> > +
-> > +	if (!divider->cached_val) {
-> > +		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (divider->lock)
-> > +		spin_lock_irqsave(divider->lock, flags);
-> > +	else
-> > +		__acquire(divider->lock);
-> > +
-> > +	/* restore div val */
-> > +	val = clk_readl(divider->reg);
-> > +	val |= divider->cached_val << divider->shift;
-> > +	clk_writel(val, divider->reg);
-> > +
-> > +	if (divider->lock)
-> > +		spin_unlock_irqrestore(divider->lock, flags);
-> > +	else
-> > +		__release(divider->lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void clk_divider_disable(struct clk_hw *hw)
-> > +{
-> > +	struct clk_divider *divider = to_clk_divider(hw);
-> > +	unsigned long flags = 0;
-> > +	u32 val;
-> > +
-> > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> > +		return;
-> > +
-> > +	if (divider->lock)
-> > +		spin_lock_irqsave(divider->lock, flags);
-> > +	else
-> > +		__acquire(divider->lock);
-> > +
-> > +	/* store the current div val */
-> > +	val = clk_readl(divider->reg) >> divider->shift;
-> > +	val &= div_mask(divider->width);
-> > +	divider->cached_val = val;
-> > +	clk_writel(0, divider->reg);
-> > +
-> > +	if (divider->lock)
-> > +		spin_unlock_irqrestore(divider->lock, flags);
-> > +	else
-> > +		__release(divider->lock);
-> > +}
-> > +
-> > +static int clk_divider_is_enabled(struct clk_hw *hw)
-> > +{
-> > +	struct clk_divider *divider = to_clk_divider(hw);
-> > +	u32 val;
-> > +
-> > +	if (!(divider->flags & CLK_DIVIDER_ZERO_GATE))
-> > +		return __clk_get_enable_count(hw->clk);
-> 
-> The plan was to delete this API once OMAP stopped using it.
-> clk_hw_is_enabled() doesn't work?
+Also found, that rockchip_fractional_approximation() increase parents =
+rate unconditionally
+without taking into account CLK_SET_RATE_PARENT flag.
 
-No, it did not work before because clk_hw_is_enabled will result
-in the dead loop by calling .is_enabled() callback again.
+Stephen, thanks a lot for deep description of determine_rate() =
+background. I=E2=80=99ll taking some
+time thinking about possible solutions.
 
-That's why __clk_get_enable_count is used instead.
-
-However, with above new patch method, this issue was gone.
-
-> 
-> > +
-> > +	val = clk_readl(divider->reg) >> divider->shift;
-> > +	val &= div_mask(divider->width);
-> > +
-> > +	return val ? 1 : 0;
-> > +}
-> > +
-> >  const struct clk_ops clk_divider_ops = {
-> >  	.recalc_rate = clk_divider_recalc_rate,
-> >  	.round_rate = clk_divider_round_rate,
-> >  	.set_rate = clk_divider_set_rate,
-> > +	.enable = clk_divider_enable,
-> > +	.disable = clk_divider_disable,
-> > +	.is_enabled = clk_divider_is_enabled,
-> >  };
-> >  EXPORT_SYMBOL_GPL(clk_divider_ops);
-> >  
-> > @@ -436,6 +525,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
-> >  	struct clk_divider *div;
-> >  	struct clk_hw *hw;
-> >  	struct clk_init_data init;
-> > +	u32 val;
-> >  	int ret;
-> >  
-> >  	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-> > @@ -468,6 +558,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
-> >  	div->hw.init = &init;
-> >  	div->table = table;
-> >  
-> > +	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
-> > +		val = clk_readl(reg) >> shift;
-> > +		val &= div_mask(width);
-> > +		div->cached_val = val;
-> > +	}
-> 
-> What if it isn't on? Setting cached_val to 0 is ok?
-> 
-
-If it isn't on, then the cache_val should be 0.
-And recalc_rate will catch this case and return 0 as there's
-no proper pre-set rate.
-
-Regards
-Dong Aisheng
-
-> > +
-> >  	/* register the clock */
-> >  	hw = &div->hw;
-> >  	ret = clk_hw_register(dev, hw);
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Regards,
+Alexander.
