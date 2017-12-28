@@ -1,104 +1,86 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 11 Dec 2017 10:29:08 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: clkctrl driver updates for 4.16 merge window
-Message-ID: <20171211182908.GA14441@atomide.com>
-References: <fe379081-62e6-11c9-285d-234e2d1a61e4@ti.com>
- <20171207072911.GA4283@codeaurora.org>
- <fd7ff1b4-00c3-ce6b-9415-85799661bf8e@ti.com>
- <CAEG3pNAZKVSaU8k6QzPesF9j_ARHGuX7brJ+XzBj=Y7ON+JbYA@mail.gmail.com>
- <20171211152914.GI24344@atomide.com>
- <fc15474a-9feb-1beb-3362-1e9c99f56a02@ti.com>
- <CAEG3pNDDOcdFCqsH3849NeWucoAvKJ0iVQjxf3-E+=Wsb-j1Gg@mail.gmail.com>
+Return-Path: <wens@wens.csie.org>
+Date: Thu, 28 Dec 2017 16:25:24 +0800
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [GIT PULL] Allwinner clock changes for 4.16
+Message-ID: <20171228082524.GA13649@wens.csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAEG3pNDDOcdFCqsH3849NeWucoAvKJ0iVQjxf3-E+=Wsb-j1Gg@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Michael Turquette <mturquette@baylibre.com> [171211 17:21]:
-> On Mon, Dec 11, 2017 at 8:40 AM, Tero Kristo <t-kristo@ti.com> wrote:
-> > On 11/12/17 17:29, Tony Lindgren wrote:
-> >>
-> >> * Michael Turquette <mturquette@baylibre.com> [171207 18:41]:
-> >>>
-> >>> Hi Tero,
-> >>>
-> >>> On Thu, Dec 7, 2017 at 12:09 AM, Tero Kristo <t-kristo@ti.com> wrote:
-> >>>>
-> >>>> On 07/12/17 09:29, Stephen Boyd wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 12/05, Tero Kristo wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> Hi Stephen, Mike,
-> >>>>>>
-> >>>>>> This pull request contains the v2 of the series posted
-> >>>>>> (https://www.spinics.net/lists/linux-omap/msg140042.html), with
-> >>>>>> Stephen's acks added to the mentioned patches, and just applied on
-> >>>>>> top of 4.15-rc1. I actually wonder if you wanted to add your acks to
-> >>>>>> the rest of the patches also, but couldn't find any comment about
-> >>>>>> this anywhere.
-> >>>>>>
-> >>>>>> -Tero
-> >>>>>>
-> >>>>>> ====
-> >>>>>>
-> >>>>>> The following changes since commit
-> >>>>>> 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-> >>>>>>
-> >>>>>>     Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-> >>>>>>
-> >>>>>> are available in the git repository at:
-> >>>>>>
-> >>>>>>     https://github.com/t-kristo/linux-pm.git 4.15-rc1-clkctrl-driver
-> >>>>>>
-> >>>>>> for you to fetch changes up to
-> >>>>>> fe7020e64f042db4b5ca50c358b232e866523447:
-> >>>>>>
-> >>>>>>     clk: ti: omap4: clkctrl data fixes for opt-clocks (2017-12-01
-> >>>>>> 15:18:08 +0200)
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>> Pulled into clk-next.
-> >>>>
-> >>>>
-> >>>>
-> >>>> Thanks.
-> >>>>
-> >>>>> Did you want to sign a tag instead of
-> >>>>> sending a plain branch? My ack isn't necessary on anything.
-> >>>>>
-> >>>>
-> >>>> Just a plain branch. Never signed a tag so far, do you have guidelines
-> >>>> someplace if you prefer this in future?
-> >>>
-> >>>
-> >>> "git tag -s" is all you need to know. It's nice to keep that tag on
-> >>> your public tree until the next -rc1, but not strictly necessary.
-> >>>
-> >>> Ideally PRs should used signed tags, as it lets us verify a trusted tree.
-> >>
-> >>
-> >> Looks like I need to merge in Tero's commit fe7020e64f04 above for the
-> >> related the dts changes. Can we all consider commit fe7020e64f04
-> >> immutable?
-> >
-> >
-> > From my point of view at least, its frozen.
-> 
-> +1
-> 
-> Mike
 
-OK thanks will merge commit fe7020e64f04 into my omap-for-v4.16/dt-clk
-branch too.
+--wac7ysb48OaltWcw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-Tony
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.16
+
+for you to fetch changes up to e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4:
+
+  clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL (2017-12-08 10:08:32 +0100)
+
+----------------------------------------------------------------
+Allwinner clock changes for 4.16
+
+Fixed-post-divider support is added for two types of our clocks.
+This in turn is used to support odd clocks on some of our SoCs.
+On the A64, the MMC module clocks have a hidden post-divider.
+On the A83T, a post-divider is needed to support programming
+sigma-delta modulation with known fixed parameters from the
+BSP kernel for the audio PLL.
+
+There's also a small cleanup to use the shorter PTR_ERR_OR_ZERO
+macro in various functions.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (5):
+      clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+      clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
+      clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+      clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+      clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+
+Vasyl Gomonovych (1):
+      clk: sunxi: Use PTR_ERR_OR_ZERO()
+
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++------------
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 18 +++++++++--
+ drivers/clk/sunxi-ng/ccu_mp.c         | 20 ++++++++++--
+ drivers/clk/sunxi-ng/ccu_mp.h         | 24 +++++++++++++++
+ drivers/clk/sunxi-ng/ccu_nm.c         | 50 ++++++++++++++++++++++--------
+ drivers/clk/sunxi-ng/ccu_nm.h         |  2 ++
+ drivers/clk/sunxi/clk-sun8i-apb0.c    |  5 +--
+ 7 files changed, 134 insertions(+), 42 deletions(-)
+
+--wac7ysb48OaltWcw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAlpEqnIACgkQOJpUIZwP
+JDDg3BAAsBq0RudOHnnVT9+urRjOXSEz970OAvzoQM+fJNLwyL5SElgk5hdXc7ba
+IlcJ2FQLJwFZ4DVTOHcswFkRkSOhCBoEAC1i+LKeV4MgJq/DeqqGV/EEmiqztGjs
+j4dox4SifeLQx5eqJJsnxlaEZRmPpb2HXH3/4oKV61zdh5OumGl7e4RncXZKkwGJ
+pRt8spUBGFa1O8fayQlyrRgcIcR962ZY/0BJVMO4zZUIt2ootWsLcXLmLUeX1r4r
+e4CJ3t0RChiJkglKONDa2DPt4Sk/Tk1AmwrwEf7OgsGp/vjYOBPiaWr9oeR/xOC9
+f7iA9Slkn9WOLGhWzouK6K4kMyvz9FvOTHyxLnbsuPxJcMx8JgvdkbtXFCwmCcgy
+qT4kNlVDLpy7foDEFJBPPkVAJTetzQDpYMcmcl6pVB2O2ZtIeoG5liEJKW3rKvIx
+DAOI5zz9PlDXLJv1uo9H3he4y3AQCTubzuSgVPn8XYRCFfGDE9dZKyzaU483mVC2
+WRhlVJ6VVMCI4NJu6WB2d3sxTs/OeyeJCFvtCWhennSNl7wJSw14IwFJNa1i98pv
+DCJ82vm9nm3AlqzwBlQoM5kpWVW/0TnbehMlHwzUdC+BrSrsQsmviAGfjxeynZIh
+X99F9VLklFevgz1LZGOZ6hEf7Ov4Lf1BvLdh768UB7e50u3+vF8=
+=Y7Bt
+-----END PGP SIGNATURE-----
+
+--wac7ysb48OaltWcw--
