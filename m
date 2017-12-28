@@ -1,183 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57164 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbdLLMbt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Dec 2017 07:31:49 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        qualcomm-lt@lists.linaro.org, ilialin@codeaurora.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 02/10] clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
-Date: Tue, 12 Dec 2017 14:31:29 +0200
-Message-Id: <1513081897-31612-3-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Dec 2017 10:42:24 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] clk: meson-axg: make local symbol
+ axg_gp0_params_table static
+Message-ID: <20171228184224.GN7997@codeaurora.org>
+References: <1514431110-98277-1-git-send-email-weiyongjun1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514431110-98277-1-git-send-email-weiyongjun1@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Taniya Das <tdas@codeaurora.org>
+On 12/28, Wei Yongjun wrote:
+> Fixes the following sparse warning:
+> 
+> drivers/clk/meson/axg.c:260:25: warning:
+>  symbol 'axg_gp0_params_table' was not declared. Should it be static?
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-From: Taniya Das <tdas@codeaurora.org>
+Applied to clk-next
 
-Alpha PLLs which do not support dynamic update feature
-need to be explicitly disabled before a rate change.
-The ones which do support dynamic update do so within a
-single vco range, so add a min/max freq check for such
-PLLs so they fall in the vco range.
-
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 71 +++++++++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-alpha-pll.h |  5 +++
- 2 files changed, 65 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 47a1da3..ecb9e7f 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -376,19 +376,46 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
- 	return alpha_pll_calc_rate(prate, l, a);
- }
- 
--static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
--				  unsigned long prate)
-+static int alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long prate,
-+			      int (*enable)(struct clk_hw *hw),
-+			      void (*disable)(struct clk_hw *hw))
- {
-+	bool enabled;
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
- 	u32 l, off = pll->offset;
- 	u64 a;
- 
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a);
--	vco = alpha_pll_find_vco(pll, rate);
--	if (!vco) {
--		pr_err("alpha pll not in a valid vco range\n");
--		return -EINVAL;
-+	enabled = clk_hw_is_enabled(hw);
-+
-+	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-+		/*
-+		 * PLLs which support dynamic updates support one single
-+		 * vco range, between min_rate and max_rate supported
-+		 */
-+		if (rate < pll->min_rate || rate > pll->max_rate) {
-+			pr_err("alpha pll rate outside supported min/max range\n");
-+			return -EINVAL;
-+		}
-+	} else {
-+		/*
-+		 * All alpha PLLs which do not support dynamic update,
-+		 * should be disabled before a vco update.
-+		 */
-+		if (enabled)
-+			disable(hw);
-+
-+		vco = alpha_pll_find_vco(pll, rate);
-+		if (!vco) {
-+			pr_err("alpha pll not in a valid vco range\n");
-+			return -EINVAL;
-+		}
-+
-+		regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-+				   PLL_VCO_MASK << PLL_VCO_SHIFT,
-+				   vco->val << PLL_VCO_SHIFT);
- 	}
- 
- 	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
-@@ -401,16 +428,29 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL_U, a >> 32);
- 	}
- 
--	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
--			   PLL_VCO_MASK << PLL_VCO_SHIFT,
--			   vco->val << PLL_VCO_SHIFT);
--
- 	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL, PLL_ALPHA_EN,
- 			   PLL_ALPHA_EN);
- 
-+	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
-+		enable(hw);
-+
- 	return 0;
- }
- 
-+static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long prate)
-+{
-+	return alpha_pll_set_rate(hw, rate, prate, clk_alpha_pll_enable,
-+				  clk_alpha_pll_disable);
-+}
-+
-+static int clk_alpha_pll_hwfsm_set_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long prate)
-+{
-+	return alpha_pll_set_rate(hw, rate, prate, clk_alpha_pll_hwfsm_enable,
-+				  clk_alpha_pll_hwfsm_disable);
-+}
-+
- static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long *prate)
- {
-@@ -420,6 +460,15 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long min_freq, max_freq;
- 
- 	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
-+
-+	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-+		if (rate < pll->min_rate)
-+			rate = pll->min_rate;
-+		else if (rate > pll->max_rate)
-+			rate = pll->max_rate;
-+		return rate;
-+	}
-+
- 	if (alpha_pll_find_vco(pll, rate))
- 		return rate;
- 
-@@ -445,7 +494,7 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	.is_enabled = clk_alpha_pll_hwfsm_is_enabled,
- 	.recalc_rate = clk_alpha_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
--	.set_rate = clk_alpha_pll_set_rate,
-+	.set_rate = clk_alpha_pll_hwfsm_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
- 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index d6e1ee2..7aaa11c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -27,6 +27,8 @@ struct pll_vco {
-  * struct clk_alpha_pll - phase locked loop (PLL)
-  * @offset: base address of registers
-  * @vco_table: array of VCO settings
-+ * @min_rate: Minimim rate for PLLs with single VCO range
-+ * @max_rate: Maximun rate for PLLs with single VCO range
-  * @clkr: regmap clock handle
-  */
- struct clk_alpha_pll {
-@@ -37,8 +39,11 @@ struct clk_alpha_pll {
- #define SUPPORTS_OFFLINE_REQ	BIT(0)
- #define SUPPORTS_16BIT_ALPHA	BIT(1)
- #define SUPPORTS_FSM_MODE	BIT(2)
-+#define SUPPORTS_DYNAMIC_UPDATE	BIT(3)
- 	u8 flags;
- 
-+	unsigned long min_rate;
-+	unsigned long max_rate;
- 	struct clk_regmap clkr;
- };
- 
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
