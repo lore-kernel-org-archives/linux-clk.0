@@ -1,102 +1,98 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v5 5/6] ASoC: Intel: Skylake: Make DSP replies more human readable
-Date: Mon, 11 Dec 2017 13:16:29 +0530
-Message-Id: <1512978390-8848-6-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1512978390-8848-1-git-send-email-sriramx.periyasamy@intel.com>
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 05/15] dt-bindings: clock: Add jz4770-cgu.h header
+Date: Thu, 28 Dec 2017 14:56:24 +0100
+Message-Id: <20171228135634.30000-6-paul@crapouillou.net>
+In-Reply-To: <20171228135634.30000-1-paul@crapouillou.net>
+References: <20170702163016.6714-2-paul@crapouillou.net>
+ <20171228135634.30000-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+This will be used from the devicetree bindings to specify the clocks
+that should be obtained from the jz4770-cgu driver.
 
-Add more meaning to the IPC replies for easy debugging. Replace the switch
-case with a lookup table to lookup for the IPC replies and print in human
-readable form.
-
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 11 deletions(-)
+ include/dt-bindings/clock/jz4770-cgu.h | 57 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 include/dt-bindings/clock/jz4770-cgu.h
 
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 5234fafb758a..8708755a8f9a 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
- 	return 0;
- }
- 
--static int skl_ipc_set_reply_error_code(u32 reply)
-+struct skl_ipc_err_map {
-+	const char *msg;
-+	enum skl_ipc_glb_reply reply;
-+	int err;
-+};
+ v3: New patch in this series
+ v4: No change
+
+diff --git a/include/dt-bindings/clock/jz4770-cgu.h b/include/dt-bindings/clock/jz4770-cgu.h
+new file mode 100644
+index 000000000000..54b8b2ae4a73
+--- /dev/null
++++ b/include/dt-bindings/clock/jz4770-cgu.h
+@@ -0,0 +1,57 @@
++/*
++ * This header provides clock numbers for the ingenic,jz4770-cgu DT binding.
++ */
 +
-+static struct skl_ipc_err_map skl_err_map[] = {
-+	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
-+	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+};
++#ifndef __DT_BINDINGS_CLOCK_JZ4770_CGU_H__
++#define __DT_BINDINGS_CLOCK_JZ4770_CGU_H__
 +
-+static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
- {
--	switch (reply) {
--	case IPC_GLB_REPLY_OUT_OF_MEMORY:
--		return -ENOMEM;
-+	int i;
- 
--	case IPC_GLB_REPLY_BUSY:
--		return -EBUSY;
-+	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
-+		if (skl_err_map[i].reply == reply)
-+			break;
-+	}
- 
--	default:
-+	if (i == ARRAY_SIZE(skl_err_map)) {
-+		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
-+				reply,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
- 		return -EINVAL;
- 	}
++#define JZ4770_CLK_EXT		0
++#define JZ4770_CLK_OSC32K	1
++#define JZ4770_CLK_PLL0		2
++#define JZ4770_CLK_PLL1		3
++#define JZ4770_CLK_CCLK		4
++#define JZ4770_CLK_H0CLK	5
++#define JZ4770_CLK_H1CLK	6
++#define JZ4770_CLK_H2CLK	7
++#define JZ4770_CLK_C1CLK	8
++#define JZ4770_CLK_PCLK		9
++#define JZ4770_CLK_MMC0_MUX	10
++#define JZ4770_CLK_MMC0		11
++#define JZ4770_CLK_MMC1_MUX	12
++#define JZ4770_CLK_MMC1		13
++#define JZ4770_CLK_MMC2_MUX	14
++#define JZ4770_CLK_MMC2		15
++#define JZ4770_CLK_CIM		16
++#define JZ4770_CLK_UHC		17
++#define JZ4770_CLK_GPU		18
++#define JZ4770_CLK_BCH		19
++#define JZ4770_CLK_LPCLK_MUX	20
++#define JZ4770_CLK_GPS		21
++#define JZ4770_CLK_SSI_MUX	22
++#define JZ4770_CLK_PCM_MUX	23
++#define JZ4770_CLK_I2S		24
++#define JZ4770_CLK_OTG		25
++#define JZ4770_CLK_SSI0		26
++#define JZ4770_CLK_SSI1		27
++#define JZ4770_CLK_SSI2		28
++#define JZ4770_CLK_PCM0		29
++#define JZ4770_CLK_PCM1		30
++#define JZ4770_CLK_DMA		31
++#define JZ4770_CLK_I2C0		32
++#define JZ4770_CLK_I2C1		33
++#define JZ4770_CLK_I2C2		34
++#define JZ4770_CLK_UART0	35
++#define JZ4770_CLK_UART1	36
++#define JZ4770_CLK_UART2	37
++#define JZ4770_CLK_UART3	38
++#define JZ4770_CLK_IPU		39
++#define JZ4770_CLK_ADC		40
++#define JZ4770_CLK_AIC		41
++#define JZ4770_CLK_AUX		42
++#define JZ4770_CLK_VPU		43
++#define JZ4770_CLK_UHC_PHY	44
++#define JZ4770_CLK_OTG_PHY	45
++#define JZ4770_CLK_EXT512	46
++#define JZ4770_CLK_RTC		47
 +
-+	if (skl_err_map[i].err < 0)
-+		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+	else
-+		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+
-+	return skl_err_map[i].err;
- }
- 
- void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
-@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
- 
- 		}
- 	} else {
--		msg->errno = skl_ipc_set_reply_error_code(reply);
--		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
--		dev_err(ipc->dev, "FW Error Code: %u\n",
--			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
- 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
- 		case IPC_GLB_LOAD_MULTIPLE_MODS:
- 		case IPC_GLB_LOAD_LIBRARY:
++#endif /* __DT_BINDINGS_CLOCK_JZ4770_CGU_H__ */
 -- 
-2.7.4
+2.11.0
