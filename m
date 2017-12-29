@@ -1,63 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52763 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751123AbdL3Lct (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Dec 2017 06:32:49 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 2/6] dt-bindings: add binding for A64 DE2 CCU SRAM
-Date: Sat, 30 Dec 2017 19:30:39 +0800
-Message-Id: <20171230113043.30237-3-icenowy@aosc.io>
-In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
-References: <20171230113043.30237-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <benh@kernel.crashing.org>
+Message-ID: <1514584997.2743.107.camel@kernel.crashing.org>
+Subject: Re: [PATCH v6 4/5] clk: aspeed: Register gated clocks
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andrew
+ Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>,
+        Rick Altherr
+ <raltherr@google.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
+ <arnd@arndb.de>
+Date: Sat, 30 Dec 2017 09:03:17 +1100
+In-Reply-To: <20171227013227.GV7997@codeaurora.org>
+References: <20171128071908.12279-1-joel@jms.id.au>
+	 <20171128071908.12279-5-joel@jms.id.au>
+	 <20171221233927.GE7997@codeaurora.org>
+	 <1513910191.2743.77.camel@kernel.crashing.org>
+	 <1513910633.2743.79.camel@kernel.crashing.org>
+	 <20171227013227.GV7997@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-A64's Display Engine 2.0 needs a section of SRAM (SRAM C) to be claimed,
-otherwise the whole DE2 memory zone cannot be accessed (kept to all 0).
+On Tue, 2017-12-26 at 17:32 -0800, Stephen Boyd wrote:
+> > I noticed we do have a few i2c based clock drivers... how are they ever
+> > supposed to work ? i2c bus controllers are allowed to sleep and the i2c
+> > core takes mutexes...
+> 
+> We have clk_prepare()/clk_unprepare() for sleeping suckage. You
+> can use that, and i2c based clk drivers do that today.
 
-Add binding for this, in order to make the DE2 CCU able to claim the
-SRAM and enable access to the DE2 clock and reset registers.
+"suckage" ? Hehe ... the suckage should rather be stuff that cannot
+sleep. Arbitrary latencies and jitter caused by too much code wanting
+to be "atomic" when unnecessary are a bad thing.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v4:
-- Added Rob's ACK.
+In the case of clocks like the aspeed where we have to wait for a
+rather long stabilization delay, way too long to legitimately do a non-
+sleepable delay with a lock held, do we need to do everything in
+prepare() then ?
 
-Changes in v2:
-- Adds description of the situation when the SRAM is not claimed.
-
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index f2fa87c4765c..a7d558a2b9b2 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-de2-clk"
- 		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
-@@ -18,6 +19,10 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
- 
-+Additional required properties for "allwinner,sun50i-a64-de2-clk" :
-+- allwinner,sram: See Documentation/devicetree/bindings/sram/sunxi-sram.txt,
-+		  should be the SRAM C section on A64 SoC.
-+
- Example:
- de2_clocks: clock@1000000 {
- 	compatible = "allwinner,sun8i-h3-de2-clk";
--- 
-2.14.2
-
+Ben.
