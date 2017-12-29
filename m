@@ -1,96 +1,93 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <25d0eff3-a0d9-fb49-8287-e65a4a102db7@arm.com>
-References: <20171204051912.7485-1-wens@csie.org> <25d0eff3-a0d9-fb49-8287-e65a4a102db7@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 5 Dec 2017 11:04:45 +0800
-Message-ID: <CAGb2v65Ps-z=ijMARxxxAX3h7+b_gQ-bh2B8AO6t5mpPdJNhtg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 0/2] clk: sunxi-ng: sun50i: a64: Add 2x
- fixed post-divider to MMC module clocks
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/6] mfd: syscon: Add ingenic-tcu.h header
+Date: Fri, 29 Dec 2017 13:59:37 +0100
+Message-Id: <20171229125942.27305-2-paul@crapouillou.net>
+In-Reply-To: <20171229125942.27305-1-paul@crapouillou.net>
+References: <20171229125942.27305-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 5, 2017 at 7:25 AM, Andr=C3=A9 Przywara <andre.przywara@arm.com=
-> wrote:
-> On 04/12/17 05:19, Chen-Yu Tsai wrote:
->> Hi,
->>
->> This is a small fix to get MMC performance up to proper speeds on the
->
-> Maybe a small fix for a skilled developer, but a giant leap for all
-> users ;-)
-> MMC performance goes from: (4.15-rc1)
->
-> SD: Timing buffered disk reads:   36 MB in  3.17 seconds =3D  11.35 MB/se=
-c
-> eMMC: Timing buffered disk reads: 66 MB in  3.03 seconds =3D  21.81 MB/se=
-c
->
-> to: (4.15-rc2 plus those two patches)
->
-> SD: Timing buffered disk reads:  68 MB in  3.01 seconds =3D   22.61 MB/se=
-c
-> eMMC: Timing buffered disk reads: 132 MB in  3.01 seconds =3D 43.80 MB/se=
-c
->
-> So yes, factor of two ...
->
-> Tested-by: Andre Przywara <andre.przywara@arm.com>
->
-> Given the impact I wonder if this is a candidate for stable as well.
+This header contains macros for the registers that are present in the
+regmap shared by all the drivers related to the TCU (Timer Counter Unit)
+of the Ingenic JZ47xx SoCs.
 
-It could. But then again, nothing was broken. And it depends on the first
-patch. I'm not sure stable would like that.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ include/linux/mfd/syscon/ingenic-tcu.h | 53 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 include/linux/mfd/syscon/ingenic-tcu.h
 
->
->> A64. According to the BSP kernel, the MMC module clocks have a /2 fixed
->> post-divider between the clock output and the MMC module, like what
->> we've seen with the "new MMC timing mode" on the A83T, but the A64 does
->> not have the mode switch.
->>
->> Sub-par performance was observed on the Banana Pi M64 eMMC. It only
->> reached half the read throughput of other Banana Pi boards, using a
->> standard sequential readout with a large block size. After these
->> patches, the performance is up to spec.
->>
->> The A64 can also do DDR transfer modes, but the clock delay config
->> registers in the MMC module are different from what we've seen so
->> far.
->
-> But the BSP doesn't set those as well, does it? I mean to remember that
-> they were all zero, expect for HS200/HS400?
-
-What I meant was we should make it clear in the mmc driver that this
-is another new configuration mechanism that is different from the
-previous ones.
-
-ChenYu
-
->
-> Thanks!
-> Andre.
->
->> One can just force enable DDR modes without tuning the delays,
->> and it does work. Proper support for this is left for another time.
->>
->>
->> ChenYu
->>
->> Chen-Yu Tsai (2):
->>   clk: sunxi-ng: Support fixed post-dividers on MP style clocks
->>   clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module
->>     clocks
->>
->>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 57 +++++++++++++++++++++++-----=
--------
->>  drivers/clk/sunxi-ng/ccu_mp.c         | 20 ++++++++++--
->>  drivers/clk/sunxi-ng/ccu_mp.h         | 24 +++++++++++++++
->>  3 files changed, 79 insertions(+), 22 deletions(-)
->>
->
+diff --git a/include/linux/mfd/syscon/ingenic-tcu.h b/include/linux/mfd/syscon/ingenic-tcu.h
+new file mode 100644
+index 000000000000..5952fdd60005
+--- /dev/null
++++ b/include/linux/mfd/syscon/ingenic-tcu.h
+@@ -0,0 +1,53 @@
++#ifndef __LINUX_CLK_INGENIC_TCU_H_
++#define __LINUX_CLK_INGENIC_TCU_H_
++
++#include <linux/bitops.h>
++#include <linux/regmap.h>
++
++enum ingenic_tcu_reg {
++	REG_WDT_TDR	= 0x00,
++	REG_WDT_TCER	= 0x04,
++	REG_WDT_TCNT	= 0x08,
++	REG_WDT_TCSR	= 0x0c,
++	REG_TER		= 0x10,
++	REG_TESR	= 0x14,
++	REG_TECR	= 0x18,
++	REG_TSR		= 0x1c,
++	REG_TFR		= 0x20,
++	REG_TFSR	= 0x24,
++	REG_TFCR	= 0x28,
++	REG_TSSR	= 0x2c,
++	REG_TMR		= 0x30,
++	REG_TMSR	= 0x34,
++	REG_TMCR	= 0x38,
++	REG_TSCR	= 0x3c,
++	REG_TDFR0	= 0x40,
++	REG_TDHR0	= 0x44,
++	REG_TCNT0	= 0x48,
++	REG_TCSR0	= 0x4c,
++	REG_OST_DR	= 0xe0,
++	REG_OST_CNTL	= 0xe4,
++	REG_OST_CNTH	= 0xe8,
++	REG_OST_TCSR	= 0xec,
++	REG_TSTR	= 0xf0,
++	REG_TSTSR	= 0xf4,
++	REG_TSTCR	= 0xf8,
++	REG_OST_CNTHBUF	= 0xfc,
++};
++
++#define TCSR_RESERVED_BITS		0x3f
++#define TCSR_PARENT_CLOCK_MASK		0x07
++#define TCSR_PRESCALE_LSB		3
++#define TCSR_PRESCALE_MASK		0x38
++
++#define TCSR_PWM_SD		BIT(9)  /* 0: Shutdown abruptly 1: gracefully */
++#define TCSR_PWM_INITL_HIGH	BIT(8)  /* Sets the initial output level */
++#define TCSR_PWM_EN		BIT(7)  /* PWM pin output enable */
++
++#define CHANNEL_STRIDE		0x10
++#define REG_TDFRc(c)		(REG_TDFR0 + ((c) * CHANNEL_STRIDE))
++#define REG_TDHRc(c)		(REG_TDHR0 + ((c) * CHANNEL_STRIDE))
++#define REG_TCNTc(c)		(REG_TCNT0 + ((c) * CHANNEL_STRIDE))
++#define REG_TCSRc(c)		(REG_TCSR0 + ((c) * CHANNEL_STRIDE))
++
++#endif /* __LINUX_CLK_INGENIC_TCU_H_ */
+-- 
+2.11.0
