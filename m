@@ -1,72 +1,65 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1513193613.7000.58.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 1/2] platform/x86: add Atom PMC quirk to disable SATA
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, Johannes Stezenbach <js@sig21.net>
-Cc: Michael Turquette <mturquette@baylibre.com>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-clk
- <linux-clk@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
- Carlo Caione <carlo@endlessm.com>, Darren Hart <dvhart@infradead.org>,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,  Takashi Iwai
- <tiwai@suse.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Date: Wed, 13 Dec 2017 21:33:33 +0200
-In-Reply-To: <e6aa5c55-8174-7ad9-009f-c254d3aeaf72@redhat.com>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
-	 <20170925191749.2oamusbajgs6clcg@sig21.net>
-	 <20170925192109.rty2fnm7c4jnj3vx@sig21.net>
-	 <34396652.fljU28PShI@aspire.rjw.lan>
-	 <a2c8d724-015a-e6c3-23ab-4b6036cc22eb@redhat.com>
-	 <CAEG3pNDL-8srk_JwqtZxs_waHAPfmRC_5Orhs_=XUhwdHTdM-g@mail.gmail.com>
-	 <e4760a03-b6af-00fc-6c26-9fff8ed6c378@redhat.com>
-	 <20171213162206.GA7337@sig21.net>
-	 <e6aa5c55-8174-7ad9-009f-c254d3aeaf72@redhat.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20171222122243.25735-1-icenowy@aosc.io>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 29 Dec 2017 16:52:06 +0800
+Message-ID: <CAGb2v66CnxSEgYhoeKT+Q8TX-M6SK=XLd=1yXC7WgCz8=ZrMCA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-12-13 at 17:37 +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 13-12-17 17:22, Johannes Stezenbach wrote:
-> > 
+On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> This patchset adds support for the SimpleFB on Allwinner SoCs with
+> "Display Engine 2.0".
+>
+> PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
+>
+> PATCH 4 adds the pipeline strings for DE2 SimpleFB.
+>
+> PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
+> for H3/H5 SoCs.
+>
+> PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
+>
+> Icenowy Zheng (11):
+>   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
+>   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
+>   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
+>   dt-bindings: simplefb-sunxi: add pipelines for DE2
+>   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
+>   arm64: allwinner: h5: add compatible string for DE2 CCU
 
+Applied the first six patches. There is no guarantee they will make
+it into 4.16.
 
-> > Please don't get confused with the other thread about clocks.
-> > This issue sets the "disable IP" bit, found by doing stupid
-> > experiments to enable S0ix on E200HA.
-> 
-> Ah my bad.
+ChenYu
 
-Oh, perhaps I also need to refresh my memory from that buglink.
-
-> > 1. no idea if Cherry Trail even has SATA IP, maybe this is a
-> >     meaningless bit but PMC firmware carried over from
-> >     Bay Trail looks at it
-> 
-> 
-> There are no CHT SoCs with SATA AFAIK, but Braswell SoCs,
-> which I believe is the same die do have SATA.
-> 
-> I think the best fix here is to look at the model-string part
-> of the CPU-id and do a quirk based on that, setting the "disable IP"
-> bit for the SATA on all SoC models known to not have SATA
-> (Z8300, Z8350, Z8500, Z8550, Z8700, Z8750).
-> 
-> Rafael, Andy how does that sound as a solution?
-
-Yeah, that bit is a property of PMC microcontroller and thus belongs to
-its driver in Linux kernel.
-
-To make it strict we need a matching property. AFAIR CPU model ID is all
-the same for all CHT and BSW SoCs, so, can't be used to distinguish
-them. So, you are thinking about comparing CPU model name then?
-
-It might work. However, SATA itself is a part of PCH, and thus can not
-exactly be matched by CPU ID.
-
-Btw, Pentium Celeron N-series according to spec has SATA host.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+>   ARM: sunxi: h3/h5: add simplefb nodes
+>   dt-bindings: add binding for A64 DE2 CCU SRAM
+>   clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
+>   arm64: allwinner: a64: add DE2 CCU for A64 SoC
+>   arm64: allwinner: a64: add simplefb for A64 SoC
+>
+>  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 ++-
+>  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 +
+>  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 +
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 +++++++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 +++++++++++++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 85 +++++++++++++++++++---
+>  7 files changed, 202 insertions(+), 13 deletions(-)
+>
+> --
+> 2.14.2
+>
