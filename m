@@ -1,38 +1,35 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu <jian.hu@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] arm64: dts: meson-axg: switch uart_ao clock to CLK81
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
-	<20171211141348.22048-7-yixun.lan@amlogic.com>
-	<1513270051.2261.11.camel@baylibre.com>
-	<b4e29e22-c0e9-1085-fbb7-eabc5c361445@amlogic.com>
-Date: Fri, 15 Dec 2017 11:14:48 -0800
-In-Reply-To: <b4e29e22-c0e9-1085-fbb7-eabc5c361445@amlogic.com> (Yixun Lan's
-	message of "Fri, 15 Dec 2017 09:49:11 +0800")
-Message-ID: <7h1sjvajmf.fsf@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Dec 2017 16:01:24 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: jassisinghbrar@gmail.com, bjorn.andersson@linaro.org,
+	mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v11 3/6] clk: qcom: Add A53 PLL support
+Message-ID: <20171229000124.GB7997@codeaurora.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+ <20171205154701.27730-4-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171205154701.27730-4-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+On 12/05, Georgi Djakov wrote:
+> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
+> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
+> are connected to a mux and half-integer divider, which is feeding the
+> CPU cores.
+> 
+> This patch adds support for the primary CPU PLL which generates the
+> higher range of frequencies above 1GHz.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-> On 12/15/17 00:47, Jerome Brunet wrote:
->> On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
->>> Switch the uart_ao pclk to CLK81 since the clock driver is ready.
->>> Also move the clock info to the board.dts instead in the soc.dtsi.
->> 
->> Same comment as for ethmac, is it really wise ?
->> Isn't the clock setup the same for the axg family ?
->> 
-> HI Jerome:
-> yes, should be same for AXG family
->
->
-> HI Kevin:
-> could you take the patch [5/6]? then I just need to resend for this one
+Applied to clk-next
 
-Yes, I've applied PATCH 5/6.
-
-Kevin
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
