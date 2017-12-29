@@ -1,35 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Dec 2017 16:01:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: jassisinghbrar@gmail.com, bjorn.andersson@linaro.org,
-	mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+Return-Path: <paul@crapouillou.net>
+Date: Fri, 29 Dec 2017 15:02:50 +0100
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 4/6] clk: ingenic: Add JZ47xx TCU clocks driver
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
+	<jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH v11 3/6] clk: qcom: Add A53 PLL support
-Message-ID: <20171229000124.GB7997@codeaurora.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
- <20171205154701.27730-4-georgi.djakov@linaro.org>
+Message-Id: <1514556170.2198.0@smtp.crapouillou.net>
+In-Reply-To: <20171229125942.27305-5-paul@crapouillou.net>
+References: <20171229125942.27305-1-paul@crapouillou.net>
+	<20171229125942.27305-5-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171205154701.27730-4-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/05, Georgi Djakov wrote:
-> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
-> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
-> are connected to a mux and half-integer divider, which is feeding the
-> CPU cores.
-> 
-> This patch adds support for the primary CPU PLL which generates the
-> higher range of frequencies above 1GHz.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
 
-Applied to clk-next
+[...]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +	tcu->clocks.clk_num = nb_clks;
+> +	tcu->clocks.clks = kcalloc(nb_clocks, sizeof(struct clk *), 
+> GFP_KERNEL);
+> +	if (!tcu->clocks.clks) {
+> +		pr_err("%s: cannot allocate memory\n", __func__);
+> +		goto err_free_tcu;
+> +	}
+
+Facepalm. A quick edit from kzalloc to kcalloc and I managed to break 
+it.
+It should be nb_clks not nb_clocks. I'll fix that in the V2.
+
+-Paul
