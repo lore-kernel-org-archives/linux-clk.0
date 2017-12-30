@@ -1,74 +1,105 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 19 Dec 2017 09:32:28 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: sun9i-mmc: Implement reset callback for
- reset controls
-Message-ID: <20171219083228.mima36idnmhmogdy@flea.lan>
-References: <20171218035751.20661-1-wens@csie.org>
- <20171218210709.GY7997@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xlp63tevqs6hn3aa"
-In-Reply-To: <20171218210709.GY7997@codeaurora.org>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 06/33] clk: at91: change clk_pll_get_best_div_mul() return logic
+Date: Sat, 30 Dec 2017 01:12:45 +0000
+Message-Id: <1514596392-22270-7-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
---xlp63tevqs6hn3aa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-On Mon, Dec 18, 2017 at 01:07:09PM -0800, Stephen Boyd wrote:
-> On 12/18, Chen-Yu Tsai wrote:
-> > Our MMC host driver now issues a reset, instead of just deasserting
-> > the reset control, since commit c34eda69ad4c ("mmc: sunxi: Reset the
-> > device at probe time"). The sun9i-mmc clock driver does not support
-> > this, and will fail, which results in MMC not probing.
-> >=20
-> > This patch implements the reset callback by asserting the reset control,
-> > then deasserting it after a small delay.
-> >=20
-> > Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/=
-resets")
-> > Cc: <stable@vger.kernel.org> # 4.14.x
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > ---
->=20
-> Did you want us to pick this up into clk-fixes? It seems to be
-> causing MMC to not work for some time? That sounds annoying
-> enough.
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/at91/clk-pll.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-That would be great, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---xlp63tevqs6hn3aa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlo4zpsACgkQ0rTAlCFN
-r3SE2A/7BIF/Li1M76KA7m6J4BWNuJy54cuS2g7FlOY6yJ6QO4My323MuD6kR+lE
-hjDIiorVeByjNHbzUayTskyiCBnxCjA6jPj6h6/AALA+61oyWm5iV7MITnaAewOH
-L/IyN4lWJi2oHt1DQXoCyUYTxxx9WgVIBJp7cs280qyJzlrAAq1c/pIpWxWdIOrl
-ULAkp1A9SGVDlstJp917sr4w3GEA7fvfx2Bb/irRmKC0qEW6saZVJuIREKypP2jf
-Q2WEPQ71CZywNs42xmlC1sSyRDYNGCMeMMEwpjXEcZew4yTIHnU8XpxSt023or39
-ZO9IU8MTy1vssR0yOrjDlWGzay0Chl9faXfRtsHkImGrZirAWk/YHISkXLxEsbIa
-Y8EiKI906dbXw1bdusDBUbGkKS1e1GrJ9Gt262cxTWn4a6bRRhANaY2xu/HRCOJ6
-hN8WBM3H8eJFTcMUh5t7R3/glT17ybCrYSt1of77zFSdQigDHUzdfXeffkAlyxs7
-L4WhdJ7eeXqdj187pPQ+buBrMKq3nhVoxvBXYVN+5uw7b5gqSmCWUA1QJeXFh/+z
-9oCI8MO3CAPtqac0Sf080+YPgRZ+sD6sOMcXfN6Pq8vykjp1wRfUk3YFX+Mo1Gwv
-NGttmx41h7FtH/z770+QRcBdl5GKoUaDKVnyv2NVlmHpwIiJJEQ=
-=29mZ
------END PGP SIGNATURE-----
-
---xlp63tevqs6hn3aa--
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 630203e..1c90ae7 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -157,14 +157,14 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 							pll->characteristics;
+ 	unsigned long bestremainder = ULONG_MAX;
+ 	unsigned long maxdiv, mindiv, tmpdiv;
+-	long bestrate = -ERANGE;
++	unsigned long bestrate = 0;
+ 	unsigned long bestdiv;
+ 	unsigned long bestmul;
+ 	int i = 0;
+ 
+ 	/* Check if parent_rate is a valid input rate */
+ 	if (parent_rate < characteristics->input.min)
+-		return -ERANGE;
++		return 0;
+ 
+ 	/*
+ 	 * Calculate minimum divider based on the minimum multiplier, the
+@@ -179,7 +179,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 	if (parent_rate > characteristics->input.max) {
+ 		tmpdiv = DIV_ROUND_UP(parent_rate, characteristics->input.max);
+ 		if (tmpdiv > PLL_DIV_MAX)
+-			return -ERANGE;
++			return 0;
+ 
+ 		if (tmpdiv > mindiv)
+ 			mindiv = tmpdiv;
+@@ -234,8 +234,8 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 			break;
+ 	}
+ 
+-	/* We haven't found any multiplier/divider pair => return -ERANGE */
+-	if (bestrate < 0)
++	/* We haven't found any multiplier/divider pair => return 0 */
++	if (bestrate == 0)
+ 		return bestrate;
+ 
+ 	/* Check if bestrate is a valid output rate  */
+@@ -246,7 +246,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 	}
+ 
+ 	if (i >= characteristics->num_output)
+-		return -ERANGE;
++		return 0;
+ 
+ 	if (div)
+ 		*div = bestdiv;
+@@ -271,15 +271,15 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+-	long ret;
++	unsigned long ret;
+ 	u32 div;
+ 	u32 mul;
+ 	u32 index;
+ 
+ 	ret = clk_pll_get_best_div_mul(pll, rate, parent_rate,
+ 				       &div, &mul, &index);
+-	if (ret < 0)
+-		return ret;
++	if (ret == 0)
++		return -ERANGE;
+ 
+ 	pll->range = index;
+ 	pll->div = div;
+-- 
+2.7.4
