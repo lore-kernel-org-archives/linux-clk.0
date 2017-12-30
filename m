@@ -1,78 +1,50 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH RESEND v6 0/6] provide power off support for iMX6 with external PMIC
-Date: Wed,  6 Dec 2017 08:23:56 +0100
-Message-Id: <20171206072402.11694-1-o.rempel@pengutronix.de>
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Barry Song <baohua@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH 22/33] clk: sirf: remove unnecessary long cast on return
+Date: Sat, 30 Dec 2017 01:13:01 +0000
+Message-Id: <1514596392-22270-23-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-2017.12.06:
-Adding Linus. Probably there is no maintainer for this patch set.
-No changes are made, tested on v4.15-rc1.
+Due to the old function signature of clk_ops->round_rate
+pll_clk_round_rate does a cast of an internal unsigned long
+to a long. After updating clk_ops->round_rate() to be an unsigned long
+though the cast isn't necessary. Remove the cast now.
 
-2017.10.27:
-Last version of this patch set was send at 20 Jun 2017, this is a rebase against
-kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
-please point me.
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Barry Song <baohua@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Barry Song <Baohua.Song@csr.com>
+---
+ drivers/clk/sirf/clk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch series is providing power off support for Freescale/NXP iMX6 based
-boards with external power management integrated circuit (PMIC).
-
-changes:
-v6:
- - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
- - fix "MPIC_STBY_REQ" typo in the comment.
-
-v5:
- - remove useless includes from pm-imx6.c patch
- - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
-   patch
-
-v4:
- - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
-   patch
- - add Acked-by to "ARM: imx6q: provide documentation for new ..."
-   patch
-
-v3:
- - set pm_power_off_prepare = NULL on .remove.
- - documentation and spelling fixes.
- - use %pf instead of lookup_symbol_name.
-
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic-stby-poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide standby on power off option
-
- .../devicetree/bindings/clock/imx6q-clock.txt      |  8 ++
- .../devicetree/bindings/regulator/pfuze100.txt     |  7 ++
- arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
- arch/arm/mach-imx/pm-imx6.c                        | 25 ++++++
- drivers/regulator/pfuze100-regulator.c             | 92 ++++++++++++++++++++++
- kernel/reboot.c                                    |  1 +
- 6 files changed, 138 insertions(+)
-
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 3ce6741..bfa3f4b 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -121,7 +121,7 @@ static unsigned long pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	dividend = (u64)fin * nf;
+ 	do_div(dividend, nr * od);
+ 
+-	return (long)dividend;
++	return dividend;
+ }
+ 
+ static int pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-2.11.0
+2.7.4
