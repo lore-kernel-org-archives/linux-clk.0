@@ -1,35 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36320 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751741AbdLGGlC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Dec 2017 01:41:02 -0500
-Date: Wed, 6 Dec 2017 22:41:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        ysato@users.sourceforge.jp, vz@mleia.com, slemieux.tyco@gmail.com,
-        vireshk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/6] clk: lpc32xx: pr_err() strings should end with
- newlines
-Message-ID: <20171207064100.GQ4283@codeaurora.org>
-References: <cover.1511505932.git.arvind.yadav.cs@gmail.com>
- <1dddfd71153339875c7bedf6e562483607180a4d.1511505932.git.arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1dddfd71153339875c7bedf6e562483607180a4d.1511505932.git.arvind.yadav.cs@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 01/11] clk: sunxi-ng: Don't set k if width is 0 for nkmp plls
+Date: Sat, 30 Dec 2017 22:01:53 +0100
+Message-Id: <20171230210203.24115-2-jernej.skrabec@siol.net>
+In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Arvind Yadav wrote:
-> pr_err() messages should end with a new-line to avoid other messages
-> being concatenated.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
+For example, A83T have nmp plls which are modelled as nkmp plls. Since k
+is not specified, it has offset 0, shift 0 and lowest value 1. This
+means that LSB bit is always set to 1, which may change clock rate.
 
-Applied to clk-next
+Fix that by applying k factor only if k width is greater than 0.
 
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..709f528af2b3 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 					unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+-	unsigned long n, m, k, p;
++	unsigned long n, m, k = 1, p;
+ 	u32 reg;
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+@@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 	if (!n)
+ 		n++;
+ 
+-	k = reg >> nkmp->k.shift;
+-	k &= (1 << nkmp->k.width) - 1;
+-	k += nkmp->k.offset;
+-	if (!k)
+-		k++;
++	if (nkmp->k.width) {
++		k = reg >> nkmp->k.shift;
++		k &= (1 << nkmp->k.width) - 1;
++		k += nkmp->k.offset;
++		if (!k)
++			k++;
++	}
+ 
+ 	m = reg >> nkmp->m.shift;
+ 	m &= (1 << nkmp->m.width) - 1;
+@@ -153,12 +155,15 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+ 	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+-	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
++	if (nkmp->k.width)
++		reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1,
++				nkmp->k.shift);
+ 	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+ 	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+ 
+ 	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+-	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
++	if (nkmp->k.width)
++		reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+ 	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+ 	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.1
