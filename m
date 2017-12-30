@@ -1,99 +1,75 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 05/10] clk: use round rate to bail out early in set_rate
-Date: Fri,  1 Dec 2017 22:51:55 +0100
-Message-Id: <20171201215200.23523-6-jbrunet@baylibre.com>
-In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 00/11] drm/sun4i: Add A83T HDMI support
+Date: Sat, 30 Dec 2017 22:01:52 +0100
+Message-Id: <20171230210203.24115-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current implementation of clk_core_set_rate_nolock() bails out early
-if the requested rate is exactly the same as the one set. It should bail
-out if the request would not result in a rate a change. This is important
-when the rate is not exactly what is requested, which is fairly common
-with PLLs.
+This patch series implements support for A83T DW HDMI and PHY. It is based
+upon Maxime Ripard's "drm/sun4i: Add A83t LVDS support" patch series which
+can be found here:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/550035.html
 
-Ex: provider able to give any rate with steps of 100Hz
- - 1st consumer request 48000Hz and gets it.
- - 2nd consumer request 48010Hz as well. If we were to perform the usual
-   mechanism, we would get 48000Hz as well. The clock would not change so
-   there is no point performing any checks to make sure the clock can
-   change, we know it won't.
+While exactly this combination of HDMI controller and PHY is not common in
+Allwinner SoCs, this patch series nevertheless makes groundwork for other
+SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
 
-This is important to prepare the addition of the clock protection
-mechanism
+All patches can also be found on github:
+https://github.com/jernejsk/linux-1/commits/a83t_hdmi
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+Please take a look.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 322d9ba7e5cd..bbe90babdae4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1658,16 +1658,37 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_change_rate(core->new_child);
- }
- 
-+static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-+						     unsigned long req_rate)
-+{
-+	int ret;
-+	struct clk_rate_request req;
-+
-+	lockdep_assert_held(&prepare_lock);
-+
-+	if (!core)
-+		return 0;
-+
-+	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
-+	req.rate = req_rate;
-+
-+	ret = clk_core_round_rate_nolock(core, &req);
-+
-+	return ret ? 0 : req.rate;
-+}
-+
- static int clk_core_set_rate_nolock(struct clk_core *core,
- 				    unsigned long req_rate)
- {
- 	struct clk_core *top, *fail_clk;
--	unsigned long rate = req_rate;
-+	unsigned long rate;
- 	int ret = 0;
- 
- 	if (!core)
- 		return 0;
- 
-+	rate = clk_core_req_round_rate_nolock(core, req_rate);
-+
- 	/* bail early if nothing to do */
- 	if (rate == clk_core_get_rate_nolock(core))
- 		return 0;
-@@ -1676,7 +1697,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return -EBUSY;
- 
- 	/* calculate new rates and get the topmost changed clock */
--	top = clk_calc_new_rates(core, rate);
-+	top = clk_calc_new_rates(core, req_rate);
- 	if (!top)
- 		return -EINVAL;
- 
+Best regards,
+Jernej
+
+Jernej Skrabec (11):
+  clk: sunxi-ng: Don't set k if width is 0 for nkmp plls
+  clk: sunxi-ng: a83t: Add M divider to TCON1 clock
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+  drm/bridge/synopsys: dw-hdmi: Add deinit callback
+  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+  drm/sun4i: Add support for A83T second TCON
+  drm/sun4i: Add support for A83T second DE2 mixer
+  drm/sun4i: Implement A83T HDMI driver
+  ARM: dts: sun8i: a83t: Add HDMI display pipeline
+  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+
+ .../bindings/display/sunxi/sun4i-drm.txt           | 188 ++++++++++-
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  29 ++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 108 +++++-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  21 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  56 +++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.h          |   2 +
+ drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+ drivers/gpu/drm/sun4i/Makefile                     |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 367 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
+ include/drm/bridge/dw_hdmi.h                       |  11 +
+ 14 files changed, 808 insertions(+), 46 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+
 -- 
-2.14.3
+2.15.1
