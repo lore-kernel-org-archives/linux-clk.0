@@ -1,53 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1539 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbdLULLe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Dec 2017 06:11:34 -0500
-Subject: Re: [PATCH v2 0/4] MBIST work around (WAR) for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <83325ffd-5b85-6288-63ac-5a938b948300@nvidia.com>
- <20171221093742.GW29417@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8e2266df-a1e4-b46e-3e4a-459bbe6e7b2f@nvidia.com>
-Date: Thu, 21 Dec 2017 11:11:28 +0000
-MIME-Version: 1.0
-In-Reply-To: <20171221093742.GW29417@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 23/33] clk: tegra: change clk_sync_source_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:02 +0000
+Message-Id: <1514596392-22270-24-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-On 21/12/17 09:37, Peter De Schrijver wrote:
-> On Wed, Dec 20, 2017 at 10:12:10AM +0000, Jon Hunter wrote:
->>
->> On 16/11/17 14:28, Peter De Schrijver wrote:
->>> This patch series introduces the Memory Built-In Self Test (MBIST)
->>> work around (WAR) needed when power ungating certain domains. More
->>> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
->>> implement the WAR in the Tegra210 clock driver, because most accesses are
->>> to CAR registers and for the VENC domain, we need to make sure the CSI
->>> clock source is not changed during the WAR execution.
->>
->> In general, I don't have any problems with the proposal, as there is no
->> great way to implement the workaround AFAICT. My only thought was if we
->> could expose the mbist WAR as a 'reset' via the clk driver and use the
->> reset_control_xxx APIs to request and reset the mbist? Yes there is no
->> reset assert/deassert here, but the reset framework does have a 'reset'
->> hook to reset logic and if we are considering these WARs to reset the
->> mbist logic maybe it is not a complete hack/abuse of the API? Feel free
->> to tell me to get lost if it is a naff idea.
->>
-> 
-> You would only implement the reset method then? I guess this could be done
-> but I don't really see why this would be better than making dedicated
-> functions given that there really is only one SoC which requires this WAR.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Yes exactly. Good point, we will only ever need this for this device, so
-maybe stick with what you have.
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/tegra/clk-audio-sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jon
-
+diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+index 9784d58..5fd825b 100644
+--- a/drivers/clk/tegra/clk-audio-sync.c
++++ b/drivers/clk/tegra/clk-audio-sync.c
+@@ -35,7 +35,7 @@ static unsigned long clk_sync_source_round_rate(struct clk_hw *hw,
+ 	struct tegra_clk_sync_source *sync = to_clk_sync_source(hw);
+ 
+ 	if (rate > sync->max_rate)
+-		return -EINVAL;
++		return 0;
+ 	else
+ 		return rate;
+ }
 -- 
-nvpublic
+2.7.4
