@@ -1,50 +1,65 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
- <1510234022-29442-3-git-send-email-geert+renesas@glider.be> <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Dec 2017 16:44:23 +0100
-Message-ID: <CAMuHMdXEhDMSmL4owVYvUbJuCQ65pF+-pXpt2RhxRqa2dqL7jQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active
- during system suspend
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
+Date: Sat, 30 Dec 2017 19:30:38 +0800
+Message-Id: <20171230113043.30237-2-icenowy@aosc.io>
+In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> If a device is part of the CPG/MSSR Clock Domain and to be used as a
->> wakeup source, it must be kept active during system suspend.
->>
->> Currently this is handled in device-specific drivers by explicitly
->> increasing the use count of the module clock when the device is
->> configured as a wakeup source.  However, the proper way to prevent the
->> device from being stopped is to inform this requirement to the genpd
->> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
->>
->> Note that this will only affect devices configured as wakeup sources.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+The H3/H5 SoCs have a HDMI output and a TV Composite output.
 
-Thank you, queued in clk-renesas-for-v4.16.
+Add simplefb nodes for these outputs.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
+  clocks that are needed to display framebuffer to the monitor.
 
-                        Geert
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index fcb909658cf0..7a83b15225c7 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -53,6 +53,30 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0-hdmi";
++			clocks = <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>, <&ccu CLK_HDMI>;
++			status = "disabled";
++		};
++
++		framebuffer-tve {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-tve";
++			clocks = <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TVE>;
++			status = "disabled";
++		};
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+2.14.2
