@@ -1,42 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20171205214345.812687071@cogentembedded.com>
-References: <20171205214345.812687071@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Dec 2017 10:00:51 +0100
-Message-ID: <CAMuHMdVtyY2jL-WA3aXHL0ZNJsE86vHXhQHS=LZPTJFx5NyNBQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add LVDS clock
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 31/33] clk: ARC: change hsdk_pll_round_rate () return logic
+Date: Sat, 30 Dec 2017 01:13:10 +0000
+Message-Id: <1514596392-22270-32-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 5, 2017 at 10:43 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
-> patch for some reason -- add it back...
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
->
-> Fixes: 8d46e28fb508 ("clk: renesas: cpg-mssr: Add R8A77970 support")
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.16.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/clk-hsdk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
+index 62c8e18..7bff5e3 100644
+--- a/drivers/clk/clk-hsdk-pll.c
++++ b/drivers/clk/clk-hsdk-pll.c
+@@ -201,7 +201,7 @@ static unsigned long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	const struct hsdk_pll_cfg *pll_cfg = clk->pll_devdata->pll_cfg;
+ 
+ 	if (pll_cfg[0].rate == 0)
+-		return -EINVAL;
++		return 0;
+ 
+ 	best_rate = pll_cfg[0].rate;
+ 
+-- 
+2.7.4
