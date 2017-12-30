@@ -1,109 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Dec 2017 08:39:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: meson-axg: add clock controller drivers
-Message-ID: <20171201163903.GF19419@codeaurora.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
- <20171128125330.363-3-yixun.lan@amlogic.com>
- <20171129193433.GA19419@codeaurora.org>
- <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d2b58c06-93dc-4368-501e-4b8bdc9a4c34@amlogic.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 03/11] drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+Date: Sat, 30 Dec 2017 22:01:55 +0100
+Message-Id: <20171230210203.24115-4-jernej.skrabec@siol.net>
+In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Yixun Lan wrote:
-> Hi Stephen
-> 
-> On 11/30/17 03:34, Stephen Boyd wrote:
-> > On 11/28, Yixun Lan wrote:
-> >> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> >> new file mode 100644
-> >> index 000000000000..51c5b4062715
-> >> --- /dev/null
-> >> +++ b/drivers/clk/meson/axg.c
-> >> @@ -0,0 +1,948 @@
-> >> +/*
-> >> + * AmLogic Meson-AXG Clock Controller Driver
-> >> + *
-> >> + * Copyright (c) 2016 Baylibre SAS.
-> >> + * Author: Michael Turquette <mturquette@baylibre.com>
-> >> + *
-> >> + * Copyright (c) 2017 Amlogic, inc.
-> >> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-> >> + *
-> >> + * SPDX-License-Identifier: GPL-2.0+
-> >> + */
-> >> +
-> >> +#include <linux/clk.h>
-> >> +#include <linux/clk-provider.h>
-> >> +#include <linux/of_address.h>
-> >> +#include <linux/of_device.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/init.h>
-> >> +
-> >> +#include "clkc.h"
-> >> +#include "axg.h"
-> >> +
-> >> +static DEFINE_SPINLOCK(clk_lock);
-> > 
-> > meson_axg_clk_lock?
-> > 
-> em... I'd leave it unchanged
-> 
-> because the spinlock will be used at macro MESON_GATE() [1] which
-> defined at drivers/clk/meson/clkc.h, and it assume using the generic
-> name 'clk_lock', change name will break the code..
-> 
-> and besides it's already defined as static, so I see no problem here
+Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
 
-The problem is lockdep debugging and ctags/grep on the source
-code. clk_lock is very generic when it should be more specific so
-we can find this lock later on from a lockdep report with a
-simple search of the code.
+Tests show that one iteration is enough.
 
-Maybe make another patch to rename it to meson_clk_lock so the
-macro doesn't have to change too much, and we get it slightly
-more unique. Looks like v4l2 also has a clk_lock.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> 
-> >> +};
-> >> +
-> >> +static int axg_clkc_probe(struct platform_device *pdev)
-> >> +{
-> >> +	const struct clkc_data *clkc_data;
-> >> +	void __iomem *clk_base;
-> >> +	int ret, clkid, i;
-> >> +	struct device *dev = &pdev->dev;
-> >> +
-> >> +	clkc_data = of_device_get_match_data(&pdev->dev);
-> >> +	if (!clkc_data)
-> >> +		return -EINVAL;
-> >> +
-> >> +	/*  Generic clocks and PLLs */
-> >> +	clk_base = of_iomap(dev->of_node, 0);
-> > 
-> > Use platform device APIs for ioremapping?
-> > 
-> I assume you are referring to 'platform_get_resource +
-> devm_ioremap_resource' ?
-> 
-> the idea sounds good to me.
-
-Yes.
-
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index a38db40ce990..7ca14d7325b5 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 	 * then write one of the FC registers several times.
+ 	 *
+ 	 * The number of iterations matters and depends on the HDMI TX revision
+-	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+-	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+-	 * 4 and 1 iterations respectively.
++	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
++	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
++	 * as needing the workaround, with 4 iterations for v1.30a and 1
++	 * iteration for others.
+ 	 */
+ 
+ 	switch (hdmi->version) {
+@@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 		count = 4;
+ 		break;
+ 	case 0x131a:
++	case 0x132a:
+ 		count = 1;
+ 		break;
+ 	default:
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.1
