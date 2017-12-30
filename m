@@ -1,141 +1,185 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A3A2A0C.8040601@samsung.com>
-Date: Wed, 20 Dec 2017 18:14:52 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
-In-reply-to: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
-References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
-	<1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 10/11] ARM: dts: sun8i: a83t: Add HDMI display pipeline
+Date: Sat, 30 Dec 2017 22:02:02 +0100
+Message-Id: <20171230210203.24115-11-jernej.skrabec@siol.net>
+In-Reply-To: <20171230210203.24115-1-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Sylwester,
+This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
+hdmi and hdmi pinctrl entries.
 
-Gently Ping.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 108 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 1 deletion(-)
 
-Regards,
-Chanwoo Choi
-
-On 2017년 11월 27일 11:31, Chanwoo Choi wrote:
-> This patch just removes the unneeded enumeration for PLL index.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s3c2412.c | 11 ++---------
->  drivers/clk/samsung/clk-s3c2443.c | 17 ++++-------------
->  drivers/clk/samsung/clk-s3c64xx.c | 17 ++++++-----------
->  3 files changed, 12 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-> index b8340a49921b..1555e407529e 100644
-> --- a/drivers/clk/samsung/clk-s3c2412.c
-> +++ b/drivers/clk/samsung/clk-s3c2412.c
-> @@ -27,11 +27,6 @@
->  #define CLKSRC		0x1c
->  #define SWRST		0x30
->  
-> -/* list of PLLs to be registered */
-> -enum s3c2412_plls {
-> -	mpll, upll,
-> -};
-> -
->  static void __iomem *reg_base;
->  
->  #ifdef CONFIG_PM_SLEEP
-> @@ -144,10 +139,8 @@ struct samsung_mux_clock s3c2412_muxes[] __initdata = {
->  };
->  
->  static struct samsung_pll_clock s3c2412_plls[] __initdata = {
-> -	[mpll] = PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti",
-> -						LOCKTIME, MPLLCON, NULL),
-> -	[upll] = PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk",
-> -						LOCKTIME, UPLLCON, NULL),
-> +	PLL(pll_s3c2440_mpll, MPLL, "mpll", "xti", LOCKTIME, MPLLCON, NULL),
-> +	PLL(pll_s3c2410_upll, UPLL, "upll", "urefclk", LOCKTIME, UPLLCON, NULL),
->  };
->  
->  struct samsung_gate_clock s3c2412_gates[] __initdata = {
-> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-> index d94b85a42356..9580a6baf4d7 100644
-> --- a/drivers/clk/samsung/clk-s3c2443.c
-> +++ b/drivers/clk/samsung/clk-s3c2443.c
-> @@ -41,11 +41,6 @@ enum supported_socs {
->  	S3C2450,
->  };
->  
-> -/* list of PLLs to be registered */
-> -enum s3c2443_plls {
-> -	mpll, epll,
-> -};
-> -
->  static void __iomem *reg_base;
->  
->  #ifdef CONFIG_PM_SLEEP
-> @@ -225,10 +220,8 @@ struct samsung_clock_alias s3c2443_common_aliases[] __initdata = {
->  /* S3C2416 specific clocks */
->  
->  static struct samsung_pll_clock s3c2416_pll_clks[] __initdata = {
-> -	[mpll] = PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref",
-> -						LOCKCON0, MPLLCON, NULL),
-> -	[epll] = PLL(pll_6553, EPLL, "epll", "epllref",
-> -						LOCKCON1, EPLLCON, NULL),
-> +	PLL(pll_6552_s3c2416, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
-> +	PLL(pll_6553, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
->  };
->  
->  PNAME(s3c2416_hsmmc0_p) = { "sclk_hsmmc0", "sclk_hsmmcext" };
-> @@ -279,10 +272,8 @@ struct samsung_clock_alias s3c2416_aliases[] __initdata = {
->  /* S3C2443 specific clocks */
->  
->  static struct samsung_pll_clock s3c2443_pll_clks[] __initdata = {
-> -	[mpll] = PLL(pll_3000, MPLL, "mpll", "mpllref",
-> -						LOCKCON0, MPLLCON, NULL),
-> -	[epll] = PLL(pll_2126, EPLL, "epll", "epllref",
-> -						LOCKCON1, EPLLCON, NULL),
-> +	PLL(pll_3000, MPLL, "mpll", "mpllref", LOCKCON0, MPLLCON, NULL),
-> +	PLL(pll_2126, EPLL, "epll", "epllref", LOCKCON1, EPLLCON, NULL),
->  };
->  
->  static struct clk_div_table armdiv_s3c2443_d[] = {
-> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-> index 7306867a0ab8..6db01cf5ab83 100644
-> --- a/drivers/clk/samsung/clk-s3c64xx.c
-> +++ b/drivers/clk/samsung/clk-s3c64xx.c
-> @@ -56,11 +56,6 @@
->  #define GATE_ON(_id, cname, pname, o, b) \
->  		GATE(_id, cname, pname, o, b, CLK_IGNORE_UNUSED, 0)
->  
-> -/* list of PLLs to be registered */
-> -enum s3c64xx_plls {
-> -	apll, mpll, epll,
-> -};
-> -
->  static void __iomem *reg_base;
->  static bool is_s3c6400;
->  
-> @@ -364,12 +359,12 @@ static void __init s3c64xx_clk_sleep_init(void) {}
->  
->  /* List of PLL clocks. */
->  static struct samsung_pll_clock s3c64xx_pll_clks[] __initdata = {
-> -	[apll] = PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
-> -						APLL_LOCK, APLL_CON, NULL),
-> -	[mpll] = PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
-> -						MPLL_LOCK, MPLL_CON, NULL),
-> -	[epll] = PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
-> -						EPLL_LOCK, EPLL_CON0, NULL),
-> +	PLL(pll_6552, FOUT_APLL, "fout_apll", "fin_pll",
-> +					APLL_LOCK, APLL_CON, NULL),
-> +	PLL(pll_6552, FOUT_MPLL, "fout_mpll", "fin_pll",
-> +					MPLL_LOCK, MPLL_CON, NULL),
-> +	PLL(pll_6553, FOUT_EPLL, "fout_epll", "fin_pll",
-> +					EPLL_LOCK, EPLL_CON0, NULL),
->  };
->  
->  /* Aliases for common s3c64xx clocks. */
-> 
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 7f4955a5fab7..601d1eb5460e 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -155,7 +155,7 @@
+ 
+ 	de: display-engine {
+ 		compatible = "allwinner,sun8i-a83t-display-engine";
+-		allwinner,pipelines = <&mixer0>;
++		allwinner,pipelines = <&mixer0>, <&mixer1>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -208,6 +208,32 @@
+ 			};
+ 		};
+ 
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer1_out_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_in_mixer1>;
++					};
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
+@@ -256,6 +282,43 @@
+ 			};
+ 		};
+ 
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun8i-a83t-mmc",
+ 				     "allwinner,sun7i-a20-mmc";
+@@ -427,6 +490,11 @@
+ 				drive-strength = <40>;
+ 			};
+ 
++			hdmi_pins: hdmi-pins {
++				pins = "PH6", "PH7", "PH8";
++				function = "hdmi";
++			};
++
+ 			i2c0_pins: i2c0-pins {
+ 				pins = "PH0", "PH1";
+ 				function = "i2c0";
+@@ -685,6 +753,44 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>,
++			      <0x01ef0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
++			reset-names = "phy", "ctrl";
++			pinctrl-names = "default";
++			pinctrl-0 = <&hdmi_pins>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		r_intc: interrupt-controller@1f00c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-intc",
+ 				     "allwinner,sun6i-a31-r-intc";
+-- 
+2.15.1
