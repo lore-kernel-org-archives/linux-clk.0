@@ -6,11 +6,16 @@ To: mturquette@baylibre.com,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: pure.logic@nexus-software.ie,
-	Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org
-Subject: [PATCH 26/33] clk: ti: composite: change clk_pll_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:13:05 +0000
-Message-Id: <1514596392-22270-27-git-send-email-pure.logic@nexus-software.ie>
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH 25/33] clk: tegra: pll: change clk_pll_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:04 +0000
+Message-Id: <1514596392-22270-26-git-send-email-pure.logic@nexus-software.ie>
 In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
@@ -24,28 +29,33 @@ clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
 the current limitation of 1 Hz to LONG_MAX Hz.
 
 Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-omap@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
+Cc: Rhyland Klein <rklein@nvidia.com>
+Cc: Bill Huang <bilhuang@nvidia.com>
 ---
- drivers/clk/ti/composite.c | 2 +-
+ drivers/clk/tegra/clk-pll.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 2477cf1..0e82b61 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -38,7 +38,7 @@ static unsigned long ti_composite_round_rate(struct clk_hw *hw,
- 					     unsigned long rate,
- 					     unsigned long *prate)
- {
--	return -EINVAL;
-+	return 0;
- }
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b4a7d30..0a3edb0 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -839,7 +839,7 @@ static unsigned long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
  
- static int ti_composite_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+ 	    pll->params->calc_rate(hw, &cfg, rate, *prate))
+-		return -EINVAL;
++		return 0;
+ 
+ 	return cfg.output_rate;
+ }
 -- 
 2.7.4
