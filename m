@@ -1,71 +1,59 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1512147583.12869.10.camel@baylibre.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: meson-axg: add clock DT info for
- Meson AXG SoC
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
-	 <khilman@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	 <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Carlo
-	Caione <carlo@caione.org>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-In-Reply-To: <20171201163437.GE19419@codeaurora.org>
-References: <20171128125330.363-1-yixun.lan@amlogic.com>
-	 <20171128125330.363-4-yixun.lan@amlogic.com>
-	 <20171129193536.GB19419@codeaurora.org>
-	 <8353c264-3253-0268-91fc-8d42fbe82611@amlogic.com>
-	 <20171201163437.GE19419@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 01 Dec 2017 17:59:43 +0100
-Mime-Version: 1.0
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: [PATCH 21/33] clk: qcom: ipq4019: change clk_cpu_div_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:00 +0000
+Message-Id: <1514596392-22270-22-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-12-01 at 08:34 -0800, Stephen Boyd wrote:
-> On 11/30, Yixun Lan wrote:
-> > Hi Stephen
-> > 
-> > On 11/30/17 03:35, Stephen Boyd wrote:
-> > > On 11/28, Yixun Lan wrote:
-> > > > diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> > > > b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> > > > index b932a784b02a..36a2e98338a8 100644
-> > > > --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> > > > +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> > > > @@ -7,6 +7,7 @@
-> > > >  #include <dt-bindings/gpio/gpio.h>
-> > > >  #include <dt-bindings/interrupt-controller/irq.h>
-> > > >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > +#include <dt-bindings/clock/axg-clkc.h>
-> > > >  
-> > > >  / {
-> > > >  	compatible = "amlogic,meson-axg";
-> > > > @@ -148,6 +149,20 @@
-> > > >  			#address-cells = <0>;
-> > > >  		};
-> > > >  
-> > > > +		hiubus: hiubus@ff63c000 {
-> > > 
-> > > Maybe just call the node "bus@ff63c000"?
-> > > 
-> > 
-> > isn't this just a name? what's the benefits to change?
-> > personally, I tend to keep it this way, because it's better map to the
-> > data sheet
-> > 
-> > we also has 'aobus', 'cbus' scattered there..
-> 
-> Per the ePAPR node names are supposed to be generic, like disk,
-> cpu, display-controller, gpu, etc. I've never heard of a hiubus,
-> so probably it's some vendor specific thing? We have the phandle
-> anyway so it's not like we're losing much information here.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Stephen, there is a lot of busses on platform. We can't just call them all
-'bus'.
-I don't get the problem with this name.
-We are re-using the name from the datasheet here, no fancy invention. It seems
-to be quite common. 
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> 
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Cc: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 804231b..943acbc 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1268,7 +1268,7 @@ static unsigned long clk_cpu_div_round_rate(struct clk_hw *hw,
+ 
+ 	f = qcom_find_freq(pll->freq_tbl, rate);
+ 	if (!f)
+-		return -EINVAL;
++		return 0;
+ 
+ 	p_hw = clk_hw_get_parent_by_index(hw, f->src);
+ 	*p_rate = clk_hw_get_rate(p_hw);
+-- 
+2.7.4
