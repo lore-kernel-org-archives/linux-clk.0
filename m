@@ -1,69 +1,58 @@
-Return-Path: <leonard.crestez@nxp.com>
-Message-ID: <1513174959.2879.32.camel@nxp.com>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Christoph Hellwig
-	<hch@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Shawn Guo <shawnguo@kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>, <linux-kernel@vger.kernel.org>, "Rob
- Herring" <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Wed, 13 Dec 2017 16:22:39 +0200
-In-Reply-To: <b39d3ae2-5a93-854f-a0ff-aefd405da78b@pengutronix.de>
-References: <20171206072402.11694-1-o.rempel@pengutronix.de>
-	 <20171206072402.11694-4-o.rempel@pengutronix.de>
-	 <20171206231130.GA6235@infradead.org>
-	 <b39d3ae2-5a93-854f-a0ff-aefd405da78b@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: leonard.crestez@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52730 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750886AbdL3LcI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Dec 2017 06:32:08 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 0/6] Allwinner H3/H5/A64(DE2) SimpleFB support (Part 2)
+Date: Sat, 30 Dec 2017 19:30:37 +0800
+Message-Id: <20171230113043.30237-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-12-07 at 06:36 +0100, Oleksij Rempel wrote:
-> 
-> On 07.12.2017 00:11, Christoph Hellwig wrote:
-> > 
-> > > 
-> > >  void (*pm_power_off_prepare)(void);
-> > > +EXPORT_SYMBOL(pm_power_off_prepare);
-> > EXPORT_SYMBOL_GPL for something this deeply internal, please.
-> Ok,
-> probably all other symbols should be converted in this file in to
-> EXPORT_SYMBOL_GPL as well?
-> 
-> grep EXPORT_SYMBOL kernel/reboot.c
-> EXPORT_SYMBOL(cad_pid);
-> EXPORT_SYMBOL(pm_power_off_prepare);
-> EXPORT_SYMBOL_GPL(emergency_restart);
-> EXPORT_SYMBOL(register_reboot_notifier);
-> EXPORT_SYMBOL(unregister_reboot_notifier);
-> EXPORT_SYMBOL(devm_register_reboot_notifier);
-> EXPORT_SYMBOL(register_restart_handler);
-> EXPORT_SYMBOL(unregister_restart_handler);
-> EXPORT_SYMBOL_GPL(kernel_restart);
-> EXPORT_SYMBOL_GPL(kernel_halt);
-> EXPORT_SYMBOL_GPL(kernel_power_off);
-> EXPORT_SYMBOL_GPL(orderly_poweroff);
-> EXPORT_SYMBOL_GPL(orderly_reboot);
+This patchset is the remaining part of Allwinner DE2 SimpleFB support in
+Linux. Some H3/5-related patches are already applied into the sunxi
+tree.
 
-This call looks much more deeply internal than those other functions,
-it's not like reboot_notifier and restart_handler.
+PATCH 1 adds the final SimpleFB nodes to the H3/H5 device tree. With it
+applied the SimpleFB will be usable on H3/H5.
 
-It seems that the only user of pm_power_off_prepare right now is the
-ACPI core and your patch uses it in a regulator driver. This looks
-extremely strange. Maybe this is why imx maintainers are stalling on
-this patch?
+PATCH 2/3 are for the SRAM requirment of the A64 SoC; PATCH 2 is the
+device tree binding of it and PATCH 3 is the implementation in DE2 CCU
+of it.
 
-It might help if the ACPI/PM maintainers ack/review this part
-explicitly, and the usage in part 5:
+PATCH 4/5 are A64 DTSI file parts; PATCH 4 adds DE2 CCU device node and
+PATCH 5 adds SimpleFB device node.
 
-https://patchwork.kernel.org/patch/9799615/
+PATCH 6 are A64 per-board DTS file changes, which keeps the regulator
+for HVCC pin (a power supply pin on A64 SoC that is used by the HDMI
+controller) on these boards.
 
---
-Regards,
-Leonard
+Icenowy Zheng (6):
+  ARM: sunxi: h3/h5: add simplefb nodes
+  dt-bindings: add binding for A64 DE2 CCU SRAM
+  clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
+  arm64: allwinner: a64: add DE2 CCU for A64 SoC
+  arm64: allwinner: a64: add simplefb for A64 SoC
+  arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
+
+ .../devicetree/bindings/clock/sun8i-de2.txt        |   5 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  24 +++++
+ .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |   4 +
+ .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   |   4 +
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    |   4 +
+ .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts |   4 +
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |   4 +
+ .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  |   4 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  60 +++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 117 ++++++++++++++-------
+ 10 files changed, 190 insertions(+), 40 deletions(-)
+
+-- 
+2.14.2
+
