@@ -1,31 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16272 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753342AbdLSW2B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Dec 2017 17:28:01 -0500
-Subject: Re: [PATCH v2 1/4] clk: tegra: Add la clock for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1510842542-16451-1-git-send-email-pdeschrijver@nvidia.com>
- <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <47980cf0-8837-bff1-a25a-1287dd96b689@nvidia.com>
-Date: Tue, 19 Dec 2017 22:27:56 +0000
-MIME-Version: 1.0
-In-Reply-To: <1510842542-16451-2-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie
+Subject: [PATCH 03/33] clk: composite: allow round_rate to scale past LONG_MAX on 32 bit systems
+Date: Sat, 30 Dec 2017 01:12:42 +0000
+Message-Id: <1514596392-22270-4-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
+Defining the return value of round_rate as a long and returning error codes
+as well as the rounded-clock value in the return value of a
+clk_ops->round_rate callback means that its not possible to return a clock
+greater than LONG_MAX Hz on a 32 bit system.
 
-On 16/11/17 14:28, Peter De Schrijver wrote:
-> This clock is needed by the memory built-in self test work around.
+This patch changes the handling of the return value from round_rate() such
+that zero indicates an unusable clock and non-zero indicates a successfully
+rounded clock giving us a full range of 1 Hz to ULONG_MAX Hz on 32 bit
+systems.
 
-Can we say what this 'LA' clock is? What does LA stand for? Looks like
-this is only used for Host1x.
+Implementations of round_rate() must either return a rounded-clock or zero
+to indicate error.
 
-Cheers
-Jon
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/clk-composite.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index f3707c3..2090b74 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -66,7 +66,7 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 	long tmp_rate, best_rate = 0;
+ 	unsigned long rate_diff;
+ 	unsigned long best_rate_diff = ULONG_MAX;
+-	long rate;
++	unsigned long rate;
+ 	int i;
+ 
+ 	if (rate_hw && rate_ops && rate_ops->determine_rate) {
+@@ -83,8 +83,8 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 
+ 			rate = rate_ops->round_rate(rate_hw, req->rate,
+ 						    &req->best_parent_rate);
+-			if (rate < 0)
+-				return rate;
++			if (!rate)
++				return -EINVAL;
+ 
+ 			req->rate = rate;
+ 			return 0;
+@@ -99,7 +99,7 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 
+ 			tmp_rate = rate_ops->round_rate(rate_hw, req->rate,
+ 							&parent_rate);
+-			if (tmp_rate < 0)
++			if (tmp_rate == 0)
+ 				continue;
+ 
+ 			rate_diff = abs(req->rate - tmp_rate);
 -- 
-nvpublic
+2.7.4
