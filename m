@@ -6,10 +6,13 @@ To: mturquette@baylibre.com,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: pure.logic@nexus-software.ie,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH 13/33] clk: si514: change si514_round_rate() return logic
-Date: Sat, 30 Dec 2017 01:12:52 +0000
-Message-Id: <1514596392-22270-14-git-send-email-pure.logic@nexus-software.ie>
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 32/33] clk: lpc32xx: change round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:11 +0000
+Message-Id: <1514596392-22270-33-git-send-email-pure.logic@nexus-software.ie>
 In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
@@ -25,25 +28,49 @@ the current limitation of 1 Hz to LONG_MAX Hz.
 Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
 Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
-Cc: Mike Looijmans <mike.looijmans@topic.nl>
 ---
- drivers/clk/clk-si514.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/nxp/clk-lpc32xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 8d940d0..042ae39 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -220,7 +220,7 @@ static unsigned long si514_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	err = si514_calc_muldiv(&settings, rate);
- 	if (err)
--		return err;
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 76c17f4..0e0d258 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -664,17 +664,17 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 	 * USB divider, USB PLL N and M parameters.
+ 	 */
+ 	if (rate != 48000000)
+-		return -EINVAL;
 +		return 0;
  
- 	return si514_calc_rate(&settings);
+ 	/* USB divider clock */
+ 	usb_div_hw = clk_hw_get_parent_by_index(hw, 0);
+ 	if (!usb_div_hw)
+-		return -EINVAL;
++		return 0;
+ 
+ 	/* Main oscillator clock */
+ 	osc_hw = clk_hw_get_parent_by_index(usb_div_hw, 0);
+ 	if (!osc_hw)
+-		return -EINVAL;
++		return 0;
+ 	o = clk_hw_get_rate(osc_hw);	/* must be in range 1..20 MHz */
+ 
+ 	/* Check if valid USB divider and USB PLL parameters exists */
+@@ -697,7 +697,7 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 		}
+ 	}
+ 
+-	return -EINVAL;
++	return 0;
  }
+ 
+ #define LPC32XX_DEFINE_PLL_OPS(_name, _rc, _sr, _rr)			\
 -- 
 2.7.4
