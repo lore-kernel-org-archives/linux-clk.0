@@ -1,66 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52763 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751123AbdL3Lct (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Dec 2017 06:32:49 -0500
 From: Icenowy Zheng <icenowy@aosc.io>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v3 00/11] Allwinner H3/H5/A64(DE2) SimpleFB support
-Date: Wed, 27 Dec 2017 12:10:59 +0800
-Message-ID: <4610834.pRdGNWpFpX@ice-x220i>
-In-Reply-To: <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
-References: <20171222122243.25735-1-icenowy@aosc.io> <CAGb2v653n_Q-spOSP9RTXBrL7CtrYiV7dAyRAVYCxg3KpzRvoQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 2/6] dt-bindings: add binding for A64 DE2 CCU SRAM
+Date: Sat, 30 Dec 2017 19:30:39 +0800
+Message-Id: <20171230113043.30237-3-icenowy@aosc.io>
+In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017年12月27日星期三 CST 下午12:09:41，Chen-Yu Tsai 写道：
-> On Fri, Dec 22, 2017 at 8:22 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> > This patchset adds support for the SimpleFB on Allwinner SoCs with
-> > "Display Engine 2.0".
-> > 
-> > PATCH 1 to PATCH 3 are DE2 CCU fixes for H3/H5 SoCs.
-> > 
-> > PATCH 4 adds the pipeline strings for DE2 SimpleFB.
-> > 
-> > PATCH 5 to 7 adds necessary device tree nodes (DE2 CCU and SimpleFB)
-> > for H3/H5 SoCs.
-> > 
-> > PATCH 8 to 11 are for Allwinner A64 SoC to enable SimpleFB.
-> 
-> Changelog?
+A64's Display Engine 2.0 needs a section of SRAM (SRAM C) to be claimed,
+otherwise the whole DE2 memory zone cannot be accessed (kept to all 0).
 
-They're in seperate patches.
+Add binding for this, in order to make the DE2 CCU able to claim the
+SRAM and enable access to the DE2 clock and reset registers.
 
-> 
-> ChenYu
-> 
-> > Icenowy Zheng (11):
-> >   dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
-> >   clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
-> >   clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
-> >   dt-bindings: simplefb-sunxi: add pipelines for DE2
-> >   ARM: sun8i: h3/h5: add DE2 CCU device node for H3
-> >   arm64: allwinner: h5: add compatible string for DE2 CCU
-> >   ARM: sunxi: h3/h5: add simplefb nodes
-> >   dt-bindings: add binding for A64 DE2 CCU SRAM
-> >   clk: sunxi-ng: add support for Allwinner A64 DE2 CCU
-> >   arm64: allwinner: a64: add DE2 CCU for A64 SoC
-> >   arm64: allwinner: a64: add simplefb for A64 SoC
-> >  
-> >  .../devicetree/bindings/clock/sun8i-de2.txt        | 10 ++-
-> >  .../bindings/display/simple-framebuffer-sunxi.txt  |  4 +
-> >  arch/arm/boot/dts/sun8i-h3.dtsi                    |  4 +
-> >  arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 43 +++++++++++
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 65 +++++++++++++++++
-> >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |  4 +
-> >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 85
-> >  +++++++++++++++++++--- 7 files changed, 202 insertions(+), 13
-> >  deletions(-)
-> > 
-> > --
-> > 2.14.2
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Added Rob's ACK.
+
+Changes in v2:
+- Adds description of the situation when the SRAM is not claimed.
+
+ Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+index f2fa87c4765c..a7d558a2b9b2 100644
+--- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -6,6 +6,7 @@ Required properties :
+ 		- "allwinner,sun8i-a83t-de2-clk"
+ 		- "allwinner,sun8i-h3-de2-clk"
+ 		- "allwinner,sun8i-v3s-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk"
+ 		- "allwinner,sun50i-h5-de2-clk"
+ 
+ - reg: Must contain the registers base address and length
+@@ -18,6 +19,10 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+ 
++Additional required properties for "allwinner,sun50i-a64-de2-clk" :
++- allwinner,sram: See Documentation/devicetree/bindings/sram/sunxi-sram.txt,
++		  should be the SRAM C section on A64 SoC.
++
+ Example:
+ de2_clocks: clock@1000000 {
+ 	compatible = "allwinner,sun8i-h3-de2-clk";
+-- 
+2.14.2
+
