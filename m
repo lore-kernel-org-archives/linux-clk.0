@@ -1,95 +1,55 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 03/10] clk: add clk_core_set_phase_nolock function
-Date: Fri,  1 Dec 2017 22:51:53 +0100
-Message-Id: <20171201215200.23523-4-jbrunet@baylibre.com>
-In-Reply-To: <20171201215200.23523-1-jbrunet@baylibre.com>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <baoyou.xie@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 28/33] clk: zte: change zx_audio_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:07 +0000
+Message-Id: <1514596392-22270-29-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a core function for set_phase, as it is done for set_rate and
-set_parent.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Jun Nie <jun.nie@linaro.org>
+Cc: Baoyou Xie <baoyou.xie@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/clk/clk.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/clk/zte/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e60b2a26b10b..7946a069ba2e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1966,6 +1966,25 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
+diff --git a/drivers/clk/zte/clk.c b/drivers/clk/zte/clk.c
+index df91842..6afdc4a 100644
+--- a/drivers/clk/zte/clk.c
++++ b/drivers/clk/zte/clk.c
+@@ -247,7 +247,7 @@ static unsigned long zx_audio_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
  
-+static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
-+{
-+	int ret = -EINVAL;
-+
-+	lockdep_assert_held(&prepare_lock);
-+
-+	if (!core)
+ 	if (rate * 2 > *prate)
+-		return -EINVAL;
 +		return 0;
-+
-+	trace_clk_set_phase(core, degrees);
-+
-+	if (core->ops->set_phase)
-+		ret = core->ops->set_phase(core->hw, degrees);
-+
-+	trace_clk_set_phase_complete(core, degrees);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_set_phase - adjust the phase shift of a clock signal
-  * @clk: clock signal source
-@@ -1988,7 +2007,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
-  */
- int clk_set_phase(struct clk *clk, int degrees)
- {
--	int ret = -EINVAL;
-+	int ret;
  
- 	if (!clk)
- 		return 0;
-@@ -1999,17 +2018,7 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
- 
- 	clk_prepare_lock();
--
--	trace_clk_set_phase(clk->core, degrees);
--
--	if (clk->core->ops->set_phase)
--		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
--
--	trace_clk_set_phase_complete(clk->core, degrees);
--
--	if (!ret)
--		clk->core->phase = degrees;
--
-+	ret = clk_core_set_phase_nolock(clk->core, degrees);
- 	clk_prepare_unlock();
- 
- 	return ret;
+ 	reg = calc_reg(*prate, rate);
+ 	return calc_rate(reg, *prate);
 -- 
-2.14.3
+2.7.4
