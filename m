@@ -1,97 +1,58 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org
-Cc: mturquette@baylibre.com,
-	robh@kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v11 1/6] mailbox: qcom: Convert APCS IPC driver to use regmap
-Date: Tue,  5 Dec 2017 17:46:56 +0200
-Message-Id: <20171205154701.27730-2-georgi.djakov@linaro.org>
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Joachim Eastwood <manabian@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 19/33] clk: nxp: change lpc18xx_pll0_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:12:58 +0000
+Message-Id: <1514596392-22270-20-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-This hardware block provides more functionalities that just IPC. Convert
-it to regmap to allow other child platform devices to use the same regmap.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Joachim Eastwood <manabian@gmail.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 9924c6d7f05d..ab344bc6fa63 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -18,6 +18,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/mailbox_controller.h>
+diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+index e08bad9..396d4f7 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
++++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+@@ -381,13 +381,13 @@ static unsigned long lpc18xx_pll0_round_rate(struct clk_hw *hw,
  
- #define QCOM_APCS_IPC_BITS	32
-@@ -26,19 +27,25 @@ struct qcom_apcs_ipc {
- 	struct mbox_controller mbox;
- 	struct mbox_chan mbox_chans[QCOM_APCS_IPC_BITS];
+ 	if (*prate < rate) {
+ 		pr_warn("%s: pll dividers not supported\n", __func__);
+-		return -EINVAL;
++		return 0;
+ 	}
  
--	void __iomem *reg;
-+	struct regmap *regmap;
- 	unsigned long offset;
- };
+ 	m = DIV_ROUND_UP_ULL(*prate, rate * 2);
+ 	if (m <= 0 && m > LPC18XX_PLL0_MSEL_MAX) {
+ 		pr_warn("%s: unable to support rate %lu\n", __func__, rate);
+-		return -EINVAL;
++		return 0;
+ 	}
  
-+static const struct regmap_config apcs_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x1000,
-+	.fast_io = true,
-+};
-+
- static int qcom_apcs_ipc_send_data(struct mbox_chan *chan, void *data)
- {
- 	struct qcom_apcs_ipc *apcs = container_of(chan->mbox,
- 						  struct qcom_apcs_ipc, mbox);
- 	unsigned long idx = (unsigned long)chan->con_priv;
- 
--	writel(BIT(idx), apcs->reg);
--
--	return 0;
-+	return regmap_write(apcs->regmap, apcs->offset, BIT(idx));
- }
- 
- static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
-@@ -47,7 +54,9 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
- 
- static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- {
-+	struct device_node *np = pdev->dev.of_node;
- 	struct qcom_apcs_ipc *apcs;
-+	struct regmap *regmap;
- 	struct resource *res;
- 	unsigned long offset;
- 	void __iomem *base;
-@@ -63,9 +72,14 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &apcs_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
- 	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
- 
--	apcs->reg = base + offset;
-+	apcs->regmap = regmap;
-+	apcs->offset = offset;
- 
- 	/* Initialize channel identifiers */
- 	for (i = 0; i < ARRAY_SIZE(apcs->mbox_chans); i++)
+ 	return 2 * *prate * m;
+-- 
+2.7.4
