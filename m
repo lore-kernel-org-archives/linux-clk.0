@@ -1,215 +1,132 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org
-Cc: mturquette@baylibre.com,
-	robh@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v11 3/6] clk: qcom: Add A53 PLL support
-Date: Tue,  5 Dec 2017 17:46:58 +0200
-Message-Id: <20171205154701.27730-4-georgi.djakov@linaro.org>
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52837 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750946AbdL3Ldp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Dec 2017 06:33:45 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 6/6] arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
+Date: Sat, 30 Dec 2017 19:30:43 +0800
+Message-Id: <20171230113043.30237-7-icenowy@aosc.io>
+In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
-a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
-are connected to a mux and half-integer divider, which is feeding the
-CPU cores.
+On usual A64 board design the power of HDMI controller is connected to
+DLDO1 of the AXP803 PMIC. If this regulator is shut down, the HDMI
+output will be blank. Therefore the simplefb driver should keep this
+regulator on.
 
-This patch adds support for the primary CPU PLL which generates the
-higher range of frequencies above 1GHz.
+Add the regulator to all currently available A64 boards' simplefb_hdmi
+device node.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
- drivers/clk/qcom/Kconfig                           |  10 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/a53-pll.c                         | 110 +++++++++++++++++++++
- 4 files changed, 143 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+New patch introduced in v4.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-new file mode 100644
-index 000000000000..e3fa8118eaee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
-@@ -0,0 +1,22 @@
-+Qualcomm MSM8916 A53 PLL Binding
-+--------------------------------
-+The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
-+above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,msm8916-a53pll"
-+
-+- reg : shall contain base register location and length
-+
-+- #clock-cells : must be set to <0>
-+
-+Example:
-+
-+	a53pll: clock@b016000 {
-+		compatible = "qcom,msm8916-a53pll";
-+		reg = <0xb016000 0x40>;
-+		#clock-cells = <0>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9f6c278deead..81ac7b9378fe 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -12,6 +12,16 @@ config COMMON_CLK_QCOM
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
+ arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts       | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts        | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts           | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts | 4 ++++
+ 6 files changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index a6975670cd1c..f98c496e1f30 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -283,6 +283,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
  
-+config QCOM_A53PLL
-+	bool "MSM8916 A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	default ARCH_QCOM
-+	help
-+	  Support for the A53 PLL on MSM8916 devices. It provides
-+	  the CPU with frequencies above 1GHz.
-+	  Say Y if you want to support higher CPU frequencies on MSM8916
-+	  devices.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 26410d31446b..e767c60c24ec 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -32,5 +32,6 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..c18cb7614e42
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm A53 PLL driver
-+ *
-+ * Copyright (c) 2017, Linaro Limited
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static const struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 63, 0x0, 0x1, 0 },
-+	{ 1248000000, 65, 0x0, 0x1, 0 },
-+	{ 1363200000, 71, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
 +};
 +
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index 2beef9e6cb88..7cbbbf238f4f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -196,6 +196,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
 +};
 +
-+static int qcom_a53pll_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
-+}
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	struct resource *res;
-+	struct clk_pll *pll;
-+	void __iomem *base;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04;
-+	pll->m_reg = 0x08;
-+	pll->n_reg = 0x0c;
-+	pll->config_reg = 0x14;
-+	pll->mode_reg = 0x00;
-+	pll->status_reg = 0x1c;
-+	pll->status_bit = 16;
-+	pll->freq_tbl = a53pll_freq;
-+
-+	init.name = "a53pll";
-+	init.parent_names = (const char *[]){ "xo" };
-+	init.num_parents = 1;
-+	init.ops = &clk_pll_sr2_ops;
-+	init.flags = CLK_IS_CRITICAL;
-+	pll->clkr.hw.init = &init;
-+
-+	ret = devm_clk_register_regmap(dev, &pll->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-+				     &pll->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,msm8916-a53pll" },
-+	{ }
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 8807664f363a..568de83427d0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -215,6 +215,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
 +};
 +
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.remove = qcom_a53pll_remove,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index 240d35731d10..ce38080db324 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -192,6 +192,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
 +};
 +
-+builtin_platform_driver(qcom_a53pll_driver);
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+index 604cdaedac38..40d9802959c4 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -230,6 +230,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ /* On Exp and Euler connectors */
+ &uart0 {
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index abe179de35d7..c21f2331add6 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -134,6 +134,10 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+2.14.2
+
