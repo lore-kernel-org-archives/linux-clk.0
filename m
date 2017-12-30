@@ -1,62 +1,49 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu <jian.hu@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <devicetree@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 5/6] arm64: dts: meson-axg: add clock DT info for Meson AXG SoC
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
-	<20171211141348.22048-6-yixun.lan@amlogic.com>
-Date: Fri, 15 Dec 2017 10:58:51 -0800
-In-Reply-To: <20171211141348.22048-6-yixun.lan@amlogic.com> (Yixun Lan's
-	message of "Mon, 11 Dec 2017 22:13:47 +0800")
-Message-ID: <7h7etnakd0.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH 13/33] clk: si514: change si514_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:12:52 +0000
+Message-Id: <1514596392-22270-14-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-> From: Qiufang Dai <qiufang.dai@amlogic.com>
->
-> Try to add Hiubus DT info, and also enable clock DT info
-> for the Amlogic's Meson-AXG SoC.
->
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Applied to v4.16/dt64,
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ drivers/clk/clk-si514.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Kevin
-
-> ---
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index b932a784b02a..6fe5ee0c144e 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -148,6 +148,20 @@
->  			#address-cells = <0>;
->  		};
->  
-> +		hiubus: bus@ff63c000 {
-> +			compatible = "simple-bus";
-> +			reg = <0x0 0xff63c000 0x0 0x1c00>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-> +
-> +			clkc: clock-controller@0 {
-> +				compatible = "amlogic,axg-clkc";
-> +				#clock-cells = <1>;
-> +				reg = <0x0 0x0 0x0 0x320>;
-> +			};
-> +		};
-> +
->  		mailbox: mailbox@ff63dc00 {
->  			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
->  			reg = <0 0xff63dc00 0 0x400>;
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index 8d940d0..042ae39 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -220,7 +220,7 @@ static unsigned long si514_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	err = si514_calc_muldiv(&settings, rate);
+ 	if (err)
+-		return err;
++		return 0;
+ 
+ 	return si514_calc_rate(&settings);
+ }
+-- 
+2.7.4
