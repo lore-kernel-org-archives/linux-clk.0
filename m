@@ -1,44 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 Dec 2017 22:28:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Tirupathi Reddy <tirupath@codeaurora.org>, mturquette@baylibre.com,
-	mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: Re: [PATCH V7 2/2] dt-bindings: Add qcom spmi_pmic clock divider
- bindings
-Message-ID: <20171207062824.GJ4283@codeaurora.org>
-References: <1511255465-3984-1-git-send-email-tirupath@codeaurora.org>
- <1511255465-3984-3-git-send-email-tirupath@codeaurora.org>
- <20171204202959.6gxmy7jdt7gwspuh@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171204202959.6gxmy7jdt7gwspuh@rob-hp-laptop>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Tero Kristo <t-kristo@ti.com>,
+	linux-omap@vger.kernel.org
+Subject: [PATCH 26/33] clk: ti: composite: change clk_pll_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:05 +0000
+Message-Id: <1514596392-22270-27-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04, Rob Herring wrote:
-> On Tue, Nov 21, 2017 at 02:41:05PM +0530, Tirupathi Reddy wrote:
-> > This patch adds device tree bindings for Qualcomm SPMI PMIC
-> > clock divider module.
-> > 
-> > Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
-> > ---
-> >  .../bindings/clock/qcom,spmi-pmic-div.txt          | 59 ++++++++++++++++++++++
-> 
-> Didn't Stephen say to move this somewhere else?
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-yeah I'll move it to qcom,spmi-clkdiv.txt
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> > +
-> > +- clock-cells:
-> 
-> #clock-cells
-> 
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/ti/composite.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And fix this. Thanks.
-
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 2477cf1..0e82b61 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -38,7 +38,7 @@ static unsigned long ti_composite_round_rate(struct clk_hw *hw,
+ 					     unsigned long rate,
+ 					     unsigned long *prate)
+ {
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int ti_composite_set_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
