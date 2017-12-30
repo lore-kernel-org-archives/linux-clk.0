@@ -1,68 +1,57 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 00/11] Add remaining clocks for QCOM IPQ8074
-Date: Wed, 13 Dec 2017 19:55:31 +0530
-Message-Id: <1513175142-3702-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 10/33] clk: bcm: iproc: change iproc_asiu_clk_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:12:49 +0000
+Message-Id: <1514596392-22270-11-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-[v2]
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-- Rebased and tested the patches over clk-next branch
-- Changed the PLL’s to use register offset from PLL node
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-[v1]
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/bcm/clk-iproc-asiu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch series adds following IPQ8074 clocks
-
-- Remaining General PLL’s, NSS UBI PLL and NSS Crypto PLL.
-- 2 instances of PCIE, USB, SDCC.
-- 2 NSS UBI core and common NSS clocks. NSS is network.
-  switching subsystem which accelerates the ethernet traffic.
-  IPQ8074 has two UBI cores and each core uses some separate
-  core clocks and remaining common clocks.
-- NSS Crypto Engine clocks
-- NSS ethernet port clocks. IPQ8074 has 6 Ethernet ports and each
-  port uses different clocks
-- Crypto engine clocks
-- PCIE and NSS MISC resets.
-
-
-Abhishek Sahu (11):
-  clk: qcom: add read-only divider operations
-  clk: qcom: add parent map for regmap mux
-  clk: qcom: ipq8074: fix missing GPLL0 divider width
-  dt-bindings: clock: qcom: add remaining clocks for IPQ8074
-  clk: qcom: ipq8074: add remaining PLL’s
-  clk: qcom: ipq8074: add PCIE, USB and SDCC clocks
-  clk: qcom: ipq8074: add NSS clocks
-  clk: qcom: ipq8074: add NSS ethernet port clocks
-  clk: qcom: ipq8074: add GP and Crypto clocks
-  dt-bindings: clock: qcom: add misc resets for PCIE and NSS
-  clk: qcom: ipq8074: add misc resets for PCIE and NSS
-
- drivers/clk/qcom/clk-rcg.h                   |   10 -
- drivers/clk/qcom/clk-regmap-divider.c        |   29 +
- drivers/clk/qcom/clk-regmap-divider.h        |    1 +
- drivers/clk/qcom/clk-regmap-mux.c            |    6 +
- drivers/clk/qcom/clk-regmap-mux.h            |    2 +
- drivers/clk/qcom/common.h                    |   11 +-
- drivers/clk/qcom/gcc-ipq8074.c               | 3750 +++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-ipq8074.h |  222 ++
- 8 files changed, 4019 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/clk/bcm/clk-iproc-asiu.c b/drivers/clk/bcm/clk-iproc-asiu.c
+index ae40d08..f89872e 100644
+--- a/drivers/clk/bcm/clk-iproc-asiu.c
++++ b/drivers/clk/bcm/clk-iproc-asiu.c
+@@ -115,7 +115,7 @@ static unsigned long iproc_asiu_clk_round_rate(struct clk_hw *hw,
+ 	unsigned int div;
+ 
+ 	if (rate == 0 || *parent_rate == 0)
+-		return -EINVAL;
++		return 0;
+ 
+ 	if (rate == *parent_rate)
+ 		return *parent_rate;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
