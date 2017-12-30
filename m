@@ -1,153 +1,84 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Wed, 20 Dec 2017 21:53:30 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org,
-	s.nawrocki@samsung.com, geert@linux-m68k.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 1/1] clk: bulk: add of_clk_bulk_get()
-Message-ID: <20171220135330.GA30461@b29396-OptiPlex-7040>
-References: <1506415441-4435-1-git-send-email-aisheng.dong@nxp.com>
- <20170929224821.GM457@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170929224821.GM457@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52825 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750886AbdL3Ldf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Dec 2017 06:33:35 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 5/6] arm64: allwinner: a64: add simplefb for A64 SoC
+Date: Sat, 30 Dec 2017 19:30:42 +0800
+Message-Id: <20171230113043.30237-6-icenowy@aosc.io>
+In-Reply-To: <20171230113043.30237-1-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 29, 2017 at 03:48:21PM -0700, Stephen Boyd wrote:
-> On 09/26, Dong Aisheng wrote:
-> > 'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
-> 
-> s/optinal/optional/
-> 
+The A64 SoC features two display pipelines, one has a LCD output, the
+other has a HDMI output.
 
-Got it.
+Add support for simplefb for these pipelines on A64 SoC.
 
-> > here to handle this for DT users without 'clock-names' specified.
-> > 
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Russell King <linux@arm.linux.org.uk>
-> > Reported-by: Shawn Guo <shawnguo@kernel.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > 
-> > ---
-> > Changes since v3:
-> >  * fix build warning on the SH platform
-> > 
-> > Changes since v2:
-> >  * of_clk_bulk_get should return -ENOENT;
-> > 
-> > Changes since v1:
-> >  * using %pOF instead of full_name
-> > ---
-> >  drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
-> >  include/linux/clk.h    |  8 ++++++++
-> >  2 files changed, 39 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> > index c834f5a..896aa3b 100644
-> > --- a/drivers/clk/clk-bulk.c
-> > +++ b/drivers/clk/clk-bulk.c
-> > @@ -19,6 +19,37 @@
-> >  #include <linux/clk.h>
-> >  #include <linux/device.h>
-> >  #include <linux/export.h>
-> > +#include <linux/of.h>
-> > +
-> > +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> > +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> > +				 struct clk_bulk_data *clks)
-> > +{
-> > +	int ret;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < num_clks; i++)
-> > +		clks[i].clk = NULL;
-> > +
-> > +	for (i = 0; i < num_clks; i++) {
-> > +		clks[i].clk = of_clk_get(np, i);
-> > +		if (IS_ERR(clks[i].clk)) {
-> > +			ret = PTR_ERR(clks[i].clk);
-> > +			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
-> > +			       np, i, ret);
-> > +			clks[i].clk = NULL;
-> > +			goto err;
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +err:
-> > +	clk_bulk_put(i, clks);
-> > +
-> > +	return ret;
-> > +}
-> 
-> Export the symbol?
-> 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Dropped extra clocks.
+- Added labels to the SimpleFB device tree nodes as boards may have
+  extra regulator for display pipeline.
 
-Got it.
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-> > +#endif
-> >  
-> >  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-> >  {
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 12c96d9..073cb3b 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -680,10 +680,18 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
-> >  }
-> >  
-> >  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> > +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> > +				 struct clk_bulk_data *clks);
-> >  struct clk *of_clk_get(struct device_node *np, int index);
-> >  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-> >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
-> >  #else
-> > +static inline int of_clk_bulk_get(struct device_node *np, int num_clks,
-> 
-> Do we need __must_check here too?
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index fb8ea7c414e1..d803c115d362 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -42,9 +42,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
+ 
+ / {
+@@ -52,6 +54,30 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		simplefb_lcd: framebuffer-lcd {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0";
++			clocks = <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>;
++			status = "disabled";
++		};
++
++		simplefb_hdmi: framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-hdmi";
++			clocks = <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
++			status = "disabled";
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-- 
+2.14.2
 
-Yes, you're absolutely right.
-
-of_clk_bulk_get is special as it returns error, so should add __must_check.
-
-> We should do the same for the
-> other bulk get APIs. Seems we missed that part last time.
-> 
-
-Currently for !CONFIG_HAVE_CLK case, all APIs return 0.
-!CONFIG_HAVE_CLK
-clk_bulk_get		return 0
-devm_clk_bulk_get	return 0
-clk_bulk_enable		return 0
-clk_bulk_prepare	return 0
-
-Do you think we still need add __must_check for them?
-
-And for CONFIG_HAVE_CLK case, all __must_check already added.
-
-int __must_check clk_bulk_get
-int __must_check devm_clk_bulk_get
-int __must_check clk_bulk_enable
-int __must_check clk_bulk_prepare
-
-And no need for void function.
-void clk_bulk_put
-void clk_bulk_unprepare
-void clk_bulk_disable
-
-> I'll fix all these things up when applying.
-> 
-
-I did not see this in latest tree.
-Suppose i should resend it with above things fixed, right?
-
-Regards
-Dong Aisheng
