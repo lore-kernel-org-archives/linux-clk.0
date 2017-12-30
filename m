@@ -1,32 +1,57 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1513270051.2261.11.camel@baylibre.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: meson-axg: switch uart_ao clock to
- CLK81
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-amlogic@lists.infradead.org,  devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 14 Dec 2017 17:47:31 +0100
-In-Reply-To: <20171211141348.22048-7-yixun.lan@amlogic.com>
-References: <20171211141348.22048-1-yixun.lan@amlogic.com>
-	 <20171211141348.22048-7-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: pure.logic@nexus-software.ie,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 24/33] clk: tegra: bpmp: change tegra_bpmp_clk_round_rate() return logic
+Date: Sat, 30 Dec 2017 01:13:03 +0000
+Message-Id: <1514596392-22270-25-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-12-11 at 22:13 +0800, Yixun Lan wrote:
-> Switch the uart_ao pclk to CLK81 since the clock driver is ready.
-> Also move the clock info to the board.dts instead in the soc.dtsi.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Same comment as for ethmac, is it really wise ?
-Isn't the clock setup the same for the axg family ?
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/tegra/clk-bpmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index 0c1197b..4297bb2 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -190,7 +190,7 @@ static unsigned long tegra_bpmp_clk_round_rate(struct clk_hw *hw,
+ 
+ 	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+ 	if (err < 0)
+-		return err;
++		return 0;
+ 
+ 	return response.rate;
+ }
+-- 
+2.7.4
