@@ -1,34 +1,51 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 15 Jan 2018 02:03:15 +0100
-Message-ID: <CACRpkdYJLkqKnu4Yh65j4KhcUcx6yW+944=V8nP+yvxYWNX+4A@mail.gmail.com>
-Subject: Re: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have
- MCI_STARBITERR flag
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andrea Merello <andrea.merello@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Tero Kristo <t-kristo@ti.com>,
+	linux-omap@vger.kernel.org
+Subject: [PATCH v2 27/34] clk: ti: composite: change clk_pll_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:53 +0000
+Message-Id: <1514835300-381-13-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 12, 2018 at 1:15 PM,  <patrice.chotard@st.com> wrote:
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> This patch prepares for supporting the STM32 variant that
-> has no such bit in the status register.
->
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/ti/composite.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 2477cf1..0e82b61 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -38,7 +38,7 @@ static unsigned long ti_composite_round_rate(struct clk_hw *hw,
+ 					     unsigned long rate,
+ 					     unsigned long *prate)
+ {
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int ti_composite_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
