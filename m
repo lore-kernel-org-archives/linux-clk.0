@@ -1,71 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:54354 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934772AbeAKPj3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jan 2018 10:39:29 -0500
-Date: Thu, 11 Jan 2018 16:39:28 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] clk: sunxi-ng: defaultly enable DE2 CCU for sun8i/sun50i
-Message-ID: <20180111153928.qys3efun4jjrx4pz@flea.lan>
-References: <20180111030451.9217-1-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fhqkf5mtjzbmefeo"
-In-Reply-To: <20180111030451.9217-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 07/34] clk: axs10x: change i2s_pll_round_rate return logic
+Date: Mon,  1 Jan 2018 19:07:34 +0000
+Message-Id: <1514833681-30737-8-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
---fhqkf5mtjzbmefeo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-On Thu, Jan 11, 2018 at 11:04:51AM +0800, Icenowy Zheng wrote:
-> As DE2 support for more SoCs are introducing, there's many reports that
-> the DE2 is not functional due to DE2 CCU code not included in kernel.
->=20
-> Defaultly enable DE2 CCU for sun8i/sun50i to reduce this kind of
-> problems.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/axs10x/i2s_pll_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-One way to avoid this would have been to add the symbol to the sunxi
-and multi_v7 defconfigs...
-
-You're also adding a depends on. This should be explained or at least
-mentionned in your commit log.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---fhqkf5mtjzbmefeo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXhS8ACgkQ0rTAlCFN
-r3Te/w/+MSz8pNeBDrNgX6H9KX+0ZR8NxKwzpqJzIRZf7QfbceS6RFxkinF8gFxE
-9cp6OSJb1yXQrsCbRolYrRzYwteXnx30jIqaS9/8mw9WIeFRiQDvzqXlyfE4BN7E
-e9MReV9SJ6tannusF6z+UZs0KqE8tIbBG4bsOC0/03P6lJdSnsxpDJCXdvBRl21N
-vjSa+4YuRnQf+PGzD3HOnZNLz3bbdppqWwDvaHsdTXIO3HYSMTZ8I+4zTBBau9O1
-k8llCx8Ol50ar73b4IGmCbw00gm0Gc8wxF+3fS0hpJev0C/lR8yL11DeQEk4xeeR
-NUriNAJpUKBzDt4SE0OXaTvKXFE222nw3sDdKN6mkIPGbzaq4/GwyGXaivryRBD7
-cfEc1BlvzJLc829PcxgPe119bwxW3Y5+iplCOyBoZF8tTBPggly+sBJxJub//7KC
-rZzmtIrZme4j9I7yGUFb+sMb04NEy6Yx+0oSrFe41q5lEk8x6n4GEhS2g+a3tzdk
-y236B22qtE/0tJn2H/CZ6JDmPO4Vo5SkHmExqd45o9gfsi+pRPJQi2o3NJX99mqh
-O/mVTMKeubRf0dta6EQUtBRgmyoVsL5tXqyiJTeWkmov3Ug/RP2SH8/4tX5FDCTb
-7TDnn2w7f2e8wWv9puswNlnlomqYTXgT6/wLG92T8/bZXNZaR7g=
-=gtsa
------END PGP SIGNATURE-----
-
---fhqkf5mtjzbmefeo--
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
+index 061260c..20f7ebf 100644
+--- a/drivers/clk/axs10x/i2s_pll_clock.c
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -119,14 +119,14 @@ static unsigned long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (!pll_cfg) {
+ 		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
+-		return -EINVAL;
++		return 0;
+ 	}
+ 
+ 	for (i = 0; pll_cfg[i].rate != 0; i++)
+ 		if (pll_cfg[i].rate == rate)
+ 			return rate;
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
