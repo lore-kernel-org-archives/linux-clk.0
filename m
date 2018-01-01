@@ -1,46 +1,58 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1516618880.7870.1.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: axg: fix the od shift of the sys_pll
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
-	 <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 22 Jan 2018 12:01:20 +0100
-In-Reply-To: <20180119020926.246887-1-yixun.lan@amlogic.com>
-References: <20180119020926.246887-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 19/34] clk: mxs: change clk_frac_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:45 +0000
+Message-Id: <1514835300-381-5-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-19 at 10:09 +0800, Yixun Lan wrote:
-> According to datasheet, the od shift of sys_pll is 16,
-> fix the typo which introduced at previous commit.
-> 
-> Fixes: 78b4af312f91 ('clk: meson-axg: add clock controller drivers')
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  drivers/clk/meson/axg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index 7988dc8506b0..04a231eaf648 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-> @@ -64,7 +64,7 @@ static struct meson_clk_pll axg_sys_pll = {
->  	},
->  	.od = {
->  		.reg_off = HHI_SYS_PLL_CNTL,
-> -		.shift   = 10,
-> +		.shift   = 16,
->  		.width   = 2,
->  	},
->  	.lock = &meson_clk_lock,
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Looks good. Thx
-I'll take it when the rc1 is released
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Jerome
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/clk/mxs/clk-frac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
+index f57281f..9debf86 100644
+--- a/drivers/clk/mxs/clk-frac.c
++++ b/drivers/clk/mxs/clk-frac.c
+@@ -59,7 +59,7 @@ static unsigned long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u64 tmp, tmp_rate, result;
+ 
+ 	if (rate > parent_rate)
+-		return -EINVAL;
++		return 0;
+ 
+ 	tmp = rate;
+ 	tmp <<= frac->width;
+@@ -67,7 +67,7 @@ static unsigned long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	div = tmp;
+ 
+ 	if (!div)
+-		return -EINVAL;
++		return 0;
+ 
+ 	tmp_rate = (u64)parent_rate * div;
+ 	result = tmp_rate >> frac->width;
+-- 
+2.7.4
