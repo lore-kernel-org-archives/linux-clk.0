@@ -1,60 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn3nam01on0084.outbound.protection.outlook.com ([104.47.33.84]:10176
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753841AbeASNh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jan 2018 08:37:28 -0500
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-doc@vger.kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-imx@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 1/1] Documentation: clk: enable lock is not held for clk_is_enabled API
-Date: Fri, 19 Jan 2018 21:37:15 +0800
-Message-ID: <1516369035-24740-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Subject: [PATCH v3 34/34] clk: change handling of round_rate() such that only zero is an error
+Date: Mon,  1 Jan 2018 19:43:13 +0000
+Message-Id: <1514835793-1104-35-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-The core does not need to hold enable lock for clk_is_enabled API.
-Update the doc to reflect it.
+Change the handling of clk_ops->round_rate() return values such that only
+zero is treated as an error. All implementations of clk_ops->round_rate()
+will have previously been updated to match this change.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
+Using zero as the determinant for an error means its possible to pass an
+unsigned long as req->rate to a clk_ops->round_rate() function and return a
+rounded clock which is as high as the original req->rate. This allows us on
+32 bit systems to return rounded rates of (2^32)-1 Hz or ULONG_MAX Hz -
+whereas without this change and the associated clk_ops->round_rate() change
+the maximum value that can be returned via clk_ops->round_rate() is
+LONG_MAX Hz - after which a higher-frequency clock looks like a negative
+error code - due to sign extension.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- Documentation/clk.txt | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/clk.txt b/Documentation/clk.txt
-index be909ed..f286ff5 100644
---- a/Documentation/clk.txt
-+++ b/Documentation/clk.txt
-@@ -268,9 +268,17 @@ The common clock framework uses two global locks, the prepare lock and the
- enable lock.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8a1860a..6af2ece 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -909,7 +909,6 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 				      struct clk_rate_request *req)
+ {
+ 	struct clk_core *parent;
+-	long rate;
  
- The enable lock is a spinlock and is held across calls to the .enable,
--.disable and .is_enabled operations. Those operations are thus not allowed to
--sleep, and calls to the clk_enable(), clk_disable() and clk_is_enabled() API
--functions are allowed in atomic context.
-+.disable operations. Those operations are thus not allowed to sleep,
-+and calls to the clk_enable(), clk_disable() API functions are allowed in
-+atomic context.
-+
-+For clk_is_enabled() API, it is also designed to be allowed to be used in
-+atomic context. However, it doesn't really make any sense to hold the enable
-+lock in core, unless you want to do something else with the information of
-+the enable state with that lock held. Otherwise, seeing if a clk is enabled is
-+a one-shot read of the enabled state, which could just as easily change after
-+the function returns because the lock is released. Thus driver onwer needs
-+judge and take care of it in their driver if it needs lock.
+ 	lockdep_assert_held(&prepare_lock);
  
- The prepare lock is a mutex and is held across calls to all other operations.
- All those operations are allowed to sleep, and calls to the corresponding API
+@@ -928,12 +927,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 	if (core->ops->determine_rate) {
+ 		return core->ops->determine_rate(core->hw, req);
+ 	} else if (core->ops->round_rate) {
+-		rate = core->ops->round_rate(core->hw, req->rate,
++		req->rate = core->ops->round_rate(core->hw, req->rate,
+ 					     &req->best_parent_rate);
+-		if (rate < 0)
+-			return rate;
+-
+-		req->rate = rate;
+ 	} else if (core->flags & CLK_SET_RATE_PARENT) {
+ 		return clk_core_round_rate_nolock(parent, req);
+ 	} else {
+@@ -1454,12 +1449,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 		new_rate = req.rate;
+ 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
+ 	} else if (core->ops->round_rate) {
+-		ret = core->ops->round_rate(core->hw, rate,
+-					    &best_parent_rate);
+-		if (ret < 0)
+-			return NULL;
+-
+-		new_rate = ret;
++		new_rate = core->ops->round_rate(core->hw, rate,
++						 &best_parent_rate);
+ 		if (new_rate < min_rate || new_rate > max_rate)
+ 			return NULL;
+ 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
 -- 
 2.7.4
-
