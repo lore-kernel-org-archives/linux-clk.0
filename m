@@ -1,108 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47048 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeADLNI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:13:08 -0500
-From: <ilialin@codeaurora.org>
-To: "'Mark Rutland'" <mark.rutland@arm.com>
-Cc: <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <will.deacon@arm.com>,
-        <rnayak@codeaurora.org>, <qualcomm-lt@lists.linaro.org>,
-        <celster@codeaurora.org>, <tfinkel@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org> <1513081897-31612-2-git-send-email-ilialin@codeaurora.org> <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
-In-Reply-To: <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
-Subject: RE: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Thu, 4 Jan 2018 13:13:02 +0200
-Message-ID: <027b01d3854c$ff085060$fd18f120$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
+	Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v2 15/34] clk: vc5: change vc5_dbl_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:41 +0000
+Message-Id: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is address in the V2: https://patchwork.kernel.org/patch/10144473/
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-> -----Original Message-----
-> From: Mark Rutland [mailto:mark.rutland@arm.com]
-> Sent: Tuesday, December 12, 2017 4:03 PM
-> To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> arm-msm@vger.kernel.org; sboyd@codeaurora.org;
-> devicetree@vger.kernel.org; will.deacon@arm.com;
-> rnayak@codeaurora.org; qualcomm-lt@lists.linaro.org;
-> celster@codeaurora.org; tfinkel@codeaurora.org
-> Subject: Re: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU
-> driver
-> 
-> Hi,
-> 
-> On Tue, Dec 12, 2017 at 02:31:28PM +0200, Ilia Lin wrote:
-> > The driver provides kernel level API for other drivers to access the
-> > MSM8996 L2 cache registers.
-> > Separating the L2 access code from the PMU driver and making it public
-> > to allow other drivers use it.
-> > The accesses must be separated with a single spinlock, maintained in
-> > this driver.
-> 
-> > -static void set_l2_indirect_reg(u64 reg, u64 val) -{
-> > -	unsigned long flags;
-> > -
-> > -	raw_spin_lock_irqsave(&l2_access_lock, flags);
-> > -	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> > -	isb();
-> > -	write_sysreg_s(val, L2CPUSRDR_EL1);
-> > -	isb();
-> > -	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-> > -}
-> 
-> > +/**
-> > + * set_l2_indirect_reg: write value to an L2 register
-> > + * @reg: Address of L2 register.
-> > + * @value: Value to be written to register.
-> > + *
-> > + * Use architecturally required barriers for ordering between system
-> > +register
-> > + * accesses, and system registers with respect to device memory  */
-> > +void set_l2_indirect_reg(u64 reg, u64 val) {
-> > +	unsigned long flags;
-> > +	mb();
-> 
-> We didn't need this for the PMU driver, so it's unfortuante that it now
-has to
-> pay the cost.
-> 
-> Can we please factor this mb() into the callers that need it?
-> 
-> > +	raw_spin_lock_irqsave(&l2_access_lock, flags);
-> > +	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-> > +	isb();
-> > +	write_sysreg_s(val, L2CPUSRDR_EL1);
-> > +	isb();
-> > +	raw_spin_unlock_irqrestore(&l2_access_lock, flags); }
-> > +EXPORT_SYMBOL(set_l2_indirect_reg);
-> 
-> [...]
-> 
-> > +#ifdef CONFIG_ARCH_QCOM
-> > +void set_l2_indirect_reg(u64 reg_addr, u64 val);
-> > +u64 get_l2_indirect_reg(u64 reg_addr); #else static inline void
-> > +set_l2_indirect_reg(u32 reg_addr, u32 val) {} static inline u32
-> > +get_l2_indirect_reg(u32 reg_addr) {
-> > +	return 0;
-> > +}
-> > +#endif
-> > +#endif
-> 
-> Are there any drivers that will bne built for !CONFIG_ARCH_QCOM that
-> reference this?
-> 
-> It might be better to not have the stub versions, so that we get a
-build-error
-> if they are erroneously used.
-> 
-> Thannks,
-> Mark.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 9432122..733b402 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -294,7 +294,7 @@ static unsigned long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
+ 		return rate;
+ 	else
+-		return -EINVAL;
++		return 0;
+ }
+ 
+ static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
