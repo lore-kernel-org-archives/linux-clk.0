@@ -1,95 +1,61 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <7454cc50-7b92-2531-4261-45bd1703f1fb@hisilicon.com>
-References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
- <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
- <20180105084004.GC26855@leoy-linaro> <7454cc50-7b92-2531-4261-45bd1703f1fb@hisilicon.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 5 Jan 2018 18:50:21 +0900
-Message-ID: <CAK7LNAQcieqS0vrGKrtr3paQADpG0GEM_k9zPdLiKF8ykv5PaA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_=2Dnext=5D_clk=3A_hisilicon=3A_hi3660=EF=BC=9AFix_poten?=
-	=?UTF-8?Q?tial_NULL_dereference_in_hi3660=5Fstub=5Fclk=5Fprobe=28=29?=
-To: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
-Cc: Leo Yan <leo.yan@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kaihua Zhong <zhongkaihua@huawei.com>, Ruyi Wang <wangruyi@huawei.com>,
-        Kai Zhao <zhaokai1@hisilicon.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v3 26/34] clk: tegra: pll: change clk_pll_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:43:05 +0000
+Message-Id: <1514835793-1104-27-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-05 18:47 GMT+09:00 Wangtao (Kevin, Kirin) <kevin.wangtao@hisilicon.=
-com>:
->
->
-> =E5=9C=A8 2018/1/5 16:40, Leo Yan =E5=86=99=E9=81=93:
->>
->> On Fri, Jan 05, 2018 at 12:59:38PM +0900, Masahiro Yamada wrote:
->>>
->>> 2018-01-04 15:36 GMT+09:00 Wei Yongjun <weiyongjun1@huawei.com>:
->>>>
->>>> platform_get_resource() may return NULL, add proper check to
->>>> avoid potential NULL dereferencing.
->>>>
->>>> This is detected by Coccinelle semantic patch.
->>>>
->>>> @@
->>>> expression pdev, res, n, t, e, e1, e2;
->>>> @@
->>>>
->>>> res =3D platform_get_resource(pdev, t, n);
->>>> + if (!res)
->>>> +   return -EINVAL;
->>>> ... when !=3D res =3D=3D NULL
->>>> e =3D devm_ioremap(e1, res->start, e2);
->>>>
->>>> Fixes: 4f16f7ff3bc0 ("clk: hisilicon: Add support for Hi3660 stub
->>>> clocks")
->>>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->>>> ---
->>>>   drivers/clk/hisilicon/clk-hi3660-stub.c | 2 ++
->>>>   1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/hisilicon/clk-hi3660-stub.c
->>>> b/drivers/clk/hisilicon/clk-hi3660-stub.c
->>>> index 9b6c72b..e8b2c43 100644
->>>> --- a/drivers/clk/hisilicon/clk-hi3660-stub.c
->>>> +++ b/drivers/clk/hisilicon/clk-hi3660-stub.c
->>>> @@ -149,6 +149,8 @@ static int hi3660_stub_clk_probe(struct
->>>> platform_device *pdev)
->>>>                  return PTR_ERR(stub_clk_chan.mbox);
->>>>
->>>>          res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>> +       if (!res)
->>>> +               return -EINVAL;
->>>>          freq_reg =3D devm_ioremap(dev, res->start, resource_size(res)=
-);
->>>>          if (!freq_reg)
->>>>                  return -ENOMEM;
->>>
->>>
->>>
->>> Probably, it is better to use devm_ioremap_resource().
->>> This checks NULL input.
->>
->>
->> Thanks for suggestion, Masahiro. This is good suggestion.
->>
->> Yongjun, could you spin new patch by using devm_ioremap_resource()
->> to replace devm_ioremap()?
->
-> clk-stub's memory region has intersection with mailbox, so we can not use
-> devm_ioremap_resource here, it will cause problem when mailbox driver be
-> accepted by mainline.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Hmm, that sounds odd.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-syscon in this case?
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rhyland Klein <rklein@nvidia.com>
+Cc: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b4a7d30..0a3edb0 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -839,7 +839,7 @@ static unsigned long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+ 	    pll->params->calc_rate(hw, &cfg, rate, *prate))
+-		return -EINVAL;
++		return 0;
+ 
+ 	return cfg.output_rate;
+ }
+-- 
+2.7.4
