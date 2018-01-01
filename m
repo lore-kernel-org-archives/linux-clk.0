@@ -1,61 +1,54 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v2 26/34] clk: tegra: pll: change clk_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:52 +0000
-Message-Id: <1514835300-381-12-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 6/6] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
+Date: Mon,  1 Jan 2018 15:33:44 +0100
+Message-Id: <20180101143344.2099-6-paul@crapouillou.net>
+In-Reply-To: <20180101143344.2099-1-paul@crapouillou.net>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+ <20180101143344.2099-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Add myself as maintainer for the ingenic-tcu-intc interrupt controller
+driver, the ingenic-tcu-clocks clock driver, and the ingenic-tcu
+clocksource driver.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Rhyland Klein <rklein@nvidia.com>
-Cc: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/tegra/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b4a7d30..0a3edb0 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -839,7 +839,7 @@ static unsigned long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b46c9cea5ae5..f3d03542d076 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6906,6 +6906,15 @@ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+ F:	drivers/mtd/nand/jz4780_*
  
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
- 	    pll->params->calc_rate(hw, &cfg, rate, *prate))
--		return -EINVAL;
-+		return 0;
- 
- 	return cfg.output_rate;
- }
++INGENIC JZ47xx TCU drivers
++M:	Paul Cercueil <paul@crapouillou.net>
++S:	Maintained
++F:	drivers/clk/ingenic/tcu.c
++F:	drivers/irqchip/irq-ingenic-tcu.c
++F:	drivers/clocksource/timer-ingenic.c
++F:	include/linux/mfd/syscon/ingenic-tcu.h
++F:	include/dt-bindings/clock/ingenic,tcu.h
++
+ INOTIFY
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
 -- 
-2.7.4
+2.11.0
