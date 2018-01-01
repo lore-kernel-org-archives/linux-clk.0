@@ -1,151 +1,62 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v3 03/14] mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
-Date: Thu, 18 Jan 2018 15:34:19 +0100
-Message-ID: <1516286070-24927-4-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
+	Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v3 14/34] clk: vc5: change vc5_pfd_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:42:53 +0000
+Message-Id: <1514835793-1104-15-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-This patch prepares for supporting STM32 variant which doesn't
-have opendrain bit in MMCIPOWER register.
-ST others variant (u300, nomadik and ux500) uses MCI_OD bit whereas
-others variants uses MCI_ROD bit.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
 ---
+ drivers/clk/clk-versaclock5.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v3: _ use variant->opendrain instead of host->variant->opendrain
-    _ remove comment about OD and ROD bit
-
-v2: _ Replace opendrain bool type by u32
-    _ Clean opendrain bit management code
-
- drivers/mmc/host/mmci.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 8a4fbc2..f0edfe7 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -85,6 +85,7 @@
-  * @mmcimask1: true if variant have a MMCIMASK1 register.
-  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
-  *	       register.
-+ * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
-  */
- struct variant_data {
- 	unsigned int		clkreg;
-@@ -116,6 +117,7 @@ struct variant_data {
- 	bool			reversed_irq_handling;
- 	bool			mmcimask1;
- 	u32			start_err;
-+	u32			opendrain;
- };
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 7c7b369..9432122 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -351,7 +351,7 @@ static unsigned long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
  
- static struct variant_data variant_arm = {
-@@ -127,6 +129,7 @@ struct variant_data {
- 	.reversed_irq_handling	= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
+ 	/* PLL cannot operate with input clock above 50 MHz. */
+ 	if (rate > 50000000)
+-		return -EINVAL;
++		return 0;
  
- static struct variant_data variant_arm_extended_fifo = {
-@@ -137,6 +140,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
+ 	/* CLKIN within range of PLL input, feed directly to PLL. */
+ 	if (*parent_rate <= 50000000)
+@@ -359,7 +359,7 @@ static unsigned long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
  
- static struct variant_data variant_arm_extended_fifo_hwfc = {
-@@ -148,6 +152,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
+ 	idiv = DIV_ROUND_UP(*parent_rate, rate);
+ 	if (idiv > 127)
+-		return -EINVAL;
++		return 0;
  
- static struct variant_data variant_u300 = {
-@@ -165,6 +170,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_nomadik = {
-@@ -183,6 +189,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_ux500 = {
-@@ -207,6 +214,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_ux500v2 = {
-@@ -233,6 +241,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_qcom = {
-@@ -253,6 +262,7 @@ struct variant_data {
- 	.qcom_dml		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
- 
- /* Busy detection for the ST Micro variant */
-@@ -1455,17 +1465,8 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 				~MCI_ST_DATA2DIREN);
- 	}
- 
--	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
--		if (host->hw_designer != AMBA_VENDOR_ST)
--			pwr |= MCI_ROD;
--		else {
--			/*
--			 * The ST Micro variant use the ROD bit for something
--			 * else and only has OD (Open Drain).
--			 */
--			pwr |= MCI_OD;
--		}
--	}
-+	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN && variant->opendrain)
-+		pwr |= variant->opendrain;
- 
- 	/*
- 	 * If clock = 0 and the variant requires the MMCIPOWER to be used for
+ 	return *parent_rate / idiv;
+ }
 -- 
-1.9.1
+2.7.4
