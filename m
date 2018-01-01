@@ -1,34 +1,60 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 11 Jan 2018 16:11:45 -0600
-From: Rob Herring <robh@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	mark.rutland@arm.com, shawnguo@kernel.org, kernel@pengutronix.de,
-	fabio.estevam@nxp.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@codeaurora.org, adriana.reus@nxp.com,
-	stefan@agner.ch, dongas86@gmail.com, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V4 2/2] ARM: dts: imx7s: add snvs rtc clock
-Message-ID: <20180111221145.7bmkxsqmx7qjw3tq@rob-hp-laptop>
-References: <1515491526-14060-1-git-send-email-Anson.Huang@nxp.com>
- <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v2 31/34] clk: at91: change round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:57 +0000
+Message-Id: <1514835300-381-17-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 05:52:06PM +0800, Anson Huang wrote:
-> Add i.MX7 SNVS RTC clock.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> change since v3:
-> 	add optional for clocks in binding doc statement.
->  Documentation/devicetree/bindings/crypto/fsl-sec4.txt | 17 +++++++++++++++++
->  arch/arm/boot/dts/imx7s.dtsi                          |  2 ++
->  2 files changed, 19 insertions(+)
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/at91/clk-audio-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+index 56227cb..48231e3 100644
+--- a/drivers/clk/at91/clk-audio-pll.c
++++ b/drivers/clk/at91/clk-audio-pll.c
+@@ -278,7 +278,7 @@ static unsigned long clk_audio_pll_pad_round_rate(struct clk_hw *hw,
+ 						  unsigned long *parent_rate)
+ {
+ 	struct clk_hw *pclk = clk_hw_get_parent(hw);
+-	long best_rate = -EINVAL;
++	unsigned long best_rate = 0;
+ 	unsigned long best_parent_rate;
+ 	unsigned long tmp_qd;
+ 	u32 div;
+@@ -330,7 +330,7 @@ static unsigned long clk_audio_pll_pmc_round_rate(struct clk_hw *hw,
+ 						  unsigned long *parent_rate)
+ {
+ 	struct clk_hw *pclk = clk_hw_get_parent(hw);
+-	long best_rate = -EINVAL;
++	unsigned long best_rate = 0;
+ 	unsigned long best_parent_rate = 0;
+ 	u32 tmp_qd = 0, div;
+ 	long tmp_rate;
+-- 
+2.7.4
