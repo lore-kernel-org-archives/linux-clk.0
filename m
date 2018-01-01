@@ -1,51 +1,76 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <ce14077b-2b8b-f8a7-2107-78b1d9dcab27@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
- <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
- <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com> <ce14077b-2b8b-f8a7-2107-78b1d9dcab27@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jan 2018 08:38:33 +0100
-Message-ID: <CACRpkdY88umqVBcFNy7Z6vgHztRr7MbAjh-AWz0nYgFXoOwCLQ@mail.gmail.com>
-Subject: Re: [PATCH 04/14] mmc: mmci: Add STM32 variant
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre TORGUE <alexandre.torgue@st.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andrea Merello <andrea.merello@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 33/34] clk: lpc32xx: change round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:59 +0000
+Message-Id: <1514835300-381-19-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 15, 2018 at 6:17 PM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
->>> +       {
->>> +               .id     = 0x00880180,
->>> +               .mask   = 0x00ffffff,
->>> +               .data   = &variant_stm32,
->>> +       },
->>
->> Since ux500 was 480180 I wonder what variants 5,6,7 are...
->
-> What is the rule to define the id ?
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-These four bits mean "revision".
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The number comes from hardware, so the ST ASIC department
-has some person who is responsible for revising the VHDL or
-Verilog code that this hardware is compiled from, and that person
-is bumping the version.
-
-Theoretically it is a "company function" or something bureaucratic
-like that updating the hardware so I guess it could be several
-people following procedure who have updated this number in the
-hardware over the years.
-
-But I bet it is a single person in Grenoble who has been doing
-the MMC/SD block since it appeared.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 76c17f4..0e0d258 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -664,17 +664,17 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 	 * USB divider, USB PLL N and M parameters.
+ 	 */
+ 	if (rate != 48000000)
+-		return -EINVAL;
++		return 0;
+ 
+ 	/* USB divider clock */
+ 	usb_div_hw = clk_hw_get_parent_by_index(hw, 0);
+ 	if (!usb_div_hw)
+-		return -EINVAL;
++		return 0;
+ 
+ 	/* Main oscillator clock */
+ 	osc_hw = clk_hw_get_parent_by_index(usb_div_hw, 0);
+ 	if (!osc_hw)
+-		return -EINVAL;
++		return 0;
+ 	o = clk_hw_get_rate(osc_hw);	/* must be in range 1..20 MHz */
+ 
+ 	/* Check if valid USB divider and USB PLL parameters exists */
+@@ -697,7 +697,7 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 		}
+ 	}
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ #define LPC32XX_DEFINE_PLL_OPS(_name, _rc, _sr, _rr)			\
+-- 
+2.7.4
