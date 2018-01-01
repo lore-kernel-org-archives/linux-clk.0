@@ -1,75 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37727 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbeAPKLH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jan 2018 05:11:07 -0500
-Message-ID: <1516097462.9022.7.camel@pengutronix.de>
-Subject: Re: [PATCH v2] clk: imx51-imx53: Fix UART4/5 registration on i.MX50
- and i.MX53
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>, sboyd@codeaurora.org
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, shawnguo@kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org
-Date: Tue, 16 Jan 2018 11:11:02 +0100
-In-Reply-To: <1516029708-17204-1-git-send-email-festevam@gmail.com>
-References: <1516029708-17204-1-git-send-email-festevam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 06/34] clk: at91: change clk_pll_get_best_div_mul() return logic
+Date: Mon,  1 Jan 2018 19:42:45 +0000
+Message-Id: <1514835793-1104-7-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-01-15 at 13:21 -0200, Fabio Estevam wrote:
-> From: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Since commit 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on
-> imx50, imx53") the following warnings are seen on i.MX53:
-> 
-> [    2.776190] ------------[ cut here ]------------
-> [    2.780948] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:811 clk_core_disable+0xc4/0xe0
-> [    2.789145] Modules linked in:
-> [    2.792236] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115 #1
-> [    2.799735] Hardware name: Freescale i.MX53 (Device Tree Support)
-> [    2.805845] Backtrace: 
-> [    2.808329] [<c010d1a0>] (dump_backtrace) from [<c010d460>] (show_stack+0x18/0x1c)
-> [    2.815919]  r7:00000000 r6:60000093 r5:00000000 r4:c10798d4
-> [    2.821607] [<c010d448>] (show_stack) from [<c0a353ec>] (dump_stack+0xb4/0xe8)
-> [    2.828854] [<c0a35338>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
-> [    2.835837]  r9:00000000 r8:0000032b r7:00000009 r6:c0d429f8 r5:00000000 r4:00000000
-> [    2.843601] [<c0126054>] (__warn) from [<c0126288>] (warn_slowpath_null+0x44/0x50)
-> [    2.851191]  r8:c1008908 r7:c0e08874 r6:c04bfac8 r5:0000032b r4:c0d429f8
-> [    2.857913] [<c0126244>] (warn_slowpath_null) from [<c04bfac8>] (clk_core_disable+0xc4/0xe0)
-> [    2.866369]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
-> [    2.871011] [<c04bfa04>] (clk_core_disable) from [<c04c0e54>] (clk_core_disable_lock+0x20/0x2c)
-> [    2.879726]  r5:dc02a980 r4:80000013
-> [    2.883323] [<c04c0e34>] (clk_core_disable_lock) from [<c04c0e84>] (clk_disable+0x24/0x28)
-> [    2.891604]  r5:c0f6b3e4 r4:0000001c
-> [    2.895209] [<c04c0e60>] (clk_disable) from [<c0f2340c>] (imx_clk_disable_uart+0x50/0x68)
-> [    2.903412] [<c0f233bc>] (imx_clk_disable_uart) from [<c010277c>] (do_one_initcall+0x50/0x19c)
-> [    2.912043]  r7:c0e08874 r6:c0f63854 r5:c0f233bc r4:ffffe000
-> [    2.917726] [<c010272c>] (do_one_initcall) from [<c0f00f00>] (kernel_init_freeable+0x118/0x1d0)
-> [    2.926447]  r9:c0f63858 r8:000000f0 r7:c0e08874 r6:c0f63854 r5:c107b500 r4:c0f75260
-> [    2.934220] [<c0f00de8>] (kernel_init_freeable) from [<c0a4a5f0>] (kernel_init+0x10/0x118)
-> [    2.942506]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0a4a5e0
-> [    2.950351]  r4:00000000
-> [    2.952908] [<c0a4a5e0>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-> [    2.960496] Exception stack(0xdc05dfb0 to 0xdc05dff8)
-> [    2.965569] dfa0:                                     00000000 00000000 00000000 00000000
-> [    2.973768] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    2.981965] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [    2.988596]  r5:c0a4a5e0 r4:00000000
-> [    2.992188] ---[ end trace 346e26f708876edd ]---
-> [    2.997420] ------------[ cut here ]------------
-> 
-> In order to fix the problem UART4/5 registration needs to happen only on
-> i.MX50 and i.MX53.
-> 
-> So let mx51_clocks_init() register only UART1-3 and 
-> mx50_clocks_init()/mx53_clocks_init register all the UART1-5 ports.
-> 
-> Fixes: 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on imx50, imx53") 
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-regards
-Philipp
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/at91/clk-pll.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 630203e..1c90ae7 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -157,14 +157,14 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 							pll->characteristics;
+ 	unsigned long bestremainder = ULONG_MAX;
+ 	unsigned long maxdiv, mindiv, tmpdiv;
+-	long bestrate = -ERANGE;
++	unsigned long bestrate = 0;
+ 	unsigned long bestdiv;
+ 	unsigned long bestmul;
+ 	int i = 0;
+ 
+ 	/* Check if parent_rate is a valid input rate */
+ 	if (parent_rate < characteristics->input.min)
+-		return -ERANGE;
++		return 0;
+ 
+ 	/*
+ 	 * Calculate minimum divider based on the minimum multiplier, the
+@@ -179,7 +179,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 	if (parent_rate > characteristics->input.max) {
+ 		tmpdiv = DIV_ROUND_UP(parent_rate, characteristics->input.max);
+ 		if (tmpdiv > PLL_DIV_MAX)
+-			return -ERANGE;
++			return 0;
+ 
+ 		if (tmpdiv > mindiv)
+ 			mindiv = tmpdiv;
+@@ -234,8 +234,8 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 			break;
+ 	}
+ 
+-	/* We haven't found any multiplier/divider pair => return -ERANGE */
+-	if (bestrate < 0)
++	/* We haven't found any multiplier/divider pair => return 0 */
++	if (bestrate == 0)
+ 		return bestrate;
+ 
+ 	/* Check if bestrate is a valid output rate  */
+@@ -246,7 +246,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
+ 	}
+ 
+ 	if (i >= characteristics->num_output)
+-		return -ERANGE;
++		return 0;
+ 
+ 	if (div)
+ 		*div = bestdiv;
+@@ -271,15 +271,15 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+-	long ret;
++	unsigned long ret;
+ 	u32 div;
+ 	u32 mul;
+ 	u32 index;
+ 
+ 	ret = clk_pll_get_best_div_mul(pll, rate, parent_rate,
+ 				       &div, &mul, &index);
+-	if (ret < 0)
+-		return ret;
++	if (ret == 0)
++		return -ERANGE;
+ 
+ 	pll->range = index;
+ 	pll->div = div;
+-- 
+2.7.4
