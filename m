@@ -1,196 +1,58 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 11/12] ARM: dts: sun8i: a83t: Add HDMI display pipeline
-Date: Wed, 17 Jan 2018 21:14:20 +0100
-Message-Id: <20180117201421.25954-12-jernej.skrabec@siol.net>
-In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35600 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeAAVBx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jan 2018 16:01:53 -0500
+Received: by mail-wm0-f65.google.com with SMTP id a79so19250031wma.0
+        for <linux-clk@vger.kernel.org>; Mon, 01 Jan 2018 13:01:53 -0800 (PST)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/1] add support for the NAND clocks on Meson8b
+Date: Mon,  1 Jan 2018 22:01:38 +0100
+Message-Id: <20180101210139.29808-1-martin.blumenstingl@googlemail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
-hdmi, hdmi phy and hdmi pinctrl entries.
+This adds support for the NAND clocks found in the Meson8, Meson8b
+and Meson8m2 SoCs.
+The clocks consist of a simple gate, a divider and a mux. The mux
+parents are not documented in the public S805 datasheet [0], so I
+had to use a bit of math and take the vendor kernel as reference [1]
+to find the actual parent clocks.
+Some mux parents cannot be divided down without remainder to the
+target clocks (as expected by the vendor NAND driver) these clocks
+have the ROUND_CLOSEST flag set.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 119 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 1 deletion(-)
+The new clocks are similar to gxbb_sd_emmc_c_clk0_sel,
+gxbb_sd_emmc_c_clk0_div and gxbb_sd_emmc_c_clk0 on the GX SoCs.
+Actual differences are:
+- mux parents are re-ordered
+- the gate is controlled by bit 8 (instead of bit 7 on GX)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 7f4955a5fab7..c2638966d338 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -155,7 +155,7 @@
- 
- 	de: display-engine {
- 		compatible = "allwinner,sun8i-a83t-display-engine";
--		allwinner,pipelines = <&mixer0>;
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
- 		status = "disabled";
- 	};
- 
-@@ -208,6 +208,32 @@
- 			};
- 		};
- 
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
-@@ -256,6 +282,43 @@
- 			};
- 		};
- 
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun8i-a83t-mmc",
- 				     "allwinner,sun7i-a20-mmc";
-@@ -427,6 +490,11 @@
- 				drive-strength = <40>;
- 			};
- 
-+			hdmi_pins: hdmi-pins {
-+				pins = "PH6", "PH7", "PH8";
-+				function = "hdmi";
-+			};
-+
- 			i2c0_pins: i2c0-pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
-@@ -685,6 +753,55 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
-+			clock-names = "iahb", "isfr";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hdmi_pins>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-a83t-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "bus", "mod", "tmds";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		r_intc: interrupt-controller@1f00c00 {
- 			compatible = "allwinner,sun8i-a83t-r-intc",
- 				     "allwinner,sun6i-a31-r-intc";
+
+Changes since v1 at [0]:
+- rebased so it still applies in 2018
+- dropped mux table (since the known parents are values 0..4)
+- replaced CLK_SET_RATE_NO_REPARENT with CLK_SET_RATE_PARENT on the mux
+- added CLK_SET_RATE_PARENT on the divider
+- fixed width of the divider (it's 7 bits wide, ranging from bit 0 to 6
+  while v1 only used a width of 6 bits)
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-April/003237.html
+
+
+Martin Blumenstingl (1):
+  clk: meson: meson8b: add support for the NAND clocks
+
+ drivers/clk/meson/meson8b.c              | 51 ++++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h              |  3 +-
+ include/dt-bindings/clock/meson8b-clkc.h |  3 ++
+ 3 files changed, 56 insertions(+), 1 deletion(-)
+
 -- 
 2.15.1
+
