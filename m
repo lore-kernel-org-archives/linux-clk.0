@@ -1,55 +1,67 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 19/37] arm64: dts: renesas: r8a77970: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:53 +0000
-Message-Id: <1516903391-30467-20-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Phil Elwell <phil@raspberrypi.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 08/34] clk: bcm2835: change bcm2835_pll_rate_from_divisors to return unsigned long
+Date: Mon,  1 Jan 2018 19:42:47 +0000
+Message-Id: <1514835793-1104-9-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+bcm2835_pll_rate_from_divisors() returns a value directly as the return
+value to round_rate(). clk_ops->round_rate() has been changed to an
+unsigned long so for the sake of completeness and neatness this patch
+updates the helper function to return the same data-type.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Phil Elwell <phil@raspberrypi.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 566a7f7..0fda66f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -113,7 +113,8 @@
- 		};
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index c215dc9..fb2b012 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -541,8 +541,9 @@ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
+ 	*fdiv = div & ((1 << A2W_PLL_FRAC_BITS) - 1);
+ }
  
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a77970-rst";
-+			compatible = "renesas,r8a77970-rst",
-+				     "renesas,rcar-gen3-rst";
- 			reg = <0 0xe6160000 0 0x200>;
- 		};
+-static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
+-					   u32 ndiv, u32 fdiv, u32 pdiv)
++static unsigned long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
++						    u32 ndiv, u32 fdiv,
++						    u32 pdiv)
+ {
+ 	u64 rate;
  
 -- 
 2.7.4
