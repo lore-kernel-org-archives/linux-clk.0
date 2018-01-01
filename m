@@ -1,52 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 29 Jan 2018 11:31:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 4/4] clk: imx: add clock driver for i.MX8MQ CCM
-Message-ID: <20180129173115.hy6dmnj2m2mdyznp@rob-hp-laptop>
-References: <20180117182950.26460-1-l.stach@pengutronix.de>
- <20180117182950.26460-4-l.stach@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180117182950.26460-4-l.stach@pengutronix.de>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Barry Song <baohua@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH v2 23/34] clk: sirf: remove unnecessary long cast on return
+Date: Mon,  1 Jan 2018 19:34:49 +0000
+Message-Id: <1514835300-381-9-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 17, 2018 at 07:29:50PM +0100, Lucas Stach wrote:
-> Add driver for the Clock Control Module found on i.MX8MQ.
-> 
-> This is largely based on the downstream driver from Anson Huang and
-> Bai Ping at NXP, with only some small adaptions to mainline from me.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/clk/imx/Makefile                 |   1 +
->  drivers/clk/imx/clk-imx8mq.c             | 861 +++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h                    |  43 ++
->  include/dt-bindings/clock/imx8mq-clock.h | 632 +++++++++++++++++++++++
->  4 files changed, 1537 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-imx8mq.c
->  create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+Due to the old function signature of clk_ops->round_rate
+pll_clk_round_rate does a cast of an internal unsigned long
+to a long. After updating clk_ops->round_rate() to be an unsigned long
+though the cast isn't necessary. Remove the cast now.
 
-> diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-> new file mode 100644
-> index 000000000000..9932b52452cb
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/imx8mq-clock.h
-> @@ -0,0 +1,632 @@
-> +/*
-> + * Copyright 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2017 NXP
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Barry Song <baohua@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Barry Song <Baohua.Song@csr.com>
+---
+ drivers/clk/sirf/clk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Use SPDX tag.
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 3ce6741..bfa3f4b 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -121,7 +121,7 @@ static unsigned long pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	dividend = (u64)fin * nf;
+ 	do_div(dividend, nr * od);
+ 
+-	return (long)dividend;
++	return dividend;
+ }
+ 
+ static int pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
