@@ -1,55 +1,45 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 16/37] ARM: dts: r8a7794: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:50 +0000
-Message-Id: <1516903391-30467-17-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Tony Prisk <linux@prisktech.co.nz>
+Subject: [PATCH v2 17/34] clk: vt8500: match temp holder variable to fn return type
+Date: Mon,  1 Jan 2018 19:34:43 +0000
+Message-Id: <1514835300-381-3-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+vtwm_pll_round_rate() returns an unsigned long. This patch changes the
+internal holder variable from signed to unsigned long for the sake of
+completeness and neatness.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Tony Prisk <linux@prisktech.co.nz>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-vt8500.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a5a23e9..9309887 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -246,7 +246,8 @@
- 		};
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 750c087..a4aa0bf 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -609,7 +609,7 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+ 	u32 filter, mul, div1, div2;
+-	long round_rate;
++	unsigned long round_rate;
+ 	int ret = 1;
  
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a7794-rst";
-+			compatible = "renesas,r8a7794-rst",
-+				     "renesas,rcar-gen2-rst";
- 			reg = <0 0xe6160000 0 0x0100>;
- 		};
- 
+ 	switch (pll->type) {
 -- 
 2.7.4
