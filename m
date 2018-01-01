@@ -1,60 +1,59 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 08/25] ARM: dts: r8a7794: Adjust SMP routine size
-Date: Tue, 30 Jan 2018 20:22:41 +0000
-Message-Id: <1517343778-27902-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: [PATCH v3 22/34] clk: qcom: ipq4019: change clk_cpu_div_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:43:01 +0000
+Message-Id: <1514835793-1104-23-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Cc: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-v1->v3:
-* increased size to 0x100
-
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+ drivers/clk/qcom/gcc-ipq4019.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index d588efa..e47c5f4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -348,7 +348,7 @@
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 804231b..943acbc 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1268,7 +1268,7 @@ static unsigned long clk_cpu_div_round_rate(struct clk_hw *hw,
  
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
+ 	f = qcom_find_freq(pll->freq_tbl, rate);
+ 	if (!f)
+-		return -EINVAL;
++		return 0;
  
+ 	p_hw = clk_hw_get_parent_by_index(hw, f->src);
+ 	*p_rate = clk_hw_get_rate(p_hw);
 -- 
 2.7.4
