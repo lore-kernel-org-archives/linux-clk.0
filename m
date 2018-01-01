@@ -1,56 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 14:59:55 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] clk: ingenic: Add JZ47xx TCU clocks driver
-Message-ID: <20180102225955.GL7997@codeaurora.org>
-References: <20171229125942.27305-2-paul@crapouillou.net>
- <20180101143344.2099-1-paul@crapouillou.net>
- <20180101143344.2099-4-paul@crapouillou.net>
- <20180102191356.GI7997@codeaurora.org>
- <1514923719.15685.0@smtp.crapouillou.net>
+Return-Path: <fengguang.wu@intel.com>
+Date: Tue, 2 Jan 2018 02:01:18 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	uclinux-h8-devel@lists.sourceforge.jp, linux-mips@linux-mips.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	linux-rtc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org,
+	pure.logic@nexus-software.ie, linux-omap@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to return unsigned
+ long
+Message-ID: <201801020112.PEMNifTo%fengguang.wu@intel.com>
+References: <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1514923719.15685.0@smtp.crapouillou.net>
+In-Reply-To: <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/02, Paul Cercueil wrote:
-> >> +		goto err_free_tcu;
-> >> +	}
-> >> +
-> >> +	tcu->clocks.clk_num = nb_clks;
-> >> +	tcu->clocks.clks = kcalloc(nb_clks, sizeof(struct clk *),
-> >>GFP_KERNEL);
-> >> +	if (!tcu->clocks.clks) {
-> >> +		pr_err("%s: cannot allocate memory\n", __func__);
-> >
-> >We don't need allocation error messages. Please run checkpatch.
-> 
-> I did run checkpatch, which warned about this, but that's a false
-> positive to me.
-> The callback passed to CLK_OF_DECLARE() has a return type void, so
-> there's no
-> way I can return -ENOMEM, and I don't want the error to be unnoticed.
+Hi Bryan,
 
-The kernel typically spews a bunch of information when an
-allocation error happens, so your pr_err() will be lost in the
-spew, which is why it's not really necessary.
+I love your patch! Perhaps something to improve:
 
-> 
-> About the other remarks - I agree with you, I'll fix these in the V2.
-> 
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on v4.15-rc6]
+[cannot apply to clk/clk-next next-20171222]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Ok.
+url:    https://github.com/0day-ci/linux/commits/Bryan-O-Donoghue/change-clk_ops-round_rate-to-scale-past-LONG_MAX/20180101-212907
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+sparse warnings: (new ones prefixed by >>)
+
+
+vim +321 drivers/clk/clk-versaclock5.c
+
+8c1ebe97 Marek Vasut 2017-07-09  318  
+8c1ebe97 Marek Vasut 2017-07-09  319  static const struct clk_ops vc5_dbl_ops = {
+8c1ebe97 Marek Vasut 2017-07-09  320  	.recalc_rate	= vc5_dbl_recalc_rate,
+8c1ebe97 Marek Vasut 2017-07-09 @321  	.round_rate	= vc5_dbl_round_rate,
+8c1ebe97 Marek Vasut 2017-07-09  322  	.set_rate	= vc5_dbl_set_rate,
+8c1ebe97 Marek Vasut 2017-07-09  323  };
+8c1ebe97 Marek Vasut 2017-07-09  324  
+
+:::::: The code at line 321 was first introduced by commit
+:::::: 8c1ebe9762670159ca982167131af63c94ff1571 clk: vc5: Add support for the input frequency doubler
+
+:::::: TO: Marek Vasut <marek.vasut@gmail.com>
+:::::: CC: Stephen Boyd <sboyd@codeaurora.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
