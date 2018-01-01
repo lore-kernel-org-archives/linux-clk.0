@@ -1,60 +1,50 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180111211948.GL28313@codeaurora.org>
-References: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
- <20180111211948.GL28313@codeaurora.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 15 Jan 2018 14:48:58 -0200
-Message-ID: <CAOMZO5BfDRsO=gn_SjkDa_09KEf_EjZcfM5VQawaR1-dQE0o0g@mail.gmail.com>
-Subject: Re: Warnings from drivers/clk/clk.c
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>,
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Barry Song <baohua@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH v3 23/34] clk: sirf: remove unnecessary long cast on return
+Date: Mon,  1 Jan 2018 19:43:02 +0000
+Message-Id: <1514835793-1104-24-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Due to the old function signature of clk_ops->round_rate
+pll_clk_round_rate does a cast of an internal unsigned long
+to a long. After updating clk_ops->round_rate() to be an unsigned long
+though the cast isn't necessary. Remove the cast now.
 
-On Thu, Jan 11, 2018 at 7:19 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Barry Song <baohua@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Barry Song <Baohua.Song@csr.com>
+---
+ drivers/clk/sirf/clk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> We have two WARN_ON in this function. Do you know which one hit
-> (makes me think we should put a printk in here now and also
-> include the clk name).
-
-Yes, having the clk name that causes the warning really helps debugging.
-
-Do you mean like this?
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9..6fed292 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -681,8 +681,12 @@ static void clk_core_unprepare(struct clk_core *core)
-        if (!core)
-                return;
-
--       if (WARN_ON(core->prepare_count == 0))
-+       if (core->prepare_count == 0) {
-+               pr_err("%s: %s called with enable_count not zero\n",
-+                      __func__, core->name);
-+               WARN_ON(1);
-                return;
-+       }
-
-        if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
-                return;
-@@ -808,9 +812,14 @@ static void clk_core_disable(struct clk_core *core)
-        if (!core)
-                return;
-
--       if (WARN_ON(core->enable_count == 0))
-+       if (core->enable_count == 0) {
-+               pr_err("%s: %s called with enable_count not zero\n",
-+                      __func__, core->name);
-+               WARN_ON(1);
-                return;
-
-+       }
-+
-        if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
-                return;
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 3ce6741..bfa3f4b 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -121,7 +121,7 @@ static unsigned long pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	dividend = (u64)fin * nf;
+ 	do_div(dividend, nr * od);
+ 
+-	return (long)dividend;
++	return dividend;
+ }
+ 
+ static int pll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
