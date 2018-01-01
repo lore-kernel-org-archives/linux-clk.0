@@ -1,248 +1,99 @@
-Return-Path: <benh@kernel.crashing.org>
-Message-ID: <1514872154.2743.135.camel@kernel.crashing.org>
-Subject: Re: [PATCH v7 2/5] clk: aspeed: Register core clocks
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
-        Michael
-	Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Andrew Jeffery <andrew@aj.id.au>,
-        Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-        Ryan Chen
- <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 02 Jan 2018 16:49:14 +1100
-In-Reply-To: <20171222024522.10362-3-joel@jms.id.au>
-References: <20171222024522.10362-1-joel@jms.id.au>
-	 <20171222024522.10362-3-joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 1/6] mfd: syscon: Add ingenic-tcu.h header
+Date: Mon,  1 Jan 2018 15:33:39 +0100
+Message-Id: <20180101143344.2099-1-paul@crapouillou.net>
+In-Reply-To: <20171229125942.27305-2-paul@crapouillou.net>
+References: <20171229125942.27305-2-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-12-22 at 13:15 +1030, Joel Stanley wrote:
-> This registers the core clocks; those which are required to calculate
-> the rate of the timer peripheral so the system can load a clocksource
-> driver.
-> 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+This header contains macros for the registers that are present in the
+regmap shared by all the drivers related to the TCU (Timer Counter Unit)
+of the Ingenic JZ47xx SoCs.
 
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ include/linux/mfd/syscon/ingenic-tcu.h | 57 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 include/linux/mfd/syscon/ingenic-tcu.h
 
-> ---
-> v5:
->   - Add Andrew's Reviewed-by
-> v4:
->   - Add defines to document the BIT() macros
-> v3:
->   - Fix ast2400 ahb calculation
->   - Remove incorrect 'this is wrong' comment
->   - Separate out clkin calc to be per platform
->   - Support 48MHz clkin on ast2400
-> ---
->  drivers/clk/clk-aspeed.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 177 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 7a86ee08ea4f..5adedda82d26 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -13,7 +13,23 @@
->  
->  #define ASPEED_NUM_CLKS		35
->  
-> +#define ASPEED_RESET_CTRL	0x04
-> +#define ASPEED_CLK_SELECTION	0x08
-> +#define ASPEED_CLK_STOP_CTRL	0x0c
-> +#define ASPEED_MPLL_PARAM	0x20
-> +#define ASPEED_HPLL_PARAM	0x24
-> +#define  AST2500_HPLL_BYPASS_EN	BIT(20)
-> +#define  AST2400_HPLL_STRAPPED	BIT(18)
-> +#define  AST2400_HPLL_BYPASS_EN	BIT(17)
-> +#define ASPEED_MISC_CTRL	0x2c
-> +#define  UART_DIV13_EN		BIT(12)
->  #define ASPEED_STRAP		0x70
-> +#define  CLKIN_25MHZ_EN		BIT(23)
-> +#define  AST2400_CLK_SOURCE_SEL	BIT(18)
-> +#define ASPEED_CLK_SELECTION_2	0xd8
-> +
-> +/* Globally visible clocks */
-> +static DEFINE_SPINLOCK(aspeed_clk_lock);
->  
->  /* Keeps track of all clocks */
->  static struct clk_hw_onecell_data *aspeed_clk_data;
-> @@ -91,6 +107,160 @@ static const struct aspeed_gate_data aspeed_gates[] = {
->  	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
->  };
->  
-> +static const struct clk_div_table ast2400_div_table[] = {
-> +	{ 0x0, 2 },
-> +	{ 0x1, 4 },
-> +	{ 0x2, 6 },
-> +	{ 0x3, 8 },
-> +	{ 0x4, 10 },
-> +	{ 0x5, 12 },
-> +	{ 0x6, 14 },
-> +	{ 0x7, 16 },
-> +	{ 0 }
-> +};
-> +
-> +static const struct clk_div_table ast2500_div_table[] = {
-> +	{ 0x0, 4 },
-> +	{ 0x1, 8 },
-> +	{ 0x2, 12 },
-> +	{ 0x3, 16 },
-> +	{ 0x4, 20 },
-> +	{ 0x5, 24 },
-> +	{ 0x6, 28 },
-> +	{ 0x7, 32 },
-> +	{ 0 }
-> +};
-> +
-> +static struct clk_hw *aspeed_ast2400_calc_pll(const char *name, u32 val)
-> +{
-> +	unsigned int mult, div;
-> +
-> +	if (val & AST2400_HPLL_BYPASS_EN) {
-> +		/* Pass through mode */
-> +		mult = div = 1;
-> +	} else {
-> +		/* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
-> +		u32 n = (val >> 5) & 0x3f;
-> +		u32 od = (val >> 4) & 0x1;
-> +		u32 d = val & 0xf;
-> +
-> +		mult = (2 - od) * (n + 2);
-> +		div = d + 1;
-> +	}
-> +	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-> +			mult, div);
-> +};
-> +
-> +static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
-> +{
-> +	unsigned int mult, div;
-> +
-> +	if (val & AST2500_HPLL_BYPASS_EN) {
-> +		/* Pass through mode */
-> +		mult = div = 1;
-> +	} else {
-> +		/* F = clkin * [(M+1) / (N+1)] / (P + 1) */
-> +		u32 p = (val >> 13) & 0x3f;
-> +		u32 m = (val >> 5) & 0xff;
-> +		u32 n = val & 0x1f;
-> +
-> +		mult = (m + 1) / (n + 1);
-> +		div = p + 1;
-> +	}
-> +
-> +	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
-> +			mult, div);
-> +}
-> +
-> +static void __init aspeed_ast2400_cc(struct regmap *map)
-> +{
-> +	struct clk_hw *hw;
-> +	u32 val, freq, div;
-> +
-> +	/*
-> +	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
-> +	 * strapping
-> +	 */
-> +	regmap_read(map, ASPEED_STRAP, &val);
-> +	if (val & CLKIN_25MHZ_EN)
-> +		freq = 25000000;
-> +	else if (val & AST2400_CLK_SOURCE_SEL)
-> +		freq = 48000000;
-> +	else
-> +		freq = 24000000;
-> +	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-> +	pr_debug("clkin @%u MHz\n", freq / 1000000);
-> +
-> +	/*
-> +	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-> +	 * and we assume that it is enabled
-> +	 */
-> +	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-> +	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
-> +	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
-> +
-> +	/*
-> +	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
-> +	 *   00: Select CPU:AHB = 1:1
-> +	 *   01: Select CPU:AHB = 2:1
-> +	 *   10: Select CPU:AHB = 4:1
-> +	 *   11: Select CPU:AHB = 3:1
-> +	 */
-> +	regmap_read(map, ASPEED_STRAP, &val);
-> +	val = (val >> 10) & 0x3;
-> +	div = val + 1;
-> +	if (div == 3)
-> +		div = 4;
-> +	else if (div == 4)
-> +		div = 3;
-> +	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-> +	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-> +
-> +	/* APB clock clock selection register SCU08 (aka PCLK) */
-> +	hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
-> +			scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
-> +			ast2400_div_table,
-> +			&aspeed_clk_lock);
-> +	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-> +}
-> +
-> +static void __init aspeed_ast2500_cc(struct regmap *map)
-> +{
-> +	struct clk_hw *hw;
-> +	u32 val, freq, div;
-> +
-> +	/* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
-> +	regmap_read(map, ASPEED_STRAP, &val);
-> +	if (val & CLKIN_25MHZ_EN)
-> +		freq = 25000000;
-> +	else
-> +		freq = 24000000;
-> +	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
-> +	pr_debug("clkin @%u MHz\n", freq / 1000000);
-> +
-> +	/*
-> +	 * High-speed PLL clock derived from the crystal. This the CPU clock,
-> +	 * and we assume that it is enabled
-> +	 */
-> +	regmap_read(map, ASPEED_HPLL_PARAM, &val);
-> +	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2500_calc_pll("hpll", val);
-> +
-> +	/* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
-> +	regmap_read(map, ASPEED_STRAP, &val);
-> +	val = (val >> 9) & 0x7;
-> +	WARN(val == 0, "strapping is zero: cannot determine ahb clock");
-> +	div = 2 * (val + 1);
-> +	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
-> +	aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
-> +
-> +	/* APB clock clock selection register SCU08 (aka PCLK) */
-> +	regmap_read(map, ASPEED_CLK_SELECTION, &val);
-> +	val = (val >> 23) & 0x7;
-> +	div = 4 * (val + 1);
-> +	hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
-> +	aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
-> +};
-> +
->  static void __init aspeed_cc_init(struct device_node *np)
->  {
->  	struct regmap *map;
-> @@ -132,6 +302,13 @@ static void __init aspeed_cc_init(struct device_node *np)
->  		return;
->  	}
->  
-> +	if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
-> +		aspeed_ast2400_cc(map);
-> +	else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
-> +		aspeed_ast2500_cc(map);
-> +	else
-> +		pr_err("unknown platform, failed to add clocks\n");
-> +
->  	aspeed_clk_data->num = ASPEED_NUM_CLKS;
->  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
->  	if (ret)
+ v2: Use SPDX identifier for the license
+
+diff --git a/include/linux/mfd/syscon/ingenic-tcu.h b/include/linux/mfd/syscon/ingenic-tcu.h
+new file mode 100644
+index 000000000000..5962165e1309
+--- /dev/null
++++ b/include/linux/mfd/syscon/ingenic-tcu.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Header file for the Ingenic JZ47xx TCU driver
++ */
++#ifndef __LINUX_CLK_INGENIC_TCU_H_
++#define __LINUX_CLK_INGENIC_TCU_H_
++
++#include <linux/bitops.h>
++#include <linux/regmap.h>
++
++enum ingenic_tcu_reg {
++	REG_WDT_TDR	= 0x00,
++	REG_WDT_TCER	= 0x04,
++	REG_WDT_TCNT	= 0x08,
++	REG_WDT_TCSR	= 0x0c,
++	REG_TER		= 0x10,
++	REG_TESR	= 0x14,
++	REG_TECR	= 0x18,
++	REG_TSR		= 0x1c,
++	REG_TFR		= 0x20,
++	REG_TFSR	= 0x24,
++	REG_TFCR	= 0x28,
++	REG_TSSR	= 0x2c,
++	REG_TMR		= 0x30,
++	REG_TMSR	= 0x34,
++	REG_TMCR	= 0x38,
++	REG_TSCR	= 0x3c,
++	REG_TDFR0	= 0x40,
++	REG_TDHR0	= 0x44,
++	REG_TCNT0	= 0x48,
++	REG_TCSR0	= 0x4c,
++	REG_OST_DR	= 0xe0,
++	REG_OST_CNTL	= 0xe4,
++	REG_OST_CNTH	= 0xe8,
++	REG_OST_TCSR	= 0xec,
++	REG_TSTR	= 0xf0,
++	REG_TSTSR	= 0xf4,
++	REG_TSTCR	= 0xf8,
++	REG_OST_CNTHBUF	= 0xfc,
++};
++
++#define TCSR_RESERVED_BITS		0x3f
++#define TCSR_PARENT_CLOCK_MASK		0x07
++#define TCSR_PRESCALE_LSB		3
++#define TCSR_PRESCALE_MASK		0x38
++
++#define TCSR_PWM_SD		BIT(9)  /* 0: Shutdown abruptly 1: gracefully */
++#define TCSR_PWM_INITL_HIGH	BIT(8)  /* Sets the initial output level */
++#define TCSR_PWM_EN		BIT(7)  /* PWM pin output enable */
++
++#define CHANNEL_STRIDE		0x10
++#define REG_TDFRc(c)		(REG_TDFR0 + ((c) * CHANNEL_STRIDE))
++#define REG_TDHRc(c)		(REG_TDHR0 + ((c) * CHANNEL_STRIDE))
++#define REG_TCNTc(c)		(REG_TCNT0 + ((c) * CHANNEL_STRIDE))
++#define REG_TCSRc(c)		(REG_TCSR0 + ((c) * CHANNEL_STRIDE))
++
++#endif /* __LINUX_CLK_INGENIC_TCU_H_ */
+-- 
+2.11.0
