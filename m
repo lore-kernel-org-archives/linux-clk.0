@@ -1,58 +1,53 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20180103013516.18844-5-sboyd@codeaurora.org>
-References: <20180103013516.18844-1-sboyd@codeaurora.org> <20180103013516.18844-5-sboyd@codeaurora.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 3 Jan 2018 10:58:26 +0800
-Message-ID: <CAGb2v67s6JR87nvZ4s1MQ0jG7xj7y0s4C257YWB66xaVCR3c0Q@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: sunxi: Use CLK_IS_CRITICAL flag for critical clks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:GENERIC INCLUDE/A..." <linux-arch@vger.kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 05/34] clk: at91: update clk_pll_get_best_div_mul to return unsigned long
+Date: Mon,  1 Jan 2018 19:07:32 +0000
+Message-Id: <1514833681-30737-6-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 3, 2018 at 9:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> We'd like to privatize __clk_get(), but the sunxi clk driver is
-> calling this function to keep a reference held on the clk and
-> call clk_prepare_enable() on it. We support this design in the
-> clk core now with the CLK_IS_CRITICAL flag, so let's just use
-> that instead.
->
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/sunxi/clk-factors.c    | 26 +++++++++++++++++++++-----
->  drivers/clk/sunxi/clk-factors.h    |  4 ++++
->  drivers/clk/sunxi/clk-mod0.c       |  9 ++-------
->  drivers/clk/sunxi/clk-sun8i-mbus.c |  7 ++-----
->  drivers/clk/sunxi/clk-sun9i-core.c |  9 ++-------
->  drivers/clk/sunxi/clk-sunxi.c      | 36 +++++++++++++-----------------------
->  6 files changed, 44 insertions(+), 47 deletions(-)
->
-> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-> index 856fef65433b..f6f4757d2dd1 100644
-> --- a/drivers/clk/sunxi/clk-factors.c
-> +++ b/drivers/clk/sunxi/clk-factors.c
-> @@ -176,10 +176,10 @@ static const struct clk_ops clk_factors_ops = {
->         .set_rate = clk_factors_set_rate,
->  };
->
-> -struct clk *sunxi_factors_register(struct device_node *node,
-> -                                  const struct factors_data *data,
-> -                                  spinlock_t *lock,
-> -                                  void __iomem *reg)
-> +struct clk *__sunxi_factors_register(struct device_node *node,
+clk_pll_get_best_div_mul() returns a value directly as the return
+value to round_rate(). clk_ops->round_rate() has been changed to an
+unsigned long so for the sake of completeness and neatness this patch
+updates the helper function to return the same data-type.
 
-This looks like it's only used within the file by the two wrapper
-functions. Mark it static?
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/at91/clk-pll.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Otherwise
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-
-Looks like you picked the easiest (least code changes) for each type
-of clock?
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 4e7da3e..630203e 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -147,10 +147,11 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 	return (parent_rate / div) * (mul + 1);
+ }
+ 
+-static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
+-				     unsigned long parent_rate,
+-				     u32 *div, u32 *mul,
+-				     u32 *index) {
++static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
++					      unsigned long rate,
++					      unsigned long parent_rate,
++					      u32 *div, u32 *mul, u32 *index)
++{
+ 	const struct clk_pll_layout *layout = pll->layout;
+ 	const struct clk_pll_characteristics *characteristics =
+ 							pll->characteristics;
+-- 
+2.7.4
