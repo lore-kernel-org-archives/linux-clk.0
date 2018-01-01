@@ -1,128 +1,59 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 16/41] clk: davinci: Add platform information for TI DM646x PSC
-Date: Sat, 20 Jan 2018 11:13:55 -0600
-Message-Id: <1516468460-4908-17-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: [PATCH v2 22/34] clk: qcom: ipq4019: change clk_cpu_div_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:34:48 +0000
+Message-Id: <1514835300-381-8-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PSC clocks on TI
-DM646x based systems.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Cc: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
+ drivers/clk/qcom/gcc-ipq4019.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v6 changes:
-- change how clkdev lookups are declared
-
- drivers/clk/davinci/Makefile     |  1 +
- drivers/clk/davinci/psc-dm646x.c | 62 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h      |  1 +
- 3 files changed, 64 insertions(+)
- create mode 100644 drivers/clk/davinci/psc-dm646x.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index a20e379..6c388d4 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -15,4 +15,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
- obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= psc-dm646x.o
- endif
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-new file mode 100644
-index 0000000..bdb9db7
---- /dev/null
-+++ b/drivers/clk/davinci/psc-dm646x.c
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PSC clock descriptions for TI DaVinci DM646x
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "psc.h"
-+
-+LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
-+LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
-+				"fck",		"davinci_mdio.0");
-+LPSC_CLKDEV1(aemif_clkdev,	"aemif",	NULL);
-+LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
-+LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
-+LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
-+LPSC_CLKDEV1(uart1_clkdev,	NULL,		"serial8250.1");
-+LPSC_CLKDEV1(uart2_clkdev,	NULL,		"serial8250.2");
-+LPSC_CLKDEV1(i2c_clkdev,	NULL,		"i2c_davinci.1");
-+/* REVISIT: gpio-davinci.c should be modified to drop con_id */
-+LPSC_CLKDEV1(gpio_clkdev,	"gpio",		NULL);
-+LPSC_CLKDEV1(timer0_clkdev,	"timer0",	 NULL);
-+
-+static const struct davinci_psc_clk_info dm646x_psc_info[] __initconst = {
-+	LPSC(0,  0, arm,      pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	/* REVISIT how to disable? */
-+	LPSC(1,  0, dsp,      pll1_sysclk1, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(4,  0, edma_cc,  pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(5,  0, edma_tc0, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(6,  0, edma_tc1, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(7,  0, edma_tc2, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(8,  0, edma_tc3, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(10, 0, ide,      pll1_sysclk4, ide_clkdev,    0),
-+	LPSC(14, 0, emac,     pll1_sysclk3, emac_clkdev,   0),
-+	LPSC(16, 0, vpif0,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(17, 0, vpif1,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(21, 0, aemif,    pll1_sysclk3, aemif_clkdev,  LPSC_ALWAYS_ENABLED),
-+	LPSC(22, 0, mcasp0,   pll1_sysclk3, mcasp0_clkdev, 0),
-+	LPSC(23, 0, mcasp1,   pll1_sysclk3, mcasp1_clkdev, 0),
-+	LPSC(26, 0, uart0,    aux_clkin,    uart0_clkdev,  0),
-+	LPSC(27, 0, uart1,    aux_clkin,    uart1_clkdev,  0),
-+	LPSC(28, 0, uart2,    aux_clkin,    uart2_clkdev,  0),
-+	/* REVIST: disabling hangs system */
-+	LPSC(29, 0, pwm0,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
-+	/* REVIST: disabling hangs system */
-+	LPSC(30, 0, pwm1,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
-+	LPSC(31, 0, i2c,      pll1_sysclk3, i2c_clkdev,    0),
-+	LPSC(33, 0, gpio,     pll1_sysclk3, gpio_clkdev,   0),
-+	LPSC(34, 0, timer0,   pll1_sysclk3, timer0_clkdev, 0),
-+	LPSC(35, 0, timer1,   pll1_sysclk3, NULL,          0),
-+	{ }
-+};
-+
-+void __init dm646x_psc_clk_init(void __iomem *psc)
-+{
-+	davinci_psc_register_clocks(dm646x_psc_info, psc);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 6d2896d..3810ea3 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -21,5 +21,6 @@ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
- void dm355_psc_clk_init(void __iomem *psc);
- void dm365_psc_clk_init(void __iomem *psc);
- void dm644x_psc_clk_init(void __iomem *psc);
-+void dm646x_psc_clk_init(void __iomem *psc);
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 804231b..943acbc 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1268,7 +1268,7 @@ static unsigned long clk_cpu_div_round_rate(struct clk_hw *hw,
  
- #endif /* __LINUX_CLK_DAVINCI_H__ */
+ 	f = qcom_find_freq(pll->freq_tbl, rate);
+ 	if (!f)
+-		return -EINVAL;
++		return 0;
+ 
+ 	p_hw = clk_hw_get_parent_by_index(hw, f->src);
+ 	*p_rate = clk_hw_get_rate(p_hw);
 -- 
 2.7.4
