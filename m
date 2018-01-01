@@ -1,88 +1,76 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 01/12] clk: sunxi-ng: Mask nkmp factors when setting register
-Date: Wed, 17 Jan 2018 21:14:10 +0100
-Message-Id: <20180117201421.25954-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 33/34] clk: lpc32xx: change round_rate() return logic
+Date: Mon,  1 Jan 2018 19:43:12 +0000
+Message-Id: <1514835793-1104-34-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, if one of the factors isn't present, bit 0 gets always set to
-1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
-K is not specified, it's offset, width and shift is 0. Driver assumes
-that lowest value possible is 1, otherwise we would get division by 0.
-That situation causes that bit 0 is always set, which may change wanted
-clock rate.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Fix that by masking every factor according to it's specified width.
-Factors with width set to 0 won't have any influence to final register
-value.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/clk/nxp/clk-lpc32xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index e58c95787f94..a99068a08315 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -134,6 +134,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+	u32 n_mask, k_mask, m_mask, p_mask;
- 	struct _ccu_nkmp _nkmp;
- 	unsigned long flags;
- 	u32 reg;
-@@ -149,18 +150,20 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 76c17f4..0e0d258 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -664,17 +664,17 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 	 * USB divider, USB PLL N and M parameters.
+ 	 */
+ 	if (rate != 48000000)
+-		return -EINVAL;
++		return 0;
  
- 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
+ 	/* USB divider clock */
+ 	usb_div_hw = clk_hw_get_parent_by_index(hw, 0);
+ 	if (!usb_div_hw)
+-		return -EINVAL;
++		return 0;
  
-+	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
-+	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
-+	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
-+	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
-+
- 	spin_lock_irqsave(nkmp->common.lock, flags);
+ 	/* Main oscillator clock */
+ 	osc_hw = clk_hw_get_parent_by_index(usb_div_hw, 0);
+ 	if (!osc_hw)
+-		return -EINVAL;
++		return 0;
+ 	o = clk_hw_get_rate(osc_hw);	/* must be in range 1..20 MHz */
  
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
--	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
--	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
--	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
--	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
--
--	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
--	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
--	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
--	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
-+	reg &= ~(n_mask | k_mask | m_mask | p_mask);
-+
-+	reg |= ((_nkmp.n - nkmp->n.offset) << nkmp->n.shift) & n_mask;
-+	reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) & k_mask;
-+	reg |= ((_nkmp.m - nkmp->m.offset) << nkmp->m.shift) & m_mask;
-+	reg |= (ilog2(_nkmp.p) << nkmp->p.shift) & p_mask;
+ 	/* Check if valid USB divider and USB PLL parameters exists */
+@@ -697,7 +697,7 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
+ 		}
+ 	}
  
- 	writel(reg, nkmp->common.base + nkmp->common.reg);
+-	return -EINVAL;
++	return 0;
+ }
  
+ #define LPC32XX_DEFINE_PLL_OPS(_name, _rc, _sr, _rr)			\
 -- 
-2.15.1
+2.7.4
