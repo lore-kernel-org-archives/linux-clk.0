@@ -1,57 +1,65 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/19] clk: meson: add regmap helpers for parm
-Date: Wed, 31 Jan 2018 19:09:38 +0100
-Message-Id: <20180131180945.18025-13-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 2/6] dt-bindings: ingenic: Add DT bindings for TCU clocks
+Date: Mon,  1 Jan 2018 15:33:40 +0100
+Message-Id: <20180101143344.2099-2-paul@crapouillou.net>
+In-Reply-To: <20180101143344.2099-1-paul@crapouillou.net>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+ <20180101143344.2099-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Meson clock drivers are using struct parm to describe each field of the
-clock provider. Providing helpers to access these field with regmap helps
-keep drivers readable
+This header provides clock numbers for the ingenic,tcu
+DT binding.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/meson/clkc.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index aa2dfa0ff89f..8edc25297422 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -38,6 +38,22 @@ struct parm {
- 	u8	width;
- };
- 
-+static inline unsigned int meson_parm_read(struct regmap *map, struct parm *p)
-+{
-+	unsigned int val;
+ v2: Use SPDX identifier for the license
+
+diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+new file mode 100644
+index 000000000000..179815d7b3bb
+--- /dev/null
++++ b/include/dt-bindings/clock/ingenic,tcu.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,tcu DT binding.
++ */
 +
-+	regmap_read(map, p->reg_off, &val);
-+	return PARM_GET(p->width, p->shift, val);
-+}
++#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
 +
-+static inline void meson_parm_write(struct regmap *map, struct parm *p,
-+				    unsigned int val)
-+{
-+	regmap_update_bits(map, p->reg_off, SETPMASK(p->width, p->shift),
-+			   val << p->shift);
-+}
++#define JZ4740_CLK_TIMER0	0
++#define JZ4740_CLK_TIMER1	1
++#define JZ4740_CLK_TIMER2	2
++#define JZ4740_CLK_TIMER3	3
++#define JZ4740_CLK_TIMER4	4
++#define JZ4740_CLK_TIMER5	5
++#define JZ4740_CLK_TIMER6	6
++#define JZ4740_CLK_TIMER7	7
++#define JZ4740_CLK_WDT		8
++#define JZ4740_CLK_LAST		JZ4740_CLK_WDT
 +
++#define JZ4770_CLK_OST		9
++#define JZ4770_CLK_LAST		JZ4770_CLK_OST
 +
- struct pll_rate_table {
- 	unsigned long	rate;
- 	u16		m;
++#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
 -- 
-2.14.3
+2.11.0
