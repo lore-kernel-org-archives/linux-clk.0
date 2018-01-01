@@ -1,147 +1,49 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 3 Jan 2018 14:21:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, airlied@linux.ie,
-	mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
-	a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com, narmstrong@baylibre.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI
- pipeline
-Message-ID: <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
- <20171230210203.24115-7-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171230210203.24115-7-jernej.skrabec@siol.net>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v3 13/34] clk: si514: change si514_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:42:52 +0000
+Message-Id: <1514835793-1104-14-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
-> This commit adds all necessary compatibles and descriptions needed to
-> implement A83T HDMI pipeline.
-> 
-> Mixer is already properly described, so only compatible is added.
-> 
-> However, A83T TCON1, which is connected to HDMI, doesn't have channel 0,
-> contrary to all TCONs currently described. Because of that, TCON
-> documentation is extended.
-> 
-> A83T features Synopsys DW HDMI controller with a custom PHY which looks
-> like Synopsys Gen2 PHY with few additions. Since there is no
-> documentation, needed properties were found out through experimentation
-> and reading BSP code.
-> 
-> At the end, example is added for newer SoCs, which features DE2 and DW
-> HDMI.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 188 ++++++++++++++++++++-
->  1 file changed, 181 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index 9f073af4c711..3eca258096a5 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -64,6 +64,40 @@ Required properties:
->      first port should be the input endpoint. The second should be the
->      output, usually to an HDMI connector.
->  
-> +DWC HDMI TX Encoder
-> +-----------------------------
-> +
-> +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-> +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
-> +
-> +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-> +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-> +following device-specific properties.
-> +
-> +Required properties:
-> +
-> +  - compatible: value must be one of:
-> +    * "allwinner,sun8i-a83t-dw-hdmi"
-> +  - reg: two pairs of base address and size of memory-mapped region, first
-> +    for controller and second for PHY
-> +    registers.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Seems like the phy should be a separate node and use the phy binding. 
-You can use the phy binding even if you don't use the kernel phy 
-framework...
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-> +  - interrupts: HDMI interrupt number
-> +  - clocks: phandles to the clocks feeding the HDMI encoder
-> +    * iahb: the HDMI bus clock
-> +    * isfr: the HDMI register clock
-> +    * tmds: the HDMI tmds clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset controllers driving the encoder
-> +    * ctrl: the reset line for the controller
-> +    * phy: the reset line for the PHY
-> +  - reset-names: the reset names mentioned above
-> +
-> +  - ports: A ports node with endpoint definitions as defined in
-> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +    first port should be the input endpoint. The second should be the
-> +    output, usually to an HDMI connector.
-> +
->  TV Encoder
->  ----------
->  
-> @@ -94,18 +128,17 @@ Required properties:
->     * allwinner,sun7i-a20-tcon
->     * allwinner,sun8i-a33-tcon
->     * allwinner,sun8i-a83t-tcon-lcd
-> +   * allwinner,sun8i-a83t-tcon-tv
->     * allwinner,sun8i-v3s-tcon
->   - reg: base address and size of memory-mapped region
->   - interrupts: interrupt associated to this IP
-> - - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> + - clocks: phandles to the clocks feeding the TCON. One is needed:
->     - 'ahb': the interface clocks
-> -   - 'tcon-ch0': The clock driving the TCON channel 0
->   - resets: phandles to the reset controllers driving the encoder
->     - "lcd": the reset line for the TCON channel 0
->  
->   - clock-names: the clock names mentioned above
->   - reset-names: the reset names mentioned above
-> - - clock-output-names: Name of the pixel clock created
->  
->  - ports: A ports node with endpoint definitions as defined in
->    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> @@ -119,11 +152,31 @@ Required properties:
->    channel the endpoint is associated to. If that property is not
->    present, the endpoint number will be used as the channel number.
->  
-> -On SoCs other than the A33 and V3s, there is one more clock required:
-> +Following compatibles:
-> + * allwinner,sun4i-a10-tcon
-> + * allwinner,sun5i-a13-tcon
-> + * allwinner,sun6i-a31-tcon
-> + * allwinner,sun6i-a31s-tcon
-> + * allwinner,sun7i-a20-tcon
-> + * allwinner,sun8i-a33-tcon
-> + * allwinner,sun8i-a83t-tcon-lcd
-> + * allwinner,sun8i-v3s-tcon
-> +have additional required properties:
-> + - 'tcon-ch0': The clock driving the TCON channel 0
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ drivers/clk/clk-si514.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-tcon-ch0 is a clock name, not a property.
-
-> + - clock-output-names: Name of the pixel clock created
-> +
-> +For following compatibles:
-> + * allwinner,sun4i-a10-tcon
-> + * allwinner,sun5i-a13-tcon
-> + * allwinner,sun6i-a31-tcon
-> + * allwinner,sun6i-a31s-tcon
-> + * allwinner,sun7i-a20-tcon
-> + * allwinner,sun8i-a83t-tcon-tv
-> +there is one more clock required:
->     - 'tcon-ch1': The clock driving the TCON channel 1
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index 8d940d0..042ae39 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -220,7 +220,7 @@ static unsigned long si514_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	err = si514_calc_muldiv(&settings, rate);
+ 	if (err)
+-		return err;
++		return 0;
+ 
+ 	return si514_calc_rate(&settings);
+ }
+-- 
+2.7.4
