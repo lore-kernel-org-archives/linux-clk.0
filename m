@@ -1,142 +1,64 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [3/5] clk: divider: add divider_ro_round_rate helper
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
- Sylvain Lemieux <slemieux.tyco@gmail.com>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-References: <20180105170959.17266-4-jbrunet@baylibre.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
-Date: Thu, 11 Jan 2018 17:08:18 -0600
-MIME-Version: 1.0
-In-Reply-To: <20180105170959.17266-4-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 21/34] clk: lpc32xx: change clk_hclk_pll_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:43:00 +0000
+Message-Id: <1514835793-1104-22-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05/2018 11:09 AM, Jerome Brunet wrote:
-> Like divider_round_rate, a couple a of driver are doing more or less
-> the same operation to round the rate of the divider when it is read-only.
-> 
-> We can factor this code so let's provide an helper function for this
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Perhaps you could also make use of this new helper here (clk-divider.c):
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-const struct clk_ops clk_divider_ro_ops = {
-	.recalc_rate = clk_divider_recalc_rate,
-	.round_rate = clk_divider_round_rate,
-};
-EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/clk/clk-divider.c    | 43 ++++++++++++++++++++++++++++---------------
->   include/linux/clk-provider.h | 15 +++++++++++++++
->   2 files changed, 43 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index a851d3e04c7f..3eb2b27f3513 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -344,29 +344,42 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
->   }
->   EXPORT_SYMBOL_GPL(divider_round_rate_parent);
->   
-
-It is nice to have documentation comments on public functions. Especially
-in this case where @prate is an in/out parameter and @table is optional.
-
-> +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> +				  unsigned long rate, unsigned long *prate,
-> +				  const struct clk_div_table *table, u8 width,
-> +				  unsigned long flags, unsigned int val)
-> +{
-> +	int div;
-> +
-> +	div = _get_div(table, val, flags, width);
-> +
-> +	/* Even a read-only clock can propagate a rate change */
-> +	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> +		if (!parent)
-> +			return -EINVAL;
-> +
-> +		*prate = clk_hw_round_rate(parent, rate * div);
-> +	}
-> +
-> +	return DIV_ROUND_UP_ULL((u64)*prate, div);
-> +}
-> +EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
-> +
-> +
->   static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->   				unsigned long *prate)
->   {
->   	struct clk_divider *divider = to_clk_divider(hw);
-> -	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
-> -	int bestdiv;
-> +	u32 val;
->   
->   	/* if read only, just return current value */
->   	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-> -		bestdiv = clk_readl(divider->reg) >> divider->shift;
-> -		bestdiv &= div_mask(divider->width);
-> -		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
-> -			divider->width);
-> -
-> -		/* Even a read-only clock can propagate a rate change */
-> -		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> -			if (!hw_parent)
-> -				return -EINVAL;
-> -
-> -			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
-> -		}
-> +		val = clk_readl(divider->reg) >> divider->shift;
-> +		val &= div_mask(divider->width);
->   
-> -		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
-> +		return divider_ro_round_rate(hw, rate, prate, divider->table,
-> +					     divider->width, divider->flags,
-> +					     val);
->   	}
->   
->   	return divider_round_rate(hw, rate, prate, divider->table,
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 175a62a15619..eb2c3a035e98 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -417,6 +417,10 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
->   			       unsigned long rate, unsigned long *prate,
->   			       const struct clk_div_table *table,
->   			       u8 width, unsigned long flags);
-> +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> +				  unsigned long rate, unsigned long *prate,
-> +				  const struct clk_div_table *table, u8 width,
-> +				  unsigned long flags, unsigned int val);
->   int divider_get_val(unsigned long rate, unsigned long parent_rate,
->   		const struct clk_div_table *table, u8 width,
->   		unsigned long flags);
-> @@ -772,6 +776,17 @@ static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
->   					 rate, prate, table, width, flags);
->   }
->   
-
-Same here (about documentation comment).
-
-> +static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
-> +					 unsigned long *prate,
-> +					 const struct clk_div_table *table,
-> +					 u8 width, unsigned long flags,
-> +					 unsigned int val)
-> +{
-> +	return divider_ro_round_rate_parent(hw, clk_hw_get_parent(hw),
-> +					    rate, prate, table, width, flags,
-> +					    val);
-> +}
-> +
->   /*
->    * FIXME clock api without lock protection
->    */
-> 
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 81ab57d..76c17f4 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -595,7 +595,7 @@ static unsigned long clk_hclk_pll_round_rate(struct clk_hw *hw,
+ 	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
+ 
+ 	if (rate > 266500000)
+-		return -EINVAL;
++		return 0;
+ 
+ 	/* Have to check all 20 possibilities to find the minimal M */
+ 	for (p_i = 4; p_i >= 0; p_i--) {
+@@ -622,7 +622,7 @@ static unsigned long clk_hclk_pll_round_rate(struct clk_hw *hw,
+ 	if (d == (u64)rate << 6) {
+ 		pr_err("%s: %lu: no valid PLL parameters are found\n",
+ 		       clk_hw_get_name(hw), rate);
+-		return -EINVAL;
++		return 0;
+ 	}
+ 
+ 	clk->m_div = m;
+-- 
+2.7.4
