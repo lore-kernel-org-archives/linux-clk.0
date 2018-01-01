@@ -1,61 +1,58 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, ABE Hiroshige <hiroshige.abe.zc@renesas.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add FDP clock
-Date: Tue, 02 Jan 2018 17:54:44 +0200
-Message-ID: <2397934.0Hfvr3l64P@avalon>
-In-Reply-To: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
-References: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 04/34] clk: omap2: change omap2_round_to_table_rate return logic
+Date: Mon,  1 Jan 2018 19:07:31 +0000
+Message-Id: <1514833681-30737-5-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Thank you for the patch.
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-On Tuesday, 2 January 2018 17:21:43 EET Geert Uytterhoeven wrote:
-> From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
-> 
-> This patch adds FDP1-0 clock to the R8A7796 SoC.
-> 
-> Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [geert: s/fdp0/fdp1-0/]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I can't verify the parent clock, but apart from that,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> This gets rid of the following error messages during boot and system
-> resume:
-> 
->     renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 119:
-> -2 rcar_fdp1 fe940000.fdp1: failed to add to PM domain a3vc: -2
-> 
-> To be queued in clk-renesas-for-v4.16.
-> ---
->  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> b/drivers/clk/renesas/r8a7796-cpg-mssr.c index
-> 83a68e51e4ec1d12..dfb267a92f2a20d3 100644
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -117,6 +117,7 @@ static const struct cpg_core_clk r8a7796_core_clks[]
-> __initconst = { };
-> 
->  static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-> +	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
->  	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
->  	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
->  	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
-
+diff --git a/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c b/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
+index e024600..ce3a33f 100644
+--- a/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
++++ b/arch/arm/mach-omap2/clkt2xxx_virt_prcm_set.c
+@@ -75,9 +75,9 @@ unsigned long omap2_round_to_table_rate(struct clk_hw *hw, unsigned long rate,
+ 					unsigned long *parent_rate)
+ {
+ 	const struct prcm_config *ptr;
+-	long highest_rate;
++	unsigned long highest_rate;
+ 
+-	highest_rate = -EINVAL;
++	highest_rate = 0;
+ 
+ 	for (ptr = rate_table; ptr->mpu_speed; ptr++) {
+ 		if (!(ptr->flags & cpu_mask))
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
