@@ -1,107 +1,53 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 22 Jan 2018 09:05:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/41] dt-bindings: clock: New bindings for TI Davinci
- PSC
-Message-ID: <20180122150503.ciavehj5dd22535n@rob-hp-laptop>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-10-git-send-email-david@lechnology.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1516468460-4908-10-git-send-email-david@lechnology.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
+	Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v3 15/34] clk: vc5: change vc5_dbl_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:42:54 +0000
+Message-Id: <1514835793-1104-16-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 20, 2018 at 11:13:48AM -0600, David Lechner wrote:
-> This adds a new binding for the Power Sleep Controller (PSC) for the
-> mach-davinci family of processors.
-> 
-> Note: Although TI Keystone has a very similar PSC, we are not using the
-> existing bindings. Keystone is using a legacy one-node-per-clock binding
-> (actually two nodes if you count the separate reset binding for the same
-> IP block). Also, some davinci LPSCs have quirks that aren't handled by
-> the keystone bindings, so we would be adding one compatible string per
-> clock with quirks instead of just a new compatible string for each
-> controller.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v6 changes:
-> - added clocks and clock-names properties
-> - expanded examples
-> 
->  .../devicetree/bindings/clock/ti/davinci/psc.txt   | 66 ++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-> new file mode 100644
-> index 0000000..0c2d2bd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-> @@ -0,0 +1,66 @@
-> +Binding for TI DaVinci Power Sleep Controller (PSC)
-> +
-> +The PSC provides power management, clock gating and reset functionality. It is
-> +primarily used for clocking.
-> +
-> +Required properties:
-> +- compatible: shall be one of:
-> +	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
-> +	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
-> +- reg: physical base address and size of the controller's register area
-> +- #clock-cells: from common clock binding; shall be set to 1
-> +- clocks: phandles to clocks corresponding to the clock-names property
-> +- clock-names: list of parent clock names - depends on compatible value
-> +	- for "ti,da850-psc0", shall be "pll0_sysclk1", "pll0_sysclk2",
-> +	  "pll0_sysclk4", "pll0_sysclk6", "async1"
-> +	- for "ti,da850-psc1", shall be "pll0_sysclk2", "pll0_sysclk4", "async3"
-> +
-> +Optional properties:
-> +- #reset-cells: from reset binding; shall be set to 1 - only applicable when
-> +  at least one local domain provides a local reset.
-> +
-> +Consumers:
-> +
-> +	Clock and reset consumers shall use the local power domain module ID
-> +	(LPSC) as the index corresponding to the clock cell. Refer to the
-> +	device-specific	datasheet to find these numbers. NB: Most local domains
-> +	only provide a clock and not a reset.
-> +
-> +Examples:
-> +
-> +	psc0: clock-controller@10000 {
-> +		compatible = "ti,da850-psc0";
-> +		reg = <0x10000 0x1000>;
-> +		#clock-cells = <1>;
-> +		#reset-cells = <1>;
-> +		clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
-> +			 <&pll0_sysclk 4>, <&pll0_sysclk 6>, <&async1_clk>;
-> +		clock_names = "pll0_sysclk1", "pll0_sysclk2",
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Should be clock-names
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> +			      "pll0_sysclk4", "pll0_sysclk6", "async1";
-> +	};
-> +	psc1: clock-controller@227000 {
-> +		compatible = "ti,da850-psc1";
-> +		reg = <0x227000 0x1000>;
-> +		#clock-cells = <1>;
-> +		clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>, <&async3_clk>;
-> +		clock_names = "pll0_sysclk2", "pll0_sysclk4", "async3";
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ditto
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 9432122..733b402 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -294,7 +294,7 @@ static unsigned long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
+ 		return rate;
+ 	else
+-		return -EINVAL;
++		return 0;
+ }
+ 
+ static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
