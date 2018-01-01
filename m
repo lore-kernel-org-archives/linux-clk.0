@@ -1,55 +1,63 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 14/37] ARM: dts: r8a7790: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:48 +0000
-Message-Id: <1516903391-30467-15-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Tony Prisk <linux@prisktech.co.nz>
+Subject: [PATCH v3 16/34] clk: vt8500: change vtwm_pll_round_rate() return logic
+Date: Mon,  1 Jan 2018 19:42:55 +0000
+Message-Id: <1514835793-1104-17-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Tony Prisk <linux@prisktech.co.nz>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-vt8500.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 8b34636..88ab60a 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -336,7 +336,8 @@
- 		};
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 43c88f6..750c087 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -610,7 +610,7 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_pll *pll = to_clk_pll(hw);
+ 	u32 filter, mul, div1, div2;
+ 	long round_rate;
+-	int ret;
++	int ret = 1;
  
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a7790-rst";
-+			compatible = "renesas,r8a7790-rst",
-+				     "renesas,rcar-gen2-rst";
- 			reg = <0 0xe6160000 0 0x0100>;
- 		};
+ 	switch (pll->type) {
+ 	case PLL_TYPE_VT8500:
+@@ -634,11 +634,11 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			round_rate = WM8850_BITS_TO_FREQ(*prate, mul, div1, div2);
+ 		break;
+ 	default:
+-		ret = -EINVAL;
++		break;
+ 	}
  
+ 	if (ret)
+-		return ret;
++		return 0;
+ 
+ 	return round_rate;
+ }
 -- 
 2.7.4
