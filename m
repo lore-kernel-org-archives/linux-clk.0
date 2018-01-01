@@ -1,62 +1,49 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 25/25] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-Date: Tue, 30 Jan 2018 20:22:58 +0000
-Message-Id: <1517343778-27902-26-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v3 30/34] clk: axs10x: change axs10x_pll_round_rate return logic
+Date: Mon,  1 Jan 2018 19:43:09 +0000
+Message-Id: <1514835793-1104-31-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
+
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-v1->v3:
-* no change
+ drivers/clk/axs10x/pll_clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index 8d0a392b..29b6e10 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -91,6 +91,11 @@
- 	};
- };
+diff --git a/drivers/clk/axs10x/pll_clock.c b/drivers/clk/axs10x/pll_clock.c
+index 27498eb..e90ae9e 100644
+--- a/drivers/clk/axs10x/pll_clock.c
++++ b/drivers/clk/axs10x/pll_clock.c
+@@ -162,7 +162,7 @@ static unsigned long axs10x_pll_round_rate(struct clk_hw *hw,
+ 	const struct axs10x_pll_cfg *pll_cfg = clk->pll_cfg;
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
- 	pinctrl-names = "default";
+ 	if (pll_cfg[0].rate == 0)
+-		return -EINVAL;
++		return 0;
+ 
+ 	best_rate = pll_cfg[0].rate;
+ 
 -- 
 2.7.4
