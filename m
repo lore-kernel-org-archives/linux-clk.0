@@ -1,85 +1,97 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Andrea Merello
-	<andrea.merello@gmail.com>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH v2 09/15] ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
-Date: Tue, 16 Jan 2018 13:30:53 +0100
-Message-ID: <1516105859-3525-10-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Subject: [PATCH v2 02/34] clk: core: update divider_round_rate functions to return unsigned long
+Date: Mon,  1 Jan 2018 19:07:29 +0000
+Message-Id: <1514833681-30737-3-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrea Merello <andrea.merello@gmail.com>
+Returning a long from round_rate() class functions is rooted in the notion
+that we will propagate a negative number on some class of failure to round
+a clock rate; however this approach does not scale to 32 bit systems which
+legitimately round a clock over LONG_MAX as the returned clock rate is
+indistinguishable from an error number.
 
-This patch adds SDIO-related DT nodes required by stm32f469 board
+A better approach is to return zero when we cannot round a clock and
+non-zero when we can - thus supporting the full range of the unsigned long
+rate input value to round_rate() functions.
 
-There is a hardware issue on these boards, it misses a pullup on
-the GPIO line used as card detect to allow correct SD card
-detection. To allow correct card detection "broken-cd" property
-is used.
+Update the signature of divider_round_rate functions to do this now.
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
+ drivers/clk/clk-divider.c    | 10 ++++++----
+ include/linux/clk-provider.h | 19 +++++++++++--------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
 
-v2 _ none
-
- arch/arm/boot/dts/stm32f469-disco.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
-index 318fb12..ebb97c3 100644
---- a/arch/arm/boot/dts/stm32f469-disco.dts
-+++ b/arch/arm/boot/dts/stm32f469-disco.dts
-@@ -66,6 +66,13 @@
- 		serial0 = &usart3;
- 	};
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index a26ec7c..e827304 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -332,10 +332,12 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 	return bestdiv;
+ }
  
-+	mmc_vcard: mmc_vcard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "mmc_vcard";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	soc {
- 		dma-ranges = <0xc0000000 0x0 0x10000000>;
- 	};
-@@ -120,6 +127,18 @@
- 	};
- };
+-long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+-			       unsigned long rate, unsigned long *prate,
+-			       const struct clk_div_table *table,
+-			       u8 width, unsigned long flags)
++unsigned long divider_round_rate_parent(struct clk_hw *hw,
++					struct clk_hw *parent,
++					unsigned long rate,
++					unsigned long *prate,
++					const struct clk_div_table *table,
++					u8 width, unsigned long flags)
+ {
+ 	int div;
  
-+&sdio {
-+	status = "okay";
-+	vmmc-supply = <&mmc_vcard>;
-+	cd-gpios = <&gpiog 2 0>;
-+	cd-inverted;
-+	broken-cd;
-+	pinctrl-names = "default", "opendrain";
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_pins_od>;
-+	bus-width = <4>;
-+};
-+
- &usart3 {
- 	pinctrl-0 = <&usart3_pins_a>;
- 	pinctrl-names = "default";
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 79b1d6e..e763d94 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -413,10 +413,12 @@ extern const struct clk_ops clk_divider_ro_ops;
+ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 		unsigned int val, const struct clk_div_table *table,
+ 		unsigned long flags);
+-long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+-			       unsigned long rate, unsigned long *prate,
+-			       const struct clk_div_table *table,
+-			       u8 width, unsigned long flags);
++unsigned long divider_round_rate_parent(struct clk_hw *hw,
++					struct clk_hw *parent,
++					unsigned long rate,
++					unsigned long *prate,
++					const struct clk_div_table *table,
++					u8 width, unsigned long flags);
+ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ 		const struct clk_div_table *table, u8 width,
+ 		unsigned long flags);
+@@ -762,10 +764,11 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ 	dst->core = src->core;
+ }
+ 
+-static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+-				      unsigned long *prate,
+-				      const struct clk_div_table *table,
+-				      u8 width, unsigned long flags)
++static inline unsigned long divider_round_rate(struct clk_hw *hw,
++					       unsigned long rate,
++					       unsigned long *prate,
++					       const struct clk_div_table *table,
++					       u8 width, unsigned long flags)
+ {
+ 	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
+ 					 rate, prate, table, width, flags);
 -- 
-1.9.1
+2.7.4
