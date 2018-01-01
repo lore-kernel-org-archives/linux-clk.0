@@ -1,57 +1,57 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 04/44] clk: davinci: Add platform information for TI
- DA850 PLL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-5-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <f9c0c0c5-ca81-ec0c-358d-f45299250f42@ti.com>
-Date: Tue, 16 Jan 2018 14:07:07 +0530
-MIME-Version: 1.0
-In-Reply-To: <1515377863-20358-5-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <pure.logic@nexus-software.ie>
+Return-Path: <pure.logic@nexus-software.ie>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v3 07/34] clk: axs10x: change i2s_pll_round_rate return logic
+Date: Mon,  1 Jan 2018 19:42:46 +0000
+Message-Id: <1514835793-1104-8-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:47 AM, David Lechner wrote:
-> +void __init da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1)
-> +{
-> +	const struct davinci_pll_divclk_info *info;
-> +
-> +	davinci_pll_clk_register("pll0", "ref_clk", pll0);
+This patch updates the round_rate() logic here to return zero instead of a
+negative number on error.
 
-I think this will be more readable with empty lines between these
-function calls. So here ..
+In conjunction with higher-level changes associated with acting on the
+return value of clk_ops->round_rate() it is then possible to have
+clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
+the current limitation of 1 Hz to LONG_MAX Hz.
 
-> +	davinci_pll_aux_clk_register("pll0_aux_clk", "ref_clk", pll0);
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/axs10x/i2s_pll_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-.. here
-
-> +	for (info = da850_pll0_divclk_info; info->name; info++)
-> +		davinci_pll_divclk_register(info, pll0);
-> +
-> +	davinci_pll_clk_register("pll1", "ref_clk", pll1);
-
-.. and here.
-
-> +	for (info = da850_pll1_divclk_info; info->name; info++)
-> +		davinci_pll_divclk_register(info, pll1);
-
-I see that you have included empty line only when changing the PLL, but
-I feel its more readable with the additional spacing suggested.
-
-Same comment for other patches too with similar function implemented.
-With that minor comment:
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
+index 061260c..20f7ebf 100644
+--- a/drivers/clk/axs10x/i2s_pll_clock.c
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -119,14 +119,14 @@ static unsigned long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (!pll_cfg) {
+ 		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
+-		return -EINVAL;
++		return 0;
+ 	}
+ 
+ 	for (i = 0; pll_cfg[i].rate != 0; i++)
+ 		if (pll_cfg[i].rate == rate)
+ 			return rate;
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.7.4
