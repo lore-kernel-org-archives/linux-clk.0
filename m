@@ -1,55 +1,46 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 13/37] ARM: dts: r8a7745: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:47 +0000
-Message-Id: <1516903391-30467-14-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:48628 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeABIKX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 03:10:23 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171230113043.30237-4-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 2 Jan 2018 16:09:57 +0800
+Message-ID: <CAGb2v65DiLg8QyT=BRHGJXUYLibP=wzYCj8ZW3hpWsF2miO2sA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 3/6] clk: sunxi-ng: add support for
+ Allwinner A64 DE2 CCU
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner A64's DE2 needs to claim a section of SRAM (SRAM C) to work.
+>
+> Add support for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v4:
+> - Use a struct to maintain both ccu desc and quirks as Chen-Yu Tsai
+>   suggested.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This made the patch slightly messy. Could you split it into two patches?
+The first just adds the struct (without the sram_needed field) and migrates
+everything to that. This patch should mention it is preperation for the
+next patch, which adds the a field to the struct (otherwise it makes no
+sense and just looks like churn.) The second patch will add the .sram_needed
+field and support for the A64 DE2 CCU.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 32e8784..9009056 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -317,7 +317,8 @@
- 		};
- 
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a7745-rst";
-+			compatible = "renesas,r8a7745-rst",
-+				     "renesas,rcar-gen2-rst";
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
--- 
-2.7.4
+
+Thanks
+ChenYu
