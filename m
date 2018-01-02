@@ -1,42 +1,58 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
-To: Adam Ford <aford173@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-3-git-send-email-david@lechnology.com>
- <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
- <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
- <CAHCN7xK44_zv27xe5yxL8Efey=VC-nypK6hY6VWqsoLqnKe04g@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c5cea4a3-0e52-d9ce-339b-b3dcd1be5a42@lechnology.com>
-Date: Fri, 12 Jan 2018 09:48:31 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:48738 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751386AbeABIav (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 03:30:51 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xK44_zv27xe5yxL8Efey=VC-nypK6hY6VWqsoLqnKe04g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20171230113043.30237-6-icenowy@aosc.io>
+References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-6-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 2 Jan 2018 16:30:25 +0800
+Message-ID: <CAGb2v67XbeyWDcCBjaVygSAHbAk25spRVkWAS3dAU6DbwkGzOg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 5/6] arm64: allwinner: a64: add simplefb
+ for A64 SoC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/12/2018 09:30 AM, Adam Ford wrote:
-> On Fri, Jan 12, 2018 at 9:25 AM, David Lechner <david@lechnology.com> wrote:
->>
->> Yes, I noticed that I missed this after I submitted this series. And I
->> will have to rework things to coordinate with the PLL as mentioned above.
->>
->> FYI, I do have cpufreq-dt working, although the LEGO EV3 has a fixed 1.2V
->> regulator, so I am limited in what I can test. Basically, I can only switch
-> 
-> I can test the cpufreq-dt.  Are there additional patches or are they
-> part of the same git repo I have been testing?
-> 
-> The DA850 I have may not run all the way to highest speed, but I'll
-> see what I can find.  I think I had a few at one point, but I don't
-> think it was part of Logic PD's standard product lineup.
-> 
+On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> The A64 SoC features two display pipelines, one has a LCD output, the
+> other has a HDMI output.
+>
+> Add support for simplefb for these pipelines on A64 SoC.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v4:
+> - Dropped extra clocks.
+> - Added labels to the SimpleFB device tree nodes as boards may have
+>   extra regulator for display pipeline.
+>
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index fb8ea7c414e1..d803c115d362 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -42,9 +42,11 @@
+>   *     OTHER DEALINGS IN THE SOFTWARE.
+>   */
+>
+> +#include <dt-bindings/clock/sun8i-de2.h>
+>  #include <dt-bindings/clock/sun50i-a64-ccu.h>
+>  #include <dt-bindings/clock/sun8i-r-ccu.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/reset/sun8i-de2.h>
 
-There are some extra patches I have not submitted yet. However, based on the
-other comments here, I don't have things implemented correctly, so you probably
-want to wait to test until I get that straightened out anyway.
+Nit: This isn't used anywhere. Please add it when DE2 DRM support is added.
+
+ChenYu
