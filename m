@@ -1,111 +1,127 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 11/44] clk: davinci: Add platform information for TI
- DA830 PSC
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-12-git-send-email-david@lechnology.com>
- <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
- <4dd36ca7-e41d-58d8-ec8c-787978307943@lechnology.com>
- <86581de6-a982-7a7b-9a83-22c869417211@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <72abb187-1c84-f307-d4f8-be5403787bac@lechnology.com>
-Date: Wed, 17 Jan 2018 11:32:31 -0600
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 15:28:11 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com,
+	uclinux-h8-devel@lists.sourceforge.jp,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to return unsigned
+ long
+Message-ID: <20180102232811.GN7997@codeaurora.org>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+ <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
+ <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
+ <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
+ <20180102190159.GH7997@codeaurora.org>
+ <c2212d56-a8b5-cba5-46a7-c2c7f66e752b@nexus-software.ie>
 MIME-Version: 1.0
-In-Reply-To: <86581de6-a982-7a7b-9a83-22c869417211@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c2212d56-a8b5-cba5-46a7-c2c7f66e752b@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/17/2018 06:18 AM, Sekhar Nori wrote:
-> On Tuesday 16 January 2018 10:46 PM, David Lechner wrote:
+On 01/02, Bryan O'Donoghue wrote:
+> On 02/01/18 19:01, Stephen Boyd wrote:
+> >On 12/31, Bryan O'Donoghue wrote:
+> >>On 30/12/17 16:36, Mikko Perttunen wrote:
+> >>>FWIW, we had this problem some years ago with the Tegra CPU clock
+> >>>- then it was determined that a simpler solution was to have the
+> >>>determine_rate callback support unsigned long rates - so clock
+> >>>drivers that need to return rates higher than 2^31 can instead
+> >>>implement the determine_rate callback. That is what's currently
+> >>>implemented.
+> >>>
+> >>>Mikko
+> >>
+> >>Granted we could work around it but, having both zero and less than
+> >>zero indicate error means you can't support larger than LONG_MAX
+> >>which is I think worth fixing.
+> >>
+> >
+> >Ok. But can you implement the determine_rate op instead of the
+> >round_rate op for your clk?
 > 
->>>> +static const struct davinci_psc_clk_info da830_psc0_info[]
->>>> __initconst = {
->>>> +    LPSC(0, 0, tpcc, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(4, 0, spi0, pll0_sysclk2, 0),
->>>> +    LPSC(5, 0, mmcsd, pll0_sysclk2, 0),
->>>> +    LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(8, 0, secu_mgr, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(9, 0, uart0, pll0_sysclk2, 0),
->>>> +    LPSC(10, 0, scr0_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(11, 0, scr1_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(12, 0, scr2_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> +    LPSC(13, 0, dmax, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>
->>> pruss is better (I know the name is coming from existing code).
->>>
->>>> +    LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
->>>
->>> This is LPSC 15 which controls DSP too. But its missing from existing
->>> code. Not sure why. Probably a note for future. For now okay with
->>> ignoring it.
->>>
->>>> +    { }
->>>> +};
->>>
->>> Tables like these are much easier to parse if columns are spaced using a
->>> tab.
->>>
->>
->> Tabs make the lines over 80 columns. How about spaces instead?
-> 
-> That works for me. I guess checkpatch will complain, but hopefully
-> maintainers will agree on the exception.
-> 
->>>> +void __init da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->>>> +{
->>>> +    struct clk_onecell_data *clk_data;
->>>> +
->>>> +    clk_data = davinci_psc_register_clocks(psc0, da830_psc0_info, 16);
->>>> +    if (!clk_data)
->>>> +        return;
->>>> +
->>>> +    clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->>>> +    clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->>>> +    clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->>>> +    clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->>>> +
->>>> +    clk_free_onecell_data(clk_data);
->>>> +
->>>> +    clk_data = davinci_psc_register_clocks(psc1, da830_psc1_info, 32);
->>>> +    if (!clk_data)
->>>> +        return;
->>>> +
->>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
->>>> +    clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
->>>> +    clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
->>>
->>> This is pretty bad (and no fault of yours) - having a con_id but no
->>> device name. Can you please make a pre-series which passes NULL con_id
->>> in gpio-davinci.c?
->>
->> I'll give it a try. This is complicated by the fact that the con_id has
->> made it's way into the device tree bindings. However, I think we can
->> safely deprecate clock-names = "gpio" in the device tree bindings since
->> we can make the driver ignore that property to preserve backwards
->> compatibility.
+> Don't know .
 
-Agreed.
+Please try.
 
-> I don't think this breaks DT-backward compatibility. Passing a NULL
-> con_id in driver should find the clock for that device even if DT entry
-> has clock-names present. As far as I can read clk_find().
 > 
-> The less intrusive alternate is to add the GPIO device name in the table
-> here, while keeping the con_id and keeping the driver untouched. The
-> advantage of that is lesser number of dependent patches for this series
-> to go in.
+> >It's not a work-around, it's the
+> >preferred solution. That would allow rates larger than 2^31 for
+> >the clk without pushing through a change to all the drivers to
+> >express zero as "error" and non-zero as the rounded rate.
+> >
+> >I'm not entirely opposed to this approach, because we probably
+> >don't care to pass the particular error value from a clk provider
+> >to a clk consumer about what the error is.
 > 
-> Later once CCF conversion has been there in the kernel for one full
-> release and no regressions, these other clean-ups can be done.
+> Which was my thought. The return value of clk_ops->round_rate()
+> appears not to get pushed up the stack, which is what the last patch
+> in this series deals with.
+> 
+> [PATCH 33/33] clk: change handling of round_rate() such that only
+> zero is an error
 
-I like this approach.
+Hmm? clk_core_determine_round_nolock() returns 'rate' if rate < 0
+from the round_rate op. clk_core_round_rate_nolock() returns that
+value to clk_round_rate() which returns it to the consumer.
+
+> 
+> >It's actually what we
+> >proposed as the solution for clk_round_rate() to return values
+> >larger than LONG_MAX to consumers. But doing that consumer API
+> >change or this provider side change is going to require us to
+> >evaluate all the consumers of these clks to make sure they don't
+> >check for some error value that's less than zero. This series
+> >does half the work,
+> 
+> Do you mean users of clk_rounda_rate() ? I have a set of patches for
+> that but wanted to separate that from clk_ops->round_rate() so as
+> not to send ~70 patches out to LKML at once - even if they are in
+> two blocks.
+
+Ok. What have you done to the consumers of clk_round_rate()?
+Made them treat 0 as an error instead of less than zero? The
+documentation in clk.h needs to be updated. See this patch from
+Paul Wamsley[1] for one proposed patch that went nowhere. Also
+include Russell King please. It was also proposed to change the
+function signature of clk_round_rate() to return unsigned long,
+but that didn't go anywhere either.
+
+> 
+> If so, I can publish that set too for reference.
+> 
+> AFAICT on clk_ops->round_rate the last patch #33 ought to cover the
+> usage of the return value of clk_ops->round_rate().
+> 
+> Have I missed something ?
+
+Hopefully not!
+
+> 
+> >by changing the provider side, while ignoring
+> >the consumer side and any potential fallout of the less than zero
+> >to zero return value change.
+> >
+> 
+> Can you look at #33 ? I'm not sure if you saw that one.
+> 
+
+Yeah I looked at it. From what I can tell it makes
+clk_round_rate() return 0 now instead of whatever negative value
+the clk_ops::round_rate function returns.
+
+[1] https://lkml.kernel.org/r/alpine.DEB.2.02.1311251603310.23090@tamien
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
