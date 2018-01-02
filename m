@@ -1,256 +1,153 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] clk: meson: remove useless pll rate param tables
-Date: Thu, 18 Jan 2018 19:45:25 +0100
-Message-Id: <20180118184532.6856-3-jbrunet@baylibre.com>
-In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
-References: <20180118184532.6856-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:57292 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753435AbeABPJK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:10 -0500
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 10/15] MIPS: ingenic: Add machine info for supported boards
+Date: Tue,  2 Jan 2018 16:08:43 +0100
+Message-Id: <20180102150848.11314-10-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Read-only pll don't need param table to recalculate the rate. Providing
-them with a param table is just a waste of memory.
+This makes sure that 'mips_machtype' will be initialized to the SoC
+version used on the board.
 
-Remove the useless tables from sys_pll on gxbb and axg.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/meson/axg.c  | 94 ------------------------------------------------
- drivers/clk/meson/gxbb.c | 94 ------------------------------------------------
- 2 files changed, 188 deletions(-)
+ arch/mips/Kconfig         |  1 +
+ arch/mips/jz4740/Makefile |  2 +-
+ arch/mips/jz4740/boards.c | 12 ++++++++++++
+ arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
+ 4 files changed, 43 insertions(+), 6 deletions(-)
+ create mode 100644 arch/mips/jz4740/boards.c
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 02f4401d7bc3..56806c6bd9d5 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -21,98 +21,6 @@
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: Use SPDX license identifier
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 350a990fc719..83243e427e36 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -376,6 +376,7 @@ config MACH_INGENIC
+ 	select BUILTIN_DTB
+ 	select USE_OF
+ 	select LIBFDT
++	select MIPS_MACHINE
  
- static DEFINE_SPINLOCK(meson_clk_lock);
+ config LANTIQ
+ 	bool "Lantiq based platforms"
+diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
+index 88d6aa7d000b..fc2d3b3c4a80 100644
+--- a/arch/mips/jz4740/Makefile
++++ b/arch/mips/jz4740/Makefile
+@@ -6,7 +6,7 @@
+ # Object file lists.
  
--static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(24000000, 56, 1, 2),
--	PLL_RATE(48000000, 64, 1, 2),
--	PLL_RATE(72000000, 72, 1, 2),
--	PLL_RATE(96000000, 64, 1, 2),
--	PLL_RATE(120000000, 80, 1, 2),
--	PLL_RATE(144000000, 96, 1, 2),
--	PLL_RATE(168000000, 56, 1, 1),
--	PLL_RATE(192000000, 64, 1, 1),
--	PLL_RATE(216000000, 72, 1, 1),
--	PLL_RATE(240000000, 80, 1, 1),
--	PLL_RATE(264000000, 88, 1, 1),
--	PLL_RATE(288000000, 96, 1, 1),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(408000000, 68, 1, 2),
--	PLL_RATE(432000000, 72, 1, 2),
--	PLL_RATE(456000000, 76, 1, 2),
--	PLL_RATE(480000000, 80, 1, 2),
--	PLL_RATE(504000000, 84, 1, 2),
--	PLL_RATE(528000000, 88, 1, 2),
--	PLL_RATE(552000000, 92, 1, 2),
--	PLL_RATE(576000000, 96, 1, 2),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(840000000, 70, 1, 1),
--	PLL_RATE(864000000, 72, 1, 1),
--	PLL_RATE(888000000, 74, 1, 1),
--	PLL_RATE(912000000, 76, 1, 1),
--	PLL_RATE(936000000, 78, 1, 1),
--	PLL_RATE(960000000, 80, 1, 1),
--	PLL_RATE(984000000, 82, 1, 1),
--	PLL_RATE(1008000000, 84, 1, 1),
--	PLL_RATE(1032000000, 86, 1, 1),
--	PLL_RATE(1056000000, 88, 1, 1),
--	PLL_RATE(1080000000, 90, 1, 1),
--	PLL_RATE(1104000000, 92, 1, 1),
--	PLL_RATE(1128000000, 94, 1, 1),
--	PLL_RATE(1152000000, 96, 1, 1),
--	PLL_RATE(1176000000, 98, 1, 1),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
--	PLL_RATE(1560000000, 65, 1, 0),
--	PLL_RATE(1584000000, 66, 1, 0),
--	PLL_RATE(1608000000, 67, 1, 0),
--	PLL_RATE(1632000000, 68, 1, 0),
--	PLL_RATE(1656000000, 68, 1, 0),
--	PLL_RATE(1680000000, 68, 1, 0),
--	PLL_RATE(1704000000, 68, 1, 0),
--	PLL_RATE(1728000000, 69, 1, 0),
--	PLL_RATE(1752000000, 69, 1, 0),
--	PLL_RATE(1776000000, 69, 1, 0),
--	PLL_RATE(1800000000, 69, 1, 0),
--	PLL_RATE(1824000000, 70, 1, 0),
--	PLL_RATE(1848000000, 70, 1, 0),
--	PLL_RATE(1872000000, 70, 1, 0),
--	PLL_RATE(1896000000, 70, 1, 0),
--	PLL_RATE(1920000000, 71, 1, 0),
--	PLL_RATE(1944000000, 71, 1, 0),
--	PLL_RATE(1968000000, 71, 1, 0),
--	PLL_RATE(1992000000, 71, 1, 0),
--	PLL_RATE(2016000000, 72, 1, 0),
--	PLL_RATE(2040000000, 72, 1, 0),
--	PLL_RATE(2064000000, 72, 1, 0),
--	PLL_RATE(2088000000, 72, 1, 0),
--	PLL_RATE(2112000000, 73, 1, 0),
--	{ /* sentinel */ },
--};
+ obj-y += prom.o time.o reset.o setup.o \
+-	platform.o timer.o
++	platform.o timer.o boards.o
+ 
+ CFLAGS_setup.o = -I$(src)/../../../scripts/dtc/libfdt
+ 
+diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
+new file mode 100644
+index 000000000000..13b0bddd8cb7
+--- /dev/null
++++ b/arch/mips/jz4740/boards.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Ingenic boards support
++ * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
++ */
++
++#include <asm/bootinfo.h>
++#include <asm/mips_machine.h>
++
++MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
++MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
++			"Imagination Technologies CI20", NULL);
+diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+index 6d0152321819..afd84ee966e8 100644
+--- a/arch/mips/jz4740/setup.c
++++ b/arch/mips/jz4740/setup.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_fdt.h>
+ 
+ #include <asm/bootinfo.h>
++#include <asm/mips_machine.h>
+ #include <asm/prom.h>
+ 
+ #include <asm/mach-jz4740/base.h>
+@@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
+ 	add_memory_region(0, size, BOOT_MEM_RAM);
+ }
+ 
++static unsigned long __init get_board_mach_type(const void *fdt)
++{
++	const struct mips_machine *mach;
++
++	for (mach = (struct mips_machine *)&__mips_machines_start;
++			mach < (struct mips_machine *)&__mips_machines_end;
++			mach++) {
++		if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
++			return mach->mach_type;
++	}
++
++	return MACH_INGENIC_JZ4740;
++}
++
+ void __init plat_mem_setup(void)
+ {
+ 	int offset;
+ 
++	if (!early_init_dt_scan(__dtb_start))
++		return;
++
+ 	jz4740_reset_init();
+-	__dt_setup_arch(__dtb_start);
+ 
+ 	offset = fdt_path_offset(__dtb_start, "/memory");
+ 	if (offset < 0)
+ 		jz4740_detect_mem();
++
++	mips_machtype = get_board_mach_type(__dtb_start);
+ }
+ 
+ void __init device_tree_init(void)
+@@ -75,13 +94,18 @@ void __init device_tree_init(void)
+ 
+ const char *get_system_type(void)
+ {
+-	if (IS_ENABLED(CONFIG_MACH_JZ4780))
+-		return "JZ4780";
 -
- static struct meson_clk_pll axg_fixed_pll = {
- 	.m = {
- 		.reg_off = HHI_MPLL_CNTL,
-@@ -154,8 +62,6 @@ static struct meson_clk_pll axg_sys_pll = {
- 		.shift   = 10,
- 		.width   = 2,
- 	},
--	.rate_table = sys_pll_rate_table,
--	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 472a3cfbfbc5..2d851bad13fa 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -29,98 +29,6 @@
+-	return "JZ4740";
++	return mips_get_machine_name();
+ }
  
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(24000000, 56, 1, 2),
--	PLL_RATE(48000000, 64, 1, 2),
--	PLL_RATE(72000000, 72, 1, 2),
--	PLL_RATE(96000000, 64, 1, 2),
--	PLL_RATE(120000000, 80, 1, 2),
--	PLL_RATE(144000000, 96, 1, 2),
--	PLL_RATE(168000000, 56, 1, 1),
--	PLL_RATE(192000000, 64, 1, 1),
--	PLL_RATE(216000000, 72, 1, 1),
--	PLL_RATE(240000000, 80, 1, 1),
--	PLL_RATE(264000000, 88, 1, 1),
--	PLL_RATE(288000000, 96, 1, 1),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(408000000, 68, 1, 2),
--	PLL_RATE(432000000, 72, 1, 2),
--	PLL_RATE(456000000, 76, 1, 2),
--	PLL_RATE(480000000, 80, 1, 2),
--	PLL_RATE(504000000, 84, 1, 2),
--	PLL_RATE(528000000, 88, 1, 2),
--	PLL_RATE(552000000, 92, 1, 2),
--	PLL_RATE(576000000, 96, 1, 2),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(840000000, 70, 1, 1),
--	PLL_RATE(864000000, 72, 1, 1),
--	PLL_RATE(888000000, 74, 1, 1),
--	PLL_RATE(912000000, 76, 1, 1),
--	PLL_RATE(936000000, 78, 1, 1),
--	PLL_RATE(960000000, 80, 1, 1),
--	PLL_RATE(984000000, 82, 1, 1),
--	PLL_RATE(1008000000, 84, 1, 1),
--	PLL_RATE(1032000000, 86, 1, 1),
--	PLL_RATE(1056000000, 88, 1, 1),
--	PLL_RATE(1080000000, 90, 1, 1),
--	PLL_RATE(1104000000, 92, 1, 1),
--	PLL_RATE(1128000000, 94, 1, 1),
--	PLL_RATE(1152000000, 96, 1, 1),
--	PLL_RATE(1176000000, 98, 1, 1),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
--	PLL_RATE(1560000000, 65, 1, 0),
--	PLL_RATE(1584000000, 66, 1, 0),
--	PLL_RATE(1608000000, 67, 1, 0),
--	PLL_RATE(1632000000, 68, 1, 0),
--	PLL_RATE(1656000000, 68, 1, 0),
--	PLL_RATE(1680000000, 68, 1, 0),
--	PLL_RATE(1704000000, 68, 1, 0),
--	PLL_RATE(1728000000, 69, 1, 0),
--	PLL_RATE(1752000000, 69, 1, 0),
--	PLL_RATE(1776000000, 69, 1, 0),
--	PLL_RATE(1800000000, 69, 1, 0),
--	PLL_RATE(1824000000, 70, 1, 0),
--	PLL_RATE(1848000000, 70, 1, 0),
--	PLL_RATE(1872000000, 70, 1, 0),
--	PLL_RATE(1896000000, 70, 1, 0),
--	PLL_RATE(1920000000, 71, 1, 0),
--	PLL_RATE(1944000000, 71, 1, 0),
--	PLL_RATE(1968000000, 71, 1, 0),
--	PLL_RATE(1992000000, 71, 1, 0),
--	PLL_RATE(2016000000, 72, 1, 0),
--	PLL_RATE(2040000000, 72, 1, 0),
--	PLL_RATE(2064000000, 72, 1, 0),
--	PLL_RATE(2088000000, 72, 1, 0),
--	PLL_RATE(2112000000, 73, 1, 0),
--	{ /* sentinel */ },
--};
--
- static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
- 	PLL_RATE(96000000, 32, 1, 3),
- 	PLL_RATE(99000000, 33, 1, 3),
-@@ -356,8 +264,6 @@ static struct meson_clk_pll gxbb_sys_pll = {
- 		.shift   = 10,
- 		.width   = 2,
- 	},
--	.rate_table = sys_pll_rate_table,
--	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
+ void __init arch_init_irq(void)
+ {
+ 	irqchip_init();
+ }
++
++static int __init jz4740_machine_setup(void)
++{
++	mips_machine_setup();
++
++	return 0;
++}
++arch_initcall(jz4740_machine_setup);
 -- 
-2.14.3
+2.11.0
+
