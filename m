@@ -1,72 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12386 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbeAYM0S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 07:26:18 -0500
-Date: Thu, 25 Jan 2018 14:26:13 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
- Tegra210
-Message-ID: <20180125122613.GM7031@tbergstrom-lnx.Nvidia.com>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
- <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
- <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
- <fe422430-cb85-c28d-404b-98e7b87c15e0@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 14:59:55 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] clk: ingenic: Add JZ47xx TCU clocks driver
+Message-ID: <20180102225955.GL7997@codeaurora.org>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+ <20180101143344.2099-1-paul@crapouillou.net>
+ <20180101143344.2099-4-paul@crapouillou.net>
+ <20180102191356.GI7997@codeaurora.org>
+ <1514923719.15685.0@smtp.crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <fe422430-cb85-c28d-404b-98e7b87c15e0@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514923719.15685.0@smtp.crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 10:57:36AM +0000, Jon Hunter wrote:
+On 01/02, Paul Cercueil wrote:
+> >> +		goto err_free_tcu;
+> >> +	}
+> >> +
+> >> +	tcu->clocks.clk_num = nb_clks;
+> >> +	tcu->clocks.clks = kcalloc(nb_clks, sizeof(struct clk *),
+> >>GFP_KERNEL);
+> >> +	if (!tcu->clocks.clks) {
+> >> +		pr_err("%s: cannot allocate memory\n", __func__);
+> >
+> >We don't need allocation error messages. Please run checkpatch.
 > 
-> On 25/01/18 10:06, Peter De Schrijver wrote:
-> > On Wed, Jan 24, 2018 at 10:43:45PM +0000, Jon Hunter wrote:
-> >>
-> >> On 23/01/18 09:22, Peter De Schrijver wrote:
-> >>> Apply the memory built-in self test work around when ungating certain
-> >>> Tegra210 power domains.
-> >>
-> >> Nit-pick .. typo in $subject.
-> >>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/soc/tegra/pmc.c | 5 +++++
-> >>>  1 file changed, 5 insertions(+)
-> >>>
-> >>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> >>> index ce62a47..c4eff4b 100644
-> >>> --- a/drivers/soc/tegra/pmc.c
-> >>> +++ b/drivers/soc/tegra/pmc.c
-> >>> @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
-> >>>  
-> >>>  	bool has_tsense_reset;
-> >>>  	bool has_gpu_clamps;
-> >>> +	bool needs_mbist_war;
-> >>>  
-> >>>  	const struct tegra_io_pad_soc *io_pads;
-> >>>  	unsigned int num_io_pads;
-> >>> @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
-> >>>  
-> >>>  	usleep_range(10, 20);
-> >>>  
-> >>> +	if (pg->pmc->soc->needs_mbist_war)
-> >>> +		tegra210_clk_handle_mbist_war(pg->id);
-> >>> +
-> >>
-> >> Be good if we could return an error from the above function.
-> >>
-> > 
-> > We need to also undo whatever we did before then. 
+> I did run checkpatch, which warned about this, but that's a false
+> positive to me.
+> The callback passed to CLK_OF_DECLARE() has a return type void, so
+> there's no
+> way I can return -ENOMEM, and I don't want the error to be unnoticed.
+
+The kernel typically spews a bunch of information when an
+allocation error happens, so your pr_err() will be lost in the
+spew, which is why it's not really necessary.
+
 > 
-> I think it is fine if on error you 'goto disable_clks'.
+> About the other remarks - I agree with you, I'll fix these in the V2.
+> 
 
-Shouldn't we do this for tegra_powergate_reset_deassert() failure as well then?
-Also in case of tegra_powergate_enable_clocks() failure we should probably jump
-to powergate_off because tegra_powergate_enable_clocks() will disable the
-already enabled clocks on failure.
+Ok.
 
-Peter.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
