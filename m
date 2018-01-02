@@ -1,64 +1,67 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>
-Subject: [PATCH 1/5] clk: divider: read-only divider can propagate rate change
-Date: Fri,  5 Jan 2018 18:09:55 +0100
-Message-Id: <20180105170959.17266-2-jbrunet@baylibre.com>
-In-Reply-To: <20180105170959.17266-1-jbrunet@baylibre.com>
-References: <20180105170959.17266-1-jbrunet@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 03/15] clk: ingenic: support PLLs with no bypass bit
+Date: Tue,  2 Jan 2018 16:08:36 +0100
+Message-Id: <20180102150848.11314-3-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
-register shall be left un-touched, but it does not mean the clock
-should stop rate propagation if CLK_SET_RATE_PARENT is set
+The second PLL of the JZ4770 does not have a bypass bit.
+This commit makes it possible to support it with the current common CGU
+code.
 
-This is properly handled in qcom clk-regmap-divider but it was not in
-the generic divider
-
-Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk-divider.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/ingenic/cgu.c | 3 ++-
+ drivers/clk/ingenic/cgu.h | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index b49942b9fe50..a851d3e04c7f 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -348,6 +348,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
- {
- 	struct clk_divider *divider = to_clk_divider(hw);
-+	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
- 	int bestdiv;
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: No change
+
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index a2e73a6d60fd..381c4a17a1fc 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -100,7 +100,8 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	n += pll_info->n_offset;
+ 	od_enc = ctl >> pll_info->od_shift;
+ 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+-	bypass = !!(ctl & BIT(pll_info->bypass_bit));
++	bypass = !pll_info->no_bypass_bit &&
++		 !!(ctl & BIT(pll_info->bypass_bit));
+ 	enable = !!(ctl & BIT(pll_info->enable_bit));
  
- 	/* if read only, just return current value */
-@@ -356,6 +357,15 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 		bestdiv &= div_mask(divider->width);
- 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
- 			divider->width);
-+
-+		/* Even a read-only clock can propagate a rate change */
-+		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-+			if (!hw_parent)
-+				return -EINVAL;
-+
-+			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
-+		}
-+
- 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
- 	}
+ 	if (bypass)
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index f1527cf75b3f..9da34910bd80 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -48,6 +48,7 @@
+  * @bypass_bit: the index of the bypass bit in the PLL control register
+  * @enable_bit: the index of the enable bit in the PLL control register
+  * @stable_bit: the index of the stable bit in the PLL control register
++ * @no_bypass_bit: if set, the PLL has no bypass functionality
+  */
+ struct ingenic_cgu_pll_info {
+ 	unsigned reg;
+@@ -58,6 +59,7 @@ struct ingenic_cgu_pll_info {
+ 	u8 bypass_bit;
+ 	u8 enable_bit;
+ 	u8 stable_bit;
++	bool no_bypass_bit;
+ };
  
+ /**
 -- 
-2.14.3
+2.11.0
