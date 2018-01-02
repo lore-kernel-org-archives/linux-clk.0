@@ -1,163 +1,174 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 26/41] ARM: da8xx: add new USB PHY clock init using common clock framework
-Date: Sat, 20 Jan 2018 11:14:05 -0600
-Message-Id: <1516468460-4908-27-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 15/15] MIPS: ingenic: Initial GCW Zero support
+Date: Tue,  2 Jan 2018 16:08:48 +0100
+Message-Id: <20180102150848.11314-15-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new USB PHY clock init in mach-davinci/usb-da8xx.c using
-the new common clock framework drivers.
+The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
+handheld game console, successfully kickstarted in ~2012, running Linux.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
+ arch/mips/boot/dts/ingenic/Makefile |  1 +
+ arch/mips/boot/dts/ingenic/gcw0.dts | 61 +++++++++++++++++++++++++++++++++++++
+ arch/mips/configs/gcw0_defconfig    | 27 ++++++++++++++++
+ arch/mips/jz4740/Kconfig            |  4 +++
+ arch/mips/jz4740/boards.c           |  1 +
+ 5 files changed, 94 insertions(+)
+ create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
+ create mode 100644 arch/mips/configs/gcw0_defconfig
 
-v6 changes:
-- rename stuff to match changes in "clk: davinci: New driver for TI DA8XX USB
-  PHY clocks"
-- take advantage of syscon lookup changes in "mfd: syscon: Add syscon_register()
-  function"
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: Use SPDX license identifier
+     Drop custom CROSS_COMPILE from defconfig
 
- arch/arm/mach-davinci/usb-da8xx.c | 78 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index fb31f6e..b960609 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -2,28 +2,36 @@
- /*
-  * DA8xx USB
-  */
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/init.h>
- #include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_data/usb-davinci.h>
- #include <linux/platform_device.h>
- #include <linux/usb/musb.h>
+diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
+index 6a31759839b4..5b1361a89e02 100644
+--- a/arch/mips/boot/dts/ingenic/Makefile
++++ b/arch/mips/boot/dts/ingenic/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
++dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
+ dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
  
--#include <mach/clock.h>
- #include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/da8xx.h>
- #include <mach/irqs.h>
+ obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
+new file mode 100644
+index 000000000000..4dc72de387db
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/gcw0.dts
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include "jz4770.dtsi"
++
++/ {
++	compatible = "gcw,zero", "ingenic,jz4770";
++
++	aliases {
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &uart2;
++		serial3 = &uart3;
++	};
++
++	chosen {
++		stdout-path = "serial2:57600n8";
++	};
++
++	board {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		ranges = <>;
++
++		otg_phy: otg-phy {
++			compatible = "usb-nop-xceiv";
++			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
++			clock-names = "main_clk";
++		};
++	};
++};
++
++&ext {
++	clock-frequency = <12000000>;
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&cgu {
++	/* Put high-speed peripherals under PLL1, such that we can change the
++	 * PLL0 frequency on demand without having to suspend peripherals.
++	 * We use a rate of 432 MHz, which is the least common multiple of
++	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
++	 */
++	assigned-clocks =
++		<&cgu JZ4770_CLK_PLL1>,
++		<&cgu JZ4770_CLK_UHC>;
++	assigned-clock-parents =
++		<0>,
++		<&cgu JZ4770_CLK_PLL1>;
++	assigned-clock-rates =
++		<432000000>;
++};
++
++&uhc {
++	/* The WiFi module is connected to the UHC. */
++	status = "okay";
++};
+diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
+new file mode 100644
+index 000000000000..99ac1fa3b35f
+--- /dev/null
++++ b/arch/mips/configs/gcw0_defconfig
+@@ -0,0 +1,27 @@
++CONFIG_MACH_INGENIC=y
++CONFIG_JZ4770_GCW0=y
++CONFIG_HIGHMEM=y
++# CONFIG_BOUNCE is not set
++CONFIG_PREEMPT_VOLUNTARY=y
++# CONFIG_SECCOMP is not set
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_EMBEDDED=y
++# CONFIG_BLK_DEV_BSG is not set
++# CONFIG_SUSPEND is not set
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_NETDEVICES=y
++CONFIG_SERIAL_8250=y
++# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_INGENIC=y
++CONFIG_USB=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_HCD_PLATFORM=y
++CONFIG_NOP_USB_XCEIV=y
++CONFIG_TMPFS=y
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 29a9361a2b77..4dd0c446ecec 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -8,6 +8,10 @@ config JZ4740_QI_LB60
+ 	bool "Qi Hardware Ben NanoNote"
+ 	select MACH_JZ4740
  
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
-+#endif
++config JZ4770_GCW0
++	bool "Game Consoles Worldwide GCW Zero"
++	select MACH_JZ4770
++
+ config JZ4780_CI20
+ 	bool "MIPS Creator CI20"
+ 	select MACH_JZ4780
+diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
+index 13b0bddd8cb7..1389d6eec80f 100644
+--- a/arch/mips/jz4740/boards.c
++++ b/arch/mips/jz4740/boards.c
+@@ -8,5 +8,6 @@
+ #include <asm/mips_machine.h>
  
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct clk *usb20_clk;
-+#endif
- 
- static struct platform_device da8xx_usb_phy = {
- 	.name		= "da8xx-usb-phy",
-@@ -128,6 +136,7 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct clk usb_refclkin = {
- 	.name		= "usb_refclkin",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -354,3 +363,70 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
- 
- 	return ret;
- }
-+#else
-+/**
-+ * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-+ *
-+ * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-+ *	or "pll0_aux_clk" if false.
-+ */
-+int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
-+{
-+	struct regmap *cfgchip;
-+	struct clk *fck_clk, *clk;
-+	struct clk_hw *parent;
-+
-+	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-+	if (IS_ERR(cfgchip))
-+		return PTR_ERR(cfgchip);
-+
-+	fck_clk = clk_get_sys("musb-da8xx", NULL);
-+	if (IS_ERR(fck_clk))
-+		return PTR_ERR(fck_clk);
-+
-+	clk = da8xx_cfgchip_register_usb0_clk48(cfgchip, fck_clk);
-+	if (IS_ERR(clk)) {
-+		clk_put(fck_clk);
-+		return PTR_ERR(clk);
-+	}
-+
-+	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk),
-+					    use_usb_refclkin ? 0 : 1);
-+	if (parent)
-+		clk_set_parent(clk, parent->clk);
-+	else
-+		pr_warn("%s: Failed to find parent clock\n", __func__);
-+
-+	return clk_register_clkdev(clk, "usb0_clk48", "da8xx-usb-phy");
-+}
-+
-+/**
-+ * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
-+ *
-+ * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-+ *	or "usb0_phy_clk" if false.
-+ */
-+int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
-+{
-+	struct regmap *cfgchip;
-+	struct clk *clk;
-+	struct clk_hw *parent;
-+
-+	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-+	if (IS_ERR(cfgchip))
-+		return PTR_ERR(cfgchip);
-+
-+	clk = da8xx_cfgchip_register_usb1_clk48(cfgchip);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk),
-+					    use_usb_refclkin ? 1 : 0);
-+	if (parent)
-+		clk_set_parent(clk, parent->clk);
-+	else
-+		pr_warn("%s: Failed to find parent clock\n", __func__);
-+
-+	return clk_register_clkdev(clk, "usb1_clk48", "da8xx-usb-phy");
-+}
-+#endif
+ MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
++MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
+ MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
+ 			"Imagination Technologies CI20", NULL);
 -- 
-2.7.4
+2.11.0
