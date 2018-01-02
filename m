@@ -1,28 +1,50 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180111080802.u7znisgy76sk3g4u@pengutronix.de>
-References: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
- <20180111080802.u7znisgy76sk3g4u@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 15 Jan 2018 10:24:43 -0200
-Message-ID: <CAOMZO5DEjHD66x8fz2sKOMDjiKTdfEr+MbtidZuay7E5FaLXoQ@mail.gmail.com>
-Subject: Re: Warnings from drivers/clk/clk.c
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 0/2] clk: qcom: MISC RCG changes for SDM845
+Date: Tue,  2 Jan 2018 12:56:25 +0530
+Message-Id: <1514877987-8082-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Uwe,
+Changes in v2:
+* Changed usage of clk_hw_is_prepared() to __clk_is_enabled()
+  in clk_rcg2_shared_ops to fix build test error.
 
-On Thu, Jan 11, 2018 at 6:08 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+Changes in v1:
+This patch series does the miscellaneous changes for RCGs
+used in SDM845.
 
-> Without earlycon or earlyprintk imx_clk_disable_uart is a noop. Does
-> this also happen when these are not given? Does this also happen when
-> clk_ignore_unused is on the command line?
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
 
-Yes, it happens without earlycon or earlyprintk.
+Amit Nischal (2):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
 
-The warnings also happens if I pass 'clk_ignore_unused'.
+ drivers/clk/qcom/clk-rcg.h  |   8 ++-
+ drivers/clk/qcom/clk-rcg2.c | 154 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 159 insertions(+), 3 deletions(-)
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
