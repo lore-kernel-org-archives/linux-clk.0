@@ -1,57 +1,82 @@
-Return-Path: <weiyongjun1@huawei.com>
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-To: Leo Yan <leo.yan@linaro.org>, Masahiro Yamada
-	<yamada.masahiro@socionext.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, zhongkaihua <zhongkaihua@huawei.com>, wangruyi
-	<wangruyi@huawei.com>, "Zhaokai (B)" <sandra.zhao@hisilicon.com>, "Wangtao
- (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>, linux-clk
-	<linux-clk@vger.kernel.org>
-Subject: =?gb2312?B?UkU6IFtQQVRDSCAtbmV4dF0gY2xrOiBoaXNpbGljb246IGhpMzY2MKO6Rml4?=
- =?gb2312?B?IHBvdGVudGlhbCBOVUxMIGRlcmVmZXJlbmNlIGluIGhpMzY2MF9zdHViX2Ns?=
- =?gb2312?Q?k=5Fprobe()?=
-Date: Fri, 5 Jan 2018 08:54:30 +0000
-Message-ID: <6AADFAC011213A4C87B956458587ADB40132145A@dggemi507-mbx.china.huawei.com>
-References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
- <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
- <20180105084004.GC26855@leoy-linaro>
-In-Reply-To: <20180105084004.GC26855@leoy-linaro>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 10/12] clk: mediatek: switch to use dev_get_regmap() for MT7622 audsys
+Date: Tue, 2 Jan 2018 19:47:52 +0800
+Message-ID: <cbdada9cdbafda2452fe171a81588ce5b0d4f688.1514881870.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1514881870.git.ryder.lee@mediatek.com>
+References: <cover.1514881870.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PiBPbiBGcmksIEphbiAwNSwgMjAxOCBhdCAxMjo1OTozOFBNICswOTAwLCBNYXNhaGlybyBZYW1h
-ZGEgd3JvdGU6DQo+ID4gMjAxOC0wMS0wNCAxNTozNiBHTVQrMDk6MDAgV2VpIFlvbmdqdW4gPHdl
-aXlvbmdqdW4xQGh1YXdlaS5jb20+Og0KPiA+ID4gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKCkgbWF5
-IHJldHVybiBOVUxMLCBhZGQgcHJvcGVyIGNoZWNrIHRvDQo+ID4gPiBhdm9pZCBwb3RlbnRpYWwg
-TlVMTCBkZXJlZmVyZW5jaW5nLg0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgZGV0ZWN0ZWQgYnkgQ29j
-Y2luZWxsZSBzZW1hbnRpYyBwYXRjaC4NCj4gPiA+DQo+ID4gPiBAQA0KPiA+ID4gZXhwcmVzc2lv
-biBwZGV2LCByZXMsIG4sIHQsIGUsIGUxLCBlMjsNCj4gPiA+IEBADQo+ID4gPg0KPiA+ID4gcmVz
-ID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIHQsIG4pOw0KPiA+ID4gKyBpZiAoIXJlcykN
-Cj4gPiA+ICsgICByZXR1cm4gLUVJTlZBTDsNCj4gPiA+IC4uLiB3aGVuICE9IHJlcyA9PSBOVUxM
-DQo+ID4gPiBlID0gZGV2bV9pb3JlbWFwKGUxLCByZXMtPnN0YXJ0LCBlMik7DQo+ID4gPg0KPiA+
-ID4gRml4ZXM6IDRmMTZmN2ZmM2JjMCAoImNsazogaGlzaWxpY29uOiBBZGQgc3VwcG9ydCBmb3Ig
-SGkzNjYwIHN0dWIgY2xvY2tzIikNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFdlaSBZb25nanVuIDx3
-ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgZHJpdmVycy9jbGsvaGlz
-aWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jIHwgMiArKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAy
-IGluc2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaGlz
-aWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jDQo+IGIvZHJpdmVycy9jbGsvaGlzaWxpY29uL2Nsay1o
-aTM2NjAtc3R1Yi5jDQo+ID4gPiBpbmRleCA5YjZjNzJiLi5lOGIyYzQzIDEwMDY0NA0KPiA+ID4g
-LS0tIGEvZHJpdmVycy9jbGsvaGlzaWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jDQo+ID4gPiArKysg
-Yi9kcml2ZXJzL2Nsay9oaXNpbGljb24vY2xrLWhpMzY2MC1zdHViLmMNCj4gPiA+IEBAIC0xNDks
-NiArMTQ5LDggQEAgc3RhdGljIGludCBoaTM2NjBfc3R1Yl9jbGtfcHJvYmUoc3RydWN0DQo+IHBs
-YXRmb3JtX2RldmljZSAqcGRldikNCj4gPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VS
-UihzdHViX2Nsa19jaGFuLm1ib3gpOw0KPiA+ID4NCj4gPiA+ICAgICAgICAgcmVzID0gcGxhdGZv
-cm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gPiA+ICsgICAgICAg
-aWYgKCFyZXMpDQo+ID4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gPiAg
-ICAgICAgIGZyZXFfcmVnID0gZGV2bV9pb3JlbWFwKGRldiwgcmVzLT5zdGFydCwgcmVzb3VyY2Vf
-c2l6ZShyZXMpKTsNCj4gPiA+ICAgICAgICAgaWYgKCFmcmVxX3JlZykNCj4gPiA+ICAgICAgICAg
-ICAgICAgICByZXR1cm4gLUVOT01FTTsNCj4gPg0KPiA+DQo+ID4gUHJvYmFibHksIGl0IGlzIGJl
-dHRlciB0byB1c2UgZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkuDQo+ID4gVGhpcyBjaGVja3MgTlVM
-TCBpbnB1dC4NCj4gDQo+IFRoYW5rcyBmb3Igc3VnZ2VzdGlvbiwgTWFzYWhpcm8uIFRoaXMgaXMg
-Z29vZCBzdWdnZXN0aW9uLg0KPiANCj4gWW9uZ2p1biwgY291bGQgeW91IHNwaW4gbmV3IHBhdGNo
-IGJ5IHVzaW5nIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpDQo+IHRvIHJlcGxhY2UgZGV2bV9pb3Jl
-bWFwKCk/DQoNCg0KSSB3aWxsIHNlbmQgdjIgcGF0Y2ggdXNpbmcgZGV2bV9pb3JlbWFwX3Jlc291
-cmNlLiBBbmQgd291bGQgcGxlYXNlIHRlc3QgaXQNCnNpbmNlIHNvbWV0aW1lcyBjaGFuZ2UgZGV2
-bV9pb3JlbWFwKCkgdG8gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgbWF5DQpjYXVzZSBkZXZpY2Ug
-Y2Fubm90IHdvcms/DQoNClJlZ2FyZHMsDQpXZWkgWW9uZ2p1bg0K
+As the new audsys wrapper driver is in place, switch to use dev_get_regmap()
+to obtain the regmap from its parent.
+
+This patch also add missing clock data 'CLK_AUDIO_AFE_CONN'.
+
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt7622-aud.c  | 11 +++++++++--
+ include/dt-bindings/clock/mt7622-clk.h |  3 ++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index fad7d9f..261e8d7 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -106,6 +106,7 @@
+ 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
+ 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
+ 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
++	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
+ 	/* AUDIO2 */
+ 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
+ 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+@@ -141,12 +142,18 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct regmap *regmap;
+ 	int r;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+ 
+-	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+-			       clk_data);
++	/* Obtain the regmap from parent - audsys wrapper */
++	regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!regmap)
++		return -ENODEV;
++
++	mtk_clk_register_num_gates(regmap, audio_clks, ARRAY_SIZE(audio_clks),
++				   clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	if (r)
+diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+index 3e514ed..e9d77f0 100644
+--- a/include/dt-bindings/clock/mt7622-clk.h
++++ b/include/dt-bindings/clock/mt7622-clk.h
+@@ -235,7 +235,8 @@
+ #define CLK_AUDIO_MEM_ASRC3		43
+ #define CLK_AUDIO_MEM_ASRC4		44
+ #define CLK_AUDIO_MEM_ASRC5		45
+-#define CLK_AUDIO_NR_CLK		46
++#define CLK_AUDIO_AFE_CONN		46
++#define CLK_AUDIO_NR_CLK		47
+ 
+ /* SSUSBSYS */
+ 
+-- 
+1.9.1
