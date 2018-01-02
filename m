@@ -1,40 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:48640 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeABIL3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 03:11:29 -0500
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 09/12] clk: mediatek: move part of mtk_clk_register_gates() to the new function
+Date: Tue, 2 Jan 2018 19:47:51 +0800
+Message-ID: <f658c6163421800b248e7b96fae05c8d6e043e02.1514881870.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1514881870.git.ryder.lee@mediatek.com>
+References: <cover.1514881870.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20171230113043.30237-2-icenowy@aosc.io>
-References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-2-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 2 Jan 2018 16:11:04 +0800
-Message-ID: <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> The H3/H5 SoCs have a HDMI output and a TV Composite output.
->
-> Add simplefb nodes for these outputs.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v4:
-> - Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
->   clocks that are needed to display framebuffer to the monitor.
+In some subsystems, the regmap has already been initialized from its parent,
+so there is no need to map it again. To keep flexible, we move some parts to
+the new function - mtk_clk_register_num_gates(), and then use it for those
+subsystems.
 
-Looks good. I assume you've tested this? It does continue to work
-with the bus and DDC clocks disabled, right?
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 26 +++++++++++++++++---------
+ drivers/clk/mediatek/clk-mtk.h |  4 ++++
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
-Thanks
-ChenYu
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 9c0ae42..815c98f 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -101,24 +101,16 @@ void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+ 	}
+ }
+ 
+-int mtk_clk_register_gates(struct device_node *node,
++int mtk_clk_register_num_gates(struct regmap *regmap,
+ 		const struct mtk_gate *clks,
+ 		int num, struct clk_onecell_data *clk_data)
+ {
+ 	int i;
+ 	struct clk *clk;
+-	struct regmap *regmap;
+ 
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
+-	regmap = syscon_node_to_regmap(node);
+-	if (IS_ERR(regmap)) {
+-		pr_err("Cannot find regmap for %pOF: %ld\n", node,
+-				PTR_ERR(regmap));
+-		return PTR_ERR(regmap);
+-	}
+-
+ 	for (i = 0; i < num; i++) {
+ 		const struct mtk_gate *gate = &clks[i];
+ 
+@@ -144,6 +136,22 @@ int mtk_clk_register_gates(struct device_node *node,
+ 	return 0;
+ }
+ 
++int mtk_clk_register_gates(struct device_node *node,
++		const struct mtk_gate *clks,
++		int num, struct clk_onecell_data *clk_data)
++{
++	struct regmap *regmap;
++
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %pOF: %ld\n", node,
++				PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	return mtk_clk_register_num_gates(regmap, clks, num, clk_data);
++}
++
+ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f10250d..f969c28 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -159,6 +159,10 @@ struct mtk_gate {
+ 	const struct clk_ops *ops;
+ };
+ 
++int mtk_clk_register_num_gates(struct regmap *regmap,
++		const struct mtk_gate *clks, int num,
++		struct clk_onecell_data *clk_data);
++
+ int mtk_clk_register_gates(struct device_node *node,
+ 			const struct mtk_gate *clks, int num,
+ 			struct clk_onecell_data *clk_data);
+-- 
+1.9.1
