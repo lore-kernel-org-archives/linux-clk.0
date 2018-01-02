@@ -1,115 +1,117 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41880 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeADLKm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:10:42 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v2 06/11] clk: qcom: cpu-8996: Add support to switch to alternate PLL
-Date: Thu,  4 Jan 2018 13:10:10 +0200
-Message-Id: <1515064215-22202-7-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
-References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Fix debugfs_create_*() usage
+Date: Tue,  2 Jan 2018 16:27:33 +0100
+Message-Id: <1514906853-9364-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+When exposing data access through debugfs, the correct
+debugfs_create_*() functions must be used, depending on data type.
 
-Each of the CPU clusters on msm8996 and powered via a primary
-PLL and a secondary PLL. The primary PLL is what drivers the
-CPU clk, except for times when we are reprogramming the PLL
-itself, when we temporarily switch to an alternate PLL.
-Use clock rate change notifiers to support this.
+Remove all casts from data pointers passed to debugfs_create_*()
+functions, as such casts prevent the compiler from flagging bugs.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+clk_core.rate, .accuracy, and .flags are "unsigned long", hence casting
+to "u32 *" exposed the wrong halves on big-endian 64-bit systems.
+
+Fix .rate and .accuracy, by using debugfs_create_ulong() instead.
+
+Fix .flags by changing the field to "unsigned int", as a change to
+debugfs_create_x64() on 64-bit systems would change the user-visible
+formatting in debugfs.
+Note that __clk_get_flags() and clk_hw_get_flags() are left unchanged
+and still return "unsigned long", to avoid having to change all their
+users.  Likewise, of_clk_detect_critical() still takes "unsigned long",
+but the comment is updated as it is never passed a real pointer to
+clk_core.flags.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Looks like none of the 64-bit architectures support common clock yet?
+---
+ drivers/clk/clk.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index bc60111..9bb25be 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -119,10 +119,14 @@ struct clk_cpu_8996_mux {
- 	u32	reg;
- 	u32	shift;
- 	u32	width;
-+	struct notifier_block nb;
- 	struct clk_hw	*pll;
- 	struct clk_regmap clkr;
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5ec580914089510a..b23e0249f0e3c634 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -58,7 +58,7 @@ struct clk_core {
+ 	unsigned long		new_rate;
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+-	unsigned long		flags;
++	unsigned int		flags;
+ 	bool			orphan;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+@@ -2600,43 +2600,43 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
  
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
- static inline
- struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
- {
-@@ -173,6 +177,27 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
+ 	core->dentry = d;
  
-+int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			void *data)
-+{
-+	int ret;
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		break;
-+	case POST_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
-+
- const struct clk_ops clk_cpu_8996_mux_ops = {
- 	.set_parent = clk_cpu_8996_mux_set_parent,
- 	.get_parent = clk_cpu_8996_mux_get_parent,
-@@ -216,6 +241,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -235,6 +261,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -310,6 +337,14 @@ struct clk_hw_clks {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+-	d = debugfs_create_u32("clk_rate", S_IRUGO, core->dentry,
+-			(u32 *)&core->rate);
++	d = debugfs_create_ulong("clk_rate", S_IRUGO, core->dentry,
++				 &core->rate);
+ 	if (!d)
+ 		goto err_out;
  
-+	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
- 	return ret;
- }
+-	d = debugfs_create_u32("clk_accuracy", S_IRUGO, core->dentry,
+-			(u32 *)&core->accuracy);
++	d = debugfs_create_ulong("clk_accuracy", S_IRUGO, core->dentry,
++				 &core->accuracy);
+ 	if (!d)
+ 		goto err_out;
  
+ 	d = debugfs_create_u32("clk_phase", S_IRUGO, core->dentry,
+-			(u32 *)&core->phase);
++			       &core->phase);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	d = debugfs_create_x32("clk_flags", S_IRUGO, core->dentry,
+-			(u32 *)&core->flags);
++			       &core->flags);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	d = debugfs_create_u32("clk_prepare_count", S_IRUGO, core->dentry,
+-			(u32 *)&core->prepare_count);
++			       &core->prepare_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	d = debugfs_create_u32("clk_enable_count", S_IRUGO, core->dentry,
+-			(u32 *)&core->enable_count);
++			       &core->enable_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	d = debugfs_create_u32("clk_protect_count", S_IRUGO, core->dentry,
+-			(u32 *)&core->protect_count);
++			       &core->protect_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	d = debugfs_create_u32("clk_notifier_count", S_IRUGO, core->dentry,
+-			(u32 *)&core->notifier_count);
++			       &core->notifier_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+@@ -3927,7 +3927,7 @@ static int parent_ready(struct device_node *np)
+  * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
+  * @np: Device node pointer associated with clock provider
+  * @index: clock index
+- * @flags: pointer to clk_core->flags
++ * @flags: pointer to core clock flags
+  *
+  * Detects if the clock-critical property exists and, if so, sets the
+  * corresponding CLK_IS_CRITICAL flag.
 -- 
-1.9.1
-
+2.7.4
