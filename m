@@ -1,137 +1,47 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517343778-27902-12-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180130220504.GA16709@roeck-us.net> <TY1PR06MB0895ECB2936323F9D281C1EFC0FB0@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <CAMuHMdViQgCjVFbs0kkBObAAoFTzvz8yPFUHPWHrtYzkbnYm_g@mail.gmail.com> <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 31 Jan 2018 16:37:27 +0100
-Message-ID: <CAMuHMdXPntakrTvdOs4p5xvzJOS7ujmyztSuGEyMDnen5QZOxg@mail.gmail.com>
-Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2 support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:57108 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbeABPJJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:09 -0500
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 09/15] MIPS: platform: add machtype IDs for more Ingenic SoCs
+Date: Tue,  2 Jan 2018 16:08:42 +0100
+Message-Id: <20180102150848.11314-9-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi G=C3=BCnter,
+Add a machtype ID for the JZ4780 SoC, which was missing, and one for the
+newly supported JZ4770 SoC.
 
-On Wed, Jan 31, 2018 at 3:48 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On 01/31/2018 04:13 AM, Geert Uytterhoeven wrote:
->> On Wed, Jan 31, 2018 at 11:47 AM, Fabrizio Castro
->> <fabrizio.castro@bp.renesas.com> wrote:
->>>> Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2
->>>> support
->>>> On Tue, Jan 30, 2018 at 08:22:44PM +0000, Fabrizio Castro wrote:
->>>>>
->>>>> On R-Car Gen2 and RZ/G1 the rwdt clock needs to be always ON, therefo=
-re
->>>>> when suspending to RAM we need to explicitly disable the counting by
->>>>> clearing TME from RWTCSRA.
->>>>> Also, on some systems RWDT is the only piece of HW that allows the So=
-C
->>>>> to be restarted, therefore this patch implements the restart callback=
-.
->>>>>
->>>>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->>>>> Signed-off-by: Ramesh Shanmugasundaram
->>>>> <ramesh.shanmugasundaram@bp.renesas.com>
->>>>> ---
->>>>> Wolfram, was the restart callback implementation missing for a reason=
-?
->>>>> Is its implementation going to break any Gen3 platform?
->>>>
->>>> The changes clearly are way more than claimed in the subject. Adding
->>>> restart handler and PM support may be prerequisites for Gen2, but the
->>>> changes apply to Gen3 as well. What happened to "one patch per logical
->>>> change" ?
->>>
->>> The PM implementation should be ok for Gen3 too, without this patch
->>> series the kernel
->>> would disable the rwdt clock when suspending to RAM, this would "pause"
->>> the counting.
->>> This patch series declares the rwdt clock as critical for Gen2 and RZ/G=
-1,
->>> which means we
->>> need to explicitly disable the counting to keep the same behaviour in
->>> place.
->>
->> Note that if the kernel crashes after rwdt_suspend(), the watchdog won't
->> restart the system. But that's an issue common to many watchdog driver,
->> right?
->>
-> If so, that would be buggy.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/include/asm/bootinfo.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-All watchdog drivers implementing a system suspend handler stop the watchdo=
-g
-before suspending the system. I guess if they wouldn't do that, the watchdo=
-g
-would restart the system while asleep?
+ v2: No change
+ v3: No change
+ v5: No change
 
-Exceptions are:
-  - atlas7_wdt, sirfsoc_wdt: these seem to rely on another driver stopping
-    the watchdog clock, so it behaves the same as all above,
-  - diag288_wdt: this returns -EBUSY when trying to suspend the system
-    while the watchdog is enabled, to put the burden of disabling the
-    watchdog on the user,
-  - ux500_wdt: this seems to use a hardware feature to automatically
-    disable the watchdog during suspend.
+diff --git a/arch/mips/include/asm/bootinfo.h b/arch/mips/include/asm/bootinfo.h
+index e26a093bb17a..a301a8f4bc66 100644
+--- a/arch/mips/include/asm/bootinfo.h
++++ b/arch/mips/include/asm/bootinfo.h
+@@ -79,6 +79,8 @@ enum loongson_machine_type {
+  */
+ #define  MACH_INGENIC_JZ4730	0	/* JZ4730 SOC		*/
+ #define  MACH_INGENIC_JZ4740	1	/* JZ4740 SOC		*/
++#define  MACH_INGENIC_JZ4770	2	/* JZ4770 SOC		*/
++#define  MACH_INGENIC_JZ4780	3	/* JZ4780 SOC		*/
+ 
+ extern char *system_type;
+ const char *get_system_type(void);
+-- 
+2.11.0
 
-So only the last one seems to protect against kernel crashes after the
-watchdog's suspend method is called...
-
-Note that two drivers (iTCO_wdt and wdat_wdt) implements suspend_noirq
-instead of suspend, which decreases the window of running without a watchdo=
-g
-a bit.
-
->>> With respect to the restart callback implementation, that may well have
->>> consequences on
->>> Gen3, hopefully Wolfram will give us a feedback on this.
->>> In particular I would like to know if we should be installing the resta=
-rt
->>> callback only when
->>> we use "renesas,rcar-gen2-wdt" as compatible string, or it's ok to make
->>> it available for
->>> Gen3 as well.
->>
->> IIRC, the reason we don't have the restart callback on R-Car Gen3 is the
->> arm64 maintainers insisting on using PSCI, and vetoing other means,
->> to restart the system.
->
-> You could just give it lower priority than PSCI.
->
->> Which leaves us with a few boards where we have to use the watchdog, and
->> wait until the timeout triggers...
->
-> Which means the veto is counter-productive and thus meaningless.
-
-I do welcome that point of view ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
