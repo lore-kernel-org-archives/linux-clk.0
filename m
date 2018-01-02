@@ -1,42 +1,66 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
-To: jassisinghbrar@gmail.com
-Cc: sboyd@codeaurora.org, bjorn.andersson@linaro.org,
- mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20171205154701.27730-1-georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <0c933015-158f-e4fc-a37c-195f7cbc8fad@linaro.org>
-Date: Fri, 26 Jan 2018 16:30:32 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 11:01:59 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com,
+	uclinux-h8-devel@lists.sourceforge.jp,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to return unsigned
+ long
+Message-ID: <20180102190159.GH7997@codeaurora.org>
+References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
+ <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
+ <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
+ <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
 MIME-Version: 1.0
-In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/05/2017 05:46 PM, Georgi Djakov wrote:
-> This patchset adds support for the A53 CPU clock on MSM8916 platforms
-> and allows scaling of the CPU frequency on msm8916 based platforms.
+On 12/31, Bryan O'Donoghue wrote:
+> On 30/12/17 16:36, Mikko Perttunen wrote:
+> >FWIW, we had this problem some years ago with the Tegra CPU clock
+> >- then it was determined that a simpler solution was to have the
+> >determine_rate callback support unsigned long rates - so clock
+> >drivers that need to return rates higher than 2^31 can instead
+> >implement the determine_rate callback. That is what's currently
+> >implemented.
+> >
+> >Mikko
 > 
-> Changes since v10 (https://lkml.org/lkml/2017/12/1/577)
-> * Addressed Bjorn's comments on APCS clock driver.
-> * Picked Acks from Rob and Bjorn.
-> 
-[..]
-> 
-> Georgi Djakov (6):
->   mailbox: qcom: Convert APCS IPC driver to use regmap
->   mailbox: qcom: Create APCS child device for clock controller
->   clk: qcom: Add A53 PLL support
->   clk: qcom: Add regmap mux-div clocks support
->   dt-bindings: mailbox: qcom: Document the APCS clock binding
->   clk: qcom: Add APCS clock controller support
+> Granted we could work around it but, having both zero and less than
+> zero indicate error means you can't support larger than LONG_MAX
+> which is I think worth fixing.
 > 
 
-Hi Jassi,
+Ok. But can you implement the determine_rate op instead of the
+round_rate op for your clk? It's not a work-around, it's the
+preferred solution. That would allow rates larger than 2^31 for
+the clk without pushing through a change to all the drivers to
+express zero as "error" and non-zero as the rounded rate.
 
-Do you want me to re-send the pending mailbox patches?
+I'm not entirely opposed to this approach, because we probably
+don't care to pass the particular error value from a clk provider
+to a clk consumer about what the error is. It's actually what we
+proposed as the solution for clk_round_rate() to return values
+larger than LONG_MAX to consumers. But doing that consumer API
+change or this provider side change is going to require us to
+evaluate all the consumers of these clks to make sure they don't
+check for some error value that's less than zero. This series
+does half the work, by changing the provider side, while ignoring
+the consumer side and any potential fallout of the less than zero
+to zero return value change.
 
-Thanks,
-Georgi
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
