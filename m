@@ -1,134 +1,49 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 15/44] clk: davinci: Add platform information for TI DM644x PSC
-Date: Sun,  7 Jan 2018 20:17:14 -0600
-Message-Id: <1515377863-20358-16-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	ABE Hiroshige <hiroshige.abe.zc@renesas.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7796: Add FDP clock
+Date: Tue,  2 Jan 2018 16:21:43 +0100
+Message-Id: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PSC clocks on TI
-DaVinci 644x based systems.
+From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
+This patch adds FDP1-0 clock to the R8A7796 SoC.
+
+Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: s/fdp0/fdp1-0/]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/davinci/Makefile     |  1 +
- drivers/clk/davinci/psc-dm644x.c | 73 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h      |  1 +
- 3 files changed, 75 insertions(+)
- create mode 100644 drivers/clk/davinci/psc-dm644x.c
+This gets rid of the following error messages during boot and system
+resume:
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 78dc1eb..a20e379 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -14,4 +14,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
- endif
-diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
-new file mode 100644
-index 0000000..ef5ef14
---- /dev/null
-+++ b/drivers/clk/davinci/psc-dm644x.c
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PSC clock descriptions for TI DaVinci DM644x
-+ *
-+ * Copyright (C) 2017 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "psc.h"
-+
-+static const struct davinci_psc_clk_info dm644x_psc_info[] __initconst = {
-+	LPSC(0, 0, vpss_master, pll1_sysclk3, 0),
-+	LPSC(1, 0, vpss_slave, pll1_sysclk3, 0),
-+	LPSC(6, 0, emac, pll1_sysclk5, 0),
-+	LPSC(9, 0, usb, pll1_sysclk5, 0),
-+	LPSC(10, 0, ide, pll1_sysclk5, 0),
-+	LPSC(11, 0, vlynq, pll1_sysclk5, 0),
-+	LPSC(14, 0, aemif, pll1_sysclk5, 0),
-+	LPSC(15, 0, mmcsd, pll1_sysclk5, 0),
-+	LPSC(17, 0, asp0, pll1_sysclk5, 0),
-+	LPSC(18, 0, i2c, pll1_aux_clk, 0),
-+	LPSC(19, 0, uart0, pll1_aux_clk, 0),
-+	LPSC(20, 0, uart1, pll1_aux_clk, 0),
-+	LPSC(21, 0, uart2, pll1_aux_clk, 0),
-+	LPSC(22, 0, spi, pll1_sysclk5, 0),
-+	LPSC(23, 0, pwm0, pll1_aux_clk, 0),
-+	LPSC(24, 0, pwm1, pll1_aux_clk, 0),
-+	LPSC(25, 0, pwm2, pll1_aux_clk, 0),
-+	LPSC(26, 0, gpio, pll1_sysclk5, 0),
-+	LPSC(27, 0, timer0, pll1_aux_clk, 0),
-+	LPSC(28, 0, timer1, pll1_aux_clk, 0),
-+	/* REVISIT: why can't this be disabled? */
-+	LPSC(29, 0, timer2, pll1_aux_clk, LPSC_ALWAYS_ENABLED),
-+	LPSC(31, 0, arm, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	/* REVISIT how to disable? */
-+	LPSC(39, 1, dsp, pll1_sysclk1, LPSC_ALWAYS_ENABLED),
-+	/* REVISIT how to disable? */
-+	LPSC(40, 1, vicp, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+void __init dm644x_psc_clk_init(void __iomem *psc)
-+{
-+	struct clk_onecell_data *clk_data;
-+
-+	clk_data = davinci_psc_register_clocks(psc, dm644x_psc_info, 41);
-+	if (!clk_data)
-+		return;
-+
-+	clk_register_clkdev(clk_data->clks[0], "master", "vpss");
-+	clk_register_clkdev(clk_data->clks[1], "slave", "vpss");
-+	clk_register_clkdev(clk_data->clks[6], NULL, "davinci_emac.1");
-+	clk_register_clkdev(clk_data->clks[6], "fck", "davinci_mdio.0");
-+	clk_register_clkdev(clk_data->clks[9], "usb", NULL);
-+	clk_register_clkdev(clk_data->clks[10], NULL, "palm_bk3710");
-+	clk_register_clkdev(clk_data->clks[14], "aemif", NULL);
-+	clk_register_clkdev(clk_data->clks[15], NULL, "dm6441-mmc.0");
-+	clk_register_clkdev(clk_data->clks[17], NULL, "davinci-mcbsp");
-+	clk_register_clkdev(clk_data->clks[18], NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk_data->clks[19], NULL, "serial8250.0");
-+	clk_register_clkdev(clk_data->clks[20], NULL, "serial8250.1");
-+	clk_register_clkdev(clk_data->clks[21], NULL, "serial8250.2");
-+	clk_register_clkdev(clk_data->clks[26], "gpio", NULL);
-+	clk_register_clkdev(clk_data->clks[27], "timer0", NULL);
-+	clk_register_clkdev(clk_data->clks[29], NULL, "davinci-wdt");
-+	clk_register_clkdev(clk_data->clks[31], "arm", NULL);
-+
-+	clk_free_onecell_data(clk_data);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index c7d8c5f..6d2896d 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -20,5 +20,6 @@ void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
- void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
- void dm355_psc_clk_init(void __iomem *psc);
- void dm365_psc_clk_init(void __iomem *psc);
-+void dm644x_psc_clk_init(void __iomem *psc);
+    renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 119: -2
+    rcar_fdp1 fe940000.fdp1: failed to add to PM domain a3vc: -2
+
+To be queued in clk-renesas-for-v4.16.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 83a68e51e4ec1d12..dfb267a92f2a20d3 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -117,6 +117,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ };
  
- #endif /* __LINUX_CLK_DAVINCI_H__ */
+ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
++	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
+ 	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
 -- 
 2.7.4
