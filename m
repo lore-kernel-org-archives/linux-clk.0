@@ -1,67 +1,57 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 09/12] drm/sun4i: Add support for A83T second DE2 mixer
-Date: Wed, 17 Jan 2018 21:14:18 +0100
-Message-Id: <20180117201421.25954-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
+Return-Path: <benh@kernel.crashing.org>
+Message-ID: <1514872015.2743.130.camel@kernel.crashing.org>
+Subject: Re: [PATCH v6 4/5] clk: aspeed: Register gated clocks
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andrew
+ Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>,
+        Rick Altherr
+ <raltherr@google.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann
+ <arnd@arndb.de>
+Date: Tue, 02 Jan 2018 16:46:55 +1100
+In-Reply-To: <1514584997.2743.107.camel@kernel.crashing.org>
+References: <20171128071908.12279-1-joel@jms.id.au>
+	 <20171128071908.12279-5-joel@jms.id.au>
+	 <20171221233927.GE7997@codeaurora.org>
+	 <1513910191.2743.77.camel@kernel.crashing.org>
+	 <1513910633.2743.79.camel@kernel.crashing.org>
+	 <20171227013227.GV7997@codeaurora.org>
+	 <1514584997.2743.107.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-It supports 1 VI and 1 UI plane and HW scaling on both planes.
+On Sat, 2017-12-30 at 09:03 +1100, Benjamin Herrenschmidt wrote:
+> On Tue, 2017-12-26 at 17:32 -0800, Stephen Boyd wrote:
+> > > I noticed we do have a few i2c based clock drivers... how are they ever
+> > > supposed to work ? i2c bus controllers are allowed to sleep and the i2c
+> > > core takes mutexes...
+> > 
+> > We have clk_prepare()/clk_unprepare() for sleeping suckage. You
+> > can use that, and i2c based clk drivers do that today.
+> 
+> "suckage" ? Hehe ... the suckage should rather be stuff that cannot
+> sleep. Arbitrary latencies and jitter caused by too much code wanting
+> to be "atomic" when unnecessary are a bad thing.
+> 
+> In the case of clocks like the aspeed where we have to wait for a
+> rather long stabilization delay, way too long to legitimately do a non-
+> sleepable delay with a lock held, do we need to do everything in
+> prepare() then ?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+BTW. Pls don't hold Joel's patches for this. Without that clk framework
+a lot of the aspeed stuff already upstream doesn't actually work
+without additional out-of-tree hacks or uboot black magic.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 2cbb2de6d39c..9b0256d31a61 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -485,6 +485,13 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
- 	.vi_num		= 1,
- };
- 
-+static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -498,6 +505,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
- 		.data = &sun8i_a83t_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
-+		.data = &sun8i_a83t_mixer1_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
--- 
-2.15.1
+We can sort out the sleeping issues (and possibly move to using prepare
+for the clocks that have that delay requirement) via subsequent
+improvements.
+
+Cheers,
+Ben.
