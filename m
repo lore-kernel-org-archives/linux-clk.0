@@ -1,169 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56336 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933299AbeAKKl3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 05:41:29 -0500
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-To: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180106042326.46519-1-icenowy@aosc.io>
- <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
- <08CB03C2-1253-4072-B8AC-D3F1253C8A85@aosc.io>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <7c3b4294-117a-c293-03d4-a35a823a796e@arm.com>
-Date: Thu, 11 Jan 2018 10:41:39 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 10:16:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 4/5] clk: aspeed: Register gated clocks
+Message-ID: <20180102181608.GG7997@codeaurora.org>
+References: <20171128071908.12279-1-joel@jms.id.au>
+ <20171128071908.12279-5-joel@jms.id.au>
+ <20171221233927.GE7997@codeaurora.org>
+ <1513910191.2743.77.camel@kernel.crashing.org>
+ <1513910633.2743.79.camel@kernel.crashing.org>
+ <20171227013227.GV7997@codeaurora.org>
+ <1514584997.2743.107.camel@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <08CB03C2-1253-4072-B8AC-D3F1253C8A85@aosc.io>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514584997.2743.107.camel@kernel.crashing.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 11/01/18 10:15, Icenowy Zheng wrote:
+On 12/30, Benjamin Herrenschmidt wrote:
+> On Tue, 2017-12-26 at 17:32 -0800, Stephen Boyd wrote:
+> > > I noticed we do have a few i2c based clock drivers... how are they ever
+> > > supposed to work ? i2c bus controllers are allowed to sleep and the i2c
+> > > core takes mutexes...
+> > 
+> > We have clk_prepare()/clk_unprepare() for sleeping suckage. You
+> > can use that, and i2c based clk drivers do that today.
 > 
+> "suckage" ? Hehe ... the suckage should rather be stuff that cannot
+> sleep. Arbitrary latencies and jitter caused by too much code wanting
+> to be "atomic" when unnecessary are a bad thing.
+
+Heh. Of course.
+
 > 
-> 于 2018年1月11日 GMT+08:00 下午6:08:19, Andre Przywara <andre.przywara@arm.com> 写到:
->> Hi,
->>
->> On 06/01/18 04:23, Icenowy Zheng wrote:
->>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->>> have no bus gate clocks.
->>>
->>> Add support for this kind of pin controllers.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30
->> ++++++++++++++++++++----------
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>>  2 files changed, 21 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> index 4b6cb25bc796..68cd505679d9 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct
->> sunxi_pinctrl *pctl,
->>>  	unsigned int hosc_div, losc_div;
->>>  	struct clk *hosc, *losc;
->>>  	u8 div, src;
->>> -	int i, ret;
->>> +	int i, ret, clk_count;
->>> +
->>> +	if (pctl->desc->without_bus_gate)
->>> +		clk_count = 2;
->>> +	else
->>> +		clk_count = 3;
->>>  
->>>  	/* Deal with old DTs that didn't have the oscillators */
->>>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") !=
->> 3)
-
-Just spotted: I guess you wanted to compare against that computed value
-here?
-But I wonder if we can get rid of this check at all? Don't we rely on
-clock-names and input-debounce anyway? So we will bail out later anyway
-if the DT does not have those?
-Why do we need this check then?
-
->>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct
->> platform_device *pdev,
->>>  			goto gpiochip_error;
->>>  	}
->>>  
->>> -	clk = devm_clk_get(&pdev->dev, NULL);
->>> -	if (IS_ERR(clk)) {
->>> -		ret = PTR_ERR(clk);
->>> -		goto gpiochip_error;
->>> -	}
->>> +	if (!desc->without_bus_gate) {
->>
->> Do we really need explicit support for that case?
->> Can't we have something that works automatically?
+> In the case of clocks like the aspeed where we have to wait for a
+> rather long stabilization delay, way too long to legitimately do a non-
+> sleepable delay with a lock held, do we need to do everything in
+> prepare() then ?
 > 
-> It can be a sanity check. When a SoC comes with bus gate
-> support but no apb is provided, there's something wrong.
-> 
->>
->> if (node has clock-names property)		(A)
->> 	use clocks as enumerated and named there
->> else if (node has one clock reference)		(B)
->> 	use this as gate clock, no debounce support
->> else if (node has no clock property at all)	(C)
->> 	no gate clock needed, no debounce support
-> 
-> This should not happen in practice, as no gate clock is implemented
-> after debounce.
 
-But still you seem to somewhat support it with your changes above - by
-bailing out if there aren't two clocks.
-This kind of explicitly checking for a certain number of clocks sounds
-not very robust and future proof to me, hence the suggestion to get rid
-of it.
+Yes. If we have to wait a long time in the enable path it makes
+sense to move it to the prepare path instead, if possible. That
+way we avoid holding a spinlock for a long time.
 
-Cheers,
-Andre.
-
->>
->> On top of that we should add the clock-names property to all DTs, even
->> for those with only a "apb" clock. Shouldn't hurt existing kernels.
->> Possibly even add debounce support for those on the way, if applicable.
->>
->> So we would just support case (B) and (C) for legacy reasons.
->>
->> Does that make sense?
->>
->> Cheers,
->> Andre.
->>
->>> +		clk = devm_clk_get(&pdev->dev, NULL);
->>> +		if (IS_ERR(clk)) {
->>> +			ret = PTR_ERR(clk);
->>> +			goto gpiochip_error;
->>> +		}
->>>  
->>> -	ret = clk_prepare_enable(clk);
->>> -	if (ret)
->>> -		goto gpiochip_error;
->>> +		ret = clk_prepare_enable(clk);
->>> +		if (ret)
->>> +			goto gpiochip_error;
->>> +	} else {
->>> +		clk = NULL;
->>> +	}
->>>  
->>>  	pctl->irq = devm_kcalloc(&pdev->dev,
->>>  				 pctl->desc->irq_banks,
->>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct
->> platform_device *pdev,
->>>  	return 0;
->>>  
->>>  clk_error:
->>> -	clk_disable_unprepare(clk);
->>> +	if (clk)
->>> +		clk_disable_unprepare(clk);
->>>  gpiochip_error:
->>>  	gpiochip_remove(pctl->chip);
->>>  	return ret;
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> index 11b128f54ed2..ccb6230f0bb5 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>>  	unsigned			irq_bank_base;
->>>  	bool				irq_read_needs_mux;
->>>  	bool				disable_strict_mode;
->>> +	bool				without_bus_gate;
->>>  };
->>>  
->>>  struct sunxi_pinctrl_function {
->>>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
