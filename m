@@ -1,74 +1,281 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v2 06/15] ARM: dts: stm32: Add SDIO controller for stm32f746
-Date: Tue, 16 Jan 2018 13:30:50 +0100
-Message-ID: <1516105859-3525-7-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 11/15] MIPS: ingenic: Initial JZ4770 support
+Date: Tue,  2 Jan 2018 16:08:44 +0100
+Message-Id: <20180102150848.11314-11-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Provide just enough bits (clocks, clocksource, uart) to allow a kernel
+to boot on the JZ4770 SoC to a initramfs userspace.
 
-stm32f746 embeds ARM_PL180 sdio IP, adds SDIO controller
-nodes to allow MMC support.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 212 +++++++++++++++++++++++++++++++++
+ arch/mips/jz4740/Kconfig               |   6 +
+ arch/mips/jz4740/time.c                |   2 +-
+ 3 files changed, 219 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/boot/dts/ingenic/jz4770.dtsi
 
-v2 _ none
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: Use SPDX license identifier
 
- arch/arm/boot/dts/stm32f746.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-index 5f66d15..7f55d00 100644
---- a/arch/arm/boot/dts/stm32f746.dtsi
-+++ b/arch/arm/boot/dts/stm32f746.dtsi
-@@ -429,6 +429,28 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+new file mode 100644
+index 000000000000..7c2804f3f5f1
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -0,0 +1,212 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <dt-bindings/clock/jz4770-cgu.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "ingenic,jz4770";
++
++	cpuintc: interrupt-controller {
++		#address-cells = <0>;
++		#interrupt-cells = <1>;
++		interrupt-controller;
++		compatible = "mti,cpu-interrupt-controller";
++	};
++
++	intc: interrupt-controller@10001000 {
++		compatible = "ingenic,jz4770-intc";
++		reg = <0x10001000 0x40>;
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&cpuintc>;
++		interrupts = <2>;
++	};
++
++	ext: ext {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++	};
++
++	osc32k: osc32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
++
++	cgu: jz4770-cgu@10000000 {
++		compatible = "ingenic,jz4770-cgu";
++		reg = <0x10000000 0x100>;
++
++		clocks = <&ext>, <&osc32k>;
++		clock-names = "ext", "osc32k";
++
++		#clock-cells = <1>;
++	};
++
++	pinctrl: pin-controller@10010000 {
++		compatible = "ingenic,jz4770-pinctrl";
++		reg = <0x10010000 0x600>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		gpa: gpio@0 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <0>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 0 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <17>;
++		};
++
++		gpb: gpio@1 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <1>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 32 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <16>;
++		};
++
++		gpc: gpio@2 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <2>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 64 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <15>;
++		};
++
++		gpd: gpio@3 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <3>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 96 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <14>;
++		};
++
++		gpe: gpio@4 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <4>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 128 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <13>;
++		};
++
++		gpf: gpio@5 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <5>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 160 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <12>;
++		};
++	};
++
++	uart0: serial@10030000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10030000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART0>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <5>;
++
++		status = "disabled";
++	};
++
++	uart1: serial@10031000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10031000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART1>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <4>;
++
++		status = "disabled";
++	};
++
++	uart2: serial@10032000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10032000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART2>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <3>;
++
++		status = "disabled";
++	};
++
++	uart3: serial@10033000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10033000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART3>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <2>;
++
++		status = "disabled";
++	};
++
++	uhc: uhc@13430000 {
++		compatible = "generic-ohci";
++		reg = <0x13430000 0x1000>;
++
++		clocks = <&cgu JZ4770_CLK_UHC>, <&cgu JZ4770_CLK_UHC_PHY>;
++		assigned-clocks = <&cgu JZ4770_CLK_UHC>;
++		assigned-clock-rates = <48000000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <20>;
++
++		status = "disabled";
++	};
++};
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 643af2012e14..29a9361a2b77 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -18,6 +18,12 @@ config MACH_JZ4740
+ 	bool
+ 	select SYS_HAS_CPU_MIPS32_R1
  
-+		sdio2: sdio2@40011c00 {
-+			compatible = "arm,pl180", "arm,primecell";
-+			arm,primecell-periphid = <0x00880180>;
-+			reg = <0x40011c00 0x400>;
-+			clocks = <&rcc 0 167>;
-+			clock-names = "apb_pclk";
-+			interrupts = <103>;
-+			max-frequency = <48000000>;
-+			status = "disabled";
-+		};
++config MACH_JZ4770
++	bool
++	select MIPS_CPU_SCACHE
++	select SYS_HAS_CPU_MIPS32_R2
++	select SYS_SUPPORTS_HIGHMEM
 +
-+		sdio1: sdio1@40012c00 {
-+			compatible = "arm,pl180", "arm,primecell";
-+			arm,primecell-periphid = <0x00880180>;
-+			reg = <0x40012c00 0x400>;
-+			clocks = <&rcc 0 171>;
-+			clock-names = "apb_pclk";
-+			interrupts = <49>;
-+			max-frequency = <48000000>;
-+			status = "disabled";
-+		};
-+
- 		syscfg: system-config@40013800 {
- 			compatible = "syscon";
- 			reg = <0x40013800 0x400>;
+ config MACH_JZ4780
+ 	bool
+ 	select MIPS_CPU_SCACHE
+diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+index bb1ad5119da4..2ca9160f642a 100644
+--- a/arch/mips/jz4740/time.c
++++ b/arch/mips/jz4740/time.c
+@@ -113,7 +113,7 @@ static struct clock_event_device jz4740_clockevent = {
+ #ifdef CONFIG_MACH_JZ4740
+ 	.irq = JZ4740_IRQ_TCU0,
+ #endif
+-#ifdef CONFIG_MACH_JZ4780
++#if defined(CONFIG_MACH_JZ4770) || defined(CONFIG_MACH_JZ4780)
+ 	.irq = JZ4780_IRQ_TCU2,
+ #endif
+ };
 -- 
-1.9.1
+2.11.0
