@@ -1,107 +1,187 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-To: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
- devicetree <devicetree@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
- <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
- <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
- <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
- <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
- <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
- <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
- <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
- <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
- <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
- <fc54ab26-72be-1377-2ccb-72d34360c5eb@lechnology.com>
- <CAMRc=Me1_i8qQE4GHeLiU2itHnp71Gt03UM6NhL=hA8Y6Pb0MA@mail.gmail.com>
- <597caa1a-a790-3629-3186-5d2152f45e06@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <12b97dc0-84e9-decd-16c0-9656b8aee072@lechnology.com>
-Date: Thu, 25 Jan 2018 10:18:19 -0600
-MIME-Version: 1.0
-In-Reply-To: <597caa1a-a790-3629-3186-5d2152f45e06@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:56206 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752725AbeABPJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:05 -0500
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 04/15] clk: ingenic: Add code to enable/disable PLLs
+Date: Tue,  2 Jan 2018 16:08:37 +0100
+Message-Id: <20180102150848.11314-4-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/25/2018 06:53 AM, Sekhar Nori wrote:
-> On Wednesday 24 January 2018 01:33 PM, Bartosz Golaszewski wrote:
->> 2018-01-23 21:23 GMT+01:00 David Lechner <david@lechnology.com>:
->>> On 01/23/2018 02:05 PM, David Lechner wrote:
->>>>
->>>> On 01/23/2018 02:01 PM, David Lechner wrote:
->>>>>
->>>>> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
->>>>>>
->>>>>>
->>>>>> In the mdio case - the problem is that devm_clk_get() doesn't fail,
->>>>>> but somehow the clock doesn't end up in the list of the device's
->>>>>> clocks - which is why it's not enabled by pm_runtime_get_sync().
->>>>>>
->>>>>
->>>>>
->>>>> Right. This is because devm_clk_get() now finds the clock via device
->>>>> tree instead of a clkdev lookup entry. However, I think that the PM
->>>>> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
->>>>> the clkdev lookup to match the con_id and does not use device tree.
->>>>> The same thing is happing in mdio, emac and lcdc.
->>>>>
->>>>
->>>> Minor correction: It looks like emac doesn't do this because it doesn't
->>>> have a con_id of "fck". But, the same clock is shared by emac and mdio, so
->>>> since mdio enables the clock, emac doesn't notice or care that it did
->>>> not enable the clock itself.
->>>
->>>
->>> How about using pm_clk_add_clk() in these drivers to explicitly use the
->>> clocks for power management instead of relying on pm_clk_add_notifier()
->>> to do this implicitly?
->>
->> Yes, this sounds good.
-> 
-> Looking at how pm_clk_notify() in clock_ops.c uses con_id[] list, right
-> now pm_runtime() will work only for clocks which have con_id (from the
-> list above) mentioned in DT. Since clk_find() mandates con_id match when
-> its available, NULL con_id does not match.
-> 
-> For simple devices like DaVinci which uses just one clock for power
-> management per device (multiple devices might share a clock, but not
-> other way around as far as I recall, anyway I will double check this
-> assertion), the attached patch should make EMAC work.
-> 
-> That still leaves why lcdc does not work. One difference is it uses
-> PSC1. Are there other devices in PSC1 which work (just to rule out any
-> thing wrong with PSC1 handling).
-> 
-> Thanks,
-> Sekhar
-> 
-> ---8<---
-> diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-> index 78eac2c0c146..0dce7397856d 100644
-> --- a/arch/arm/mach-davinci/pm_domain.c
-> +++ b/arch/arm/mach-davinci/pm_domain.c
-> @@ -23,7 +23,6 @@ static struct dev_pm_domain davinci_pm_domain = {
->   
->   static struct pm_clk_notifier_block platform_bus_notifier = {
->   	.pm_domain = &davinci_pm_domain,
-> -	.con_ids = { "fck", "master", "slave", NULL },
->   };
->   
->   static int __init davinci_pm_runtime_init(void)
-> 
-> 
+This commit permits the PLLs to be dynamically enabled and disabled when
+their children clocks are enabled and disabled.
 
-Won't this cause *all* clocks, not just PSC clocks, to be used for power management?
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/ingenic/cgu.c | 89 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 74 insertions(+), 15 deletions(-)
 
-Some examples of devices with more than just the PSC clock are SATA and the USB PHY.
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: No change
+
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index 381c4a17a1fc..56a712c9075f 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -107,9 +107,6 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	if (bypass)
+ 		return parent_rate;
+ 
+-	if (!enable)
+-		return 0;
+-
+ 	for (od = 0; od < pll_info->od_max; od++) {
+ 		if (pll_info->od_encoding[od] == od_enc)
+ 			break;
+@@ -153,17 +150,25 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
+ 	return div_u64((u64)parent_rate * m, n * od);
+ }
+ 
+-static long
+-ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
+-		       unsigned long *prate)
++static inline const struct ingenic_cgu_clk_info *to_clk_info(
++		struct ingenic_clk *ingenic_clk)
+ {
+-	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+ 	const struct ingenic_cgu_clk_info *clk_info;
+ 
+ 	clk_info = &cgu->clock_info[ingenic_clk->idx];
+ 	BUG_ON(clk_info->type != CGU_CLK_PLL);
+ 
++	return clk_info;
++}
++
++static long
++ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
++		       unsigned long *prate)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++
+ 	return ingenic_pll_calc(clk_info, req_rate, *prate, NULL, NULL, NULL);
+ }
+ 
+@@ -171,19 +176,14 @@ static int
+ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		     unsigned long parent_rate)
+ {
+-	const unsigned timeout = 100;
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+-	const struct ingenic_cgu_pll_info *pll_info;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
+ 	unsigned long rate, flags;
+-	unsigned m, n, od, i;
++	unsigned int m, n, od;
+ 	u32 ctl;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-	BUG_ON(clk_info->type != CGU_CLK_PLL);
+-	pll_info = &clk_info->pll;
+-
+ 	rate = ingenic_pll_calc(clk_info, req_rate, parent_rate,
+ 			       &m, &n, &od);
+ 	if (rate != req_rate)
+@@ -202,6 +202,26 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+ 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
+ 
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return 0;
++}
++
++static int ingenic_pll_enable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	const unsigned int timeout = 100;
++	unsigned long flags;
++	unsigned int i;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
+ 	ctl &= ~BIT(pll_info->bypass_bit);
+ 	ctl |= BIT(pll_info->enable_bit);
+ 
+@@ -223,10 +243,48 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	return 0;
+ }
+ 
++static void ingenic_pll_disable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
++	ctl &= ~BIT(pll_info->enable_bit);
++
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++}
++
++static int ingenic_pll_is_enabled(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return !!(ctl & BIT(pll_info->enable_bit));
++}
++
+ static const struct clk_ops ingenic_pll_ops = {
+ 	.recalc_rate = ingenic_pll_recalc_rate,
+ 	.round_rate = ingenic_pll_round_rate,
+ 	.set_rate = ingenic_pll_set_rate,
++
++	.enable = ingenic_pll_enable,
++	.disable = ingenic_pll_disable,
++	.is_enabled = ingenic_pll_is_enabled,
+ };
+ 
+ /*
+@@ -601,6 +659,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
+ 		}
+ 	} else if (caps & CGU_CLK_PLL) {
+ 		clk_init.ops = &ingenic_pll_ops;
++		clk_init.flags |= CLK_SET_RATE_GATE;
+ 
+ 		caps &= ~CGU_CLK_PLL;
+ 
+-- 
+2.11.0
+
