@@ -1,94 +1,47 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Wed, 17 Jan 2018 10:57:18 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, linux-imx@nxp.com
-Subject: Re: [RFC PATCH V1 2/2] clk: add lock for clk_core_is_enabled
-Message-ID: <20180117025718.GA7760@b29396-OptiPlex-7040>
-References: <1513935965-12909-1-git-send-email-aisheng.dong@nxp.com>
- <1513935965-12909-2-git-send-email-aisheng.dong@nxp.com>
- <20171227012918.GU7997@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:36321 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750736AbeABIOw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Jan 2018 03:14:52 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
+Date: Tue, 02 Jan 2018 16:14:37 +0800
+Message-ID: <2823749.lCJ0TQNemj@ice-x220i>
+In-Reply-To: <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com>
+References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-2-icenowy@aosc.io> <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171227012918.GU7997@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 26, 2017 at 05:29:18PM -0800, Stephen Boyd wrote:
-> On 12/22, Dong Aisheng wrote:
-> > According to design doc, .is_enabled should be protected by enable lock.
-> > Then users don't have to protect it against enable/disable operation
-> > in clock drivers.
+在 2018年1月2日星期二 CST 下午4:11:04，Chen-Yu Tsai 写道：
+> On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > The H3/H5 SoCs have a HDMI output and a TV Composite output.
 > > 
-> > See: Documentation/clk.txt
-> > "The enable lock is a spinlock and is held across calls to the .enable,
-> > .disable and .is_enabled operations."
+> > Add simplefb nodes for these outputs.
 > > 
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > > ---
-> >  drivers/clk/clk.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > Changes in v4:
+> > - Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
 > > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index e24968f..d6e2d5c 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -198,14 +198,19 @@ static bool clk_core_is_prepared(struct clk_core *core)
-> >  
-> >  static bool clk_core_is_enabled(struct clk_core *core)
-> >  {
-> > +	unsigned long flags;
-> >  	bool ret = false;
-> >  
-> > +	flags = clk_enable_lock();
-> > +
-> >  	/*
-> >  	 * .is_enabled is only mandatory for clocks that gate
-> >  	 * fall back to software usage counter if .is_enabled is missing
-> >  	 */
-> > -	if (!core->ops->is_enabled)
-> > +	if (!core->ops->is_enabled) {
-> > +		clk_enable_unlock(flags);
-> >  		return core->enable_count;
-> > +	}
-> >  
-> >  	/*
-> >  	 * Check if clock controller's device is runtime active before
-> > @@ -230,6 +235,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
-> >  	if (core->dev)
-> >  		pm_runtime_put(core->dev);
-> >  
-> > +	clk_enable_unlock(flags);
-> > +
-> >  	return ret;
-> >  }
+> >   clocks that are needed to display framebuffer to the monitor.
 > 
-> It doesn't really make any sense to hold the enable lock inside
-> the clk_core_is_enabled() function, unless you want to do
-> something else with the information of the enable state with that
-> lock held. Otherwise, seeing if a clk is enabled is a one-shot
-> read of the enabled state, which could just as easily change
-> after the function returns because the lock is released.
+> Looks good. I assume you've tested this? It does continue to work
+> with the bus and DDC clocks disabled, right?
+
+Yes. This patchset is tested in Orange Pi PC and SoPine w/ Baseboard "Model 
+A".
+
 > 
-> We should update the documentation.
-> 
+> Thanks
+> ChenYu
 
-Yes, you're absolutely right.
-I could draft a patch to update it later.
 
-Thanks
-
-Regards
-Dong Aisheng
-
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
