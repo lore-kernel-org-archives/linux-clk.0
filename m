@@ -1,65 +1,99 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 9/9] ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
-Date: Sat, 20 Jan 2018 07:17:35 +0800
-Message-Id: <20180119231735.61504-10-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:56382 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbeABPJM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:12 -0500
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 13/15] MIPS: JZ4770: Workaround for corrupted DMA transfers
+Date: Tue,  2 Jan 2018 16:08:46 +0100
+Message-Id: <20180102150848.11314-13-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Lichee Pi Nano is a F1C100s board by Lichee Pi.
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-Add initial device tree for it.
+We have seen MMC DMA transfers read corrupted data from SDRAM when
+a burst interval ends at physical address 0x10000000. To avoid this
+problem, we remove the final page of low memory from the memory map.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
 ---
- arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 27 +++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+ arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
+ arch/mips/kernel/setup.c |  8 ++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
-new file mode 100644
-index 000000000000..11c891716acc
---- /dev/null
-+++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR X11)
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: No change
+
+diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+index afd84ee966e8..6948b133a15d 100644
+--- a/arch/mips/jz4740/setup.c
++++ b/arch/mips/jz4740/setup.c
+@@ -23,6 +23,7 @@
+ 
+ #include <asm/bootinfo.h>
+ #include <asm/mips_machine.h>
++#include <asm/page.h>
+ #include <asm/prom.h>
+ 
+ #include <asm/mach-jz4740/base.h>
+@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
+ 	irqchip_init();
+ }
+ 
 +/*
-+ * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
++ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
++ * interval ends at physical address 0x10000000. To avoid this problem, we
++ * remove the final page of low memory from the memory map.
 + */
++void __init jz4770_reserve_unsafe_for_dma(void)
++{
++	int i;
 +
-+/dts-v1/;
-+#include "suniv-f1c100s.dtsi"
++	for (i = 0; i < boot_mem_map.nr_map; i++) {
++		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
 +
-+/ {
-+	model = "Lichee Pi Nano";
-+	compatible = "licheepi,licheepi-nano", "allwinner,suniv-f1c100s",
-+		     "allwinner,suniv";
++		if (entry->type != BOOT_MEM_RAM)
++			continue;
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
++		if (entry->addr + entry->size != 0x10000000)
++			continue;
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
++		entry->size -= PAGE_SIZE;
++		break;
++	}
++}
 +
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
+ static int __init jz4740_machine_setup(void)
+ {
+ 	mips_machine_setup();
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 85bc601e9a0d..5a2c20145aee 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -879,6 +879,14 @@ static void __init arch_mem_init(char **cmdline_p)
+ 
+ 	parse_early_param();
+ 
++#ifdef CONFIG_MACH_JZ4770
++	if (current_cpu_type() == CPU_JZRISC &&
++				mips_machtype == MACH_INGENIC_JZ4770) {
++		extern void __init jz4770_reserve_unsafe_for_dma(void);
++		jz4770_reserve_unsafe_for_dma();
++	}
++#endif
++
+ 	if (usermem) {
+ 		pr_info("User-defined physical RAM map:\n");
+ 		print_memory_map();
 -- 
-2.14.2
+2.11.0
+
