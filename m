@@ -1,85 +1,115 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Andrea Merello
-	<andrea.merello@gmail.com>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH v2 08/15] ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
-Date: Tue, 16 Jan 2018 13:30:52 +0100
-Message-ID: <1516105859-3525-9-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34541 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeABQpP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 11:45:15 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180102150848.11314-13-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-13-paul@crapouillou.net>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Tue, 2 Jan 2018 22:15:14 +0530
+Message-ID: <CANc+2y4mJMMiN4SPiPtcXMrQ0AM_2XGnVRk1Dvyv9VYpNN3x-g@mail.gmail.com>
+Subject: Re: [PATCH v5 13/15] MIPS: JZ4770: Workaround for corrupted DMA transfers
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrea Merello <andrea.merello@gmail.com>
+Hi Paul,
 
-This patch adds the pin configuration for SDIO controller on
-stm32f4.
+On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net> wrote:
+> From: Maarten ter Huurne <maarten@treewalker.org>
+>
+> We have seen MMC DMA transfers read corrupted data from SDRAM when
+> a burst interval ends at physical address 0x10000000. To avoid this
+> problem, we remove the final page of low memory from the memory map.
+>
+> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+> ---
+>  arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
+>  arch/mips/kernel/setup.c |  8 ++++++++
+>  2 files changed, 32 insertions(+)
+>
+>  v2: No change
+>  v3: No change
+>  v4: No change
+>  v5: No change
+>
+> diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+> index afd84ee966e8..6948b133a15d 100644
+> --- a/arch/mips/jz4740/setup.c
+> +++ b/arch/mips/jz4740/setup.c
+> @@ -23,6 +23,7 @@
+>
+>  #include <asm/bootinfo.h>
+>  #include <asm/mips_machine.h>
+> +#include <asm/page.h>
+>  #include <asm/prom.h>
+>
+>  #include <asm/mach-jz4740/base.h>
+> @@ -102,6 +103,29 @@ void __init arch_init_irq(void)
+>         irqchip_init();
+>  }
+>
+> +/*
+> + * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
+> + * interval ends at physical address 0x10000000. To avoid this problem, we
+> + * remove the final page of low memory from the memory map.
+> + */
+> +void __init jz4770_reserve_unsafe_for_dma(void)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < boot_mem_map.nr_map; i++) {
+> +               struct boot_mem_map_entry *entry = boot_mem_map.map + i;
+> +
+> +               if (entry->type != BOOT_MEM_RAM)
+> +                       continue;
+> +
+> +               if (entry->addr + entry->size != 0x10000000)
+> +                       continue;
+> +
+> +               entry->size -= PAGE_SIZE;
+> +               break;
+> +       }
+> +}
+> +
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
+Just a wild idea (probably bad too). Changing the memory node in the
+device tree to skip this physical address would work I think. What is
+your opinion about that?
 
-v2 _ none
+>  static int __init jz4740_machine_setup(void)
+>  {
+>         mips_machine_setup();
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index 85bc601e9a0d..5a2c20145aee 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -879,6 +879,14 @@ static void __init arch_mem_init(char **cmdline_p)
+>
+>         parse_early_param();
+>
+> +#ifdef CONFIG_MACH_JZ4770
+> +       if (current_cpu_type() == CPU_JZRISC &&
+> +                               mips_machtype == MACH_INGENIC_JZ4770) {
+> +               extern void __init jz4770_reserve_unsafe_for_dma(void);
+> +               jz4770_reserve_unsafe_for_dma();
+> +       }
+> +#endif
+> +
+>         if (usermem) {
+>                 pr_info("User-defined physical RAM map:\n");
+>                 print_memory_map();
+> --
+> 2.11.0
+>
+>
 
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-index ae94d86..3520289 100644
---- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-@@ -338,6 +338,37 @@
- 					slew-rate = <3>;
- 				};
- 			};
-+
-+			sdio_pins: sdio_pins@0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
-+						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
-+						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
-+						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
-+						 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
-+						 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
-+					drive-push-pull;
-+					slew-rate = <2>;
-+				};
-+			};
-+
-+			sdio_pins_od: sdio_pins_od@0 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
-+						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
-+						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
-+						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
-+						 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
-+					drive-push-pull;
-+					slew-rate = <2>;
-+				};
-+
-+				pins2 {
-+					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
-+					drive-open-drain;
-+					slew-rate = <2>;
-+				};
-+			};
- 		};
- 	};
- };
--- 
-1.9.1
+Thanks,
+PrasannaKumar
