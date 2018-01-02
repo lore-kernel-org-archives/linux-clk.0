@@ -1,125 +1,45 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v7 0/6] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
-Date: Thu,  4 Jan 2018 16:55:13 +0530
-Message-Id: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:42665 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeABREe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 12:04:34 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180102150848.11314-15-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-15-paul@crapouillou.net>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 2 Jan 2018 18:04:12 +0100
+Message-ID: <CA+7wUsw0+dsvmY3wCq=VcfRsovhPPLEJjyEwV5pYUWLcC3i2dA@mail.gmail.com>
+Subject: Re: [PATCH v5 15/15] MIPS: ingenic: Initial GCW Zero support
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For certain platforms, clocks (mclk/sclk/fs) are required to be up before
-the stream start. Example: some codecs needs the mclk/sclk/fs to be
-enabled early for a successful clock synchronization. Some platforms
-require clock to be enabled at boot and be always ON.
+On Tue, Jan 2, 2018 at 4:08 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+> The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
+> handheld game console, successfully kickstarted in ~2012, running Linux.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  arch/mips/boot/dts/ingenic/Makefile |  1 +
+>  arch/mips/boot/dts/ingenic/gcw0.dts | 61 +++++++++++++++++++++++++++++++++++++
+>  arch/mips/configs/gcw0_defconfig    | 27 ++++++++++++++++
+>  arch/mips/jz4740/Kconfig            |  4 +++
+>  arch/mips/jz4740/boards.c           |  1 +
+>  5 files changed, 94 insertions(+)
+>  create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
+>  create mode 100644 arch/mips/configs/gcw0_defconfig
+>
+>  v2: No change
+>  v3: No change
+>  v4: No change
+>  v5: Use SPDX license identifier
+>      Drop custom CROSS_COMPILE from defconfig
 
-By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
-these clocks can be enabled early after the firmware is downloaded.
+Thanks for removing CROSS_COMPILE.
 
-With this series, a virtual clock driver is created which provides
-interface to send the required IPCs from machine driver to enable the
-clocks. NHLT is parsed during probe and the clock information is populated.
-The pointer to blob is cached and sent along with the set_dma_control IPC
-structure during the clk prepare/unprepare callback. Clocks are created for
-a ssp if the nhlt table has endpoint configuration for that particular ssp.
-
-Kabylake machine driver uses the clock interface to enable the clocks early
-as it is required by the rt5663 driver for clock synchronization.
-
-v6 -> v7
-	- Remove the check to deny set_rate when clock is enabled and
-	  instead use framework flag CLK_SET_RATE_GATE
-
-v5 -> v6
-	- Remove unwanted checks from clk ops
-
-	- Modify recalc_rate to return just the cached rate and remove the 
-	  rate calculations
-
-	- Add license based on SPDX	
-
-v4 -> v5
-	- Remove checks for clock enable status from machine driver since
-	  taken care in the framework already
-
-	- Add check in the skl_clk_set_rate to avoid different rates when
-	  clock is enabled already
-
-v3 -> v4
-	- Add missing signed-offs
-
-v2 -> v3
-	- Moved the clk ops and IPCs from Skylake driver to clk driver and
-	  reordered commits accordingly
-
-	- Add the support for extended I2S blob config which supports
-	  multiple mclk dividers in NHLT
-
-	- Enable the clocks as well in DAPM PMU event instead of hw_params
-	  in machine drivers as confirmed by codec vendor
-
-	- Do not register the clk if there is no valid clock source is
-	  avail in the I2S blob
-
-	- Take care of error return in the clk driver
-
-	- Address rest of the review comments and more optimization added
-
-	- Fix the warning
-		sound/soc/intel/skylake/skl.c:724:1-3:
-		WARNING: PTR_ERR_OR_ZERO can be used
-	  reported by scripts/coccinelle/api/ptr_ret.cocci
-
-	- Modified DSP replies as human readable to ease the debugging
-
-	- Add firmware replies for MCLK/SCLK clocks if they are running
-	  already
-
-v1 -> v2
-	- Register parent clocks with skylake device.
-	  With the patch "clk: Add support for runtime PM" soon to be merged
-	  will help DSP to stay active on call to clock enable.
-	  Reference: (https://patchwork.kernel.org/patch/9911741/)
-
-	- Fix the machine driver to enable clocks early for headphone
-	  playback path as well to fix a pop noise issue
-
-Harsha Priya (1):
-  ASoC: Intel: kbl: Enable mclk and ssp sclk early
-
-Naveen M (1):
-  ASoC: Intel: eve: Enable mclk and ssp sclk early
-
-Sriram Periyasamy (2):
-  ASoC: Intel: Skylake: Add ssp clock driver
-  ASoC: Intel: Skylake: Add extended I2S config blob support in Clock
-    driver
-
-Subhransu S. Prusty (2):
-  ASoC: Intel: Skylake: Make DSP replies more human readable
-  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
-
- sound/soc/intel/Kconfig                            |   3 +
- sound/soc/intel/boards/Kconfig                     |   2 +
- sound/soc/intel/boards/kbl_rt5663_max98927.c       |  95 ++++-
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  94 +++++
- sound/soc/intel/skylake/Makefile                   |   5 +
- sound/soc/intel/skylake/skl-i2s.h                  |  31 ++
- sound/soc/intel/skylake/skl-messages.c             |   1 +
- sound/soc/intel/skylake/skl-nhlt.c                 |  41 +-
- sound/soc/intel/skylake/skl-ssp-clk.c              | 429 +++++++++++++++++++++
- sound/soc/intel/skylake/skl-ssp-clk.h              |  38 ++
- sound/soc/intel/skylake/skl-sst-ipc.c              |  50 ++-
- sound/soc/intel/skylake/skl.h                      |   6 +
- 12 files changed, 771 insertions(+), 24 deletions(-)
- create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
-
--- 
-2.7.4
+Acked-by: Mathieu Malaterre <malat@debian.org>
