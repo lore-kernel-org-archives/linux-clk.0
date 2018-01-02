@@ -1,88 +1,81 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Andrea Merello
-	<andrea.merello@gmail.com>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH v3 08/14] ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
-Date: Thu, 18 Jan 2018 15:34:24 +0100
-Message-ID: <1516286070-24927-9-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33104 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750934AbeABLrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 06:47:20 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 00/12] mediatek: rework audio subsystem driver
+Date: Tue, 2 Jan 2018 19:47:09 +0800
+Message-ID: <cover.1514881870.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrea Merello <andrea.merello@gmail.com>
+Hi all,
 
-This patch adds the pin configuration for SDIO controller on
-stm32f4.
+This patch series mainly adds a common driver [5][6] for the top block of
+the MediaTek audio subsystem, which includes clock part and audio components.
+This is a minimal driver that manages shared resources like shared registers,
+and expose a regmap to its sub-nodes. It was tested on the bananapi-r2 and
+the MT2701 EVB.
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
+Also, this driver can be reused by other subsystems (e.g. MMSYS, ETHSYS) in
+future patch.
 
-v3: _ none
+Patch[1]-[4]: rework for audio enable/disable sequences and update some part of
+			  code to make them more generic.
+Patch[7]~[12]: modify both drivers, audio and clock to adapt the new subsystem.
 
-v2: _ none
+Ryder Lee (12):
+  ASoC: mediatek: fix error handling in mt2701_afe_pcm_dev_probe()
+  ASoC: mediatek: rework clock functions for MT2701
+  ASoC: mediatek: cleanup audio driver for MT2701
+  ASoC: mediatek: update clock related properties of MT2701 AFE
+  mfd: mtk-audsys: add MediaTek audio subsystem driver
+  mfd: add DT bindings for MedaiTek audio subsystem
+  ASoC: mediatek: modify MT2701 AFE driver to adapt subsystem wrapper
+  ASoC: mediatek: modify documentation to adapt subsystem wrapper
+  clk: mediatek: move part of mtk_clk_register_gates() to the new
+    function
+  clk: mediatek: switch to use dev_get_regmap() for MT7622 audsys
+  clk: mediatek: add audsys support for MT2701
+  dt-bindings: clock: mediatek: update audsys bindings to adapt the
+    wrapper
 
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  19 +-
+ .../devicetree/bindings/mfd/mtk-audsys.txt         | 109 +++++
+ .../devicetree/bindings/sound/mt2701-afe-pcm.txt   | 257 +++++-----
+ drivers/clk/mediatek/Kconfig                       |   6 +
+ drivers/clk/mediatek/Makefile                      |   1 +
+ drivers/clk/mediatek/clk-mt2701-aud.c              | 180 +++++++
+ drivers/clk/mediatek/clk-mt7622-aud.c              |  11 +-
+ drivers/clk/mediatek/clk-mtk.c                     |  26 +-
+ drivers/clk/mediatek/clk-mtk.h                     |   4 +
+ drivers/mfd/Kconfig                                |   9 +
+ drivers/mfd/Makefile                               |   2 +
+ drivers/mfd/mtk-audsys.c                           | 138 ++++++
+ include/dt-bindings/clock/mt7622-clk.h             |   3 +-
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c  | 526 +++++++--------------
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h  |  15 +-
+ sound/soc/mediatek/mt2701/mt2701-afe-common.h      |  84 +---
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c         | 212 +++------
+ sound/soc/mediatek/mt2701/mt2701-reg.h             |  42 +-
+ 18 files changed, 860 insertions(+), 784 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mtk-audsys.txt
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
+ create mode 100644 drivers/mfd/mtk-audsys.c
 
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-index ae94d86..3520289 100644
---- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-@@ -338,6 +338,37 @@
- 					slew-rate = <3>;
- 				};
- 			};
-+
-+			sdio_pins: sdio_pins@0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
-+						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
-+						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
-+						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
-+						 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
-+						 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
-+					drive-push-pull;
-+					slew-rate = <2>;
-+				};
-+			};
-+
-+			sdio_pins_od: sdio_pins_od@0 {
-+				pins1 {
-+					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
-+						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
-+						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
-+						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
-+						 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
-+					drive-push-pull;
-+					slew-rate = <2>;
-+				};
-+
-+				pins2 {
-+					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
-+					drive-open-drain;
-+					slew-rate = <2>;
-+				};
-+			};
- 		};
- 	};
- };
 -- 
 1.9.1
+
