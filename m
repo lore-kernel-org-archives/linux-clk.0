@@ -1,131 +1,61 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: divider: export clk_div_mask() helper
-Date: Thu, 18 Jan 2018 12:01:43 +0100
-Message-Id: <20180118110144.30619-2-jbrunet@baylibre.com>
-In-Reply-To: <20180118110144.30619-1-jbrunet@baylibre.com>
-References: <20180118110144.30619-1-jbrunet@baylibre.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, ABE Hiroshige <hiroshige.abe.zc@renesas.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add FDP clock
+Date: Tue, 02 Jan 2018 17:54:44 +0200
+Message-ID: <2397934.0Hfvr3l64P@avalon>
+In-Reply-To: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
+References: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Export clk_div_mask() in clk-provider header so every clock providers
-derived from the generic clock divider may share the definition instead
-of redefining it.
+Hi Geert,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-divider.c    | 24 +++++++++++-------------
- include/linux/clk-provider.h |  1 +
- 2 files changed, 12 insertions(+), 13 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 3eb2b27f3513..b859620be4d2 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -28,12 +28,10 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
- 
--#define div_mask(width)	((1 << (width)) - 1)
--
- static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
- 				      u8 width)
- {
--	unsigned int maxdiv = 0, mask = div_mask(width);
-+	unsigned int maxdiv = 0, mask = clk_div_mask(width);
- 	const struct clk_div_table *clkt;
- 
- 	for (clkt = table; clkt->div; clkt++)
-@@ -57,12 +55,12 @@ static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width,
- 				unsigned long flags)
- {
- 	if (flags & CLK_DIVIDER_ONE_BASED)
--		return div_mask(width);
-+		return clk_div_mask(width);
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
--		return 1 << div_mask(width);
-+		return 1 << clk_div_mask(width);
- 	if (table)
- 		return _get_table_maxdiv(table, width);
--	return div_mask(width) + 1;
-+	return clk_div_mask(width) + 1;
- }
- 
- static unsigned int _get_table_div(const struct clk_div_table *table,
-@@ -84,7 +82,7 @@ static unsigned int _get_div(const struct clk_div_table *table,
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return 1 << val;
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
--		return val ? val : div_mask(width) + 1;
-+		return val ? val : clk_div_mask(width) + 1;
- 	if (table)
- 		return _get_table_div(table, val);
- 	return val + 1;
-@@ -109,7 +107,7 @@ static unsigned int _get_val(const struct clk_div_table *table,
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return __ffs(div);
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
--		return (div == div_mask(width) + 1) ? 0 : div;
-+		return (div == clk_div_mask(width) + 1) ? 0 : div;
- 	if (table)
- 		return  _get_table_val(table, div);
- 	return div - 1;
-@@ -141,7 +139,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 	unsigned int val;
- 
- 	val = clk_readl(divider->reg) >> divider->shift;
--	val &= div_mask(divider->width);
-+	val &= clk_div_mask(divider->width);
- 
- 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
- 				   divider->flags, divider->width);
-@@ -375,7 +373,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 	/* if read only, just return current value */
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
- 		val = clk_readl(divider->reg) >> divider->shift;
--		val &= div_mask(divider->width);
-+		val &= clk_div_mask(divider->width);
- 
- 		return divider_ro_round_rate(hw, rate, prate, divider->table,
- 					     divider->width, divider->flags,
-@@ -399,7 +397,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 
- 	value = _get_val(table, div, flags, width);
- 
--	return min_t(unsigned int, value, div_mask(width));
-+	return min_t(unsigned int, value, clk_div_mask(width));
- }
- EXPORT_SYMBOL_GPL(divider_get_val);
- 
-@@ -422,10 +420,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 		__acquire(divider->lock);
- 
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
--		val = div_mask(divider->width) << (divider->shift + 16);
-+		val = clk_div_mask(divider->width) << (divider->shift + 16);
- 	} else {
- 		val = clk_readl(divider->reg);
--		val &= ~(div_mask(divider->width) << divider->shift);
-+		val &= ~(clk_div_mask(divider->width) << divider->shift);
- 	}
- 	val |= (u32)value << divider->shift;
- 	clk_writel(val, divider->reg);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2f3a9aae1abb..38861e75b017 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -397,6 +397,7 @@ struct clk_divider {
- 	spinlock_t	*lock;
- };
- 
-+#define clk_div_mask(width)	((1 << (width)) - 1)
- #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
- 
- #define CLK_DIVIDER_ONE_BASED		BIT(0)
+On Tuesday, 2 January 2018 17:21:43 EET Geert Uytterhoeven wrote:
+> From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+> 
+> This patch adds FDP1-0 clock to the R8A7796 SoC.
+> 
+> Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [geert: s/fdp0/fdp1-0/]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I can't verify the parent clock, but apart from that,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> This gets rid of the following error messages during boot and system
+> resume:
+> 
+>     renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 119:
+> -2 rcar_fdp1 fe940000.fdp1: failed to add to PM domain a3vc: -2
+> 
+> To be queued in clk-renesas-for-v4.16.
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7796-cpg-mssr.c index
+> 83a68e51e4ec1d12..dfb267a92f2a20d3 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -117,6 +117,7 @@ static const struct cpg_core_clk r8a7796_core_clks[]
+> __initconst = { };
+> 
+>  static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+> +	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
+>  	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
+>  	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
+>  	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
+
 -- 
-2.14.3
+Regards,
+
+Laurent Pinchart
