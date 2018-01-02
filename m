@@ -1,86 +1,80 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        Philippe CORNU
-	<philippe.cornu@st.com>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>
-Subject: Re: [PATCH 2/2] clk: stm32: Add DSI clock for STM32F469 Board
-Date: Tue, 30 Jan 2018 15:22:16 +0000
-Message-ID: <df882957-9d04-cda8-abd4-0b731ffa62d3@st.com>
-References: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
- <1516286980-8603-3-git-send-email-gabriel.fernandez@st.com>
- <20180129185624.zesocq2siiikwnog@rob-hp-laptop>
-In-Reply-To: <20180129185624.zesocq2siiikwnog@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:56382 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753334AbeABPJI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:08 -0500
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Burton <paul.burton@imgtec.com>
+Subject: [PATCH v5 08/15] MIPS: ingenic: Use common cmdline handling code
+Date: Tue,  2 Jan 2018 16:08:41 +0100
+Message-Id: <20180102150848.11314-8-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUm9iLA0KDQpUaGFua3MgZm9yIHJldmlld2luZy4NCg0KDQpPbiAwMS8yOS8yMDE4IDA3OjU2
-IFBNLCBSb2IgSGVycmluZyB3cm90ZToNCj4gT24gVGh1LCBKYW4gMTgsIDIwMTggYXQgMDM6NDk6
-NDBQTSArMDEwMCwgZ2FicmllbC5mZXJuYW5kZXpAc3QuY29tIHdyb3RlOg0KPj4gRnJvbTogR2Fi
-cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+DQo+PiBUaGlzIHBh
-dGNoIGFkZHMgRFNJIGNsb2NrIGZvciBTVE0zMkY0NjkgYm9hcmQNCj4+DQo+PiBTaWduZWQtb2Zm
-LWJ5OiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4gLS0t
-DQo+PiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgICAgICAgICAgICAgICAgIHwgMTEgKysr
-KysrKysrKy0NCj4+ICAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zdG0zMmZ4LWNsb2NrLmgg
-fCAgMyArKy0NCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0
-aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIv
-ZHJpdmVycy9jbGsvY2xrLXN0bTMyZjQuYw0KPj4gaW5kZXggZGE0NGY4ZC4uM2MyODc5OCAxMDA2
-NDQNCj4+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4+ICsrKyBiL2RyaXZlcnMv
-Y2xrL2Nsay1zdG0zMmY0LmMNCj4+IEBAIC01MjEsNyArNTIxLDcgQEAgc3RydWN0IHN0bTMyZjRf
-cGxsX2RhdGEgew0KPj4gICB9Ow0KPj4gICANCj4+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCBzdG0z
-MmY0X3BsbF9kYXRhIHN0bTMyZjQ2OV9wbGxbTUFYX1BMTF9ESVZdID0gew0KPj4gLQl7IFBMTCwJ
-ICAgNTAsIHsgInBsbCIsCSAgICAgInBsbC1xIiwgICAgTlVMTAkgICAgfSB9LA0KPj4gKwl7IFBM
-TCwJICAgNTAsIHsgInBsbCIsCSAgICAgInBsbC1xIiwgICAgInBsbC1yIiAgICB9IH0sDQo+PiAg
-IAl7IFBMTF9JMlMsIDUwLCB7ICJwbGxpMnMtcCIsICJwbGxpMnMtcSIsICJwbGxpMnMtciIgfSB9
-LA0KPj4gICAJeyBQTExfU0FJLCA1MCwgeyAicGxsc2FpLXAiLCAicGxsc2FpLXEiLCAicGxsc2Fp
-LXIiIH0gfSwNCj4+ICAgfTsNCj4+IEBAIC0xMDQ3LDYgKzEwNDcsOCBAQCBzdGF0aWMgc3RydWN0
-IGNsa19odyAqc3RtMzJfcmVnaXN0ZXJfY2NsayhzdHJ1Y3QgZGV2aWNlICpkZXYsIGNvbnN0IGNo
-YXIgKm5hbWUsDQo+PiAgIAkibm8tY2xvY2siLCAibHNlIiwgImxzaSIsICJoc2UtcnRjIg0KPj4g
-ICB9Ow0KPj4gICANCj4+ICtzdGF0aWMgY29uc3QgY2hhciAqZHNpX3BhcmVudFsyXSA9IHsgTlVM
-TCwgInBsbC1yIiB9Ow0KPj4gKw0KPj4gICBzdGF0aWMgY29uc3QgY2hhciAqbGNkX3BhcmVudFsx
-XSA9IHsgInBsbHNhaS1yLWRpdiIgfTsNCj4+ICAgDQo+PiAgIHN0YXRpYyBjb25zdCBjaGFyICpp
-MnNfcGFyZW50c1syXSA9IHsgInBsbGkycy1yIiwgTlVMTCB9Ow0KPj4gQEAgLTExNTYsNiArMTE1
-OCwxMiBAQCBzdHJ1Y3Qgc3RtMzJmNF9jbGtfZGF0YSB7DQo+PiAgIAkJTk9fR0FURSwgMCwNCj4+
-ICAgCQkwDQo+PiAgIAl9LA0KPj4gKwl7DQo+PiArCQlDTEtfRjQ2OV9EU0ksICJkc2kiLCBkc2lf
-cGFyZW50LCBBUlJBWV9TSVpFKGRzaV9wYXJlbnQpLA0KPj4gKwkJU1RNMzJGNF9SQ0NfRENLQ0ZH
-UiwgMjksIDEsDQo+PiArCQlTVE0zMkY0X1JDQ19BUEIyRU5SLCAyNywNCj4+ICsJCUNMS19TRVRf
-UkFURV9QQVJFTlQgfCBDTEtfU0VUX1JBVEVfTk9fUkVQQVJFTlQNCj4+ICsJfSwNCj4+ICAgfTsN
-Cj4+ICAgDQo+PiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3RtMzJfYXV4X2NsayBzdG0zMmY3NDZf
-YXV4X2Nsa1tdID0gew0KPj4gQEAgLTE0NTAsNiArMTQ1OCw3IEBAIHN0YXRpYyB2b2lkIF9faW5p
-dCBzdG0zMmY0X3JjY19pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApDQo+PiAgIAlzdG0zMmY0
-X2dhdGVfbWFwID0gZGF0YS0+Z2F0ZXNfbWFwOw0KPj4gICANCj4+ICAgCWhzZV9jbGsgPSBvZl9j
-bGtfZ2V0X3BhcmVudF9uYW1lKG5wLCAwKTsNCj4+ICsJZHNpX3BhcmVudFswXSA9IGhzZV9jbGs7
-DQo+PiAgIA0KPj4gICAJaTJzX2luX2NsayA9IG9mX2Nsa19nZXRfcGFyZW50X25hbWUobnAsIDEp
-Ow0KPj4gICANCj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N0bTMy
-ZngtY2xvY2suaCBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJmeC1jbG9jay5oDQo+
-PiBpbmRleCA0ZDUyM2IwLi41OGQ4YjUxIDEwMDY0NA0KPj4gLS0tIGEvaW5jbHVkZS9kdC1iaW5k
-aW5ncy9jbG9jay9zdG0zMmZ4LWNsb2NrLmgNCj4+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3Mv
-Y2xvY2svc3RtMzJmeC1jbG9jay5oDQo+PiBAQCAtMzUsOCArMzUsOSBAQA0KPj4gICAjZGVmaW5l
-IENMS19TQUlRX1BESVYJCTEzDQo+PiAgICNkZWZpbmUgQ0xLX0hTSQkJCTE0DQo+PiAgICNkZWZp
-bmUgQ0xLX1NZU0NMSwkJMTUNCj4+ICsjZGVmaW5lIENMS19GNDY5X0RTSQkJMTYNCj4+ICAgDQo+
-PiAtI2RlZmluZSBFTkRfUFJJTUFSWV9DTEsJCTE2DQo+PiArI2RlZmluZSBFTkRfUFJJTUFSWV9D
-TEsJCTE3DQo+PiAgIA0KPj4gICAjZGVmaW5lIENMS19IRE1JX0NFQwkJMTYNCj4+ICAgI2RlZmlu
-ZSBDTEtfU1BESUYJCTE3DQo+IFRoaXMgbG9va3Mgc3VzcGljaW91cy4gV2hhdCdzIHRoZSByZWxh
-dGlvbnNoaXAgb2YgdGhlc2UgY2xvY2tzPw0KSSBoYXZlIGp1c3QgYWRkZWQgQ0xLX0Y0NjlfRFNJ
-IGluIHRoZSBiaW5kaW5nLCBhbmQgc2hpZnRlZCB0aGUgZW5kIG9mIA0KcHJpbWFyeSBjbG9jayBm
-b3IgRjQgY2xvY2tzLg0KDQonQ0xLX0Y0NjlfRFNJJyBiaW5kaW5nIGlzIG9ubHkgdXNlZCBmb3Ig
-U1RNMzJGNDY5IGFuZCBub3QgZm9yIFNUTTMyRjc0NiANCih0aGF0IHdoeSBDTEtfSERNSV9DRUMg
-Y2FuIHVzZSB0aGUgaW5kZXggMTYpDQoNCg0KQlINCg0KR2FicmllbC4NCj4NCj4gUm9iDQo=
+From: Paul Burton <paul.burton@imgtec.com>
+
+jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
+arcs_cmdline, up to argc (in fw_arg0). The common code in
+fw_init_cmdline will do the exact same thing when run on a system where
+fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
+use it). Remove the custom implementation & use the generic code.
+
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+---
+ arch/mips/jz4740/prom.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
+
+ v2: No change
+ v3: No change
+ v4: No change
+ v5: No change
+
+diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
+index 47e857194ce6..a62dd8e6ecf9 100644
+--- a/arch/mips/jz4740/prom.c
++++ b/arch/mips/jz4740/prom.c
+@@ -20,33 +20,13 @@
+ #include <linux/serial_reg.h>
+ 
+ #include <asm/bootinfo.h>
++#include <asm/fw/fw.h>
+ #include <asm/mach-jz4740/base.h>
+ 
+-static __init void jz4740_init_cmdline(int argc, char *argv[])
+-{
+-	unsigned int count = COMMAND_LINE_SIZE - 1;
+-	int i;
+-	char *dst = &(arcs_cmdline[0]);
+-	char *src;
+-
+-	for (i = 1; i < argc && count; ++i) {
+-		src = argv[i];
+-		while (*src && count) {
+-			*dst++ = *src++;
+-			--count;
+-		}
+-		*dst++ = ' ';
+-	}
+-	if (i > 1)
+-		--dst;
+-
+-	*dst = 0;
+-}
+-
+ void __init prom_init(void)
+ {
+-	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
+ 	mips_machtype = MACH_INGENIC_JZ4740;
++	fw_init_cmdline();
+ }
+ 
+ void __init prom_free_prom_memory(void)
+-- 
+2.11.0
+
