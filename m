@@ -1,67 +1,43 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Phil Elwell <phil@raspberrypi.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 08/34] clk: bcm2835: change bcm2835_pll_rate_from_divisors to return unsigned long
-Date: Mon,  1 Jan 2018 19:07:35 +0000
-Message-Id: <1514833681-30737-9-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 14/15] devicetree/bindings: Add GCW vendor prefix
+Date: Tue,  2 Jan 2018 16:08:47 +0100
+Message-Id: <20180102150848.11314-14-paul@crapouillou.net>
+In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-bcm2835_pll_rate_from_divisors() returns a value directly as the return
-value to round_rate(). clk_ops->round_rate() has been changed to an
-unsigned long so for the sake of completeness and neatness this patch
-updates the helper function to return the same data-type.
+Game Consoles Worldwide, mostly known under the acronym GCW, is the
+creator of the GCW Zero open-source video game system.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Phil Elwell <phil@raspberrypi.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index c215dc9..fb2b012 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -541,8 +541,9 @@ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
- 	*fdiv = div & ((1 << A2W_PLL_FRAC_BITS) - 1);
- }
- 
--static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
--					   u32 ndiv, u32 fdiv, u32 pdiv)
-+static unsigned long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
-+						    u32 ndiv, u32 fdiv,
-+						    u32 pdiv)
- {
- 	u64 rate;
- 
+ v2: It's 'Game Consoles Worldwide', not 'Games Consoles Worldwide'
+ v3: No change
+ v4: No change
+ v5: No change
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 0994bdd82cd3..f40f4da39937 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -123,6 +123,7 @@ focaltech	FocalTech Systems Co.,Ltd
+ friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
+ fsl	Freescale Semiconductor
+ fujitsu	Fujitsu Ltd.
++gcw Game Consoles Worldwide
+ ge	General Electric Company
+ geekbuying	GeekBuying
+ gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
 -- 
-2.7.4
+2.11.0
