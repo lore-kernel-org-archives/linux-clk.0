@@ -1,43 +1,41 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH] clk: imx: pllv2: avoid using uninitialized values
-Date: Wed, 17 Jan 2018 16:02:56 +0100
-Message-Id: <20180117150256.7430-1-l.stach@pengutronix.de>
+Return-Path: <vinod.koul@intel.com>
+Date: Tue, 2 Jan 2018 16:13:35 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc: ALSA ML <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Patches Audi o <patches.audio@intel.com>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v6 0/6] ASoC: Intel: Skylake: Add a clk
+ driver to enable ssp clks early
+Message-ID: <20180102104334.GZ18649@localhost>
+References: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514306696-7062-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Forward the errors returned by __clk_pllv2_set_rate() in the recalc rate
-function, to avoid using uninitialized values for the rate calculation.
+On Tue, Dec 26, 2017 at 10:14:50PM +0530, Sriram Periyasamy wrote:
+> For certain platforms, clocks (mclk/sclk/fs) are required to be up before
+> the stream start. Example: some codecs needs the mclk/sclk/fs to be
+> enabled early for a successful clock synchronization. Some platforms
+> require clock to be enabled at boot and be always ON.
+> 
+> By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+> these clocks can be enabled early after the firmware is downloaded.
+> 
+> With this series, a virtual clock driver is created which provides
+> interface to send the required IPCs from machine driver to enable the
+> clocks. NHLT is parsed during probe and the clock information is populated.
+> The pointer to blob is cached and sent along with the set_dma_control IPC
+> structure during the clk prepare/unprepare callback. Clocks are created for
+> a ssp if the nhlt table has endpoint configuration for that particular ssp.
+> 
+> Kabylake machine driver uses the clock interface to enable the clocks early
+> as it is required by the rt5663 driver for clock synchronization.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-pllv2.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Acked-By: Vinod Koul <vinod.koul@intel.com>
 
-diff --git a/drivers/clk/imx/clk-pllv2.c b/drivers/clk/imx/clk-pllv2.c
-index 85b5cbe9744c..eeba3cb14e2d 100644
---- a/drivers/clk/imx/clk-pllv2.c
-+++ b/drivers/clk/imx/clk-pllv2.c
-@@ -182,8 +182,12 @@ static long clk_pllv2_round_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long *prate)
- {
- 	u32 dp_op, dp_mfd, dp_mfn;
-+	int ret;
-+
-+	ret = __clk_pllv2_set_rate(rate, *prate, &dp_op, &dp_mfd, &dp_mfn);
-+	if (ret)
-+		return ret;
- 
--	__clk_pllv2_set_rate(rate, *prate, &dp_op, &dp_mfd, &dp_mfn);
- 	return __clk_pllv2_recalc_rate(*prate, MXC_PLL_DP_CTL_DPDCK0_2_EN,
- 			dp_op, dp_mfd, dp_mfn);
- }
 -- 
-2.11.0
+~Vinod
