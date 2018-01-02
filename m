@@ -1,110 +1,55 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:48350 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932527AbeASXSY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jan 2018 18:18:24 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 3/9] irqchip/sun4i: add support for suniv interrupt controller
-Date: Sat, 20 Jan 2018 07:17:29 +0800
-Message-Id: <20180119231735.61504-4-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37242 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeABP7Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:59:24 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180102150848.11314-9-paul@crapouillou.net>
+References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-9-paul@crapouillou.net>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Tue, 2 Jan 2018 21:29:23 +0530
+Message-ID: <CANc+2y6YXXtFsjCbxP-WVOSXaN9nmtn5VkQ_ZVdVzpvK_eXbKw@mail.gmail.com>
+Subject: Re: [PATCH v5 09/15] MIPS: platform: add machtype IDs for more
+ Ingenic SoCs
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The new F-series SoCs (suniv) from Allwinner use an stripped version of
-the interrupt controller in A10/A13.
+On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net> wrote:
+> Add a machtype ID for the JZ4780 SoC, which was missing, and one for the
+> newly supported JZ4770 SoC.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  arch/mips/include/asm/bootinfo.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+>  v2: No change
+>  v3: No change
+>  v5: No change
+>
+> diff --git a/arch/mips/include/asm/bootinfo.h b/arch/mips/include/asm/bootinfo.h
+> index e26a093bb17a..a301a8f4bc66 100644
+> --- a/arch/mips/include/asm/bootinfo.h
+> +++ b/arch/mips/include/asm/bootinfo.h
+> @@ -79,6 +79,8 @@ enum loongson_machine_type {
+>   */
+>  #define  MACH_INGENIC_JZ4730   0       /* JZ4730 SOC           */
+>  #define  MACH_INGENIC_JZ4740   1       /* JZ4740 SOC           */
+> +#define  MACH_INGENIC_JZ4770   2       /* JZ4770 SOC           */
+> +#define  MACH_INGENIC_JZ4780   3       /* JZ4780 SOC           */
+>
+>  extern char *system_type;
+>  const char *get_system_type(void);
+> --
+> 2.11.0
+>
+>
 
-Add support for it in irq-sun4i driver.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/irqchip/irq-sun4i.c | 43 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-index e3e5b9132b75..64ae41379802 100644
---- a/drivers/irqchip/irq-sun4i.c
-+++ b/drivers/irqchip/irq-sun4i.c
-@@ -23,13 +23,26 @@
- 
- #include <asm/exception.h>
- 
-+enum sun4i_irq_type {
-+	sun4i_ic,
-+	suniv_ic
-+};
-+
-+static enum sun4i_irq_type sun4i_irq_type;
-+static int sun4i_irq_enable_reg_offset;
-+static int sun4i_irq_mask_reg_offset;
-+
- #define SUN4I_IRQ_VECTOR_REG		0x00
- #define SUN4I_IRQ_PROTECTION_REG	0x08
- #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
- #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
- #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
--#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
--#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
-+#define SUN4I_IRQ_ENABLE_REG_OFFSET	0x40
-+#define SUN4I_IRQ_MASK_REG_OFFSET	0x50
-+#define SUNIV_IRQ_ENABLE_REG_OFFSET	0x20
-+#define SUNIV_IRQ_MASK_REG_OFFSET	0x30
-+#define SUN4I_IRQ_ENABLE_REG(x)		(sun4i_irq_enable_reg_offset + 0x4 * x)
-+#define SUN4I_IRQ_MASK_REG(x)		(sun4i_irq_mask_reg_offset + 0x4 * x)
- 
- static void __iomem *sun4i_irq_base;
- static struct irq_domain *sun4i_irq_domain;
-@@ -115,8 +128,9 @@ static int __init sun4i_of_init(struct device_node *node,
- 	writel(0xffffffff, sun4i_irq_base + SUN4I_IRQ_PENDING_REG(1));
- 	writel(0xffffffff, sun4i_irq_base + SUN4I_IRQ_PENDING_REG(2));
- 
--	/* Enable protection mode */
--	writel(0x01, sun4i_irq_base + SUN4I_IRQ_PROTECTION_REG);
-+	/* Enable protection mode (not available in suniv) */
-+	if (sun4i_irq_type == sun4i_ic)
-+		writel(0x01, sun4i_irq_base + SUN4I_IRQ_PROTECTION_REG);
- 
- 	/* Configure the external interrupt source type */
- 	writel(0x00, sun4i_irq_base + SUN4I_IRQ_NMI_CTRL_REG);
-@@ -130,7 +144,26 @@ static int __init sun4i_of_init(struct device_node *node,
- 
- 	return 0;
- }
--IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_of_init);
-+
-+static int __init sun4i_ic_of_init(struct device_node *node,
-+				   struct device_node *parent)
-+{
-+	sun4i_irq_type = sun4i_ic;
-+	sun4i_irq_enable_reg_offset = SUN4I_IRQ_ENABLE_REG_OFFSET;
-+	sun4i_irq_mask_reg_offset = SUN4I_IRQ_MASK_REG_OFFSET;
-+	sun4i_of_init(node, parent);
-+}
-+IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_ic_of_init);
-+
-+static int __init suniv_ic_of_init(struct device_node *node,
-+				   struct device_node *parent)
-+{
-+	sun4i_irq_type = suniv_ic;
-+	sun4i_irq_enable_reg_offset = SUNIV_IRQ_ENABLE_REG_OFFSET;
-+	sun4i_irq_mask_reg_offset = SUNIV_IRQ_MASK_REG_OFFSET;
-+	sun4i_of_init(node, parent);
-+}
-+IRQCHIP_DECLARE(allwinner_suniv_ic, "allwinner,suniv-ic", suniv_ic_of_init);
- 
- static void __exception_irq_entry sun4i_handle_irq(struct pt_regs *regs)
- {
--- 
-2.14.2
-
+Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
