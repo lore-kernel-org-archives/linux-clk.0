@@ -1,50 +1,90 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 3 Jan 2018 15:08:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] clocksource: Add a new timer-ingenic driver
+Message-ID: <20180103210840.hsh4kghuxz7btu5f@rob-hp-laptop>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+ <20180101143344.2099-1-paul@crapouillou.net>
+ <20180101143344.2099-5-paul@crapouillou.net>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-6-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-6-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 10:53:21 +0100
-Message-ID: <CAMuHMdU8yPbDpSxBq=DjaVWZMYS47VtX9Hk_dov5MWtg+jGwsw@mail.gmail.com>
-Subject: Re: [RFC 05/37] ARM: dts: r8a7791: Adjust SMP routine size
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180101143344.2099-5-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adjusts the definition of the SMP routine size according
-> to the latest changes made by commit:
-> "ARM: shmobile: Add watchdog support"
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+On Mon, Jan 01, 2018 at 03:33:43PM +0100, Paul Cercueil wrote:
+> This driver will use the TCU (Timer Counter Unit) present on the Ingenic
+> JZ47xx SoCs to provide the kernel with a clocksource and timers.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      |  35 +++
 
-I would make it a bit larger, though. "0x64" is the strict minimum =>
-0x80? 0x100?
+Separate patch please.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>  drivers/clocksource/Kconfig                        |   8 +
+>  drivers/clocksource/Makefile                       |   1 +
+>  drivers/clocksource/timer-ingenic.c                | 256 +++++++++++++++++++++
+>  4 files changed, 300 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>  create mode 100644 drivers/clocksource/timer-ingenic.c
+> 
+>  v2: Use SPDX identifier for the license
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..e4944972ea53
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,35 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+> +---------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+> +  * ingenic,jz4740-tcu
+> +  * ingenic,jz4770-tcu
+> +  * ingenic,jz4780-tcu
+> +- interrupt-parent : phandle of the TCU interrupt controller.
+> +- interrupts : Specifies the interrupts the controller is connected to.
+> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+> +- clock-names : List of name strings for the TCU clocks.
+> +- ingenic,channels: a list of TCU channels to be used as timers.
 
-Gr{oetje,eeting}s,
+Why is this needed? This looks like you are trying to assign certain 
+timers to clocksource and clockevent. A common problem, but one that 
+should be decided by describing h/w features. There must be some 
+property present or missing to make you decide to use a given channel or 
+not.
 
-                        Geert
+> +
+> +Example:
+> +
+> +/ {
+> +	regmap {
+> +		compatible = "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +
+> +		tcu: timer {
+> +			compatible = "ingenic,jz4740-tcu";
+> +
+> +			clocks = <&tcu 0>, <&tcu 1>;
+> +			clock-names = "timer0", "timer1";
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+It's curious that you have timer0 and timer1 here and then channels 0 
+and 1 below. Would your clocks change if you use channel 2 for example? 
+The binding should be a list of clock connections in the h/w, not 
+just what the driver needs or what the used h/w configuration is. 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
