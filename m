@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 09/12] clk: mediatek: move part of mtk_clk_register_gates() to the new function
-Date: Tue, 2 Jan 2018 19:47:51 +0800
-Message-ID: <f658c6163421800b248e7b96fae05c8d6e043e02.1514881870.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1514881870.git.ryder.lee@mediatek.com>
-References: <cover.1514881870.git.ryder.lee@mediatek.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 3 Jan 2018 14:58:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] irqchip: Add the ingenic-tcu-intc driver
+Message-ID: <20180103205817.4hnoyyomtwmhri76@rob-hp-laptop>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+ <20180101143344.2099-1-paul@crapouillou.net>
+ <20180101143344.2099-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180101143344.2099-3-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-In some subsystems, the regmap has already been initialized from its parent,
-so there is no need to map it again. To keep flexible, we move some parts to
-the new function - mtk_clk_register_num_gates(), and then use it for those
-subsystems.
+On Mon, Jan 01, 2018 at 03:33:41PM +0100, Paul Cercueil wrote:
+> This simple driver handles the IRQ chip of the TCU
+> (Timer Counter Unit) of the JZ47xx Ingenic SoCs.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../bindings/interrupt-controller/ingenic,tcu.txt  |  32 +++++
+>  drivers/irqchip/Kconfig                            |   6 +
+>  drivers/irqchip/Makefile                           |   1 +
+>  drivers/irqchip/irq-ingenic-tcu.c                  | 151 +++++++++++++++++++++
+>  4 files changed, 190 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>  create mode 100644 drivers/irqchip/irq-ingenic-tcu.c
+> 
+>  v2: Use SPDX identifier for the license
+>      Make KConfig option select CONFIG_IRQ_DOMAIN since we depend on it
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..a3e6318f8461
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> @@ -0,0 +1,32 @@
+> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
+> +  * ingenic,jz4740-tcu-intc
+> +  * ingenic,jz4770-tcu-intc
+> +  * ingenic,jz4780-tcu-intc
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +  interrupt source. The value shall be 1.
+> +- interrupt-parent : phandle of the interrupt controller.
+> +- interrupts : Specifies the interrupt the controller is connected to.
+> +
+> +Example:
+> +
+> +/ {
+> +	regmap {
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/clk-mtk.c | 26 +++++++++++++++++---------
- drivers/clk/mediatek/clk-mtk.h |  4 ++++
- 2 files changed, 21 insertions(+), 9 deletions(-)
+regmap is a Linuxism.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 9c0ae42..815c98f 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -101,24 +101,16 @@ void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
- 	}
- }
- 
--int mtk_clk_register_gates(struct device_node *node,
-+int mtk_clk_register_num_gates(struct regmap *regmap,
- 		const struct mtk_gate *clks,
- 		int num, struct clk_onecell_data *clk_data)
- {
- 	int i;
- 	struct clk *clk;
--	struct regmap *regmap;
- 
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	regmap = syscon_node_to_regmap(node);
--	if (IS_ERR(regmap)) {
--		pr_err("Cannot find regmap for %pOF: %ld\n", node,
--				PTR_ERR(regmap));
--		return PTR_ERR(regmap);
--	}
--
- 	for (i = 0; i < num; i++) {
- 		const struct mtk_gate *gate = &clks[i];
- 
-@@ -144,6 +136,22 @@ int mtk_clk_register_gates(struct device_node *node,
- 	return 0;
- }
- 
-+int mtk_clk_register_gates(struct device_node *node,
-+		const struct mtk_gate *clks,
-+		int num, struct clk_onecell_data *clk_data)
-+{
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %pOF: %ld\n", node,
-+				PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	return mtk_clk_register_num_gates(regmap, clks, num, clk_data);
-+}
-+
- struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f10250d..f969c28 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -159,6 +159,10 @@ struct mtk_gate {
- 	const struct clk_ops *ops;
- };
- 
-+int mtk_clk_register_num_gates(struct regmap *regmap,
-+		const struct mtk_gate *clks, int num,
-+		struct clk_onecell_data *clk_data);
-+
- int mtk_clk_register_gates(struct device_node *node,
- 			const struct mtk_gate *clks, int num,
- 			struct clk_onecell_data *clk_data);
--- 
-1.9.1
+> +		compatible = "simple-mfd", "syscon";
+
+Need a specific compatible string here. Neither of these are valid by 
+themselves.
+
+> +		reg = <0x10002000 0x1000>;
+> +
+> +		tcu: interrupt-controller {
+
+The TCU is only an interrupt controller?
+
+> +			compatible = "ingenic,jz4740-tcu-intc";
+
+Is there a register range associated with this block? If so, add a reg 
+property even if regmap doesn't need it.
+
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <15>;
+> +		};
+> +	};
+> +};
