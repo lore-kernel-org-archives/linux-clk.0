@@ -1,41 +1,46 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 17:47:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v7 4/5] clk: aspeed: Register gated clocks
+Message-ID: <20180103014703.GS7997@codeaurora.org>
+References: <20171222024522.10362-1-joel@jms.id.au>
+ <20171222024522.10362-5-joel@jms.id.au>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516107034-6600-1-git-send-email-fabio.estevam@nxp.com>
-References: <1516107034-6600-1-git-send-email-fabio.estevam@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 Jan 2018 09:14:18 +0100
-Message-ID: <CAMuHMdXyEBaaGq8yS8Xdxj-0s-CirV3htBaVpN_oK_n9iWLArg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Print the clock name and warning cause
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171222024522.10362-5-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 16, 2018 at 1:50 PM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
-> When getting the clock related warnings, it is useful to know what
-> is the clock name that is causing the problem and the cause of the
-> problem.
->
-> Add the clock name and the the warning cause to the log, so that the
-> output becomes clearer like this:
->
-> [    2.383969] ------------[ cut here ]------------
-> [    2.388720] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:814 clk_core_disable+0xd4/0xf8
-> [    2.396658] uart4_ipg_gate already disabled
->
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+On 12/22, Joel Stanley wrote:
+> The majority of the clocks in the system are gates paired with a reset
+> controller that holds the IP in reset.
+> 
+> This borrows from clk_hw_register_gate, but registers two 'gates', one
+> to control the clock enable register and the other to control the reset
+> IP. This allows us to enforce the ordering:
+> 
+>  1. Place IP in reset
+>  2. Enable clock
+>  3. Delay
+>  4. Release reset
+> 
+> There are some gates that do not have an associated reset; these are
+> handled by using -1 as the index for the reset.
+> 
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied to clk-next
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
