@@ -1,125 +1,116 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 15/15] clk: ti: convert to use proper register
- definition for all accesses
-To: Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
- <1489236606-24023-16-git-send-email-t-kristo@ti.com>
- <CAHCN7x+oKEmXBpogy4VOB8UgmTd6+X5fBiP66yzUqXmvDWdqaw@mail.gmail.com>
- <6b4c5bf2-1260-0e79-0414-9870f21e4a75@ti.com>
- <CAHCN7xLaP-th=vAzN8C1QXstf3c5SP4JADAZZXTb1Nd6N6QdsQ@mail.gmail.com>
- <20180117211907.GE4042@atomide.com>
- <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <4f0f185a-2890-3747-7060-1f5b5a77022a@ti.com>
-Date: Thu, 18 Jan 2018 09:34:37 +0200
+Return-Path: <paul@crapouillou.net>
+Date: Wed, 03 Jan 2018 22:56:16 +0100
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 5/6] clocksource: Add a new timer-ingenic driver
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier
+	<marc.zyngier@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones
+	<lee.jones@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-Id: <1515016576.1642.2@smtp.crapouillou.net>
+In-Reply-To: <20180103210840.hsh4kghuxz7btu5f@rob-hp-laptop>
+References: <20171229125942.27305-2-paul@crapouillou.net>
+	<20180101143344.2099-1-paul@crapouillou.net>
+	<20180101143344.2099-5-paul@crapouillou.net>
+	<20180103210840.hsh4kghuxz7btu5f@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/01/18 23:44, Adam Ford wrote:
-> On Wed, Jan 17, 2018 at 3:19 PM, Tony Lindgren <tony@atomide.com> wrote:
->> * Adam Ford <aford173@gmail.com> [180117 15:15]:
->>> On Wed, Jan 17, 2018 at 8:02 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>> On 17/01/18 15:27, Adam Ford wrote:
->>>>>
->>>>> On Sat, Mar 11, 2017 at 6:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>>>>
->>>>>> Currently, TI clock driver uses an encapsulated struct that is cast into
->>>>>> a void pointer to store all register addresses. This can be considered
->>>>>> as rather nasty hackery, and prevents from expanding the register
->>>>>> address field also. Instead, replace all the code to use proper struct
->>>>>> in place for this, which contains all the previously used data.
->>>>>>
->>>>>> This patch is rather large as it is touching multiple files, but this
->>>>>> can't be split up as we need to avoid any boot breakage.
->>>>>>
->>>>>
->>>>> I know it's late coming, but according to git bisect, this patch is
->>>>> causing some problems with Logic PD Torpedo 37xx Dev kit.
->>>>
->>>>
->>>> Oh reporting bugs is never too late, thanks for posting this out.
->>>>
->>>>>
->>>>> It it is a DM3730 that has a WL1283 chipset attached to the SDIO
->>>>> interface on MMC3.  The driver seems to load properly, but when
->>>>> loading wpa_supplicant to activate the WL1283, we get a giant crash.
->>>>> I checked kernel revisions starting at 4.14 and working back to when
->>>>> it worked, then used git bisect from there.
->>>>>
->>>>> I am hoping it might be a simple fix for something that just needs to
->>>>> get added or tweaked in the device tree.
->>>>
->>>>
->>>> I don't have access to the specific hw, but can you try to dig out which
->>>> hwmod is causing the crash? Just print out the oh->name from the
->>>> _wait_softreset_complete. That would help root causing the issue.
->>>>
->>>
->>> With one small patch, I was able to make it work again.
->>>
->>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
->>> index 2dbd632..ed1f625 100644
->>> --- a/arch/arm/mach-omap2/omap_hwmod.c
->>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
->>> @@ -477,7 +477,7 @@ static int _wait_softreset_complete(struct omap_hwmod *oh)
->>>          int c = 0;
->>>
->>>          sysc = oh->class->sysc;
->>> -
->>> +pr_warn("_wait_softreset_complete: %s\n", oh->name);
->>>          if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
->>>                  omap_test_timeout((omap_hwmod_read(oh, sysc->syss_offs)
->>>                                     & SYSS_RESETDONE_MASK),
->>>
->>>
->>> This leads me to believe that the omap_test_timeout functions might
->>> not be working quite right.
->>
->> There may be a srst_udelay needed for some module, see commit
->> ebf244148092 ("ARM: OMAP2+: Use srst_udelay for USB on dm814x")
->> for example.
->>
->> You might be able to find which module it is by commenting out
->> postcore_initcall_sync(omap3_l3_init) in drivers/bus/omap_l3_smx.c
->> temporarily as the system will most likely hang right there.
-> 
-> I commented out that line as you suggested, but the system boots as
-> normal and I get the crash (as normal)
-> 
-> I am looking through the DM3730 and OMAP3630 TRM now.  Any thought on
-> a keyword search I should use to see which hwmods might require
-> srst_udelay?
+Hi,
 
-Looking at the log you provided, it looks like only mmc1, mmc3 and i2c1 
-are reset during the wlan probe. Based on the prints coming out in the 
-failing case, it looks like the culprit might be mmc3 for some reason.
+Le mer. 3 janv. 2018 =E0 22:08, Rob Herring <robh@kernel.org> a =E9crit :
+> On Mon, Jan 01, 2018 at 03:33:43PM +0100, Paul Cercueil wrote:
+>>  This driver will use the TCU (Timer Counter Unit) present on the=20
+>> Ingenic
+>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>   .../devicetree/bindings/timer/ingenic,tcu.txt      |  35 +++
+>=20
+> Separate patch please.
 
-[   18.239746] _wait_softreset_complete: mmc3
-[   18.638580] _wait_softreset_complete: mmc3
-[   18.657562] _wait_softreset_complete: mmc1
-[   18.833374] wlcore: firmware booted (Rev 7.3.10.0.141)
+OK.
 
-^ the firmware notification above does not come out in the crash.
+>>   drivers/clocksource/Kconfig                        |   8 +
+>>   drivers/clocksource/Makefile                       |   1 +
+>>   drivers/clocksource/timer-ingenic.c                | 256=20
+>> +++++++++++++++++++++
+>>   4 files changed, 300 insertions(+)
+>>   create mode 100644=20
+>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>   create mode 100644 drivers/clocksource/timer-ingenic.c
+>>=20
+>>   v2: Use SPDX identifier for the license
+>>=20
+>>  diff --git=20
+>> a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt=20
+>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>  new file mode 100644
+>>  index 000000000000..e4944972ea53
+>>  --- /dev/null
+>>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>  @@ -0,0 +1,35 @@
+>>  +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+>>  +---------------------------------------------
+>>  +
+>>  +Required properties:
+>>  +
+>>  +- compatible : should be "ingenic,<socname>-tcu". Valid strings=20
+>> are:
+>>  +  * ingenic,jz4740-tcu
+>>  +  * ingenic,jz4770-tcu
+>>  +  * ingenic,jz4780-tcu
+>>  +- interrupt-parent : phandle of the TCU interrupt controller.
+>>  +- interrupts : Specifies the interrupts the controller is=20
+>> connected to.
+>>  +- clocks : List of phandle & clock specifiers for the TCU clocks.
+>>  +- clock-names : List of name strings for the TCU clocks.
+>>  +- ingenic,channels: a list of TCU channels to be used as timers.
+>=20
+> Why is this needed? This looks like you are trying to assign certain
+> timers to clocksource and clockevent. A common problem, but one that
+> should be decided by describing h/w features. There must be some
+> property present or missing to make you decide to use a given channel=20
+> or
+> not.
 
--Tero
+Well, it's not easy; some TCU channels will be used as PWM, and there's=20
+no way
+to know that when the clocksource driver probes. And which ones are PWM=20
+/ which
+ones are not, is board-specific. If you have a better solution though,=20
+I take it.
 
-> 
-> adam
-> 
->>
->> Regards,
->>
->> Tony
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>>  +
+>>  +Example:
+>>  +
+>>  +/ {
+>>  +	regmap {
+>>  +		compatible =3D "simple-mfd", "syscon";
+>>  +		reg =3D <0x10002000 0x1000>;
+>>  +
+>>  +		tcu: timer {
+>>  +			compatible =3D "ingenic,jz4740-tcu";
+>>  +
+>>  +			clocks =3D <&tcu 0>, <&tcu 1>;
+>>  +			clock-names =3D "timer0", "timer1";
+>=20
+> It's curious that you have timer0 and timer1 here and then channels 0
+> and 1 below. Would your clocks change if you use channel 2 for=20
+> example?
+> The binding should be a list of clock connections in the h/w, not
+> just what the driver needs or what the used h/w configuration is.
+>=20
+> Rob
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I only put these to simplify the example, but you're right, I should=20
+have
+all the timer clocks supplied there.
+
+Thanks,
+-Paul
+=
