@@ -1,126 +1,116 @@
-Return-Path: <marc.zyngier@arm.com>
-Date: Sat, 20 Jan 2018 13:06:49 +0000
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
- <jason@lakedaemon.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee
- Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
-Message-ID: <20180120130649.7f326f75@why.wild-wind.fr.eu.org>
-In-Reply-To: <1515687945.2170.1@smtp.crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
-	<20180110224838.16711-1-paul@crapouillou.net>
-	<20180110224838.16711-6-paul@crapouillou.net>
-	<58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
-	<1515687945.2170.1@smtp.crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] clk: Use octal instead of symbolic permissions
+Date: Wed,  3 Jan 2018 12:06:15 +0100
+Message-Id: <1514977577-11854-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
+References: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 11 Jan 2018 17:25:45 +0100
-Paul Cercueil <paul@crapouillou.net> wrote:
+Octal permissions are preferred, as they are easier to read than
+symbolic permissions.  Hence replace "S_IRUGO" by "0444".
 
-> Hi Marc,
-> 
-> >>  +static int __init ingenic_tcu_intc_of_init(struct device_node 
-> >> *node,
-> >>  +	struct device_node *parent)
-> >>  +{
-> >>  +	struct irq_domain *domain;
-> >>  +	struct irq_chip_generic *gc;
-> >>  +	struct irq_chip_type *ct;
-> >>  +	int err, i, num_parent_irqs;
-> >>  +	unsigned int parent_irqs[3];  
-> > 
-> > 3 parent interrupts? Really? How do you pick one? Also, given the 
-> > useage
-> > model below, "int" is the wrong type. Probably should be u32.  
-> 
-> See below.
-> 
-> >>  +	struct regmap *map;
-> >>  +
-> >>  +	num_parent_irqs = of_property_count_elems_of_size(
-> >>  +			node, "interrupts", 4);  
-> > 
-> > Nit: on a single line, as here is nothing that hurts my eyes more than
-> > reading something like(
-> > this). Also, 4 is better expressed as sizeof(u32).  
-> 
-> That will make checkpatch.pl unhappy :(
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/clk/clk.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-And I don't care about checkpatch. I maintain the irqchip stuff, while
-checkpatch doesn't. Hence, I win.
-
-> 
-> >>  +	if (num_parent_irqs < 0 || num_parent_irqs > 
-> >> ARRAY_SIZE(parent_irqs))
-> >>  +		return -EINVAL;
-> >>  +
-> >>  +	map = syscon_node_to_regmap(node->parent);
-> >>  +	if (IS_ERR(map))
-> >>  +		return PTR_ERR(map);
-> >>  +
-> >>  +	domain = irq_domain_add_linear(node, 32, &irq_generic_chip_ops, 
-> >> NULL);
-> >>  +	if (!domain)
-> >>  +		return -ENOMEM;
-> >>  +
-> >>  +	err = irq_alloc_domain_generic_chips(domain, 32, 1, "TCU",
-> >>  +			handle_level_irq, 0, IRQ_NOPROBE | IRQ_LEVEL, 0);
-> >>  +	if (err)
-> >>  +		goto out_domain_remove;
-> >>  +
-> >>  +	gc = irq_get_domain_generic_chip(domain, 0);
-> >>  +	ct = gc->chip_types;
-> >>  +
-> >>  +	gc->wake_enabled = IRQ_MSK(32);
-> >>  +	gc->private = map;
-> >>  +
-> >>  +	ct->regs.disable = TCU_REG_TMSR;
-> >>  +	ct->regs.enable = TCU_REG_TMCR;
-> >>  +	ct->regs.ack = TCU_REG_TFCR;
-> >>  +	ct->chip.irq_unmask = ingenic_tcu_gc_unmask_enable_reg;
-> >>  +	ct->chip.irq_mask = ingenic_tcu_gc_mask_disable_reg;
-> >>  +	ct->chip.irq_mask_ack = ingenic_tcu_gc_mask_disable_reg_and_ack;
-> >>  +	ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
-> >>  +
-> >>  +	/* Mask all IRQs by default */
-> >>  +	regmap_write(map, TCU_REG_TMSR, IRQ_MSK(32));
-> >>  +
-> >>  +	for (i = 0; i < num_parent_irqs; i++) {
-> >>  +		parent_irqs[i] = irq_of_parse_and_map(node, i);
-> >>  +		if (!parent_irqs[i]) {
-> >>  +			err = -EINVAL;
-> >>  +			goto out_unmap_irqs;
-> >>  +		}
-> >>  +
-> >>  +		irq_set_chained_handler_and_data(parent_irqs[i],
-> >>  +				ingenic_tcu_intc_cascade, domain);
-> >>  +	}  
-> > 
-> > I don't get the multiple parent irq at all. How are the source 
-> > interrupt routed to the various cascades?  
-> 
-> On JZ4740, channels 0 and 1 have their own interrupt, and channels
-> 2-7 share one interrupt line.
-> On JZ4770 and JZ4780, the OST (OS timer) channel has its own
-> interrupt, channel 5 has its own interrupt, and channels 0-4 and 6-7
-> share one interrupt line.
-
-What a mess. I suppose you get a shared status register to find out
-which channel has fired?
-
-> To keep things simple, we register the same interrupt handler for the 
-> three parent interrupts.
-
-Please add a comment to that effect, documenting the above HW blunder.
-
-Thanks,
-
-	M.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8c4769c50a71be93..240b1d427fadab66 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2600,48 +2600,48 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 
+ 	core->dentry = d;
+ 
+-	d = debugfs_create_u32("clk_rate", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_rate", 0444, core->dentry,
+ 			(u32 *)&core->rate);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_accuracy", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_accuracy", 0444, core->dentry,
+ 			(u32 *)&core->accuracy);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_phase", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_phase", 0444, core->dentry,
+ 			(u32 *)&core->phase);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_x32("clk_flags", S_IRUGO, core->dentry,
++	d = debugfs_create_x32("clk_flags", 0444, core->dentry,
+ 			(u32 *)&core->flags);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_prepare_count", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_prepare_count", 0444, core->dentry,
+ 			(u32 *)&core->prepare_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_enable_count", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_enable_count", 0444, core->dentry,
+ 			(u32 *)&core->enable_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_protect_count", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_protect_count", 0444, core->dentry,
+ 			(u32 *)&core->protect_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+-	d = debugfs_create_u32("clk_notifier_count", S_IRUGO, core->dentry,
++	d = debugfs_create_u32("clk_notifier_count", 0444, core->dentry,
+ 			(u32 *)&core->notifier_count);
+ 	if (!d)
+ 		goto err_out;
+ 
+ 	if (core->num_parents > 1) {
+-		d = debugfs_create_file("clk_possible_parents", S_IRUGO,
++		d = debugfs_create_file("clk_possible_parents", 0444,
+ 				core->dentry, core, &possible_parents_fops);
+ 		if (!d)
+ 			goto err_out;
+@@ -2737,22 +2737,22 @@ static int __init clk_debug_init(void)
+ 	if (!rootdir)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_summary", S_IRUGO, rootdir, &all_lists,
++	d = debugfs_create_file("clk_summary", 0444, rootdir, &all_lists,
+ 				&clk_summary_fops);
+ 	if (!d)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_dump", S_IRUGO, rootdir, &all_lists,
++	d = debugfs_create_file("clk_dump", 0444, rootdir, &all_lists,
+ 				&clk_dump_fops);
+ 	if (!d)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_orphan_summary", S_IRUGO, rootdir,
++	d = debugfs_create_file("clk_orphan_summary", 0444, rootdir,
+ 				&orphan_list, &clk_summary_fops);
+ 	if (!d)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_orphan_dump", S_IRUGO, rootdir,
++	d = debugfs_create_file("clk_orphan_dump", 0444, rootdir,
+ 				&orphan_list, &clk_dump_fops);
+ 	if (!d)
+ 		return -ENOMEM;
 -- 
-Without deviation from the norm, progress is not possible.
+2.7.4
