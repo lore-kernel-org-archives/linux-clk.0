@@ -1,255 +1,67 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 19/44] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
-Date: Sun,  7 Jan 2018 20:17:18 -0600
-Message-Id: <1515377863-20358-20-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 5/5] clk: Move __clk_{get,put}() into private clk.h API
+Date: Tue,  2 Jan 2018 17:35:16 -0800
+Message-Id: <20180103013516.18844-6-sboyd@codeaurora.org>
+In-Reply-To: <20180103013516.18844-1-sboyd@codeaurora.org>
+References: <20180103013516.18844-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new driver for the gate and multiplexer clocks in the
-CFGCHIPn syscon registers on TI DA8XX-type SoCs.
+We can move these APIs into the private header file now that we
+don't have any users of the __clk_get() and __clk_put() APIs
+outside of clkdev.c and clk.c.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/davinci/Makefile        |   2 +
- drivers/clk/davinci/da8xx-cfgchip.c | 203 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 205 insertions(+)
- create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
+ drivers/clk/clk.h      | 4 ++++
+ include/linux/clkdev.h | 8 --------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6c388d4..11178b7 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 00b35a13cdf3..70c0ba6336c1 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -20,6 +20,8 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 			     const char *con_id);
+ void __clk_free_clk(struct clk *clk);
++int __clk_get(struct clk *clk);
++void __clk_put(struct clk *clk);
+ #else
+ /* All these casts to avoid ifdefs in clkdev... */
+ static inline struct clk *
+@@ -32,5 +34,7 @@ static struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return (struct clk_hw *)clk;
+ }
++static inline int __clk_get(struct clk *clk) { return 1; }
++static inline void __clk_put(struct clk *clk) { }
  
- ifeq ($(CONFIG_COMMON_CLK), y)
-+obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
-+
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-new file mode 100644
-index 0000000..772e09a
---- /dev/null
-+++ b/drivers/clk/davinci/da8xx-cfgchip.c
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
-+ *
-+ * Copyright (C) 2017 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#ifdef CONFIG_OF
-+struct da8xx_cfgchip_gate_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_gate_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
-+
-+static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
-+}
-+
-+static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+
-+	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
-+}
-+
-+static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return !!(val & clk->mask);
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
-+	.enable		= da8xx_cfgchip_gate_clk_enable,
-+	.disable	= da8xx_cfgchip_gate_clk_disable,
-+	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
-+};
-+
-+static void da8xx_cfgchip_gate_clk_init(struct device_node *np, u32 reg,
-+					u32 mask)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk;
-+	struct clk_init_data init;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	of_property_read_string(np, "clock-output-names", &name);
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap)) {
-+		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
-+		       __func__, np->full_name, PTR_ERR(regmap));
-+		return;
-+	}
-+
-+	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return;
-+
-+	init.name = name;
-+	init.ops = &da8xx_cfgchip_gate_clk_ops;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+	init.flags = 0;
-+
-+	clk->hw.init = &init;
-+	clk->regmap = regmap;
-+	clk->reg = reg;
-+	clk->mask = mask;
-+
-+	ret = clk_hw_register(NULL, &clk->hw);
-+	if (ret) {
-+		pr_err("%s: failed to register %s (%d)\n", __func__,
-+		       np->full_name, ret);
-+		return;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, &clk->hw);
-+}
-+
-+static void da8xx_tbclk_init(struct device_node *np)
-+{
-+	da8xx_cfgchip_gate_clk_init(np, CFGCHIP(1), CFGCHIP1_TBCLKSYNC);
-+}
-+CLK_OF_DECLARE(da8xx_tbclk, "ti,da830-tbclk", da8xx_tbclk_init);
-+
-+struct da8xx_cfgchip_mux_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_mux_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
-+
-+static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val = index ? clk->mask : 0;
-+
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
-+}
-+
-+static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return (val & clk->mask) ? 1 : 0;
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
-+	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
-+	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
-+};
-+
-+static void da8xx_cfgchip_mux_clk_init(struct device_node *np, u32 reg,
-+				       u32 mask)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk;
-+	struct clk_init_data init;
-+	const char *name = np->name;
-+	const char *parent_names[2];
-+	struct regmap *regmap;
-+	int ret;
-+
-+	ret = of_property_match_string(np, "clock-names", "pll0_sysclk2");
-+	parent_names[0] = of_clk_get_parent_name(np, ret);
-+	if (!parent_names[0]) {
-+		pr_err("%s: missing pll0_sysclk2 clock\n", __func__);
-+		return;
-+	}
-+
-+	ret = of_property_match_string(np, "clock-names", "pll1_sysclk2");
-+	parent_names[1] = of_clk_get_parent_name(np, ret);
-+	if (!parent_names[1]) {
-+		pr_err("%s: missing pll1_sysclk2 clock\n", __func__);
-+		return;
-+	}
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap)) {
-+		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
-+		       __func__, np->full_name, PTR_ERR(regmap));
-+		return;
-+	}
-+
-+	of_property_read_string(np, "clock-output-names", &name);
-+
-+	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return;
-+
-+	init.name = name;
-+	init.ops = &da8xx_cfgchip_mux_clk_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = 2;
-+	init.flags = 0;
-+
-+	clk->hw.init = &init;
-+	clk->regmap = regmap;
-+	clk->reg = reg;
-+	clk->mask = mask;
-+
-+	ret = clk_hw_register(NULL, &clk->hw);
-+	if (ret) {
-+		pr_err("%s: failed to register %s (%d)\n", __func__,
-+		       np->full_name, ret);
-+		return;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, &clk->hw);
-+}
-+
-+static void da8xx_async3_init(struct device_node *np)
-+{
-+	da8xx_cfgchip_mux_clk_init(np, CFGCHIP(3), CFGCHIP3_ASYNC3_CLKSRC);
-+}
-+CLK_OF_DECLARE(da8xx_async3, "ti,da850-async3-clock", da8xx_async3_init);
-+#endif
+ #endif
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index ef98ee8c6358..4890ff033220 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -52,12 +52,4 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+ int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
+-#ifdef CONFIG_COMMON_CLK
+-int __clk_get(struct clk *clk);
+-void __clk_put(struct clk *clk);
+-#else
+-static inline int __clk_get(struct clk *clk) { return 1; }
+-static inline void __clk_put(struct clk *clk) { }
+-#endif
+-
+ #endif
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
