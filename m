@@ -1,60 +1,58 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 06/25] ARM: dts: r8a7792: Adjust SMP routine size
-Date: Tue, 30 Jan 2018 20:22:39 +0000
-Message-Id: <1517343778-27902-7-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20180103013516.18844-5-sboyd@codeaurora.org>
+References: <20180103013516.18844-1-sboyd@codeaurora.org> <20180103013516.18844-5-sboyd@codeaurora.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 3 Jan 2018 10:58:26 +0800
+Message-ID: <CAGb2v67s6JR87nvZ4s1MQ0jG7xj7y0s4C257YWB66xaVCR3c0Q@mail.gmail.com>
+Subject: Re: [PATCH 4/5] clk: sunxi: Use CLK_IS_CRITICAL flag for critical clks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:GENERIC INCLUDE/A..." <linux-arch@vger.kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On Wed, Jan 3, 2018 at 9:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> We'd like to privatize __clk_get(), but the sunxi clk driver is
+> calling this function to keep a reference held on the clk and
+> call clk_prepare_enable() on it. We support this design in the
+> clk core now with the CLK_IS_CRITICAL flag, so let's just use
+> that instead.
+>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/sunxi/clk-factors.c    | 26 +++++++++++++++++++++-----
+>  drivers/clk/sunxi/clk-factors.h    |  4 ++++
+>  drivers/clk/sunxi/clk-mod0.c       |  9 ++-------
+>  drivers/clk/sunxi/clk-sun8i-mbus.c |  7 ++-----
+>  drivers/clk/sunxi/clk-sun9i-core.c |  9 ++-------
+>  drivers/clk/sunxi/clk-sunxi.c      | 36 +++++++++++++-----------------------
+>  6 files changed, 44 insertions(+), 47 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+> index 856fef65433b..f6f4757d2dd1 100644
+> --- a/drivers/clk/sunxi/clk-factors.c
+> +++ b/drivers/clk/sunxi/clk-factors.c
+> @@ -176,10 +176,10 @@ static const struct clk_ops clk_factors_ops = {
+>         .set_rate = clk_factors_set_rate,
+>  };
+>
+> -struct clk *sunxi_factors_register(struct device_node *node,
+> -                                  const struct factors_data *data,
+> -                                  spinlock_t *lock,
+> -                                  void __iomem *reg)
+> +struct clk *__sunxi_factors_register(struct device_node *node,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* increased size to 0x100
+This looks like it's only used within the file by the two wrapper
+functions. Mark it static?
 
- arch/arm/boot/dts/r8a7792.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Otherwise
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 268987f..bea0f12 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -341,7 +341,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+
+Looks like you picked the easiest (least code changes) for each type
+of clock?
