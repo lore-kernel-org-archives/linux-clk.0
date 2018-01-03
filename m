@@ -1,39 +1,35 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Thu, 11 Jan 2018 22:29:57 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 17:46:58 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>
-Subject: Re: Warnings from drivers/clk/clk.c
-Message-ID: <20180111212957.fiyw2eozi5cubt5v@pengutronix.de>
-References: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
- <20180111211948.GL28313@codeaurora.org>
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v7 2/5] clk: aspeed: Register core clocks
+Message-ID: <20180103014658.GQ7997@codeaurora.org>
+References: <20171222024522.10362-1-joel@jms.id.au>
+ <20171222024522.10362-3-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180111211948.GL28313@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171222024522.10362-3-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 11, 2018 at 01:19:48PM -0800, Stephen Boyd wrote:
-> On 01/10, Fabio Estevam wrote:
-> > Hi,
-> > 
-> > Bootling linux-next 20180110 on a imx53-qsb leads to the following
-> > warning that gets repeated several times:
-> > 
-> > 
-> > [    2.776154] ------------[ cut here ]------------
-> > [    2.780909] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:802
-> > clk_core_disable+0xc4/0xe0
+On 12/22, Joel Stanley wrote:
+> This registers the core clocks; those which are required to calculate
+> the rate of the timer peripheral so the system can load a clocksource
+> driver.
 > 
-> We have two WARN_ON in this function. Do you know which one hit
-> (makes me think we should put a printk in here now and also
-> include the clk name).
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-It's the one in line 802 as noted above :-)
- 
-Uwe
+Applied to clk-next
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
