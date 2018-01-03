@@ -1,79 +1,48 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11271 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751315AbeAYKGb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 05:06:31 -0500
-Date: Thu, 25 Jan 2018 12:06:25 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
- Tegra210
-Message-ID: <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
- <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:52388 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeACCrc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 21:47:32 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+In-Reply-To: <2823749.lCJ0TQNemj@ice-x220i>
+References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-2-icenowy@aosc.io>
+ <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com> <2823749.lCJ0TQNemj@ice-x220i>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 3 Jan 2018 10:47:07 +0800
+Message-ID: <CAGb2v67Cz-8pNOSEhYC_3jgJ8KNhT6jqd3diTUmdf2KwixSUVg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 24, 2018 at 10:43:45PM +0000, Jon Hunter wrote:
-> 
-> On 23/01/18 09:22, Peter De Schrijver wrote:
-> > Apply the memory built-in self test work around when ungating certain
-> > Tegra210 power domains.
-> 
-> Nit-pick .. typo in $subject.
-> 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/soc/tegra/pmc.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> > index ce62a47..c4eff4b 100644
-> > --- a/drivers/soc/tegra/pmc.c
-> > +++ b/drivers/soc/tegra/pmc.c
-> > @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
-> >  
-> >  	bool has_tsense_reset;
-> >  	bool has_gpu_clamps;
-> > +	bool needs_mbist_war;
-> >  
-> >  	const struct tegra_io_pad_soc *io_pads;
-> >  	unsigned int num_io_pads;
-> > @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
-> >  
-> >  	usleep_range(10, 20);
-> >  
-> > +	if (pg->pmc->soc->needs_mbist_war)
-> > +		tegra210_clk_handle_mbist_war(pg->id);
-> > +
-> 
-> Be good if we could return an error from the above function.
-> 
+On Tue, Jan 2, 2018 at 4:14 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> 在 2018年1月2日星期二 CST 下午4:11:04，Chen-Yu Tsai 写道：
+>> On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> > The H3/H5 SoCs have a HDMI output and a TV Composite output.
+>> >
+>> > Add simplefb nodes for these outputs.
+>> >
+>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > ---
+>> > Changes in v4:
+>> > - Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
+>> >
+>> >   clocks that are needed to display framebuffer to the monitor.
+>>
+>> Looks good. I assume you've tested this? It does continue to work
+>> with the bus and DDC clocks disabled, right?
+>
+> Yes. This patchset is tested in Orange Pi PC and SoPine w/ Baseboard "Model
+> A".
 
-We need to also undo whatever we did before then. 
+Applied this one.
 
-> >  	if (disable_clocks)
-> >  		tegra_powergate_disable_clocks(pg);
-> >  
-> > @@ -1815,6 +1819,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
-> >  	.cpu_powergates = tegra210_cpu_powergates,
-> >  	.has_tsense_reset = true,
-> >  	.has_gpu_clamps = true,
-> > +	.needs_mbist_war = true,
-> >  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
-> >  	.io_pads = tegra210_io_pads,
-> >  	.regs = &tegra20_pmc_regs,
-> > 
-> 
-> Otherwise looks good to me.
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
+ChenYu
