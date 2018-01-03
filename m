@@ -1,117 +1,147 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: Fix debugfs_create_*() usage
-Date: Tue,  2 Jan 2018 16:27:33 +0100
-Message-Id: <1514906853-9364-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 3 Jan 2018 14:21:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: maxime.ripard@free-electrons.com, airlied@linux.ie,
+	mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
+	a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com, narmstrong@baylibre.com,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI
+ pipeline
+Message-ID: <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+ <20171230210203.24115-7-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171230210203.24115-7-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-When exposing data access through debugfs, the correct
-debugfs_create_*() functions must be used, depending on data type.
+On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
+> This commit adds all necessary compatibles and descriptions needed to
+> implement A83T HDMI pipeline.
+> 
+> Mixer is already properly described, so only compatible is added.
+> 
+> However, A83T TCON1, which is connected to HDMI, doesn't have channel 0,
+> contrary to all TCONs currently described. Because of that, TCON
+> documentation is extended.
+> 
+> A83T features Synopsys DW HDMI controller with a custom PHY which looks
+> like Synopsys Gen2 PHY with few additions. Since there is no
+> documentation, needed properties were found out through experimentation
+> and reading BSP code.
+> 
+> At the end, example is added for newer SoCs, which features DE2 and DW
+> HDMI.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 188 ++++++++++++++++++++-
+>  1 file changed, 181 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 9f073af4c711..3eca258096a5 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -64,6 +64,40 @@ Required properties:
+>      first port should be the input endpoint. The second should be the
+>      output, usually to an HDMI connector.
+>  
+> +DWC HDMI TX Encoder
+> +-----------------------------
+> +
+> +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
+> +
+> +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
+> +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
+> +following device-specific properties.
+> +
+> +Required properties:
+> +
+> +  - compatible: value must be one of:
+> +    * "allwinner,sun8i-a83t-dw-hdmi"
+> +  - reg: two pairs of base address and size of memory-mapped region, first
+> +    for controller and second for PHY
+> +    registers.
 
-Remove all casts from data pointers passed to debugfs_create_*()
-functions, as such casts prevent the compiler from flagging bugs.
+Seems like the phy should be a separate node and use the phy binding. 
+You can use the phy binding even if you don't use the kernel phy 
+framework...
 
-clk_core.rate, .accuracy, and .flags are "unsigned long", hence casting
-to "u32 *" exposed the wrong halves on big-endian 64-bit systems.
+> +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
+> +  - interrupts: HDMI interrupt number
+> +  - clocks: phandles to the clocks feeding the HDMI encoder
+> +    * iahb: the HDMI bus clock
+> +    * isfr: the HDMI register clock
+> +    * tmds: the HDMI tmds clock
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset controllers driving the encoder
+> +    * ctrl: the reset line for the controller
+> +    * phy: the reset line for the PHY
+> +  - reset-names: the reset names mentioned above
+> +
+> +  - ports: A ports node with endpoint definitions as defined in
+> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +    first port should be the input endpoint. The second should be the
+> +    output, usually to an HDMI connector.
+> +
+>  TV Encoder
+>  ----------
+>  
+> @@ -94,18 +128,17 @@ Required properties:
+>     * allwinner,sun7i-a20-tcon
+>     * allwinner,sun8i-a33-tcon
+>     * allwinner,sun8i-a83t-tcon-lcd
+> +   * allwinner,sun8i-a83t-tcon-tv
+>     * allwinner,sun8i-v3s-tcon
+>   - reg: base address and size of memory-mapped region
+>   - interrupts: interrupt associated to this IP
+> - - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> + - clocks: phandles to the clocks feeding the TCON. One is needed:
+>     - 'ahb': the interface clocks
+> -   - 'tcon-ch0': The clock driving the TCON channel 0
+>   - resets: phandles to the reset controllers driving the encoder
+>     - "lcd": the reset line for the TCON channel 0
+>  
+>   - clock-names: the clock names mentioned above
+>   - reset-names: the reset names mentioned above
+> - - clock-output-names: Name of the pixel clock created
+>  
+>  - ports: A ports node with endpoint definitions as defined in
+>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> @@ -119,11 +152,31 @@ Required properties:
+>    channel the endpoint is associated to. If that property is not
+>    present, the endpoint number will be used as the channel number.
+>  
+> -On SoCs other than the A33 and V3s, there is one more clock required:
+> +Following compatibles:
+> + * allwinner,sun4i-a10-tcon
+> + * allwinner,sun5i-a13-tcon
+> + * allwinner,sun6i-a31-tcon
+> + * allwinner,sun6i-a31s-tcon
+> + * allwinner,sun7i-a20-tcon
+> + * allwinner,sun8i-a33-tcon
+> + * allwinner,sun8i-a83t-tcon-lcd
+> + * allwinner,sun8i-v3s-tcon
+> +have additional required properties:
+> + - 'tcon-ch0': The clock driving the TCON channel 0
 
-Fix .rate and .accuracy, by using debugfs_create_ulong() instead.
+tcon-ch0 is a clock name, not a property.
 
-Fix .flags by changing the field to "unsigned int", as a change to
-debugfs_create_x64() on 64-bit systems would change the user-visible
-formatting in debugfs.
-Note that __clk_get_flags() and clk_hw_get_flags() are left unchanged
-and still return "unsigned long", to avoid having to change all their
-users.  Likewise, of_clk_detect_critical() still takes "unsigned long",
-but the comment is updated as it is never passed a real pointer to
-clk_core.flags.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Looks like none of the 64-bit architectures support common clock yet?
----
- drivers/clk/clk.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5ec580914089510a..b23e0249f0e3c634 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -58,7 +58,7 @@ struct clk_core {
- 	unsigned long		new_rate;
- 	struct clk_core		*new_parent;
- 	struct clk_core		*new_child;
--	unsigned long		flags;
-+	unsigned int		flags;
- 	bool			orphan;
- 	unsigned int		enable_count;
- 	unsigned int		prepare_count;
-@@ -2600,43 +2600,43 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 
- 	core->dentry = d;
- 
--	d = debugfs_create_u32("clk_rate", S_IRUGO, core->dentry,
--			(u32 *)&core->rate);
-+	d = debugfs_create_ulong("clk_rate", S_IRUGO, core->dentry,
-+				 &core->rate);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_accuracy", S_IRUGO, core->dentry,
--			(u32 *)&core->accuracy);
-+	d = debugfs_create_ulong("clk_accuracy", S_IRUGO, core->dentry,
-+				 &core->accuracy);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_u32("clk_phase", S_IRUGO, core->dentry,
--			(u32 *)&core->phase);
-+			       &core->phase);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_x32("clk_flags", S_IRUGO, core->dentry,
--			(u32 *)&core->flags);
-+			       &core->flags);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_u32("clk_prepare_count", S_IRUGO, core->dentry,
--			(u32 *)&core->prepare_count);
-+			       &core->prepare_count);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_u32("clk_enable_count", S_IRUGO, core->dentry,
--			(u32 *)&core->enable_count);
-+			       &core->enable_count);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_u32("clk_protect_count", S_IRUGO, core->dentry,
--			(u32 *)&core->protect_count);
-+			       &core->protect_count);
- 	if (!d)
- 		goto err_out;
- 
- 	d = debugfs_create_u32("clk_notifier_count", S_IRUGO, core->dentry,
--			(u32 *)&core->notifier_count);
-+			       &core->notifier_count);
- 	if (!d)
- 		goto err_out;
- 
-@@ -3927,7 +3927,7 @@ static int parent_ready(struct device_node *np)
-  * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
-  * @np: Device node pointer associated with clock provider
-  * @index: clock index
-- * @flags: pointer to clk_core->flags
-+ * @flags: pointer to core clock flags
-  *
-  * Detects if the clock-critical property exists and, if so, sets the
-  * corresponding CLK_IS_CRITICAL flag.
--- 
-2.7.4
+> + - clock-output-names: Name of the pixel clock created
+> +
+> +For following compatibles:
+> + * allwinner,sun4i-a10-tcon
+> + * allwinner,sun5i-a13-tcon
+> + * allwinner,sun6i-a31-tcon
+> + * allwinner,sun6i-a31s-tcon
+> + * allwinner,sun7i-a20-tcon
+> + * allwinner,sun8i-a83t-tcon-tv
+> +there is one more clock required:
+>     - 'tcon-ch1': The clock driving the TCON channel 1
