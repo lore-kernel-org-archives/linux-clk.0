@@ -1,82 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9405 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751441AbeAYOAZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 09:00:25 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 1/4] clk: tegra: Add la clock for Tegra210
-Date: Thu, 25 Jan 2018 16:00:10 +0200
-Message-ID: <1516888813-32180-2-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Message-id: <5A4D6018.1050000@samsung.com>
+Date: Thu, 04 Jan 2018 07:58:32 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, sboyd@codeaurora.org
+Cc: tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
+In-reply-to: <e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
+References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
+	<1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+	<e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is needed by the memory built-in self test work around.
+On 2018년 01월 04일 02:29, Sylwester Nawrocki wrote:
+> On 11/27/2017 03:31 AM, Chanwoo Choi wrote:
+>> This patch just removes the unneeded enumeration for PLL index.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> 
+> Thanks for the patch Chanwoo, I have applied it to my tree but 
+> I'm afraid it will now need to wait until v4.17.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c         | 14 ++++++++++++++
- include/dt-bindings/clock/tegra210-car.h |  2 +-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+No problem. Thanks.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 9e62608..f790c2d 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -41,6 +41,7 @@
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
- #define CLK_SOURCE_SOR1 0x410
-+#define CLK_SOURCE_LA 0x1f8
- 
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -2654,6 +2655,13 @@ static int tegra210_init_pllu(void)
- 			      sor1_parents_idx, 0, &sor1_lock),
- };
- 
-+static const char * const la_parents[] = {
-+	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
-+};
-+
-+static struct tegra_clk_periph tegra210_la =
-+	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
-+
- static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-@@ -2700,6 +2708,12 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA210_CLK_DSIB] = clk;
- 
-+	/* la */
-+	clk = tegra_clk_register_periph("la", la_parents,
-+			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
-+			CLK_SOURCE_LA, 0);
-+	clks[TEGRA210_CLK_LA] = clk;
-+
- 	/* emc mux */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 6422314..6b77e72 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -95,7 +95,7 @@
- #define TEGRA210_CLK_CSITE 73
- /* 74 */
- /* 75 */
--/* 76 */
-+#define TEGRA210_CLK_LA 76
- /* 77 */
- #define TEGRA210_CLK_SOC_THERM 78
- #define TEGRA210_CLK_DTV 79
+> 
+> Stephen, if you decide to apply it directly for v4.16-rc1
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> --
+> Thanks,
+> Sylwester
+> 
+> 
+
+
 -- 
-1.9.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
