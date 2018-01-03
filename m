@@ -1,129 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:55836 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932394AbeAKKIL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 05:08:11 -0500
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180106042326.46519-1-icenowy@aosc.io>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
-Date: Thu, 11 Jan 2018 10:08:19 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 17:46:56 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v7 1/5] clk: Add clock driver for ASPEED BMC SoCs
+Message-ID: <20180103014656.GP7997@codeaurora.org>
+References: <20171222024522.10362-1-joel@jms.id.au>
+ <20171222024522.10362-2-joel@jms.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20171222024522.10362-2-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 06/01/18 04:23, Icenowy Zheng wrote:
-> The Allwinner H6 pin controllers (both the main one and the CPUs one)
-> have no bus gate clocks.
+On 12/22, Joel Stanley wrote:
+> This adds the stub of a driver for the ASPEED SoCs. The clocks are
+> defined and the static registration is set up.
 > 
-> Add support for this kind of pin controllers.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 > ---
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->  2 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 4b6cb25bc796..68cd505679d9 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->  	unsigned int hosc_div, losc_div;
->  	struct clk *hosc, *losc;
->  	u8 div, src;
-> -	int i, ret;
-> +	int i, ret, clk_count;
-> +
-> +	if (pctl->desc->without_bus_gate)
-> +		clk_count = 2;
-> +	else
-> +		clk_count = 3;
->  
->  	/* Deal with old DTs that didn't have the oscillators */
->  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
-> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  			goto gpiochip_error;
->  	}
->  
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(clk)) {
-> -		ret = PTR_ERR(clk);
-> -		goto gpiochip_error;
-> -	}
-> +	if (!desc->without_bus_gate) {
 
-Do we really need explicit support for that case?
-Can't we have something that works automatically?
+Applied to clk-next
 
-if (node has clock-names property)		(A)
-	use clocks as enumerated and named there
-else if (node has one clock reference)		(B)
-	use this as gate clock, no debounce support
-else if (node has no clock property at all)	(C)
-	no gate clock needed, no debounce support
-
-On top of that we should add the clock-names property to all DTs, even
-for those with only a "apb" clock. Shouldn't hurt existing kernels.
-Possibly even add debounce support for those on the way, if applicable.
-
-So we would just support case (B) and (C) for legacy reasons.
-
-Does that make sense?
-
-Cheers,
-Andre.
-
-> +		clk = devm_clk_get(&pdev->dev, NULL);
-> +		if (IS_ERR(clk)) {
-> +			ret = PTR_ERR(clk);
-> +			goto gpiochip_error;
-> +		}
->  
-> -	ret = clk_prepare_enable(clk);
-> -	if (ret)
-> -		goto gpiochip_error;
-> +		ret = clk_prepare_enable(clk);
-> +		if (ret)
-> +			goto gpiochip_error;
-> +	} else {
-> +		clk = NULL;
-> +	}
->  
->  	pctl->irq = devm_kcalloc(&pdev->dev,
->  				 pctl->desc->irq_banks,
-> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  	return 0;
->  
->  clk_error:
-> -	clk_disable_unprepare(clk);
-> +	if (clk)
-> +		clk_disable_unprepare(clk);
->  gpiochip_error:
->  	gpiochip_remove(pctl->chip);
->  	return ret;
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> index 11b128f54ed2..ccb6230f0bb5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->  	unsigned			irq_bank_base;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
-> +	bool				without_bus_gate;
->  };
->  
->  struct sunxi_pinctrl_function {
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
