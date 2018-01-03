@@ -1,36 +1,57 @@
-Return-Path: <sudeep.holla@arm.com>
+Return-Path: <mchehab@s-opensource.com>
+Date: Wed, 3 Jan 2018 08:07:42 -0200
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
- Sudeep Holla <sudeep.holla@arm.com>, Jolly Shah <jollys@xilinx.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
-To: Jolly Shah <jolly.shah@xilinx.com>, michal.simek@xilinx.com,
- linux-clk@vger.kernel.org
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
-Date: Thu, 11 Jan 2018 10:54:39 +0000
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org,
+ patches@opensource.cirrus.com, uclinux-h8-devel@lists.sourceforge.jp,
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 01/34] clk_ops: change round_rate() to return
+ unsigned long
+Message-ID: <20180103080742.6ad76c2d@vento.lan>
+In-Reply-To: <1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
+References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+	<1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
 MIME-Version: 1.0
-In-Reply-To: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+Em Mon,  1 Jan 2018 19:42:40 +0000
+Bryan O'Donoghue <pure.logic@nexus-software.ie> escreveu:
 
-
-On 08/01/18 22:16, Jolly Shah wrote:
-> Add clock driver for ZynqMP
+> Right now it is not possible to return a value larger than LONG_MAX on 32
+> bit systems. You can pass a rate of ULONG_MAX but can't return anything
+> past LONG_MAX due to the fact both the rounded_rate and negative error
+> codes are represented in the return value of round_rate().
+> 
+> Most implementations either return zero on error or don't return error
+> codes at all. A minority of implementations do return a negative number -
+> typically -EINVAL or -ENODEV.
+> 
+> At the higher level then callers of round_rate() typically and rightly
+> check for a value of <= 0.
+> 
+> It is possible then to convert round_rate() to an unsigned long return
+> value and change error code indication for the minority from -ERRORCODE to
+> a simple 0.
+> 
+> This patch is the first step in making it possible to scale round_rate past
+> LONG_MAX, later patches will change the previously mentioned minority of
+> round_rate() implementations to return zero only on error if those
+> implementations currently return a negative error number. Implementations
+> that do not return an error code of < 0 will be left as-is.
 > 
 
-Can you post the complete series in one set for easy of review. It's
-currently broken into *6 - 8* different sets by different authors and
-it's extremely hard to get the full view of how these pieces are
-connected and extremely misleading. Can someone post them collectively
-as you would already have it if you are doing some testing building on
-each patch set.
+>  drivers/media/platform/omap3isp/isp.c           |  4 ++--
 
-IIUC mailbox is used for all the communication, right ?
-If so, to start with just have 2 series one for mailbox/transport and
-another for the whole protocol(eemi?) and users of it.
+Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
--- 
-Regards,
-Sudeep
+Thanks,
+Mauro
