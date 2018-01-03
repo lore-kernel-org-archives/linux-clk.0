@@ -1,26 +1,27 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Jan 2018 17:52:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
+Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.16 - 3rd round
+Message-ID: <20180103015208.GU7997@codeaurora.org>
+References: <1514569451.7439.3.camel@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180117150256.7430-1-l.stach@pengutronix.de>
-References: <20180117150256.7430-1-l.stach@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 17 Jan 2018 16:52:22 -0200
-Message-ID: <CAOMZO5Db5TMQ2ugG1NumVnxuBPiS23R1WUOvbqpc0N2U1eFTzQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: pllv2: avoid using uninitialized values
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	patchwork-lst@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514569451.7439.3.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 17, 2018 at 1:02 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> Forward the errors returned by __clk_pllv2_set_rate() in the recalc rate
-> function, to avoid using uninitialized values for the rate calculation.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+On 12/29, Jerome Brunet wrote:
+> Dear clock maintainers
+> 
+> Here is a last round of update for meson clock for v4.16. There is just
+> one simple fix
+> 
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Thanks, pulled into clk-next.
 
-Thanks
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
