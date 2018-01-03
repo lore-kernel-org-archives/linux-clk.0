@@ -1,176 +1,165 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 11/44] clk: davinci: Add platform information for TI
- DA830 PSC
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-12-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
-Date: Tue, 16 Jan 2018 19:08:59 +0530
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Rob Herring <robh@kernel.org>
+Cc: maxime.ripard@free-electrons.com, airlied@linux.ie, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+Date: Wed, 03 Jan 2018 22:32:26 +0100
+Message-ID: <1645801.yZU0HLsLbk@jernej-laptop>
+In-Reply-To: <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-7-jernej.skrabec@siol.net> <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1515377863-20358-12-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:47 AM, David Lechner wrote:
-> This adds platform-specific declarations for the PSC clocks on TI DA830/
-> OMAP-L137/AM17XX SoCs.
+Hi Rob,
+
+Dne sreda, 03. januar 2018 ob 21:21:54 CET je Rob Herring napisal(a):
+> On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
+> > This commit adds all necessary compatibles and descriptions needed to
+> > implement A83T HDMI pipeline.
+> > 
+> > Mixer is already properly described, so only compatible is added.
+> > 
+> > However, A83T TCON1, which is connected to HDMI, doesn't have channel 0,
+> > contrary to all TCONs currently described. Because of that, TCON
+> > documentation is extended.
+> > 
+> > A83T features Synopsys DW HDMI controller with a custom PHY which looks
+> > like Synopsys Gen2 PHY with few additions. Since there is no
+> > documentation, needed properties were found out through experimentation
+> > and reading BSP code.
+> > 
+> > At the end, example is added for newer SoCs, which features DE2 and DW
+> > HDMI.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  .../bindings/display/sunxi/sun4i-drm.txt           | 188
+> >  ++++++++++++++++++++- 1 file changed, 181 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> > 9f073af4c711..3eca258096a5 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > 
+> > @@ -64,6 +64,40 @@ Required properties:
+> >      first port should be the input endpoint. The second should be the
+> >      output, usually to an HDMI connector.
+> > 
+> > +DWC HDMI TX Encoder
+> > +-----------------------------
+> > +
+> > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> > +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
+> > +
+> > +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
+> > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
+> > +following device-specific properties.
+> > +
+> > +Required properties:
+> > +
+> > +  - compatible: value must be one of:
+> > +    * "allwinner,sun8i-a83t-dw-hdmi"
+> > +  - reg: two pairs of base address and size of memory-mapped region,
+> > first
+> > +    for controller and second for PHY
+> > +    registers.
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  drivers/clk/davinci/Makefile    |  1 +
->  drivers/clk/davinci/psc-da830.c | 96 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk/davinci.h     |  2 +
->  3 files changed, 99 insertions(+)
->  create mode 100644 drivers/clk/davinci/psc-da830.c
+> Seems like the phy should be a separate node and use the phy binding.
+> You can use the phy binding even if you don't use the kernel phy
+> framework...
+
+Unfortunately, it's not so straighforward. Phy is actually accessed through 
+I2C implemented in HDMI controller. Second memory region in this case has 
+small influence on phy. However, it has big influence on controller. For 
+example, magic number has to be written in one register in second memory 
+region in order to unlock read access to any register from first memory region 
+(controller). However, they shouldn't be merged to one region, because first 
+memory region requires byte access while second memory region can be accessed 
+per byte or word.
+
+To complicate things more, later I want to add support for another SoC which 
+has same glue layer (unlocking read access, etc.) and uses memory mapped phy 
+registers in second memory region.
+
+I think current binding is the least complicated way to represent this.
+
 > 
-> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-> index cd1bf2c..fb14c8c 100644
-> --- a/drivers/clk/davinci/Makefile
-> +++ b/drivers/clk/davinci/Makefile
-> @@ -10,4 +10,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
->  obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
->  
->  obj-y += psc.o
-> +obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
->  endif
-> diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
-> new file mode 100644
-> index 0000000..193b08f
-> --- /dev/null
-> +++ b/drivers/clk/davinci/psc-da830.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PSC clock descriptions for TI DA830/OMAP-L137/AM17XX
-> + *
-> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/init.h>
-> +#include <linux/types.h>
-> +
-> +#include "psc.h"
-> +
-> +static const struct davinci_psc_clk_info da830_psc0_info[] __initconst = {
-> +	LPSC(0, 0, tpcc, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
-> +	LPSC(4, 0, spi0, pll0_sysclk2, 0),
-> +	LPSC(5, 0, mmcsd, pll0_sysclk2, 0),
-> +	LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
-> +	LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(8, 0, secu_mgr, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
-> +	LPSC(9, 0, uart0, pll0_sysclk2, 0),
-> +	LPSC(10, 0, scr0_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(11, 0, scr1_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(12, 0, scr2_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> +	LPSC(13, 0, dmax, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+> > +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
+> > +  - interrupts: HDMI interrupt number
+> > +  - clocks: phandles to the clocks feeding the HDMI encoder
+> > +    * iahb: the HDMI bus clock
+> > +    * isfr: the HDMI register clock
+> > +    * tmds: the HDMI tmds clock
+> > +  - clock-names: the clock names mentioned above
+> > +  - resets: phandles to the reset controllers driving the encoder
+> > +    * ctrl: the reset line for the controller
+> > +    * phy: the reset line for the PHY
+> > +  - reset-names: the reset names mentioned above
+> > +
+> > +  - ports: A ports node with endpoint definitions as defined in
+> > +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +    first port should be the input endpoint. The second should be the
+> > +    output, usually to an HDMI connector.
+> > +
+> > 
+> >  TV Encoder
+> >  ----------
+> > 
+> > @@ -94,18 +128,17 @@ Required properties:
+> >     * allwinner,sun7i-a20-tcon
+> >     * allwinner,sun8i-a33-tcon
+> >     * allwinner,sun8i-a83t-tcon-lcd
+> > 
+> > +   * allwinner,sun8i-a83t-tcon-tv
+> > 
+> >     * allwinner,sun8i-v3s-tcon
+> >   
+> >   - reg: base address and size of memory-mapped region
+> >   - interrupts: interrupt associated to this IP
+> > 
+> > - - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> > 
+> > + - clocks: phandles to the clocks feeding the TCON. One is needed:
+> >     - 'ahb': the interface clocks
+> > 
+> > -   - 'tcon-ch0': The clock driving the TCON channel 0
+> > 
+> >   - resets: phandles to the reset controllers driving the encoder
+> >   
+> >     - "lcd": the reset line for the TCON channel 0
+> >   
+> >   - clock-names: the clock names mentioned above
+> >   - reset-names: the reset names mentioned above
+> > 
+> > - - clock-output-names: Name of the pixel clock created
+> > 
+> >  - ports: A ports node with endpoint definitions as defined in
+> >  
+> >    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > 
+> > @@ -119,11 +152,31 @@ Required properties:
+> >    channel the endpoint is associated to. If that property is not
+> >    present, the endpoint number will be used as the channel number.
+> > 
+> > -On SoCs other than the A33 and V3s, there is one more clock required:
+> > +Following compatibles:
+> > + * allwinner,sun4i-a10-tcon
+> > + * allwinner,sun5i-a13-tcon
+> > + * allwinner,sun6i-a31-tcon
+> > + * allwinner,sun6i-a31s-tcon
+> > + * allwinner,sun7i-a20-tcon
+> > + * allwinner,sun8i-a33-tcon
+> > + * allwinner,sun8i-a83t-tcon-lcd
+> > + * allwinner,sun8i-v3s-tcon
+> > +have additional required properties:
+> > + - 'tcon-ch0': The clock driving the TCON channel 0
+> 
+> tcon-ch0 is a clock name, not a property.
 
-pruss is better (I know the name is coming from existing code).
+right.
 
-> +	LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
-
-This is LPSC 15 which controls DSP too. But its missing from existing
-code. Not sure why. Probably a note for future. For now okay with
-ignoring it.
-
-> +	{ }
-> +};
-
-Tables like these are much easier to parse if columns are spaced using a
-tab.
-
-> +
-> +static const struct davinci_psc_clk_info da830_psc1_info[] __initconst = {
-> +	LPSC(1, 0, usb0, pll0_sysclk2, 0),
-> +	LPSC(2, 0, usb1, pll0_sysclk4, 0),
-> +	LPSC(3, 0, gpio, pll0_sysclk4, 0),
-
-There is LPSC 4 controlling UHPI. Again, lets ignore for now.
-
-> +	LPSC(5, 0, emac, pll0_sysclk4, 0),
-> +	LPSC(6, 0, emif3, pll0_sysclk5, LPSC_ALWAYS_ENABLED),
-> +	LPSC(7, 0, mcasp0, pll0_sysclk2, 0),
-> +	LPSC(8, 0, mcasp1, pll0_sysclk2, 0),
-> +	LPSC(9, 0, mcasp2, pll0_sysclk2, 0),
-> +	LPSC(10, 0, spi1, pll0_sysclk2, 0),
-> +	LPSC(11, 0, i2c1, pll0_sysclk4, 0),
-> +	LPSC(12, 0, uart1, pll0_sysclk2, 0),
-> +	LPSC(13, 0, uart2, pll0_sysclk2, 0),
-> +	LPSC(16, 0, lcdc, pll0_sysclk2, 0),
-> +	LPSC(17, 0, pwm, pll0_sysclk2, 0),
-> +	LPSC(20, 0, ecap, pll0_sysclk2, 0),
-> +	LPSC(21, 0, eqep, pll0_sysclk2, 0),
-> +	{ }
-> +};
-> +
-> +void __init da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
-> +{
-> +	struct clk_onecell_data *clk_data;
-> +
-> +	clk_data = davinci_psc_register_clocks(psc0, da830_psc0_info, 16);
-> +	if (!clk_data)
-> +		return;
-> +
-> +	clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
-> +	clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
-> +	clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
-> +	clk_register_clkdev(clk_data->clks[14], "arm", NULL);
-> +
-> +	clk_free_onecell_data(clk_data);
-> +
-> +	clk_data = davinci_psc_register_clocks(psc1, da830_psc1_info, 32);
-> +	if (!clk_data)
-> +		return;
-> +
-> +	clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
-> +	clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
-> +	clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
-> +	clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
-
-This is pretty bad (and no fault of yours) - having a con_id but no
-device name. Can you please make a pre-series which passes NULL con_id
-in gpio-davinci.c?
-
-> +	clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
-> +	clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
-> +	clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
-> +	clk_register_clkdev(clk_data->clks[8], NULL, "davinci-mcasp.1");
-> +	clk_register_clkdev(clk_data->clks[9], NULL, "davinci-mcasp.2");
-> +	clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
-> +	clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
-> +	clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
-> +	clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
-> +	clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
-> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
-> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
-> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
-> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
-> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
-> +	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.0");
-> +	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.1");
-
-This is going to be very difficult to audit for mistakes. How do you
-feel about adding the con_id and dev_id to davinci_psc_clk_info[] so
-they can be initialized as part of a single static table? And then here
-you go over the table looking for non-NULL con_id/dev_id to call
-clk_register_clkdev()?
-
-I am guessing you did not take that route because the DT path does not
-need those. But still, I think that will be much less error prone.
-
-Thanks,
-Sekhar
+Best regards,
+Jernej
