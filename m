@@ -1,81 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40616 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeAETCj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jan 2018 14:02:39 -0500
-Date: Fri, 5 Jan 2018 13:02:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-Subject: Re: [PATCH v1 4/6] dt-bindings: clock: mediatek: add "simple-mfd" in
- audsys documentation
-Message-ID: <20180105190236.bapetnwxd6dii7re@rob-hp-laptop>
-References: <cover.1515038387.git.ryder.lee@mediatek.com>
- <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: s3c: Remove unneeded enumeration
+To: Chanwoo Choi <cw00.choi@samsung.com>, sboyd@codeaurora.org
+Cc: tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <e178400d-12b5-7836-6fe0-cdd3b5a68107@samsung.com>
+Date: Wed, 03 Jan 2018 18:29:56 +0100
+MIME-version: 1.0
+In-reply-to: <1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20171127023145epcas1p1b97c3c66ce624f5362c8d9bf74997c7f@epcas1p1.samsung.com>
+	<1511749908-29777-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 04, 2018 at 03:44:20PM +0800, Ryder Lee wrote:
-> Add "simple-mfd" to support MFD device and add a compatible string for MT2701.
+On 11/27/2017 03:31 AM, Chanwoo Choi wrote:
+> This patch just removes the unneeded enumeration for PLL index.
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,audsys.txt       | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> index 9b8f578..6e97552 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> @@ -6,17 +6,25 @@ The MediaTek AUDSYS controller provides various clocks to the system.
->  Required Properties:
->  
->  - compatible: Should be one of:
-> -	- "mediatek,mt7622-audsys", "syscon"
-> +	- "mediatek,mt2701-audsys", "syscon", "simple-mfd"
-> +	- "mediatek,mt7622-audsys", "syscon", "simple-mfd"
->  - #clock-cells: Must be 1
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I don't think this is a simple-mfd. The AFE uses clocks created by its 
-parent, right? So the parent should be probed first. You should have 
-the parent instantiate the child nodes.
 
->  The AUDSYS controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
->  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
->  
-> +See ../sound/mt2701-afe-pcm.txt for details about required subnode.
-> +
->  Example:
->  
-> -audsys: audsys@11220000 {
-> -	compatible = "mediatek,mt7622-audsys", "syscon";
-> -	reg = <0 0x11220000 0 0x1000>;
-> -	#clock-cells = <1>;
-> -};
-> +	audsys: audio-subsystem@11220000 {
-> +		compatible = "mediatek,mt2701-audsys", "syscon", "simple-mfd";
-> +		reg = <0 0x11220000 0 0x1000>;
-> +		#clock-cells = <1>;
-> +
-> +		afe: audio-controller {
-> +			compatible = "mediatek,mt2701-audio";
-> +			...
-> +		};
-> +	};
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks for the patch Chanwoo, I have applied it to my tree but 
+I'm afraid it will now need to wait until v4.17.
+
+Stephen, if you decide to apply it directly for v4.16-rc1
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+--
+Thanks,
+Sylwester
