@@ -1,96 +1,91 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
- <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
- <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com> <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
- <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 23 Jan 2018 20:53:20 +0100
-Message-ID: <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To: arm@kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [RECEND PATCH V7 11/12] arm64: dts: add syscon for whale2 platform
+Date: Thu,  4 Jan 2018 15:08:03 +0800
+Message-Id: <1515049684-23481-1-git-send-email-zhang.chunyan@linaro.org>
+In-Reply-To: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-23 20:24 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 01/23/2018 12:34 PM, Bartosz Golaszewski wrote:
->>
->> 2018-01-23 19:26 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> On 01/23/2018 12:10 PM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> 2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
->>>>>
->>>>>
->>>>> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> On 01/23/2018 10:03 AM, David Lechner wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> You can see if the clock is enabled by running:
->>>>>>>
->>>>>>>        cat /sys/kernel/debug/clk/clk_summary
->>>>>>>
->>>>>>
->>>>>> I just realized if you can't boot, you can't do this. :-/
->>>>>
->>>>>
->>>>>
->>>>> I can boot with the latest set in your git repo, but the Ethernet
->>>>> doesn't apparently fully operate.  I don't get errors, but I cannot
->>>>> get a dhcp address.
->>>>>
->>>>> I'll try to do a more exhaustive test later today to get an idea of
->>>>> what works and what doesn't.  When I ran my basic tests, I just did a
->>>>> feel-good boot test (and reboot test)
->>>>>
->>>>> adam
->>>>
->>>>
->>>>
->>>> FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
->>>> seems to at least fix the ethernet. In master branch it's done by
->>>> pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
->>>> getting several oopses and WARNs so there's some more work to do.
->>>>
->>>
->>> Hmm... I'm wondering if we need to also add #power-domain-cells to the
->>> PSC clocks and power-domains properties to the consumers.
->>>
->>> For this specific case though, it seems strange to me that the drivers
->>> to clk_get() and clk_get_rate() but never enable the clocks.
->>>
->>>
->>> Also, are the oopses and WARNs the same as before?
->>
->>
->> No, the ones before were all related to the ethernet failing, now I
->> get several stack traces from drm. Posted them on pastebin[1].
->>
->
-> It looks like the LCDC driver is the same way. It does clk_get() but
-> not clk_prepare_enable().
->
->
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 
-In the mdio case - the problem is that devm_clk_get() doesn't fail,
-but somehow the clock doesn't end up in the list of the device's
-clocks - which is why it's not enabled by pm_runtime_get_sync().
+Some clocks on SC9860 are in the same address area with syscon
+devices, the proper syscon node will be quoted under the
+definitions of those clocks in DT.
 
-Bartosz
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/whale2.dtsi | 46 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..6ea3a75 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -17,6 +17,51 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		ap_ahb_regs: syscon@20210000 {
++			compatible = "syscon";
++			reg = <0 0x20210000 0 0x10000>;
++		};
++
++		pmu_regs: syscon@402b0000 {
++			compatible = "syscon";
++			reg = <0 0x402b0000 0 0x10000>;
++		};
++
++		aon_regs: syscon@402e0000 {
++			compatible = "syscon";
++			reg = <0 0x402e0000 0 0x10000>;
++		};
++
++		ana_regs: syscon@40400000 {
++			compatible = "syscon";
++			reg = <0 0x40400000 0 0x10000>;
++		};
++
++		agcp_regs: syscon@415e0000 {
++			compatible = "syscon";
++			reg = <0 0x415e0000 0 0x1000000>;
++		};
++
++		vsp_regs: syscon@61100000 {
++			compatible = "syscon";
++			reg = <0 0x61100000 0 0x10000>;
++		};
++
++		cam_regs: syscon@62100000 {
++			compatible = "syscon";
++			reg = <0 0x62100000 0 0x10000>;
++		};
++
++		disp_regs: syscon@63100000 {
++			compatible = "syscon";
++			reg = <0 0x63100000 0 0x10000>;
++		};
++
++		ap_apb_regs: syscon@70b00000 {
++			compatible = "syscon";
++			reg = <0 0x70b00000 0 0x40000>;
++		};
++
+ 		ap-apb {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+@@ -59,7 +104,6 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+ 	};
+ 
+ 	ext_26m: ext-26m {
+-- 
+2.7.4
