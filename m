@@ -1,65 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37403 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754634AbeAIDhF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jan 2018 22:37:05 -0500
-Date: Mon, 8 Jan 2018 21:37:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v2 05/11] clk: qcom: Add DT bindings for CPU clock driver
- for msm8996
-Message-ID: <20180109033703.ra2ysibuv4s76xcm@rob-hp-laptop>
-References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
- <1515064215-22202-6-git-send-email-ilialin@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515064215-22202-6-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1514906296-8099-1-git-send-email-geert+renesas@glider.be>
+References: <1514906296-8099-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Jan 2018 11:35:16 +0100
+Message-ID: <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: Stop enabling legacy DT clock support by default
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 04, 2018 at 01:10:09PM +0200, Ilia Lin wrote:
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+On Tue, Jan 2, 2018 at 4:18 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Since v4.15-rc1, the DTS files for all R-Car Gen2 SoCs have been
+> converted to the new CPG/MSSR bindings.  Hence it is now safe to no
+> longer enable legacy DT clock support by default.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> new file mode 100644
-> index 0000000..c45de03
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> @@ -0,0 +1,17 @@
-> +Qualcomm CPUSS clock controller for Kryo CPUs
-> +----------------------------------------------------
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +			"qcom,apcc-msm8996"
+> To be queued in clk-renesas-for-v4.16.
 
-qcom-msm8996-apcc is the conventional order.
+Applied and queued in clk-renesas-for-v4.16.
 
-> +
-> +- reg : shall contain base register location and length
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +	kryocc: clock-controller@6400000 {
-> +		compatible = "qcom,apcc-msm8996";
-> +		reg = <0x6400000 0x90000>;
-> +		#clock-cells = <1>;
-> +	};
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
