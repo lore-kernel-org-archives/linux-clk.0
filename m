@@ -1,244 +1,242 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 2/2] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Tue,  2 Jan 2018 12:56:27 +0530
-Message-Id: <1514877987-8082-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1514877987-8082-1-git-send-email-anischal@codeaurora.org>
-References: <1514877987-8082-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1 6/6] clk: mediatek: add audsys support for MT2701
+Date: Thu, 4 Jan 2018 15:44:22 +0800
+Message-ID: <e59d69d3eb32f62b778112eeb4d6b23b4bcee2d1.1515038387.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1515038387.git.ryder.lee@mediatek.com>
+References: <cover.1515038387.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For some root clock generators, there could be child branches which are
-controlled by an entity other than application processor subsystem. For
-such RCGs, as per application processor subsystem clock driver, all of its
-downstream clocks are disabled and RCG is in disabled state but in actual
-downstream clocks can be left enabled before.
+Add clock driver support for MT2701 audsys.
 
-So in this scenario, when RCG is disabled as per clock driver's point of
-view and when rate scaling request comes before downstream clock enable
-request, then RCG fails to update its configuration because in actual RCG
-is on and it expects its new source to alredy in enable state  but in
-reality new source is in off state. In order to avoid letting the RCG to
-go into an invalid state, add support to just cache the rate of RCG during
-set_rate(), defer actual RCG configuration update to be done during
-clk_enable() as at this point of time, both its new parent and safe source
-will be already enabled and RCG can safely switch to new parent.
-
-During clk_disable() request, configure it to safe source as both
-its parents, safe source and current parent will be enabled and RCG can
-safely execute a switch. Also add support to have safe configuration
-frequency table structure for each shared RCG.
-
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/clk/qcom/clk-rcg.h  |   8 ++-
- drivers/clk/qcom/clk-rcg2.c | 149 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 156 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/Kconfig          |   6 ++
+ drivers/clk/mediatek/Makefile         |   1 +
+ drivers/clk/mediatek/clk-mt2701-aud.c | 174 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 181 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index a249545..bb63bc0 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -156,6 +156,9 @@ struct clk_dyn_rcg {
-  * @hid_width: number of bits in half integer divider
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-+ * @current_freq: last cached frequency when using branches with shared RCGs
-+ * @safe_src_freq_tbl : frequency table of safe source when using branches
-+ *			with shared RCGs
-  * @clkr: regmap clock handle
-  *
-  */
-@@ -165,6 +168,8 @@ struct clk_rcg2 {
- 	u8			hid_width;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
-+	unsigned long		current_freq;
-+	const struct freq_tbl	*safe_src_freq_tbl;
- 	struct clk_regmap	clkr;
- };
-
-@@ -177,5 +182,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
-
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index ef8b14a..1816e10 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -790,3 +790,152 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.determine_rate = clk_gfx3d_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 59dc0aa..efb6f58 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -50,6 +50,12 @@ config COMMON_CLK_MT2701_BDPSYS
+ 	---help---
+ 	  This driver supports Mediatek MT2701 bdpsys clocks.
+ 
++config COMMON_CLK_MT2701_AUDSYS
++	bool "Clock driver for Mediatek MT2701 audsys"
++	depends on COMMON_CLK_MT2701
++	---help---
++	  This driver supports Mediatek MT2701 audsys clocks.
 +
-+static int clk_rcg2_set_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
+ config COMMON_CLK_MT2712
+ 	bool "Clock driver for Mediatek MT2712"
+ 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index c421ffc..c4ab7d3 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_VDECSYS) += clk-mt6797-vdec.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_VENCSYS) += clk-mt6797-venc.o
+ obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
++obj-$(CONFIG_COMMON_CLK_MT2701_AUDSYS) += clk-mt2701-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_ETHSYS) += clk-mt2701-eth.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
+diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
+new file mode 100644
+index 0000000..eafc18e
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2701-aud.c
+@@ -0,0 +1,174 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Ryder Lee <ryder.lee@mediatek.com>
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
 +
-+	/* Force enable bit */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
++#include "clk-mtk.h"
++#include "clk-gate.h"
 +
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		if (clk_rcg2_is_enabled(hw))
-+			return 0;
++#include <dt-bindings/clock/mt2701-clk.h>
 +
-+		/* Delay for 1usec and retry polling the status bit */
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Clear force enable bit */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+					CMD_ROOT_EN, 0);
-+}
-+
-+static int
-+clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, unsigned long rate)
-+{
-+	int ret;
-+
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	/* set clock rate */
-+	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	/*
-+	 * Return if the RCG is currently disabled. This configuration
-+	 * update will happen as part of the RCG enable sequence.
-+	 */
-+	if (!__clk_is_enabled(hw->clk)) {
-+		rcg->current_freq = rate;
-+		return 0;
++#define GATE_AUDIO0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
 +	}
 +
-+	ret = clk_rcg2_shared_force_enable_clear(hw, rate);
-+	if (ret)
-+		return ret;
-+
-+	/* Update current frequency with the requested frequency. */
-+	rcg->current_freq = rate;
-+
-+	return ret;
-+}
-+
-+static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+}
-+
-+static unsigned long
-+clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (!__clk_is_enabled(hw->clk)) {
-+		if (!rcg->current_freq)
-+			rcg->current_freq = rcg->safe_src_freq_tbl->freq;
-+
-+		return rcg->current_freq;
++#define GATE_AUDIO1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
 +	}
 +
-+	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (rcg->current_freq == rcg->safe_src_freq_tbl->freq) {
-+		clk_rcg2_set_force_enable(hw);
-+		clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-+		clk_rcg2_clear_force_enable(hw);
-+
-+		return 0;
++#define GATE_AUDIO2(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio2_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
 +	}
 +
-+	/*
-+	 * Switch from safe source to the stashed mux selection. The current
-+	 * parent has already been prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its source.
-+	 */
++#define GATE_AUDIO3(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio3_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
 +
-+	return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/*
-+	 * Park the RCG at a safe configuration - sourced off from safe source.
-+	 * Force enable and disable the RCG while configuring it to safeguard
-+	 * against any update signal coming from the downstream clock.
-+	 * The current parent is still prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its parent.
-+	 */
-+	clk_rcg2_set_force_enable(hw);
-+	clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-+	clk_rcg2_clear_force_enable(hw);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
++static const struct mtk_gate_regs audio0_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x0,
++	.sta_ofs = 0x0,
 +};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
++
++static const struct mtk_gate_regs audio1_cg_regs = {
++	.set_ofs = 0x10,
++	.clr_ofs = 0x10,
++	.sta_ofs = 0x10,
++};
++
++static const struct mtk_gate_regs audio2_cg_regs = {
++	.set_ofs = 0x14,
++	.clr_ofs = 0x14,
++	.sta_ofs = 0x14,
++};
++
++static const struct mtk_gate_regs audio3_cg_regs = {
++	.set_ofs = 0x634,
++	.clr_ofs = 0x634,
++	.sta_ofs = 0x634,
++};
++
++static const struct mtk_gate audio_clks[] = {
++	/* AUDIO0 */
++	GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
++	GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
++	GATE_AUDIO0(CLK_AUD_SPDF, "audio_spdf", "audpll_sel", 21),
++	GATE_AUDIO0(CLK_AUD_SPDF2, "audio_spdf2", "audpll_sel", 22),
++	GATE_AUDIO0(CLK_AUD_APLL, "audio_apll", "audpll_sel", 23),
++	/* AUDIO1 */
++	GATE_AUDIO1(CLK_AUD_I2SIN1, "audio_i2sin1", "aud_mux1_sel", 0),
++	GATE_AUDIO1(CLK_AUD_I2SIN2, "audio_i2sin2", "aud_mux1_sel", 1),
++	GATE_AUDIO1(CLK_AUD_I2SIN3, "audio_i2sin3", "aud_mux1_sel", 2),
++	GATE_AUDIO1(CLK_AUD_I2SIN4, "audio_i2sin4", "aud_mux1_sel", 3),
++	GATE_AUDIO1(CLK_AUD_I2SIN5, "audio_i2sin5", "aud_mux1_sel", 4),
++	GATE_AUDIO1(CLK_AUD_I2SIN6, "audio_i2sin6", "aud_mux1_sel", 5),
++	GATE_AUDIO1(CLK_AUD_I2SO1, "audio_i2so1", "aud_mux1_sel", 6),
++	GATE_AUDIO1(CLK_AUD_I2SO2, "audio_i2so2", "aud_mux1_sel", 7),
++	GATE_AUDIO1(CLK_AUD_I2SO3, "audio_i2so3", "aud_mux1_sel", 8),
++	GATE_AUDIO1(CLK_AUD_I2SO4, "audio_i2so4", "aud_mux1_sel", 9),
++	GATE_AUDIO1(CLK_AUD_I2SO5, "audio_i2so5", "aud_mux1_sel", 10),
++	GATE_AUDIO1(CLK_AUD_I2SO6, "audio_i2so6", "aud_mux1_sel", 11),
++	GATE_AUDIO1(CLK_AUD_ASRCI1, "audio_asrci1", "asm_h_sel", 12),
++	GATE_AUDIO1(CLK_AUD_ASRCI2, "audio_asrci2", "asm_h_sel", 13),
++	GATE_AUDIO1(CLK_AUD_ASRCO1, "audio_asrco1", "asm_h_sel", 14),
++	GATE_AUDIO1(CLK_AUD_ASRCO2, "audio_asrco2", "asm_h_sel", 15),
++	GATE_AUDIO1(CLK_AUD_INTDIR, "audio_intdir", "intdir_sel", 20),
++	GATE_AUDIO1(CLK_AUD_A1SYS, "audio_a1sys", "aud_mux1_sel", 21),
++	GATE_AUDIO1(CLK_AUD_A2SYS, "audio_a2sys", "aud_mux2_sel", 22),
++	GATE_AUDIO1(CLK_AUD_AFE_CONN, "audio_afe_conn", "aud_mux1_sel", 23),
++	GATE_AUDIO1(CLK_AUD_AFE_MRGIF, "audio_afe_mrgif", "aud_mux1_sel", 25),
++	/* AUDIO2 */
++	GATE_AUDIO2(CLK_AUD_MMIF_UL1, "audio_ul1", "aud_mux1_sel", 0),
++	GATE_AUDIO2(CLK_AUD_MMIF_UL2, "audio_ul2", "aud_mux1_sel", 1),
++	GATE_AUDIO2(CLK_AUD_MMIF_UL3, "audio_ul3", "aud_mux1_sel", 2),
++	GATE_AUDIO2(CLK_AUD_MMIF_UL4, "audio_ul4", "aud_mux1_sel", 3),
++	GATE_AUDIO2(CLK_AUD_MMIF_UL5, "audio_ul5", "aud_mux1_sel", 4),
++	GATE_AUDIO2(CLK_AUD_MMIF_UL6, "audio_ul6", "aud_mux1_sel", 5),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL1, "audio_dl1", "aud_mux1_sel", 6),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL2, "audio_dl2", "aud_mux1_sel", 7),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL3, "audio_dl3", "aud_mux1_sel", 8),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL4, "audio_dl4", "aud_mux1_sel", 9),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL5, "audio_dl5", "aud_mux1_sel", 10),
++	GATE_AUDIO2(CLK_AUD_MMIF_DL6, "audio_dl6", "aud_mux1_sel", 11),
++	GATE_AUDIO2(CLK_AUD_MMIF_DLMCH, "audio_dlmch", "aud_mux1_sel", 12),
++	GATE_AUDIO2(CLK_AUD_MMIF_ARB1, "audio_arb1", "aud_mux1_sel", 13),
++	GATE_AUDIO2(CLK_AUD_MMIF_AWB1, "audio_awb", "aud_mux1_sel", 14),
++	GATE_AUDIO2(CLK_AUD_MMIF_AWB2, "audio_awb2", "aud_mux1_sel", 15),
++	GATE_AUDIO2(CLK_AUD_MMIF_DAI, "audio_dai", "aud_mux1_sel", 16),
++	/* AUDIO3 */
++	GATE_AUDIO3(CLK_AUD_ASRCI3, "audio_asrci3", "asm_h_sel", 2),
++	GATE_AUDIO3(CLK_AUD_ASRCI4, "audio_asrci4", "asm_h_sel", 3),
++	GATE_AUDIO3(CLK_AUD_ASRCI5, "audio_asrci5", "asm_h_sel", 4),
++	GATE_AUDIO3(CLK_AUD_ASRCI6, "audio_asrci6", "asm_h_sel", 5),
++	GATE_AUDIO3(CLK_AUD_ASRCO3, "audio_asrco3", "asm_h_sel", 6),
++	GATE_AUDIO3(CLK_AUD_ASRCO4, "audio_asrco4", "asm_h_sel", 7),
++	GATE_AUDIO3(CLK_AUD_ASRCO5, "audio_asrco5", "asm_h_sel", 8),
++	GATE_AUDIO3(CLK_AUD_ASRCO6, "audio_asrco6", "asm_h_sel", 9),
++	GATE_AUDIO3(CLK_AUD_MEM_ASRC1, "audio_mem_asrc1", "asm_h_sel", 10),
++	GATE_AUDIO3(CLK_AUD_MEM_ASRC2, "audio_mem_asrc2", "asm_h_sel", 11),
++	GATE_AUDIO3(CLK_AUD_MEM_ASRC3, "audio_mem_asrc3", "asm_h_sel", 12),
++	GATE_AUDIO3(CLK_AUD_MEM_ASRC4, "audio_mem_asrc4", "asm_h_sel", 13),
++	GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
++};
++
++static const struct of_device_id of_match_clk_mt2701_aud[] = {
++	{ .compatible = "mediatek,mt2701-audsys", },
++	{}
++};
++
++static int clk_mt2701_aud_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++	int r;
++
++	clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
++
++	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
++				   clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	if (r)
++		dev_err(&pdev->dev,
++			"could not register clock provider: %s: %d\n",
++			pdev->name, r);
++
++	return r;
++}
++
++static struct platform_driver clk_mt2701_aud_drv = {
++	.probe = clk_mt2701_aud_probe,
++	.driver = {
++		.name = "clk-mt2701-aud",
++		.of_match_table = of_match_clk_mt2701_aud,
++	},
++};
++
++builtin_platform_driver(clk_mt2701_aud_drv);
+-- 
+1.9.1
