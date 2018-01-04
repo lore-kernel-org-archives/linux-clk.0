@@ -1,102 +1,108 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v8 2/3] ASoC: Intel: Skylake: Make DSP replies more human readable
-Date: Mon, 29 Jan 2018 21:45:59 +0530
-Message-Id: <1517242560-22157-3-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1517242560-22157-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1517242560-22157-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:47048 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeADLNI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:13:08 -0500
+From: <ilialin@codeaurora.org>
+To: "'Mark Rutland'" <mark.rutland@arm.com>
+Cc: <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <will.deacon@arm.com>,
+        <rnayak@codeaurora.org>, <qualcomm-lt@lists.linaro.org>,
+        <celster@codeaurora.org>, <tfinkel@codeaurora.org>
+References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org> <1513081897-31612-2-git-send-email-ilialin@codeaurora.org> <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
+In-Reply-To: <20171212140302.au4wart4uhwm7lfq@lakrids.cambridge.arm.com>
+Subject: RE: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU driver
+Date: Thu, 4 Jan 2018 13:13:02 +0200
+Message-ID: <027b01d3854c$ff085060$fd18f120$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+This is address in the V2: https://patchwork.kernel.org/patch/10144473/
 
-Add more meaning to the IPC replies for easy debugging. Replace the switch
-case with a lookup table to lookup for the IPC replies and print in human
-readable form.
+> -----Original Message-----
+> From: Mark Rutland [mailto:mark.rutland@arm.com]
+> Sent: Tuesday, December 12, 2017 4:03 PM
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> arm-msm@vger.kernel.org; sboyd@codeaurora.org;
+> devicetree@vger.kernel.org; will.deacon@arm.com;
+> rnayak@codeaurora.org; qualcomm-lt@lists.linaro.org;
+> celster@codeaurora.org; tfinkel@codeaurora.org
+> Subject: Re: [PATCH 01/10] soc: qcom: Separate kryo l2 accessors from PMU
+> driver
+> 
+> Hi,
+> 
+> On Tue, Dec 12, 2017 at 02:31:28PM +0200, Ilia Lin wrote:
+> > The driver provides kernel level API for other drivers to access the
+> > MSM8996 L2 cache registers.
+> > Separating the L2 access code from the PMU driver and making it public
+> > to allow other drivers use it.
+> > The accesses must be separated with a single spinlock, maintained in
+> > this driver.
+> 
+> > -static void set_l2_indirect_reg(u64 reg, u64 val) -{
+> > -	unsigned long flags;
+> > -
+> > -	raw_spin_lock_irqsave(&l2_access_lock, flags);
+> > -	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+> > -	isb();
+> > -	write_sysreg_s(val, L2CPUSRDR_EL1);
+> > -	isb();
+> > -	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+> > -}
+> 
+> > +/**
+> > + * set_l2_indirect_reg: write value to an L2 register
+> > + * @reg: Address of L2 register.
+> > + * @value: Value to be written to register.
+> > + *
+> > + * Use architecturally required barriers for ordering between system
+> > +register
+> > + * accesses, and system registers with respect to device memory  */
+> > +void set_l2_indirect_reg(u64 reg, u64 val) {
+> > +	unsigned long flags;
+> > +	mb();
+> 
+> We didn't need this for the PMU driver, so it's unfortuante that it now
+has to
+> pay the cost.
+> 
+> Can we please factor this mb() into the callers that need it?
+> 
+> > +	raw_spin_lock_irqsave(&l2_access_lock, flags);
+> > +	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+> > +	isb();
+> > +	write_sysreg_s(val, L2CPUSRDR_EL1);
+> > +	isb();
+> > +	raw_spin_unlock_irqrestore(&l2_access_lock, flags); }
+> > +EXPORT_SYMBOL(set_l2_indirect_reg);
+> 
+> [...]
+> 
+> > +#ifdef CONFIG_ARCH_QCOM
+> > +void set_l2_indirect_reg(u64 reg_addr, u64 val);
+> > +u64 get_l2_indirect_reg(u64 reg_addr); #else static inline void
+> > +set_l2_indirect_reg(u32 reg_addr, u32 val) {} static inline u32
+> > +get_l2_indirect_reg(u32 reg_addr) {
+> > +	return 0;
+> > +}
+> > +#endif
+> > +#endif
+> 
+> Are there any drivers that will bne built for !CONFIG_ARCH_QCOM that
+> reference this?
+> 
+> It might be better to not have the stub versions, so that we get a
+build-error
+> if they are erroneously used.
+> 
+> Thannks,
+> Mark.
 
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 5234fafb758a..8708755a8f9a 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
- 	return 0;
- }
- 
--static int skl_ipc_set_reply_error_code(u32 reply)
-+struct skl_ipc_err_map {
-+	const char *msg;
-+	enum skl_ipc_glb_reply reply;
-+	int err;
-+};
-+
-+static struct skl_ipc_err_map skl_err_map[] = {
-+	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
-+	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+};
-+
-+static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
- {
--	switch (reply) {
--	case IPC_GLB_REPLY_OUT_OF_MEMORY:
--		return -ENOMEM;
-+	int i;
- 
--	case IPC_GLB_REPLY_BUSY:
--		return -EBUSY;
-+	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
-+		if (skl_err_map[i].reply == reply)
-+			break;
-+	}
- 
--	default:
-+	if (i == ARRAY_SIZE(skl_err_map)) {
-+		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
-+				reply,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
- 		return -EINVAL;
- 	}
-+
-+	if (skl_err_map[i].err < 0)
-+		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+	else
-+		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
-+				skl_err_map[i].msg,
-+				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+
-+	return skl_err_map[i].err;
- }
- 
- void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
-@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
- 
- 		}
- 	} else {
--		msg->errno = skl_ipc_set_reply_error_code(reply);
--		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
--		dev_err(ipc->dev, "FW Error Code: %u\n",
--			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
-+		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
- 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
- 		case IPC_GLB_LOAD_MULTIPLE_MODS:
- 		case IPC_GLB_LOAD_LIBRARY:
--- 
-2.7.4
