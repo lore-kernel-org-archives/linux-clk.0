@@ -1,89 +1,102 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 28/41] ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Sat, 20 Jan 2018 11:14:07 -0600
-Message-Id: <1516468460-4908-29-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v7 5/6] ASoC: Intel: Skylake: Make DSP replies more human readable
+Date: Thu,  4 Jan 2018 16:55:18 +0530
+Message-Id: <1515065119-1683-6-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The common clock framework will take care of disabling unused clocks when
-we switch from the legacy davinci clocks and having this enabled will
-cause compile errors after we switch, so remove it now.
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Add more meaning to the IPC replies for easy debugging. Replace the switch
+case with a lookup table to lookup for the IPC replies and print in human
+readable form.
+
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 ---
+ sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
 
-v6 changes:
-- none
-
- arch/arm/mach-davinci/Kconfig               | 12 ------------
- arch/arm/mach-davinci/common.c              |  1 -
- arch/arm/mach-davinci/include/mach/common.h |  6 ------
- 3 files changed, 19 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index 05c3eecf..ba9912b 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -231,18 +231,6 @@ config DAVINCI_MUX_WARNINGS
- 	  to change the pin multiplexing setup. When there are no warnings
- 	  printed, it's safe to deselect DAVINCI_MUX for your product.
- 
--config DAVINCI_RESET_CLOCKS
--	bool "Reset unused clocks during boot"
--	depends on ARCH_DAVINCI
--	help
--	  Say Y if you want to reset unused clocks during boot.
--	  This option saves power, but assumes all drivers are
--	  using the clock framework. Broken drivers that do not
--	  yet use clock framework may not work with this option.
--	  If you are booting from another operating system, you
--	  probably do not want this option enabled until your
--	  device drivers work properly.
--
- endmenu
- 
- endif
-diff --git a/arch/arm/mach-davinci/common.c b/arch/arm/mach-davinci/common.c
-index bcb6a7b..e03f95c 100644
---- a/arch/arm/mach-davinci/common.c
-+++ b/arch/arm/mach-davinci/common.c
-@@ -118,5 +118,4 @@ void __init davinci_common_init(const struct davinci_soc_info *soc_info)
- void __init davinci_init_late(void)
- {
- 	davinci_cpufreq_init();
--	davinci_clk_disable_unused();
+diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
+index 5234fafb758a..8708755a8f9a 100644
+--- a/sound/soc/intel/skylake/skl-sst-ipc.c
++++ b/sound/soc/intel/skylake/skl-sst-ipc.c
+@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
+ 	return 0;
  }
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index f0d5e858..c86a058 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -82,12 +82,6 @@ extern void davinci_common_init(const struct davinci_soc_info *soc_info);
- extern void davinci_init_ide(void);
- void davinci_init_late(void);
  
--#ifdef CONFIG_DAVINCI_RESET_CLOCKS
--int davinci_clk_disable_unused(void);
--#else
--static inline int davinci_clk_disable_unused(void) { return 0; }
--#endif
--
- #ifdef CONFIG_CPU_FREQ
- int davinci_cpufreq_init(void);
- #else
+-static int skl_ipc_set_reply_error_code(u32 reply)
++struct skl_ipc_err_map {
++	const char *msg;
++	enum skl_ipc_glb_reply reply;
++	int err;
++};
++
++static struct skl_ipc_err_map skl_err_map[] = {
++	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
++	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
++};
++
++static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+ {
+-	switch (reply) {
+-	case IPC_GLB_REPLY_OUT_OF_MEMORY:
+-		return -ENOMEM;
++	int i;
+ 
+-	case IPC_GLB_REPLY_BUSY:
+-		return -EBUSY;
++	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
++		if (skl_err_map[i].reply == reply)
++			break;
++	}
+ 
+-	default:
++	if (i == ARRAY_SIZE(skl_err_map)) {
++		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
++				reply,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
+ 		return -EINVAL;
+ 	}
++
++	if (skl_err_map[i].err < 0)
++		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++	else
++		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++
++	return skl_err_map[i].err;
+ }
+ 
+ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+ 
+ 		}
+ 	} else {
+-		msg->errno = skl_ipc_set_reply_error_code(reply);
+-		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
+-		dev_err(ipc->dev, "FW Error Code: %u\n",
+-			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
+ 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
+ 		case IPC_GLB_LOAD_MULTIPLE_MODS:
+ 		case IPC_GLB_LOAD_LIBRARY:
 -- 
 2.7.4
