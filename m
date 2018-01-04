@@ -1,64 +1,40 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 29 Jan 2018 11:29:16 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 3/4] dt-bindings: add binding for i.MX8MQ CCM
-Message-ID: <20180129172916.ek5l5jscsn4qipx5@rob-hp-laptop>
-References: <20180117182950.26460-1-l.stach@pengutronix.de>
- <20180117182950.26460-3-l.stach@pengutronix.de>
+Return-Path: <Anson.Huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-imx@nxp.com>
+CC: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <stefan@agner.ch>, <linux@armlinux.org.uk>
+Subject: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+Date: Thu, 4 Jan 2018 23:06:42 +0800
+Message-ID: <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
+References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: Anson.Huang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180117182950.26460-3-l.stach@pengutronix.de>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 17, 2018 at 07:29:49PM +0100, Lucas Stach wrote:
-> This adds the binding for the i.MX8MQ Clock Controller Module.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  .../devicetree/bindings/clock/imx8mq-clock.txt       | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-> new file mode 100644
-> index 000000000000..c9b0123b80d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-> @@ -0,0 +1,20 @@
-> +* Clock bindings for NXP i.MX8M Quad
-> +
-> +Required properties:
-> +- compatible: Should be "nxp,imx8mq-ccm"
-> +- reg: Address and length of the register set
-> +- #clock-cells: Should be <1>
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +          entry in clock-names
-> +- clock-names: should include the following entries:
-> +    - "ckil"
-> +    - "osc_25m"
-> +    - "osc_27m"
-> +    - "clk_ext1"
-> +    - "clk_ext2"
-> +    - "clk_ext3"
-> +    - "clk_ext4"
-> +
-> +The clock consumer should specify the desired clock by having the clock
-> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clock.h
+Add i.MX7 SNVS RTC clock.
 
-This header belongs in this patch. With that,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +for the full list of i.MX8M Quad clock IDs.
-> -- 
-> 2.11.0
-> 
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index e718fd2..f9b97f3 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -534,6 +534,8 @@
+ 					offset = <0x34>;
+ 					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 						     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clks IMX7D_SNVS_CLK>;
++					clock-names = "snvs-rtc";
+ 				};
+ 
+ 				snvs_poweroff: snvs-poweroff {
+-- 
+1.9.1
