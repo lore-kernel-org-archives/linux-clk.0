@@ -1,39 +1,201 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 33/44] ARM: davinci: switch to common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515378238-23105-1-git-send-email-david@lechnology.com>
- <1515378238-23105-4-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <6a694c9e-243a-5fce-03fa-989d8bb783d2@ti.com>
-Date: Thu, 18 Jan 2018 20:56:25 +0530
-MIME-Version: 1.0
-In-Reply-To: <1515378238-23105-4-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37871 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751842AbeADHIb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 02:08:31 -0500
+Received: by mail-pl0-f68.google.com with SMTP id s3so581494plp.4
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2018 23:08:31 -0800 (PST)
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To: arm@kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [RECEND PATCH V7 12/12] arm64: dts: add clocks for SC9860
+Date: Thu,  4 Jan 2018 15:08:04 +0800
+Message-Id: <1515049684-23481-2-git-send-email-zhang.chunyan@linaro.org>
+In-Reply-To: <1515049684-23481-1-git-send-email-zhang.chunyan@linaro.org>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+ <1515049684-23481-1-git-send-email-zhang.chunyan@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:53 AM, David Lechner wrote:
-> diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-> index 4e81780..8a8f413 100644
-> --- a/arch/arm/mach-davinci/Makefile
-> +++ b/arch/arm/mach-davinci/Makefile
-> @@ -5,7 +5,7 @@
->  #
->  
->  # Common objects
-> -obj-y 			:= time.o clock.o serial.o psc.o \
-> +obj-y 			:= time.o serial.o \
->  			   usb.o common.o sram.o aemif.o
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 
-The line break seems too early now.
+Some clocks on SC9860 are in the same address area with syscon devices,
+those are what have a property of 'sprd,syscon' which would refer to
+syscon devices, others would have a reg property indicated their address
+ranges.
 
-Thanks,
-Sekhar
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |  18 +++++-
+ 2 files changed, 131 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..bf03da4 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,120 @@
+ 	};
+ 
+ 	soc {
++		pmu_gate: pmu-gate {
++			compatible = "sprd,sc9860-pmu-gate";
++			sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
++			clocks = <&ext_26m>;
++			#clock-cells = <1>;
++		};
++
++		pll: pll {
++			compatible = "sprd,sc9860-pll";
++			sprd,syscon = <&ana_regs>; /* 0x40400000 */
++			clocks = <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		ap_clk: clock-controller@20000000 {
++			compatible = "sprd,sc9860-ap-clk";
++			reg = <0 0x20000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_prediv: aon-prediv {
++			compatible = "sprd,sc9860-aon-prediv";
++			reg = <0 0x402d0000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>,
++				 <&pmu_gate 0>;
++			#clock-cells = <1>;
++		};
++
++		apahb_gate: apahb-gate {
++			compatible = "sprd,sc9860-apahb-gate";
++			sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aon_gate: aon-gate {
++			compatible = "sprd,sc9860-aon-gate";
++			sprd,syscon = <&aon_regs>; /* 0x402e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		aonsecure_clk: clock-controller@40880000 {
++			compatible = "sprd,sc9860-aonsecure-clk";
++			reg = <0 0x40880000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		agcp_gate: agcp-gate {
++			compatible = "sprd,sc9860-agcp-gate";
++			sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
++			clocks = <&aon_prediv 0>;
++			#clock-cells = <1>;
++		};
++
++		gpu_clk: clock-controller@60200000 {
++			compatible = "sprd,sc9860-gpu-clk";
++			reg = <0 0x60200000 0 0x400>;
++			clocks = <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_clk: clock-controller@61000000 {
++			compatible = "sprd,sc9860-vsp-clk";
++			reg = <0 0x61000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		vsp_gate: vsp-gate {
++			compatible = "sprd,sc9860-vsp-gate";
++			sprd,syscon = <&vsp_regs>; /* 0x61100000 */
++			clocks = <&vsp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_clk: clock-controller@62000000 {
++			compatible = "sprd,sc9860-cam-clk";
++			reg = <0 0x62000000 0 0x4000>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		cam_gate: cam-gate {
++			compatible = "sprd,sc9860-cam-gate";
++			sprd,syscon = <&cam_regs>; /* 0x62100000 */
++			clocks = <&cam_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_clk: clock-controller@63000000 {
++			compatible = "sprd,sc9860-disp-clk";
++			reg = <0 0x63000000 0 0x400>;
++			clocks = <&ext_26m>, <&pll 0>;
++			#clock-cells = <1>;
++		};
++
++		disp_gate: disp-gate {
++			compatible = "sprd,sc9860-disp-gate";
++			sprd,syscon = <&disp_regs>; /* 0x63100000 */
++			clocks = <&disp_clk 0>;
++			#clock-cells = <1>;
++		};
++
++		apapb_gate: apapb-gate {
++			compatible = "sprd,sc9860-apapb-gate";
++			sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
++			clocks = <&ap_clk 0>;
++			#clock-cells = <1>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 6ea3a75..328009c 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -106,10 +106,24 @@
+ 		};
+ 	};
+ 
+-	ext_26m: ext-26m {
++	ext_32k: ext_32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "ext-32k";
++	};
++
++	ext_26m: ext_26m {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
++	};
++
++	ext_rco_100m: ext_rco_100m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "ext-rco-100m";
+ 	};
+ };
+-- 
+2.7.4
+
