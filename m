@@ -1,75 +1,68 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 3/9] doc: dt-bindings: Add doc for Ingenic TCU IRQ driver
-Date: Wed, 10 Jan 2018 23:48:32 +0100
-Message-Id: <20180110224838.16711-3-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:46330 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752469AbeADNlc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 08:41:32 -0500
+Date: Thu, 4 Jan 2018 14:41:30 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 09/11] clk: sunxi-ng: add support for Allwinner A64
+ DE2 CCU
+Message-ID: <20180104134130.dfh2qbhcvo67zu36@flea.lan>
+References: <20171222122243.25735-1-icenowy@aosc.io>
+ <20171222122243.25735-10-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vey4lzzuwtjmi6al"
+In-Reply-To: <20171222122243.25735-10-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation about how to properly use the Ingenic TCU
-(Timer/Counter Unit) IRQ driver from devicetree.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- .../bindings/interrupt-controller/ingenic,tcu.txt  | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+--vey4lzzuwtjmi6al
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- v3: New patch in this series
+On Fri, Dec 22, 2017 at 08:22:41PM +0800, Icenowy Zheng wrote:
+> Allwinner A64's DE2 needs to claim a section of SRAM (SRAM C) to work.
+>=20
+> Add support for it.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-new file mode 100644
-index 000000000000..e3a7d2354172
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-@@ -0,0 +1,33 @@
-+Ingenic SoCs Timer/Counter Unit Interrupt Controller
-+
-+Required properties:
-+
-+- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
-+  * ingenic,jz4740-tcu-intc
-+  * ingenic,jz4770-tcu-intc
-+  * ingenic,jz4780-tcu-intc
-+- interrupt-controller : Identifies the node as an interrupt controller
-+- #interrupt-cells : Specifies the number of cells needed to encode an
-+  interrupt source. The value shall be 1.
-+- interrupt-parent : phandle of the interrupt controller.
-+- interrupts : Specifies the interrupt the controller is connected to.
-+
-+Example:
-+
-+/ {
-+	mfd@10002000 {
-+		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-+		reg = <0x10002000 0x1000>;
-+
-+		tcu_irq: interrupt-controller {
-+			compatible = "ingenic,jz4740-tcu-intc";
-+			reg = <0x10002020 0x20>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <15>;
-+		};
-+	};
-+};
--- 
-2.11.0
+That's highly suspicious that the clocks need an SRAM to operate
+properly.
+
+Can you elaborate?
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--vey4lzzuwtjmi6al
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpOLwkACgkQ0rTAlCFN
+r3QVuA/7BKDQF9s38/X7rq2BLnI01Qon26NAH53tdQ6EX8wjDyse2gVWcoOt3yph
+cslsPHh4o1OoZzd9Xp4+Jr3niRs27D02o+KNUpIb5VtIJcrUz//Bp36E5qLLqF8S
+AD9wlwzsGO8ZcrMKonlmKvzhW807q6FaxpST2AHqOCdXe4iuoXILmhyXrrPntxQW
+HXtMJ3/zJCTQjkcJrwA00Apz2xPgr5CRPDa99OVxLmFtfd+pZPKCRWoAnLYTB2rb
+uyVHCldIDq6/OZYkuFwUS0yrDgev0LrERyL+lDLkkriElj9bnpMP3gLJhTLkEtbQ
+newFdehxcwPBg88fUweKKyedM1OJKz4m96ATZRi6pf2Yuck3866qFqvItb6mFLzJ
+jGlYOugqnH0FVlGrFL4C40nNwPhJ7ba8lFEGYvi8muxRrQIFGoi03mBJvJoFcdOq
+u5DA41bV2v+Ckna2WH4DNQLG35JPXDQTyxJAN9toxwSxYwmQLQo+757Rt9fda+YD
+liP9CgdqA8GPCtOe4IsUaRGW8d/juyLAKEwzERhSy4KLwB/vS/a5xeV1Pdq7kLSl
+asu1juk3fbH4cPZRdmipkVMWI1m7f+0M+nCQjFfOkxf5coF3xQxNU622YGVFmngW
+a6rBB0CvC5lJSx69qpoxDLhmddxkk7xNYECoWYS93MidvA8NCj4=
+=XbsJ
+-----END PGP SIGNATURE-----
+
+--vey4lzzuwtjmi6al--
