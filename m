@@ -1,58 +1,92 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Marc Zyngier <marc.zyngier@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [RFC PATCH 4/9] clocksource: sun4i: add a compatible for suniv
-Date: Sat, 20 Jan 2018 07:17:30 +0800
-Message-Id: <20180119231735.61504-5-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v4 5/7] clk: Introduce davinci clocks
+To: David Lechner <david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1514763588-31560-1-git-send-email-david@lechnology.com>
+ <1514763588-31560-6-git-send-email-david@lechnology.com>
+ <42102b7d-4e3c-d5fc-b0db-48a1203757ba@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <521d77e1-1375-7ef0-4ef5-d8a3401d1b73@ti.com>
+Date: Thu, 4 Jan 2018 17:58:29 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <42102b7d-4e3c-d5fc-b0db-48a1203757ba@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The suniv (new F-series) chip has a timer with less functionality than
-the A10 timer, e.g. it has only 3 channels.
+On Wednesday 03 January 2018 03:01 AM, David Lechner wrote:
+> Forgot to cc linux-clk, so doing that now...
+> 
+> 
+> On 12/31/2017 05:39 PM, David Lechner wrote:
+>> This introduces new drivers for arch/arm/mach-davinci. The code is based
+>> on the clock drivers from there and adapted to use the common clock
+>> framework.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>   drivers/clk/Makefile                      |   1 +
+>>   drivers/clk/davinci/Makefile              |   3 +
+>>   drivers/clk/davinci/da8xx-cfgchip-clk.c   | 380
+>> ++++++++++++++++++++++++++++++
+>>   drivers/clk/davinci/pll.c                 | 333
+>> ++++++++++++++++++++++++++
+>>   drivers/clk/davinci/psc.c                 | 217 +++++++++++++++++
+>>   include/linux/clk/davinci.h               |  46 ++++
+>>   include/linux/platform_data/davinci_clk.h |  25 ++
+>>   7 files changed, 1005 insertions(+)
 
-Add a new compatible for it. As we didn't use the extra channels on A10
-either now, the code needn't to be changed.
+This is a pretty huge patch and I think each of cfgchip, pll and PSC
+clocks deserve a patch of their own.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clocksource/sun4i_timer.c | 2 ++
- 1 file changed, 2 insertions(+)
+On the PLL patch, please describe how the PLL implementation on DaVinci
+is different from Keystone, so no reuse is really possible. Similarly
+for the PSC patch (no non-DT support in keystone etc).
 
-diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-index 6e0180aaf784..88e09554ce7a 100644
---- a/drivers/clocksource/sun4i_timer.c
-+++ b/drivers/clocksource/sun4i_timer.c
-@@ -218,3 +218,5 @@ static int __init sun4i_timer_init(struct device_node *node)
- }
- TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
- 		       sun4i_timer_init);
-+TIMER_OF_DECLARE(suniv, "allwinner,suniv-timer",
-+		       sun4i_timer_init);
--- 
-2.14.2
+>> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+>> new file mode 100644
+>> index 0000000..8ae85ee
+>> --- /dev/null
+>> +++ b/drivers/clk/davinci/psc.c
+>> @@ -0,0 +1,217 @@
 
+>> +static void psc_config(struct davinci_psc_clk *psc,
+>> +               enum davinci_psc_state next_state)
+>> +{
+>> +    u32 epcpr, ptcmd, pdstat, pdctl, mdstat, mdctl, ptstat;
+>> +
+>> +    mdctl = readl(psc->base + MDCTL + 4 * psc->lpsc);
+>> +    mdctl &= ~MDSTAT_STATE_MASK;
+>> +    mdctl |= next_state;
+>> +    /* TODO: old davinci clocks for da850 set MDCTL_FORCE bit for
+>> sata and
+>> +     * dsp here. Is this really needed?
+>> +     */
+>> +    writel(mdctl, psc->base + MDCTL + 4 * psc->lpsc);
+>> +
+>> +    pdstat = readl(psc->base + PDSTAT + 4 * psc->pd);
+>> +    if ((pdstat & PDSTAT_STATE_MASK) == 0) {
+>> +        pdctl = readl(psc->base + PDSTAT + 4 * psc->pd);
+>> +        pdctl |= PDCTL_NEXT;
+>> +        writel(pdctl, psc->base + PDSTAT + 4 * psc->pd);
+>> +
+>> +        ptcmd = BIT(psc->pd);
+>> +        writel(ptcmd, psc->base + PTCMD);
+>> +
+>> +        do {
+>> +            epcpr = __raw_readl(psc->base + EPCPR);
+>> +        } while (!(epcpr & BIT(psc->pd)));
+>> +
+>> +        pdctl = __raw_readl(psc->base + PDCTL + 4 * psc->pd);
+>> +        pdctl |= PDCTL_EPCGOOD;
+>> +        __raw_writel(pdctl, psc->base + PDCTL + 4 * psc->pd);
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Can we shift to regmap here too? Then the polling loops like above can
+be converted to regmap_read_poll_timeout() too like you have done elsewhere.
+
+Thanks,
+Sekhar
