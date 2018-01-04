@@ -1,49 +1,63 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Boris Brezillon <boris.brezillon@free-electrons.com>, Phil Elwell <phil@raspberrypi.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 09/34] clk: bcm2835: change clk_get_rate() helper return type
-In-Reply-To: <1514835793-1104-10-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie> <1514835793-1104-10-git-send-email-pure.logic@nexus-software.ie>
-Date: Tue, 02 Jan 2018 14:21:45 -0800
-Message-ID: <87r2r7gava.fsf@anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:52909 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752738AbeADLbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Jan 2018 06:31:25 -0500
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+        Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Patches Audio <patches.audio@intel.com>,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v7 6/6] ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
+Date: Thu,  4 Jan 2018 16:55:19 +0530
+Message-Id: <1515065119-1683-7-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-Bryan O'Donoghue <pure.logic@nexus-software.ie> writes:
+If mclk/sclk is already running, FW responds with IPC reply MCLK/SCLK
+already running. Add these to the IPC reply lookup table.
 
-> bcm2835_pll_rate_from_divisor returns a long but the function calling it
-> returns an unsigned long. There's no reason to have a type disparity here
-> so tidy up the return type of bcm2835_pll_rate_from_divisor() from signed
-> to unsigned long.
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+---
+ sound/soc/intel/skylake/skl-sst-ipc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I'm still surprised that clocks are using longs instead of u64s, but
-this seems like a fine change.  For the 2 bcm2835 patches,
+diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
+index 8708755a8f9a..9f3ce73593ae 100644
+--- a/sound/soc/intel/skylake/skl-sst-ipc.c
++++ b/sound/soc/intel/skylake/skl-sst-ipc.c
+@@ -249,6 +249,8 @@ enum skl_ipc_glb_reply {
+ 	IPC_GLB_REPLY_INVALID_CONFIG_DATA_LEN = 121,
+ 	IPC_GLB_REPLY_GATEWAY_NOT_INITIALIZED = 140,
+ 	IPC_GLB_REPLY_GATEWAY_NOT_EXIST = 141,
++	IPC_GLB_REPLY_SCLK_ALREADY_RUNNING = 150,
++	IPC_GLB_REPLY_MCLK_ALREADY_RUNNING = 151,
+ 
+ 	IPC_GLB_REPLY_PPL_NOT_INITIALIZED = 160,
+ 	IPC_GLB_REPLY_PPL_NOT_EXIST = 161,
+@@ -401,6 +403,10 @@ struct skl_ipc_err_map {
+ static struct skl_ipc_err_map skl_err_map[] = {
+ 	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
+ 	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
++	{"SCLK already running", IPC_GLB_REPLY_SCLK_ALREADY_RUNNING,
++			IPC_GLB_REPLY_SCLK_ALREADY_RUNNING},
++	{"MCLK already running", IPC_GLB_REPLY_MCLK_ALREADY_RUNNING,
++			IPC_GLB_REPLY_MCLK_ALREADY_RUNNING},
+ };
+ 
+ static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+-- 
+2.7.4
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlpMBfoACgkQtdYpNtH8
-nui3PA//RIW+nxhg3XpGb4HzXfIkPRirmURSlZPS9NAMefUhbA3bBeuIiRRbasgf
-hcX6K5sWDHE5UPNv0igdnY7fNrbx6hmG8qmj4VQFSh4vdKTo2ckWxqXI2aXxWzPo
-KEtzwC25AvdBo+WAplXQpVuGd0Yo21qQqg761rjgTuxfcZfl+vLbQO3ORjn2+ucA
-/6Q1M4DdGz4akTiJbRX/rAF3j3u7Ex9giEDwZFK4Sp8kM0LqvVPeY6EfXZ42TLZM
-4ZAVTLiZqQtEceunp6u4wYMd7esreqLu+NIfLnEF6H1ySZpswKXQqPfHOwZv41dL
-qUtDXSVQ2M4zD7f48uivkQTHdleJS3GP/4isfzRXiW2MGkqfnFeTee7tkKIcQNk1
-l6Q5JkCa6udXnSUClBlmrq1YRqUYeTErtLkA6F4vv9eq66BNtORUB6puQQ1zvija
-7gOsWKanYS6RZVtFQKTb5hIhy5FoYXMAEfjxUxjqlQX/1rW/aaSxipNm6RC1X6xo
-CmScNIQQDZULKniz+BlabDBnb6Jup4i1QJPsgouETp0j48lhx/EWm0xhPCWZ88y7
-UCNTENRel6xvzo9ORpLM3oTMWHDuAl7QTbuy0MfCvcRPCmy79NJ0hLbYkOoizNYV
-MjpJ8f97DUNHl4D+xPHK5miO0mYUJx/8AH7G2sbMYOjb8tQzvR0=
-=lz0Q
------END PGP SIGNATURE-----
---=-=-=--
