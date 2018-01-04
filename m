@@ -1,58 +1,45 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 13/25] ARM: shmobile: defconfig: Enable CONFIG_RENESAS_WDT
-Date: Tue, 30 Jan 2018 20:22:46 +0000
-Message-Id: <1517343778-27902-14-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <arndbergmann@gmail.com>
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CAAfSe-tc6s6F-1AYEamZubJ7VfMXm-rp18c8pctE51izeHXsnA@mail.gmail.com>
+References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
+ <20171207125715.16160-12-chunyan.zhang@spreadtrum.com> <20171221230316.GY7997@codeaurora.org>
+ <CAAfSe-tc6s6F-1AYEamZubJ7VfMXm-rp18c8pctE51izeHXsnA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 4 Jan 2018 17:51:05 +0100
+Message-ID: <CAK8P3a0SFscEGsMGGKe=BNJZjT=B3Swz9kt=znHEiqqR837+TQ@mail.gmail.com>
+Subject: Re: [PATCH V7 11/12] arm64: dts: add syscon for whale2 platform
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, "arm@kernel.org" <arm@kernel.org>,
+	Chunyan Zhang <chunyan.zhang@spreadtrum.com>, Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default.
+On Fri, Dec 22, 2017 at 6:30 AM, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> On 22 December 2017 at 07:03, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 12/07, Chunyan Zhang wrote:
+>>> Some clocks on SC9860 are in the same address area with syscon
+>>> devices, the proper syscon node will be quoted under the
+>>> definitions of those clocks in DT.
+>>>
+>>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>>> ---
+>>
+>> These last two can go via arm-soc?
+>
+> Thanks Stephen!
+>
+> Hi Arnd, Olof
+>
+> Could you please take the patch 11, 12 through arm-soc?
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* CONFIG_RENESAS_WDT_GEN2 -> CONFIG_RENESAS_WDT
+Applied both to next/dt now, thanks!
 
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 578434c..d5cdad8 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
- CONFIG_RCAR_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9063_WATCHDOG=y
-+CONFIG_RENESAS_WDT=y
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_DA9063=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
--- 
-2.7.4
+      Arnd
