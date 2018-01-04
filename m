@@ -1,62 +1,125 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 26/26] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-Date: Wed, 31 Jan 2018 18:24:30 +0000
-Message-Id: <1517423070-24236-27-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v7 0/6] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
+Date: Thu,  4 Jan 2018 16:55:13 +0530
+Message-Id: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+For certain platforms, clocks (mclk/sclk/fs) are required to be up before
+the stream start. Example: some codecs needs the mclk/sclk/fs to be
+enabled early for a successful clock synchronization. Some platforms
+require clock to be enabled at boot and be always ON.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->4:
-* no change
+By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+these clocks can be enabled early after the firmware is downloaded.
 
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+With this series, a virtual clock driver is created which provides
+interface to send the required IPCs from machine driver to enable the
+clocks. NHLT is parsed during probe and the clock information is populated.
+The pointer to blob is cached and sent along with the set_dma_control IPC
+structure during the clk prepare/unprepare callback. Clocks are created for
+a ssp if the nhlt table has endpoint configuration for that particular ssp.
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index 8d0a392b..29b6e10 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -91,6 +91,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
- 	pinctrl-names = "default";
+Kabylake machine driver uses the clock interface to enable the clocks early
+as it is required by the rt5663 driver for clock synchronization.
+
+v6 -> v7
+	- Remove the check to deny set_rate when clock is enabled and
+	  instead use framework flag CLK_SET_RATE_GATE
+
+v5 -> v6
+	- Remove unwanted checks from clk ops
+
+	- Modify recalc_rate to return just the cached rate and remove the 
+	  rate calculations
+
+	- Add license based on SPDX	
+
+v4 -> v5
+	- Remove checks for clock enable status from machine driver since
+	  taken care in the framework already
+
+	- Add check in the skl_clk_set_rate to avoid different rates when
+	  clock is enabled already
+
+v3 -> v4
+	- Add missing signed-offs
+
+v2 -> v3
+	- Moved the clk ops and IPCs from Skylake driver to clk driver and
+	  reordered commits accordingly
+
+	- Add the support for extended I2S blob config which supports
+	  multiple mclk dividers in NHLT
+
+	- Enable the clocks as well in DAPM PMU event instead of hw_params
+	  in machine drivers as confirmed by codec vendor
+
+	- Do not register the clk if there is no valid clock source is
+	  avail in the I2S blob
+
+	- Take care of error return in the clk driver
+
+	- Address rest of the review comments and more optimization added
+
+	- Fix the warning
+		sound/soc/intel/skylake/skl.c:724:1-3:
+		WARNING: PTR_ERR_OR_ZERO can be used
+	  reported by scripts/coccinelle/api/ptr_ret.cocci
+
+	- Modified DSP replies as human readable to ease the debugging
+
+	- Add firmware replies for MCLK/SCLK clocks if they are running
+	  already
+
+v1 -> v2
+	- Register parent clocks with skylake device.
+	  With the patch "clk: Add support for runtime PM" soon to be merged
+	  will help DSP to stay active on call to clock enable.
+	  Reference: (https://patchwork.kernel.org/patch/9911741/)
+
+	- Fix the machine driver to enable clocks early for headphone
+	  playback path as well to fix a pop noise issue
+
+Harsha Priya (1):
+  ASoC: Intel: kbl: Enable mclk and ssp sclk early
+
+Naveen M (1):
+  ASoC: Intel: eve: Enable mclk and ssp sclk early
+
+Sriram Periyasamy (2):
+  ASoC: Intel: Skylake: Add ssp clock driver
+  ASoC: Intel: Skylake: Add extended I2S config blob support in Clock
+    driver
+
+Subhransu S. Prusty (2):
+  ASoC: Intel: Skylake: Make DSP replies more human readable
+  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
+
+ sound/soc/intel/Kconfig                            |   3 +
+ sound/soc/intel/boards/Kconfig                     |   2 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c       |  95 ++++-
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |  94 +++++
+ sound/soc/intel/skylake/Makefile                   |   5 +
+ sound/soc/intel/skylake/skl-i2s.h                  |  31 ++
+ sound/soc/intel/skylake/skl-messages.c             |   1 +
+ sound/soc/intel/skylake/skl-nhlt.c                 |  41 +-
+ sound/soc/intel/skylake/skl-ssp-clk.c              | 429 +++++++++++++++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.h              |  38 ++
+ sound/soc/intel/skylake/skl-sst-ipc.c              |  50 ++-
+ sound/soc/intel/skylake/skl.h                      |   6 +
+ 12 files changed, 771 insertions(+), 24 deletions(-)
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
+
 -- 
 2.7.4
