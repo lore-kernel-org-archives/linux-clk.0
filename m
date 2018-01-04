@@ -1,120 +1,66 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 23/44] ARM: da830: add new clock init using common clock framework
-Date: Sun,  7 Jan 2018 20:17:22 -0600
-Message-Id: <1515377863-20358-24-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:28096 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751493AbeADHoJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 02:44:09 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1 0/6] add "simple-mfd" support for MediaTek audio subsystem
+Date: Thu, 4 Jan 2018 15:44:02 +0800
+Message-ID: <cover.1515038387.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specfic clock init in mach-davinci/da830.c using
-the new common clock framework drivers.
+Hi,
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+The reason for this series is that MediaTek audio hardware block expose more than
+a single functionality, but register those in different kernel subsystems.
+Same issue could also be found in MMSYS: https://lkml.org/lkml/2017/11/14/669
 
-Also clean up the #includes since we are adding some here.
+Hence use "simple-mfd" to handle this kind of situation, that will make sure all
+children are registered - and we don't need to write an MFD driver specially.
+It was tested on the bananapi-r2 and the MT2701/MT7622 EVB.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/da830.c | 41 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+[1]~[3]: modify the current audio driver accordingly.
+[5][6]: add clock driver for MT2701 and add missing data for MT7622.
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 350d767..cbb351d 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -8,23 +8,29 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
- #include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
-+#include <mach/irqs.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
-+
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -37,6 +43,7 @@
- 
- #define DA830_REF_FREQ		24000000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll0_data = {
- 	.num		= 1,
- 	.phys_base	= DA8XX_PLL0_BASE,
-@@ -432,6 +439,7 @@ static struct clk_lookup da830_clks[] = {
- 	CLK(NULL,		"rmii",		&rmii_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1223,6 +1231,27 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll0, *psc0, *psc1;
-+	struct clk *clk;
-+
-+	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-+	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
-+	da830_pll_clk_init(pll0);
-+	da830_psc_clk_init(psc0, psc1);
-+	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-+	clk_register_clkdev(clk, "rmii", NULL);
-+#else
- 	davinci_clk_init(da830_clks);
-+#endif
- 	davinci_timer_init();
- }
+changes since v1:
+ - To avoid writing an MFD driver, we add "simple-mfd" in the audsys binding.
+ - Move three top clocks to audio driver [1] as we remove mfd/mtk-audsys.c in v1.
+
+Ryder Lee (6):
+  ASoC: mediatek: add some core clocks for MT2701 AFE
+  ASoC: mediatek: modify MT2701 AFE driver to adapt mfd device
+  ASoC: mediatek: update MT2701 AFE documentation to adapt mfd device
+  dt-bindings: clock: mediatek: add "simple-mfd" in audsys documentation
+  clk: mediatek: update missing clock data for MT7622 audsys
+  clk: mediatek: add audsys support for MT2701
+
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  21 ++-
+ .../devicetree/bindings/sound/mt2701-afe-pcm.txt   | 171 +++++++++++---------
+ drivers/clk/mediatek/Kconfig                       |   6 +
+ drivers/clk/mediatek/Makefile                      |   1 +
+ drivers/clk/mediatek/clk-mt2701-aud.c              | 174 +++++++++++++++++++++
+ drivers/clk/mediatek/clk-mt7622-aud.c              |   3 +-
+ include/dt-bindings/clock/mt7622-clk.h             |   3 +-
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c  |  30 +++-
+ sound/soc/mediatek/mt2701/mt2701-afe-common.h      |   3 +
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c         |  45 +++---
+ sound/soc/mediatek/mt2701/mt2701-reg.h             |   1 -
+ 11 files changed, 345 insertions(+), 113 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
+
 -- 
-2.7.4
+1.9.1
+
