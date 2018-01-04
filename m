@@ -1,138 +1,115 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 18:25:42 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix reentrancy of clk_enable() on UP systems
-Message-ID: <20180103022542.GV7997@codeaurora.org>
-References: <1514309062-1768-1-git-send-email-david@lechnology.com>
- <20171227022154.GA7997@codeaurora.org>
- <40787e8b-94af-6b0f-a409-53caeb9c4c01@lechnology.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <40787e8b-94af-6b0f-a409-53caeb9c4c01@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:41880 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeADLKm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:10:42 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v2 06/11] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Thu,  4 Jan 2018 13:10:10 +0200
+Message-Id: <1515064215-22202-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, David Lechner wrote:
-> On 12/26/2017 08:21 PM, Stephen Boyd wrote:
-> >On 12/26, David Lechner wrote:
-> >>Reentrant calls to clk_enable() are not working on UP systems. This is
-> >>caused by the fact spin_trylock_irqsave() always returns true when
-> >>CONFIG_SMP=n (and CONFIG_DEBUG_SPINLOCK=n) which causes the reference
-> >>counting to not work correctly when clk_enable_lock() is called twice
-> >>before clk_enable_unlock() is called (this happens when clk_enable()
-> >>is called from within another clk_enable()).
-> >>
-> >>This introduces a new set of clk_enable_lock() and clk_enable_unlock()
-> >>functions for UP systems that doesn't use spinlocks but effectively does
-> >>the same thing as the SMP version of the functions.
-> >>
-> >>Signed-off-by: David Lechner <david@lechnology.com>
-> >>---
-> >>
-> >>Previous discussion of this issue for reference:
-> >>* https://patchwork.kernel.org/patch/10108437/
-> >>* https://patchwork.kernel.org/patch/10115483/
-> >>
-> >>
-> >>  drivers/clk/clk.c | 39 +++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 39 insertions(+)
-> >>
-> >>diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >>index bb1b1f9..259a77f 100644
-> >>--- a/drivers/clk/clk.c
-> >>+++ b/drivers/clk/clk.c
-> >>@@ -136,6 +136,8 @@ static void clk_prepare_unlock(void)
-> >>  	mutex_unlock(&prepare_lock);
-> >>  }
-> >>+#ifdef CONFIG_SMP
-> >>+
-> >>  static unsigned long clk_enable_lock(void)
-> >>  	__acquires(enable_lock)
-> >>  {
-> >>@@ -170,6 +172,43 @@ static void clk_enable_unlock(unsigned long flags)
-> >>  	spin_unlock_irqrestore(&enable_lock, flags);
-> >>  }
-> >>+#else
-> >>+
-> >>+static unsigned long clk_enable_lock(void)
-> >>+	__acquires(enable_lock)
-> >>+{
-> >>+	unsigned long flags;
-> >>+
-> >>+	local_irq_save(flags);
-> >>+	preempt_disable();
-> >
-> >Well we certainly don't want to do both irq save and preemption
-> >disabling.
-> 
-> If you don't mind humoring my ignorance, why not? This is exactly
-> what spin_lock_irqsave() does on a UP system, which is where I got
-> if from. I'm not arguing that is is right or wrong, just hoping to
-> learn something.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Ah you're right. I was thinking that we don't need to disable
-preemption because we've already disabled irqs so we can't be
-preempted out but I believe this is done this way so that when we
-reenable irqs on the unlock path we have preemption disabled and
-hardirqs can run immediately after we enable irqs and then the
-task can be preempted after irqs run and preemption is enabled.
+Each of the CPU clusters on msm8996 and powered via a primary
+PLL and a secondary PLL. The primary PLL is what drivers the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-> 
-> >Really all we need to do is save away the current
-> >flags to restore them them later. On UP systems, we would do that
-> >on each call to this function. On SMP systems, we would actually
-> >test the enable_owner and up the enable_refcnt outside of the
-> >locked section because if spin_trylock_irqsave() returns a 0, we
-> >have restored the irq flags to whatever they were before, and
-> >then we test enable_owner. So I suppose if it was safe on SMP to
-> >test enable_owner and up the refcnt without holding any sort of
-> >lock then it's also safe on UP, because current is a "special"
-> >variable.
-> >
-> >Does this ugly hack do the trick?
-> 
-> Yes, it does the trick, but the local_save_flags() seems pointless.
-> On the first call, enable_owner == NULL, so spin_lock_irqsave() is
-> called, which writes over the flags variable. For any later calls
-> where enable_owner == current, the flags variable is not used in
-> clk_enable_unlock() - the reference count is just decreased. The
-> flags variable is only used in clk_enable_unlock() in the release of
-> the last reference, in which the flags variable will be the one set
-> by spin_lock_irqsave() in clk_enable_lock().
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Ok, fair enough. I was trying to replicate the behavior on SMP
-where we return the flags if we're already holding the lock. It's
-nice to always return the current state of the flags because then
-we can easily nest the lock calls multiple times in the same
-function without worrying about the flags value becoming junk. We
-don't have that problem now, but it wouldn't be very obvious that
-flags is overwritten if we nested the calls at some point.
-
-This avoids the semicolon stuff, probably deserves a comment
-though.
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e24968fa31db..55933eda1981 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -143,10 +143,13 @@ static unsigned long clk_enable_lock(void)
- {
- 	unsigned long flags;
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index bc60111..9bb25be 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -119,10 +119,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u32	shift;
+ 	u32	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
  
--	if (!spin_trylock_irqsave(&enable_lock, flags)) {
-+	if (!IS_ENABLED(CONFIG_SMP) ||
-+	    !spin_trylock_irqsave(&enable_lock, flags)) {
- 		if (enable_owner == current) {
- 			enable_refcnt++;
- 			__acquire(enable_lock);
-+			if (!IS_ENABLED(CONFIG_SMP))
-+				local_save_flags(flags);
- 			return flags;
- 		}
- 		spin_lock_irqsave(&enable_lock, flags);
-
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+ {
+@@ -173,6 +177,27 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
++
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -216,6 +241,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -235,6 +261,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -310,6 +337,14 @@ struct clk_hw_clks {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++	if (ret)
++		return ret;
++
+ 	return ret;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
