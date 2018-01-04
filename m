@@ -1,67 +1,68 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	gabriel.fernandez@st.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v2] clk: stm32: add configuration flags for each of the stm32 drivers
-Date: Wed, 17 Jan 2018 10:38:13 +0100
-Message-Id: <20180117093813.20227-1-benjamin.gaignard@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:41012 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeADLKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:10:21 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v2 00/11] clk: qcom: CPU clock driver for msm8996
+Date: Thu,  4 Jan 2018 13:10:04 +0200
+Message-Id: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add two configuration flags to be able to not compile all the time
-stm32f and stm32h7 drivers when ARCH_STM32 is set.
-That help to save some space on those small platforms.
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/Kconfig  | 14 ++++++++++++++
- drivers/clk/Makefile |  4 ++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+This series adds support for the CPU clocks on msm8996 devices.
+A previous post of RFC can be found here
+https://patchwork.kernel.org/patch/10106867/
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa6767e..47243e8675c1 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -226,6 +226,20 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
- 
-+config COMMON_CLK_STM32F
-+	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-+	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	help
-+	---help---
-+	  Support for stm32f4 and stm32f7 SoC families clocks
-+
-+config COMMON_CLK_STM32H7
-+	bool "Clock driver for stm32h7 SoC family"
-+	depends on MACH_STM32H743
-+	help
-+	---help---
-+	  Support for stm32h7 SoC family clocks
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f7f761b02bed..956dce66587b 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,8 +44,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-+obj-$(CONFIG_COMMON_CLK_STM32F) 	+= clk-stm32f4.o
-+obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
- obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
- obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
+Ilia Lin (6):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: qcom: Add DT bindings for CPU clock driver for msm8996
+  clk: qcom: clk-cpu-8996: Prepare PLLs on probe
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  DT: QCOM: Add cpufreq-dt to msm8996
+  DT: QCOM: Add thermal mitigation to msm8996
+
+Rajendra Nayak (4):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: Add CPU clock driver for msm8996
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+
+Taniya Das (1):
+  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
+
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ arch/arm64/Kconfig.platforms                       |   7 +
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 282 ++++++++++-
+ drivers/clk/qcom/Kconfig                           |   8 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  73 ++-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   5 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 543 +++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/perf/qcom_l2_pmu.c                         |  48 +-
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  64 +++
+ include/soc/qcom/kryo-l2-accessors.h               |  22 +
+ 14 files changed, 1006 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
 -- 
-2.15.0
+1.9.1
+
