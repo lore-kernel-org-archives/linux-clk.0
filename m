@@ -1,67 +1,133 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 22/25] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:55 +0000
-Message-Id: <1517343778-27902-23-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeADLKr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:10:47 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v2 07/11] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Thu,  4 Jan 2018 13:10:11 +0200
+Message-Id: <1515064215-22202-8-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7791 dtsi.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The CPU clock controllers primary PLL operates on a single VCO range,
+between 600Mhz and 3Ghz. However the CPUs do support OPPs with
+frequencies between 300Mhz and 600Mhz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+So for frequencies above 600Mhz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300Mhz and 600Mhz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
-v1->v3:
-* rwdt moved before gpio@e6050000
+ drivers/clk/qcom/clk-cpu-8996.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
- arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index d2a4546..80e20ecd 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -142,6 +142,16 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 9bb25be..81cf466 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -28,15 +28,17 @@
+ #define PLL_INDEX		1
+ #define ACD_INDEX		2
+ #define ALT_INDEX		3
++#define DIV_2_THRESHOLD		600000000
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7791-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
+ /* PLLs */
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4828,
++	.config_ctl_val = 0x200D4AA8,
+ 	.config_ctl_hi_val = 0x006,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -82,7 +84,7 @@
+ 	.vco_mask = 0x3 << 20,
+ 	.config_ctl_val = 0x4001051b,
+ 	.post_div_mask = 0x3 << 8,
+-	.post_div_val = 0x1,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -121,6 +123,7 @@ struct clk_cpu_8996_mux {
+ 	u32	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -171,6 +174,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (!cpuclk->pll)
+ 		return -EINVAL;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
 +
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7791",
- 				     "renesas,rcar-gen2-gpio";
++		parent = cpuclk->pll_div_2;
++	}
++
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
+ 
+@@ -182,13 +192,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
+ 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -241,6 +257,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -261,6 +278,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
 -- 
-2.7.4
+1.9.1
+
