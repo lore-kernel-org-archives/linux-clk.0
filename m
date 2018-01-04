@@ -1,196 +1,105 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 11/12] ARM: dts: sun8i: a83t: Add HDMI display pipeline
-Date: Wed, 10 Jan 2018 20:25:11 +0100
-Message-Id: <20180110192512.19684-12-jernej.skrabec@siol.net>
-In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20171230210203.24115-2-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-2-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 4 Jan 2018 22:45:18 +0800
+Message-ID: <CAGb2v67B23yUdACijKxosfFG_os5WndiBKX02DGA4PFUkxDx9g@mail.gmail.com>
+Subject: Re: [PATCH 01/11] clk: sunxi-ng: Don't set k if width is 0 for nkmp plls
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Archit Taneja <architt@codeaurora.org>, a.hajda@samsung.com,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jose.Abreu@synopsys.com,
+	Neil Armstrong <narmstrong@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
-hdmi, hdmi phy and hdmi pinctrl entries.
+On Sun, Dec 31, 2017 at 5:01 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> For example, A83T have nmp plls which are modelled as nkmp plls. Since k
+> is not specified, it has offset 0, shift 0 and lowest value 1. This
+> means that LSB bit is always set to 1, which may change clock rate.
+>
+> Fix that by applying k factor only if k width is greater than 0.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> index e58c95787f94..709f528af2b3 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> @@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+>                                         unsigned long parent_rate)
+>  {
+>         struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+> -       unsigned long n, m, k, p;
+> +       unsigned long n, m, k = 1, p;
+>         u32 reg;
+>
+>         reg = readl(nkmp->common.base + nkmp->common.reg);
+> @@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+>         if (!n)
+>                 n++;
+>
+> -       k = reg >> nkmp->k.shift;
+> -       k &= (1 << nkmp->k.width) - 1;
+> -       k += nkmp->k.offset;
+> -       if (!k)
+> -               k++;
+> +       if (nkmp->k.width) {
+> +               k = reg >> nkmp->k.shift;
+> +               k &= (1 << nkmp->k.width) - 1;
+> +               k += nkmp->k.offset;
+> +               if (!k)
+> +                       k++;
+> +       }
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 119 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 1 deletion(-)
+The conditional shouldn't be necessary. With nkmp->k.width = 0,
+you'd simply get k & 0, which is 0, which then gets bumped up to 1,
+unless k.offset > 1, which would be a bug.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 7f4955a5fab7..c2638966d338 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -155,7 +155,7 @@
- 
- 	de: display-engine {
- 		compatible = "allwinner,sun8i-a83t-display-engine";
--		allwinner,pipelines = <&mixer0>;
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
- 		status = "disabled";
- 	};
- 
-@@ -208,6 +208,32 @@
- 			};
- 		};
- 
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
-@@ -256,6 +282,43 @@
- 			};
- 		};
- 
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun8i-a83t-mmc",
- 				     "allwinner,sun7i-a20-mmc";
-@@ -427,6 +490,11 @@
- 				drive-strength = <40>;
- 			};
- 
-+			hdmi_pins: hdmi-pins {
-+				pins = "PH6", "PH7", "PH8";
-+				function = "hdmi";
-+			};
-+
- 			i2c0_pins: i2c0-pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
-@@ -685,6 +753,55 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
-+			clock-names = "iahb", "isfr";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hdmi_pins>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-a83t-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "bus", "mod", "tmds";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		r_intc: interrupt-controller@1f00c00 {
- 			compatible = "allwinner,sun8i-a83t-r-intc",
- 				     "allwinner,sun6i-a31-r-intc";
--- 
-2.15.1
+>
+>         m = reg >> nkmp->m.shift;
+>         m &= (1 << nkmp->m.width) - 1;
+> @@ -153,12 +155,15 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+>
+>         reg = readl(nkmp->common.base + nkmp->common.reg);
+>         reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+> -       reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+> +       if (nkmp->k.width)
+> +               reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1,
+> +                               nkmp->k.shift);
+>         reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+>         reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+>
+>         reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+> -       reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+> +       if (nkmp->k.width)
+> +               reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+
+I think a better way would be
+
+        reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) &
+               GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+
+And do this for all the factors, not just k. This pattern is what
+regmap_update_bits does, which seems much safer. I wonder what
+GENMASK() with a negative value would do though...
+
+ChenYu
+
+>         reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+>         reg |= ilog2(_nkmp.p) << nkmp->p.shift;
+>
+> --
+> 2.15.1
+>
