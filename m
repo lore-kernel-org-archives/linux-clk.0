@@ -1,87 +1,66 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 12/12] ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
-Date: Wed, 10 Jan 2018 20:25:12 +0100
-Message-Id: <20180110192512.19684-13-jernej.skrabec@siol.net>
-In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 5/7] clk: rockchip: make use of clk_alloc_onecell_data()
+Date: Thu,  4 Jan 2018 18:38:10 -0600
+Message-Id: <1515112695-3160-6-git-send-email-david@lechnology.com>
+In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
+References: <1515112695-3160-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-BananaPi M3 includes HDMI connector, so add support for it.
+Use helper function clk_alloc_onecell_data() to allocate struct
+clk_onecell_data.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/rockchip/clk-rockchip.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-index 6550bf0e594b..00e47423cd07 100644
---- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/clk/rockchip/clk-rockchip.c b/drivers/clk/rockchip/clk-rockchip.c
+index 2c9bb81..499af3a 100644
+--- a/drivers/clk/rockchip/clk-rockchip.c
++++ b/drivers/clk/rockchip/clk-rockchip.c
+@@ -52,19 +52,12 @@ static void __init rk2928_gate_clk_init(struct device_node *node)
+ 	if (!reg)
+ 		return;
  
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_usb1_vbus: reg-usb1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb1-vbus";
-@@ -82,6 +93,10 @@
- 	};
- };
+-	clk_data = kzalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
++	clk_data = clk_alloc_onecell_data(qty);
+ 	if (!clk_data) {
+ 		iounmap(reg);
+ 		return;
+ 	}
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	/* Terminus Tech FE 1.1s 4-port USB 2.0 hub here */
- 	status = "okay";
-@@ -100,6 +115,16 @@
- 	status = "okay";
- };
+-	clk_data->clks = kzalloc(qty * sizeof(struct clk *), GFP_KERNEL);
+-	if (!clk_data->clks) {
+-		kfree(clk_data);
+-		iounmap(reg);
+-		return;
+-	}
+-
+ 	flags = CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE;
  
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
+ 	for (i = 0; i < qty; i++) {
+@@ -91,8 +84,6 @@ static void __init rk2928_gate_clk_init(struct device_node *node)
+ 		WARN_ON(IS_ERR(clk_data->clks[i]));
+ 	}
+ 
+-	clk_data->clk_num = qty;
+-
+ 	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
+ CLK_OF_DECLARE(rk2928_gate, "rockchip,rk2928-gate-clk", rk2928_gate_clk_init);
 -- 
-2.15.1
+2.7.4
