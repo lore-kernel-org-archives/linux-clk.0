@@ -1,133 +1,69 @@
 Return-Path: <jbrunet@baylibre.com>
 Return-Path: <jbrunet@baylibre.com>
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+To: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 06/19] clk: meson: switch gxbb ao_clk to clk_regmap
-Date: Wed, 31 Jan 2018 19:09:32 +0100
-Message-Id: <20180131180945.18025-7-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>
+Subject: [PATCH 4/5] clk: lpc32xx: use divider_ro_round_rate helper
+Date: Fri,  5 Jan 2018 18:09:58 +0100
+Message-Id: <20180105170959.17266-5-jbrunet@baylibre.com>
+In-Reply-To: <20180105170959.17266-1-jbrunet@baylibre.com>
+References: <20180105170959.17266-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop the gxbb ao specific regmap based clock and use the
-meson clk_regmap based clock instead.
+There is now an helper function to round the rate when the
+divider is read-only. Let's use it
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Kconfig      |  1 +
- drivers/clk/meson/Makefile     |  2 +-
- drivers/clk/meson/gxbb-aoclk.c | 20 ++++++++++----------
- drivers/clk/meson/gxbb-aoclk.h |  1 -
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/nxp/clk-lpc32xx.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index e97e85077da1..33d148e19066 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -20,6 +20,7 @@ config COMMON_CLK_GXBB
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 11a50586666a..465086118d62 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,6 +4,6 @@
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 729333766f97..c20285e74b8e 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -963,26 +963,17 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
+ 	struct lpc32xx_clk_div *divider = to_lpc32xx_div(hw);
+-	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
+-	unsigned int bestdiv;
++	unsigned int val;
  
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
--obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
-+obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 6c161e0a8e59..9ec23ae9a219 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -62,10 +62,9 @@
- #include <linux/delay.h>
- #include <dt-bindings/clock/gxbb-aoclkc.h>
- #include <dt-bindings/reset/gxbb-aoclkc.h>
-+#include "clk-regmap.h"
- #include "gxbb-aoclk.h"
- 
--static DEFINE_SPINLOCK(gxbb_aoclk_lock);
+ 	/* if read only, just return current value */
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+-		regmap_read(clk_regmap, divider->reg, &bestdiv);
+-		bestdiv >>= divider->shift;
+-		bestdiv &= div_mask(divider->width);
+-		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+-			divider->width);
 -
- struct gxbb_aoclk_reset_controller {
- 	struct reset_controller_dev reset;
- 	unsigned int *data;
-@@ -87,12 +86,14 @@ static const struct reset_control_ops gxbb_aoclk_reset_ops = {
- };
+-		/* Even a read-only clock can propagate a rate change */
+-		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-			if (!hw_parent)
+-				return -EINVAL;
+-
+-			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
+-		}
++		regmap_read(clk_regmap, divider->reg, &val);
++		val >>= divider->shift;
++		val &= div_mask(divider->width);
  
- #define GXBB_AO_GATE(_name, _bit)					\
--static struct aoclk_gate_regmap _name##_ao = {				\
--	.bit_idx = (_bit),						\
--	.lock = &gxbb_aoclk_lock,					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = AO_RTI_GEN_CNTL_REG0,				\
-+		.bit_idx = (_bit),					\
-+	},								\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name "_ao",					\
--		.ops = &meson_aoclk_gate_regmap_ops,			\
-+		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-@@ -107,7 +108,6 @@ GXBB_AO_GATE(uart2, 5);
- GXBB_AO_GATE(ir_blaster, 6);
- 
- static struct aoclk_cec_32k cec_32k_ao = {
--	.lock = &gxbb_aoclk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cec_32k_ao",
- 		.ops = &meson_aoclk_cec_32k_ops,
-@@ -126,7 +126,7 @@ static unsigned int gxbb_aoclk_reset[] = {
- 	[RESET_AO_IR_BLASTER] = 23,
- };
- 
--static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
-+static struct clk_regmap *gxbb_aoclk_gate[] = {
- 	[CLKID_AO_REMOTE] = &remote_ao,
- 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
- 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
-@@ -177,10 +177,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- 	 * Populate regmap and register all clks
- 	 */
- 	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
--		gxbb_aoclk_gate[clkid]->regmap = regmap;
-+		gxbb_aoclk_gate[clkid]->map = regmap;
- 
- 		ret = devm_clk_hw_register(dev,
--					gxbb_aoclk_onecell_data.hws[clkid]);
-+					   gxbb_aoclk_onecell_data.hws[clkid]);
- 		if (ret)
- 			return ret;
+-		return DIV_ROUND_UP(*prate, bestdiv);
++		return divider_ro_round_rate(hw, rate, prate, divider->table,
++					     divider->width, divider->flags,
++					     bestdiv);
  	}
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index e8604c8f7eee..127d58954cca 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -32,7 +32,6 @@ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
- struct aoclk_cec_32k {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
--	spinlock_t *lock;
- };
  
- #define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
+ 	return divider_round_rate(hw, rate, prate, divider->table,
 -- 
 2.14.3
