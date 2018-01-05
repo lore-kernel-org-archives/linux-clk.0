@@ -1,137 +1,77 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
-Date: Fri, 12 Jan 2018 13:15:56 +0100
-Message-ID: <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <khilman@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAOi56cX0Uw=jiAhNSZ8p8_1LPbd7zePkS5kTnMf+ua0v98zfVg@mail.gmail.com>
+References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
+ <4357a69da97f46a324eec4c766f4bc9d9e7733ff.1490545262.git-series.plaes@plaes.org>
+ <CAOi56cUjqjcZRz6VSwUWcrW=4RQyqyZHtm1vuM3HT2ypdPJ78g@mail.gmail.com>
+ <20171212172635.2utwz3koyo5iwglt@plaes.org> <CAOi56cUeRrKQnJ-akJPB160-60aBzy64bDgFeoqMpHRJSCnDeQ@mail.gmail.com>
+ <20171213170933.qyfn3hgnrvjpmod7@plaes.org> <20171213171358.oocp24c2mdon45o5@plaes.org>
+ <CAOi56cX0Uw=jiAhNSZ8p8_1LPbd7zePkS5kTnMf+ua0v98zfVg@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Fri, 5 Jan 2018 08:10:54 -0800
+Message-ID: <CAOi56cXTrGg+mx4aJsrMTHcwAV4KLCUZDy9bjpAq1hi1gngKAg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 3/6] ARM: sun4i: Convert to CCU
+To: Priit Laes <plaes@plaes.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	lkml <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+	Russell King <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On Wed, Dec 13, 2017 at 11:46 AM, Kevin Hilman <khilman@baylibre.com> wrote:
+> On Wed, Dec 13, 2017 at 9:13 AM, Priit Laes <plaes@plaes.org> wrote:
+>> On Wed, Dec 13, 2017 at 05:09:33PM +0000, Priit Laes wrote:
+>>> On Tue, Dec 12, 2017 at 01:24:52PM -0800, Kevin Hilman wrote:
+>>> > On Tue, Dec 12, 2017 at 9:26 AM, Priit Laes <plaes@plaes.org> wrote:
+>>> > > On Mon, Dec 11, 2017 at 02:22:30PM -0800, Kevin Hilman wrote:
+>>> > >> On Sun, Mar 26, 2017 at 10:20 AM, Priit Laes <plaes@plaes.org> wrote:
+>>> > >> > Convert sun4i-a10.dtsi to new CCU driver.
+>>> > >> >
+>>> > >> > Signed-off-by: Priit Laes <plaes@plaes.org>
+>>> > >>
+>>> > >> I finally got around to bisecting a mainline boot failure on
+>>> > >> sun4i-a10-cubieboard that's been happening for quite a while.  Based
+>>> > >> on on kernelci.org, it showed up sometime during the v4.15 merge
+>>> > >> window[1].  It bisected down to this commit (in mainline as commit
+>>> > >> 41193869f2bdb585ce09bfdd16d9482aadd560ad).
+>>> > >>
+>>> > >> When it fails, there is no output on the serial console, so I don't
+>>> > >> know exactly how it's failing, just that it no longer boots.
+>>> > >
+>>> > > We tried out latest 4.15 with various compilers and it works:
+>>> > > - gcc version 7.1.1 20170622 (Red Hat Cross 7.1.1-3) (GCC) - A10 Gemei G9 tablet
+>>> > > - gcc 7.2.0-debian - A10 Cubieboard
+>>> >
+>>> > And you can reproduce the bug with gcc5 or gcc6?
+>>>
+>>> Tried following commits on Gemei G9 (A10 tablet):
+>>> * 4.15.0-rc3-00037-gd39a01eff9af - latest master
+>>> * 4.14.0-rc1-00002-g41193869f2bd - the exact commit, causing the issue.
+>>>
+>>> With the same Linaro toolchain:
+>>> (gcc version 5.3.1 20160412 (Linaro GCC 5.3-2016.05))
+>>
+>> And I also tried the same dtb and zImage from kernelci page [1] and it works with
+>> that too...
+>>
+>> https://storage.kernelci.org/mainline/master/v4.15-rc3/arm/sunxi_defconfig/
+>
+> Can you share a full boot-log (including all the u-boot output etc.)
+> so I can see exactly how the kernel is being loaded?    Especially the
+> u-boot version?
+>
+> As $SUBJECT patch seems to be changing clocks around, perhaps this is
+> an issue where some u-boot dependency is uncovered, and older versions
+> of u-boot don't play well with this change.
 
-This patch prepares for supporting the STM32 variant that
-has no such bit in the status register.
+Ping.
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
- drivers/mmc/host/mmci.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+This is still failing in mainline, but passing int stable <= v4.14
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 3125dc0..7e56f85 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -83,6 +83,8 @@
-  * @qcom_dml: enables qcom specific dma glue for dma transfers.
-  * @reversed_irq_handling: handle data irq before cmd irq.
-  * @mmcimask1: true if variant have a MMCIMASK1 register.
-+ * @start_err: true is the variant has STARTBITERR bit inside MMCISTATUS
-+ *	       register.
-  */
- struct variant_data {
- 	unsigned int		clkreg;
-@@ -113,6 +115,7 @@ struct variant_data {
- 	bool			qcom_dml;
- 	bool			reversed_irq_handling;
- 	bool			mmcimask1;
-+	bool			start_err;
- };
- 
- static struct variant_data variant_arm = {
-@@ -123,6 +126,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.reversed_irq_handling	= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_arm_extended_fifo = {
-@@ -132,6 +136,7 @@ struct variant_data {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_arm_extended_fifo_hwfc = {
-@@ -142,6 +147,7 @@ struct variant_data {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_u300 = {
-@@ -158,6 +164,7 @@ struct variant_data {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_nomadik = {
-@@ -175,6 +182,7 @@ struct variant_data {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_ux500 = {
-@@ -198,6 +206,7 @@ struct variant_data {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_ux500v2 = {
-@@ -223,6 +232,7 @@ struct variant_data {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- static struct variant_data variant_qcom = {
-@@ -242,6 +252,7 @@ struct variant_data {
- 	.qcom_fifo		= true,
- 	.qcom_dml		= true,
- 	.mmcimask1		= true,
-+	.start_err		= true,
- };
- 
- /* Busy detection for the ST Micro variant */
-@@ -935,8 +946,9 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
- 		return;
- 
- 	/* First check for errors */
--	if (status & (MCI_DATACRCFAIL|MCI_DATATIMEOUT|MCI_STARTBITERR|
--		      MCI_TXUNDERRUN|MCI_RXOVERRUN)) {
-+	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
-+		      (host->variant->start_err ? MCI_STARTBITERR : 0) |
-+		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
- 		u32 remain, success;
- 
- 		/* Terminate the DMA transfer */
--- 
-1.9.1
+Kevin
