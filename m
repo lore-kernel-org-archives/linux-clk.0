@@ -1,197 +1,218 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 29 Jan 2018 12:05:26 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, airlied@linux.ie,
-	mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
-	a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com, narmstrong@baylibre.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 06/12] dt-bindings: display: sun4i-drm: Add A83T HDMI
- pipeline
-Message-ID: <20180129180526.v2vokx75zg2diem3@rob-hp-laptop>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
- <20180117201421.25954-7-jernej.skrabec@siol.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 05 Jan 2018 10:50:40 +0800
+In-Reply-To: <1645801.yZU0HLsLbk@jernej-laptop>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-7-jernej.skrabec@siol.net> <20180103202154.eeajt3234w3adqjq@rob-hp-laptop> <1645801.yZU0HLsLbk@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180117201421.25954-7-jernej.skrabec@siol.net>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+To: linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Rob Herring <robh@kernel.org>
+CC: mark.rutland@arm.com, Jose.Abreu@synopsys.com,
+        architt@codeaurora.org, narmstrong@baylibre.com, airlied@linux.ie,
+        mturquette@baylibre.com, linux-sunxi@googlegroups.com,
+        sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, a.hajda@samsung.com,
+        wens@csie.org, Laurent.pinchart@ideasonboard.com,
+        maxime.ripard@free-electrons.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <A6B18BA1-5B45-4C8D-9C72-082098C92BA8@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 17, 2018 at 09:14:15PM +0100, Jernej Skrabec wrote:
-> This commit adds all necessary compatibles and descriptions needed to
-> implement A83T HDMI pipeline.
-> 
-> Mixer is already properly described, so only compatible is added.
-> 
-> However, A83T TV TCON, which is connected to HDMI, doesn't have channel 0,
-> contrary to all TCONs currently described. Because of that, TCON
-> documentation is extended.
-> 
-> A83T features Synopsys DW HDMI controller with a custom PHY which looks
-> like Synopsys Gen2 PHY with few additions. Since there is no
-> documentation, needed properties were found out through experimentation
-> and reading BSP code.
-> 
-> At the end, example is added for newer SoCs, which feature DE2 and DW
-> HDMI.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 197 ++++++++++++++++++++-
->  1 file changed, 190 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index cd626ee1147a..4fb380f3e53d 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -64,6 +64,52 @@ Required properties:
->      first port should be the input endpoint. The second should be the
->      output, usually to an HDMI connector.
->  
-> +DWC HDMI TX Encoder
-> +-------------------
-> +
-> +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-> +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
-> +
-> +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-> +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-> +following device-specific properties.
-> +
-> +Required properties:
-> +
-> +  - compatible: value must be one of:
-> +    * "allwinner,sun8i-a83t-dw-hdmi"
-> +  - reg: base address and size of memory-mapped region
-> +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-> +  - interrupts: HDMI interrupt number
-> +  - clocks: phandles to the clocks feeding the HDMI encoder
-> +    * iahb: the HDMI bus clock
-> +    * isfr: the HDMI register clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandle to the reset controller
-> +  - reset-names: must be "ctrl"
-> +  - phys: phandle to the DWC HDMI PHY
-> +  - phy-names: must be "phy"
-> +
-> +  - ports: A ports node with endpoint definitions as defined in
-> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +    first port should be the input endpoint. The second should be the
-> +    output, usually to an HDMI connector.
-> +
-> +DWC HDMI PHY
-> +------------
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun8i-a83t-hdmi-phy
-> +  - reg: base address and size of memory-mapped region
-> +  - clocks: phandles to the clocks feeding the HDMI PHY
-> +    * bus: the HDMI PHY interface clock
-> +    * mod: the HDMI PHY module clock
-> +    * tmds: TMDS clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandle to the reset controller driving the PHY
-> +  - reset-names: must be "phy"
-> +
->  TV Encoder
->  ----------
->  
-> @@ -94,24 +140,23 @@ Required properties:
->     * allwinner,sun7i-a20-tcon
->     * allwinner,sun8i-a33-tcon
->     * allwinner,sun8i-a83t-tcon-lcd
-> +   * allwinner,sun8i-a83t-tcon-tv
->     * allwinner,sun8i-v3s-tcon
->   - reg: base address and size of memory-mapped region
->   - interrupts: interrupt associated to this IP
-> - - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> + - clocks: phandles to the clocks feeding the TCON. One is needed:
->     - 'ahb': the interface clocks
-> -   - 'tcon-ch0': The clock driving the TCON channel 0
 
-Well, it didn't look right before saying 3 are needed, but listing 2. 
-However, you can't just change this as it affects all the other SoCs. 
-This should probably be a separate patch.
 
->   - resets: phandles to the reset controllers driving the encoder
->     - "lcd": the reset line for the TCON channel 0
->  
->   - clock-names: the clock names mentioned above
->   - reset-names: the reset names mentioned above
-> - - clock-output-names: Name of the pixel clock created
+于 2018年1月4日 GMT+08:00 上午5:32:26, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
+>Hi Rob,
+>
+>Dne sreda, 03. januar 2018 ob 21:21:54 CET je Rob Herring napisal(a):
+>> On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
+>> > This commit adds all necessary compatibles and descriptions needed
+>to
+>> > implement A83T HDMI pipeline.
+>> > 
+>> > Mixer is already properly described, so only compatible is added.
+>> > 
+>> > However, A83T TCON1, which is connected to HDMI, doesn't have
+>channel 0,
+>> > contrary to all TCONs currently described. Because of that, TCON
+>> > documentation is extended.
+>> > 
+>> > A83T features Synopsys DW HDMI controller with a custom PHY which
+>looks
+>> > like Synopsys Gen2 PHY with few additions. Since there is no
+>> > documentation, needed properties were found out through
+>experimentation
+>> > and reading BSP code.
+>> > 
+>> > At the end, example is added for newer SoCs, which features DE2 and
+>DW
+>> > HDMI.
+>> > 
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> > 
+>> >  .../bindings/display/sunxi/sun4i-drm.txt           | 188
+>> >  ++++++++++++++++++++- 1 file changed, 181 insertions(+), 7
+>deletions(-)
+>> > 
+>> > diff --git
+>a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>index
+>> > 9f073af4c711..3eca258096a5 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > 
+>> > @@ -64,6 +64,40 @@ Required properties:
+>> >      first port should be the input endpoint. The second should be
+>the
+>> >      output, usually to an HDMI connector.
+>> > 
+>> > +DWC HDMI TX Encoder
+>> > +-----------------------------
+>> > +
+>> > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX
+>controller IP
+>> > +with Allwinner's own PHY IP. It supports audio and video outputs
+>and CEC.
+>> > +
+>> > +These DT bindings follow the Synopsys DWC HDMI TX bindings defined
+>in
+>> > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with
+>the
+>> > +following device-specific properties.
+>> > +
+>> > +Required properties:
+>> > +
+>> > +  - compatible: value must be one of:
+>> > +    * "allwinner,sun8i-a83t-dw-hdmi"
+>> > +  - reg: two pairs of base address and size of memory-mapped
+>region,
+>> > first
+>> > +    for controller and second for PHY
+>> > +    registers.
+>> 
+>> Seems like the phy should be a separate node and use the phy binding.
+>> You can use the phy binding even if you don't use the kernel phy
+>> framework...
+>
+>Unfortunately, it's not so straighforward. Phy is actually accessed
+>through 
+>I2C implemented in HDMI controller. Second memory region in this case
+>has 
+>small influence on phy. However, it has big influence on controller.
 
-Why is this removed?
+To be honest you used inaccurate word. Use "glue" directly
+here may be more accurate.
 
->  
->  - ports: A ports node with endpoint definitions as defined in
->    Documentation/devicetree/bindings/media/video-interfaces.txt. The
->    first port should be the input endpoint, the second one the output
->  
-> -  The output may have multiple endpoints. The TCON has two channels,
-> +  The output may have multiple endpoints. TCON can have two channels,
-
-Perhaps you should say "can have 1 or 2 channels".
-
->    usually with the first channel being used for the panels interfaces
->    (RGB, LVDS, etc.), and the second being used for the outputs that
->    require another controller (TV Encoder, HDMI, etc.). The endpoints
-> @@ -119,11 +164,16 @@ Required properties:
->    channel the endpoint is associated to. If that property is not
->    present, the endpoint number will be used as the channel number.
->  
-> +When TCON supports channel 0 (all TCONs except TV TCON on A83T), two
-> +more clocks are needed:
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-
-Looks like one clock to me.
-
-> +   - clock-output-names: Name of the pixel clock created
-
-It's better to not move this, but just add what compatibles it does or 
-doesn't apply to.
-
-> +
->  On SoCs other than the A33 and V3s, there is one more clock required:
->     - 'tcon-ch1': The clock driving the TCON channel 1
->  
-> -On SoCs that support LVDS (all SoCs but the A13, H3, H5 and V3s), you
-> -need one more reset line:
-> +When TCON support LVDS (all TCONs except TV TCON on A83T and those found
-> +in A13, H3, H5 and V3s SoCs), you need one more reset line:
->     - 'lvds': The reset line driving the LVDS logic
->  
->  And on the A23, A31, A31s and A33, you need one more clock line:
-> @@ -226,6 +276,7 @@ supported.
->  Required properties:
->    - compatible: value must be one of:
->      * allwinner,sun8i-a83t-de2-mixer-0
-> +    * allwinner,sun8i-a83t-de2-mixer-1
->      * allwinner,sun8i-v3s-de2-mixer
->    - reg: base address and size of the memory-mapped region.
->    - clocks: phandles to the clocks feeding the mixer
-> @@ -261,7 +312,7 @@ Required properties:
->    - allwinner,pipelines: list of phandle to the display engine
->      frontends (DE 1.0) or mixers (DE 2.0) available.
->  
-> -Example:
-> +Example 1:
->  
->  panel: panel {
->  	compatible = "olimex,lcd-olinuxino-43-ts";
-> @@ -460,3 +511,135 @@ display-engine {
->  	compatible = "allwinner,sun5i-a13-display-engine";
->  	allwinner,pipelines = <&fe0>;
->  };
-> +
-> +Example 2:
-
-Is this really different enough to need an example? Examples don't 
-need to enumerate all possible options. They are often wrong because 
-they don't compile on their own and that creates a maintenance burden.
-
-Rob
+>For 
+>example, magic number has to be written in one register in second
+>memory 
+>region in order to unlock read access to any register from first memory
+>region 
+>(controller). However, they shouldn't be merged to one region, because
+>first 
+>memory region requires byte access while second memory region can be
+>accessed 
+>per byte or word.
+>
+>To complicate things more, later I want to add support for another SoC
+>which 
+>has same glue layer (unlocking read access, etc.) and uses memory
+>mapped phy 
+>registers in second memory region.
+>
+>I think current binding is the least complicated way to represent this.
+>
+>> 
+>> > +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
+>> > +  - interrupts: HDMI interrupt number
+>> > +  - clocks: phandles to the clocks feeding the HDMI encoder
+>> > +    * iahb: the HDMI bus clock
+>> > +    * isfr: the HDMI register clock
+>> > +    * tmds: the HDMI tmds clock
+>> > +  - clock-names: the clock names mentioned above
+>> > +  - resets: phandles to the reset controllers driving the encoder
+>> > +    * ctrl: the reset line for the controller
+>> > +    * phy: the reset line for the PHY
+>> > +  - reset-names: the reset names mentioned above
+>> > +
+>> > +  - ports: A ports node with endpoint definitions as defined in
+>> > +    Documentation/devicetree/bindings/media/video-interfaces.txt.
+>The
+>> > +    first port should be the input endpoint. The second should be
+>the
+>> > +    output, usually to an HDMI connector.
+>> > +
+>> > 
+>> >  TV Encoder
+>> >  ----------
+>> > 
+>> > @@ -94,18 +128,17 @@ Required properties:
+>> >     * allwinner,sun7i-a20-tcon
+>> >     * allwinner,sun8i-a33-tcon
+>> >     * allwinner,sun8i-a83t-tcon-lcd
+>> > 
+>> > +   * allwinner,sun8i-a83t-tcon-tv
+>> > 
+>> >     * allwinner,sun8i-v3s-tcon
+>> >   
+>> >   - reg: base address and size of memory-mapped region
+>> >   - interrupts: interrupt associated to this IP
+>> > 
+>> > - - clocks: phandles to the clocks feeding the TCON. Three are
+>needed:
+>> > 
+>> > + - clocks: phandles to the clocks feeding the TCON. One is needed:
+>> >     - 'ahb': the interface clocks
+>> > 
+>> > -   - 'tcon-ch0': The clock driving the TCON channel 0
+>> > 
+>> >   - resets: phandles to the reset controllers driving the encoder
+>> >   
+>> >     - "lcd": the reset line for the TCON channel 0
+>> >   
+>> >   - clock-names: the clock names mentioned above
+>> >   - reset-names: the reset names mentioned above
+>> > 
+>> > - - clock-output-names: Name of the pixel clock created
+>> > 
+>> >  - ports: A ports node with endpoint definitions as defined in
+>> >  
+>> >    Documentation/devicetree/bindings/media/video-interfaces.txt.
+>The
+>> > 
+>> > @@ -119,11 +152,31 @@ Required properties:
+>> >    channel the endpoint is associated to. If that property is not
+>> >    present, the endpoint number will be used as the channel number.
+>> > 
+>> > -On SoCs other than the A33 and V3s, there is one more clock
+>required:
+>> > +Following compatibles:
+>> > + * allwinner,sun4i-a10-tcon
+>> > + * allwinner,sun5i-a13-tcon
+>> > + * allwinner,sun6i-a31-tcon
+>> > + * allwinner,sun6i-a31s-tcon
+>> > + * allwinner,sun7i-a20-tcon
+>> > + * allwinner,sun8i-a33-tcon
+>> > + * allwinner,sun8i-a83t-tcon-lcd
+>> > + * allwinner,sun8i-v3s-tcon
+>> > +have additional required properties:
+>> > + - 'tcon-ch0': The clock driving the TCON channel 0
+>> 
+>> tcon-ch0 is a clock name, not a property.
+>
+>right.
+>
+>Best regards,
+>Jernej
+>
+>
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
