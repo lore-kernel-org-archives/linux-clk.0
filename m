@@ -1,52 +1,50 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        <daniel.thompson@linaro.org>, <philippe.cornu@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <gabriel.fernandez@st.com>
-Subject: [PATCH 1/2] clk: stm32: END_PRIMARY_CLK should be declare after CLK_SYSCLK
-Date: Thu, 18 Jan 2018 15:49:39 +0100
-Message-ID: <1516286980-8603-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
-References: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 5 Jan 2018 08:24:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] clk: meson-axg: fix potential NULL dereference in
+ axg_clkc_probe()
+Message-ID: <20180105162438.GB21040@codeaurora.org>
+References: <1515117059-176004-1-git-send-email-weiyongjun1@huawei.com>
+ <1515143370.7439.62.camel@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515143370.7439.62.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 01/05, Jerome Brunet wrote:
+> On Fri, 2018-01-05 at 01:50 +0000, Wei Yongjun wrote:
+> > platform_get_resource() may return NULL, add proper
+> > check to avoid potential NULL dereferencing.
+> > 
+> > This is detected by Coccinelle semantic patch.
+> > 
+> > @@
+> > expression pdev, res, n, t, e, e1, e2;
+> > @@
+> > 
+> > res = platform_get_resource(pdev, t, n);
+> > + if (!res)
+> > +   return -EINVAL;
+> > ... when != res == NULL
+> > e = devm_ioremap(e1, res->start, e2);
+> > 
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > ---
+> 
+> Looks good. Thank you.
+> 
+> Stephen, do you prefer to take this directly ?
 
-Update of END_PRIMARY_CLK was missed, it should be after CLK_SYSCLK
-hsi and sysclk are overwritten by gpioa and gpiob.
+Yes. Will do today.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/clock/stm32fx-clock.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/dt-bindings/clock/stm32fx-clock.h b/include/dt-bindings/clock/stm32fx-clock.h
-index 49bb3c2..4d523b0 100644
---- a/include/dt-bindings/clock/stm32fx-clock.h
-+++ b/include/dt-bindings/clock/stm32fx-clock.h
-@@ -33,11 +33,11 @@
- #define CLK_SAI2		11
- #define CLK_I2SQ_PDIV		12
- #define CLK_SAIQ_PDIV		13
--
--#define END_PRIMARY_CLK		14
--
- #define CLK_HSI			14
- #define CLK_SYSCLK		15
-+
-+#define END_PRIMARY_CLK		16
-+
- #define CLK_HDMI_CEC		16
- #define CLK_SPDIF		17
- #define CLK_USART1		18
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
