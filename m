@@ -1,64 +1,34 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33029 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752125AbeAEQeC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jan 2018 11:34:02 -0500
+Date: Fri, 5 Jan 2018 10:34:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 05/15] dt-bindings: clock: Add jz4770-cgu.h header
+Message-ID: <20180105163400.qg6q7znrv4s5wrfd@rob-hp-laptop>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+ <20180102150848.11314-5-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 5 Jan 2018 12:59:38 +0900
-Message-ID: <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_=2Dnext=5D_clk=3A_hisilicon=3A_hi3660=EF=BC=9AFix_poten?=
-	=?UTF-8?Q?tial_NULL_dereference_in_hi3660=5Fstub=5Fclk=5Fprobe=28=29?=
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kaihua Zhong <zhongkaihua@huawei.com>, Leo Yan <leo.yan@linaro.org>,
-        Ruyi Wang <wangruyi@huawei.com>, Kai Zhao <zhaokai1@hisilicon.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180102150848.11314-5-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-04 15:36 GMT+09:00 Wei Yongjun <weiyongjun1@huawei.com>:
-> platform_get_resource() may return NULL, add proper check to
-> avoid potential NULL dereferencing.
->
-> This is detected by Coccinelle semantic patch.
->
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
->
-> res = platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res == NULL
-> e = devm_ioremap(e1, res->start, e2);
->
-> Fixes: 4f16f7ff3bc0 ("clk: hisilicon: Add support for Hi3660 stub clocks")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Tue, Jan 02, 2018 at 04:08:38PM +0100, Paul Cercueil wrote:
+> This will be used from the devicetree bindings to specify the clocks
+> that should be obtained from the jz4770-cgu driver.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  drivers/clk/hisilicon/clk-hi3660-stub.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/hisilicon/clk-hi3660-stub.c b/drivers/clk/hisilicon/clk-hi3660-stub.c
-> index 9b6c72b..e8b2c43 100644
-> --- a/drivers/clk/hisilicon/clk-hi3660-stub.c
-> +++ b/drivers/clk/hisilicon/clk-hi3660-stub.c
-> @@ -149,6 +149,8 @@ static int hi3660_stub_clk_probe(struct platform_device *pdev)
->                 return PTR_ERR(stub_clk_chan.mbox);
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -EINVAL;
->         freq_reg = devm_ioremap(dev, res->start, resource_size(res));
->         if (!freq_reg)
->                 return -ENOMEM;
+>  include/dt-bindings/clock/jz4770-cgu.h | 58 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/jz4770-cgu.h
 
-
-Probably, it is better to use devm_ioremap_resource().
-This checks NULL input.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Reviewed-by: Rob Herring <robh@kernel.org>
