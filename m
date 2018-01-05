@@ -1,62 +1,72 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 30/37] clk: renesas: r8a7794: Add rwdt clock
-Date: Thu, 25 Jan 2018 18:03:04 +0000
-Message-Id: <1516903391-30467-31-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 3/7] clk: qoriq: make use of clk_alloc_onecell_data()
+Date: Thu,  4 Jan 2018 18:38:08 -0600
+Message-Id: <1515112695-3160-4-git-send-email-david@lechnology.com>
+In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
+References: <1515112695-3160-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7794_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+Use helper function clk_alloc_onecell_data() to allocate struct
+clk_onecell_data.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk-qoriq.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-index ec091a4..2a40bbe 100644
---- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-@@ -121,6 +121,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7794_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7794_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7794_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7794_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7794_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7794_CLK_ZS),
- 	DEF_MOD("audio-dmac0",		 502,	R8A7794_CLK_HP),
-@@ -190,6 +191,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
- };
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 3a1812f..5278cc7 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1175,13 +1175,11 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
+ 	count = of_property_count_strings(np, "clock-output-names");
  
- static const unsigned int r8a7794_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
+ 	BUILD_BUG_ON(ARRAY_SIZE(pll->div) < 4);
+-	subclks = kcalloc(4, sizeof(struct clk *), GFP_KERNEL);
+-	if (!subclks)
++	onecell_data = clk_alloc_onecell_data(4);
++	if (!onecell_data)
+ 		return;
  
+-	onecell_data = kmalloc(sizeof(*onecell_data), GFP_KERNEL);
+-	if (!onecell_data)
+-		goto err_clks;
++	subclks = onecell_data->clks;
+ 
+ 	if (count <= 3) {
+ 		subclks[0] = pll->div[0].clk;
+@@ -1194,7 +1192,6 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
+ 		subclks[3] = pll->div[3].clk;
+ 	}
+ 
+-	onecell_data->clks = subclks;
+ 	onecell_data->clk_num = count;
+ 
+ 	rc = of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
+@@ -1206,9 +1203,7 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
+ 
+ 	return;
+ err_cell:
+-	kfree(onecell_data);
+-err_clks:
+-	kfree(subclks);
++	clk_free_onecell_data(onecell_data);
+ }
+ 
+ /* Legacy node */
 -- 
 2.7.4
