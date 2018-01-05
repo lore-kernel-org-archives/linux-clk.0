@@ -1,57 +1,81 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from vern.gendns.com ([206.190.152.46]:55313 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752170AbeAXEIf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jan 2018 23:08:35 -0500
-Subject: Re: [PATCH v6 41/41] ARM: dts: da850: Add clocks
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-42-git-send-email-david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <5f394e07-4384-6f0d-806e-a692da3b780a@lechnology.com>
-Date: Tue, 23 Jan 2018 22:08:26 -0600
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40616 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeAETCj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jan 2018 14:02:39 -0500
+Date: Fri, 5 Jan 2018 13:02:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+Subject: Re: [PATCH v1 4/6] dt-bindings: clock: mediatek: add "simple-mfd" in
+ audsys documentation
+Message-ID: <20180105190236.bapetnwxd6dii7re@rob-hp-laptop>
+References: <cover.1515038387.git.ryder.lee@mediatek.com>
+ <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-42-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20/2018 11:14 AM, David Lechner wrote:
-> This adds clock provider nodes for da850 and wires them up to all of the
-> devices.
+On Thu, Jan 04, 2018 at 03:44:20PM +0800, Ryder Lee wrote:
+> Add "simple-mfd" to support MFD device and add a compatible string for MT2701.
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 > ---
+>  .../bindings/arm/mediatek/mediatek,audsys.txt       | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
 > 
-> v6 changes:
-> - updated for device tree bindings changes earlier in this series
-> - use single async2 clock instead of duplicate fixed factor clocks
-> - add clock-names property to mdio node
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> index 9b8f578..6e97552 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> @@ -6,17 +6,25 @@ The MediaTek AUDSYS controller provides various clocks to the system.
+>  Required Properties:
+>  
+>  - compatible: Should be one of:
+> -	- "mediatek,mt7622-audsys", "syscon"
+> +	- "mediatek,mt2701-audsys", "syscon", "simple-mfd"
+> +	- "mediatek,mt7622-audsys", "syscon", "simple-mfd"
+>  - #clock-cells: Must be 1
+
+I don't think this is a simple-mfd. The AFE uses clocks created by its 
+parent, right? So the parent should be probed first. You should have 
+the parent instantiate the child nodes.
+
+>  The AUDSYS controller uses the common clk binding from
+>  Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+>  
+> +See ../sound/mt2701-afe-pcm.txt for details about required subnode.
+> +
+>  Example:
+>  
+> -audsys: audsys@11220000 {
+> -	compatible = "mediatek,mt7622-audsys", "syscon";
+> -	reg = <0 0x11220000 0 0x1000>;
+> -	#clock-cells = <1>;
+> -};
+> +	audsys: audio-subsystem@11220000 {
+> +		compatible = "mediatek,mt2701-audsys", "syscon", "simple-mfd";
+> +		reg = <0 0x11220000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +
+> +		afe: audio-controller {
+> +			compatible = "mediatek,mt2701-audio";
+> +			...
+> +		};
+> +	};
+> -- 
+> 1.9.1
 > 
->   arch/arm/boot/dts/da850.dtsi | 162 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 162 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-
-...
-
-> +		psc1: clock-controller@227000 {
-> +			compatible = "ti,da850-psc1";
-> +			reg = <0x227000 0x1000>;
-> +			#clock-cells = <1>;
-> +			clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>,
-> +				 <&async3_clk>;
-> +			clock_names = "pll0_sysclk2", "pll0_sysclk4", "async3";
-
-Should be clock-names, not clock_names
-
->   		};
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
