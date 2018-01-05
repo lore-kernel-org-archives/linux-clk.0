@@ -1,56 +1,229 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 07/37] ARM: dts: r8a7793: Adjust SMP routine size
-Date: Thu, 25 Jan 2018 18:02:41 +0000
-Message-Id: <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, icenowy@aosc.io
+Cc: linux-arm-kernel@lists.infradead.org, Maxime Ripard <maxime.ripard@free-electrons.com>, mark.rutland@arm.com, Rob Herring <robh@kernel.org>, architt@codeaurora.org, narmstrong@baylibre.com, airlied@linux.ie, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, wens@csie.org, Laurent.pinchart@ideasonboard.com, Jose.Abreu@synopsys.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+Date: Fri, 05 Jan 2018 07:20:46 +0100
+Message-ID: <2801449.XnWJ1iOJse@jernej-laptop>
+In-Reply-To: <4B652FB5-08B2-416B-ABA9-08E12112087D@aosc.io>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20180104185210.afsvsofq7q35psa6@flea.lan> <4B652FB5-08B2-416B-ABA9-08E12112087D@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dne petek, 05. januar 2018 ob 03:49:09 CET je Icenowy Zheng napisal(a):
+> =E4=BA=8E 2018=E5=B9=B41=E6=9C=885=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=882=
+:52:10, Maxime Ripard <maxime.ripard@free-
+electrons.com> =E5=86=99=E5=88=B0:
+> >On Wed, Jan 03, 2018 at 10:32:26PM +0100, Jernej =C5=A0krabec wrote:
+> >> Hi Rob,
+> >>=20
+> >> Dne sreda, 03. januar 2018 ob 21:21:54 CET je Rob Herring napisal(a):
+> >> > On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
+> >> > > This commit adds all necessary compatibles and descriptions
+> >
+> >needed to
+> >
+> >> > > implement A83T HDMI pipeline.
+> >> > >=20
+> >> > > Mixer is already properly described, so only compatible is added.
+> >> > >=20
+> >> > > However, A83T TCON1, which is connected to HDMI, doesn't have
+> >
+> >channel 0,
+> >
+> >> > > contrary to all TCONs currently described. Because of that, TCON
+> >> > > documentation is extended.
+> >> > >=20
+> >> > > A83T features Synopsys DW HDMI controller with a custom PHY which
+> >
+> >looks
+> >
+> >> > > like Synopsys Gen2 PHY with few additions. Since there is no
+> >> > > documentation, needed properties were found out through
+> >
+> >experimentation
+> >
+> >> > > and reading BSP code.
+> >> > >=20
+> >> > > At the end, example is added for newer SoCs, which features DE2
+> >
+> >and DW
+> >
+> >> > > HDMI.
+> >> > >=20
+> >> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> > > ---
+> >> > >=20
+> >> > >  .../bindings/display/sunxi/sun4i-drm.txt           | 188
+> >> > >  ++++++++++++++++++++- 1 file changed, 181 insertions(+), 7
+> >
+> >deletions(-)
+> >
+> >> > > diff --git
+> >
+> >a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >
+> >> > > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >
+> >index
+> >
+> >> > > 9f073af4c711..3eca258096a5 100644
+> >> > > ---
+> >
+> >a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >
+> >> > > +++
+> >
+> >b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >
+> >> > > @@ -64,6 +64,40 @@ Required properties:
+> >> > >      first port should be the input endpoint. The second should
+> >
+> >be the
+> >
+> >> > >      output, usually to an HDMI connector.
+> >> > >=20
+> >> > > +DWC HDMI TX Encoder
+> >> > > +-----------------------------
+> >> > > +
+> >> > > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX
+> >
+> >controller IP
+> >
+> >> > > +with Allwinner's own PHY IP. It supports audio and video outputs
+> >
+> >and CEC.
+> >
+> >> > > +
+> >> > > +These DT bindings follow the Synopsys DWC HDMI TX bindings
+> >
+> >defined in
+> >
+> >> > > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt
+> >
+> >with the
+> >
+> >> > > +following device-specific properties.
+> >> > > +
+> >> > > +Required properties:
+> >> > > +
+> >> > > +  - compatible: value must be one of:
+> >> > > +    * "allwinner,sun8i-a83t-dw-hdmi"
+> >> > > +  - reg: two pairs of base address and size of memory-mapped
+> >
+> >region,
+> >
+> >> > > first
+> >> > > +    for controller and second for PHY
+> >> > > +    registers.
+> >> >=20
+> >> > Seems like the phy should be a separate node and use the phy
+> >
+> >binding.
+> >
+> >> > You can use the phy binding even if you don't use the kernel phy
+> >> > framework...
+> >>=20
+> >> Unfortunately, it's not so straighforward. Phy is actually accessed
+> >
+> >through
+> >
+> >> I2C implemented in HDMI controller. Second memory region in this case
+> >
+> >has
+> >
+> >> small influence on phy. However, it has big influence on controller.
+> >
+> >For
+> >
+> >> example, magic number has to be written in one register in second
+> >
+> >memory
+> >
+> >> region in order to unlock read access to any register from first
+> >
+> >memory region
+> >
+> >> (controller). However, they shouldn't be merged to one region,
+> >
+> >because first
+> >
+> >> memory region requires byte access while second memory region can be
+> >
+> >accessed
+> >
+> >> per byte or word.
+> >>=20
+> >> To complicate things more, later I want to add support for another
+> >
+> >SoC which
+> >
+> >> has same glue layer (unlocking read access, etc.) and uses memory
+> >
+> >mapped phy
+> >
+> >> registers in second memory region.
+> >>=20
+> >> I think current binding is the least complicated way to represent
+> >
+> >this.
+> >
+> >I agree with Rob here. I did a similar thing for the DSI patches I've
+> >sent a few monthes ago and it turned out to not be that difficult, so
+> >I'm sure you can come up with something :)
+>=20
+> In A83T/H3/A64/H5/R40 this part is not purely a PHY.
+> It controls the access of main controller's register (e.g. read/write
+> lock and register obfuscation). So it should be called a "glue"
+> with PHY part (and on A83T seems a pure glue) but not a simple
+>  PHY.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aa7d779..ca684d0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -392,7 +392,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x64>;
- 			};
- 		};
- 
--- 
-2.7.4
+It's not so simple. Actually it has PHY settings also on A83T. For example,=
+=20
+value at 0x01EF0001 depends on polarity. Value at 0x01EF0002 sets PHY I2C=20
+address. Bit 7 at 0x01EF0007 enables/disables external resistor. That is in=
+fo=20
+I discovered/received after I sent patches, so it's not cleary marked.
+
+Proper memory map (starts at 0x01EE0000):
+0x00000 - 0x10000 -> DW HDMI controller
+0x10000 - 0x10010 -> (almost?) Common PHY settings
+0x10010 - 0x10020 -> Allwinner proprietary glue layer
+0x10020 - 0x10040 -> Allwinner proprietary PHY (not present on A83T)
+
+In preliminary PHY doc AW released, there are additional regs at 0x01EF0FF8=
+=20
+and 0x01EF0FFC for controller ID and phy ID, but it was always 0 at A83T an=
+d=20
+H3.
+
+So splitting memory in so many regions just to satisfy clean division it=20
+doesn't seem sane to me. Now that I checked how Maxime did it with MIPI DSI=
+=20
+driver, I'm good with dividing it into two parts.
+
+Best regards,
+Jernej
+
+
+>=20
+> >Maxime
+> >
+> >--
+> >Maxime Ripard, Free Electrons
+> >Embedded Linux and Kernel engineering
+> >http://free-electrons.com
+> >
+> >_______________________________________________
+> >linux-arm-kernel mailing list
+> >linux-arm-kernel@lists.infradead.org
+> >http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
