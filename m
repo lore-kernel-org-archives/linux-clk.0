@@ -1,102 +1,57 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 00/12] drm/sun4i: Add A83T HDMI support
-Date: Wed, 17 Jan 2018 21:14:09 +0100
-Message-Id: <20180117201421.25954-1-jernej.skrabec@siol.net>
+Return-Path: <weiyongjun1@huawei.com>
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+To: Leo Yan <leo.yan@linaro.org>, Masahiro Yamada
+	<yamada.masahiro@socionext.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, zhongkaihua <zhongkaihua@huawei.com>, wangruyi
+	<wangruyi@huawei.com>, "Zhaokai (B)" <sandra.zhao@hisilicon.com>, "Wangtao
+ (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>, linux-clk
+	<linux-clk@vger.kernel.org>
+Subject: =?gb2312?B?UkU6IFtQQVRDSCAtbmV4dF0gY2xrOiBoaXNpbGljb246IGhpMzY2MKO6Rml4?=
+ =?gb2312?B?IHBvdGVudGlhbCBOVUxMIGRlcmVmZXJlbmNlIGluIGhpMzY2MF9zdHViX2Ns?=
+ =?gb2312?Q?k=5Fprobe()?=
+Date: Fri, 5 Jan 2018 08:54:30 +0000
+Message-ID: <6AADFAC011213A4C87B956458587ADB40132145A@dggemi507-mbx.china.huawei.com>
+References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
+ <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
+ <20180105084004.GC26855@leoy-linaro>
+In-Reply-To: <20180105084004.GC26855@leoy-linaro>
+Content-Type: text/plain; charset="gb2312"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series implements support for A83T DW HDMI and PHY. Contrary to
-v1 series, this one is based on latest linux-next, since all needed patches
-were merged.
-
-While exactly this combination of HDMI controller and PHY is not common in
-Allwinner SoCs, this patch series nevertheless makes groundwork for other
-SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
-
-Please take a look.
-
-Best regards,
-Jernej
-
-Changes from v2:
-- Collected ACKs and Review-by tags
-- patch for deinit callback was replaced with the one which gives control
-  of drvdata to driver
-- fixed meson driver (renamed reset function)
-- prototypes for newly exported functions in dw_hdmi.h were reordered
-
-Changes from v1:
-- Collected ACKs
-- Separated bindings for controller and PHY
-- Split driver into two parts - controller and PHY
-- HDMI PHY driver now uses regmap for writes
-- added defines for PHY registers and bits
-- updated DT entries to accomodate new bindings
-- removed already merged clock patch
-- reworked first clock patch according to comments
-- added new clock patch which changes NKMP formula
-- split TCON patch in two, one for quirk and one for new compatible
-- reworked patch which exports DW HDMI PHY functions:
-  - remove "gen2" from some function names
-  - removed parameter from dw_hdmi_phy_reset()
-  - added address parameter to dw_hdmi_phy_i2c_set_addr()
-- updated most of commit messages
-
-Jernej Skrabec (12):
-  clk: sunxi-ng: Mask nkmp factors when setting register
-  clk: sunxi-ng: Change formula for NKMP PLLs
-  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
-  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-  drm/sun4i: Add has_channel_0 TCON quirk
-  drm/sun4i: Add support for A83T second TCON
-  drm/sun4i: Add support for A83T second DE2 mixer
-  drm/sun4i: Implement A83T HDMI driver
-  ARM: dts: sun8i: a83t: Add HDMI display pipeline
-  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
-
- .../bindings/display/sunxi/sun4i-drm.txt           | 197 +++++++++++++-
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 119 +++++++-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |  27 +-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 +++---
- drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
- drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
- drivers/gpu/drm/sun4i/Kconfig                      |   9 +
- drivers/gpu/drm/sun4i/Makefile                     |   4 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 181 ++++++++++++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  46 ++++
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 302 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
- include/drm/bridge/dw_hdmi.h                       |  24 +-
- 18 files changed, 1046 insertions(+), 89 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-
--- 
-2.15.1
+PiBPbiBGcmksIEphbiAwNSwgMjAxOCBhdCAxMjo1OTozOFBNICswOTAwLCBNYXNhaGlybyBZYW1h
+ZGEgd3JvdGU6DQo+ID4gMjAxOC0wMS0wNCAxNTozNiBHTVQrMDk6MDAgV2VpIFlvbmdqdW4gPHdl
+aXlvbmdqdW4xQGh1YXdlaS5jb20+Og0KPiA+ID4gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKCkgbWF5
+IHJldHVybiBOVUxMLCBhZGQgcHJvcGVyIGNoZWNrIHRvDQo+ID4gPiBhdm9pZCBwb3RlbnRpYWwg
+TlVMTCBkZXJlZmVyZW5jaW5nLg0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgZGV0ZWN0ZWQgYnkgQ29j
+Y2luZWxsZSBzZW1hbnRpYyBwYXRjaC4NCj4gPiA+DQo+ID4gPiBAQA0KPiA+ID4gZXhwcmVzc2lv
+biBwZGV2LCByZXMsIG4sIHQsIGUsIGUxLCBlMjsNCj4gPiA+IEBADQo+ID4gPg0KPiA+ID4gcmVz
+ID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIHQsIG4pOw0KPiA+ID4gKyBpZiAoIXJlcykN
+Cj4gPiA+ICsgICByZXR1cm4gLUVJTlZBTDsNCj4gPiA+IC4uLiB3aGVuICE9IHJlcyA9PSBOVUxM
+DQo+ID4gPiBlID0gZGV2bV9pb3JlbWFwKGUxLCByZXMtPnN0YXJ0LCBlMik7DQo+ID4gPg0KPiA+
+ID4gRml4ZXM6IDRmMTZmN2ZmM2JjMCAoImNsazogaGlzaWxpY29uOiBBZGQgc3VwcG9ydCBmb3Ig
+SGkzNjYwIHN0dWIgY2xvY2tzIikNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFdlaSBZb25nanVuIDx3
+ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgZHJpdmVycy9jbGsvaGlz
+aWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jIHwgMiArKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAy
+IGluc2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaGlz
+aWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jDQo+IGIvZHJpdmVycy9jbGsvaGlzaWxpY29uL2Nsay1o
+aTM2NjAtc3R1Yi5jDQo+ID4gPiBpbmRleCA5YjZjNzJiLi5lOGIyYzQzIDEwMDY0NA0KPiA+ID4g
+LS0tIGEvZHJpdmVycy9jbGsvaGlzaWxpY29uL2Nsay1oaTM2NjAtc3R1Yi5jDQo+ID4gPiArKysg
+Yi9kcml2ZXJzL2Nsay9oaXNpbGljb24vY2xrLWhpMzY2MC1zdHViLmMNCj4gPiA+IEBAIC0xNDks
+NiArMTQ5LDggQEAgc3RhdGljIGludCBoaTM2NjBfc3R1Yl9jbGtfcHJvYmUoc3RydWN0DQo+IHBs
+YXRmb3JtX2RldmljZSAqcGRldikNCj4gPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VS
+UihzdHViX2Nsa19jaGFuLm1ib3gpOw0KPiA+ID4NCj4gPiA+ICAgICAgICAgcmVzID0gcGxhdGZv
+cm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gPiA+ICsgICAgICAg
+aWYgKCFyZXMpDQo+ID4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gPiAg
+ICAgICAgIGZyZXFfcmVnID0gZGV2bV9pb3JlbWFwKGRldiwgcmVzLT5zdGFydCwgcmVzb3VyY2Vf
+c2l6ZShyZXMpKTsNCj4gPiA+ICAgICAgICAgaWYgKCFmcmVxX3JlZykNCj4gPiA+ICAgICAgICAg
+ICAgICAgICByZXR1cm4gLUVOT01FTTsNCj4gPg0KPiA+DQo+ID4gUHJvYmFibHksIGl0IGlzIGJl
+dHRlciB0byB1c2UgZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkuDQo+ID4gVGhpcyBjaGVja3MgTlVM
+TCBpbnB1dC4NCj4gDQo+IFRoYW5rcyBmb3Igc3VnZ2VzdGlvbiwgTWFzYWhpcm8uIFRoaXMgaXMg
+Z29vZCBzdWdnZXN0aW9uLg0KPiANCj4gWW9uZ2p1biwgY291bGQgeW91IHNwaW4gbmV3IHBhdGNo
+IGJ5IHVzaW5nIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpDQo+IHRvIHJlcGxhY2UgZGV2bV9pb3Jl
+bWFwKCk/DQoNCg0KSSB3aWxsIHNlbmQgdjIgcGF0Y2ggdXNpbmcgZGV2bV9pb3JlbWFwX3Jlc291
+cmNlLiBBbmQgd291bGQgcGxlYXNlIHRlc3QgaXQNCnNpbmNlIHNvbWV0aW1lcyBjaGFuZ2UgZGV2
+bV9pb3JlbWFwKCkgdG8gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgbWF5DQpjYXVzZSBkZXZpY2Ug
+Y2Fubm90IHdvcms/DQoNClJlZ2FyZHMsDQpXZWkgWW9uZ2p1bg0K
