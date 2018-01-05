@@ -1,82 +1,61 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/19] clk: meson: use devm_of_clk_add_hw_provider
-Date: Wed, 31 Jan 2018 19:09:28 +0100
-Message-Id: <20180131180945.18025-3-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 05 Jan 2018 19:03:52 +0100
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 13/15] MIPS: JZ4770: Workaround for corrupted DMA
+ transfers
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Message-Id: <1515175432.2058.0@smtp.crapouillou.net>
+In-Reply-To: <CANc+2y4mJMMiN4SPiPtcXMrQ0AM_2XGnVRk1Dvyv9VYpNN3x-g@mail.gmail.com>
+References: <20180102150848.11314-1-paul@crapouillou.net>
+        <20180102150848.11314-13-paul@crapouillou.net>
+        <CANc+2y4mJMMiN4SPiPtcXMrQ0AM_2XGnVRk1Dvyv9VYpNN3x-g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There is no remove callbacks in meson's clock controllers and
-of_clk_del_provider is never called if of_clk_add_hw_provider has been
-executed, introducing a potential memory leak.
-Fixing this by the using the devm variant.
+Hi,
+Hi,
 
-In reality, the leak would never happen since these controllers are
-never unloaded once in use ... still, this is worth cleaning.
+>> [...]
+>> 
+>>  +/*
+>>  + * We have seen MMC DMA transfers read corrupted data from SDRAM 
+>> when a burst
+>>  + * interval ends at physical address 0x10000000. To avoid this 
+>> problem, we
+>>  + * remove the final page of low memory from the memory map.
+>>  + */
+>>  +void __init jz4770_reserve_unsafe_for_dma(void)
+>>  +{
+>>  +       int i;
+>>  +
+>>  +       for (i = 0; i < boot_mem_map.nr_map; i++) {
+>>  +               struct boot_mem_map_entry *entry = boot_mem_map.map 
+>> + i;
+>>  +
+>>  +               if (entry->type != BOOT_MEM_RAM)
+>>  +                       continue;
+>>  +
+>>  +               if (entry->addr + entry->size != 0x10000000)
+>>  +                       continue;
+>>  +
+>>  +               entry->size -= PAGE_SIZE;
+>>  +               break;
+>>  +       }
+>>  +}
+>>  +
+> 
+> Just a wild idea (probably bad too). Changing the memory node in the
+> device tree to skip this physical address would work I think. What is
+> your opinion about that?
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c     | 4 ++--
- drivers/clk/meson/gxbb.c    | 5 +++--
- drivers/clk/meson/meson8b.c | 4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
+I guess it would work as well, but I don't think this fix should be in 
+devicetree.
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 0db0fc0762e2..2f2b3845c01d 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -854,8 +854,8 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			clkc_data->hw_onecell_data);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clkc_data->hw_onecell_data);
- }
- 
- static struct platform_driver axg_driver = {
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 423abcb8ef88..17f44ac751b3 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -2002,8 +2002,9 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 			goto iounmap;
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			clkc_data->hw_onecell_data);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clkc_data->hw_onecell_data);
- 
- iounmap:
- 	iounmap(clk_base);
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 3ffea80c1308..abac079ff77f 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -878,8 +878,8 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			&meson8b_hw_onecell_data);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   &meson8b_hw_onecell_data);
- }
- 
- static const struct of_device_id meson8b_clkc_match_table[] = {
--- 
-2.14.3
+-Paul
