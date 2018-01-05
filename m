@@ -1,95 +1,107 @@
 Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
 From: David Lechner <david@lechnology.com>
-Message-ID: <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
-Date: Tue, 16 Jan 2018 11:21:18 -0600
-MIME-Version: 1.0
-In-Reply-To: <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: linux-clk@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 1/7] clk: add helper functions for managing clk_onecell_data
+Date: Thu,  4 Jan 2018 18:38:06 -0600
+Message-Id: <1515112695-3160-2-git-send-email-david@lechnology.com>
+In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
+References: <1515112695-3160-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/16/2018 08:00 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->> +{
->> +	struct clk_onecell_data *clk_data;
->> +
->> +	clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
->> +	if (!clk_data)
->> +		return;
->> +
->> +	clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
->> +	clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
->> +	clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->> +	clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->> +	clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->> +	clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->> +	clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
->> +
->> +	clk_free_onecell_data(clk_data);
->> +
->> +	clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
->> +	if (!clk_data)
->> +		return;
->> +
->> +	clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
-> 
-> Is this con_id really needed now? Searching for "usb20_psc_clk" in your
-> tree results in only this one hit.
+This adds helper functions for allocating and freeing struct
+clk_onecell_data.
 
-Yes, this is left over from previous attempts.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/clk.c            | 49 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  3 +++
+ 2 files changed, 52 insertions(+)
 
-> 
->> +	clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->> +	clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
-> 
-> I guess multiple dev_id matches like these are another hurdle in moving
-> them to davinci_psc_clk_info[] table? If its too cumbersome to keep
-> multiple entries in the table, they can be handled as an exception at
-> the end of processing the table? Still they are not the norm so I hope
-> the normal case will still benefit.
-
-Right, as I mentioned in the reply to the previous patch, instead of
-assigning a con_id and dev_id to each clock, we would need to assign
-an array with a list of clocks. I think that would work better than
-trying to handle the extras as an exception since there, on average,
-about 5 per SoC.
-
-> 
->> +	clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
->> +	clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
->> +	clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
->> +	clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
->> +	clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
->> +	clk_register_clkdev(clk_data->clks[8], "fck", "ahci_da850");
->> +	clk_register_clkdev(clk_data->clks[9], NULL, "vpif");
->> +	clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
->> +	clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
->> +	clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
->> +	clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
->> +	clk_register_clkdev(clk_data->clks[14], NULL, "davinci-mcbsp.0");
->> +	clk_register_clkdev(clk_data->clks[15], NULL, "davinci-mcbsp.1");
->> +	clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
->> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
->> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
->> +	clk_register_clkdev(clk_data->clks[18], NULL, "da830-mmc.1");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
->> +
->> +	clk_free_onecell_data(clk_data);
->> +}
-> 
-> Thanks,
-> Sekhar
-> 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e24968f..83c8df7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3551,6 +3551,55 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec, void *data)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_hw_simple_get);
+ 
++/**
++ * clk_alloc_onecell_data - allocate new struct clk_onecell_data
++ * @num_clks: Number of clock pointers to allocate
++ *
++ * An array of clock pointers is allocated and each clock pointer is
++ * initialized to ERR_PTR(-ENOENT).
++ *
++ * Returns: Pointer to struct clk_onecell_data or NULL on failure.
++ */
++struct clk_onecell_data *clk_alloc_onecell_data(size_t num_clks)
++{
++	struct clk_onecell_data *clk_data;
++	int i;
++
++	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return NULL;
++
++	clk_data->clks = kcalloc(num_clks, sizeof(*clk_data->clks), GFP_KERNEL);
++	if (!clk_data->clks) {
++		kfree(clk_data);
++		return NULL;
++	}
++
++	for (i = 0; i < num_clks; i++)
++		clk_data->clks[i] = ERR_PTR(-ENOENT);
++
++	clk_data->clk_num = num_clks;
++
++	return clk_data;
++}
++EXPORT_SYMBOL_GPL(clk_alloc_onecell_data);
++
++/**
++ * clk_free_onecell_data - frees @clk_data and associated resources
++ * @clk_data: Pointer to struct clk_onecelldata that was allocated with
++ *            clk_alloc_onecell_data()
++ *
++ * It is safe to call this function even if @clk_data is NULL or an error value.
++ */
++void clk_free_onecell_data(struct clk_onecell_data *clk_data)
++{
++	if (IS_ERR_OR_NULL(clk_data))
++		return;
++
++	kfree(clk_data->clks);
++	kfree(clk_data);
++}
++
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	struct clk_onecell_data *clk_data = data;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 175a62a..b1f51f7 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -786,6 +786,9 @@ struct clk_onecell_data {
+ 	unsigned int clk_num;
+ };
+ 
++struct clk_onecell_data *clk_alloc_onecell_data(size_t num_clks);
++void clk_free_onecell_data(struct clk_onecell_data *clk_data);
++
+ struct clk_hw_onecell_data {
+ 	unsigned int num;
+ 	struct clk_hw *hws[];
+-- 
+2.7.4
