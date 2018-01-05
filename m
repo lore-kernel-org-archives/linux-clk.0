@@ -1,82 +1,42 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 10/12] clk: mediatek: switch to use dev_get_regmap() for MT7622 audsys
-Date: Tue, 2 Jan 2018 19:47:52 +0800
-Message-ID: <cbdada9cdbafda2452fe171a81588ce5b0d4f688.1514881870.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1514881870.git.ryder.lee@mediatek.com>
-References: <cover.1514881870.git.ryder.lee@mediatek.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
+References: <1514906296-8099-1-git-send-email-geert+renesas@glider.be> <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jan 2018 11:12:16 +0100
+Message-ID: <CAMuHMdU-h39Ty6gUfuVGw3Lnor793R4v_r4_NbQrNnRecw2FsA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: Stop enabling legacy DT clock support by default
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-As the new audsys wrapper driver is in place, switch to use dev_get_regmap()
-to obtain the regmap from its parent.
+On Thu, Jan 4, 2018 at 11:35 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Jan 2, 2018 at 4:18 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> Since v4.15-rc1, the DTS files for all R-Car Gen2 SoCs have been
+>> converted to the new CPG/MSSR bindings.  Hence it is now safe to no
+>> longer enable legacy DT clock support by default.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> To be queued in clk-renesas-for-v4.16.
+>
+> Applied and queued in clk-renesas-for-v4.16.
 
-This patch also add missing clock data 'CLK_AUDIO_AFE_CONN'.
+Upon second thought, I'll postpone this to v4.17.
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/clk-mt7622-aud.c  | 11 +++++++++--
- include/dt-bindings/clock/mt7622-clk.h |  3 ++-
- 2 files changed, 11 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index fad7d9f..261e8d7 100644
---- a/drivers/clk/mediatek/clk-mt7622-aud.c
-+++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -106,6 +106,7 @@
- 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
- 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
- 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
-+	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
- 	/* AUDIO2 */
- 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
- 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
-@@ -141,12 +142,18 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
-+	struct regmap *regmap;
- 	int r;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
- 
--	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
--			       clk_data);
-+	/* Obtain the regmap from parent - audsys wrapper */
-+	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!regmap)
-+		return -ENODEV;
-+
-+	mtk_clk_register_num_gates(regmap, audio_clks, ARRAY_SIZE(audio_clks),
-+				   clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
-diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
-index 3e514ed..e9d77f0 100644
---- a/include/dt-bindings/clock/mt7622-clk.h
-+++ b/include/dt-bindings/clock/mt7622-clk.h
-@@ -235,7 +235,8 @@
- #define CLK_AUDIO_MEM_ASRC3		43
- #define CLK_AUDIO_MEM_ASRC4		44
- #define CLK_AUDIO_MEM_ASRC5		45
--#define CLK_AUDIO_NR_CLK		46
-+#define CLK_AUDIO_AFE_CONN		46
-+#define CLK_AUDIO_NR_CLK		47
- 
- /* SSUSBSYS */
- 
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
