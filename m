@@ -1,157 +1,64 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [RFC PATCH 2/2] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-Date: Tue, 23 Jan 2018 20:50:41 +0800
-Message-ID: <1516711841-25234-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1516711841-25234-1-git-send-email-aisheng.dong@nxp.com>
-References: <1516711841-25234-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
- hdegoede@redhat.com, aisheng.dong@codeaurora.org, b.zolnierkie@samsung.com,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- yamada.masahiro@socionext.com, linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>
+Subject: [PATCH 5/5] clk: qcom: use divider_ro_round_rate helper
+Date: Fri,  5 Jan 2018 18:09:59 +0100
+Message-Id: <20180105170959.17266-6-jbrunet@baylibre.com>
+In-Reply-To: <20180105170959.17266-1-jbrunet@baylibre.com>
+References: <20180105170959.17266-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Switching to use clk_bulk API to simplify clock operations.
+There is now an helper function to round the rate when the
+divider is read-only. Let's use it
 
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-fbdev@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/video/fbdev/simplefb.c | 70 ++++++++----------------------------------
- 1 file changed, 13 insertions(+), 57 deletions(-)
+ drivers/clk/qcom/clk-regmap-divider.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index a3c44ec..3ce2e5b 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -181,8 +181,7 @@ struct simplefb_par {
- 	u32 palette[PSEUDO_PALETTE_SIZE];
- #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
- 	bool clks_enabled;
--	unsigned int clk_count;
--	struct clk **clks;
-+	struct clk_bulk *clk_bulk;
- #endif
- #if defined CONFIG_OF && defined CONFIG_REGULATOR
- 	bool regulators_enabled;
-@@ -214,37 +213,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
- 			       struct platform_device *pdev)
+diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
+index 4e9b8c2c8980..114e36b97255 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.c
++++ b/drivers/clk/qcom/clk-regmap-divider.c
+@@ -28,22 +28,15 @@ static long div_round_ro_rate(struct clk_hw *hw, unsigned long rate,
  {
- 	struct device_node *np = pdev->dev.of_node;
--	struct clk *clock;
--	int i;
+ 	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
+ 	struct clk_regmap *clkr = &divider->clkr;
+-	u32 div;
++	u32 val;
+ 	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
  
- 	if (dev_get_platdata(&pdev->dev) || !np)
- 		return 0;
- 
--	par->clk_count = of_clk_get_parent_count(np);
--	if (!par->clk_count)
--		return 0;
+-	regmap_read(clkr->regmap, divider->reg, &div);
+-	div >>= divider->shift;
+-	div &= BIT(divider->width) - 1;
+-	div += 1;
 -
--	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
--	if (!par->clks)
--		return -ENOMEM;
+-	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-		if (!hw_parent)
+-			return -EINVAL;
 -
--	for (i = 0; i < par->clk_count; i++) {
--		clock = of_clk_get(np, i);
--		if (IS_ERR(clock)) {
--			if (PTR_ERR(clock) == -EPROBE_DEFER) {
--				while (--i >= 0) {
--					if (par->clks[i])
--						clk_put(par->clks[i]);
--				}
--				kfree(par->clks);
--				return -EPROBE_DEFER;
--			}
--			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
--				__func__, i, PTR_ERR(clock));
--			continue;
--		}
--		par->clks[i] = clock;
+-		*prate = clk_hw_round_rate(hw_parent, rate * div);
 -	}
-+	par->clk_bulk = of_clk_bulk_get_all(np);
-+	if (IS_ERR(par->clk_bulk) && PTR_ERR(par->clk_bulk) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
++	regmap_read(clkr->regmap, divider->reg, &val);
++	val >>= divider->shift;
++	val &= BIT(divider->width) - 1;
  
- 	return 0;
- }
-@@ -252,45 +227,26 @@ static int simplefb_clocks_get(struct simplefb_par *par,
- static void simplefb_clocks_enable(struct simplefb_par *par,
- 				   struct platform_device *pdev)
- {
--	int i, ret;
-+	int ret;
-+
-+	ret = clk_bulk_enable_all(par->clk_bulk);
-+	if (ret)
-+		dev_warn(&pdev->dev, "failed to enable clocks\n");
- 
--	for (i = 0; i < par->clk_count; i++) {
--		if (par->clks[i]) {
--			ret = clk_prepare_enable(par->clks[i]);
--			if (ret) {
--				dev_err(&pdev->dev,
--					"%s: failed to enable clock %d: %d\n",
--					__func__, i, ret);
--				clk_put(par->clks[i]);
--				par->clks[i] = NULL;
--			}
--		}
--	}
- 	par->clks_enabled = true;
+-	return DIV_ROUND_UP_ULL((u64)*prate, div);
++	return divider_ro_round_rate(hw, rate, prate, NULL, divider->width,
++				     CLK_DIVIDER_ROUND_CLOSEST, val);
  }
  
- static void simplefb_clocks_destroy(struct simplefb_par *par)
- {
--	int i;
--
--	if (!par->clks)
--		return;
-+	if (par->clks_enabled)
-+		clk_bulk_disable_all(par->clk_bulk);
- 
--	for (i = 0; i < par->clk_count; i++) {
--		if (par->clks[i]) {
--			if (par->clks_enabled)
--				clk_disable_unprepare(par->clks[i]);
--			clk_put(par->clks[i]);
--		}
--	}
--
--	kfree(par->clks);
-+	of_clk_bulk_put_all(par->clk_bulk);
- }
- #else
- static int simplefb_clocks_get(struct simplefb_par *par,
- 	struct platform_device *pdev) { return 0; }
--static void simplefb_clocks_enable(struct simplefb_par *par,
--	struct platform_device *pdev) { }
-+static int simplefb_clocks_enable(struct simplefb_par *par) { }
- static void simplefb_clocks_destroy(struct simplefb_par *par) { }
- #endif
- 
+ static long div_round_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.14.3
