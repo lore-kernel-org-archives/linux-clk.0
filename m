@@ -1,45 +1,71 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: [PATCH v3 17/34] clk: vt8500: match temp holder variable to fn return type
-Date: Mon,  1 Jan 2018 19:42:56 +0000
-Message-Id: <1514835793-1104-18-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Fri, 5 Jan 2018 16:40:04 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kaihua Zhong <zhongkaihua@huawei.com>,
+	Ruyi Wang <wangruyi@huawei.com>, Kai Zhao <zhaokai1@hisilicon.com>,
+	Tao Wang <kevin.wangtao@hisilicon.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH -next] clk: =?utf-8?Q?hisilicon?=
+ =?utf-8?B?OiBoaTM2NjDvvJpGaQ==?= =?utf-8?Q?x?= potential NULL dereference in
+ hi3660_stub_clk_probe()
+Message-ID: <20180105084004.GC26855@leoy-linaro>
+References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
+ <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-vtwm_pll_round_rate() returns an unsigned long. This patch changes the
-internal holder variable from signed to unsigned long for the sake of
-completeness and neatness.
+On Fri, Jan 05, 2018 at 12:59:38PM +0900, Masahiro Yamada wrote:
+> 2018-01-04 15:36 GMT+09:00 Wei Yongjun <weiyongjun1@huawei.com>:
+> > platform_get_resource() may return NULL, add proper check to
+> > avoid potential NULL dereferencing.
+> >
+> > This is detected by Coccinelle semantic patch.
+> >
+> > @@
+> > expression pdev, res, n, t, e, e1, e2;
+> > @@
+> >
+> > res = platform_get_resource(pdev, t, n);
+> > + if (!res)
+> > +   return -EINVAL;
+> > ... when != res == NULL
+> > e = devm_ioremap(e1, res->start, e2);
+> >
+> > Fixes: 4f16f7ff3bc0 ("clk: hisilicon: Add support for Hi3660 stub clocks")
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > ---
+> >  drivers/clk/hisilicon/clk-hi3660-stub.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/clk/hisilicon/clk-hi3660-stub.c b/drivers/clk/hisilicon/clk-hi3660-stub.c
+> > index 9b6c72b..e8b2c43 100644
+> > --- a/drivers/clk/hisilicon/clk-hi3660-stub.c
+> > +++ b/drivers/clk/hisilicon/clk-hi3660-stub.c
+> > @@ -149,6 +149,8 @@ static int hi3660_stub_clk_probe(struct platform_device *pdev)
+> >                 return PTR_ERR(stub_clk_chan.mbox);
+> >
+> >         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       if (!res)
+> > +               return -EINVAL;
+> >         freq_reg = devm_ioremap(dev, res->start, resource_size(res));
+> >         if (!freq_reg)
+> >                 return -ENOMEM;
+> 
+> 
+> Probably, it is better to use devm_ioremap_resource().
+> This checks NULL input.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Tony Prisk <linux@prisktech.co.nz>
----
- drivers/clk/clk-vt8500.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for suggestion, Masahiro. This is good suggestion.
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 750c087..a4aa0bf 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -609,7 +609,7 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	u32 filter, mul, div1, div2;
--	long round_rate;
-+	unsigned long round_rate;
- 	int ret = 1;
- 
- 	switch (pll->type) {
--- 
-2.7.4
+Yongjun, could you spin new patch by using devm_ioremap_resource()
+to replace devm_ioremap()?
+
+Thanks,
+Leo Yan
