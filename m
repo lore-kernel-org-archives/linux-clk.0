@@ -1,138 +1,129 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-Date: Wed, 24 Jan 2018 14:45:34 +0200
-Message-ID: <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>
+Subject: [PATCH 3/5] clk: divider: add divider_ro_round_rate helper
+Date: Fri,  5 Jan 2018 18:09:57 +0100
+Message-Id: <20180105170959.17266-4-jbrunet@baylibre.com>
+In-Reply-To: <20180105170959.17266-1-jbrunet@baylibre.com>
+References: <20180105170959.17266-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When using a PWM controlled regulator, the voltage step and offset are
-determined by the regulator IC in use. This is specified in DT rather
-than fixed in the CVB table. Hence pass this information to the CVB table
-calculation function. For backwards compatibility the table values are used
-if the corresponding parameter is 0.
+Like divider_round_rate, a couple a of driver are doing more or less
+the same operation to round the rate of the divider when it is read-only.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+We can factor this code so let's provide an helper function for this
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
- drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
- drivers/clk/tegra/cvb.h                    |  5 +++--
- 3 files changed, 38 insertions(+), 8 deletions(-)
+ drivers/clk/clk-divider.c    | 43 ++++++++++++++++++++++++++++---------------
+ include/linux/clk-provider.h | 15 +++++++++++++++
+ 2 files changed, 43 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 440eb8d..6205ce1 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
- 	const struct of_device_id *of_id;
- 	const struct dfll_fcpu_data *fcpu_data;
-+	struct rail_alignment align;
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index a851d3e04c7f..3eb2b27f3513 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -344,29 +344,42 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+ }
+ EXPORT_SYMBOL_GPL(divider_round_rate_parent);
  
- 	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
- 	fcpu_data = of_id->data;
-@@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
++long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
++				  unsigned long rate, unsigned long *prate,
++				  const struct clk_div_table *table, u8 width,
++				  unsigned long flags, unsigned int val)
++{
++	int div;
++
++	div = _get_div(table, val, flags, width);
++
++	/* Even a read-only clock can propagate a rate change */
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
++		if (!parent)
++			return -EINVAL;
++
++		*prate = clk_hw_round_rate(parent, rate * div);
++	}
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
++
++
+ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
+ 	struct clk_divider *divider = to_clk_divider(hw);
+-	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
+-	int bestdiv;
++	u32 val;
+ 
+ 	/* if read only, just return current value */
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+-		bestdiv = clk_readl(divider->reg) >> divider->shift;
+-		bestdiv &= div_mask(divider->width);
+-		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+-			divider->width);
+-
+-		/* Even a read-only clock can propagate a rate change */
+-		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-			if (!hw_parent)
+-				return -EINVAL;
+-
+-			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
+-		}
++		val = clk_readl(divider->reg) >> divider->shift;
++		val &= div_mask(divider->width);
+ 
+-		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
++		return divider_ro_round_rate(hw, rate, prate, divider->table,
++					     divider->width, divider->flags,
++					     val);
  	}
  
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
-+					&align.offset_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"offset uv not found, default to table value\n");
-+		align.offset_uv = 0;
-+	}
-+
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-+					&align.step_uv);
-+	if (err < 0) {
-+		dev_err(&pdev->dev,
-+			"step uv not found, default to table value\n");
-+		align.step_uv = 0;
-+	}
-+
- 	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
- 	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
--					   process_id, speedo_id, speedo_value,
--					   soc->max_freq);
-+					   &align, process_id, speedo_id,
-+					   speedo_value, soc->max_freq);
-+	soc->alignment = align;
-+
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7..561012a 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -62,11 +62,19 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
+ 	return divider_round_rate(hw, rate, prate, divider->table,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 175a62a15619..eb2c3a035e98 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -417,6 +417,10 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+ 			       unsigned long rate, unsigned long *prate,
+ 			       const struct clk_div_table *table,
+ 			       u8 width, unsigned long flags);
++long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
++				  unsigned long rate, unsigned long *prate,
++				  const struct clk_div_table *table, u8 width,
++				  unsigned long flags, unsigned int val);
+ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ 		const struct clk_div_table *table, u8 width,
+ 		unsigned long flags);
+@@ -772,6 +776,17 @@ static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 					 rate, prate, table, width, flags);
  }
  
- static int build_opp_table(struct device *dev, const struct cvb_table *table,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align = &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
- 
-+	if (!align->step_uv)
-+		align->step_uv = table->alignment.step_uv;
-+	if (!align->step_uv)
-+		return -EINVAL;
++static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
++					 unsigned long *prate,
++					 const struct clk_div_table *table,
++					 u8 width, unsigned long flags,
++					 unsigned int val)
++{
++	return divider_ro_round_rate_parent(hw, clk_hw_get_parent(hw),
++					    rate, prate, table, width, flags,
++					    val);
++}
 +
-+	if (!align->offset_uv)
-+		align->offset_uv = table->alignment.offset_uv;
-+
- 	min_mv = round_voltage(table->min_millivolts, align, UP);
- 	max_mv = round_voltage(table->max_millivolts, align, DOWN);
- 
-@@ -109,8 +117,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+ /*
+  * FIXME clock api without lock protection
   */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
- {
- 	size_t i;
- 	int ret;
-@@ -124,7 +133,8 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
- 		if (table->process_id != -1 && table->process_id != process_id)
- 			continue;
- 
--		ret = build_opp_table(dev, table, speedo_value, max_freq);
-+		ret = build_opp_table(dev, table, align, speedo_value,
-+				      max_freq);
- 		return ret ? ERR_PTR(ret) : table;
- 	}
- 
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f0779..cfa110f 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -59,8 +59,9 @@ struct cvb_table {
- 
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
 -- 
-1.9.1
+2.14.3
