@@ -1,67 +1,64 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-29-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-29-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:25:15 +0100
-Message-ID: <CAMuHMdVxgyo3FWWxHnXyoHHueq4pibUYLAd=nZJDpG2++e-8Yg@mail.gmail.com>
-Subject: Re: [RFC 28/37] clk: renesas: r8a7790: Add rwdt clock
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>
+Subject: [PATCH 1/5] clk: divider: read-only divider can propagate rate change
+Date: Fri,  5 Jan 2018 18:09:55 +0100
+Message-Id: <20180105170959.17266-2-jbrunet@baylibre.com>
+In-Reply-To: <20180105170959.17266-1-jbrunet@baylibre.com>
+References: <20180105170959.17266-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
-> the watchdog registers at any time, declare the clock as critical.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
+register shall be left un-touched, but it does not mean the clock
+should stop rate propagation if CLK_SET_RATE_PARENT is set
 
-With the critical clock handling removed (that can be done by the driver,
-if really needed)
+This is properly handled in qcom clk-regmap-divider but it was not in
+the generic divider
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk-divider.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> --- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
-> @@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
->         DEF_MOD("cmt1",                  329,   R8A7790_CLK_R),
->         DEF_MOD("usbhs-dmac0",           330,   R8A7790_CLK_HP),
->         DEF_MOD("usbhs-dmac1",           331,   R8A7790_CLK_HP),
-> +       DEF_MOD("rwdt",                  402,   R8A7790_CLK_R),
->         DEF_MOD("irqc",                  407,   R8A7790_CLK_CP),
->         DEF_MOD("intc-sys",              408,   R8A7790_CLK_ZS),
->         DEF_MOD("audio-dmac1",           501,   R8A7790_CLK_HP),
-> @@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
->  };
->
->  static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
-> +       MOD_CLK_ID(402),        /* RWDT */
->         MOD_CLK_ID(408),        /* INTC-SYS (GIC) */
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index b49942b9fe50..a851d3e04c7f 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -348,6 +348,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
+ 	struct clk_divider *divider = to_clk_divider(hw);
++	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
+ 	int bestdiv;
+ 
+ 	/* if read only, just return current value */
+@@ -356,6 +357,15 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		bestdiv &= div_mask(divider->width);
+ 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+ 			divider->width);
++
++		/* Even a read-only clock can propagate a rate change */
++		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
++			if (!hw_parent)
++				return -EINVAL;
++
++			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
++		}
++
+ 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+ 	}
+ 
+-- 
+2.14.3
