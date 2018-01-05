@@ -1,22 +1,76 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1516383795.7000.1137.camel@linux.intel.com>
-Subject: Re: [PATCH v1] HACK: earlyprintk: Allow nocfg and keep together
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Date: Fri, 19 Jan 2018 19:43:15 +0200
-In-Reply-To: <20180119173517.22474-1-andriy.shevchenko@linux.intel.com>
-References: <20180119173517.22474-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 5 Jan 2018 13:04:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+Subject: Re: [PATCH v1 5/6] clk: mediatek: update missing clock data for
+ MT7622 audsys
+Message-ID: <20180105190404.37c5gyjgoboibbrl@rob-hp-laptop>
+References: <cover.1515038387.git.ryder.lee@mediatek.com>
+ <296e97ad8720d575918657e821bb2a01a2d31c49.1515038387.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <296e97ad8720d575918657e821bb2a01a2d31c49.1515038387.git.ryder.lee@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-19 at 19:35 +0200, Andy Shevchenko wrote:
+On Thu, Jan 04, 2018 at 03:44:21PM +0800, Ryder Lee wrote:
+> Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-mt7622-aud.c  | 3 ++-
+>  include/dt-bindings/clock/mt7622-clk.h | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+> index fad7d9f..96959ad 100644
+> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+> @@ -106,6 +106,7 @@
+>  	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
+>  	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
+>  	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
+> +	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
+>  	/* AUDIO2 */
+>  	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
+>  	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+> @@ -146,7 +147,7 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+>  
+>  	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> -			       clk_data);
+> +				   clk_data);
 
-Sorry, noise.
+Drop this unrelated change.
 
-I will send a proper one soon.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+>  
+>  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>  	if (r)
+> diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+> index 3e514ed..e9d77f0 100644
+> --- a/include/dt-bindings/clock/mt7622-clk.h
+> +++ b/include/dt-bindings/clock/mt7622-clk.h
+> @@ -235,7 +235,8 @@
+>  #define CLK_AUDIO_MEM_ASRC3		43
+>  #define CLK_AUDIO_MEM_ASRC4		44
+>  #define CLK_AUDIO_MEM_ASRC5		45
+> -#define CLK_AUDIO_NR_CLK		46
+> +#define CLK_AUDIO_AFE_CONN		46
+> +#define CLK_AUDIO_NR_CLK		47
+>  
+>  /* SSUSBSYS */
+>  
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
