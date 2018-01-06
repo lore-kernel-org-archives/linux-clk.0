@@ -1,76 +1,102 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX
- USB PHY clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-21-git-send-email-david@lechnology.com>
- <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
-Date: Thu, 18 Jan 2018 13:00:22 -0600
-MIME-Version: 1.0
-In-Reply-To: <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:47092 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750837AbeAFE0Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jan 2018 23:26:24 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/7] pinctrl: sunxi: add support for pin controllers without bus gate
+Date: Sat,  6 Jan 2018 12:23:20 +0800
+Message-Id: <20180106042326.46519-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/18/2018 06:10 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> This adds a new binding for TI DA8XX USB PHY clocks. These clocks are part
->> of a syscon register called CFGCHIP3.
-> 
-> CFGCHIP2
-> 
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
-> 
->> +Examples:
->> +
->> +	cfgchip: syscon@1417c {
->> +		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
->> +		reg = <0x1417c 0x14>;
->> +
->> +		usb0_phy_clk: usb0-phy-clock {
->> +			compatible = "ti,da830-usb0-phy-clock";
->> +			#clock-cells = <0>;
->> +			clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
->> +			clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
->> +			clock-output-names = "usb0_phy_clk";
-> 
-> Probably call this "usb0_phy" to match with the input name used for
-> usb1_phy_clk?
+The Allwinner H6 pin controllers (both the main one and the CPUs one)
+have no bus gate clocks.
 
-I was planning on just dropping clock-output-names altogether actually
-since they don't really do anything useful.
+Add support for this kind of pin controllers.
 
-Also, I was considering sending a series to change the con_id for the
-PHY clocks.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+ 2 files changed, 21 insertions(+), 10 deletions(-)
 
-My current revision of the device tree bindings is looking like this:
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 4b6cb25bc796..68cd505679d9 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+ 	unsigned int hosc_div, losc_div;
+ 	struct clk *hosc, *losc;
+ 	u8 div, src;
+-	int i, ret;
++	int i, ret, clk_count;
++
++	if (pctl->desc->without_bus_gate)
++		clk_count = 2;
++	else
++		clk_count = 3;
+ 
+ 	/* Deal with old DTs that didn't have the oscillators */
+ 	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
+@@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 			goto gpiochip_error;
+ 	}
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		goto gpiochip_error;
+-	}
++	if (!desc->without_bus_gate) {
++		clk = devm_clk_get(&pdev->dev, NULL);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			goto gpiochip_error;
++		}
+ 
+-	ret = clk_prepare_enable(clk);
+-	if (ret)
+-		goto gpiochip_error;
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto gpiochip_error;
++	} else {
++		clk = NULL;
++	}
+ 
+ 	pctl->irq = devm_kcalloc(&pdev->dev,
+ 				 pctl->desc->irq_banks,
+@@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 	return 0;
+ 
+ clk_error:
+-	clk_disable_unprepare(clk);
++	if (clk)
++		clk_disable_unprepare(clk);
+ gpiochip_error:
+ 	gpiochip_remove(pctl->chip);
+ 	return ret;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 11b128f54ed2..ccb6230f0bb5 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+ 	unsigned			irq_bank_base;
+ 	bool				irq_read_needs_mux;
+ 	bool				disable_strict_mode;
++	bool				without_bus_gate;
+ };
+ 
+ struct sunxi_pinctrl_function {
+-- 
+2.14.2
 
-	usb_phy: usb-phy {
-		compatible = "ti,da830-usb-phy";
-		#phy-cells = <1>;
-		clocks = <&usb_phy_clk 0>, <&usb_phy_clk 1>;
-		clock-names = "usb20_phy", "usb11_phy";
-		status = "disabled";
-	};
-	usb_phy_clk: usb-phy-clocks {
-		compatible = "ti,da830-usb-phy-clocks";
-		#clock-cells = <1>;
-		clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
-		clock-names = "fck", "usb_refclkin", "auxclk";
-	};
-
-The clock-names = "usb20_phy", "usb11_phy" comes from the existing con_ids
-in the PHY driver's clk_get()s.
-
-However, in device tree, we are usually referring to the USB devices as
-usb0 and usb1 instead of usb20 and usb11, respectively. Figure 6-2 "USB
-Clocking Diagram" in spruh82c.pdf (AM1808 TRM) calls these clocks "CLK48"
-and "CLK48MHz from USB 2.0 PHY", so I was thinking of changing the con_ids
-(and therefore also clock-names) to "usb0_clk48" and "usb1_clk48".
