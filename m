@@ -1,71 +1,104 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21388 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752159AbeADHo1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 02:44:27 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1 4/6] dt-bindings: clock: mediatek: add "simple-mfd" in audsys documentation
-Date: Thu, 4 Jan 2018 15:44:20 +0800
-Message-ID: <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1515038387.git.ryder.lee@mediatek.com>
-References: <cover.1515038387.git.ryder.lee@mediatek.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:46377 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753897AbeAGQ1b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Jan 2018 11:27:31 -0500
+Received: by mail-wm0-f66.google.com with SMTP id r78so10207989wme.5
+        for <linux-clk@vger.kernel.org>; Sun, 07 Jan 2018 08:27:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180106050910.48070-1-icenowy@aosc.io>
+References: <20180106050910.48070-1-icenowy@aosc.io>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Sun, 7 Jan 2018 17:26:49 +0100
+Message-ID: <CAOFm3uHVsXTMPmrx2G-5vR6oiYk5Fq0qQXfGpT3NrUJwumRweQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] arm64: allwinner: h6: add the basical Allwinner H6
+ DTSI file
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "simple-mfd" to support MFD device and add a compatible string for MT2701.
+On Sat, Jan 6, 2018 at 6:09 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
+> memory map fully reworked and some high-speed peripherals (PCIe, USB
+> 3.0) introduced.
+>
+> This commit adds the basical DTSI file of it, including the clock
+> support and UART support.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 214 +++++++++++++++++++++++++++
+>  1 file changed, 214 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> new file mode 100644
+> index 000000000000..482f5cb64d07
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -0,0 +1,214 @@
+> +/*
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This file is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- .../bindings/arm/mediatek/mediatek,audsys.txt       | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Icenowy,
+This is a very long legalese indeed!
+Do you mind using the new concise SPDX tags instead here and in the
+rest of your patch?
+See Thomas doc [1]
+Thanks!
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-index 9b8f578..6e97552 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-@@ -6,17 +6,25 @@ The MediaTek AUDSYS controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be one of:
--	- "mediatek,mt7622-audsys", "syscon"
-+	- "mediatek,mt2701-audsys", "syscon", "simple-mfd"
-+	- "mediatek,mt7622-audsys", "syscon", "simple-mfd"
- - #clock-cells: Must be 1
- 
- The AUDSYS controller uses the common clk binding from
- Documentation/devicetree/bindings/clock/clock-bindings.txt
- The available clocks are defined in dt-bindings/clock/mt*-clk.h.
- 
-+See ../sound/mt2701-afe-pcm.txt for details about required subnode.
-+
- Example:
- 
--audsys: audsys@11220000 {
--	compatible = "mediatek,mt7622-audsys", "syscon";
--	reg = <0 0x11220000 0 0x1000>;
--	#clock-cells = <1>;
--};
-+	audsys: audio-subsystem@11220000 {
-+		compatible = "mediatek,mt2701-audsys", "syscon", "simple-mfd";
-+		reg = <0 0x11220000 0 0x1000>;
-+		#clock-cells = <1>;
-+
-+		afe: audio-controller {
-+			compatible = "mediatek,mt2701-audio";
-+			...
-+		};
-+	};
+[1] https://lkml.org/lkml/2017/12/28/323
 -- 
-1.9.1
-
+Cordially
+Philippe Ombredanne
