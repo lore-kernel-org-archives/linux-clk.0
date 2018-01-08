@@ -1,161 +1,185 @@
 Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-3-git-send-email-david@lechnology.com>
- <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
 From: David Lechner <david@lechnology.com>
-Message-ID: <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
-Date: Fri, 12 Jan 2018 09:25:12 -0600
-MIME-Version: 1.0
-In-Reply-To: <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 24/44] ARM: da850: add new clock init using common clock framework
+Date: Sun,  7 Jan 2018 20:17:23 -0600
+Message-Id: <1515377863-20358-25-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/12/2018 03:21 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> This adds a new driver for mach-davinci PLL clocks. This is porting the
->> code from arch/arm/mach-davinci/clock.c to the common clock framework.
->> Additionally, it adds device tree support for these clocks.
->>
->> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
->> compile errors until the clock code in arch/arm/mach-davinci is removed.
->>
->> Note: although there are similar clocks for TI Keystone we are not able
->> to share the code for a few reasons. The keystone clocks are device tree
->> only and use legacy one-node-per-clock bindings. Also the register
->> layouts are a bit different, which would add even more if/else mess
->> to the keystone clocks. And the keystone PLL driver doesn't support
->> setting clock rates.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
+This adds the new board-specfic clock init in mach-davinci/da850.c using
+the new common clock framework drivers.
 
->> +
->> +#define PLLM_MASK		0x1f
->> +#define PREDIV_RATIO_MASK	0x1f
-> 
-> May be use the mode modern GENMASK()?
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-I haven't seen that one before. Thanks.
+Some CFGCHIP* #defines are removed since they are included in the
+linux/mfd/da8xx-cfgchip.h header file.
 
-...
+Also clean up the #includes since we are adding some here.
 
->> +static unsigned long davinci_pll_clk_recalc(struct clk_hw *hw,
->> +					    unsigned long parent_rate)
->> +{
->> +	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
->> +	unsigned long rate = parent_rate;
->> +	u32 prediv, mult, postdiv;
->> +
->> +	prediv = readl(pll->base + PREDIV) & PREDIV_RATIO_MASK;
->> +	mult = readl(pll->base + PLLM) & PLLM_MASK;
->> +	postdiv = readl(pll->base + POSTDIV) & POSTDIV_RATIO_MASK;
-> 
-> Shouldn't we check if the pre and post dividers are enabled before using
-> them?
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/da850.c | 74 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 61 insertions(+), 13 deletions(-)
 
-Indeed.
-
-> 
->> +
->> +	rate /= prediv + 1;
->> +	rate *= mult + 1;
->> +	rate /= postdiv + 1;
->> +
->> +	return rate;
->> +}
->> +
-
-...
-
-> 
-> PLL output on DA850 must never be below 300MHz or above 600MHz (see
-> datasheet table "Allowed PLL Operating Conditions"). Does this take care
-> of that? Thats one of the main reasons I recall I went with some
-> specific values of prediv, pllm and post div in
-> arch/arm/mach-davinci/da850.c
-
-Apparently, I missed this requirement. It looks like I am going to have to
-rework things so that there is some coordination between the PLL and the
-PLLDIV clocks in order to get the < 300MHz operating points.
-
-...
-
->> +
->> +	divider->reg = base + OSCDIV;
->> +	divider->width = OSCDIV_RATIO_WIDTH;
-> 
-> can you write OD1EN of OSCDIV here? I guess the reset default is 1 so
-> you didnt need to do that. But not doing exposes us to settings that
-> bootloader left us in.
-> 
-
-It looks like I am going to have to make a custom implementation for parts
-of this clock anyway, so I will probably just make new enable/disable
-callbacks that set both OSCDIV_OD1EN and CKEN_OBSCLK.
-
->> +
->> +	clk = clk_register_composite(NULL, name, parent_names, num_parents,
->> +				     &mux->hw, &clk_mux_ops,
->> +				     &divider->hw, &clk_divider_ops,
->> +				     &gate->hw, &clk_gate_ops, 0);
->> +	if (IS_ERR(clk)) {
->> +		kfree(divider);
->> +		kfree(gate);
->> +		kfree(mux);
->> +	}
->> +
->> +	return clk;
->> +}
->> +
->> +struct clk *
->> +davinci_pll_divclk_register(const struct davinci_pll_divclk_info *info,
->> +			    void __iomem *base)
->> +{
->> +	const struct clk_ops *divider_ops = &clk_divider_ops;
-> 
-> setting the sysclk divider requires GOSTAT handling apart from setting
-> the divider value. So I think .set_rate ops above wont work. Other ops
-> can be used, I guess. So we need a private structure here.
-> 
-> Can you port over davinci_set_sysclk_rate() too? I understand you cannot
-> test it due to lack of cpufreq support in DT, but I can help testing there.
-> 
-> Or leave .set_rate NULL and it can be added later.
-
-Yes, I noticed that I missed this after I submitted this series. And I
-will have to rework things to coordinate with the PLL as mentioned above.
-
-FYI, I do have cpufreq-dt working, although the LEGO EV3 has a fixed 1.2V
-regulator, so I am limited in what I can test. Basically, I can only switch
-between 300MHz and 375MHz according to the datasheets. The chip is technically
-the 456MHz version. What would happen if I ran it faster or slower with the
-wrong voltage?
-
-...
-
->> +
->> +	child = of_get_child_by_name(node, "auxclk");
->> +	if (child && of_device_is_available(child)) {
->> +		char child_name[MAX_NAME_SIZE];
->> +
->> +		snprintf(child_name, MAX_NAME_SIZE, "%s_aux_clk", name);
->> +
->> +		clk = davinci_pll_aux_clk_register(child_name, parent_name, base);
->> +		if (IS_ERR(clk))
->> +			pr_warn("%s: failed to register %s (%ld)\n", __func__,
->> +				child_name, PTR_ERR(clk));
->> +		else
->> +			of_clk_add_provider(child, of_clk_src_simple_get, clk);
->> +	}
-> 
-> davinci_pll_obs_clk_register() should also be handled here?
-
-I omitted it because no one is using it (same reason I left it out of the
-device tree bindings). We can certainly add it, though.
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 34117e61..4804096 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -11,39 +11,44 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
++#include <linux/cpufreq.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
++#include <linux/log2.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_device.h>
+-#include <linux/cpufreq.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
+-#include <mach/da8xx.h>
+ #include <mach/cpufreq.h>
++#include <mach/cputype.h>
++#include <mach/da8xx.h>
++#include <mach/irqs.h>
+ #include <mach/pm.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ #define DA850_PLL1_BASE		0x01e1a000
+ #define DA850_TIMER64P2_BASE	0x01f0c000
+ #define DA850_TIMER64P3_BASE	0x01f0d000
+ 
+ #define DA850_REF_FREQ		24000000
+ 
+-#define CFGCHIP3_ASYNC3_CLKSRC	BIT(4)
+-#define CFGCHIP3_PLL1_MASTER_LOCK	BIT(5)
+-#define CFGCHIP0_PLL_MASTER_LOCK	BIT(4)
+-
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate);
+ static int da850_round_armrate(struct clk *clk, unsigned long rate);
+ static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
+@@ -583,6 +588,7 @@ static struct clk_lookup da850_clks[] = {
+ 	CLK("ecap.2",		"fck",		&ecap2_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1170,6 +1176,7 @@ int da850_register_cpufreq(char *async_clk)
+ 	return platform_device_register(&da850_cpufreq_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	int ret = 0, diff;
+@@ -1232,12 +1239,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
+ 
+ 	return 0;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #else
+ int __init da850_register_cpufreq(char *async_clk)
+ {
+ 	return 0;
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return -EINVAL;
+@@ -1252,6 +1261,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return clk->rate;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #endif
+ 
+ /* VPIF resource, platform data */
+@@ -1395,6 +1405,44 @@ void __init da850_init(void)
+ 
+ void __init da850_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0, *pll1, *psc0, *psc1;
++	struct clk *clk;
++	struct clk_hw *parent;
++
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
++	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
++	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
++	da850_pll_clk_init(pll0, pll1);
++	clk = clk_register_mux(NULL, "async3",
++		(const char * const[]){ "pll0_sysclk2", "pll1_sysclk2" },
++		2, 0, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG),
++		ilog2(CFGCHIP3_ASYNC3_CLKSRC), 1, 0, NULL);
++	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
++	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
++	if (parent)
++		clk_set_parent(clk, parent->clk);
++	else
++		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
++	da850_psc_clk_init(psc0, psc1);
++	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
++	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, "timer0", NULL);
++	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
++	clk_register_clkdev(clk, "rmii", NULL);
++	clk = clk_register_gate(NULL, "ehrpwm_tbclk", "ehrpwm", 0,
++				DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG),
++				ilog2(CFGCHIP1_TBCLKSYNC), 0, NULL);
++	clk_register_clkdev(clk, "tbclk", "ehrpwm.0");
++	clk_register_clkdev(clk, "tbclk", "ehrpwm.1");
++#else
+ 	davinci_clk_init(da850_clks);
++#endif
+ 	davinci_timer_init();
+ }
+-- 
+2.7.4
