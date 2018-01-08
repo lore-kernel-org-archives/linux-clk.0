@@ -1,49 +1,87 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH v3 18/34] clk: mvebu: change dove_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:57 +0000
-Message-Id: <1514835793-1104-19-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com>
+ <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
+Date: Mon, 8 Jan 2018 10:29:08 -0600
+MIME-Version: 1.0
+In-Reply-To: <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On 01/08/2018 08:00 AM, Sekhar Nori wrote:
+> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>> This adds a new binding for the PLL IP blocks in the mach-davinci family
+>> of processors. Currently, only the SYSCLKn and AUXCLK outputs are needed,
+>> but in the future additional child nodes could be added for OBSCLK and
+>> BPDIV.
+>>
+>> Note: Although these PLL controllers are very similar to the TI Keystone
+>> SoCs, we are not re-using those bindings. The Keystone bindings use a
+>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+> 
+> Not sure what is meant by "legacy one-node-per-clock binding"
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+It's a term I picked up from of_clk_detect_critical()
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
----
- drivers/clk/mvebu/dove-divider.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  * Do not use this function. It exists only for legacy Device Tree
+  * bindings, such as the one-clock-per-node style that are outdated.
+  * Those bindings typically put all clock data into .dts and the Linux
+  * driver has no clock data, thus making it impossible to set this flag
+  * correctly from the driver. Only those drivers may call
+  * of_clk_detect_critical from their setup functions.
 
-diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
-index 234ba0a..7704b5e 100644
---- a/drivers/clk/mvebu/dove-divider.c
-+++ b/drivers/clk/mvebu/dove-divider.c
-@@ -117,7 +117,7 @@ static unsigned long dove_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	divider = dove_calc_divider(dc, rate, parent_rate, false);
- 	if (divider < 0)
--		return divider;
-+		return 0;
- 
- 	rate = DIV_ROUND_CLOSEST(parent_rate, divider);
- 
--- 
-2.7.4
+> 
+>> have a slightly different PLL register layout and a number of quirks that
+>> can't be handled by the existing bindings, so the keystone bindings could
+>> not be used as-is anyway.
+> 
+> Right, I think different register layout between the processors is the
+> main reason for a new driver. This should be sufficient reason IMO.
+> 
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>   .../devicetree/bindings/clock/ti/davinci/pll.txt   | 47 ++++++++++++++++++++++
+>>   1 file changed, 47 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>> new file mode 100644
+>> index 0000000..99bf5da
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>> @@ -0,0 +1,47 @@
+>> +Binding for TI DaVinci PLL Controllers
+>> +
+>> +The PLL provides clocks to most of the components on the SoC. In addition
+>> +to the PLL itself, this controller also contains bypasses, gates, dividers,
+>> +an multiplexers for various clock signals.
+>> +
+>> +Required properties:
+>> +- compatible: shall be one of:
+>> +	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>> +	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+> 
+> These PLLs are same IP so they should use the same compatible. You can
+> initialize both PLLs for DA850 based on the same compatible.
+> 
+
+But they are not exactly the same. For example, PLL0 has 7 PLLDIV clocks while
+PLL1 only has 3. PLL0 has PREDIV while PLL1 does not. PLL0 has certain SYSCLKs
+that are fixed-ratio but PLL1 does not have any of these. There are even more
+differences, but these are the ones we are actually using.
+
+So, if we use the same compatible, we either have to come up with device tree
+bindings to describe all of this (yuck) or I suppose we can look at the REVID
+register to electronically determine exactly what we have. I went with the
+simpler option of just creating two different compatible strings.
