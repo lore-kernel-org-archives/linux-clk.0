@@ -1,165 +1,191 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Rob Herring <robh@kernel.org>
-Cc: maxime.ripard@free-electrons.com, airlied@linux.ie, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-Date: Wed, 03 Jan 2018 22:32:26 +0100
-Message-ID: <1645801.yZU0HLsLbk@jernej-laptop>
-In-Reply-To: <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-7-jernej.skrabec@siol.net> <20180103202154.eeajt3234w3adqjq@rob-hp-laptop>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <3625461.aU9oqMdpo3@jernej-laptop>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+ <20171230210203.24115-2-jernej.skrabec@siol.net> <CAGb2v67B23yUdACijKxosfFG_os5WndiBKX02DGA4PFUkxDx9g@mail.gmail.com>
+ <3625461.aU9oqMdpo3@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 8 Jan 2018 17:19:47 +0800
+Message-ID: <CAGb2v6463B-JVw5A9C39iiuo7Xzj3Bq06m6VzdAUqr0b-S91MQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 01/11] clk: sunxi-ng: Don't set k if
+ width is 0 for nkmp plls
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Archit Taneja <architt@codeaurora.org>, a.hajda@samsung.com,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jose.Abreu@synopsys.com,
+	Neil Armstrong <narmstrong@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+On Fri, Jan 5, 2018 at 3:28 AM, Jernej =C5=A0krabec <jernej.skrabec@siol.ne=
+t> wrote:
+> Hi,
+>
+> Dne =C4=8Detrtek, 04. januar 2018 ob 15:45:18 CET je Chen-Yu Tsai napisal=
+(a):
+>> On Sun, Dec 31, 2017 at 5:01 AM, Jernej Skrabec <jernej.skrabec@siol.net=
+>
+> wrote:
+>> > For example, A83T have nmp plls which are modelled as nkmp plls. Since=
+ k
+>> > is not specified, it has offset 0, shift 0 and lowest value 1. This
+>> > means that LSB bit is always set to 1, which may change clock rate.
+>> >
+>> > Fix that by applying k factor only if k width is greater than 0.
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
+>> >  1 file changed, 13 insertions(+), 8 deletions(-)
+>> >
+>> > diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c
+>> > b/drivers/clk/sunxi-ng/ccu_nkmp.c index e58c95787f94..709f528af2b3 100=
+644
+>> > --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
+>> > +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+>> > @@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk=
+_hw
+>> > *hw,>
+>> >                                         unsigned long parent_rate)
+>> >
+>> >  {
+>> >
+>> >         struct ccu_nkmp *nkmp =3D hw_to_ccu_nkmp(hw);
+>> >
+>> > -       unsigned long n, m, k, p;
+>> > +       unsigned long n, m, k =3D 1, p;
+>> >
+>> >         u32 reg;
+>> >
+>> >         reg =3D readl(nkmp->common.base + nkmp->common.reg);
+>> >
+>> > @@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct
+>> > clk_hw *hw,>
+>> >         if (!n)
+>> >
+>> >                 n++;
+>> >
+>> > -       k =3D reg >> nkmp->k.shift;
+>> > -       k &=3D (1 << nkmp->k.width) - 1;
+>> > -       k +=3D nkmp->k.offset;
+>> > -       if (!k)
+>> > -               k++;
+>> > +       if (nkmp->k.width) {
+>> > +               k =3D reg >> nkmp->k.shift;
+>> > +               k &=3D (1 << nkmp->k.width) - 1;
+>> > +               k +=3D nkmp->k.offset;
+>> > +               if (!k)
+>> > +                       k++;
+>> > +       }
+>>
+>> The conditional shouldn't be necessary. With nkmp->k.width =3D 0,
+>> you'd simply get k & 0, which is 0, which then gets bumped up to 1,
+>> unless k.offset > 1, which would be a bug.
+>>
+>> >         m =3D reg >> nkmp->m.shift;
+>> >         m &=3D (1 << nkmp->m.width) - 1;
+>> >
+>> > @@ -153,12 +155,15 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw,
+>> > unsigned long rate,>
+>> >         reg =3D readl(nkmp->common.base + nkmp->common.reg);
+>> >         reg &=3D ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.s=
+hift);
+>> >
+>> > -       reg &=3D ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.s=
+hift);
+>> > +       if (nkmp->k.width)
+>> > +               reg &=3D ~GENMASK(nkmp->k.width + nkmp->k.shift - 1,
+>> > +                               nkmp->k.shift);
+>> >
+>> >         reg &=3D ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.s=
+hift);
+>> >         reg &=3D ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.s=
+hift);
+>> >
+>> >         reg |=3D (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+>> >
+>> > -       reg |=3D (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+>> > +       if (nkmp->k.width)
+>> > +               reg |=3D (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+>>
+>> I think a better way would be
+>>
+>>         reg |=3D ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) &
+>>                GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift)=
+;
+>>
+>> And do this for all the factors, not just k. This pattern is what
+>> regmap_update_bits does, which seems much safer. I wonder what
+>> GENMASK() with a negative value would do though...
+>
+> You're right, GENMASK(-1, 0) equals 0 (calculated by hand, not tested). T=
+his
+> seems much more elegant solution.
+>
+> Semi-related question: All nmp PLLs have much wider N range than real nkm=
+p
+> PLLs. This causes integer overflow when using nkmp formula from datasheet=
+.
+> Usually, N is 1-256 for nmp PLLs, which means that for very high N factor=
+s, it
+> overflows. This also causes issue that M factor is never higher than 1.
 
-Dne sreda, 03. januar 2018 ob 21:21:54 CET je Rob Herring napisal(a):
-> On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
-> > This commit adds all necessary compatibles and descriptions needed to
-> > implement A83T HDMI pipeline.
-> > 
-> > Mixer is already properly described, so only compatible is added.
-> > 
-> > However, A83T TCON1, which is connected to HDMI, doesn't have channel 0,
-> > contrary to all TCONs currently described. Because of that, TCON
-> > documentation is extended.
-> > 
-> > A83T features Synopsys DW HDMI controller with a custom PHY which looks
-> > like Synopsys Gen2 PHY with few additions. Since there is no
-> > documentation, needed properties were found out through experimentation
-> > and reading BSP code.
-> > 
-> > At the end, example is added for newer SoCs, which features DE2 and DW
-> > HDMI.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  .../bindings/display/sunxi/sun4i-drm.txt           | 188
-> >  ++++++++++++++++++++- 1 file changed, 181 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> > 9f073af4c711..3eca258096a5 100644
-> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > 
-> > @@ -64,6 +64,40 @@ Required properties:
-> >      first port should be the input endpoint. The second should be the
-> >      output, usually to an HDMI connector.
-> > 
-> > +DWC HDMI TX Encoder
-> > +-----------------------------
-> > +
-> > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-> > +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
-> > +
-> > +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-> > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-> > +following device-specific properties.
-> > +
-> > +Required properties:
-> > +
-> > +  - compatible: value must be one of:
-> > +    * "allwinner,sun8i-a83t-dw-hdmi"
-> > +  - reg: two pairs of base address and size of memory-mapped region,
-> > first
-> > +    for controller and second for PHY
-> > +    registers.
-> 
-> Seems like the phy should be a separate node and use the phy binding.
-> You can use the phy binding even if you don't use the kernel phy
-> framework...
+Sounds like we can't use u8 for storing the factors. At least the
+intermediate values we use to calculate the rates.
 
-Unfortunately, it's not so straighforward. Phy is actually accessed through 
-I2C implemented in HDMI controller. Second memory region in this case has 
-small influence on phy. However, it has big influence on controller. For 
-example, magic number has to be written in one register in second memory 
-region in order to unlock read access to any register from first memory region 
-(controller). However, they shouldn't be merged to one region, because first 
-memory region requires byte access while second memory region can be accessed 
-per byte or word.
+>
+> I was wondering, if patch would be acceptable which would change this for=
+mula:
+>
+> RATE =3D (24MHz * N * K) / (M * P)
+>
+> to this:
+>
+> RATE ((24MHz / M) * N * K) / P
+>
+> I checked all M factors and are all in 1-4 or 1-2 range, which means it
+> wouldn't have any impact for real nkmp PLLs when parent is 24 MHz clock w=
+hich
+> is probably always.
+>
+> What do you think?
 
-To complicate things more, later I want to add support for another SoC which 
-has same glue layer (unlocking read access, etc.) and uses memory mapped phy 
-registers in second memory region.
+I think this is acceptable. M is normally the pre-divider, so this
+actually fits how the hardware works, including possible rounding
+errors.
 
-I think current binding is the least complicated way to represent this.
+ChenYu
 
-> 
-> > +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-> > +  - interrupts: HDMI interrupt number
-> > +  - clocks: phandles to the clocks feeding the HDMI encoder
-> > +    * iahb: the HDMI bus clock
-> > +    * isfr: the HDMI register clock
-> > +    * tmds: the HDMI tmds clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandles to the reset controllers driving the encoder
-> > +    * ctrl: the reset line for the controller
-> > +    * phy: the reset line for the PHY
-> > +  - reset-names: the reset names mentioned above
-> > +
-> > +  - ports: A ports node with endpoint definitions as defined in
-> > +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> > +    first port should be the input endpoint. The second should be the
-> > +    output, usually to an HDMI connector.
-> > +
-> > 
-> >  TV Encoder
-> >  ----------
-> > 
-> > @@ -94,18 +128,17 @@ Required properties:
-> >     * allwinner,sun7i-a20-tcon
-> >     * allwinner,sun8i-a33-tcon
-> >     * allwinner,sun8i-a83t-tcon-lcd
-> > 
-> > +   * allwinner,sun8i-a83t-tcon-tv
-> > 
-> >     * allwinner,sun8i-v3s-tcon
-> >   
-> >   - reg: base address and size of memory-mapped region
-> >   - interrupts: interrupt associated to this IP
-> > 
-> > - - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> > 
-> > + - clocks: phandles to the clocks feeding the TCON. One is needed:
-> >     - 'ahb': the interface clocks
-> > 
-> > -   - 'tcon-ch0': The clock driving the TCON channel 0
-> > 
-> >   - resets: phandles to the reset controllers driving the encoder
-> >   
-> >     - "lcd": the reset line for the TCON channel 0
-> >   
-> >   - clock-names: the clock names mentioned above
-> >   - reset-names: the reset names mentioned above
-> > 
-> > - - clock-output-names: Name of the pixel clock created
-> > 
-> >  - ports: A ports node with endpoint definitions as defined in
-> >  
-> >    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> > 
-> > @@ -119,11 +152,31 @@ Required properties:
-> >    channel the endpoint is associated to. If that property is not
-> >    present, the endpoint number will be used as the channel number.
-> > 
-> > -On SoCs other than the A33 and V3s, there is one more clock required:
-> > +Following compatibles:
-> > + * allwinner,sun4i-a10-tcon
-> > + * allwinner,sun5i-a13-tcon
-> > + * allwinner,sun6i-a31-tcon
-> > + * allwinner,sun6i-a31s-tcon
-> > + * allwinner,sun7i-a20-tcon
-> > + * allwinner,sun8i-a33-tcon
-> > + * allwinner,sun8i-a83t-tcon-lcd
-> > + * allwinner,sun8i-v3s-tcon
-> > +have additional required properties:
-> > + - 'tcon-ch0': The clock driving the TCON channel 0
-> 
-> tcon-ch0 is a clock name, not a property.
-
-right.
-
-Best regards,
-Jernej
+> I discovered that when I tried to set A83T PLL_VIDEO to 346.5 MHz which i=
+s
+> possible only when above formula is changed.
+>
+> Best regards,
+> Jernej
+>
+>>
+>> ChenYu
+>>
+>> >         reg |=3D (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+>> >         reg |=3D ilog2(_nkmp.p) << nkmp->p.shift;
+>> >
+>> > --
+>> > 2.15.1
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
