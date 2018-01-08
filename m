@@ -1,85 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:40073 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751256AbeAZU5o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Jan 2018 15:57:44 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
-Date: Sat, 27 Jan 2018 04:57:33 +0800
-Message-ID: <3527360.oZpfb5Pa1p@ice-x220i>
-In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
-References: <20180119231735.61504-1-icenowy@aosc.io> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 08/44] clk: davinci: Add platform information for TI DM646x PLL
+Date: Sun,  7 Jan 2018 20:17:07 -0600
+Message-Id: <1515377863-20358-9-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018年1月25日星期四 CST 下午11:35:20，Maxime Ripard 写道：
-> Hi,
-> 
-> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
-> > 
-> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9
-> > > > SoC.
-> > > > 
-> > > > The same die is packaged differently, come with different co-packaged
-> > > > DRAM or shipped with different SDK; and then made many model names:
-> > > > F23,
-> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs
-> > > > all
-> > > > share a common feature set and are packaged similarly (eLQFP128 for
-> > > > SoCs
-> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > > > functionality hidden on the QFN88 models (except DRAM interface not
-> > > > exported), it's not clever to differentiate them. So I will use suniv
-> > > > as
-> > > > common name of all these SoCs.
-> > > 
-> > > Where is that suniv prefix coming from?
-> > 
-> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK
-> > and "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
-> 
-> Do you have a link to that BSP?
+This adds platform-specific declarations for the PLL clocks on TI
+DaVinci 646x based systems.
 
-https://pan.baidu.com/s/1rar5YtI
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/pll-dm646x.c | 44 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h      |  1 +
+ 3 files changed, 46 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm646x.c
 
-There's Melis (F1C100s) and Linux (F1C600) BSP.
-
-> 
-> > > You should really answer two questions here:
-> > >   - Are you able to predict whether you'll find an SoC part of that
-> > >   
-> > >     family in the future that derives a bit and will need a compatible
-> > >     of its own?
-> > >   
-> > >   - Are you able to predict which quirks we'll need along the way to
-> > >   
-> > >     support all the SoCs you've listed there?
-> > > 
-> > > If you can't answer yes to both these questions, with a 100%
-> > > certainty, then you'll need a SoC name in the compatible.
-> > > 
-> > > Which doesn't prevent you from sharing as much as possible the DT like
-> > > we did between the A10s and the A13 for example.
-> > 
-> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals
-> > known should go through suniv.dtsi.
-> 
-> Sorry if I wasn't really clear. You can totally keep the current DT
-> structure if that makes sense (and judging by what you're saying, it
-> does.), but the compatibles should have the SoC name in it.
-> 
-> Maxime
-
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 59d8ab6..d471386 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -7,4 +7,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
++obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+new file mode 100644
+index 0000000..9d5bdaf
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM646X
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_divclk_info dm646x_pll1_divclk_info[] __initconst = {
++	DIVCLK(1, pll1_sysclk1, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(2, pll1_sysclk2, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(3, pll1_sysclk3, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(4, pll1_sysclk4, pll1, 0),
++	DIVCLK(5, pll1_sysclk5, pll1, 0),
++	DIVCLK(6, pll1_sysclk6, pll1, 0),
++	DIVCLK(7, pll1_sysclk7, pll1, 0),
++	DIVCLK(8, pll1_sysclk8, pll1, 0),
++	DIVCLK(9, pll1_sysclk9, pll1, 0),
++	{ }
++};
++
++static const struct davinci_pll_divclk_info dm646x_pll2_divclk_info[] __initconst = {
++	DIVCLK(1, pll2_sysclk1, pll2, 0),
++	{ }
++};
++
++void __init dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
++{
++	const struct davinci_pll_divclk_info *info;
++
++	davinci_pll_clk_register("pll1", "ref_clk", pll1);
++	for (info = dm646x_pll1_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll1);
++	davinci_pll_bpdiv_clk_register("pll1_sysclkbp", "ref_clk", pll1);
++	davinci_pll_aux_clk_register("pll1_aux_clk", "ref_clk", pll1);
++
++	davinci_pll_clk_register("pll2_clk", "ref_clk", pll2);
++	for (info = dm646x_pll2_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll2);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 535990a..d495de7 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -14,5 +14,6 @@ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
+ void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
++void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
