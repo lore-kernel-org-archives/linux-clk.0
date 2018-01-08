@@ -1,150 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:34735 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933107AbeAKNVz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 08:21:55 -0500
-Date: Thu, 11 Jan 2018 21:21:06 +0800
-In-Reply-To: <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
-References: <20180106042326.46519-1-icenowy@aosc.io> <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin controllers without bus gate
-To: linux-arm-kernel@lists.infradead.org,
-        Andre Przywara <andre.przywara@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 23/44] ARM: da830: add new clock init using common clock framework
+Date: Sun,  7 Jan 2018 20:17:22 -0600
+Message-Id: <1515377863-20358-24-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds the new board-specfic clock init in mach-davinci/da830.c using
+the new common clock framework drivers.
 
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-于 2018年1月11日 GMT+08:00 下午7:48:40, Andre Przywara <andre.przywara@arm.com> 写到:
->Hi,
->
->another take to avoid this patch at all, I just remembered this from an
->IRC discussion before:
->
->On 06/01/18 04:23, Icenowy Zheng wrote:
->> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->> have no bus gate clocks.
->
->I don't think this is true. The pin controller *needs* an APB clock,
->it's just not gate-able or not exposed or documented.
->The "system bus tree" on page 90 in the manual shows that the "GPIO"
->block is located on the APB1 bus.
->So can't we just reference this apb clock directly? That would be much
->cleaner, "more" correct and require less changes: "The best patch is no
->patch":
+Also clean up the #includes since we are adding some here.
 
-I can accept this. (In fact I have considered this, but
-I don't dare to directly use bus clock in a device, as it's not
-exported before.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/da830.c | 41 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-Maxime, Chen-Yu, can you agree the following code?
-
->
->	clocks = <&ccu APB1>, <&osc24M>, <&osc32k>;
->	/* or whatever this APB clock is actually called. */
->	clock-names = "apb", "hosc", "losc";
->
->Cheers,
->Andre.
->
->> 
->> Add support for this kind of pin controllers.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30
->++++++++++++++++++++----------
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>  2 files changed, 21 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> index 4b6cb25bc796..68cd505679d9 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct
->sunxi_pinctrl *pctl,
->>  	unsigned int hosc_div, losc_div;
->>  	struct clk *hosc, *losc;
->>  	u8 div, src;
->> -	int i, ret;
->> +	int i, ret, clk_count;
->> +
->> +	if (pctl->desc->without_bus_gate)
->> +		clk_count = 2;
->> +	else
->> +		clk_count = 3;
->>  
->>  	/* Deal with old DTs that didn't have the oscillators */
->>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") !=
->3)
->> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct
->platform_device *pdev,
->>  			goto gpiochip_error;
->>  	}
->>  
->> -	clk = devm_clk_get(&pdev->dev, NULL);
->> -	if (IS_ERR(clk)) {
->> -		ret = PTR_ERR(clk);
->> -		goto gpiochip_error;
->> -	}
->> +	if (!desc->without_bus_gate) {
->> +		clk = devm_clk_get(&pdev->dev, NULL);
->> +		if (IS_ERR(clk)) {
->> +			ret = PTR_ERR(clk);
->> +			goto gpiochip_error;
->> +		}
->>  
->> -	ret = clk_prepare_enable(clk);
->> -	if (ret)
->> -		goto gpiochip_error;
->> +		ret = clk_prepare_enable(clk);
->> +		if (ret)
->> +			goto gpiochip_error;
->> +	} else {
->> +		clk = NULL;
->> +	}
->>  
->>  	pctl->irq = devm_kcalloc(&pdev->dev,
->>  				 pctl->desc->irq_banks,
->> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct
->platform_device *pdev,
->>  	return 0;
->>  
->>  clk_error:
->> -	clk_disable_unprepare(clk);
->> +	if (clk)
->> +		clk_disable_unprepare(clk);
->>  gpiochip_error:
->>  	gpiochip_remove(pctl->chip);
->>  	return ret;
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> index 11b128f54ed2..ccb6230f0bb5 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>  	unsigned			irq_bank_base;
->>  	bool				irq_read_needs_mux;
->>  	bool				disable_strict_mode;
->> +	bool				without_bus_gate;
->>  };
->>  
->>  struct sunxi_pinctrl_function {
->> 
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 350d767..cbb351d 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -8,23 +8,29 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
++#include <mach/irqs.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ /* Offsets of the 8 compare registers on the da830 */
+ #define DA830_CMP12_0		0x60
+ #define DA830_CMP12_1		0x64
+@@ -37,6 +43,7 @@
+ 
+ #define DA830_REF_FREQ		24000000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll0_data = {
+ 	.num		= 1,
+ 	.phys_base	= DA8XX_PLL0_BASE,
+@@ -432,6 +439,7 @@ static struct clk_lookup da830_clks[] = {
+ 	CLK(NULL,		"rmii",		&rmii_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1223,6 +1231,27 @@ void __init da830_init(void)
+ 
+ void __init da830_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0, *psc0, *psc1;
++	struct clk *clk;
++
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
++	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
++	da830_pll_clk_init(pll0);
++	da830_psc_clk_init(psc0, psc1);
++	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
++	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, "timer0", NULL);
++	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
++	clk_register_clkdev(clk, "rmii", NULL);
++#else
+ 	davinci_clk_init(da830_clks);
++#endif
+ 	davinci_timer_init();
+ }
+-- 
+2.7.4
