@@ -1,40 +1,80 @@
-Return-Path: <shawn.guo@linaro.org>
-Return-Path: <shawn.guo@linaro.org>
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jianguo Sun <sunjianguo1@huawei.com>,
-	linux-clk@vger.kernel.org,
-	project-aspen-dev@linaro.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH 3/5] clk: hi3798cv200: add support for HISTB_USB2_OTG_UTMI_CLK
-Date: Wed, 24 Jan 2018 19:48:25 +0800
-Message-Id: <1516794507-5607-4-git-send-email-shawn.guo@linaro.org>
-In-Reply-To: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
-References: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<michal.simek@xilinx.com>, <linux-clk@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Jolly Shah <jollys@xilinx.com>, Tejas Patel <tejasp@xilinx.com>, Shubhrajyoti
+ Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [RFC PATCH 1/2] drivers: clk: Add clk_get_children support
+Date: Mon, 8 Jan 2018 14:16:36 -0800
+Message-ID: <1515449797-5629-2-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
+References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock HISTB_USB2_OTG_UTMI_CLK is defined by device tree bindings in
-include/dt-bindings/clock/histb-clock.h, but hasn't been supported by
-hi3798cv200 clock driver.  Let's add the support for it.
+This API helps to determine the users for any clock.
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Signed-off-by: Tejas Patel <tejasp@xilinx.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
- drivers/clk/hisilicon/crg-hi3798cv200.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk.c            | 28 ++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 29 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index d7d1ba0153ec..6017ade0cd92 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -161,6 +161,8 @@
- 		CLK_SET_RATE_PARENT, 0xb8, 1, 0 },
- 	{ HISTB_USB2_UTMI_CLK, "clk_u2_utmi", "60m",
- 		CLK_SET_RATE_PARENT, 0xb8, 5, 0 },
-+	{ HISTB_USB2_OTG_UTMI_CLK, "clk_u2_otg_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 3, 0 },
- 	{ HISTB_USB2_PHY1_REF_CLK, "clk_u2_phy1_ref", "24m",
- 		CLK_SET_RATE_PARENT, 0xbc, 0, 0 },
- 	{ HISTB_USB2_PHY2_REF_CLK, "clk_u2_phy2_ref", "24m",
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b56c11f..7488787 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -258,6 +258,34 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_parent);
+ 
++static unsigned int sibling;
++
++static void clk_show_subtree(struct clk_core *c,
++			     int level)
++{
++	struct clk_core *child;
++
++	if (!c)
++		return;
++
++	if (level == 1)
++		sibling++;
++
++	hlist_for_each_entry(child, &c->children, child_node)
++		clk_show_subtree(child, level + 1);
++}
++
++unsigned int clk_get_children(char *name)
++{
++	struct clk_core *core;
++	struct clk *pclk = __clk_lookup(name);
++
++	sibling = 0;
++	core = pclk->core;
++	clk_show_subtree(core, 0);
++	return sibling;
++}
++
+ static struct clk_core *__clk_lookup_subtree(const char *name,
+ 					     struct clk_core *core)
+ {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7c925e6..8191a32a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -743,6 +743,7 @@ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
+ unsigned long clk_hw_get_flags(const struct clk_hw *hw);
++unsigned int clk_get_children(char *name);
+ bool clk_hw_is_prepared(const struct clk_hw *hw);
+ bool clk_hw_is_enabled(const struct clk_hw *hw);
+ bool __clk_is_enabled(struct clk *clk);
 -- 
-1.9.1
+2.7.4
