@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 26 Jan 2018 17:24:54 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] sh: clk: Relax clk rate match test
-Message-ID: <20180126162454.GA11798@w540>
-References: <1516879493-24637-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVZpAB+Xu4trs0Eaiygk1WD7DPzKr3ehF-kugB5Fbps2g@mail.gmail.com>
- <20180125141407.GH17416@w540>
- <CAMuHMdWi=s=9oAA5YdPrZA=RjnPfh2YBiPOGQXu1ksj2srxZfA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:28624 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754904AbeAHDBw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Jan 2018 22:01:52 -0500
+Message-ID: <1515380508.2984.31.camel@mtkswgap22>
+Subject: Re: [PATCH v1 4/6] dt-bindings: clock: mediatek: add "simple-mfd"
+ in audsys documentation
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        "Garlic Tseng" <garlic.tseng@mediatek.com>
+Date: Mon, 8 Jan 2018 11:01:48 +0800
+In-Reply-To: <20180105190236.bapetnwxd6dii7re@rob-hp-laptop>
+References: <cover.1515038387.git.ryder.lee@mediatek.com>
+         <bd1cb0aeaf07b4bf2cedbf00ef8fedc6ba01f9cb.1515038387.git.ryder.lee@mediatek.com>
+         <20180105190236.bapetnwxd6dii7re@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAMuHMdWi=s=9oAA5YdPrZA=RjnPfh2YBiPOGQXu1ksj2srxZfA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Fri, 2018-01-05 at 13:02 -0600, Rob Herring wrote:
+> On Thu, Jan 04, 2018 at 03:44:20PM +0800, Ryder Lee wrote:
+> > Add "simple-mfd" to support MFD device and add a compatible string for MT2701.
+> > 
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,audsys.txt       | 21 +++++++++++++++------
+> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > index 9b8f578..6e97552 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > @@ -6,17 +6,25 @@ The MediaTek AUDSYS controller provides various clocks to the system.
+> >  Required Properties:
+> >  
+> >  - compatible: Should be one of:
+> > -	- "mediatek,mt7622-audsys", "syscon"
+> > +	- "mediatek,mt2701-audsys", "syscon", "simple-mfd"
+> > +	- "mediatek,mt7622-audsys", "syscon", "simple-mfd"
+> >  - #clock-cells: Must be 1
+> 
+> I don't think this is a simple-mfd. The AFE uses clocks created by its 
+> parent, right? So the parent should be probed first. You should have 
+> the parent instantiate the child nodes.
 
-On Thu, Jan 25, 2018 at 03:39:32PM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
-[snip]
-> >> > ---
-> >> >  drivers/sh/clk/core.c | 9 ++++++---
-> >> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >> >
-> >> > diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
-> >> > index 92863e3..d2cb94c 100644
-> >> > --- a/drivers/sh/clk/core.c
-> >> > +++ b/drivers/sh/clk/core.c
-> >> > @@ -198,9 +198,12 @@ int clk_rate_table_find(struct clk *clk,
-> >> >  {
-> >> >         struct cpufreq_frequency_table *pos;
-> >> >
-> >> > -       cpufreq_for_each_valid_entry(pos, freq_table)
-> >> > -               if (pos->frequency == rate)
-> >> > -                       return pos - freq_table;
-> >> > +       cpufreq_for_each_valid_entry(pos, freq_table) {
-> >> > +               if (pos->frequency > rate)
-> >> > +                       continue;
-> >>
-> >> This assumes all frequency tables are sorted.
-> >>
-> >> Shouldn't you pick the closest frequency?
-> >>
-> >> However, that's what clk_rate_table_round() does, which is called from
-> >> sh_clk_div_round_rate(), and thus already used as .round_rate:
-> >>
-> >>     static struct sh_clk_ops sh_clk_div_enable_clk_ops = {
-> >>             .recalc         = sh_clk_div_recalc,
-> >>             .set_rate       = sh_clk_div_set_rate,
-> >>             .round_rate     = sh_clk_div_round_rate,
-> >>             .enable         = sh_clk_div_enable,
-> >>             .disable        = sh_clk_div_disable,
-> >>     };
-> >
-> > Does this implies clock rates should be set using clk_round_rate() and
-> > not clk_set_rate() if I understand this right?
->
-> Not necessarily...
->
-> Note that both cpg_div6_clock_round_rate() and cpg_div6_clock_set_rate()
-> in the CCF implementation for DIV6 clocks use rounding.
->
+The reason I add simple-mfd here is to make sure all drivers are probed.
+We don't need to know the probing sequence but let *deferred probing* to
+handle that. Otherwise, I think there is no difference between audsys
+and other clock nodes (the only difference is audsys shares its register
+regions with AFE).
 
-Yeah but it doesn't seem to me that CCF implementation for DIV6 clocks does
-have to walk static tables like the old sh clock driver does. They
-perform rounding, but on the clock dividers given a requested rate
-and the respective parent clock, if I'm not wrong.
+But yes, parent should be probed first in general. How about this:
 
-Anyway, in this case a much simpler:
-clk_set_rate(video_clk, clk_round_rate(video_clk, 10000000));
-does the job for Migo-R.
+audio-subsystem@11220000 {
+		compatible = "syscon", "simple-mfd";
+		reg = <0 0x11220000 0 0x2000>;
 
-I will include this in next CEU iterations, since I already have a
-small comment from you to fix there ;)
+		audsys: clock-controller {
+			compatible = "mediatek,mt2701-audsys";
+			#clock-cells = <1>;
+		};
+	
+		afe: audio-controller {
+			compatible = "mediatek,mt2701-audio";
+			.....
+			<&topckgen CLK_TOP_AUD_I2S4_MCLK>,
+			<&audsys CLK_AUD_I2SO1>,
+			....
+		};
+	};
 
-Thanks
-   j
 
-> >> (clk_rate_table_find() is called from sh_clk_div_set_rate())
-> >>
-> >> Or are you supposed to ask for the exact clock rate? Where does the 10 MHz
-> >> come from?
-> >
-> > From board initialization code, in order to provide a valid input
-> > clock to OV7720 sensor.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+I prefer to separate these nodes as we could see them as unrelated
+functions. Or, alternatively, I could add a MFD driver to instantiate
+both audsys and AFE driver.
+
+The similar discussion thread could be found in other subsystem:
+http://lists.infradead.org/pipermail/linux-mediatek/2017-October/011035.html
+
+I want to come up with a consistent approach to handle this kind of
+situation.
+
+> >  The AUDSYS controller uses the common clk binding from
+> >  Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> >  
+> > +See ../sound/mt2701-afe-pcm.txt for details about required subnode.
+> > +
+> >  Example:
+> >  
+> > -audsys: audsys@11220000 {
+> > -	compatible = "mediatek,mt7622-audsys", "syscon";
+> > -	reg = <0 0x11220000 0 0x1000>;
+> > -	#clock-cells = <1>;
+> > -};
+> > +	audsys: audio-subsystem@11220000 {
+> > +		compatible = "mediatek,mt2701-audsys", "syscon", "simple-mfd";
+> > +		reg = <0 0x11220000 0 0x1000>;
+> > +		#clock-cells = <1>;
+> > +
+> > +		afe: audio-controller {
+> > +			compatible = "mediatek,mt2701-audio";
+> > +			...
+> > +		};
+> > +	};
+> > -- 
+> > 1.9.1
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
