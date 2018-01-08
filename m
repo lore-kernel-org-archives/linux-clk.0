@@ -1,45 +1,128 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-38-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-38-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:32:35 +0100
-Message-ID: <CAMuHMdU+_b6503dea70GuZsrpeQM8WQF1i+Z-RTBo6nYVmhCOQ@mail.gmail.com>
-Subject: Re: [RFC 37/37] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 04/44] clk: davinci: Add platform information for TI DA850 PLL
+Date: Sun,  7 Jan 2018 20:17:03 -0600
+Message-Id: <1515377863-20358-5-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch enables the watchdog from within the iwg20m SoM dtsi.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This adds platform-specific declarations for the PLL clocks on TI DA850/
+OMAP-L138/AM18XX SoCs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-da850.c | 67 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 69 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-da850.c
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 9061e19..13049d4 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -3,4 +3,5 @@
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
++obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ endif
+diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
+new file mode 100644
+index 0000000..2f00f3d
+--- /dev/null
++++ b/drivers/clk/davinci/pll-da850.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DA850/OMAP-L138/AM18XX
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++/*
++ * NB: Technically, the clocks flagged as DIVCLK_FIXED_DIV are "fixed ratio",
++ * meaning that we could change the divider as long as we keep the correct
++ * ratio between all of the clocks, but we don't support that because there is
++ * currently not a need for it.
++ */
++
++static const struct davinci_pll_divclk_info da850_pll0_divclk_info[] __initconst = {
++	DIVCLK(1, pll0_sysclk1, pll0, DIVCLK_FIXED_DIV),
++	DIVCLK(2, pll0_sysclk2, pll0, DIVCLK_FIXED_DIV),
++	DIVCLK(3, pll0_sysclk3, pll0, 0),
++	DIVCLK(4, pll0_sysclk4, pll0, DIVCLK_FIXED_DIV),
++	DIVCLK(5, pll0_sysclk5, pll0, 0),
++	DIVCLK(6, pll0_sysclk6, pll0, DIVCLK_ARM_RATE | DIVCLK_FIXED_DIV),
++	DIVCLK(7, pll0_sysclk7, pll0, 0),
++	{ }
++};
++
++static const struct davinci_pll_divclk_info da850_pll1_divclk_info[] __initconst = {
++	DIVCLK(1, pll1_sysclk1, pll1, DIVCLK_ALWAYS_ENABLED),
++	DIVCLK(2, pll1_sysclk2, pll1, 0),
++	DIVCLK(3, pll1_sysclk3, pll1, 0),
++	{ }
++};
++
++void __init da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1)
++{
++	const struct davinci_pll_divclk_info *info;
++
++	davinci_pll_clk_register("pll0", "ref_clk", pll0);
++	davinci_pll_aux_clk_register("pll0_aux_clk", "ref_clk", pll0);
++	for (info = da850_pll0_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll0);
++
++	davinci_pll_clk_register("pll1", "ref_clk", pll1);
++	for (info = da850_pll1_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll1);
++}
++
++#ifdef CONFIG_OF
++static void __init of_da850_pll0_auxclk_init(struct device_node *node)
++{
++	of_davinci_pll_init(node, "pll0", da850_pll0_divclk_info, 7);
++}
++CLK_OF_DECLARE(da850_pll0_auxclk, "ti,da850-pll0", of_da850_pll0_auxclk_init);
++
++static void __init of_da850_pll1_auxclk_init(struct device_node *node)
++{
++	of_davinci_pll_init(node, "pll1", da850_pll1_divclk_info, 3);
++}
++CLK_OF_DECLARE(da850_pll1_auxclk, "ti,da850-pll1", of_da850_pll1_auxclk_init);
++#endif
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 4f4d60d..7b08fe0 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -10,5 +10,6 @@
+ #include <linux/types.h>
+ 
+ void da830_pll_clk_init(void __iomem *pll);
++void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
