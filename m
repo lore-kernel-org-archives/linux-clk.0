@@ -1,130 +1,139 @@
-Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
-References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
- <1515484746-10656-1-git-send-email-cw00.choi@samsung.com> <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 9 Jan 2018 12:44:12 +0100
-Message-ID: <CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support suspend-to-ram
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene@kernel.org,
-	Tomasz Figa <tomasz.figa@gmail.com>, chanwoo@kernel.org,
-	Jaehoon Chung <jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 13/44] clk: davinci: Add platform information for TI DM355 PSC
+Date: Sun,  7 Jan 2018 20:17:12 -0600
+Message-Id: <1515377863-20358-14-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
-> to some clocks in order to avoid the hang-out in the suspend mode.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index db270908037a..3dc53cd0c730 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -583,25 +583,25 @@
->                         CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
->                         ENABLE_ACLK_TOP, 13,
-> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
->                         ENABLE_ACLK_TOP, 12,
->                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
->                         ENABLE_ACLK_TOP, 11,
-> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
->                         ENABLE_ACLK_TOP, 10,
-> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
->                         ENABLE_ACLK_TOP, 9,
->                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
->                         ENABLE_ACLK_TOP, 8,
-> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
->                         ENABLE_ACLK_TOP, 7,
-> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
->                         ENABLE_ACLK_TOP, 6,
->                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
-> @@ -624,11 +624,11 @@
->
->         /* ENABLE_SCLK_TOP_CAM1 */
->         GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
-> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
-> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
->                         ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
->         GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
-> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
-> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
+This adds platform-specific declarations for the PSC clocks on TI
+DaVinci 355 based systems.
 
-Marking this and few others related to ISP as ignore_unused or
-is_critical looks like a hacky workaround for wrong topology or
-missing clock users. The real cause should be fixed instead marking
-all the clocks as critical or ignore_unused.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm355.c | 78 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 80 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm355.c
 
-Best regards,
-Krzysztof
-
->         GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
->                         ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
->         GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
-> @@ -636,7 +636,7 @@
->         GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
->                         ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
->         GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
-> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
-> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
->
->         /* ENABLE_SCLK_TOP_DISP */
->         GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
-> @@ -654,7 +654,7 @@
->                         ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
->                         "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
-> -                       3, CLK_SET_RATE_PARENT, 0),
-> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->         GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
->                         "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
->                         1, CLK_SET_RATE_PARENT, 0),
-> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
->         GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
->                         ENABLE_PCLK_AUD, 6, 0, 0),
->         GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
-> -                       ENABLE_PCLK_AUD, 5, 0, 0),
-> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
->         GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
->                         ENABLE_PCLK_AUD, 4, 0, 0),
->         GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
-> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
->         GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
->                         ENABLE_SCLK_AUD1, 4, 0, 0),
->         GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
-> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
-> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
->         GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
->                         ENABLE_SCLK_AUD1, 2, 0, 0),
->         GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
-> --
-> 1.9.1
->
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index aef0390..e0da5c3 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -12,4 +12,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
+new file mode 100644
+index 0000000..09075ed
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM355
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++static const struct davinci_psc_clk_info dm355_psc_info[] __initconst = {
++	LPSC(0, 0, vpss_master, pll1_sysclk4, 0),
++	LPSC(1, 0, vpss_slave, pll1_sysclk4, 0),
++	LPSC(5, 0, timer3, pll1_aux_clk, 0),
++	LPSC(6, 0, spi1, pll1_sysclk2, 0),
++	LPSC(7, 0, mmcsd1, pll1_sysclk2, 0),
++	LPSC(8, 0, asp1, pll1_sysclk2, 0),
++	LPSC(9, 0, usb, pll1_sysclk2, 0),
++	LPSC(10, 0, pwm3, pll1_aux_clk, 0),
++	LPSC(11, 0, spi2, pll1_sysclk2, 0),
++	LPSC(12, 0, rto, pll1_aux_clk, 0),
++	LPSC(14, 0, aemif, pll1_sysclk2, 0),
++	LPSC(15, 0, mmcsd0, pll1_sysclk2, 0),
++	LPSC(17, 0, asp0, pll1_sysclk2, 0),
++	LPSC(18, 0, i2c, pll1_aux_clk, 0),
++	LPSC(19, 0, uart0, pll1_aux_clk, 0),
++	LPSC(20, 0, uart1, pll1_aux_clk, 0),
++	LPSC(21, 0, uart2, pll1_sysclk2, 0),
++	LPSC(22, 0, spi0, pll1_sysclk2, 0),
++	LPSC(23, 0, pwm0, pll1_aux_clk, 0),
++	LPSC(24, 0, pwm1, pll1_aux_clk, 0),
++	LPSC(25, 0, pwm2, pll1_aux_clk, 0),
++	LPSC(26, 0, gpio, pll1_sysclk2, 0),
++	LPSC(27, 0, timer0, pll1_aux_clk, 0),
++	LPSC(28, 0, timer1, pll1_aux_clk, 0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2, pll1_aux_clk, LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm, pll1_sysclk1, LPSC_ALWAYS_ENABLED),
++	LPSC(40, 0, mjcp, pll1_sysclk1, 0),
++	LPSC(41, 0, vpss_dac, pll1_sysclk3, 0),
++	{ }
++};
++
++void __init dm355_psc_clk_init(void __iomem *psc)
++{
++	struct clk_onecell_data *clk_data;
++
++	clk_data = davinci_psc_register_clocks(psc, dm355_psc_info, 42);
++	if (!clk_data)
++		return;
++
++	clk_register_clkdev(clk_data->clks[0], "master", "vpss");
++	clk_register_clkdev(clk_data->clks[1], "slave", "vpss");
++	clk_register_clkdev(clk_data->clks[6], NULL, "spi_davinci.1");
++	clk_register_clkdev(clk_data->clks[7], NULL, "dm6441-mmc.1");
++	clk_register_clkdev(clk_data->clks[8], NULL, "davinci-mcbsp.1");
++	clk_register_clkdev(clk_data->clks[9], "usb", NULL);
++	clk_register_clkdev(clk_data->clks[11], NULL, "spi_davinci.2");
++	clk_register_clkdev(clk_data->clks[14], "aemif", NULL);
++	clk_register_clkdev(clk_data->clks[15], NULL, "dm6441-mmc.0");
++	clk_register_clkdev(clk_data->clks[17], NULL, "davinci-mcbsp.0");
++	clk_register_clkdev(clk_data->clks[18], NULL, "i2c_davinci.1");
++	clk_register_clkdev(clk_data->clks[19], NULL, "serial8250.0");
++	clk_register_clkdev(clk_data->clks[20], NULL, "serial8250.1");
++	clk_register_clkdev(clk_data->clks[21], NULL, "serial8250.2");
++	clk_register_clkdev(clk_data->clks[22], NULL, "spi_davinci.0");
++	clk_register_clkdev(clk_data->clks[26], "gpio", NULL);
++	clk_register_clkdev(clk_data->clks[27], "timer0", NULL);
++	clk_register_clkdev(clk_data->clks[29], NULL, "davinci-wdt");
++	clk_register_clkdev(clk_data->clks[31], "arm", NULL);
++	clk_register_clkdev(clk_data->clks[41], "vpss_dac", NULL);
++
++	clk_free_onecell_data(clk_data);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 3d8bdfa..dc09177 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -18,5 +18,6 @@ void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
+ void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
+ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
++void dm355_psc_clk_init(void __iomem *psc);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
