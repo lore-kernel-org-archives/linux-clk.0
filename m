@@ -1,50 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:41262 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeABRGE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 12:06:04 -0500
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+Date: Mon, 8 Jan 2018 19:30:13 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180102150848.11314-7-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-7-paul@crapouillou.net>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 2 Jan 2018 18:05:43 +0100
-Message-ID: <CA+7wUsyfrFcGevgfRb9S3T1bSGaFjN=y1gfg70D21vpw26YWzQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/15] MIPS: Setup boot_command_line before plat_mem_setup
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Burton <paul.burton@mips.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1515377863-20358-2-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 4:08 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-> From: Paul Burton <paul.burton@imgtec.com>
->
-> Platforms using DT will typically call __dt_setup_arch from
-> plat_mem_setup. This in turn calls early_init_dt_scan. When
-> CONFIG_CMDLINE is set, this leads to its value being copied into
-> boot_command_line by early_init_dt_scan_chosen. If this happens before
-> the code setting up boot_command_line in arch_mem_init runs, that code
-> will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
-> boot_command_line again, duplicating it. For some command line
-> parameters (eg. earlycon) this can be a problem. Set up
-> boot_command_line before early_init_dt_scan_chosen gets called such that
-> it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
-> duplicated.
->
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds a new binding for the PLL IP blocks in the mach-davinci family
+> of processors. Currently, only the SYSCLKn and AUXCLK outputs are needed,
+> but in the future additional child nodes could be added for OBSCLK and
+> BPDIV.
+> 
+> Note: Although these PLL controllers are very similar to the TI Keystone
+> SoCs, we are not re-using those bindings. The Keystone bindings use a
+> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+
+Not sure what is meant by "legacy one-node-per-clock binding"
+
+> have a slightly different PLL register layout and a number of quirks that
+> can't be handled by the existing bindings, so the keystone bindings could
+> not be used as-is anyway.
+
+Right, I think different register layout between the processors is the
+main reason for a new driver. This should be sufficient reason IMO.
+
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
->  arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
->  1 file changed, 20 insertions(+), 19 deletions(-)
->
->  v2: New patch in this series
->  v3: No change
->  v4: No change
->  v5: No change
+>  .../devicetree/bindings/clock/ti/davinci/pll.txt   | 47 ++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> new file mode 100644
+> index 0000000..99bf5da
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> @@ -0,0 +1,47 @@
+> +Binding for TI DaVinci PLL Controllers
+> +
+> +The PLL provides clocks to most of the components on the SoC. In addition
+> +to the PLL itself, this controller also contains bypasses, gates, dividers,
+> +an multiplexers for various clock signals.
+> +
+> +Required properties:
+> +- compatible: shall be one of:
+> +	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+> +	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
 
-I would have used @mips email. Anyway:
+These PLLs are same IP so they should use the same compatible. You can
+initialize both PLLs for DA850 based on the same compatible.
 
-Acked-by: Mathieu Malaterre <malat@debian.org>
+Thanks,
+Sekhar
