@@ -1,144 +1,144 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	"Geert Uytterhoeven" <geert+renesas@glider.be>, Guenter Roeck
-	<linux@roeck-us.net>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
- BINDINGS" <devicetree@vger.kernel.org>, Linux Watchdog Mailing List
-	<linux-watchdog@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk
-	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
-	<ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC 01/37] ARM: shmobile: Add watchdog support
-Date: Fri, 26 Jan 2018 11:52:15 +0000
-Message-ID: <TY1PR06MB08950BD28BEC28D55C6D80EDC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1516903391-30467-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdWVvMJR5NHMFn6zx39jw2XdP5nteU3actUcen0dmoT-LQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWVvMJR5NHMFn6zx39jw2XdP5nteU3actUcen0dmoT-LQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 14/44] clk: davinci: Add platform information for TI DM365 PSC
+Date: Sun,  7 Jan 2018 20:17:13 -0600
+Message-Id: <1515377863-20358-15-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtSRkMgMDEvMzddIEFSTTogc2htb2JpbGU6
-IEFkZCB3YXRjaGRvZyBzdXBwb3J0DQo+DQo+IEhpIEZhYnJpemlvLA0KPg0KPiBPbiBUaHUsIEph
-biAyNSwgMjAxOCBhdCA3OjAyIFBNLCBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ry
-b0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gT24gUi1DYXIgR2VuMiBhbmQgUlovRzEgcGxh
-dGZvcm1zLCB3ZSB1c2UgdGhlIFNCQVIgcmVnaXN0ZXJzIHRvIG1ha2Ugbm9uDQo+ID4gYm9vdCBD
-UFVzIHJ1biBhIHJvdXRpbmUgZGVzaWduZWQgdG8gYnJpbmcgdXAgU01QIGFuZCBkZWFsIHdpdGgg
-aG90IHBsdWcuDQo+ID4gVGhlIHZhbHVlIGNvbnRhaW5lZCBpbiB0aGUgU0JBUiByZWdpc3RlcnMg
-aXMgbm90IGluaXRpYWxpemVkIGJ5IGEgV0RUDQo+ID4gdHJpZ2dlcmVkIHJlc2V0LCB3aGljaCBt
-ZWFucyB0aGF0IGFmdGVyIGEgV0RUIHRyaWdnZXJlZCByZXNldCB3ZSBqdW1wDQo+ID4gdG8gdGhl
-IFNNUCBicmluZyB1cCByb3V0aW5lLCBwcmV2ZW50aW5nIHRoZSBzeXN0ZW0gZnJvbSBleGVjdXRp
-bmcgdGhlDQo+ID4gYm9vdHJvbSBjb2RlLg0KPg0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQoN
-ClRoYW5rIHlvdSBmb3IgbG9va2luZyBpbnRvIHRoaXMhDQoNCkkgYW0gbm90IGdvaW5nIHRvIHJl
-cGx5IHRvIHlvdXIgY29tbWVudHMgb24gdGhlIG90aGVyIHBhdGNoZXMgZm9yIG5vdywgYXMgd2Ug
-bmVlZCB0byBmaW5kIGEgc29sdXRpb24gZm9yIHRoaXMgcGFydGljdWxhciBwYXRjaCB3ZSBhcmUg
-YWxsIGhhcHB5IHdpdGggZmlyc3QuDQpBIGNoYW5nZSB0byB0aGlzIHBhdGNoIG1heSBpbXBhY3Qg
-dGhlIG90aGVyIHBhdGNoZXMgYXMgd2VsbC4NCg0KPg0KPiA+IFRoZSBwdXJwb3NlIG9mIHRoaXMg
-cGF0Y2ggaXMgdG8ganVtcCB0byB0aGUgYm9vdHJvbSBjb2RlIGluIGNhc2Ugb2YgYQ0KPiA+IFdE
-VCB0cmlnZ2VyZWQgcmVzZXQsIGFuZCBrZWVwIHRoZSBTTVAgZnVuY3Rpb25hbGl0eSB1bnRvdWNo
-ZWQuDQo+ID4gSW4gb3JkZXIgdG8gdGVsbCBpZiB0aGUgY29kZSBoYWQgYmVlbiBjYWxsZWQgZHVl
-IHRvIHRoZSBXRFQgb3ZlcmZsb3dpbmcNCj4gPiB3ZSBuZWVkIHRvIGluc3BlY3QgZmxhZyBXT1ZG
-IGZyb20gcmVnaXN0ZXIgUldUQ1NSQSwgaG93ZXZlciBmb3IgdGhpcw0KPiA+IHRvIHdvcmsgc21v
-b3RobHkgd2UgbmVlZCB0byBtYWtlIHN1cmUgdGhhdCBSV0RUIGNsb2NrIGlzIE9OLg0KPiA+IFNp
-bmNlIGl0J3Mgbm90IHdpc2UgdG8gaW50ZXJmZXJlIHdpdGggdGhlIGNsb2NrIGNvbmZpZ3VyYXRp
-b24gZnJvbQ0KPiA+IHdpdGhpbiB0aGlzIHJvdXRpbmUsIGEgZmxhZyBoYXMgYmVlbiBwdXQgaW4g
-cGxhY2UNCj4gPiAoc2htb2JpbGVfd2R0X2Nsb2NrX3N0YXR1cykgc28gdGhhdCB0aGUgd2F0Y2hk
-b2cgZHJpdmVyIGNhbiB0ZWxsDQo+ID4gc2htb2JpbGVfYm9vdF92ZWN0b3Igd2hlbiB0aGUgY2xv
-Y2sgaXMgT04sIGFuZCB0aGVyZWZvcmUgdGhlcmUgaXMgbm8NCj4gPiBuZWVkIGZvciBzaG1vYmls
-ZV9ib290X3ZlY3RvciB0byBtZXNzIHVwIHdpdGggdGhlIGNsb2NrIHJlZ2lzdGVycy4NCj4gPg0K
-PiA+IEJpdCBXT1ZGIHN1cnZpdmVzIGEgd2F0Y2hkb2cgdHJpZ2dlcmVkIHJlc2V0LCBhbmQgaXQg
-aXMgdXN1YWxseSBjbGVhcmVkDQo+ID4gYnkgdGhlIGJvb3Rsb2FkZXIuIENoZWNraW5nIHRoZSBN
-TVUgZW5hYmxlIGJpdCBmcm9tIHJlZ2lzdGVyIFNDVExSDQo+ID4gYWxsb3dzIHVzIHRvIG1ha2Ug
-dGhlIGNvZGUgYSBsaXR0bGUgYml0IG1vcmUgcm9idXN0IChqdXN0IGluIGNhc2UgdGhlDQo+ID4g
-Yml0IHdhc24ndCBjbGVhcmVkIHVwKSwgYXMgcmlnaHQgYWZ0ZXIgYSByZXNldCB0aGUgTU1VIGlz
-IGRpc2FibGVkLA0KPiA+IGFuZCB3aGVuIExpbnV4IGlzIHJ1bm5pbmcgdGhlIE1NVSBpcyBlbmFi
-bGVkLiBBbHNvLCBhY2Nlc3NpbmcgUldUQ1NSQQ0KPiA+IHBoeXNpY2FsIGFkZHJlc3MgaXMgc2Fm
-ZSB3aGVuIHRoZSBNTVUgaXMgZG93bi4NCj4NCj4gQ2hlY2tpbmcgYSBoYXJkd2FyZSByZWdpc3Rl
-ciBpcyBpbmRlZWQgYSBiZXR0ZXIgc29sdXRpb24gdGhhbiBteSBvcmlnaW5hbA0KPiBpZGVhIHRv
-IGxldCBTTVAgYnJpbmd1cCBzZXQgYSBmbGFnIGluIFJBTSwgYXMgdGhlIGZvcm1lciBpcyBsZXNz
-IHJhY3kuDQoNCkFsc28sIHN1Y2ggYSBmbGFnIHdvdWxkIG5vdCBiZSBhY2Nlc3NpYmxlIGFmdGVy
-IHRoZSByZXNldCBnZXRzIHRyaWdnZXJlZC4NCg0KPiBIb3dldmVyLCBhcyB5b3UgY2FuIHByb2Jh
-Ymx5IGltYWdpbmUsIEkgZG9uJ3QgbGlrZSB0aGUNCj4gc2htb2JpbGVfd2R0X2Nsb2NrX3N0YXR1
-cyBwYXJ0IDstKQ0KDQpOZWl0aGVyIGRvIEkhICAgICAgOi1EDQoNCj4NCj4gSXNuJ3QgaXMgc3Vm
-ZmljaWVudCB0byBjaGVjayB0aGUgTU1VIGVuYWJsZSBiaXQ/DQoNCkkgYW0gYWZyYWlkIGl0IGlz
-bid0LCB3aGVuIGJyaW5naW5nIHVwIFNNUCB0aGUgY29yZXMgd2lsbCByZWFkIHRoZSBNTVUgZmxh
-ZyBhcyBkaXNhYmxlZCwgdG8gbWFrZSB0aGluZ3Mgd29yc2UgYXQgdGhhdCBwcmVjaXNlIHBvaW50
-IGluIHRpbWUgdGhlIHJ3ZHQgY2xvY2sgaXMgZGlzYWJsZWQuDQpJZiB0aGUgc3lzdGVtIGp1c3Qg
-cmVzdGFydGVkIGR1ZSB0byB0aGUgd2F0Y2hkb2csIHRoZW4gd2hlbiB5b3UgcmVhZCBXT1ZGIGNo
-YW5jZXMgYXJlIHlvdSBhcmUgZ29pbmcgdG8gcmVhZCAnMScsIGhlbmNlIHRoZSBzeXN0ZW0gd2ls
-bCBmYWlsIHRvIGJyaW5nIHVwIFNNUC4NCg0KPiBIb3dldmVyLCB0aGF0IHdvdWxkIHByZWNsdWRl
-cyB1Q2xpbnV4IChkbyB3ZSBjYXJlPykuDQoNClRoZSBNTVUgd2lsbCBiZSBjb25zdGFudGx5IGRp
-c2FibGVkIGluIHRoaXMgY2FzZSwgd291bGRuJ3QgaXQ/IFRoZXJlZm9yZSB0aGUgcmVzZXQgdmVj
-dG9yIHdpbGwgYWx3YXlzIHByb2NlZWQgd2l0aCB0aGUgdGVzdGluZyBvZiB2YXJpYWJsZSAic2ht
-b2JpbGVfd2R0X2Nsb2NrX3N0YXR1cyIsIGFuZCBpdCdsbCBmaW5hbGx5IHRlc3QgV09WRiBvbmx5
-IHdoZW4gaXQncyBzYWZlIHRvIGRvIHNvLiBJZiBXT1ZGIGlzIHNldCwgdGhlbiB3ZSBzdGlsbCBq
-dW1wIHRvIHRoZSBib290cm9tIGNvZGUuIGlmIFdPVkYgaXMgbm90IHNldCwgdGhlbiB3ZSBqdW1w
-IHRvIHNobW9iaWxlX2Jvb3RfZm4uIENvdWxkIHlvdSBwbGVhc2UgZWxhYm9yYXRlIHlvdXIgdGhv
-dWdodHMgYSBsaXR0bGUgYml0IG1vcmU/DQoNCj4gSXMgdGhlcmUgYW55IG90aGVyIHJlZ2lzdGVy
-L2JpdCB0aGF0J3MgcmVzZXQgd2hlbiB0aGUgd2F0Y2hkb2cgaXMNCj4gdHJpZ2dlcmVkLCBhbmQg
-YWx3YXlzIHNldCBieSBMaW51eD8NCg0KTm90IHRoYXQgSSBrbm93IG9mLCBidXQgeW91IG1heSBr
-bm93IGJldHRlciA7LVANCkFueSBzdWdnZXN0aW9uPw0KDQo+DQo+ID4gU01QIGJyaW5ndXAsIENQ
-VSBob3QgcGx1ZywgYW5kIHN1c3BlbmQgdG8gUkFNIHdvcmsgYXMgbm9ybWFsLg0KPg0KPiBzaG1v
-YmlsZV9ib290X3ZlY3RvciBpcyBub3Qgb25seSB1c2VkIGZvciBSLUNhciBHZW4yIGFuZCBSWi9H
-MSBTb0NzLCBidXQNCj4gYWxzbyBmb3IgRU1NQSBNb2JpbGUsIFNIL1ItTW9iaWxlLCBhbmQgUi1D
-YXIgSDEuICBIZW5jZSB0aGlzIGJyZWFrcyBTTVANCj4gZm9yIHRoZSBsYXR0ZXIgKGFuZCB0aGVp
-ciBidWlsZCBpZiBBUkNIX1JFTkVTQVM9biwgZHVlIHRvIG1pc3NpbmcNCj4gc2htb2JpbGVfd2R0
-X2Nsb2NrX3N0YXR1cykuDQoNCkFzIHBlciB5b3VyIHN1Z2dlc3Rpb24sIEkgYW0gaWdub3Jpbmcg
-dGhpcy4NCg0KPg0KPiA+IFNpbmNlIHNobW9iaWxlX2Jvb3RfdmVjdG9yIGhhcyBiZWNvbWUgYmln
-Z2VyLCAicmVnIiBwcm9wZXJ0eSBvZiBub2Rlcw0KPiA+IGNvbXBhdGlibGUgd2l0aCAicmVuZXNh
-cyxzbXAtc3JhbSIgbm93IG5lZWQgdG8gYmUgc2V0IHRvICI8MCAweDY0PiIuDQo+DQo+IFRoaXMg
-YnJlYWtzIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5IHdpdGggb2xkIERUcyBkZWNsYXJpbmcgYSB0
-b28gc21hbGwNCj4gc21wLXNyYW0gYXJlYS4gSWYgdGhlIGFyZWEgaXMgdG9vIHNtYWxsLCB5b3Ug
-c2hvdWxkIGZhbGxiYWNrIHRvIHRoZSBvbGQgYW5kDQo+IHNtYWxsZXIgY29kZS4NCg0KR29vZCBw
-b2ludC4gSSdsbCBsb29rIGludG8gdGhpcy4NCg0KDQpUaGFua3MsDQpGYWINCg0KPg0KPiA+IC0t
-LSBhL2FyY2gvYXJtL21hY2gtc2htb2JpbGUvaGVhZHNtcC5TDQo+ID4gKysrIGIvYXJjaC9hcm0v
-bWFjaC1zaG1vYmlsZS9oZWFkc21wLlMNCj4gPiBAQCAtMTYsNiArMTYsMTMgQEANCj4gPiAgI2lu
-Y2x1ZGUgPGFzbS9hc3NlbWJsZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGFzbS9tZW1vcnkuaD4NCj4g
-Pg0KPiA+ICsjZGVmaW5lIFJXRFRfQ0xPQ0tfT04gIDB4ZGVhZGJlZWYNCj4gPiArI2RlZmluZSBS
-V0RUX0NMT0NLX09GRiAweDAwMDAwMDAwDQo+ID4gKyNkZWZpbmUgU0NUTFJfTU1VICAgICAgMHgw
-MQ0KPiA+ICsjZGVmaW5lIEJPT1RST01fQUREUkVTUyAgICAgICAgMHhFNjM0MDAwMA0KPiA+ICsj
-ZGVmaW5lIFJXVENTUkFfQUREUkVTUyAweEU2MDIwMDA0DQo+ID4gKyNkZWZpbmUgUldUQ1NSQV9X
-T1ZGICAgMHgxMA0KPiA+ICsNCj4gPiAgLyoNCj4gPiAgICogUmVzZXQgdmVjdG9yIGZvciBzZWNv
-bmRhcnkgQ1BVcy4NCj4gPiAgICogVGhpcyB3aWxsIGJlIG1hcHBlZCBhdCBhZGRyZXNzIDAgYnkg
-U0JBUiByZWdpc3Rlci4NCj4gPiBAQCAtMjQsMTEgKzMxLDU3IEBADQo+ID4gICAgICAgICAuYXJt
-DQo+ID4gICAgICAgICAuYWxpZ24gIDEyDQo+ID4gIEVOVFJZKHNobW9iaWxlX2Jvb3RfdmVjdG9y
-KQ0KPg0KPiBUaGlzIHNob3VsZCBiZWNvbWUgZS5nLiByY2FyX2dlbjJfYm9vdF92ZWN0b3Jfd2R0
-DQo+DQo+ID4gKy8qDQo+ID4gKyAgICAgICBpZiAoU0NUTFJfTU1VID09IDEpDQo+ID4gKyAgICAg
-ICAgICAgICAgIGdvdG8gc2htb2JpbGVfc21wX2NvbnRpbnVlOw0KPiA+ICsqLw0KPiA+ICsgICAg
-ICAgbXJjICAgICBwMTUsIDAsIHIxLCBjMSwgYzAsIDAgICAgICAgICAgIEAgcjEgPSBTQ1RMUg0K
-PiA+ICsgICAgICAgYW5kICAgICByMCwgcjEsICNTQ1RMUl9NTVUNCj4gPiArICAgICAgIGNtcCAg
-ICAgcjAsICNTQ1RMUl9NTVUNCj4gPiArICAgICAgIGJlcSAgICAgc2htb2JpbGVfc21wX2NvbnRp
-bnVlDQo+ID4gKy8qDQo+ID4gKyAgICAgICBpZiAoc2htb2JpbGVfd2R0X2Nsb2NrX3N0YXR1cyAh
-PSBSV0RUX0NMT0NLX09OKQ0KPiA+ICsgICAgICAgICAgICAgICBnb3RvIHNobW9iaWxlX3NtcF9j
-b250aW51ZTsNCj4gPiArKi8NCj4gPiArICAgICAgIGxkciAgICAgcjAsICNzaG1vYmlsZV93ZHRf
-Y2xvY2tfc3RhdHVzDQo+ID4gKyAgICAgICBsZHIgICAgIHIxLCAjY2xvY2tfb24NCj4gPiArICAg
-ICAgIGNtcCAgICAgcjAsIHIxDQo+ID4gKyAgICAgICBibmUgICAgIHNobW9iaWxlX3NtcF9jb250
-aW51ZQ0KPiA+ICsNCj4gPiArLyoNCj4gPiArICAgICAgIGlmIChSV1RDU1JBX1dPVkYgPT0gMCkN
-Cj4gPiArICAgICAgICAgICAgICAgZ290byBzaG1vYmlsZV9zbXBfY29udGludWU7DQo+ID4gKyov
-DQo+ID4gKyAgICAgICBsZHIgICAgIHIwLCByd3Rjc3JhDQo+ID4gKyAgICAgICBtb3YgICAgIHIx
-LCAjMA0KPiA+ICsgICAgICAgbGRyYiAgICByMSwgW3IwXQ0KPiA+ICsgICAgICAgYW5kICAgICBy
-MCwgcjEsICNSV1RDU1JBX1dPVkYNCj4gPiArICAgICAgIGNtcCAgICAgcjAsICNSV1RDU1JBX1dP
-VkYNCj4gPiArICAgICAgIGJuZSAgICAgc2htb2JpbGVfc21wX2NvbnRpbnVlDQo+ID4gKw0KPiA+
-ICsvKg0KPiA+ICsgICAgICAgZ290byBib290cm9tOw0KPiA+ICsqLw0KPiA+ICsgICAgICAgbGRy
-ICAgICByMCwgYm9vdHJvbQ0KPiA+ICsgICAgICAgYnggICAgICByMA0KPiA+ICsNCj4gPiArc2ht
-b2JpbGVfc21wX2NvbnRpbnVlOg0KPg0KPiBUaGlzIHNob3VsZCBiZWNvbWUNCj4NCj4gICAgIEVO
-VFJZKHNobW9iaWxlX2Jvb3RfdmVjdG9yKQ0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9l
-dmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1t
-NjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBl
-b3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8g
-am91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhh
-dC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
-DQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxi
-b2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdp
-c3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4N
-Cg==
+This adds platform-specific declarations for the PSC clocks on TI
+DaVinci 365 based systems.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm365.c | 83 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 85 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm365.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index e0da5c3..78dc1eb 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -13,4 +13,5 @@ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+new file mode 100644
+index 0000000..0232832
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM365
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++static const struct davinci_psc_clk_info dm365_psc_info[] __initconst = {
++	LPSC(1, 0, vpss_slave, pll1_sysclk5, 0),
++	LPSC(5, 0, timer3, pll1_aux_clk, 0),
++	LPSC(6, 0, spi1, pll1_sysclk4, 0),
++	LPSC(7, 0, mmcsd1, pll1_sysclk4, 0),
++	LPSC(8, 0, asp0, pll1_sysclk4, 0),
++	LPSC(9, 0, usb, pll1_aux_clk, 0),
++	LPSC(10, 0, pwm3, ref_clk, 0),
++	LPSC(11, 0, spi2, pll1_sysclk4, 0),
++	LPSC(12, 0, rto, pll1_sysclk4, 0),
++	LPSC(14, 0, aemif, pll1_sysclk4, 0),
++	LPSC(15, 0, mmcsd0, pll1_sysclk8, 0),
++	LPSC(18, 0, i2c, pll1_aux_clk, 0),
++	LPSC(19, 0, uart0, pll1_aux_clk, 0),
++	LPSC(20, 0, uart1, pll1_sysclk4, 0),
++	LPSC(22, 0, spi0, pll1_sysclk4, 0),
++	LPSC(23, 0, pwm0, pll1_aux_clk, 0),
++	LPSC(24, 0, pwm1, pll1_aux_clk, 0),
++	LPSC(25, 0, pwm2, pll1_aux_clk, 0),
++	LPSC(26, 0, gpio, pll1_sysclk4, 0),
++	LPSC(27, 0, timer0, pll1_aux_clk, 0),
++	LPSC(28, 0, timer1, pll1_aux_clk, 0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2, pll1_aux_clk, LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm, pll2_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(38, 0, spi3, pll1_sysclk4, 0),
++	LPSC(39, 0, spi4, pll1_aux_clk, 0),
++	LPSC(40, 0, emac, pll2_sysclk4, 0),
++	LPSC(44, 1, voice_codec, pll1_sysclk3, 0),
++	LPSC(46, 1, vpss_dac, pll1_sysclk3, 0),
++	LPSC(47, 0, vpss_master, pll1_sysclk5, 0),
++	LPSC(50, 0, mjcp, pll1_sysclk3, 0),
++	{ }
++};
++
++void __init dm365_psc_clk_init(void __iomem *psc)
++{
++	struct clk_onecell_data *clk_data;
++
++	clk_data = davinci_psc_register_clocks(psc, dm365_psc_info, 52);
++	if (!clk_data)
++		return;
++
++	clk_register_clkdev(clk_data->clks[1], "slave", "vpss");
++	clk_register_clkdev(clk_data->clks[6], NULL, "spi_davinci.1");
++	clk_register_clkdev(clk_data->clks[7], NULL, "da830-mmc.1");
++	clk_register_clkdev(clk_data->clks[8], NULL, "davinci-mcbsp");
++	clk_register_clkdev(clk_data->clks[9], "usb", NULL);
++	clk_register_clkdev(clk_data->clks[11], NULL, "spi_davinci.2");
++	clk_register_clkdev(clk_data->clks[14], "aemif", NULL);
++	clk_register_clkdev(clk_data->clks[15], NULL, "da830-mmc.0");
++	clk_register_clkdev(clk_data->clks[18], NULL, "i2c_davinci.1");
++	clk_register_clkdev(clk_data->clks[19], NULL, "serial8250.0");
++	clk_register_clkdev(clk_data->clks[20], NULL, "serial8250.1");
++	clk_register_clkdev(clk_data->clks[22], NULL, "spi_davinci.0");
++	clk_register_clkdev(clk_data->clks[26], "gpio", NULL);
++	clk_register_clkdev(clk_data->clks[27], "timer0", NULL);
++	clk_register_clkdev(clk_data->clks[29], NULL, "davinci-wdt");
++	clk_register_clkdev(clk_data->clks[31], "arm", NULL);
++	clk_register_clkdev(clk_data->clks[38], NULL, "spi_davinci.3");
++	clk_register_clkdev(clk_data->clks[39], NULL, "spi_davinci.4");
++	clk_register_clkdev(clk_data->clks[40], NULL, "davinci_emac.1");
++	clk_register_clkdev(clk_data->clks[40], "fck", "davinci_mdio.0");
++	clk_register_clkdev(clk_data->clks[44], NULL, "davinci_voicecodec");
++	clk_register_clkdev(clk_data->clks[46], "vpss_dac", NULL);
++	clk_register_clkdev(clk_data->clks[47], "master", "vpss");
++
++	clk_free_onecell_data(clk_data);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index dc09177..c7d8c5f 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -19,5 +19,6 @@ void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
+ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
+ void dm355_psc_clk_init(void __iomem *psc);
++void dm365_psc_clk_init(void __iomem *psc);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
