@@ -1,80 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:56382 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753334AbeABPJI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:08 -0500
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Burton <paul.burton@imgtec.com>
-Subject: [PATCH v5 08/15] MIPS: ingenic: Use common cmdline handling code
-Date: Tue,  2 Jan 2018 16:08:41 +0100
-Message-Id: <20180102150848.11314-8-paul@crapouillou.net>
-In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 42/44] ARM: davinci: add device tree support to timer
+Date: Sun,  7 Jan 2018 20:25:05 -0600
+Message-Id: <1515378307-23718-3-git-send-email-david@lechnology.com>
+In-Reply-To: <1515378307-23718-1-git-send-email-david@lechnology.com>
+References: <1515378307-23718-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Burton <paul.burton@imgtec.com>
+This adds device tree support to the davinci timer so that when clocks
+are moved to device tree, the timer will still work.
 
-jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
-arcs_cmdline, up to argc (in fw_arg0). The common code in
-fw_init_cmdline will do the exact same thing when run on a system where
-fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
-use it). Remove the custom implementation & use the generic code.
-
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- arch/mips/jz4740/prom.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ arch/arm/mach-davinci/Kconfig |  1 +
+ arch/arm/mach-davinci/time.c  | 17 ++++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
- v2: No change
- v3: No change
- v4: No change
- v5: No change
-
-diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
-index 47e857194ce6..a62dd8e6ecf9 100644
---- a/arch/mips/jz4740/prom.c
-+++ b/arch/mips/jz4740/prom.c
-@@ -20,33 +20,13 @@
- #include <linux/serial_reg.h>
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index ba9912b..da8a039 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
+ 	default y
+ 	depends on ARCH_DAVINCI_DA850
+ 	select PINCTRL
++	select TIMER_OF
+ 	help
+ 	  Say y here to include support for TI DaVinci DA850 based using
+ 	  Flattened Device Tree. More information at Documentation/devicetree
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index bd0c80e..44470e9 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -333,9 +333,9 @@ static struct clock_event_device clockevent_davinci = {
+ };
  
- #include <asm/bootinfo.h>
-+#include <asm/fw/fw.h>
- #include <asm/mach-jz4740/base.h>
  
--static __init void jz4740_init_cmdline(int argc, char *argv[])
--{
--	unsigned int count = COMMAND_LINE_SIZE - 1;
--	int i;
--	char *dst = &(arcs_cmdline[0]);
--	char *src;
--
--	for (i = 1; i < argc && count; ++i) {
--		src = argv[i];
--		while (*src && count) {
--			*dst++ = *src++;
--			--count;
--		}
--		*dst++ = ' ';
--	}
--	if (i > 1)
--		--dst;
--
--	*dst = 0;
--}
--
- void __init prom_init(void)
+-void __init davinci_timer_init(void)
++static int __init of_davinci_timer_init(struct device_node *node)
  {
--	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
- 	mips_machtype = MACH_INGENIC_JZ4740;
-+	fw_init_cmdline();
- }
+-	struct clk *timer_clk;
++	struct clk *timer_clk = NULL;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 	unsigned int clockevent_id;
+ 	unsigned int clocksource_id;
+@@ -371,7 +371,10 @@ void __init davinci_timer_init(void)
+ 		}
+ 	}
  
- void __init prom_free_prom_memory(void)
+-	timer_clk = clk_get(NULL, "timer0");
++	if (node)
++		timer_clk = of_clk_get(node, 0);
++	if (IS_ERR_OR_NULL(timer_clk))
++		timer_clk = clk_get(NULL, "timer0");
+ 	BUG_ON(IS_ERR(timer_clk));
+ 	clk_prepare_enable(timer_clk);
+ 
+@@ -399,4 +402,12 @@ void __init davinci_timer_init(void)
+ 
+ 	for (i=0; i< ARRAY_SIZE(timers); i++)
+ 		timer32_config(&timers[i]);
++
++	return 0;
++}
++TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
++
++void __init davinci_timer_init(void)
++{
++	of_davinci_timer_init(NULL);
+ }
 -- 
-2.11.0
-
+2.7.4
