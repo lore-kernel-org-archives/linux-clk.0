@@ -1,67 +1,126 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 5/5] clk: Move __clk_{get,put}() into private clk.h API
-Date: Tue,  2 Jan 2018 17:35:16 -0800
-Message-Id: <20180103013516.18844-6-sboyd@codeaurora.org>
-In-Reply-To: <20180103013516.18844-1-sboyd@codeaurora.org>
-References: <20180103013516.18844-1-sboyd@codeaurora.org>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 26/44] ARM: dm365: add new clock init using common clock framework
+Date: Sun,  7 Jan 2018 20:17:25 -0600
+Message-Id: <1515377863-20358-27-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We can move these APIs into the private header file now that we
-don't have any users of the __clk_get() and __clk_put() APIs
-outside of clkdev.c and clk.c.
+This adds the new board-specfic clock init in mach-davinci/dm365.c using
+the new common clock framework drivers.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/clk.h      | 4 ++++
- include/linux/clkdev.h | 8 --------
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ arch/arm/mach-davinci/dm365.c | 41 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 00b35a13cdf3..70c0ba6336c1 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -20,6 +20,8 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
- 			     const char *con_id);
- void __clk_free_clk(struct clk *clk);
-+int __clk_get(struct clk *clk);
-+void __clk_put(struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
- static inline struct clk *
-@@ -32,5 +34,7 @@ static struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return (struct clk_hw *)clk;
- }
-+static inline int __clk_get(struct clk *clk) { return 1; }
-+static inline void __clk_put(struct clk *clk) { }
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 1e3df9d..fbbe31c 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -12,32 +12,38 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#include <linux/init.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/keyscan-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
  
- #endif
-diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-index ef98ee8c6358..4890ff033220 100644
---- a/include/linux/clkdev.h
-+++ b/include/linux/clkdev.h
-@@ -52,12 +52,4 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
- int clk_register_clkdev(struct clk *, const char *, const char *);
- int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ #include <asm/mach/map.h>
  
--#ifdef CONFIG_COMMON_CLK
--int __clk_get(struct clk *clk);
--void __clk_put(struct clk *clk);
--#else
--static inline int __clk_get(struct clk *clk) { return 1; }
--static inline void __clk_put(struct clk *clk) { }
--#endif
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+ #define DM365_RTC_BASE			0x01c69000
+@@ -54,6 +60,7 @@
+ #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
+ #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num		= 1,
+ 	.phys_base	= DAVINCI_PLL1_BASE,
+@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
+ 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
 -
- #endif
++#endif
+ /*----------------------------------------------------------------------*/
+ 
+ #define INTMUX		0x18
+@@ -1171,7 +1178,19 @@ void __init dm365_init(void)
+ 
+ void __init dm365_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *pll2, *psc;
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_4K);
++	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_4K);
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
++	dm365_pll_clk_init(pll1, pll2);
++	dm365_psc_clk_init(psc);
++#else
+ 	davinci_clk_init(dm365_clks);
++#endif
+ 	davinci_timer_init();
+ }
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
