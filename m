@@ -1,74 +1,157 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1624 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932906AbeAXWnu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jan 2018 17:43:50 -0500
-Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
-Date: Wed, 24 Jan 2018 22:43:45 +0000
-MIME-Version: 1.0
-In-Reply-To: <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 11/44] clk: davinci: Add platform information for TI DA830 PSC
+Date: Sun,  7 Jan 2018 20:17:10 -0600
+Message-Id: <1515377863-20358-12-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds platform-specific declarations for the PSC clocks on TI DA830/
+OMAP-L137/AM17XX SoCs.
 
-On 23/01/18 09:22, Peter De Schrijver wrote:
-> Apply the memory built-in self test work around when ungating certain
-> Tegra210 power domains.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-da830.c | 96 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  2 +
+ 3 files changed, 99 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-da830.c
 
-Nit-pick .. typo in $subject.
-
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index ce62a47..c4eff4b 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
->  
->  	bool has_tsense_reset;
->  	bool has_gpu_clamps;
-> +	bool needs_mbist_war;
->  
->  	const struct tegra_io_pad_soc *io_pads;
->  	unsigned int num_io_pads;
-> @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
->  
->  	usleep_range(10, 20);
->  
-> +	if (pg->pmc->soc->needs_mbist_war)
-> +		tegra210_clk_handle_mbist_war(pg->id);
-> +
-
-Be good if we could return an error from the above function.
-
->  	if (disable_clocks)
->  		tegra_powergate_disable_clocks(pg);
->  
-> @@ -1815,6 +1819,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
->  	.cpu_powergates = tegra210_cpu_powergates,
->  	.has_tsense_reset = true,
->  	.has_gpu_clamps = true,
-> +	.needs_mbist_war = true,
->  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
->  	.io_pads = tegra210_io_pads,
->  	.regs = &tegra20_pmc_regs,
-> 
-
-Otherwise looks good to me.
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index cd1bf2c..fb14c8c 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -10,4 +10,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ 
+ obj-y += psc.o
++obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ endif
+diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
+new file mode 100644
+index 0000000..193b08f
+--- /dev/null
++++ b/drivers/clk/davinci/psc-da830.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DA830/OMAP-L137/AM17XX
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++static const struct davinci_psc_clk_info da830_psc0_info[] __initconst = {
++	LPSC(0, 0, tpcc, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
++	LPSC(4, 0, spi0, pll0_sysclk2, 0),
++	LPSC(5, 0, mmcsd, pll0_sysclk2, 0),
++	LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
++	LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(8, 0, secu_mgr, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
++	LPSC(9, 0, uart0, pll0_sysclk2, 0),
++	LPSC(10, 0, scr0_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(11, 0, scr1_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(12, 0, scr2_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(13, 0, dmax, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
++	LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_psc_clk_info da830_psc1_info[] __initconst = {
++	LPSC(1, 0, usb0, pll0_sysclk2, 0),
++	LPSC(2, 0, usb1, pll0_sysclk4, 0),
++	LPSC(3, 0, gpio, pll0_sysclk4, 0),
++	LPSC(5, 0, emac, pll0_sysclk4, 0),
++	LPSC(6, 0, emif3, pll0_sysclk5, LPSC_ALWAYS_ENABLED),
++	LPSC(7, 0, mcasp0, pll0_sysclk2, 0),
++	LPSC(8, 0, mcasp1, pll0_sysclk2, 0),
++	LPSC(9, 0, mcasp2, pll0_sysclk2, 0),
++	LPSC(10, 0, spi1, pll0_sysclk2, 0),
++	LPSC(11, 0, i2c1, pll0_sysclk4, 0),
++	LPSC(12, 0, uart1, pll0_sysclk2, 0),
++	LPSC(13, 0, uart2, pll0_sysclk2, 0),
++	LPSC(16, 0, lcdc, pll0_sysclk2, 0),
++	LPSC(17, 0, pwm, pll0_sysclk2, 0),
++	LPSC(20, 0, ecap, pll0_sysclk2, 0),
++	LPSC(21, 0, eqep, pll0_sysclk2, 0),
++	{ }
++};
++
++void __init da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
++{
++	struct clk_onecell_data *clk_data;
++
++	clk_data = davinci_psc_register_clocks(psc0, da830_psc0_info, 16);
++	if (!clk_data)
++		return;
++
++	clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
++	clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
++	clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
++	clk_register_clkdev(clk_data->clks[14], "arm", NULL);
++
++	clk_free_onecell_data(clk_data);
++
++	clk_data = davinci_psc_register_clocks(psc1, da830_psc1_info, 32);
++	if (!clk_data)
++		return;
++
++	clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
++	clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
++	clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
++	clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
++	clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
++	clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
++	clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
++	clk_register_clkdev(clk_data->clks[8], NULL, "davinci-mcasp.1");
++	clk_register_clkdev(clk_data->clks[9], NULL, "davinci-mcasp.2");
++	clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
++	clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
++	clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
++	clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
++	clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
++	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
++	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
++	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
++	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
++	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
++	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.0");
++	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.1");
++
++	clk_free_onecell_data(clk_data);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index d495de7..3ec8100 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -16,4 +16,6 @@ void dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
++void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
++
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
-nvpublic
+2.7.4
