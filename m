@@ -1,155 +1,107 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Dong Aisheng <dongas86@gmail.com>
-CC: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>, Aymen Sghaier
-	<aymen.sghaier@nxp.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, Adriana Reus <adriana.reus@nxp.com>,
-	"stefan@agner.ch" <stefan@agner.ch>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 2/2] ARM: dts: imx7s: add snvs rtc clock
-Date: Tue, 9 Jan 2018 10:03:18 +0000
-Message-ID: <AM3PR04MB13150428BE76FF16EA9C15DDF5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
- <1515489651-13488-2-git-send-email-Anson.Huang@nxp.com>
- <20180109094716.GH26312@b29396-OptiPlex-7040>
-In-Reply-To: <20180109094716.GH26312@b29396-OptiPlex-7040>
-Content-Type: text/plain; charset="iso-8859-2"
-MIME-Version: 1.0
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 33/44] ARM: davinci: switch to common clock framework
+Date: Sun,  7 Jan 2018 20:23:52 -0600
+Message-Id: <1515378238-23105-4-git-send-email-david@lechnology.com>
+In-Reply-To: <1515378238-23105-1-git-send-email-david@lechnology.com>
+References: <1515378238-23105-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
 
+A few macros had to be moved to prevent compile errors.
 
-Best Regards!
-Anson Huang
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/Kconfig                | 2 +-
+ arch/arm/mach-davinci/Makefile  | 2 +-
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 6 insertions(+), 8 deletions(-)
 
-
-> -----Original Message-----
-> From: Dong Aisheng [mailto:dongas86@gmail.com]
-> Sent: 2018-01-09 5:47 PM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: Horia Geant=E3 <horia.geanta@nxp.com>; Aymen Sghaier
-> <aymen.sghaier@nxp.com>; herbert@gondor.apana.org.au;
-> davem@davemloft.net; robh+dt@kernel.org; mark.rutland@arm.com;
-> shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; linux@armlinux.org.uk;
-> mturquette@baylibre.com; sboyd@codeaurora.org; Adriana Reus
-> <adriana.reus@nxp.com>; stefan@agner.ch; linux-crypto@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-clk@vger.kernel.org; dl-linux-imx <linu=
-x-
-> imx@nxp.com>
-> Subject: Re: [PATCH V3 2/2] ARM: dts: imx7s: add snvs rtc clock
->=20
-> On Tue, Jan 09, 2018 at 05:20:51PM +0800, Anson Huang wrote:
-> > Add i.MX7 SNVS RTC clock.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> > changes since v2:
-> > 	improve the binding doc statement about clocks.
-> >  Documentation/devicetree/bindings/crypto/fsl-sec4.txt | 15
-> +++++++++++++++
-> >  arch/arm/boot/dts/imx7s.dtsi                          |  2 ++
-> >  2 files changed, 17 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> > b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> > index 76aec8a..7329f29 100644
-> > --- a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> > +++ b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> > @@ -415,12 +415,25 @@ Secure Non-Volatile Storage (SNVS) Low Power (LP)
-> RTC Node
-> >  	value type: <u32>
-> >  	Definition: LP register offset. default it is 0x34.
-> >
-> > +   - clocks
-> > +      Usage: required if SNVS LP RTC requires explicit enablement of c=
-locks
-> > +      Value type: <prop_encoded-array>
-> > +      Definition:  a clock specifier describing the clock required for
-> > +          enabling and disabling SNVS LP RTC.
-> > +
->=20
-> This clock seem optional.
-> Should we indicate it here explicitly?
-
-Will add a optional in usage.
-
-
->=20
-> BTW, i thought we probably could update poweroff and key as well at the s=
-ame
-> time since device tree changes can go separately.
-> Does it make sense?
-
-I think this patch set is only for RTC case since snvs-rtc driver already h=
-andle the clock.
-But for poweroff and powerkey, their drivers are NOT handling clocks curren=
-tly, we
-can add them when driver ready to handle clocks. Should be in another patch=
- set later.
-
-Anson.
-
->=20
-> Regards
-> Dong Aisheng
->=20
-> > +   - clock-names
-> > +      Usage: required if SNVS LP RTC requires explicit enablement of c=
-locks
-> > +      Value type: <string>
-> > +      Definition: clock name string should be "snvs-rtc".
-> > +
-> >  EXAMPLE
-> >  	sec_mon_rtc_lp@1 {
-> >  		compatible =3D "fsl,sec-v4.0-mon-rtc-lp";
-> >  		interrupts =3D <93 2>;
-> >  		regmap =3D <&snvs>;
-> >  		offset =3D <0x34>;
-> > +		clocks =3D <&clks IMX7D_SNVS_CLK>;
-> > +		clock-names =3D "snvs-rtc";
-> >  	};
-> >
-> >
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > @@ -543,6 +556,8 @@ FULL EXAMPLE
-> >  			regmap =3D <&sec_mon>;
-> >  			offset =3D <0x34>;
-> >  			interrupts =3D <93 2>;
-> > +			clocks =3D <&clks IMX7D_SNVS_CLK>;
-> > +			clock-names =3D "snvs-rtc";
-> >  		};
-> >
-> >  		snvs-pwrkey@020cc000 {
-> > diff --git a/arch/arm/boot/dts/imx7s.dtsi
-> > b/arch/arm/boot/dts/imx7s.dtsi index 9aa2bb9..02baf42 100644
-> > --- a/arch/arm/boot/dts/imx7s.dtsi
-> > +++ b/arch/arm/boot/dts/imx7s.dtsi
-> > @@ -551,6 +551,8 @@
-> >  					offset =3D <0x34>;
-> >  					interrupts =3D <GIC_SPI 19
-> IRQ_TYPE_LEVEL_HIGH>,
-> >  						     <GIC_SPI 20
-> IRQ_TYPE_LEVEL_HIGH>;
-> > +					clocks =3D <&clks IMX7D_SNVS_CLK>;
-> > +					clock-names =3D "snvs-rtc";
-> >  				};
-> >
-> >  				snvs_poweroff: snvs-poweroff {
-> > --
-> > 1.9.1
-> >
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 51c8df5..3a12f9e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -604,7 +604,7 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e81780..8a8f413 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,7 +5,7 @@
+ #
+ 
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
++obj-y 			:= time.o serial.o \
+ 			   usb.o common.o sram.o aemif.o
+ 
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5..2d05856 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
+ 
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 270cef8..f5206a6 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
+ 
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
++
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09..b58707c 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
+ 
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
+-- 
+2.7.4
