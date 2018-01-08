@@ -1,194 +1,347 @@
-Return-Path: <aford173@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <cee43b44-1de6-a317-e89a-57f86607df86@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
- <1489236606-24023-16-git-send-email-t-kristo@ti.com> <CAHCN7x+oKEmXBpogy4VOB8UgmTd6+X5fBiP66yzUqXmvDWdqaw@mail.gmail.com>
- <6b4c5bf2-1260-0e79-0414-9870f21e4a75@ti.com> <CAHCN7xLaP-th=vAzN8C1QXstf3c5SP4JADAZZXTb1Nd6N6QdsQ@mail.gmail.com>
- <20180117211907.GE4042@atomide.com> <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
- <4f0f185a-2890-3747-7060-1f5b5a77022a@ti.com> <CAHCN7x+hkCyrj1pH7f5DQia-1QgF3g-idAo0Sd-vY6u8iLufWA@mail.gmail.com>
- <cee43b44-1de6-a317-e89a-57f86607df86@ti.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Thu, 18 Jan 2018 08:12:18 -0600
-Message-ID: <CAHCN7xL0Y8z+QhCQC8GrDeqiiHPQwnemR5mwJYEGMxUPFZfe6Q@mail.gmail.com>
-Subject: Re: [PATCHv2 15/15] clk: ti: convert to use proper register
- definition for all accesses
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 40/44] ARM: da8xx: Remove legacy clock init
+Date: Sun,  7 Jan 2018 20:25:03 -0600
+Message-Id: <1515378307-23718-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 18, 2018 at 7:29 AM, Tero Kristo <t-kristo@ti.com> wrote:
-> On 18/01/18 15:26, Adam Ford wrote:
->>
->> On Thu, Jan 18, 2018 at 1:34 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>
->>> On 17/01/18 23:44, Adam Ford wrote:
->>>>
->>>>
->>>> On Wed, Jan 17, 2018 at 3:19 PM, Tony Lindgren <tony@atomide.com> wrote:
->>>>>
->>>>>
->>>>> * Adam Ford <aford173@gmail.com> [180117 15:15]:
->>>>>>
->>>>>>
->>>>>> On Wed, Jan 17, 2018 at 8:02 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 17/01/18 15:27, Adam Ford wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On Sat, Mar 11, 2017 at 6:50 AM, Tero Kristo <t-kristo@ti.com>
->>>>>>>> wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Currently, TI clock driver uses an encapsulated struct that is cast
->>>>>>>>> into
->>>>>>>>> a void pointer to store all register addresses. This can be
->>>>>>>>> considered
->>>>>>>>> as rather nasty hackery, and prevents from expanding the register
->>>>>>>>> address field also. Instead, replace all the code to use proper
->>>>>>>>> struct
->>>>>>>>> in place for this, which contains all the previously used data.
->>>>>>>>>
->>>>>>>>> This patch is rather large as it is touching multiple files, but
->>>>>>>>> this
->>>>>>>>> can't be split up as we need to avoid any boot breakage.
->>>>>>>>>
->>>>>>>>
->>>>>>>> I know it's late coming, but according to git bisect, this patch is
->>>>>>>> causing some problems with Logic PD Torpedo 37xx Dev kit.
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Oh reporting bugs is never too late, thanks for posting this out.
->>>>>>>
->>>>>>>>
->>>>>>>> It it is a DM3730 that has a WL1283 chipset attached to the SDIO
->>>>>>>> interface on MMC3.  The driver seems to load properly, but when
->>>>>>>> loading wpa_supplicant to activate the WL1283, we get a giant crash.
->>>>>>>> I checked kernel revisions starting at 4.14 and working back to when
->>>>>>>> it worked, then used git bisect from there.
->>>>>>>>
->>>>>>>> I am hoping it might be a simple fix for something that just needs
->>>>>>>> to
->>>>>>>> get added or tweaked in the device tree.
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I don't have access to the specific hw, but can you try to dig out
->>>>>>> which
->>>>>>> hwmod is causing the crash? Just print out the oh->name from the
->>>>>>> _wait_softreset_complete. That would help root causing the issue.
->>>>>>>
->>>>>>
->>>>>> With one small patch, I was able to make it work again.
->>>>>>
->>>>>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c
->>>>>> b/arch/arm/mach-omap2/omap_hwmod.c
->>>>>> index 2dbd632..ed1f625 100644
->>>>>> --- a/arch/arm/mach-omap2/omap_hwmod.c
->>>>>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
->>>>>> @@ -477,7 +477,7 @@ static int _wait_softreset_complete(struct
->>>>>> omap_hwmod *oh)
->>>>>>           int c = 0;
->>>>>>
->>>>>>           sysc = oh->class->sysc;
->>>>>> -
->>>>>> +pr_warn("_wait_softreset_complete: %s\n", oh->name);
->>>>>>           if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
->>>>>>                   omap_test_timeout((omap_hwmod_read(oh,
->>>>>> sysc->syss_offs)
->>>>>>                                      & SYSS_RESETDONE_MASK),
->>>>>>
->>>>>>
->>>>>> This leads me to believe that the omap_test_timeout functions might
->>>>>> not be working quite right.
->>>>>
->>>>>
->>>>>
->>>>> There may be a srst_udelay needed for some module, see commit
->>>>> ebf244148092 ("ARM: OMAP2+: Use srst_udelay for USB on dm814x")
->>>>> for example.
->>>>>
->>>>> You might be able to find which module it is by commenting out
->>>>> postcore_initcall_sync(omap3_l3_init) in drivers/bus/omap_l3_smx.c
->>>>> temporarily as the system will most likely hang right there.
->>>>
->>>>
->>>>
->>>> I commented out that line as you suggested, but the system boots as
->>>> normal and I get the crash (as normal)
->>>>
->>>> I am looking through the DM3730 and OMAP3630 TRM now.  Any thought on
->>>> a keyword search I should use to see which hwmods might require
->>>> srst_udelay?
->>>
->>>
->>>
->>> Looking at the log you provided, it looks like only mmc1, mmc3 and i2c1
->>> are
->>> reset during the wlan probe. Based on the prints coming out in the
->>> failing
->>> case, it looks like the culprit might be mmc3 for some reason.
->>>
->>> [   18.239746] _wait_softreset_complete: mmc3
->>> [   18.638580] _wait_softreset_complete: mmc3
->>> [   18.657562] _wait_softreset_complete: mmc1
->>> [   18.833374] wlcore: firmware booted (Rev 7.3.10.0.141)
->>>
->>> ^ the firmware notification above does not come out in the crash.
->>>
->>
->> I agree with your assessment.  Any ideas why moving the debug
->> statement before the if statement would make it start working?  I
->> added some artificial udelay at around 100, but I still got the crash.
->> It seems like there is some timing issue, but at the same time just
->> adding a delay isn't enough.
->
->
-> The pr_warn does more than just delay, it accesses the io-space potentially
-> causing a flush on certain IO ranges. There might be some OCP readback
-> missing for example, in which case a simple udelay may not help.
->
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
 
-I am not very familiar with the OCP and/or how the flushing would
-impact this.  Do you have any suggestions on how I can troubleshoot?
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/devices-da8xx.c |  29 -----
+ arch/arm/mach-davinci/usb-da8xx.c     | 238 ----------------------------------
+ 2 files changed, 267 deletions(-)
 
-adam
-
-> -Tero
->
->
->>
->>> -Tero
->>>
->>
->> adam
->>
->>>>
->>>> adam
->>>>
->>>>>
->>>>> Regards,
->>>>>
->>>>> Tony
->>>>
->>>>
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>
->>> --
->
->
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 7ffacb9..d3660fd 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -31,11 +31,6 @@
+ #include "cpuidle.h"
+ #include "sram.h"
+ 
+-#ifndef CONFIG_COMMON_CLK
+-#include <mach/clock.h>
+-#include "clock.h"
+-#endif
+-
+ #define DA8XX_TPCC_BASE			0x01c00000
+ #define DA8XX_TPTC0_BASE		0x01c08000
+ #define DA8XX_TPTC1_BASE		0x01c08400
+@@ -1046,29 +1041,6 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
+ }
+ 
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
+-#ifndef CONFIG_COMMON_CLK
+-static struct clk sata_refclk = {
+-	.name		= "sata_refclk",
+-	.set_rate	= davinci_simple_set_rate,
+-};
+-
+-static struct clk_lookup sata_refclk_lookup =
+-		CLK("ahci_da850", "refclk", &sata_refclk);
+-
+-int __init da850_register_sata_refclk(int rate)
+-{
+-	int ret;
+-
+-	sata_refclk.rate = rate;
+-	ret = clk_register(&sata_refclk);
+-	if (ret)
+-		return ret;
+-
+-	clkdev_add(&sata_refclk_lookup);
+-
+-	return 0;
+-}
+-#else
+ int __init da850_register_sata_refclk(int rate)
+ {
+ 	struct clk *clk;
+@@ -1079,7 +1051,6 @@ int __init da850_register_sata_refclk(int rate)
+ 
+ 	return clk_register_clkdev(clk, "refclk", "ahci_da850");
+ }
+-#endif
+ 
+ static struct resource da850_sata_resources[] = {
+ 	{
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index d7340670..d05a6c7 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -21,18 +21,9 @@
+ #include <mach/da8xx.h>
+ #include <mach/irqs.h>
+ 
+-#ifndef CONFIG_COMMON_CLK
+-#include <mach/clock.h>
+-#include "clock.h"
+-#endif
+-
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct clk *usb20_clk;
+-#endif
+-
+ static struct platform_device da8xx_usb_phy = {
+ 	.name		= "da8xx-usb-phy",
+ 	.id		= -1,
+@@ -136,234 +127,6 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
+ 	return platform_device_register(&da8xx_usb11_device);
+ }
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct clk usb_refclkin = {
+-	.name		= "usb_refclkin",
+-	.set_rate	= davinci_simple_set_rate,
+-};
+-
+-static struct clk_lookup usb_refclkin_lookup =
+-	CLK(NULL, "usb_refclkin", &usb_refclkin);
+-
+-/**
+- * da8xx_register_usb_refclkin - register USB_REFCLKIN clock
+- *
+- * @rate: The clock rate in Hz
+- *
+- * This clock is only needed if the board provides an external USB_REFCLKIN
+- * signal, in which case it will be used as the parent of usb20_phy_clk and/or
+- * usb11_phy_clk.
+- */
+-int __init da8xx_register_usb_refclkin(int rate)
+-{
+-	int ret;
+-
+-	usb_refclkin.rate = rate;
+-	ret = clk_register(&usb_refclkin);
+-	if (ret)
+-		return ret;
+-
+-	clkdev_add(&usb_refclkin_lookup);
+-
+-	return 0;
+-}
+-
+-static void usb20_phy_clk_enable(struct clk *clk)
+-{
+-	u32 val;
+-	u32 timeout = 500000; /* 500 msec */
+-
+-	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	/* The USB 2.O PLL requires that the USB 2.O PSC is enabled as well. */
+-	davinci_clk_enable(usb20_clk);
+-
+-	/*
+-	 * Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
+-	 * host may use the PLL clock without USB 2.0 OTG being used.
+-	 */
+-	val &= ~(CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN);
+-	val |= CFGCHIP2_PHY_PLLON;
+-
+-	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	while (--timeout) {
+-		val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-		if (val & CFGCHIP2_PHYCLKGD)
+-			goto done;
+-		udelay(1);
+-	}
+-
+-	pr_err("Timeout waiting for USB 2.0 PHY clock good\n");
+-done:
+-	davinci_clk_disable(usb20_clk);
+-}
+-
+-static void usb20_phy_clk_disable(struct clk *clk)
+-{
+-	u32 val;
+-
+-	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-	val |= CFGCHIP2_PHYPWRDN;
+-	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-}
+-
+-static int usb20_phy_clk_set_parent(struct clk *clk, struct clk *parent)
+-{
+-	u32 val;
+-
+-	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	/* Set the mux depending on the parent clock. */
+-	if (parent == &usb_refclkin) {
+-		val &= ~CFGCHIP2_USB2PHYCLKMUX;
+-	} else if (strcmp(parent->name, "pll0_aux_clk") == 0) {
+-		val |= CFGCHIP2_USB2PHYCLKMUX;
+-	} else {
+-		pr_err("Bad parent on USB 2.0 PHY clock\n");
+-		return -EINVAL;
+-	}
+-
+-	/* reference frequency also comes from parent clock */
+-	val &= ~CFGCHIP2_REFFREQ_MASK;
+-	switch (clk_get_rate(parent)) {
+-	case 12000000:
+-		val |= CFGCHIP2_REFFREQ_12MHZ;
+-		break;
+-	case 13000000:
+-		val |= CFGCHIP2_REFFREQ_13MHZ;
+-		break;
+-	case 19200000:
+-		val |= CFGCHIP2_REFFREQ_19_2MHZ;
+-		break;
+-	case 20000000:
+-		val |= CFGCHIP2_REFFREQ_20MHZ;
+-		break;
+-	case 24000000:
+-		val |= CFGCHIP2_REFFREQ_24MHZ;
+-		break;
+-	case 26000000:
+-		val |= CFGCHIP2_REFFREQ_26MHZ;
+-		break;
+-	case 38400000:
+-		val |= CFGCHIP2_REFFREQ_38_4MHZ;
+-		break;
+-	case 40000000:
+-		val |= CFGCHIP2_REFFREQ_40MHZ;
+-		break;
+-	case 48000000:
+-		val |= CFGCHIP2_REFFREQ_48MHZ;
+-		break;
+-	default:
+-		pr_err("Bad parent clock rate on USB 2.0 PHY clock\n");
+-		return -EINVAL;
+-	}
+-
+-	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	return 0;
+-}
+-
+-static struct clk usb20_phy_clk = {
+-	.name		= "usb20_phy",
+-	.clk_enable	= usb20_phy_clk_enable,
+-	.clk_disable	= usb20_phy_clk_disable,
+-	.set_parent	= usb20_phy_clk_set_parent,
+-};
+-
+-static struct clk_lookup usb20_phy_clk_lookup =
+-	CLK("da8xx-usb-phy", "usb20_phy", &usb20_phy_clk);
+-
+-/**
+- * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
+- *
+- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
+- *	or "pll0_aux" if false.
+- */
+-int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
+-{
+-	struct clk *parent;
+-	int ret;
+-
+-	usb20_clk = clk_get(&da8xx_usb20_dev.dev, "usb20");
+-	ret = PTR_ERR_OR_ZERO(usb20_clk);
+-	if (ret)
+-		return ret;
+-
+-	parent = clk_get(NULL, use_usb_refclkin ? "usb_refclkin" : "pll0_aux");
+-	ret = PTR_ERR_OR_ZERO(parent);
+-	if (ret) {
+-		clk_put(usb20_clk);
+-		return ret;
+-	}
+-
+-	usb20_phy_clk.parent = parent;
+-	ret = clk_register(&usb20_phy_clk);
+-	if (!ret)
+-		clkdev_add(&usb20_phy_clk_lookup);
+-
+-	clk_put(parent);
+-
+-	return ret;
+-}
+-
+-static int usb11_phy_clk_set_parent(struct clk *clk, struct clk *parent)
+-{
+-	u32 val;
+-
+-	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
+-	if (parent == &usb20_phy_clk) {
+-		val &= ~CFGCHIP2_USB1PHYCLKMUX;
+-	} else if (parent == &usb_refclkin) {
+-		val |= CFGCHIP2_USB1PHYCLKMUX;
+-	} else {
+-		pr_err("Bad parent on USB 1.1 PHY clock\n");
+-		return -EINVAL;
+-	}
+-
+-	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
+-
+-	return 0;
+-}
+-
+-static struct clk usb11_phy_clk = {
+-	.name		= "usb11_phy",
+-	.set_parent	= usb11_phy_clk_set_parent,
+-};
+-
+-static struct clk_lookup usb11_phy_clk_lookup =
+-	CLK("da8xx-usb-phy", "usb11_phy", &usb11_phy_clk);
+-
+-/**
+- * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
+- *
+- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
+- *	or "usb20_phy" if false.
+- */
+-int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
+-{
+-	struct clk *parent;
+-	int ret = 0;
+-
+-	if (use_usb_refclkin)
+-		parent = clk_get(NULL, "usb_refclkin");
+-	else
+-		parent = clk_get(&da8xx_usb_phy.dev, "usb20_phy");
+-	if (IS_ERR(parent))
+-		return PTR_ERR(parent);
+-
+-	usb11_phy_clk.parent = parent;
+-	ret = clk_register(&usb11_phy_clk);
+-	if (!ret)
+-		clkdev_add(&usb11_phy_clk_lookup);
+-
+-	clk_put(parent);
+-
+-	return ret;
+-}
+-#else
+ /**
+  * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
+  *
+@@ -435,4 +198,3 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
+ 
+ 	return clk_register_clkdev(clk, "usb11_phy", "da8xx-usb-phy");
+ }
+-#endif
+-- 
+2.7.4
