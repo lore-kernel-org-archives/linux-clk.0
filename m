@@ -12,174 +12,91 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 24/44] ARM: da850: add new clock init using common clock framework
-Date: Sun,  7 Jan 2018 20:17:23 -0600
-Message-Id: <1515377863-20358-25-git-send-email-david@lechnology.com>
+Subject: [PATCH v5 07/44] clk: davinci: Add platform information for TI DM644x PLL
+Date: Sun,  7 Jan 2018 20:17:06 -0600
+Message-Id: <1515377863-20358-8-git-send-email-david@lechnology.com>
 In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
 References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specfic clock init in mach-davinci/da850.c using
-the new common clock framework drivers.
-
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Some CFGCHIP* #defines are removed since they are included in the
-linux/mfd/da8xx-cfgchip.h header file.
-
-Also clean up the #includes since we are adding some here.
+This adds platform-specific declarations for the PLL clocks on TI
+DaVinci 644x based systems.
 
 Signed-off-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/da850.c | 74 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 61 insertions(+), 13 deletions(-)
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/pll-dm644x.c | 41 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h      |  1 +
+ 3 files changed, 43 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm644x.c
 
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 34117e61..4804096 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -11,39 +11,44 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 353aa02..59d8ab6 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -6,4 +6,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
++obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
+new file mode 100644
+index 0000000..b0d0373
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm644x.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM644X
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clkdev.h>
-+#include <linux/cpufreq.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
-+#include <linux/log2.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_device.h>
--#include <linux/cpufreq.h>
- #include <linux/regulator/consumer.h>
--#include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
--#include <mach/da8xx.h>
- #include <mach/cpufreq.h>
-+#include <mach/cputype.h>
-+#include <mach/da8xx.h>
-+#include <mach/irqs.h>
- #include <mach/pm.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
++#include <linux/init.h>
++#include <linux/types.h>
 +
- #define DA850_PLL1_BASE		0x01e1a000
- #define DA850_TIMER64P2_BASE	0x01f0c000
- #define DA850_TIMER64P3_BASE	0x01f0d000
- 
- #define DA850_REF_FREQ		24000000
- 
--#define CFGCHIP3_ASYNC3_CLKSRC	BIT(4)
--#define CFGCHIP3_PLL1_MASTER_LOCK	BIT(5)
--#define CFGCHIP0_PLL_MASTER_LOCK	BIT(4)
--
-+#ifndef CONFIG_COMMON_CLK
- static int da850_set_armrate(struct clk *clk, unsigned long rate);
- static int da850_round_armrate(struct clk *clk, unsigned long rate);
- static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
-@@ -583,6 +588,7 @@ static struct clk_lookup da850_clks[] = {
- 	CLK("ecap.2",		"fck",		&ecap2_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1170,6 +1176,7 @@ int da850_register_cpufreq(char *async_clk)
- 	return platform_device_register(&da850_cpufreq_device);
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static int da850_round_armrate(struct clk *clk, unsigned long rate)
- {
- 	int ret = 0, diff;
-@@ -1232,12 +1239,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
- 
- 	return 0;
- }
-+#endif /* CONFIG_COMMON_CLK */
- #else
- int __init da850_register_cpufreq(char *async_clk)
- {
- 	return 0;
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static int da850_set_armrate(struct clk *clk, unsigned long rate)
- {
- 	return -EINVAL;
-@@ -1252,6 +1261,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
- {
- 	return clk->rate;
- }
-+#endif /* CONFIG_COMMON_CLK */
- #endif
- 
- /* VPIF resource, platform data */
-@@ -1395,6 +1405,44 @@ void __init da850_init(void)
- 
- void __init da850_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll0, *pll1, *psc0, *psc1;
-+	struct clk *clk;
-+	struct clk_hw *parent;
++#include "pll.h"
 +
-+	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
-+	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-+	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
++static const struct davinci_pll_divclk_info dm644x_pll1_divclk_info[] __initconst = {
++	DIVCLK(1, pll1_sysclk1, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(2, pll1_sysclk2, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(3, pll1_sysclk3, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(5, pll1_sysclk5, pll1, DIVCLK_FIXED_DIV),
++	{ }
++};
 +
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
-+	da850_pll_clk_init(pll0, pll1);
-+	clk = clk_register_mux(NULL, "async3",
-+		(const char * const[]){ "pll0_sysclk2", "pll1_sysclk2" },
-+		2, 0, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG),
-+		ilog2(CFGCHIP3_ASYNC3_CLKSRC), 1, 0, NULL);
-+	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-+	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
-+	if (parent)
-+		clk_set_parent(clk, parent->clk);
-+	else
-+		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
-+	da850_psc_clk_init(psc0, psc1);
-+	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-+	clk_register_clkdev(clk, "rmii", NULL);
-+	clk = clk_register_gate(NULL, "ehrpwm_tbclk", "ehrpwm", 0,
-+				DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG),
-+				ilog2(CFGCHIP1_TBCLKSYNC), 0, NULL);
-+	clk_register_clkdev(clk, "tbclk", "ehrpwm.0");
-+	clk_register_clkdev(clk, "tbclk", "ehrpwm.1");
-+#else
- 	davinci_clk_init(da850_clks);
-+#endif
- 	davinci_timer_init();
- }
++static const struct davinci_pll_divclk_info dm644x_pll2_divclk_info[] __initconst = {
++	DIVCLK(1, pll2_sysclk1, pll2, 0),
++	DIVCLK(2, pll2_sysclk2, pll2, 0),
++	{ }
++};
++
++void __init dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
++{
++	const struct davinci_pll_divclk_info *info;
++
++	davinci_pll_clk_register("pll1", "ref_clk", pll1);
++	for (info = dm644x_pll1_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll1);
++	davinci_pll_aux_clk_register("pll1_aux_clk", "ref_clk", pll1);
++	davinci_pll_bpdiv_clk_register("pll1_sysclkbp", "ref_clk", pll1);
++
++	davinci_pll_clk_register("pll2", "ref_clk", pll2);
++	for (info = dm644x_pll2_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll2);
++	davinci_pll_bpdiv_clk_register("pll2_sysclkbp", "ref_clk", pll2);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 5bf60a7..535990a 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -13,5 +13,6 @@ void da830_pll_clk_init(void __iomem *pll);
+ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
+ void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ void dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
++void dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
 2.7.4
