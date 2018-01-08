@@ -1,90 +1,93 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] clk: tegra: Specify VDE clock rate
-Date: Wed, 10 Jan 2018 16:59:44 +0300
-Message-Id: <9e1258dfbf4f8e3702d5b43ed08c4e790813798c.1515589507.git.digetx@gmail.com>
-In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
-In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks
+Date: Sun,  7 Jan 2018 20:17:19 -0600
+Message-Id: <1515377863-20358-21-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently VDE clock rate is determined by clock config left from
-bootloader, let's not rely on it and explicitly specify the clock
-rate in the CCF driver.
+This adds a new binding for TI DA8XX USB PHY clocks. These clocks are part
+of a syscon register called CFGCHIP3.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
+ .../clock/ti/davinci/da8xx-cfgchip-usb-phy.txt     | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-usb-phy.txt
 
-Change log:
-v2:     No change.
-v3:     No change.
-
- drivers/clk/tegra/clk-tegra114.c | 1 +
- drivers/clk/tegra/clk-tegra124.c | 2 +-
- drivers/clk/tegra/clk-tegra20.c  | 1 +
- drivers/clk/tegra/clk-tegra30.c  | 1 +
- 4 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index c3945c683f60..5d5a22d529f5 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1189,6 +1189,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_XUSB_HS_SRC, TEGRA114_CLK_XUSB_SS_DIV2, 61200000, 0 },
- 	{ TEGRA114_CLK_XUSB_FALCON_SRC, TEGRA114_CLK_PLL_P, 204000000, 0 },
- 	{ TEGRA114_CLK_XUSB_HOST_SRC, TEGRA114_CLK_PLL_P, 102000000, 0 },
-+	{ TEGRA114_CLK_VDE, TEGRA114_CLK_CLK_MAX, 600000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 230f9a2c1abf..50088e976611 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
--	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_P, 0, 0 },
-+	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
- 	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
- 	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
- 	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index dec95919fbff..0ee56dd04cec 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1048,6 +1048,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-+	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8428895ad475..b316dfb6f6c7 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1266,6 +1266,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
-+	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-usb-phy.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-usb-phy.txt
+new file mode 100644
+index 0000000..8a12e1b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-usb-phy.txt
+@@ -0,0 +1,55 @@
++Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP USB PHY clocks
++
++TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
++registers call CFGCHIPn. Some of these registers function as the USB PHY
++clocks. This document describes the bindings for those clocks.
++
++Required properties:
++- compatible: shall be one of:
++	- "ti,da830-usb0-phy-clock" for the USB 2.0 PHY
++	- "ti,da830-usb1-phy-clock" for the USB 1.1 PHY
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandle list of clocks corresponding to clock-names
++- clock-names: depends on compatible:
++	- for "ti,da830-usb0-phy-clock" must be "usb_refclkin", "auxclk",
++		"usb0_lpsc"
++	- for "ti,da830-usb1-phy-clock" must be "usb0_phy", "usb_refclkin"
++
++Optional properties:
++- clock-output-names: from common clock binding.
++
++Parent:
++	This node must be a child of a "ti,da830-cfgchip" node.
++
++Assignment:
++	The assigned-clocks and assigned-clock-parents properties from the
++	common clock bindings can be used to indicate which parent clock should
++	be used. Note: for "ti,da830-usb0-phy-clock", only "usb_refclkin" or
++	"auxclk" can be used as the assigned parent clock ("usb0_lpsc" is not
++	an actual parent clock and only used internally).
++
++Examples:
++
++	cfgchip: syscon@1417c {
++		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
++		reg = <0x1417c 0x14>;
++
++		usb0_phy_clk: usb0-phy-clock {
++			compatible = "ti,da830-usb0-phy-clock";
++			#clock-cells = <0>;
++			clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
++			clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
++			clock-output-names = "usb0_phy_clk";
++		};
++
++		usb1_phy_clk: usb1-phy-clock {
++			compatible = "ti,da830-usb1-phy-clock";
++			#clock-cells = <0>;
++			clocks = <&usb0_phy_clk>, <&usb_refclkin>;
++			clock-names = "usb0_phy", "usb_refclkin";
++			clock-output-names = "usb1_phy_clk";
++		};
++	};
++
++Also see:
++- Documentation/devicetree/bindings/clock/clock-bindings.txt
 -- 
-2.15.1
+2.7.4
