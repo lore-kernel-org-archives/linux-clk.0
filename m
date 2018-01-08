@@ -1,111 +1,255 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 00/19] clk: meson: use regmap in clock controllers
-Date: Wed, 31 Jan 2018 19:09:26 +0100
-Message-Id: <20180131180945.18025-1-jbrunet@baylibre.com>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 19/44] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
+Date: Sun,  7 Jan 2018 20:17:18 -0600
+Message-Id: <1515377863-20358-20-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset is a rework of meson's clock controllers to use regmap
-instead of directly using io memory. It based clk-meson next/drivers
-and depends on few core clock patches, mainly to export generic clocks
-helpers: [0],[1]. The line count is pretty high but the changes are
-actually fairly simple and repetitive.
+This adds a new driver for the gate and multiplexer clocks in the
+CFGCHIPn syscon registers on TI DA8XX-type SoCs.
 
-This work has been triggered by the fact that the HHI register space on
-gxbb and axg provides more than just clocks. The display driver already
-uses a syscon for HHI on gxbb. This is why gxbb did not use
-devm_ioremap_resource() to map the registers, since it would have
-reserved the memory region, preventing another driver from re-mapping
-it. The cleaner solution is, of course, to use syscon to handle. The
-purpose of this changeset is to allow it. Even if meson8b does not need
-this ATM, there is real reason to leave it behind. It is actually easier
-to migrate it as well, so all meson clock drivers may support regmap
-only.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile        |   2 +
+ drivers/clk/davinci/da8xx-cfgchip.c | 203 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 205 insertions(+)
+ create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
 
-The rework starts with a few easy clean-ups. The real deal starts with
-patch 5, which adds meson's clk_regmap. This will be used as common
-structure to implement all the controller clocks. Having this replaces
-the gxbb AO controller specific regmap gate. This structure will also be
-re-used in upcoming controllers, such as the axg's AO and audio
-controllers.  Each clock type is then migrated, one at a time, to this
-new structure.
-
-While at it, the meson clock drivers have been cleaned-up a bit,
-removing the gate embedded in the mpll driver, simplifying the pll
-driver and removing the legacy cpu_clk of meson8b The new code around
-the cpu clk of the meson8b is just re-implementation, using simple
-elements, of the old cpu_clk. What was failing before is still expected
-to fail now. Apparently this clock will need a bit more love to enable
-dvfs on meson8b. BTW, thanks a lot to Martin for trying this rework as
-early as he did !!
-
-With this series applied, the clock controllers of the gxbb, gxl and axg
-SoC will try get regmap from their parent DT node. If this fails, they
-will fallback to mapping the register themselves. This fallback will be
-kept until platform DTs have changed so clock controllers is a child of
-the HHI system controller.
-
-Based on this changeset, more patches are coming. For those interested,
-the WIP is available here [2]
-
-[0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
-[1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
-[2]: https://github.com/jeromebrunet/linux/tree/v4.16/meson/clk-regmap
-
-Jerome Brunet (19):
-  clk: meson: use dev pointer where possible
-  clk: meson: use devm_of_clk_add_hw_provider
-  clk: meson: only one loop index is necessary in probe
-  clk: meson: remove obsolete comments
-  clk: meson: add regmap clocks
-  clk: meson: switch gxbb ao_clk to clk_regmap
-  clk: meson: remove superseded aoclk_gate_regmap
-  clk: meson: add regmap to the clock controllers
-  clk: meson: migrate gates to clk_regmap
-  clk: meson: migrate dividers to clk_regmap
-  clk: meson: migrate muxes to clk_regmap
-  clk: meson: add regmap helpers for parm
-  clk: meson: migrate mplls clocks to clk_regmap
-  clk: meson: migrate the audio divider clock to clk_regmap
-  clk: meson: migrate plls clocks to clk_regmap
-  clk: meson: split divider and gate part of mpll
-  clk: meson: rework meson8b cpu clock
-  clk: meson: remove obsolete cpu_clk
-  clk: meson: use hhi syscon if available
-
- drivers/clk/meson/Kconfig             |    9 +
- drivers/clk/meson/Makefile            |    5 +-
- drivers/clk/meson/axg.c               |  722 +++++++++--------
- drivers/clk/meson/axg.h               |    6 +-
- drivers/clk/meson/clk-audio-divider.c |   63 +-
- drivers/clk/meson/clk-cpu.c           |  178 -----
- drivers/clk/meson/clk-mpll.c          |  132 +---
- drivers/clk/meson/clk-pll.c           |  243 +++---
- drivers/clk/meson/clk-regmap.c        |  166 ++++
- drivers/clk/meson/clk-regmap.h        |  111 +++
- drivers/clk/meson/clkc.h              |   93 +--
- drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
- drivers/clk/meson/gxbb-aoclk.c        |   20 +-
- drivers/clk/meson/gxbb-aoclk.h        |   11 -
- drivers/clk/meson/gxbb.c              | 1399 ++++++++++++++++++---------------
- drivers/clk/meson/gxbb.h              |    5 +-
- drivers/clk/meson/meson8b.c           |  612 ++++++++------
- drivers/clk/meson/meson8b.h           |   11 +-
- 18 files changed, 2016 insertions(+), 1816 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-cpu.c
- create mode 100644 drivers/clk/meson/clk-regmap.c
- create mode 100644 drivers/clk/meson/clk-regmap.h
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 6c388d4..11178b7 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
++obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+new file mode 100644
+index 0000000..772e09a
+--- /dev/null
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#ifdef CONFIG_OF
++struct da8xx_cfgchip_gate_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
++
++#define to_da8xx_cfgchip_gate_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
++
++static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
++}
++
++static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
++}
++
++static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return !!(val & clk->mask);
++}
++
++static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
++	.enable		= da8xx_cfgchip_gate_clk_enable,
++	.disable	= da8xx_cfgchip_gate_clk_disable,
++	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
++};
++
++static void da8xx_cfgchip_gate_clk_init(struct device_node *np, u32 reg,
++					u32 mask)
++{
++	struct da8xx_cfgchip_gate_clk *clk;
++	struct clk_init_data init;
++	const char *name = np->name;
++	const char *parent_name;
++	struct regmap *regmap;
++	int ret;
++
++	of_property_read_string(np, "clock-output-names", &name);
++	parent_name = of_clk_get_parent_name(np, 0);
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
++		       __func__, np->full_name, PTR_ERR(regmap));
++		return;
++	}
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return;
++
++	init.name = name;
++	init.ops = &da8xx_cfgchip_gate_clk_ops;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++	init.flags = 0;
++
++	clk->hw.init = &init;
++	clk->regmap = regmap;
++	clk->reg = reg;
++	clk->mask = mask;
++
++	ret = clk_hw_register(NULL, &clk->hw);
++	if (ret) {
++		pr_err("%s: failed to register %s (%d)\n", __func__,
++		       np->full_name, ret);
++		return;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_simple_get, &clk->hw);
++}
++
++static void da8xx_tbclk_init(struct device_node *np)
++{
++	da8xx_cfgchip_gate_clk_init(np, CFGCHIP(1), CFGCHIP1_TBCLKSYNC);
++}
++CLK_OF_DECLARE(da8xx_tbclk, "ti,da830-tbclk", da8xx_tbclk_init);
++
++struct da8xx_cfgchip_mux_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
++
++#define to_da8xx_cfgchip_mux_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
++
++static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val = index ? clk->mask : 0;
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
++}
++
++static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return (val & clk->mask) ? 1 : 0;
++}
++
++static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
++	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
++	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
++};
++
++static void da8xx_cfgchip_mux_clk_init(struct device_node *np, u32 reg,
++				       u32 mask)
++{
++	struct da8xx_cfgchip_mux_clk *clk;
++	struct clk_init_data init;
++	const char *name = np->name;
++	const char *parent_names[2];
++	struct regmap *regmap;
++	int ret;
++
++	ret = of_property_match_string(np, "clock-names", "pll0_sysclk2");
++	parent_names[0] = of_clk_get_parent_name(np, ret);
++	if (!parent_names[0]) {
++		pr_err("%s: missing pll0_sysclk2 clock\n", __func__);
++		return;
++	}
++
++	ret = of_property_match_string(np, "clock-names", "pll1_sysclk2");
++	parent_names[1] = of_clk_get_parent_name(np, ret);
++	if (!parent_names[1]) {
++		pr_err("%s: missing pll1_sysclk2 clock\n", __func__);
++		return;
++	}
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
++		       __func__, np->full_name, PTR_ERR(regmap));
++		return;
++	}
++
++	of_property_read_string(np, "clock-output-names", &name);
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return;
++
++	init.name = name;
++	init.ops = &da8xx_cfgchip_mux_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++	init.flags = 0;
++
++	clk->hw.init = &init;
++	clk->regmap = regmap;
++	clk->reg = reg;
++	clk->mask = mask;
++
++	ret = clk_hw_register(NULL, &clk->hw);
++	if (ret) {
++		pr_err("%s: failed to register %s (%d)\n", __func__,
++		       np->full_name, ret);
++		return;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_simple_get, &clk->hw);
++}
++
++static void da8xx_async3_init(struct device_node *np)
++{
++	da8xx_cfgchip_mux_clk_init(np, CFGCHIP(3), CFGCHIP3_ASYNC3_CLKSRC);
++}
++CLK_OF_DECLARE(da8xx_async3, "ti,da850-async3-clock", da8xx_async3_init);
++#endif
 -- 
-2.14.3
+2.7.4
