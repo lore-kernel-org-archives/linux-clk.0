@@ -1,41 +1,51 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	yang.zheng@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 7/7] clk: rockchip: document hdmi_phy external input for rk3328
-Date: Mon, 22 Jan 2018 15:15:30 +0100
-Message-Id: <20180122141530.12398-8-heiko@sntech.de>
-In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
-References: <20180122141530.12398-1-heiko@sntech.de>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 8 Jan 2018 18:41:11 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, fabio.estevam@nxp.com,
+	kernel@pengutronix.de, shawnguo@kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH] clk: imx: imx7d: correct video pll clock tree
+Message-ID: <20180108104111.GE32635@b29396-OptiPlex-7040>
+References: <1514999361-2723-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514999361-2723-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The hdmi-phy block inside the soc also loops its pll output back
-into the clock controller, so document that already used input clock.
+On Thu, Jan 04, 2018 at 01:09:21AM +0800, Anson Huang wrote:
+> There is a test divider and post divider in video PLL,
+> test divider is placed before post divider, all clocks
+> that can select parent from video PLL should be from
+> post divider, NOT from pll_video_main, below are
+> clock tree dump before and after this patch:
+> 
+> Before:
+> pll_video_main
+>    pll_video_main_bypass
+>       pll_video_main_clk
+>          lcdif_pixel_src
+>             lcdif_pixel_cg
+>                lcdif_pixel_pre_div
+>                   lcdif_pixel_post_div
+>                      lcdif_pixel_root_clk
+> After:
+> pll_video_main
+>    pll_video_main_bypass
+>       pll_video_main_clk
+>          pll_video_test_div
+>             pll_video_post_div
+>                lcdif_pixel_src
+>                   lcdif_pixel_cg
+>                      lcdif_pixel_pre_div
+>                         lcdif_pixel_post_div
+>                            lcdif_pixel_root_clk
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-index e71c675ba5da..904ae682ea90 100644
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-@@ -32,6 +32,7 @@ clock-output-names:
-  - "clkin_i2s" - external I2S clock - optional,
-  - "gmac_clkin" - external GMAC clock - optional
-  - "phy_50m_out" - output clock of the pll in the mac phy
-+ - "hdmi_phy" - output clock of the hdmi phy pll - optional
- 
- Example: Clock controller node:
- 
--- 
-2.14.2
+Regards
+Dong Aisheng
