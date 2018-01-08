@@ -1,71 +1,52 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1515759368-16946-15-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-15-git-send-email-patrice.chotard@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 15 Jan 2018 10:57:24 +0100
-Message-ID: <CACRpkdZUqzL0W_sLGSxiz1cOF3DDRjE_9iRrgHb2mnD9uP9fPA@mail.gmail.com>
-Subject: Re: [PATCH 14/14] gpio: stmpe: i2c transfer are forbiden in atomic context
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1515402639.5048.82.camel@baylibre.com>
+Subject: Re: [PATCH 2/5] clk: lpc32xx: read-only divider can propagate rate
+ change
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Vladimir Zapolskiy <vz@mleia.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+Date: Mon, 08 Jan 2018 10:10:39 +0100
+In-Reply-To: <54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com>
+References: <20180105170959.17266-1-jbrunet@baylibre.com>
+	 <20180105170959.17266-3-jbrunet@baylibre.com>
+	 <5a256cde-8e59-4921-f6e2-fecd3d1c3377@mleia.com>
+	 <1515181225.5048.52.camel@baylibre.com>
+	 <54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 12, 2018 at 1:16 PM,  <patrice.chotard@st.com> wrote:
+On Sat, 2018-01-06 at 16:04 +0200, Vladimir Zapolskiy wrote:
+> > I added the fix to LPC32xx because it looks like the generic divider (a lot) and
+> 
+> right, the relevant divider operations were copied, however the difference
+> is important, unfortunately there is no simple option to get rid of regmap,
+> because System Control Block registers are shared with a number of other
+> device drivers.
 
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> Move the workaround from stmpe_gpio_irq_unmask() which is executed
-> in atomic context to stmpe_gpio_irq_sync_unlock() which is not.
->
-> It fixes the following issue:
->
-> [    1.500000] BUG: scheduling while atomic: swapper/1/0x00000002
-> [    1.500000] CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc2-00020-gbd4301f-dirty #28
-> [    1.520000] Hardware name: STM32 (Device Tree Support)
-> [    1.520000] [<0000bfc9>] (unwind_backtrace) from [<0000b347>] (show_stack+0xb/0xc)
-> [    1.530000] [<0000b347>] (show_stack) from [<0001fc49>] (__schedule_bug+0x39/0x58)
-> [    1.530000] [<0001fc49>] (__schedule_bug) from [<00168211>] (__schedule+0x23/0x2b2)
-> [    1.550000] [<00168211>] (__schedule) from [<001684f7>] (schedule+0x57/0x64)
-> [    1.550000] [<001684f7>] (schedule) from [<0016a513>] (schedule_timeout+0x137/0x164)
-> [    1.550000] [<0016a513>] (schedule_timeout) from [<00168b91>] (wait_for_common+0x8d/0xfc)
-> [    1.570000] [<00168b91>] (wait_for_common) from [<00139753>] (stm32f4_i2c_xfer+0xe9/0xfe)
-> [    1.580000] [<00139753>] (stm32f4_i2c_xfer) from [<00138545>] (__i2c_transfer+0x111/0x148)
-> [    1.590000] [<00138545>] (__i2c_transfer) from [<001385cf>] (i2c_transfer+0x53/0x70)
-> [    1.590000] [<001385cf>] (i2c_transfer) from [<001388a5>] (i2c_smbus_xfer+0x12f/0x36e)
-> [    1.600000] [<001388a5>] (i2c_smbus_xfer) from [<00138b49>] (i2c_smbus_read_byte_data+0x1f/0x2a)
-> [    1.610000] [<00138b49>] (i2c_smbus_read_byte_data) from [<00124fdd>] (__stmpe_reg_read+0xd/0x24)
-> [    1.620000] [<00124fdd>] (__stmpe_reg_read) from [<001252b3>] (stmpe_reg_read+0x19/0x24)
-> [    1.630000] [<001252b3>] (stmpe_reg_read) from [<0002c4d1>] (unmask_irq+0x17/0x22)
-> [    1.640000] [<0002c4d1>] (unmask_irq) from [<0002c57f>] (irq_startup+0x6f/0x78)
-> [    1.650000] [<0002c57f>] (irq_startup) from [<0002b7a1>] (__setup_irq+0x319/0x47c)
-> [    1.650000] [<0002b7a1>] (__setup_irq) from [<0002bad3>] (request_threaded_irq+0x6b/0xe8)
-> [    1.660000] [<0002bad3>] (request_threaded_irq) from [<0002d0b9>] (devm_request_threaded_irq+0x3b/0x6a)
-> [    1.670000] [<0002d0b9>] (devm_request_threaded_irq) from [<001446e7>] (mmc_gpiod_request_cd_irq+0x49/0x8a)
-> [    1.680000] [<001446e7>] (mmc_gpiod_request_cd_irq) from [<0013d45d>] (mmc_start_host+0x49/0x60)
-> [    1.690000] [<0013d45d>] (mmc_start_host) from [<0013e40b>] (mmc_add_host+0x3b/0x54)
-> [    1.700000] [<0013e40b>] (mmc_add_host) from [<00148119>] (mmci_probe+0x4d1/0x60c)
-> [    1.710000] [<00148119>] (mmci_probe) from [<000f903b>] (amba_probe+0x7b/0xbe)
-> [    1.720000] [<000f903b>] (amba_probe) from [<001170e5>] (driver_probe_device+0x169/0x1f8)
-> [    1.730000] [<001170e5>] (driver_probe_device) from [<001171b7>] (__driver_attach+0x43/0x5c)
-> [    1.740000] [<001171b7>] (__driver_attach) from [<0011618d>] (bus_for_each_dev+0x3d/0x46)
-> [    1.740000] [<0011618d>] (bus_for_each_dev) from [<001165cd>] (bus_add_driver+0xcd/0x124)
-> [    1.740000] [<001165cd>] (bus_add_driver) from [<00117713>] (driver_register+0x4d/0x7a)
-> [    1.760000] [<00117713>] (driver_register) from [<001fc765>] (do_one_initcall+0xbd/0xe8)
-> [    1.770000] [<001fc765>] (do_one_initcall) from [<001fc88b>] (kernel_init_freeable+0xfb/0x134)
-> [    1.780000] [<001fc88b>] (kernel_init_freeable) from [<00167ee3>] (kernel_init+0x7/0x9c)
-> [    1.790000] [<00167ee3>] (kernel_init) from [<00009b65>] (ret_from_fork+0x11/0x2c)
->
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+I have the same issue ;)
 
-Patch applied.
+> 
+> > appears to support CLK_DIVIDER_READ_ONLY. If it does not, could you please kill
+> > the related code ?
+> 
+> The driver supports CLK_DIVIDER_READ_ONLY clocks, and it should not be
+> changed, but all such clocks don't have children with CLK_SET_RATE_PARENT
+> property, which invalidates your fix for LPC32xx. Please let me know,
+> if I missed something.
 
-Yours,
-Linus Walleij
+You did not miss anything. I understand your choice.
+I just have different approach and usually prefer to avoid these particularity
+which may catch you later on. 
+
+At least, the fact that propagation would stop with CLK_DIVIDER_READ_ONLY on
+LPC32xx, even with CLK_SET_RATE_PARENT, is now known.
+
+Adding a comment in the code to make this explicit would be nice though.
+
+Regards
+Jerome
