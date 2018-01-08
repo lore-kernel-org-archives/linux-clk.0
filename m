@@ -1,164 +1,511 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A55DD71.2060808@samsung.com>
-Date: Wed, 10 Jan 2018 18:31:29 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, kgene@kernel.org, Tomasz Figa
-	<tomasz.figa@gmail.com>, chanwoo@kernel.org, Jaehoon Chung
-	<jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support
- suspend-to-ram
-In-reply-to: 
-	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
-References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
-	<1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
-	<1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
-	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 21/44] clk: davinci: New driver for TI DA8XX USB PHY clocks
+Date: Sun,  7 Jan 2018 20:17:20 -0600
+Message-Id: <1515377863-20358-22-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 01월 09일 20:44, Krzysztof Kozlowski wrote:
-> On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
->> to some clocks in order to avoid the hang-out in the suspend mode.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: linux-clk@vger.kernel.org
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index db270908037a..3dc53cd0c730 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -583,25 +583,25 @@
->>                         CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->>         GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
->>                         ENABLE_ACLK_TOP, 13,
->> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
->>                         ENABLE_ACLK_TOP, 12,
->>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
->>                         ENABLE_ACLK_TOP, 11,
->> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
->>                         ENABLE_ACLK_TOP, 10,
->> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
->>                         ENABLE_ACLK_TOP, 9,
->>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
->>                         ENABLE_ACLK_TOP, 8,
->> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
->>                         ENABLE_ACLK_TOP, 7,
->> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
->>                         ENABLE_ACLK_TOP, 6,
->>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->> @@ -624,11 +624,11 @@
->>
->>         /* ENABLE_SCLK_TOP_CAM1 */
->>         GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
->> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
->> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
->>         GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
->>                         ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
->>         GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
->> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
->> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
-> 
-> Marking this and few others related to ISP as ignore_unused or
-> is_critical looks like a hacky workaround for wrong topology or
-> missing clock users. The real cause should be fixed instead marking
-> all the clocks as critical or ignore_unused.
+This adds a new driver for the USB PHY clocks in the CFGCHIP2 syscon
+register on TI DA8XX-type SoCs.
 
-I'm sorry. It is my mistake. When I tested the suspend again,
-following three clocks need CLK_IS_CRITICAL flag.
+The USB0 (USB 2.0) PHY clock is an interesting case because it calls
+clk_enable() in a reentrant way. The USB 2.0 PSC only has to be enabled
+temporarily while we are locking the PLL, which takes place during the
+clk_enable() callback.
 
-- CLK_ACLK_CAM0_552 / CLK_SCLK_UFSUNIPRO_FSYS
-  : there are not clk consumer until now.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile            |   1 +
+ drivers/clk/davinci/da8xx-usb-phy-clk.c | 425 ++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h             |  13 +
+ 3 files changed, 439 insertions(+)
+ create mode 100644 drivers/clk/davinci/da8xx-usb-phy-clk.c
 
-- CLK_SCLK_AUD_UART is for serial_3.
-  : There are no problem for the clocks of other serial port.
-  Only this clock must need to enable it always on. If we have to
-  handle CLK_SCLK_AUD_UART on drivers/tty/serial/samsung.c,
-  we need to pass the 'serial port information and Exynos info'.
-  So, If possible, adding the CLK_IS_CRITICAL flag to CLK_SCLK_AUD_UART
-  is simple.
-
-> 
-> Best regards,
-> Krzysztof
-> 
->>         GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
->>                         ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
->>         GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
->> @@ -636,7 +636,7 @@
->>         GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
->>                         ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
->>         GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
->> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
->> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
->>
->>         /* ENABLE_SCLK_TOP_DISP */
->>         GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
->> @@ -654,7 +654,7 @@
->>                         ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
->>         GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
->>                         "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
->> -                       3, CLK_SET_RATE_PARENT, 0),
->> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->>         GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
->>                         "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
->>                         1, CLK_SET_RATE_PARENT, 0),
->> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
->>         GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
->>                         ENABLE_PCLK_AUD, 6, 0, 0),
->>         GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
->> -                       ENABLE_PCLK_AUD, 5, 0, 0),
->> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
->>         GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
->>                         ENABLE_PCLK_AUD, 4, 0, 0),
->>         GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
->> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
->>         GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
->>                         ENABLE_SCLK_AUD1, 4, 0, 0),
->>         GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
->> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
->> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
->>         GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
->>                         ENABLE_SCLK_AUD1, 2, 0, 0),
->>         GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
->> --
->> 1.9.1
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
-
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 11178b7..4c772a7 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -2,6 +2,7 @@
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-usb-phy-clk.o
+ 
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+diff --git a/drivers/clk/davinci/da8xx-usb-phy-clk.c b/drivers/clk/davinci/da8xx-usb-phy-clk.c
+new file mode 100644
+index 0000000..fc6ea07
+--- /dev/null
++++ b/drivers/clk/davinci/da8xx-usb-phy-clk.c
+@@ -0,0 +1,425 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * da8xx-usb-phy-clk - TI DaVinci DA8xx USB PHY clocks driver
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ *
++ * This driver exposes the USB PHY clocks on DA8xx/AM18xx/OMAP-L13x SoCs.
++ * The clocks consist of two muxes and a PLL. The USB 2.0 PHY mux and PLL are
++ * combined into a single clock in Linux. The USB 1.0 PHY clock just consists
++ * of a mux. These clocks are controlled through CFGCHIP2, which is accessed
++ * as a syscon regmap since it is shared with other devices.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++/* --- USB 2.0 PHY clock --- */
++
++struct da8xx_usb0_phy_clk {
++	struct clk_hw hw;
++	struct clk *clk;
++	struct regmap *regmap;
++};
++
++enum da8xx_usb0_phy_clk_parent {
++	DA8XX_USB0_PHY_CLK_PARENT_USB_REFCLKIN,
++	DA8XX_USB0_PHY_CLK_PARENT_PLL0_AUXCLK,
++};
++
++#define to_da8xx_usb0_phy_clk(_hw) \
++	container_of((_hw), struct da8xx_usb0_phy_clk, hw)
++
++static int da8xx_usb0_phy_clk_prepare(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++
++	/* The USB 2.0 PSC clock is only needed temporarily during the USB 2.0
++	 * PHY clock enable, but since clk_prepare() can't be called in an
++	 * atomic context (i.e. in clk_enable()), we have to prepare it here.
++	 */
++	return clk_prepare(clk->clk);
++}
++
++static void da8xx_usb0_phy_clk_unprepare(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++
++	clk_unprepare(clk->clk);
++}
++
++static int da8xx_usb0_phy_clk_enable(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int mask, val;
++	int ret;
++
++	/* Locking the USB 2.O PLL requires that the USB 2.O PSC is enabled
++	 * temporaily. It can be turned back off once the PLL is locked.
++	 */
++	clk_enable(clk->clk);
++
++	/* Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
++	 * PHY may use the USB 2.0 PLL clock without USB 2.0 OTG being used.
++	 */
++	mask = CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN | CFGCHIP2_PHY_PLLON;
++	val = CFGCHIP2_PHY_PLLON;
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++	ret = regmap_read_poll_timeout(clk->regmap, CFGCHIP(2), val,
++				       val & CFGCHIP2_PHYCLKGD, 0, 500000);
++
++	clk_disable(clk->clk);
++
++	return ret;
++}
++
++static void da8xx_usb0_phy_clk_disable(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int val;
++
++	val = CFGCHIP2_PHYPWRDN;
++	regmap_write_bits(clk->regmap, CFGCHIP(2), val, val);
++}
++
++static int da8xx_usb0_phy_clk_is_enabled(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	return !!(val & CFGCHIP2_PHYCLKGD);
++}
++
++static unsigned long da8xx_usb0_phy_clk_recalc_rate(struct clk_hw *hw,
++						    unsigned long parent_rate)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int mask, val;
++
++	/* The parent clock rate must be one of the following */
++	mask = CFGCHIP2_REFFREQ_MASK;
++	switch (parent_rate) {
++	case 12000000:
++		val = CFGCHIP2_REFFREQ_12MHZ;
++		break;
++	case 13000000:
++		val = CFGCHIP2_REFFREQ_13MHZ;
++		break;
++	case 19200000:
++		val = CFGCHIP2_REFFREQ_19_2MHZ;
++		break;
++	case 20000000:
++		val = CFGCHIP2_REFFREQ_20MHZ;
++		break;
++	case 24000000:
++		val = CFGCHIP2_REFFREQ_24MHZ;
++		break;
++	case 26000000:
++		val = CFGCHIP2_REFFREQ_26MHZ;
++		break;
++	case 38400000:
++		val = CFGCHIP2_REFFREQ_38_4MHZ;
++		break;
++	case 40000000:
++		val = CFGCHIP2_REFFREQ_40MHZ;
++		break;
++	case 48000000:
++		val = CFGCHIP2_REFFREQ_48MHZ;
++		break;
++	default:
++		return 0;
++	}
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++
++	/* USB 2.0 PLL always supplies 48MHz */
++	return 48000000;
++}
++
++static long da8xx_usb0_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long *parent_rate)
++{
++	return 48000000;
++}
++
++static int da8xx_usb0_phy_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int mask, val;
++
++	/* Set the mux depending on the parent clock. */
++	mask = CFGCHIP2_USB2PHYCLKMUX;
++	switch (index) {
++	case DA8XX_USB0_PHY_CLK_PARENT_USB_REFCLKIN:
++		val = 0;
++		break;
++	case DA8XX_USB0_PHY_CLK_PARENT_PLL0_AUXCLK:
++		val = CFGCHIP2_USB2PHYCLKMUX;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++
++	return 0;
++}
++
++static u8 da8xx_usb0_phy_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_usb0_phy_clk *clk = to_da8xx_usb0_phy_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	if (val & CFGCHIP2_USB2PHYCLKMUX)
++		return DA8XX_USB0_PHY_CLK_PARENT_PLL0_AUXCLK;
++
++	return DA8XX_USB0_PHY_CLK_PARENT_USB_REFCLKIN;
++}
++
++static const struct clk_ops da8xx_usb0_phy_clk_ops = {
++	.prepare	= da8xx_usb0_phy_clk_prepare,
++	.unprepare	= da8xx_usb0_phy_clk_unprepare,
++	.enable		= da8xx_usb0_phy_clk_enable,
++	.disable	= da8xx_usb0_phy_clk_disable,
++	.is_enabled	= da8xx_usb0_phy_clk_is_enabled,
++	.recalc_rate	= da8xx_usb0_phy_clk_recalc_rate,
++	.round_rate	= da8xx_usb0_phy_clk_round_rate,
++	.set_parent	= da8xx_usb0_phy_clk_set_parent,
++	.get_parent	= da8xx_usb0_phy_clk_get_parent,
++};
++
++/**
++ * da8xx_usb0_phy_clk_register - Register a new USB 2.0 PHY clock
++ * @name: The clock name
++ * @parent0: The name of the USB_REFCLKIN clock
++ * @parent1: The name of the PLL0 AUXCLK
++ * @usb0_psc_clk: The USB 2.0 PSC clock
++ * @regmap: The CFGCHIP regmap
++ */
++struct clk *da8xx_usb0_phy_clk_register(const char *name,
++					const char *parent0,
++					const char *parent1,
++					struct clk *usb0_psc_clk,
++					struct regmap *regmap)
++{
++	const char * const parent_names[] = {
++		[DA8XX_USB0_PHY_CLK_PARENT_USB_REFCLKIN] = parent0,
++		[DA8XX_USB0_PHY_CLK_PARENT_PLL0_AUXCLK] = parent1,
++	};
++	struct da8xx_usb0_phy_clk *clk;
++	struct clk_init_data init;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &da8xx_usb0_phy_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++
++	clk->hw.init = &init;
++	clk->clk = usb0_psc_clk;
++	clk->regmap = regmap;
++
++	return clk_register(NULL, &clk->hw);
++}
++
++/* --- USB 1.1 PHY clock --- */
++
++struct da8xx_usb1_phy_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++};
++
++enum usb1_phy_clk_parent {
++	DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL,
++	DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN,
++};
++
++#define to_da8xx_usb1_phy_clk(_hw) \
++	container_of((_hw), struct da8xx_usb1_phy_clk, hw)
++
++static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
++	unsigned int mask, val;
++
++	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
++	mask = CFGCHIP2_USB1PHYCLKMUX;
++	switch (index) {
++	case DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN:
++		val = CFGCHIP2_USB1PHYCLKMUX;
++		break;
++	case DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL:
++		val = 0;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++
++	return 0;
++}
++
++static u8 da8xx_usb1_phy_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	if (val & CFGCHIP2_USB1PHYCLKMUX)
++		return DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN;
++
++	return DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL;
++}
++
++static const struct clk_ops da8xx_usb1_phy_clk_ops = {
++	.set_parent	= da8xx_usb1_phy_clk_set_parent,
++	.get_parent	= da8xx_usb1_phy_clk_get_parent,
++};
++
++/**
++ * da8xx_usb1_phy_clk_register - Register a new USB 1.1 PHY clock
++ * @name: The clock name
++ * @parent0: The name of the USB 2.0 PHY clock
++ * @parent1: The name of the USB_REFCLKIN clock
++ * @regmap: The CFGCHIP regmap
++ */
++struct clk *da8xx_usb1_phy_clk_register(const char *name,
++					const char *parent0,
++					const char *parent1,
++					struct regmap *regmap)
++{
++	const char * const parent_names[] = {
++		[DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL] = parent0,
++		[DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN] = parent1,
++	};
++	struct da8xx_usb1_phy_clk *clk;
++	struct clk_init_data init;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &da8xx_usb1_phy_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++
++	clk->hw.init = &init;
++	clk->regmap = regmap;
++
++	return clk_register(NULL, &clk->hw);
++}
++
++#ifdef CONFIG_OF
++static void da8xx_usb0_phy_clk_init(struct device_node *np)
++{
++	const char *name = np->name;
++	const char *parent0, *parent1;
++	struct regmap *regmap;
++	struct clk *usb0_psc_clk, *clk;
++	int ret;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("%s: No regmap for syscon parent of %s (%ld)\n",
++		       __func__, np->full_name, PTR_ERR(regmap));
++		return;
++	}
++
++	ret = of_property_match_string(np, "clock-names", "usb_refclkin");
++	parent0 = of_clk_get_parent_name(np, ret);
++	if (!parent0) {
++		pr_err("%s: Could not get usb_refclkin (%d)\n", __func__, ret);
++		return;
++	}
++
++	ret = of_property_match_string(np, "clock-names", "auxclk");
++	parent1 = of_clk_get_parent_name(np, ret);
++	if (!parent1) {
++		pr_err("%s: Could not get auxclk (%d)\n", __func__, ret);
++		return;
++	}
++
++	usb0_psc_clk = of_clk_get_by_name(np, "usb0_lpsc");
++	if (IS_ERR(usb0_psc_clk)) {
++		pr_err("%s: Could not get usb0_lpsc (%ld)\n", __func__,
++		       PTR_ERR(usb0_psc_clk));
++		return;
++	}
++
++	of_property_read_string(np, "clock-output-names", &name);
++
++	clk = da8xx_usb0_phy_clk_register(name, parent0, parent1, usb0_psc_clk,
++					  regmap);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Failed to register clock %s (%ld)\n",  __func__,
++		       np->full_name, PTR_ERR(clk));
++		clk_put(usb0_psc_clk);
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++
++CLK_OF_DECLARE(da8xx_usb0_phy_clk, "ti,da830-usb0-phy-clock",
++	       da8xx_usb0_phy_clk_init);
++
++static void da8xx_usb1_phy_clk_init(struct device_node *np)
++{
++	const char *name = np->name;
++	const char *parent0, *parent1;
++	struct regmap *regmap;
++	struct clk *clk;
++	int ret;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("%s: No regmap for syscon parent of %s (%ld)\n",
++		       __func__, np->full_name, PTR_ERR(regmap));
++		return;
++	}
++
++	ret = of_property_match_string(np, "clock-names", "usb0_phy");
++	parent0 = of_clk_get_parent_name(np, ret);
++	if (!parent0) {
++		pr_err("%s: Could not get usb0_phy (%d)\n", __func__, ret);
++		return;
++	}
++
++	ret = of_property_match_string(np, "clock-names", "usb_refclkin");
++	parent1 = of_clk_get_parent_name(np, ret);
++	if (!parent1) {
++		pr_err("%s: Could not get usb_refclkin (%d)\n", __func__, ret);
++		return;
++	}
++
++	of_property_read_string(np, "clock-output-names", &name);
++
++	clk = da8xx_usb1_phy_clk_register(name, parent0, parent1, regmap);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Failed to register clock %s (%ld)\n",
++		       __func__, np->full_name, PTR_ERR(clk));
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++
++CLK_OF_DECLARE(da8xx_usb1_phy_clk, "ti,da830-usb1-phy-clock",
++	       da8xx_usb1_phy_clk_init);
++#endif
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 3810ea3..ec7403e 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -9,6 +9,9 @@
+ 
+ #include <linux/types.h>
+ 
++struct clk;
++struct regmap;
++
+ void da830_pll_clk_init(void __iomem *pll);
+ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
+ void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+@@ -23,4 +26,14 @@ void dm365_psc_clk_init(void __iomem *psc);
+ void dm644x_psc_clk_init(void __iomem *psc);
+ void dm646x_psc_clk_init(void __iomem *psc);
+ 
++struct clk *da8xx_usb0_phy_clk_register(const char *name,
++					const char *parent0,
++					const char *parent1,
++					struct clk *usb0_psc_clk,
++					struct regmap *regmap);
++struct clk *da8xx_usb1_phy_clk_register(const char *name,
++					const char *parent0,
++					const char *parent1,
++					struct regmap *regmap);
++
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
