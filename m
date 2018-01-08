@@ -1,127 +1,101 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Archit Taneja <architt@codeaurora.org>, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, a.hajda@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-Date: Tue, 09 Jan 2018 17:33:37 +0100
-Message-ID: <303103903.KTokUV0fdz@jernej-laptop>
-In-Reply-To: <1586880.7NXXgpct7p@avalon>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <10903755.CJpSM8RM5e@jernej-laptop> <1586880.7NXXgpct7p@avalon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 05/44] clk: davinci: Add platform information for TI DM355 PLL
+Date: Sun,  7 Jan 2018 20:17:04 -0600
+Message-Id: <1515377863-20358-6-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This adds platform-specific declarations for the PLL clocks on TI
+DaVinci 355 based systems.
 
-Dne torek, 09. januar 2018 ob 17:08:55 CET je Laurent Pinchart napisal(a):
-> Hello,
->=20
-> On Tuesday, 9 January 2018 17:58:46 EET Jernej =C5=A0krabec wrote:
-> > Dne torek, 09. januar 2018 ob 11:43:08 CET je Archit Taneja napisal(a):
-> > > On 12/31/2017 02:31 AM, Jernej Skrabec wrote:
-> > >> Parts of PHY code could be useful also for custom PHYs. For example,
-> > >> Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
-> > >> with few additional memory mapped registers, so most of the Synopsys
-> > >> PHY
-> > >> related code could be reused.
-> > >>=20
-> > >> It turns out that even completely custom HDMI PHYs, such as the one
-> > >> found in Allwinner H3, can reuse some of those functions. This would
-> > >> suggest that (some?) functions exported in this commit are actually
-> > >> part
-> > >> of generic PHY interface and not really specific to Synopsys PHYs.
-> > >>=20
-> > >> Export useful PHY functions.
-> > >>=20
-> > >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > >> ---
-> > >>=20
-> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++++----=
-=2D--
-> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
-> > >> include/drm/bridge/dw_hdmi.h              | 10 +++++++
-> > >> 3 files changed, 44 insertions(+), 13 deletions(-)
-> > >>=20
-> > >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > >> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
-> > >> 7ca14d7325b5..67467d0b683a 100644
-> > >> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->=20
-> [snip]
->=20
-> > >> @@ -1065,6 +1067,23 @@ static void
-> > >> dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
-> > >>=20
-> > >>   			 HDMI_PHY_CONF0_SELDIPIF_MASK);
-> > >>  =20
-> > >>   }
-> > >>=20
-> > >> +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
-> > >> +{
-> > >> +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
-> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
-> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
-> > >> +}
-> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
->=20
-> I don't remember the details, is the reset signal Gen2-specific ?
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-dm355.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 42 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm355.c
 
-I don't know, since there is not much documentation. Should I remove "gen2"=
-=20
-from the name?
-
->=20
-> How about asserting and deasserting the reset signal in the same call
-> instead of having to call this function twice ?
-
-A83T BSP driver clears txpwron and sets pddq between asserting and deassert=
-ing=20
-reset. I'll test if it works with your proposal.
-
->=20
-> > >> +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
-> > >> +{
-> > >> +	hdmi_phy_test_clear(hdmi, 1);
-> > >> +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
-> > >> +		    HDMI_PHY_I2CM_SLAVE_ADDR);
-> > >> +	hdmi_phy_test_clear(hdmi, 0);
-> > >> +}
-> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
-> > >=20
-> > > Should this be called dw_hdmi_phy_gen2_set_slave_addr?
-> >=20
-> > Probably. I will rename it in v2 to be consistent with other phy
-> > functions.
->=20
-> The I2C write function is called dw_hdmi_phy_i2c_write(). If we want to be
-> conosistent we should either rename this one to dw_hdmi_phy_i2c_set_addr()
-> or rename them both to dw_hdmi_phy_gen2_i2c_write() and
-> dw_hdmi_phy_gen2_i2c_set_addr(). I think I'd prefer the former, and we co=
-uld
-> even drop gen2 from dw_hdmi_phy_gen2_pddq() and dw_hdmi_phy_gen2_txpwron()
-> if desired.
-
-Ok, then I'll name it dw_hdmi_phy_i2c_set_addr(). I'll leave other names as=
-=20
-they are.
-
-Best regards,
-Jernej
-
->=20
-> > > Looks good otherwise. Same for patches 3 and 4 in this series.
-> > >=20
-> > >> +
-> > >>=20
-> > >>   static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
-> > >>   {
-> > >>  =20
-> > >>   	const struct dw_hdmi_phy_data *phy =3D hdmi->phy.data;
->=20
-> [snip]
->=20
-> --
-> Regards,
->=20
-> Laurent Pinchart
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 13049d4..6720bd0 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+new file mode 100644
+index 0000000..972fd2b
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM355
++ *
++ * Copyright (C) 2017 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_divclk_info dm355_pll1_divclk_info[] __initconst = {
++	DIVCLK(1, pll1_sysclk1, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(2, pll1_sysclk2, pll1, DIVCLK_FIXED_DIV),
++	DIVCLK(3, pll1_sysclk3, pll1, 0),
++	DIVCLK(4, pll1_sysclk4, pll1, 0),
++	{ }
++};
++
++static const struct davinci_pll_divclk_info dm355_pll2_divclk_info[] __initconst = {
++	DIVCLK(1, pll2_sysclk1, pll2, DIVCLK_FIXED_DIV),
++	{ }
++};
++
++void __init dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
++{
++	const struct davinci_pll_divclk_info *info;
++
++	davinci_pll_clk_register("pll1", "ref_clk", pll1);
++	for (info = dm355_pll1_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll1);
++	davinci_pll_aux_clk_register("pll1_aux_clk", "ref_clk", pll1);
++	davinci_pll_bpdiv_clk_register("pll1_sysclkbp", "ref_clk", pll1);
++
++	davinci_pll_clk_register("pll2", "ref_clk", pll2);
++	for (info = dm355_pll2_divclk_info; info->name; info++)
++		davinci_pll_divclk_register(info, pll2);
++	davinci_pll_bpdiv_clk_register("pll2_sysclkbp", "ref_clk", pll2);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 7b08fe0..95333fe 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -11,5 +11,6 @@
+ 
+ void da830_pll_clk_init(void __iomem *pll);
+ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
++void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
