@@ -1,109 +1,161 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:48305 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932382AbeASXSJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jan 2018 18:18:09 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 1/9] ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7 Allwinner SoCs
-Date: Sat, 20 Jan 2018 07:17:27 +0800
-Message-Id: <20180119231735.61504-2-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 29/44] ARM: da8xx: add new USB PHY clock init using common clock framework
+Date: Sun,  7 Jan 2018 20:17:28 -0600
+Message-Id: <1515377863-20358-30-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner also has some ARMv5 SoCs.
+This adds the new USB PHY clock init in mach-davinci/usb-da8xx.c using
+the new common clock framework drivers.
 
-In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 option that
-is selectable when ARMv7 is selceted, and make CONFIG_ARCH_SUNXI a
-common bool config which is selected by both V7 and V5 sunxi option.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-The ARMv7 defconfigs are modified to have the new CONFIG_ARCH_SUNXI_V7
-option.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/configs/multi_v7_defconfig |  2 +-
- arch/arm/configs/sunxi_defconfig    |  2 +-
- arch/arm/mach-sunxi/Kconfig         | 14 ++++++++++++--
- arch/arm/mach-sunxi/Makefile        |  2 +-
- 4 files changed, 15 insertions(+), 5 deletions(-)
+ arch/arm/mach-davinci/usb-da8xx.c | 84 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 61509c4b769f..9b4267b2ad49 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -98,7 +98,7 @@ CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
- CONFIG_ARCH_SH73A0=y
--CONFIG_ARCH_SUNXI=y
-+CONFIG_ARCH_SUNXI_V7=y
- CONFIG_ARCH_SIRF=y
- CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
-diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
-index 5caaf971fb50..9e9be989a4bd 100644
---- a/arch/arm/configs/sunxi_defconfig
-+++ b/arch/arm/configs/sunxi_defconfig
-@@ -5,7 +5,7 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_PERF_EVENTS=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
--CONFIG_ARCH_SUNXI=y
-+CONFIG_ARCH_SUNXI_V7=y
- CONFIG_SMP=y
- CONFIG_NR_CPUS=8
- CONFIG_AEABI=y
-diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-index 58153cdf025b..65509a35935f 100644
---- a/arch/arm/mach-sunxi/Kconfig
-+++ b/arch/arm/mach-sunxi/Kconfig
-@@ -1,6 +1,16 @@
--menuconfig ARCH_SUNXI
-+config ARCH_SUNXI
-+	bool
-+	select ARCH_HAS_RESET_CONTROLLER
-+	select CLKSRC_MMIO
-+	select GENERIC_IRQ_CHIP
-+	select GPIOLIB
-+	select PINCTRL
-+	select RESET_CONTROLLER
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index d480a02..d7340670 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -2,28 +2,36 @@
+ /*
+  * DA8xx USB
+  */
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/init.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_device.h>
+ #include <linux/usb/musb.h>
+ 
+-#include <mach/clock.h>
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+ #include <mach/irqs.h>
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
++#endif
+ 
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk *usb20_clk;
++#endif
+ 
+ static struct platform_device da8xx_usb_phy = {
+ 	.name		= "da8xx-usb-phy",
+@@ -128,6 +136,7 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
+ 	return platform_device_register(&da8xx_usb11_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk usb_refclkin = {
+ 	.name		= "usb_refclkin",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -354,3 +363,76 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
+ 
+ 	return ret;
+ }
++#else
++/**
++ * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
++ *
++ * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
++ *	or "pll0_aux_clk" if false.
++ */
++int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
++{
++	struct regmap *cfgchip;
++	struct clk *usb0_psc_clk, *clk;
++	struct clk_hw *parent;
 +
-+menuconfig ARCH_SUNXI_V7
- 	bool "Allwinner SoCs"
- 	depends on ARCH_MULTI_V7
-+	select ARCH_SUNXI
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select CLKSRC_MMIO
- 	select GENERIC_IRQ_CHIP
-@@ -10,7 +20,7 @@ menuconfig ARCH_SUNXI
- 	select SUN4I_TIMER
- 	select RESET_CONTROLLER
- 
--if ARCH_SUNXI
-+if ARCH_SUNXI_V7
- 
- config MACH_SUN4I
- 	bool "Allwinner A10 (sun4i) SoCs support"
-diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
-index 27b168f121a1..6d874f6c9d3a 100644
---- a/arch/arm/mach-sunxi/Makefile
-+++ b/arch/arm/mach-sunxi/Makefile
-@@ -1,2 +1,2 @@
--obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
-+obj-$(CONFIG_ARCH_SUNXI_V7) += sunxi.o
- obj-$(CONFIG_SMP) += platsmp.o
++	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++	if (IS_ERR(cfgchip))
++		cfgchip = syscon_regmap_lookup_by_pdevname("syscon");
++	if (IS_ERR(cfgchip))
++		return PTR_ERR(cfgchip);
++
++	usb0_psc_clk = clk_get_sys("musb-da8xx", NULL);
++	if (IS_ERR(usb0_psc_clk))
++		return PTR_ERR(usb0_psc_clk);
++
++	clk = da8xx_usb0_phy_clk_register("usb0_phy_clk", "usb_refclkin",
++					  "pll0_aux_clk", usb0_psc_clk, cfgchip);
++	if (IS_ERR(clk)) {
++		clk_put(usb0_psc_clk);
++		return PTR_ERR(clk);
++	}
++
++	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk),
++					    use_usb_refclkin ? 0 : 1);
++	if (parent)
++		clk_set_parent(clk, parent->clk);
++	else
++		pr_warn("%s: Failed to find parent clock\n", __func__);
++
++	return clk_register_clkdev(clk, "usb20_phy", "da8xx-usb-phy");
++}
++
++/**
++ * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
++ *
++ * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
++ *	or "usb0_phy_clk" if false.
++ */
++int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
++{
++	struct regmap *cfgchip;
++	struct clk *clk;
++	struct clk_hw *parent;
++
++	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++	if (IS_ERR(cfgchip))
++		cfgchip = syscon_regmap_lookup_by_pdevname("syscon");
++	if (IS_ERR(cfgchip))
++		return PTR_ERR(cfgchip);
++
++	clk = da8xx_usb1_phy_clk_register("usb1_phy_clk", "usb0_phy_clk",
++					  "usb_refclkin", cfgchip);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk),
++					    use_usb_refclkin ? 1 : 0);
++	if (parent)
++		clk_set_parent(clk, parent->clk);
++	else
++		pr_warn("%s: Failed to find parent clock\n", __func__);
++
++	return clk_register_clkdev(clk, "usb11_phy", "da8xx-usb-phy");
++}
++#endif
 -- 
-2.14.2
-
+2.7.4
