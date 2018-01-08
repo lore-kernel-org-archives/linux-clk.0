@@ -1,254 +1,93 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Jose.Abreu@synopsys.com, devicetree@vger.kernel.org, narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-Date: Tue, 09 Jan 2018 17:02:36 +0100
-Message-ID: <9472740.0QW8HIeWPA@jernej-laptop>
-In-Reply-To: <4765263.5spOVExvvT@avalon>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-5-jernej.skrabec@siol.net> <4765263.5spOVExvvT@avalon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v5 09/44] dt-bindings: clock: New bindings for TI Davinci PSC
+Date: Sun,  7 Jan 2018 20:17:08 -0600
+Message-Id: <1515377863-20358-10-git-send-email-david@lechnology.com>
+In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laurent,
+This adds a new binding for the Power Sleep Controller (PSC) for the
+mach-davinci family of processors.
 
-Dne torek, 09. januar 2018 ob 14:30:22 CET je Laurent Pinchart napisal(a):
-> Hi Jernej,
-> 
-> Thank you for the patch.
-> 
-> On Saturday, 30 December 2017 23:01:56 EET Jernej Skrabec wrote:
-> > Parts of PHY code could be useful also for custom PHYs. For example,
-> > Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
-> > with few additional memory mapped registers, so most of the Synopsys PHY
-> > related code could be reused.
-> > 
-> > It turns out that even completely custom HDMI PHYs, such as the one
-> > found in Allwinner H3, can reuse some of those functions. This would
-> > suggest that (some?) functions exported in this commit are actually part
-> > of generic PHY interface and not really specific to Synopsys PHYs.
-> 
-> That's correct, those functions control the interface between the HDMI
-> controller and the PHY. They're not specific to Synopsys PHYs, but they're
-> specific to the PHY interface as designed by Synopsys.
+Note: Although TI Keystone has a very similar PSC, we are not using the
+existing bindings. Keystone is using a legacy one-node-per-clock binding
+(actually two nodes if you count the separate reset binding for the same
+IP block). Also, some davinci LPSCs have quirks that aren't handled by
+the keystone bindings, so we would be adding one compatible string per
+clock with quirks instead of just a new compatible string for each
+controller.
 
-Ok, I'll update commit message.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ .../devicetree/bindings/clock/ti/davinci/psc.txt   | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
 
-> 
-> > Export useful PHY functions.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45
-> >  ++++++++++++++++++++-------
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
-> >  include/drm/bridge/dw_hdmi.h              | 10 +++++++
-> >  3 files changed, 44 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
-> > 7ca14d7325b5..67467d0b683a 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > @@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct
-> > dw_hdmi *hdmi, u8 enable) HDMI_PHY_CONF0_SVSRET_MASK);
-> > 
-> >  }
-> > 
-> > -static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
-> > +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
-> > 
-> >  {
-> >  
-> >  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
-> >  	
-> >  			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
-> >  			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
-> >  
-> >  }
-> > 
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
-> > 
-> > -static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
-> > +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
-> > 
-> >  {
-> >  
-> >  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
-> >  	
-> >  			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
-> >  			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
-> >  
-> >  }
-> > 
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
-> > 
-> >  static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
-> >  {
-> > 
-> > @@ -1065,6 +1067,23 @@ static void
-> > dw_hdmi_phy_sel_interface_control(struct
-> > dw_hdmi *hdmi, u8 enable) HDMI_PHY_CONF0_SELDIPIF_MASK);
-> > 
-> >  }
-> > 
-> > +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
-> > +{
-> > +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
-> > +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
-> > +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
-> > +
-> > +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
-> > +{
-> > +	hdmi_phy_test_clear(hdmi, 1);
-> > +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
-> > +		    HDMI_PHY_I2CM_SLAVE_ADDR);
-> > +	hdmi_phy_test_clear(hdmi, 0);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
-> 
-> Should the I2C address be passed as an argument ?
-
-Yes, I already planned to do that for v2.
-
-Best regards,
-Jernej
-
-> 
-> >  static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
-> >  {
-> >  
-> >  	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
-> > 
-> > @@ -1204,15 +1223,12 @@ static int hdmi_phy_configure(struct dw_hdmi
-> > *hdmi)
-> > 
-> >  		dw_hdmi_phy_enable_svsret(hdmi, 1);
-> >  	
-> >  	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
-> > 
-> > -	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
-> > -	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
-> > +	dw_hdmi_phy_gen2_reset(hdmi, 1);
-> > +	dw_hdmi_phy_gen2_reset(hdmi, 0);
-> > 
-> >  	hdmi_writeb(hdmi, HDMI_MC_HEACPHY_RST_ASSERT, HDMI_MC_HEACPHY_RST);
-> > 
-> > -	hdmi_phy_test_clear(hdmi, 1);
-> > -	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
-> > -		    HDMI_PHY_I2CM_SLAVE_ADDR);
-> > -	hdmi_phy_test_clear(hdmi, 0);
-> > +	dw_hdmi_phy_set_slave_addr(hdmi);
-> > 
-> >  	/* Write to the PHY as configured by the platform */
-> >  	if (pdata->configure_phy)
-> > 
-> > @@ -1251,15 +1267,16 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
-> > *hdmi, void *data) dw_hdmi_phy_power_off(hdmi);
-> > 
-> >  }
-> > 
-> > -static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi
-> > *hdmi, -						      void *data)
-> > +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-> > +					       void *data)
-> > 
-> >  {
-> >  
-> >  	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
-> >  	
-> >  		connector_status_connected : connector_status_disconnected;
-> >  
-> >  }
-> > 
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_read_hpd);
-> > 
-> > -static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-> > -				   bool force, bool disabled, bool rxsense)
-> > +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-> > +			    bool force, bool disabled, bool rxsense)
-> > 
-> >  {
-> >  
-> >  	u8 old_mask = hdmi->phy_mask;
-> > 
-> > @@ -1271,8 +1288,9 @@ static void dw_hdmi_phy_update_hpd(struct dw_hdmi
-> > *hdmi, void *data, if (old_mask != hdmi->phy_mask)
-> > 
-> >  		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
-> >  
-> >  }
-> > 
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_update_hpd);
-> > 
-> > -static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
-> > +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
-> > 
-> >  {
-> >  
-> >  	/*
-> >  	
-> >  	 * Configure the PHY RX SENSE and HPD interrupts polarities and clear
-> > 
-> > @@ -1291,6 +1309,7 @@ static void dw_hdmi_phy_setup_hpd(struct dw_hdmi
-> > *hdmi, void *data) hdmi_writeb(hdmi, ~(HDMI_IH_PHY_STAT0_HPD |
-> > HDMI_IH_PHY_STAT0_RX_SENSE), HDMI_IH_MUTE_PHY_STAT0);
-> > 
-> >  }
-> > 
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_setup_hpd);
-> > 
-> >  static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
-> >  
-> >  	.init = dw_hdmi_phy_init,
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
-> > 9d90eb9c46e5..fd150430d0b3 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> > @@ -950,6 +950,8 @@ enum {
-> > 
-> >  /* MC_PHYRSTZ field values */
-> >  
-> >  	HDMI_MC_PHYRSTZ_PHYRSTZ = 0x01,
-> > 
-> > +	HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET = 0x00,
-> > +	HDMI_MC_PHYRSTZ_PHYRSTZ_MASK = 0x01,
-> > 
-> >  /* MC_HEACPHY_RST field values */
-> >  
-> >  	HDMI_MC_HEACPHY_RST_ASSERT = 0x1,
-> > 
-> > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> > index 182f83283e24..f5cca4362154 100644
-> > --- a/include/drm/bridge/dw_hdmi.h
-> > +++ b/include/drm/bridge/dw_hdmi.h
-> > @@ -159,5 +159,15 @@ void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
-> > 
-> >  /* PHY configuration */
-> >  void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
-> >  
-> >  			   unsigned char addr);
-> > 
-> > +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-> > +					       void *data);
-> > +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-> > +			    bool force, bool disabled, bool rxsense);
-> > +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
-> > +
-> > +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable);
-> > +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable);
-> > +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable);
-> > +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi);
-> > 
-> >  #endif /* __IMX_HDMI_H__ */
-> 
-> --
-> Regards,
-> 
-> Laurent Pinchart
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+new file mode 100644
+index 0000000..83a9da5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+@@ -0,0 +1,47 @@
++Binding for TI DaVinci Power Sleep Controller (PSC)
++
++The PSC provides power management, clock gating and reset functionality. It is
++primarily used for clocking.
++
++Required properties:
++- compatible: shall be one of:
++	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
++	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
++- reg: physical base address and size of the controller's register area.
++- #clock-cells: from common clock binding; shall be set to 1.
++- #reset-cells: from reset binding; shall be set to 1.
++
++Consumers:
++
++	Clock and reset consumers shall use the local power domain module ID
++	(LPSC) as the index corresponding to the clock cell. Refer to the
++	device-specific	datasheet to find these numbers. NB: Most local domains
++	only provide a clock and not a reset.
++
++Examples:
++
++	psc0: clock-controller@10000 {
++		compatible = "ti,da850-psc0";
++		reg = <0x10000 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	/* consumer */
++	dsp: dsp@11800000 {
++		compatible = "ti,da850-dsp";
++		reg = <0x11800000 0x40000>,
++		      <0x11e00000 0x8000>,
++		      <0x11f00000 0x8000>,
++		      <0x01c14044 0x4>,
++		      <0x01c14174 0x8>;
++		reg-names = "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig";
++		interrupt-parent = <&intc>;
++		interrupts = <28>;
++		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
++	};
++
++Also see:
++- Documentation/devicetree/bindings/clock/clock-bindings.txt
++- Documentation/devicetree/bindings/reset/reset.txt
+-- 
+2.7.4
