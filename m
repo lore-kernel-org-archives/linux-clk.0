@@ -1,261 +1,115 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 9 Jan 2018 10:17:04 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Anson Huang <anson.huang@nxp.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"stefan@agner.ch" <stefan@agner.ch>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+Message-ID: <20180109021704.GG32635@b29396-OptiPlex-7040>
+References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
+ <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+ <20180108103915.GD32635@b29396-OptiPlex-7040>
+ <AM3PR04MB131588945BE9C5504C6EC0E8F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
-References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com> <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 25 Jan 2018 11:22:03 -0200
-Message-ID: <CAOMZO5D-qfdeMHuRWfZk9+tLoSNP6GLbMG4_t2V0bM-xJJDZ8Q@mail.gmail.com>
-Subject: Re: [PATCH V3 10/10] add imx7ulp support
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Ping Bai <ping.bai@nxp.com>,
-	Yongcai Huang <Anson.Huang@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com,
-	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB131588945BE9C5504C6EC0E8F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 19, 2018 at 11:11 AM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+On Tue, Jan 09, 2018 at 01:43:25AM +0000, Anson Huang wrote:
+> 
+> 
+> Best Regards!
+> Anson Huang
+> 
+> 
+> > -----Original Message-----
+> > From: Dong Aisheng [mailto:dongas86@gmail.com]
+> > Sent: 2018-01-08 6:39 PM
+> > To: Anson Huang <anson.huang@nxp.com>
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; dl-linux-imx <linux-
+> > imx@nxp.com>; shawnguo@kernel.org; kernel@pengutronix.de; Fabio
+> > Estevam <fabio.estevam@nxp.com>; mturquette@baylibre.com;
+> > sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> > stefan@agner.ch; linux@armlinux.org.uk
+> > Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+> > 
+> > On Thu, Jan 04, 2018 at 11:06:42PM +0800, Anson Huang wrote:
+> > > Add i.MX7 SNVS RTC clock.
+> > >
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > 
+> > If this clock IMX7D_SNVS_CLK is used for all SNVS sub modules, then
+> > snvs_poweroff and snvs_pwrkey should also rely on it, right?
+> > 
+> > How about add them all in one time?
+> > 
+> > BTW, syscon-poweroff seems still not introduce clock support and fsl,sec-v4.0-
+> > pwrkey also does not handle clock, they may need to be added later.
+> > 
+> > Regards
+> > Dong Aisheng
+> 
+> Yes, I thought about it before sending patch, but currently the poweroff and pwrkey driver do NOT
+> handle clocks, so I plan to add them later, including handling clocks in driver and dtb.
+> 
 
-Please always add a commit log.
+SNVS RTC binding doc does not claim a optional clock support, you probably may
+need update the binding doc as well.
 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+BTW, Should mx6 platforms need the same fixes?
+If yes, we'd better fix them all.
 
-> ---
->  arch/arm/boot/dts/Makefile           |   2 +
->  arch/arm/boot/dts/imx7ulp-evk.dts    |  87 +++++++++++++++
->  arch/arm/boot/dts/imx7ulp.dtsi       | 202 +++++++++++++++++++++++++++++++++++
->  arch/arm/configs/imx_v6_v7_defconfig |  16 ++-
->  arch/arm/mach-imx/Kconfig            |   9 ++
->  arch/arm/mach-imx/Makefile           |   1 +
->  arch/arm/mach-imx/common.h           |   1 +
->  arch/arm/mach-imx/cpu.c              |   3 +
->  arch/arm/mach-imx/mach-imx7ulp.c     |  37 +++++++
->  arch/arm/mach-imx/mxc.h              |   1 +
->  arch/arm/mach-imx/pm-imx7ulp.c       |  32 ++++++
->  11 files changed, 381 insertions(+), 10 deletions(-)
->  create mode 100644 arch/arm/boot/dts/imx7ulp-evk.dts
->  create mode 100644 arch/arm/boot/dts/imx7ulp.dtsi
->  create mode 100644 arch/arm/mach-imx/mach-imx7ulp.c
->  create mode 100644 arch/arm/mach-imx/pm-imx7ulp.c
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index d0381e9..3257e71 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -519,6 +519,8 @@ dtb-$(CONFIG_SOC_IMX7D) += \
->         imx7d-sdb-sht11.dtb \
->         imx7s-colibri-eval-v3.dtb \
->         imx7s-warp.dtb
-> +dtb-$(CONFIG_SOC_IMX7ULP) += \
-> +       imx7ulp-evk.dtb
->  dtb-$(CONFIG_SOC_LS1021A) += \
->         ls1021a-qds.dtb \
->         ls1021a-twr.dtb
-> diff --git a/arch/arm/boot/dts/imx7ulp-evk.dts b/arch/arm/boot/dts/imx7ulp-evk.dts
-> new file mode 100644
-> index 0000000..cc4e6ef
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx7ulp-evk.dts
-> @@ -0,0 +1,87 @@
-> +/*
-> + * Copyright 2017 NXP
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Regards
+Dong Aisheng
 
-Please use SPDX identifier.
-
-
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx7ulp.dtsi"
-> +
-> +/ {
-> +       model = "NXP i.MX7ULP EVK";
-> +       compatible = "fsl,imx7ulp-evk", "fsl,imx7ulp", "Generic DT based system";
-
-Please remove the '"Generic DT based system" entry.
-
-
-> +
-> +       chosen {
-> +               bootargs = "console=ttyLP0,115200 earlycon=lpuart32,0x402D0010,115200";
-> +               stdout-path = &lpuart4;
-
-Better remove bootargs.
-
-
-> +       };
-> +
-> +       memory {
-
-memory@60000000 , otherwise building with W=1 will give you warning.
-
-Please make sure that you don't get dtc warnings with W=1.
-
-> +               device_type = "memory";
-> +               reg = <0x60000000 0x40000000>;
-> +       };
-> +};
-> +
-> +&lpuart4 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_lpuart4>;
-> +       status = "okay";
-> +};
-> +
-> +&usdhc0 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <>;
-> +       pinctrl-0 = <&pinctrl_usdhc0_cmd_data>, <&pinctrl_usdhc0_clk>;
-> +//                 <&pinctrl_usdhc0_cd>, <&pinctrl_usdhc0_rst>;
-
-Just remove the line instead of commenting it.
-
-> diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
-> new file mode 100644
-> index 0000000..05410ba
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx7ulp.dtsi
-> @@ -0,0 +1,202 @@
-> +/*
-> + * Copyright NXP
-
-No year information?
-
-
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-
-
-Please use SPDX identifier instead.
-
-> diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-> index 0d44949..3ce8ff6 100644
-> --- a/arch/arm/configs/imx_v6_v7_defconfig
-> +++ b/arch/arm/configs/imx_v6_v7_defconfig
-> @@ -41,6 +41,7 @@ CONFIG_SOC_IMX6SL=y
->  CONFIG_SOC_IMX6SX=y
->  CONFIG_SOC_IMX6UL=y
->  CONFIG_SOC_IMX7D=y
-> +CONFIG_SOC_IMX7ULP=y
-
-This should be part of a separate patch.
-
-
->  CONFIG_SOC_VF610=y
->  CONFIG_PCI=y
->  CONFIG_PCI_MSI=y
-> @@ -48,9 +49,7 @@ CONFIG_PCI_IMX6=y
->  CONFIG_SMP=y
->  CONFIG_ARM_PSCI=y
->  CONFIG_PREEMPT_VOLUNTARY=y
-> -CONFIG_AEABI=y
->  CONFIG_HIGHMEM=y
-> -CONFIG_CMA=y
->  CONFIG_FORCE_MAX_ZONEORDER=14
->  CONFIG_CMDLINE="noinitrd console=ttymxc0,115200"
->  CONFIG_KEXEC=y
-> @@ -81,7 +80,6 @@ CONFIG_CAN_FLEXCAN=y
->  CONFIG_BT=y
->  CONFIG_BT_HCIUART=y
->  CONFIG_BT_HCIUART_H4=y
-> -CONFIG_BT_HCIUART_LL=y
->  CONFIG_CFG80211=y
->  CONFIG_CFG80211_WEXT=y
->  CONFIG_MAC80211=y
-> @@ -90,7 +88,6 @@ CONFIG_RFKILL_INPUT=y
->  CONFIG_DEVTMPFS=y
->  CONFIG_DEVTMPFS_MOUNT=y
->  # CONFIG_STANDALONE is not set
-> -CONFIG_DMA_CMA=y
->  CONFIG_CMA_SIZE_MBYTES=64
->  CONFIG_IMX_WEIM=y
->  CONFIG_CONNECTOR=y
-> @@ -167,9 +164,9 @@ CONFIG_MOUSE_PS2_ELANTECH=y
->  CONFIG_INPUT_TOUCHSCREEN=y
->  CONFIG_TOUCHSCREEN_ADS7846=y
->  CONFIG_TOUCHSCREEN_EGALAX=y
-> +CONFIG_TOUCHSCREEN_MAX11801=y
->  CONFIG_TOUCHSCREEN_IMX6UL_TSC=y
->  CONFIG_TOUCHSCREEN_EDT_FT5X06=y
-> -CONFIG_TOUCHSCREEN_MAX11801=y
->  CONFIG_TOUCHSCREEN_MC13783=y
->  CONFIG_TOUCHSCREEN_TSC2004=y
->  CONFIG_TOUCHSCREEN_TSC2007=y
-> @@ -178,7 +175,6 @@ CONFIG_TOUCHSCREEN_SX8654=y
->  CONFIG_TOUCHSCREEN_COLIBRI_VF50=y
->  CONFIG_INPUT_MISC=y
->  CONFIG_INPUT_MMA8450=y
-> -CONFIG_HID_MULTITOUCH=y
->  CONFIG_SERIO_SERPORT=m
->  # CONFIG_LEGACY_PTYS is not set
->  CONFIG_SERIAL_IMX=y
-> @@ -228,13 +224,13 @@ CONFIG_REGULATOR_GPIO=y
->  CONFIG_REGULATOR_MC13783=y
->  CONFIG_REGULATOR_MC13892=y
->  CONFIG_REGULATOR_PFUZE100=y
-> +CONFIG_RC_CORE=y
-> +CONFIG_RC_DEVICES=y
-> +CONFIG_IR_GPIO_CIR=y
->  CONFIG_MEDIA_SUPPORT=y
->  CONFIG_MEDIA_CAMERA_SUPPORT=y
-> -CONFIG_RC_CORE=y
->  CONFIG_MEDIA_CONTROLLER=y
->  CONFIG_VIDEO_V4L2_SUBDEV_API=y
-> -CONFIG_RC_DEVICES=y
-> -CONFIG_IR_GPIO_CIR=y
->  CONFIG_MEDIA_USB_SUPPORT=y
->  CONFIG_USB_VIDEO_CLASS=m
->  CONFIG_V4L_PLATFORM_DRIVERS=y
-> @@ -245,7 +241,6 @@ CONFIG_VIDEO_CODA=m
->  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
->  CONFIG_VIDEO_ADV7180=m
->  CONFIG_VIDEO_OV5640=m
-> -CONFIG_SOC_CAMERA_OV2640=y
->  CONFIG_IMX_IPUV3_CORE=y
->  CONFIG_DRM=y
->  CONFIG_DRM_PANEL_SIMPLE=y
-> @@ -283,6 +278,7 @@ CONFIG_SND_SOC_CS42XX8_I2C=y
->  CONFIG_SND_SOC_TLV320AIC3X=y
->  CONFIG_SND_SOC_WM8960=y
->  CONFIG_SND_SIMPLE_CARD=y
-> +CONFIG_HID_MULTITOUCH=y
-
-Don't do the defconfig cleanup in the same patch.
-
->  CONFIG_USB=y
->  CONFIG_USB_EHCI_HCD=y
->  CONFIG_USB_EHCI_MXC=y
-> diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-> index 782699e..54002c3 100644
-> --- a/arch/arm/mach-imx/Kconfig
-> +++ b/arch/arm/mach-imx/Kconfig
-> @@ -554,6 +554,15 @@ comment "Cortex-A/Cortex-M asymmetric multiprocessing platforms"
->
->  if ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
->
-> +config SOC_IMX7ULP
-> +       bool "i.MX7ULP support"
-> +       select ARM_GIC
-> +       select CLKSRC_IMX_TPM
-> +       select HAVE_ARM_ARCH_TIMER
-> +       select PINCTRL_IMX7ULP
-> +       help
-> +         This enables support for Freescale i.MX7 Ultra Low Power processor.
-> +
->  config SOC_VF610
->         bool "Vybrid Family VF610 support"
->         select ARM_GIC if ARCH_MULTI_V7
-> diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
-> index 8ff7105..69c2517 100644
-> --- a/arch/arm/mach-imx/Makefile
-> +++ b/arch/arm/mach-imx/Makefile
-
-arch/arm/mach-imx changes can also go in a different patch.
+> Anson
+> 
+> > 
+> > > ---
+> > >  arch/arm/boot/dts/imx7s.dtsi | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/arch/arm/boot/dts/imx7s.dtsi
+> > > b/arch/arm/boot/dts/imx7s.dtsi index e718fd2..f9b97f3 100644
+> > > --- a/arch/arm/boot/dts/imx7s.dtsi
+> > > +++ b/arch/arm/boot/dts/imx7s.dtsi
+> > > @@ -534,6 +534,8 @@
+> > >  					offset = <0x34>;
+> > >  					interrupts = <GIC_SPI 19
+> > IRQ_TYPE_LEVEL_HIGH>,
+> > >  						     <GIC_SPI 20
+> > IRQ_TYPE_LEVEL_HIGH>;
+> > > +					clocks = <&clks IMX7D_SNVS_CLK>;
+> > > +					clock-names = "snvs-rtc";
+> > >  				};
+> > >
+> > >  				snvs_poweroff: snvs-poweroff {
+> > > --
+> > > 1.9.1
+> > >
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe linux-clk"
+> > > in the body of a message to majordomo@vger.kernel.org More majordomo
+> > > info at
+> > > https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fvger
+> > > .kernel.org%2Fmajordomo-
+> > info.html&data=02%7C01%7CAnson.Huang%40nxp.com
+> > > %7Cd10ff23b822b4cd16c2708d5568417c6%7C686ea1d3bc2b4c6fa92cd99c5c30
+> > 1635
+> > > %7C0%7C0%7C636510047707248763&sdata=FMx22hfKxs7YA%2F1zCVeYCnVX
+> > 9Ck4MmB9
+> > > GuolA51V2eg%3D&reserved=0
