@@ -1,114 +1,130 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1515664708.12538.49.camel@pengutronix.de>
-Subject: Re: Warnings from drivers/clk/clk.c
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>
-Date: Thu, 11 Jan 2018 10:58:28 +0100
-In-Reply-To: <20180111080802.u7znisgy76sk3g4u@pengutronix.de>
-References: 
-	<CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
-	 <20180111080802.u7znisgy76sk3g4u@pengutronix.de>
+Return-Path: <krzk@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
+References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
+ <1515484746-10656-1-git-send-email-cw00.choi@samsung.com> <1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 9 Jan 2018 12:44:12 +0100
+Message-ID: <CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
+Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support suspend-to-ram
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene@kernel.org,
+	Tomasz Figa <tomasz.figa@gmail.com>, chanwoo@kernel.org,
+	Jaehoon Chung <jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, den 11.01.2018, 09:08 +0100 schrieb Uwe Kleine-König:
-> On Wed, Jan 10, 2018 at 09:29:02PM -0200, Fabio Estevam wrote:
-> > Hi,
-> > 
-> > Bootling linux-next 20180110 on a imx53-qsb leads to the following
-> > warning that gets repeated several times:
-> > 
-> > 
-> > [    2.776154] ------------[ cut here ]------------
-> > [    2.780909] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:802
-> > clk_core_disable+0xc4/0xe0
-> 
-> that's:
-> 
-> 	static void clk_core_disable(struct clk_core *core)
-> 	{
-> 		...
-> 		if (WARN_ON(core->enable_count == 0))
-> 			return;
-> 
-> 
-> > [    2.789107] Modules linked in:
-> > [    2.792198] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-
-> > rc7-next-20180110 #1
-> > [    2.799696] Hardware name: Freescale i.MX53 (Device Tree
-> > Support)
-> > [    2.805805] Backtrace:
-> > [    2.808290] [<c010d1a0>] (dump_backtrace) from [<c010d460>]
-> > (show_stack+0x18/0x1c)
-> > [    2.815879]  r7:00000000 r6:60000093 r5:00000000 r4:c1079954
-> > [    2.821566] [<c010d448>] (show_stack) from [<c0a33bac>]
-> > (dump_stack+0xb4/0xe8)
-> > [    2.828813] [<c0a33af8>] (dump_stack) from [<c0126144>]
-> > (__warn+0xf0/0x11c)
-> > [    2.835795]  r9:00000000 r8:00000322 r7:00000009 r6:c0d425e8
-> > r5:00000000 r4:00000000
-> > [    2.843558] [<c0126054>] (__warn) from [<c0126288>]
-> > (warn_slowpath_null+0x44/0x50)
-> > [    2.851148]  r8:c1008908 r7:c0e0777c r6:c04be730 r5:00000322
-> > r4:c0d425e8
-> > [    2.857870] [<c0126244>] (warn_slowpath_null) from [<c04be730>]
-> > (clk_core_disable+0xc4/0xe0)
-> > [    2.866325]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
-> > [    2.870965] [<c04be66c>] (clk_core_disable) from [<c04bf9e8>]
-> > (clk_core_disable_lock+0x20/0x2c)
-> > [    2.879681]  r5:dc02a980 r4:80000013
-> > [    2.883278] [<c04bf9c8>] (clk_core_disable_lock) from
-> > [<c04bfa18>] (clk_disable+0x24/0x28)
-> > [    2.891559]  r5:c0f6b3e4 r4:0000001c
-> > [    2.895160] [<c04bf9f4>] (clk_disable) from [<c0f233b0>]
-> > (imx_clk_disable_uart+0x50/0x68)
-> > [    2.903365] [<c0f23360>] (imx_clk_disable_uart) from
-> > [<c010277c>] (do_one_initcall+0x50/0x19c)
-> > [    2.911996]  r7:c0e0777c r6:c0f63854 r5:c0f23360 r4:ffffe000
-> > [    2.917678] [<c010272c>] (do_one_initcall) from [<c0f00f00>]
-> > (kernel_init_freeable+0x118/0x1d0)
-> > [    2.926397]  r9:c0f63858 r8:000000f0 r7:c0e0777c r6:c0f63854>
-> > r5:c107b540 r4:c0f7525c
-> > [    2.934169] [<c0f00de8>] (kernel_init_freeable) from
-> > [<c0a48ec8>] (kernel_init+0x10/0x118)
-> > [    2.942456]  r10:00000000 r9:00000000 r8:00000000 r7:00000000
-> > r6:00000000 r5:c0a48eb8
-> > [    2.950301]  r4:00000000
-> > [    2.952857] [<c0a48eb8>] (kernel_init) from [<c01010b4>]
-> > (ret_from_fork+0x14/0x20)
-> > [    2.960444] Exception stack(0xdc05dfb0 to 0xdc05dff8)
-> > [    2.965516] dfa0:                                     00000000
-> > 00000000 00000000 00000000
-> > [    2.973715] dfc0: 00000000 00000000 00000000 00000000 00000000
-> > 00000000 00000000 00000000
-> > [    2.981912] dfe0: 00000000 00000000 00000000 00000000 00000013
-> > 00000000
-> > [    2.988543]  r5:c0a48eb8 r4:00000000
-> > [    2.992135] ---[ end trace 5c23aee63f870994 ]---
-> > [    2.997359] ------------[ cut here ]------------
-> > 
-> > Does anyone have any ideas on how to fix it?
-> 
-> Without earlycon or earlyprintk imx_clk_disable_uart is a noop. Does
-> this also happen when these are not given? Does this also happen when
-> clk_ignore_unused is on the command line?
-> 
-> My guess is that imx_register_uart_clocks() enables the uart clocks,
-> clk_disable_unused() then disables the unused ones
+On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
+> to some clocks in order to avoid the hang-out in the suspend mode.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index db270908037a..3dc53cd0c730 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -583,25 +583,25 @@
+>                         CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
+>                         ENABLE_ACLK_TOP, 13,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+>                         ENABLE_ACLK_TOP, 12,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+>                         ENABLE_ACLK_TOP, 11,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+>                         ENABLE_ACLK_TOP, 10,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+>                         ENABLE_ACLK_TOP, 9,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+>                         ENABLE_ACLK_TOP, 8,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
+>                         ENABLE_ACLK_TOP, 7,
+> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+>                         ENABLE_ACLK_TOP, 6,
+>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+> @@ -624,11 +624,11 @@
+>
+>         /* ENABLE_SCLK_TOP_CAM1 */
+>         GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
+>                         ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
+>         GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
 
-If they are enabled, they are no longer unused.
+Marking this and few others related to ISP as ignore_unused or
+is_critical looks like a hacky workaround for wrong topology or
+missing clock users. The real cause should be fixed instead marking
+all the clocks as critical or ignore_unused.
 
-Regards,
-Lucas
+Best regards,
+Krzysztof
 
-> and
-> imx_clk_disable_uart() disables them once more.
-> 
-> Best regards
-> Uwe
-> 
+>         GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
+>                         ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
+>         GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
+> @@ -636,7 +636,7 @@
+>         GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
+>                         ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
+>         GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
+> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
+>
+>         /* ENABLE_SCLK_TOP_DISP */
+>         GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+> @@ -654,7 +654,7 @@
+>                         ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+>         GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
+>                         "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
+> -                       3, CLK_SET_RATE_PARENT, 0),
+> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>         GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
+>                         "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
+>                         1, CLK_SET_RATE_PARENT, 0),
+> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>         GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
+>                         ENABLE_PCLK_AUD, 6, 0, 0),
+>         GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
+> -                       ENABLE_PCLK_AUD, 5, 0, 0),
+> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
+>                         ENABLE_PCLK_AUD, 4, 0, 0),
+>         GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
+> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>         GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+>                         ENABLE_SCLK_AUD1, 4, 0, 0),
+>         GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
+> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+>                         ENABLE_SCLK_AUD1, 2, 0, 0),
+>         GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+> --
+> 1.9.1
+>
