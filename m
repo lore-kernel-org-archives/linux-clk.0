@@ -1,27 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 17:52:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.16 - 3rd round
-Message-ID: <20180103015208.GU7997@codeaurora.org>
-References: <1514569451.7439.3.camel@baylibre.com>
+Return-Path: <Anson.Huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <horia.geanta@nxp.com>, <aymen.sghaier@nxp.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<fabio.estevam@nxp.com>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <adriana.reus@nxp.com>, <stefan@agner.ch>,
+	<dongas86@gmail.com>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH V2 1/2] clk: imx: imx7d: add the snvs clock
+Date: Tue, 9 Jan 2018 10:51:15 +0800
+Message-ID: <1515466276-5541-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: Anson.Huang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1514569451.7439.3.camel@baylibre.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/29, Jerome Brunet wrote:
-> Dear clock maintainers
-> 
-> Here is a last round of update for meson clock for v4.16. There is just
-> one simple fix
-> 
+According to the i.MX7D Reference Manual,
+SNVS block has a clock gate, accessing SNVS block
+would need this clock gate to be enabled, add it
+into clock tree so that SNVS module driver can
+operate this clock gate.
 
-Thanks, pulled into clk-next.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+no changes since v1.
+ drivers/clk/imx/clk-imx7d.c             | 1 +
+ include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 80dc211..f34f1ec 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
++	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
+ 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
+ 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+ 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index e2f99ae..dc51904 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -452,5 +452,6 @@
+ #define IMX7D_OCOTP_CLK			439
+ #define IMX7D_NAND_RAWNAND_CLK		440
+ #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
+-#define IMX7D_CLK_END			442
++#define IMX7D_SNVS_CLK			442
++#define IMX7D_CLK_END			443
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
