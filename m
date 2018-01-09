@@ -1,43 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751593AbeA2SCL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 13:02:11 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 4/6] clk: renesas: r8a7795: Add Z2 clock
-Date: Mon, 29 Jan 2018 19:01:52 +0100
-Message-Id: <20180129180154.29626-5-horms+renesas@verge.net.au>
-In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
-References: <20180129180154.29626-1-horms+renesas@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Archit Taneja <architt@codeaurora.org>, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, a.hajda@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+Date: Tue, 09 Jan 2018 19:42:26 +0100
+Message-ID: <1523919.I1QF6T1ars@jernej-laptop>
+In-Reply-To: <1586880.7NXXgpct7p@avalon>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <10903755.CJpSM8RM5e@jernej-laptop> <1586880.7NXXgpct7p@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Laurent,
 
-This patch adds Z2 clock for r8a7795 SoC.
+Dne torek, 09. januar 2018 ob 17:08:55 CET je Laurent Pinchart napisal(a):
+> Hello,
+>=20
+> On Tuesday, 9 January 2018 17:58:46 EET Jernej =C5=A0krabec wrote:
+> > Dne torek, 09. januar 2018 ob 11:43:08 CET je Archit Taneja napisal(a):
+> > > On 12/31/2017 02:31 AM, Jernej Skrabec wrote:
+> > >> Parts of PHY code could be useful also for custom PHYs. For example,
+> > >> Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
+> > >> with few additional memory mapped registers, so most of the Synopsys
+> > >> PHY
+> > >> related code could be reused.
+> > >>=20
+> > >> It turns out that even completely custom HDMI PHYs, such as the one
+> > >> found in Allwinner H3, can reuse some of those functions. This would
+> > >> suggest that (some?) functions exported in this commit are actually
+> > >> part
+> > >> of generic PHY interface and not really specific to Synopsys PHYs.
+> > >>=20
+> > >> Export useful PHY functions.
+> > >>=20
+> > >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > >> ---
+> > >>=20
+> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++++----=
+=2D--
+> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
+> > >> include/drm/bridge/dw_hdmi.h              | 10 +++++++
+> > >> 3 files changed, 44 insertions(+), 13 deletions(-)
+> > >>=20
+> > >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > >> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> > >> 7ca14d7325b5..67467d0b683a 100644
+> > >> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>=20
+> [snip]
+>=20
+> > >> @@ -1065,6 +1067,23 @@ static void
+> > >> dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+> > >>=20
+> > >>   			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+> > >>  =20
+> > >>   }
+> > >>=20
+> > >> +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
+> > >> +{
+> > >> +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
+> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
+> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
+> > >> +}
+> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
+>=20
+> I don't remember the details, is the reset signal Gen2-specific ?
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+According to this comment:
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 995a4c4fb01e..775b0ceaa337 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
-+	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.11.0
+/* PHY reset. The reset signal is active high on Gen2 PHYs. */
 
+I would guess that it is not specific to Gen2, otherwise the comment wouldn=
+'t=20
+be needed. I will remove "gen2" from the name.
+
+>=20
+> How about asserting and deasserting the reset signal in the same call
+> instead of having to call this function twice ?
+
+It works on A83T if reset signal is asserted and deasserted immediately. I=
+=20
+will change function according to your proposal.
+
+Best regards,
+Jernej
+
+>=20
+> > >> +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
+> > >> +{
+> > >> +	hdmi_phy_test_clear(hdmi, 1);
+> > >> +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> > >> +		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> > >> +	hdmi_phy_test_clear(hdmi, 0);
+> > >> +}
+> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
+> > >=20
+> > > Should this be called dw_hdmi_phy_gen2_set_slave_addr?
+> >=20
+> > Probably. I will rename it in v2 to be consistent with other phy
+> > functions.
+>=20
+> The I2C write function is called dw_hdmi_phy_i2c_write(). If we want to be
+> conosistent we should either rename this one to dw_hdmi_phy_i2c_set_addr()
+> or rename them both to dw_hdmi_phy_gen2_i2c_write() and
+> dw_hdmi_phy_gen2_i2c_set_addr(). I think I'd prefer the former, and we co=
+uld
+> even drop gen2 from dw_hdmi_phy_gen2_pddq() and dw_hdmi_phy_gen2_txpwron()
+> if desired.
+>=20
+> > > Looks good otherwise. Same for patches 3 and 4 in this series.
+> > >=20
+> > >> +
+> > >>=20
+> > >>   static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+> > >>   {
+> > >>  =20
+> > >>   	const struct dw_hdmi_phy_data *phy =3D hdmi->phy.data;
+>=20
+> [snip]
+>=20
+> --
+> Regards,
+>=20
+> Laurent Pinchart
