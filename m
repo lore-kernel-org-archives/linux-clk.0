@@ -1,67 +1,68 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v3 11/14] ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-Date: Thu, 18 Jan 2018 15:34:27 +0100
-Message-ID: <1516286070-24927-12-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Dong Aisheng <dongas86@gmail.com>
+CC: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>, Aymen Sghaier
+	<aymen.sghaier@nxp.com>, "herbert@gondor.apana.org.au"
+	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, Adriana Reus <adriana.reus@nxp.com>,
+	"stefan@agner.ch" <stefan@agner.ch>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
+Date: Tue, 9 Jan 2018 10:10:09 +0000
+Message-ID: <AM3PR04MB1315A6E9A645EC6256914285F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
+ <20180109094348.GG26312@b29396-OptiPlex-7040>
+In-Reply-To: <20180109094348.GG26312@b29396-OptiPlex-7040>
+Content-Type: text/plain; charset="iso-8859-2"
 MIME-Version: 1.0
-Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
 
-As both STM32F4 and STM32F7 SoCs embeds an AMBA PL180 mmci IP,
-we need to enable AMBA support in mach-stm32.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
+Best Regards!
+Anson Huang
 
-v3: _ none
 
-v2: _ none
+> -----Original Message-----
+> From: Dong Aisheng [mailto:dongas86@gmail.com]
+> Sent: 2018-01-09 5:44 PM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: Horia Geant=E3 <horia.geanta@nxp.com>; Aymen Sghaier
+> <aymen.sghaier@nxp.com>; herbert@gondor.apana.org.au;
+> davem@davemloft.net; robh+dt@kernel.org; mark.rutland@arm.com;
+> shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
+> <fabio.estevam@nxp.com>; linux@armlinux.org.uk;
+> mturquette@baylibre.com; sboyd@codeaurora.org; Adriana Reus
+> <adriana.reus@nxp.com>; stefan@agner.ch; linux-crypto@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-clk@vger.kernel.org; dl-linux-imx <linu=
+x-
+> imx@nxp.com>
+> Subject: Re: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
+>=20
+> On Tue, Jan 09, 2018 at 05:20:50PM +0800, Anson Huang wrote:
+> > According to the i.MX7D Reference Manual, SNVS block has a clock gate,
+> > accessing SNVS block would need this clock gate to be enabled, add it
+> > into clock tree so that SNVS module driver can operate this clock
+> > gate.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> You missed the last round review tags.
+>=20
+> Regards
+> Dong Aisheng
 
- arch/arm/mach-stm32/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 0d1889b..f53a8db 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -13,16 +13,19 @@ config ARCH_STM32
- config MACH_STM32F429
- 	bool "STMicrolectronics STM32F429"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F469
- 	bool "STMicrolectronics STM32F469"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F746
- 	bool "STMicrolectronics STM32F746"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32H743
--- 
-1.9.1
+Thanks for reminder, already sent out a V4 patch set to add tags.
+
+Anson.
