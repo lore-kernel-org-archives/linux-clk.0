@@ -1,195 +1,35 @@
-Return-Path: <aford173@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 9 Jan 2018 17:43:48 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+	kernel@pengutronix.de, fabio.estevam@nxp.com, linux@armlinux.org.uk,
+	mturquette@baylibre.com, sboyd@codeaurora.org, adriana.reus@nxp.com,
+	stefan@agner.ch, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: Re: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
+Message-ID: <20180109094348.GG26312@b29396-OptiPlex-7040>
+References: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-3-git-send-email-david@lechnology.com> <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
- <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 12 Jan 2018 09:30:37 -0600
-Message-ID: <CAHCN7xK44_zv27xe5yxL8Efey=VC-nypK6hY6VWqsoLqnKe04g@mail.gmail.com>
-Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
-To: David Lechner <david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 12, 2018 at 9:25 AM, David Lechner <david@lechnology.com> wrote:
-> On 01/12/2018 03:21 AM, Sekhar Nori wrote:
->>
->> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->>>
->>> This adds a new driver for mach-davinci PLL clocks. This is porting the
->>> code from arch/arm/mach-davinci/clock.c to the common clock framework.
->>> Additionally, it adds device tree support for these clocks.
->>>
->>> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
->>> compile errors until the clock code in arch/arm/mach-davinci is removed.
->>>
->>> Note: although there are similar clocks for TI Keystone we are not able
->>> to share the code for a few reasons. The keystone clocks are device tree
->>> only and use legacy one-node-per-clock bindings. Also the register
->>> layouts are a bit different, which would add even more if/else mess
->>> to the keystone clocks. And the keystone PLL driver doesn't support
->>> setting clock rates.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->
->
->>> +
->>> +#define PLLM_MASK              0x1f
->>> +#define PREDIV_RATIO_MASK      0x1f
->>
->>
->> May be use the mode modern GENMASK()?
->
->
-> I haven't seen that one before. Thanks.
->
-> ...
->
->>> +static unsigned long davinci_pll_clk_recalc(struct clk_hw *hw,
->>> +                                           unsigned long parent_rate)
->>> +{
->>> +       struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
->>> +       unsigned long rate = parent_rate;
->>> +       u32 prediv, mult, postdiv;
->>> +
->>> +       prediv = readl(pll->base + PREDIV) & PREDIV_RATIO_MASK;
->>> +       mult = readl(pll->base + PLLM) & PLLM_MASK;
->>> +       postdiv = readl(pll->base + POSTDIV) & POSTDIV_RATIO_MASK;
->>
->>
->> Shouldn't we check if the pre and post dividers are enabled before using
->> them?
->
->
-> Indeed.
->
->>
->>> +
->>> +       rate /= prediv + 1;
->>> +       rate *= mult + 1;
->>> +       rate /= postdiv + 1;
->>> +
->>> +       return rate;
->>> +}
->>> +
->
->
-> ...
->
->>
->> PLL output on DA850 must never be below 300MHz or above 600MHz (see
->> datasheet table "Allowed PLL Operating Conditions"). Does this take care
->> of that? Thats one of the main reasons I recall I went with some
->> specific values of prediv, pllm and post div in
->> arch/arm/mach-davinci/da850.c
->
->
-> Apparently, I missed this requirement. It looks like I am going to have to
-> rework things so that there is some coordination between the PLL and the
-> PLLDIV clocks in order to get the < 300MHz operating points.
->
-> ...
->
->>> +
->>> +       divider->reg = base + OSCDIV;
->>> +       divider->width = OSCDIV_RATIO_WIDTH;
->>
->>
->> can you write OD1EN of OSCDIV here? I guess the reset default is 1 so
->> you didnt need to do that. But not doing exposes us to settings that
->> bootloader left us in.
->>
->
-> It looks like I am going to have to make a custom implementation for parts
-> of this clock anyway, so I will probably just make new enable/disable
-> callbacks that set both OSCDIV_OD1EN and CKEN_OBSCLK.
->
->
->>> +
->>> +       clk = clk_register_composite(NULL, name, parent_names,
->>> num_parents,
->>> +                                    &mux->hw, &clk_mux_ops,
->>> +                                    &divider->hw, &clk_divider_ops,
->>> +                                    &gate->hw, &clk_gate_ops, 0);
->>> +       if (IS_ERR(clk)) {
->>> +               kfree(divider);
->>> +               kfree(gate);
->>> +               kfree(mux);
->>> +       }
->>> +
->>> +       return clk;
->>> +}
->>> +
->>> +struct clk *
->>> +davinci_pll_divclk_register(const struct davinci_pll_divclk_info *info,
->>> +                           void __iomem *base)
->>> +{
->>> +       const struct clk_ops *divider_ops = &clk_divider_ops;
->>
->>
->> setting the sysclk divider requires GOSTAT handling apart from setting
->> the divider value. So I think .set_rate ops above wont work. Other ops
->> can be used, I guess. So we need a private structure here.
->>
->> Can you port over davinci_set_sysclk_rate() too? I understand you cannot
->> test it due to lack of cpufreq support in DT, but I can help testing
->> there.
->>
->> Or leave .set_rate NULL and it can be added later.
->
->
-> Yes, I noticed that I missed this after I submitted this series. And I
-> will have to rework things to coordinate with the PLL as mentioned above.
->
-> FYI, I do have cpufreq-dt working, although the LEGO EV3 has a fixed 1.2V
-> regulator, so I am limited in what I can test. Basically, I can only switch
+On Tue, Jan 09, 2018 at 05:20:50PM +0800, Anson Huang wrote:
+> According to the i.MX7D Reference Manual,
+> SNVS block has a clock gate, accessing SNVS block
+> would need this clock gate to be enabled, add it
+> into clock tree so that SNVS module driver can
+> operate this clock gate.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I can test the cpufreq-dt.  Are there additional patches or are they
-part of the same git repo I have been testing?
+You missed the last round review tags.
 
-The DA850 I have may not run all the way to highest speed, but I'll
-see what I can find.  I think I had a few at one point, but I don't
-think it was part of Logic PD's standard product lineup.
-
-adam
-
-> between 300MHz and 375MHz according to the datasheets. The chip is
-> technically
-> the 456MHz version. What would happen if I ran it faster or slower with the
-> wrong voltage?
->
-> ...
->
->>> +
->>> +       child = of_get_child_by_name(node, "auxclk");
->>> +       if (child && of_device_is_available(child)) {
->>> +               char child_name[MAX_NAME_SIZE];
->>> +
->>> +               snprintf(child_name, MAX_NAME_SIZE, "%s_aux_clk", name);
->>> +
->>> +               clk = davinci_pll_aux_clk_register(child_name,
->>> parent_name, base);
->>> +               if (IS_ERR(clk))
->>> +                       pr_warn("%s: failed to register %s (%ld)\n",
->>> __func__,
->>> +                               child_name, PTR_ERR(clk));
->>> +               else
->>> +                       of_clk_add_provider(child, of_clk_src_simple_get,
->>> clk);
->>> +       }
->>
->>
->> davinci_pll_obs_clk_register() should also be handled here?
->
->
-> I omitted it because no one is using it (same reason I left it out of the
-> device tree bindings). We can certainly add it, though.
->
->
+Regards
+Dong Aisheng
