@@ -1,166 +1,104 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1516211221.2608.140.camel@baylibre.com>
-Subject: Re: [3/5] clk: divider: add divider_ro_round_rate helper
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: David Lechner <david@lechnology.com>, Stephen Boyd
- <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, Sylvain
- Lemieux <slemieux.tyco@gmail.com>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>
-Date: Wed, 17 Jan 2018 18:47:01 +0100
-In-Reply-To: <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
-References: <20180105170959.17266-4-jbrunet@baylibre.com>
-	 <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Dong Aisheng <dongas86@gmail.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "stefan@agner.ch"
+	<stefan@agner.ch>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Subject: RE: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+Date: Tue, 9 Jan 2018 01:43:25 +0000
+Message-ID: <AM3PR04MB131588945BE9C5504C6EC0E8F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
+ <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+ <20180108103915.GD32635@b29396-OptiPlex-7040>
+In-Reply-To: <20180108103915.GD32635@b29396-OptiPlex-7040>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-01-11 at 17:08 -0600, David Lechner wrote:
-> On 01/05/2018 11:09 AM, Jerome Brunet wrote:
-> > Like divider_round_rate, a couple a of driver are doing more or less
-> > the same operation to round the rate of the divider when it is read-only.
-> > 
-> > We can factor this code so let's provide an helper function for this
-> 
-> Perhaps you could also make use of this new helper here (clk-divider.c):
-> 
-> const struct clk_ops clk_divider_ro_ops = {
-> 	.recalc_rate = clk_divider_recalc_rate,
-> 	.round_rate = clk_divider_round_rate,
-> };
-> EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
 
-The helper is used in this driver and ro_ops will use it.
-I don't get this comment, could you be more specific
 
-> 
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Best Regards!
+Anson Huang
+
+
+> -----Original Message-----
+> From: Dong Aisheng [mailto:dongas86@gmail.com]
+> Sent: 2018-01-08 6:39 PM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org; linu=
+x-
+> kernel@vger.kernel.org; devicetree@vger.kernel.org; dl-linux-imx <linux-
+> imx@nxp.com>; shawnguo@kernel.org; kernel@pengutronix.de; Fabio
+> Estevam <fabio.estevam@nxp.com>; mturquette@baylibre.com;
+> sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> stefan@agner.ch; linux@armlinux.org.uk
+> Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+>=20
+> On Thu, Jan 04, 2018 at 11:06:42PM +0800, Anson Huang wrote:
+> > Add i.MX7 SNVS RTC clock.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> If this clock IMX7D_SNVS_CLK is used for all SNVS sub modules, then
+> snvs_poweroff and snvs_pwrkey should also rely on it, right?
+>=20
+> How about add them all in one time?
+>=20
+> BTW, syscon-poweroff seems still not introduce clock support and fsl,sec-=
+v4.0-
+> pwrkey also does not handle clock, they may need to be added later.
+>=20
+> Regards
+> Dong Aisheng
+
+Yes, I thought about it before sending patch, but currently the poweroff an=
+d pwrkey driver do NOT
+handle clocks, so I plan to add them later, including handling clocks in dr=
+iver and dtb.
+
+Anson
+
+>=20
 > > ---
-> >   drivers/clk/clk-divider.c    | 43 ++++++++++++++++++++++++++++---------------
-> >   include/linux/clk-provider.h | 15 +++++++++++++++
-> >   2 files changed, 43 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index a851d3e04c7f..3eb2b27f3513 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -344,29 +344,42 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> >   }
-> >   EXPORT_SYMBOL_GPL(divider_round_rate_parent);
-> >   
-> 
-> It is nice to have documentation comments on public functions. Especially
-> in this case where @prate is an in/out parameter and @table is optional.
-
-Sure, but divider_round_rate_parent was already and undocumented. There is no
-reason to change this is this particular patch (it is not the topic)
-
-The RO helper being the counter part of this one, it did not do it differently
-
-I suppose a documentation could be added in another patch.
-
-However, I don't know if there is policy regarding the documentation of
-functions internal to CCF. Maybe Stephen can tell us ?
-
-Cheers
-Jerome
-
-
-> 
-> > +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> > +				  unsigned long rate, unsigned long *prate,
-> > +				  const struct clk_div_table *table, u8 width,
-> > +				  unsigned long flags, unsigned int val)
-> > +{
-> > +	int div;
-> > +
-> > +	div = _get_div(table, val, flags, width);
-> > +
-> > +	/* Even a read-only clock can propagate a rate change */
-> > +	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> > +		if (!parent)
-> > +			return -EINVAL;
-> > +
-> > +		*prate = clk_hw_round_rate(parent, rate * div);
-> > +	}
-> > +
-> > +	return DIV_ROUND_UP_ULL((u64)*prate, div);
-> > +}
-> > +EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
-> > +
-> > +
-> >   static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> >   				unsigned long *prate)
-> >   {
-> >   	struct clk_divider *divider = to_clk_divider(hw);
-> > -	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
-> > -	int bestdiv;
-> > +	u32 val;
-> >   
-> >   	/* if read only, just return current value */
-> >   	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-> > -		bestdiv = clk_readl(divider->reg) >> divider->shift;
-> > -		bestdiv &= div_mask(divider->width);
-> > -		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
-> > -			divider->width);
-> > -
-> > -		/* Even a read-only clock can propagate a rate change */
-> > -		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> > -			if (!hw_parent)
-> > -				return -EINVAL;
-> > -
-> > -			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
-> > -		}
-> > +		val = clk_readl(divider->reg) >> divider->shift;
-> > +		val &= div_mask(divider->width);
-> >   
-> > -		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
-> > +		return divider_ro_round_rate(hw, rate, prate, divider->table,
-> > +					     divider->width, divider->flags,
-> > +					     val);
-> >   	}
-> >   
-> >   	return divider_round_rate(hw, rate, prate, divider->table,
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 175a62a15619..eb2c3a035e98 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -417,6 +417,10 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> >   			       unsigned long rate, unsigned long *prate,
-> >   			       const struct clk_div_table *table,
-> >   			       u8 width, unsigned long flags);
-> > +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-> > +				  unsigned long rate, unsigned long *prate,
-> > +				  const struct clk_div_table *table, u8 width,
-> > +				  unsigned long flags, unsigned int val);
-> >   int divider_get_val(unsigned long rate, unsigned long parent_rate,
-> >   		const struct clk_div_table *table, u8 width,
-> >   		unsigned long flags);
-> > @@ -772,6 +776,17 @@ static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> >   					 rate, prate, table, width, flags);
-> >   }
-> >   
-> 
-> Same here (about documentation comment).
-> 
-> > +static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +					 unsigned long *prate,
-> > +					 const struct clk_div_table *table,
-> > +					 u8 width, unsigned long flags,
-> > +					 unsigned int val)
-> > +{
-> > +	return divider_ro_round_rate_parent(hw, clk_hw_get_parent(hw),
-> > +					    rate, prate, table, width, flags,
-> > +					    val);
-> > +}
-> > +
-> >   /*
-> >    * FIXME clock api without lock protection
-> >    */
-> > 
-> 
-> 
+> >  arch/arm/boot/dts/imx7s.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/imx7s.dtsi
+> > b/arch/arm/boot/dts/imx7s.dtsi index e718fd2..f9b97f3 100644
+> > --- a/arch/arm/boot/dts/imx7s.dtsi
+> > +++ b/arch/arm/boot/dts/imx7s.dtsi
+> > @@ -534,6 +534,8 @@
+> >  					offset =3D <0x34>;
+> >  					interrupts =3D <GIC_SPI 19
+> IRQ_TYPE_LEVEL_HIGH>,
+> >  						     <GIC_SPI 20
+> IRQ_TYPE_LEVEL_HIGH>;
+> > +					clocks =3D <&clks IMX7D_SNVS_CLK>;
+> > +					clock-names =3D "snvs-rtc";
+> >  				};
+> >
+> >  				snvs_poweroff: snvs-poweroff {
+> > --
+> > 1.9.1
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-clk"
+> > in the body of a message to majordomo@vger.kernel.org More majordomo
+> > info at
+> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fvge=
+r
+> > .kernel.org%2Fmajordomo-
+> info.html&data=3D02%7C01%7CAnson.Huang%40nxp.com
+> > %7Cd10ff23b822b4cd16c2708d5568417c6%7C686ea1d3bc2b4c6fa92cd99c5c30
+> 1635
+> > %7C0%7C0%7C636510047707248763&sdata=3DFMx22hfKxs7YA%2F1zCVeYCnVX
+> 9Ck4MmB9
+> > GuolA51V2eg%3D&reserved=3D0
