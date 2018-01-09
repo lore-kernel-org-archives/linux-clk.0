@@ -1,77 +1,127 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 11/37] soc: renesas: rcar-rst: Document generic compatible strings
-Date: Thu, 25 Jan 2018 18:02:45 +0000
-Message-Id: <1516903391-30467-12-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Archit Taneja <architt@codeaurora.org>, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, a.hajda@samsung.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+Date: Tue, 09 Jan 2018 17:33:37 +0100
+Message-ID: <303103903.KTokUV0fdz@jernej-laptop>
+In-Reply-To: <1586880.7NXXgpct7p@avalon>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <10903755.CJpSM8RM5e@jernej-laptop> <1586880.7NXXgpct7p@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
->From now on, devices compatible with the generic compatible strings
-documented by this commit don't need to modify the corresponding driver
-anymore.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Dne torek, 09. januar 2018 ob 17:08:55 CET je Laurent Pinchart napisal(a):
+> Hello,
+>=20
+> On Tuesday, 9 January 2018 17:58:46 EET Jernej =C5=A0krabec wrote:
+> > Dne torek, 09. januar 2018 ob 11:43:08 CET je Archit Taneja napisal(a):
+> > > On 12/31/2017 02:31 AM, Jernej Skrabec wrote:
+> > >> Parts of PHY code could be useful also for custom PHYs. For example,
+> > >> Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
+> > >> with few additional memory mapped registers, so most of the Synopsys
+> > >> PHY
+> > >> related code could be reused.
+> > >>=20
+> > >> It turns out that even completely custom HDMI PHYs, such as the one
+> > >> found in Allwinner H3, can reuse some of those functions. This would
+> > >> suggest that (some?) functions exported in this commit are actually
+> > >> part
+> > >> of generic PHY interface and not really specific to Synopsys PHYs.
+> > >>=20
+> > >> Export useful PHY functions.
+> > >>=20
+> > >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > >> ---
+> > >>=20
+> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++++----=
+=2D--
+> > >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
+> > >> include/drm/bridge/dw_hdmi.h              | 10 +++++++
+> > >> 3 files changed, 44 insertions(+), 13 deletions(-)
+> > >>=20
+> > >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > >> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> > >> 7ca14d7325b5..67467d0b683a 100644
+> > >> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>=20
+> [snip]
+>=20
+> > >> @@ -1065,6 +1067,23 @@ static void
+> > >> dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
+> > >>=20
+> > >>   			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+> > >>  =20
+> > >>   }
+> > >>=20
+> > >> +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
+> > >> +{
+> > >> +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
+> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
+> > >> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
+> > >> +}
+> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
+>=20
+> I don't remember the details, is the reset signal Gen2-specific ?
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index a8014f3..2602a19 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -11,7 +11,10 @@ following functions:
- 
- 
- Required properties:
--  - compatible: Should be
-+  - compatible: Should be a SoC specific string, followed by a generic
-+		fallback compatible string when compatible with the generic
-+		version.
-+		The SoC specific compatible string should be:
- 		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
- 		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
- 		Examples with soctypes are:
-@@ -28,12 +31,16 @@ Required properties:
- 		  - "renesas,r8a7796-rst" (R-Car M3-W)
- 		  - "renesas,r8a77970-rst" (R-Car V3M)
- 		  - "renesas,r8a77995-rst" (R-Car D3)
-+		The generic compatible string should be:
-+		  - "renesas,rcar-gen1-rst" for R-Car Gen1
-+		  - "renesas,rcar-gen2-rst" for R-Car Gen2 and RZ/G
-+		  - "renesas,rcar-gen3-rst" for R-Car Gen3
-   - reg: Address start and address range for the device.
- 
- 
- Example:
- 
- 	rst: reset-controller@e6160000 {
--		compatible = "renesas,r8a7795-rst";
-+		compatible = "renesas,r8a7795-rst", "renesas,rcar-gen3-rst";
- 		reg = <0 0xe6160000 0 0x0200>;
- 	};
--- 
-2.7.4
+I don't know, since there is not much documentation. Should I remove "gen2"=
+=20
+from the name?
+
+>=20
+> How about asserting and deasserting the reset signal in the same call
+> instead of having to call this function twice ?
+
+A83T BSP driver clears txpwron and sets pddq between asserting and deassert=
+ing=20
+reset. I'll test if it works with your proposal.
+
+>=20
+> > >> +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
+> > >> +{
+> > >> +	hdmi_phy_test_clear(hdmi, 1);
+> > >> +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> > >> +		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> > >> +	hdmi_phy_test_clear(hdmi, 0);
+> > >> +}
+> > >> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
+> > >=20
+> > > Should this be called dw_hdmi_phy_gen2_set_slave_addr?
+> >=20
+> > Probably. I will rename it in v2 to be consistent with other phy
+> > functions.
+>=20
+> The I2C write function is called dw_hdmi_phy_i2c_write(). If we want to be
+> conosistent we should either rename this one to dw_hdmi_phy_i2c_set_addr()
+> or rename them both to dw_hdmi_phy_gen2_i2c_write() and
+> dw_hdmi_phy_gen2_i2c_set_addr(). I think I'd prefer the former, and we co=
+uld
+> even drop gen2 from dw_hdmi_phy_gen2_pddq() and dw_hdmi_phy_gen2_txpwron()
+> if desired.
+
+Ok, then I'll name it dw_hdmi_phy_i2c_set_addr(). I'll leave other names as=
+=20
+they are.
+
+Best regards,
+Jernej
+
+>=20
+> > > Looks good otherwise. Same for patches 3 and 4 in this series.
+> > >=20
+> > >> +
+> > >>=20
+> > >>   static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+> > >>   {
+> > >>  =20
+> > >>   	const struct dw_hdmi_phy_data *phy =3D hdmi->phy.data;
+>=20
+> [snip]
+>=20
+> --
+> Regards,
+>=20
+> Laurent Pinchart
