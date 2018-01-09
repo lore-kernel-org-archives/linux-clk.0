@@ -1,69 +1,92 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 03/11] drm/bridge/synopsys: dw-hdmi: Enable workaround for
+ v1.32a
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
+ maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org,
+ mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
+ a.hajda@samsung.com, Jose.Abreu@synopsys.com, devicetree@vger.kernel.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20171230210203.24115-1-jernej.skrabec@siol.net>
+ <20171230210203.24115-4-jernej.skrabec@siol.net> <3367423.0HCaRuLuz8@avalon>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <9e9269be-fde7-7654-30c0-85a26760b9ad@baylibre.com>
+Date: Tue, 9 Jan 2018 16:29:47 +0100
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 22 Jan 2018 14:29:17 +0100
-Message-ID: <CAMRc=MesQTvkVtPLOGr2G7-KSR=k35y24SsO4s8rDbCv=2-G7A@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3367423.0HCaRuLuz8@avalon>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
-> This series converts mach-davinci to use the common clock framework.
->
-> The series works like this, the first 19 patches create new clock drivers
-> using the common clock framework. There are basically 3 groups of clocks -
-> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
-> unique init data, which is the reason for so many patches.
->
-> Then, starting with "ARM: da830: add new clock init using common clock",
-> we get the mach code ready for the switch by adding the code needed for
-> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
-> legacy clocks so that we can switch easily between the old and the new.
->
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
->
-> The final three patches add device tree clock support to the one SoC that
-> supports it.
->
-> v6 changes (also see individual patches for details):
-> - All of the device tree bindings are changed
-> - All of the clock drivers are changed significantly
-> - Fixed issues brought up during review of v5
-> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
->   series and submitted separately
->
-> v5 changes:
-> - Basically, this is an entirely new series
-> - Patches are broken up into bite-sized pieces
-> - Converted PSC clock driver to use regmap
-> - Restored "force" flag for certain DA850 clocks
-> - Added device tree bindings
-> - Moved more of the clock init to drivers/clk
-> - Fixed frequency scaling (maybe*)
->
-> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
->   what they need to do to make this work, but I haven't figured out how to
->   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
->   sent separately after this series has landed.)
->
+Hi,
 
-This driver doesn't have DT support - I suppose it would be useful to
-add it and also add the corresponding DT node to da850.dtsi. If you're
-ok with it, I can start working on it. I also have a patch for the i2c
-cpufreq issue and it would be nice to test it with it.
+I think this question is for Jose.
 
-Thanks,
-Bartosz
+On 09/01/2018 13:56, Laurent Pinchart wrote:
+> Hi Jernej,
+> 
+> Thank you for the patch.
+> 
+> On Saturday, 30 December 2017 23:01:55 EET Jernej Skrabec wrote:
+>> Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+>> magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
+
+We observe the same issue on Amlogic SoCs with the dw hdmi controller v2.01a.
+
+Rockchip seems to also use count=1 for 0x200a, 0x201a and 0x211a in
+https://github.com/rockchip-linux/kernel/commit/cafa8ebd5f4df41425d6f2f61633d5bc64f20e65
+
+Changelog is :
+The issue can be worked around by issuing a TMDS software reset and
+then write one of the FC registers several times. After tested, the
+number of iterations of RK3399/RK3328(v2.11a), RK3368(v2.01a),
+RK3288(v2.00a) is one.
+
+Can you confirm it is necessary ?
+
+Neil
+
+>>
+>> Tests show that one iteration is enough.
+>>
+>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> 
+> This does not break R-Car DU, so
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+>> ---
+>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+>> a38db40ce990..7ca14d7325b5 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> @@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
+>> *hdmi) * then write one of the FC registers several times.
+>>  	 *
+>>  	 * The number of iterations matters and depends on the HDMI TX revision
+>> -	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+>> -	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+>> -	 * 4 and 1 iterations respectively.
+>> +	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
+>> +	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
+>> +	 * as needing the workaround, with 4 iterations for v1.30a and 1
+>> +	 * iteration for others.
+>>  	 */
+>>
+>>  	switch (hdmi->version) {
+>> @@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
+>> *hdmi) count = 4;
+>>  		break;
+>>  	case 0x131a:
+>> +	case 0x132a:
+>>  		count = 1;
+>>  		break;
+>>  	default:
+> 
