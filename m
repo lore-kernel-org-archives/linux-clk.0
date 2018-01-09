@@ -1,64 +1,65 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17275 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeAZJhk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jan 2018 04:37:40 -0500
-Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <839ae776-65b4-88bd-48d2-96b21d97d9e6@nvidia.com>
-Date: Fri, 26 Jan 2018 09:37:35 +0000
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37403 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754634AbeAIDhF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jan 2018 22:37:05 -0500
+Date: Mon, 8 Jan 2018 21:37:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v2 05/11] clk: qcom: Add DT bindings for CPU clock driver
+ for msm8996
+Message-ID: <20180109033703.ra2ysibuv4s76xcm@rob-hp-laptop>
+References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
+ <1515064215-22202-6-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515064215-22202-6-git-send-email-ilialin@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 25/01/18 14:00, Peter De Schrijver wrote:
-> This patch series introduces the Memory Built-In Self Test (MBIST)
-> work around (WAR) needed when power ungating certain domains. More
-> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> implement the WAR in the Tegra210 clock driver, because most accesses are
-> to CAR registers and for the VENC domain, we need to make sure the CSI
-> clock source is not changed during the WAR execution.
+On Thu, Jan 04, 2018 at 01:10:09PM +0200, Ilia Lin wrote:
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 > 
-> Changes in v4:
-> * moved locking and clock control to tegra210_clk_handle_mbist_war()
-> * propagate errors during WAR execution to user
-> * rework error handling tegra210_mbist_clk_init() slightly
-> 
-> Changes in v3:
-> * fix compile problem on non-Tegra210 platforms
-> * fix clock handling bug in tegra210_generic_mbist_war()
-> * addressed minor comments
-> 
-> Changes in v2:
-> * Use readl for fence_delay() rather than readl_relaxed
-> * clarify MBIST and WAR acronyms
-> 
-> Peter De Schrijver (4):
->   clk: tegra: Add la clock for Tegra210
->   clk: tegra: add fence_delay for clock registers
->   clk: tegra: MBIST work around for Tegra210
->   soc/tegra: pmc: MBIST work around for Tegra210
-> 
->  drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk.h                  |   7 +
->  drivers/soc/tegra/pmc.c                  |   7 +
->  include/dt-bindings/clock/tegra210-car.h |   2 +-
->  include/linux/clk/tegra.h                |   6 +
->  5 files changed, 376 insertions(+), 3 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> new file mode 100644
+> index 0000000..c45de03
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> @@ -0,0 +1,17 @@
+> +Qualcomm CPUSS clock controller for Kryo CPUs
+> +----------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +
+> +			"qcom,apcc-msm8996"
 
-For the series ...
+qcom-msm8996-apcc is the conventional order.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+> +
+> +- reg : shall contain base register location and length
+> +- #clock-cells : shall contain 1
+> +
+> +Example:
+> +	kryocc: clock-controller@6400000 {
+> +		compatible = "qcom,apcc-msm8996";
+> +		reg = <0x6400000 0x90000>;
+> +		#clock-cells = <1>;
+> +	};
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
