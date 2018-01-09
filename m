@@ -1,88 +1,65 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX
- USB PHY clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-21-git-send-email-david@lechnology.com>
- <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
- <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <458ac21d-a995-1c52-792e-563d81ba1e33@ti.com>
-Date: Fri, 19 Jan 2018 11:47:07 +0530
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Jose.Abreu@synopsys.com, devicetree@vger.kernel.org, narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 03/11] drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+Date: Tue, 09 Jan 2018 14:56:21 +0200
+Message-ID: <3367423.0HCaRuLuz8@avalon>
+In-Reply-To: <20171230210203.24115-4-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-4-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 19 January 2018 12:30 AM, David Lechner wrote:
-> On 01/18/2018 06:10 AM, Sekhar Nori wrote:
->> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->>> This adds a new binding for TI DA8XX USB PHY clocks. These clocks are
->>> part
->>> of a syscon register called CFGCHIP3.
->>
->> CFGCHIP2
->>
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>
->>> +Examples:
->>> +
->>> +    cfgchip: syscon@1417c {
->>> +        compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
->>> +        reg = <0x1417c 0x14>;
->>> +
->>> +        usb0_phy_clk: usb0-phy-clock {
->>> +            compatible = "ti,da830-usb0-phy-clock";
->>> +            #clock-cells = <0>;
->>> +            clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
->>> +            clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
->>> +            clock-output-names = "usb0_phy_clk";
->>
->> Probably call this "usb0_phy" to match with the input name used for
->> usb1_phy_clk?
-> 
-> I was planning on just dropping clock-output-names altogether actually
-> since they don't really do anything useful.
-> 
-> Also, I was considering sending a series to change the con_id for the
-> PHY clocks.
-> 
-> My current revision of the device tree bindings is looking like this:
-> 
->     usb_phy: usb-phy {
->         compatible = "ti,da830-usb-phy";
->         #phy-cells = <1>;
->         clocks = <&usb_phy_clk 0>, <&usb_phy_clk 1>;
->         clock-names = "usb20_phy", "usb11_phy";
->         status = "disabled";
->     };
->     usb_phy_clk: usb-phy-clocks {
->         compatible = "ti,da830-usb-phy-clocks";
->         #clock-cells = <1>;
->         clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
->         clock-names = "fck", "usb_refclkin", "auxclk";
->     };
-> 
-> The clock-names = "usb20_phy", "usb11_phy" comes from the existing con_ids
-> in the PHY driver's clk_get()s.
-> 
-> However, in device tree, we are usually referring to the USB devices as
-> usb0 and usb1 instead of usb20 and usb11, respectively. Figure 6-2 "USB
-> Clocking Diagram" in spruh82c.pdf (AM1808 TRM) calls these clocks "CLK48"
-> and "CLK48MHz from USB 2.0 PHY", so I was thinking of changing the con_ids
-> (and therefore also clock-names) to "usb0_clk48" and "usb1_clk48".
+Hi Jernej,
 
-This is fine with me.
+Thank you for the patch.
 
-Thanks,
-Sekhar
+On Saturday, 30 December 2017 23:01:55 EET Jernej Skrabec wrote:
+> Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+> magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
+> 
+> Tests show that one iteration is enough.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+This does not break R-Car DU, so
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> a38db40ce990..7ca14d7325b5 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
+> *hdmi) * then write one of the FC registers several times.
+>  	 *
+>  	 * The number of iterations matters and depends on the HDMI TX revision
+> -	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+> -	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+> -	 * 4 and 1 iterations respectively.
+> +	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
+> +	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
+> +	 * as needing the workaround, with 4 iterations for v1.30a and 1
+> +	 * iteration for others.
+>  	 */
+> 
+>  	switch (hdmi->version) {
+> @@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
+> *hdmi) count = 4;
+>  		break;
+>  	case 0x131a:
+> +	case 0x132a:
+>  		count = 1;
+>  		break;
+>  	default:
+
+-- 
+Regards,
+
+Laurent Pinchart
