@@ -1,106 +1,147 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 23 Jan 2018 20:21:02 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com,
-	linux-imx@nxp.com, fabio.estevam@nxp.com
-Subject: Re: [PATCH V3 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Message-ID: <20180123122102.GA16865@b29396-OptiPlex-7040>
-References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
- <1516367470-24340-2-git-send-email-aisheng.dong@nxp.com>
- <1516705426.7870.45.camel@baylibre.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Dong Aisheng <dongas86@gmail.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "stefan@agner.ch"
+	<stefan@agner.ch>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Subject: RE: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+Date: Tue, 9 Jan 2018 02:20:57 +0000
+Message-ID: <AM3PR04MB1315E7F99FAB7F0720B37756F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
+ <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+ <20180108103915.GD32635@b29396-OptiPlex-7040>
+ <AM3PR04MB131588945BE9C5504C6EC0E8F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <20180109021704.GG32635@b29396-OptiPlex-7040>
+In-Reply-To: <20180109021704.GG32635@b29396-OptiPlex-7040>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1516705426.7870.45.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 23, 2018 at 12:03:46PM +0100, Jerome Brunet wrote:
-> On Fri, 2018-01-19 at 21:11 +0800, Dong Aisheng wrote:
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index f711be6..68ccd36 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -360,6 +360,7 @@ struct clk_div_table {
-> >   * @shift:     shift to the divider bit field
-> >   * @width:     width of the divider bit field
-> >   * @table:     array of value/divider pairs, last entry should have div = 0
-> > + * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
-> >   * @lock:      register lock
-> >   *
-> >   * Clock with an adjustable divider affecting its output frequency.  Implements
-> > @@ -388,6 +389,12 @@ struct clk_div_table {
-> >   * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-> >   *     except when the value read from the register is zero, the divisor is
-> >   *     2^width of the field.
-> > + * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
-> 
-> Unless I missed something in your patch, this comment says that, like
-> CLK_DIVIDER_MAX_AT_ZERO, CLK_DIVIDER_ZERO_GATE behave as a CLK_DIVIDER_ONE_BASED
-> clock
-> 
-> However, I don't see anything special done in _get_val() around
-> CLK_DIVIDER_ZERO_GATE which means that calling _get_val() with div=2 would give
-> val=1. This is more like a regular divider (when CLK_DIVIDER_ONE_BASED is not
-> set)
-> 
-> Also, when looking for the best divider, CCF could find that the best div is 1.
-> On a non-CLK_DIVIDER_ONE_BASED, this would translate to value 0 and
-> (accidentally) gate the clock .
-> 
-> all the occurrences of CLK_DIVIDER_ZERO_GATE I have seen in patch 9 are combined
-> with CLK_DIVIDER_ONE_BASED, which is probably why this potential issue has gone
-> unnoticed.
-> 
 
-Yes, this feature only works with CLK_DIVIDER_ONE_BASED in current design.
-Probably we should state more clearly in the code comments?
 
-> I think CLK_DIVIDER_ZERO_GATE should just means that value 0 gate the clock, and
-> just that. It should not imply what the rest of values mean.
-> 
+Best Regards!
+Anson Huang
 
-It did not imply what the reset of values mean. User needs to specify the
-correct divider types. For current case, it should be CLK_DIVIDER_ONE_BASED
-only.
-e.g.
-000b - Clock disabled
-001b - Divide by 1
-010b - Divide by 2
 
-If anymore divider type want to use it, then we need extend the support
-accordingly.
+> -----Original Message-----
+> From: Dong Aisheng [mailto:dongas86@gmail.com]
+> Sent: 2018-01-09 10:17 AM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org; linu=
+x-
+> kernel@vger.kernel.org; devicetree@vger.kernel.org; dl-linux-imx <linux-
+> imx@nxp.com>; shawnguo@kernel.org; kernel@pengutronix.de; Fabio
+> Estevam <fabio.estevam@nxp.com>; mturquette@baylibre.com;
+> sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> stefan@agner.ch; linux@armlinux.org.uk
+> Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+>=20
+> On Tue, Jan 09, 2018 at 01:43:25AM +0000, Anson Huang wrote:
+> >
+> >
+> > Best Regards!
+> > Anson Huang
+> >
+> >
+> > > -----Original Message-----
+> > > From: Dong Aisheng [mailto:dongas86@gmail.com]
+> > > Sent: 2018-01-08 6:39 PM
+> > > To: Anson Huang <anson.huang@nxp.com>
+> > > Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org;
+> > > linux- kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> > > dl-linux-imx <linux- imx@nxp.com>; shawnguo@kernel.org;
+> > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
+> > > mturquette@baylibre.com; sboyd@codeaurora.org; robh+dt@kernel.org;
+> > > mark.rutland@arm.com; stefan@agner.ch; linux@armlinux.org.uk
+> > > Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
+> > >
+> > > On Thu, Jan 04, 2018 at 11:06:42PM +0800, Anson Huang wrote:
+> > > > Add i.MX7 SNVS RTC clock.
+> > > >
+> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > >
+> > > If this clock IMX7D_SNVS_CLK is used for all SNVS sub modules, then
+> > > snvs_poweroff and snvs_pwrkey should also rely on it, right?
+> > >
+> > > How about add them all in one time?
+> > >
+> > > BTW, syscon-poweroff seems still not introduce clock support and
+> > > fsl,sec-v4.0- pwrkey also does not handle clock, they may need to be =
+added
+> later.
+> > >
+> > > Regards
+> > > Dong Aisheng
+> >
+> > Yes, I thought about it before sending patch, but currently the
+> > poweroff and pwrkey driver do NOT handle clocks, so I plan to add them =
+later,
+> including handling clocks in driver and dtb.
+> >
+>=20
+> SNVS RTC binding doc does not claim a optional clock support, you probabl=
+y
+> may need update the binding doc as well.
+>=20
+> BTW, Should mx6 platforms need the same fixes?
+> If yes, we'd better fix them all.
 
-Theoretically any type of divider gets a 0 val (register value) is invalid for
-ZERO_GATE feature. We should avoid it.
+I.MX6 platforms has no such SNVS CCGR clock gate, no need to change.
+OK, I will update the SNVS RTC binding doc and send out a V2 patch set.
 
-> In a more general way, I'd love to see a feature such as CLK_DIVIDER_ZERO_GATE
-> added to the divider but I'm bit concerned of all the quirks we are slowly
-> adding to the generic divider. It seems we are all trying re-use the algorithm
-> of clk_divider_bestdiv() with different 'val-to-div' transfer function. Not too
-> sure what the best solution could be though.
-> 
+Anson.
 
-IMHO CLK_DIVIDER_ZERO_GATE only indicates the 0 val means clk gate.
-It does not assume divider types. That looks like a generic way and is exactly
-what this patch intends to do. Does it make sense?
-
-Regards
-Dong Aisheng
-
-> > + *     when the value read from the register is zero, it means the divisor
-> > + *     is gated. For this case, the cached_val will be used to store the
-> > + *     intermediate div for the normal rate operation, like set_rate/get_rate/
-> > + *     recalc_rate. When the divider is ungated, the driver will actually
-> > + *     program the hardware to have the requested divider value.
-> >   */
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+> Regards
+> Dong Aisheng
+>=20
+> > Anson
+> >
+> > >
+> > > > ---
+> > > >  arch/arm/boot/dts/imx7s.dtsi | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/imx7s.dtsi
+> > > > b/arch/arm/boot/dts/imx7s.dtsi index e718fd2..f9b97f3 100644
+> > > > --- a/arch/arm/boot/dts/imx7s.dtsi
+> > > > +++ b/arch/arm/boot/dts/imx7s.dtsi
+> > > > @@ -534,6 +534,8 @@
+> > > >  					offset =3D <0x34>;
+> > > >  					interrupts =3D <GIC_SPI 19
+> > > IRQ_TYPE_LEVEL_HIGH>,
+> > > >  						     <GIC_SPI 20
+> > > IRQ_TYPE_LEVEL_HIGH>;
+> > > > +					clocks =3D <&clks IMX7D_SNVS_CLK>;
+> > > > +					clock-names =3D "snvs-rtc";
+> > > >  				};
+> > > >
+> > > >  				snvs_poweroff: snvs-poweroff {
+> > > > --
+> > > > 1.9.1
+> > > >
+> > > > --
+> > > > To unsubscribe from this list: send the line "unsubscribe linux-clk=
+"
+> > > > in the body of a message to majordomo@vger.kernel.org More
+> > > > majordomo info at
+> > > > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2=
+F
+> > > > vger
+> > > > .kernel.org%2Fmajordomo-
+> > > info.html&data=3D02%7C01%7CAnson.Huang%40nxp.com
+> > > > %7Cd10ff23b822b4cd16c2708d5568417c6%7C686ea1d3bc2b4c6fa92cd99c5
+> c30
+> > > 1635
+> > > > %7C0%7C0%7C636510047707248763&sdata=3DFMx22hfKxs7YA%2F1zCVeYC
+> nVX
+> > > 9Ck4MmB9
+> > > > GuolA51V2eg%3D&reserved=3D0
