@@ -1,71 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:46895 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbeAFEUs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jan 2018 23:20:48 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/7] Initial Allwinner H6 support
-Date: Sat,  6 Jan 2018 12:18:06 +0800
-Message-Id: <20180106041813.46256-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Anson.Huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <horia.geanta@nxp.com>, <aymen.sghaier@nxp.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<fabio.estevam@nxp.com>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <adriana.reus@nxp.com>, <stefan@agner.ch>,
+	<dongas86@gmail.com>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH V4 2/2] ARM: dts: imx7s: add snvs rtc clock
+Date: Tue, 9 Jan 2018 17:52:06 +0800
+Message-ID: <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1515491526-14060-1-git-send-email-Anson.Huang@nxp.com>
+References: <1515491526-14060-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: Anson.Huang@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the Allwinner H6 SoC.
+Add i.MX7 SNVS RTC clock.
 
-It's quite different from earlier Allwinner SoCs. For example, the
-memory map is refactored, and the CCU is rearranged. It's also the first
-Allwinner SoC with PCI Express interface, and the second one with USB
-3.0 (the first one is A80).
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+change since v3:
+	add optional for clocks in binding doc statement.
+ Documentation/devicetree/bindings/crypto/fsl-sec4.txt | 17 +++++++++++++++++
+ arch/arm/boot/dts/imx7s.dtsi                          |  2 ++
+ 2 files changed, 19 insertions(+)
 
-This patchset adds the most basical support for it, including the main pin
-controller, the main CCU and the basical device tree.
-
-Icenowy Zheng (7):
-  pinctrl: sunxi: add support for pin controllers without bus gate
-  pinctrl: sunxi: support pin controllers with holes among IRQ banks
-  pinctrl: sunxi: add support for the Allwinner H6 main pin controller
-  clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-  clk: sunxi-ng: add support for the Allwinner H6 CCU
-  arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-  arm64: allwinner: h6: add support for Pine H64 board
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    4 +-
- arch/arm64/boot/dts/allwinner/Makefile             |    1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      |   66 ++
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |  214 ++++
- drivers/clk/sunxi-ng/Kconfig                       |    5 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1206 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   63 +
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |   20 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
- drivers/pinctrl/sunxi/Kconfig                      |    4 +
- drivers/pinctrl/sunxi/Makefile                     |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          |  679 +++++++++++
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   46 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   42 +-
- include/dt-bindings/clock/sun50i-h6-ccu.h          |  159 +++
- include/dt-bindings/reset/sun50i-h6-ccu.h          |  110 ++
- 20 files changed, 2595 insertions(+), 37 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
- create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
-
+diff --git a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
+index 76aec8a..3c1f3a2 100644
+--- a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
++++ b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
+@@ -415,12 +415,27 @@ Secure Non-Volatile Storage (SNVS) Low Power (LP) RTC Node
+ 	value type: <u32>
+ 	Definition: LP register offset. default it is 0x34.
+ 
++   - clocks
++      Usage: optional, required if SNVS LP RTC requires explicit
++          enablement of clocks
++      Value type: <prop_encoded-array>
++      Definition:  a clock specifier describing the clock required for
++          enabling and disabling SNVS LP RTC.
++
++   - clock-names
++      Usage: optional, required if SNVS LP RTC requires explicit
++          enablement of clocks
++      Value type: <string>
++      Definition: clock name string should be "snvs-rtc".
++
+ EXAMPLE
+ 	sec_mon_rtc_lp@1 {
+ 		compatible = "fsl,sec-v4.0-mon-rtc-lp";
+ 		interrupts = <93 2>;
+ 		regmap = <&snvs>;
+ 		offset = <0x34>;
++		clocks = <&clks IMX7D_SNVS_CLK>;
++		clock-names = "snvs-rtc";
+ 	};
+ 
+ =====================================================================
+@@ -543,6 +558,8 @@ FULL EXAMPLE
+ 			regmap = <&sec_mon>;
+ 			offset = <0x34>;
+ 			interrupts = <93 2>;
++			clocks = <&clks IMX7D_SNVS_CLK>;
++			clock-names = "snvs-rtc";
+ 		};
+ 
+ 		snvs-pwrkey@020cc000 {
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 9aa2bb9..02baf42 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -551,6 +551,8 @@
+ 					offset = <0x34>;
+ 					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 						     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clks IMX7D_SNVS_CLK>;
++					clock-names = "snvs-rtc";
+ 				};
+ 
+ 				snvs_poweroff: snvs-poweroff {
 -- 
-2.14.2
-
+1.9.1
