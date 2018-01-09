@@ -1,112 +1,255 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 29 Jan 2018 13:53:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-Message-ID: <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-2-git-send-email-david@lechnology.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Archit Taneja <architt@codeaurora.org>
+Cc: maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+Date: Tue, 09 Jan 2018 16:58:46 +0100
+Message-ID: <10903755.CJpSM8RM5e@jernej-laptop>
+In-Reply-To: <6b454804-e910-e8e8-6d2b-5bc25c7a4d4c@codeaurora.org>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-5-jernej.skrabec@siol.net> <6b454804-e910-e8e8-6d2b-5bc25c7a4d4c@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1516468460-4908-2-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
-> This adds a new binding for the PLL IP blocks in the mach-davinci
-> family of processors. Currently, only da850 has device tree support
-> but these bindings can also work for other SoCs in this family just
-> by adding new compatible strings.
-> 
-> Note: Although these PLL controllers are very similar to the TI Keystone
-> SoCs, we are not re-using those bindings. The Keystone bindings use a
-> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
-> have a slightly different PLL register layout and a number of quirks
-> that can't be handled by the existing bindings, so the keystone bindings
-> could not be used as-is anyway.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v6 changes:
-> - Added clock-names property
-> - Added ti,clkmode-square-wave property
-> - Added pllout child node
-> - Added obsclk child node
-> - Expanded examples
-> 
->  .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96 ++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-> new file mode 100644
-> index 0000000..36998e1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-> @@ -0,0 +1,96 @@
-> +Binding for TI DaVinci PLL Controllers
-> +
-> +The PLL provides clocks to most of the components on the SoC. In addition
-> +to the PLL itself, this controller also contains bypasses, gates, dividers,
-> +an multiplexers for various clock signals.
-> +
-> +Required properties:
-> +- compatible: shall be one of:
-> +	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
-> +	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
-> +- reg: physical base address and size of the controller's register area.
-> +- clocks: phandles corresponding to the clock names
-> +- clock-names: names of the clock sources - depends on compatible string
-> +	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
-> +	- for "ti,da850-pll1", shall be "clksrc"
-> +
-> +Optional properties:
-> +- ti,clkmode-square-wave: Indicates that the the board is supplying a square
-> +	wave input on the OSCIN pin instead of using a crystal oscillator.
-> +	This property is only valid when compatible = "ti,da850-pll0".
-> +
-> +
-> +Optional child nodes:
-> +
-> +pllout
-> +	Describes the main PLL clock output (before POSTDIV). The node name must
-> +	be "pllout".
-> +
-> +	Required properties:
-> +	- #clock-cells: shall be 0
-> +
-> +sysclk
-> +	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
-> +	domains. The node name must be "sysclk". Consumers of this node should
-> +	use "n" in "SYSCLKn" as the index parameter for the clock cell.
-> +
-> +	Required properties:
-> +	- #clock-cells: shall be 1
-> +
-> +auxclk
-> +	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
-> +	This child node is only valid when compatible = "ti,da850-pll0".
-> +
-> +	Required properties:
-> +	- #clock-cells: shall be 0
-> +
-> +obsclk
-> +	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
-> +
-> +	Required properties:
-> +	- #clock-cells: shall be 0
+Hi Archit,
 
-So why have all these child nodes vs. just defining a single number 
-space of clock ids?
+Dne torek, 09. januar 2018 ob 11:43:08 CET je Archit Taneja napisal(a):
+> On 12/31/2017 02:31 AM, Jernej Skrabec wrote:
+> > Parts of PHY code could be useful also for custom PHYs. For example,
+> > Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
+> > with few additional memory mapped registers, so most of the Synopsys PHY
+> > related code could be reused.
+> > 
+> > It turns out that even completely custom HDMI PHYs, such as the one
+> > found in Allwinner H3, can reuse some of those functions. This would
+> > suggest that (some?) functions exported in this commit are actually part
+> > of generic PHY interface and not really specific to Synopsys PHYs.
+> > 
+> > Export useful PHY functions.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45
+> >   ++++++++++++++++++++++---------
+> >   drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
+> >   include/drm/bridge/dw_hdmi.h              | 10 +++++++
+> >   3 files changed, 44 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> > 7ca14d7325b5..67467d0b683a 100644
+> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > @@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct
+> > dw_hdmi *hdmi, u8 enable)> 
+> >   			 HDMI_PHY_CONF0_SVSRET_MASK);
+> >   
+> >   }
+> > 
+> > -static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+> > +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+> > 
+> >   {
+> >   
+> >   	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+> >   	
+> >   			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
+> >   			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
+> >   
+> >   }
+> > 
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
+> > 
+> > -static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
+> > +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
+> > 
+> >   {
+> >   
+> >   	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+> >   	
+> >   			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
+> >   			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
+> >   
+> >   }
+> > 
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
+> > 
+> >   static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
+> >   {
+> > 
+> > @@ -1065,6 +1067,23 @@ static void
+> > dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)> 
+> >   			 HDMI_PHY_CONF0_SELDIPIF_MASK);
+> >   
+> >   }
+> > 
+> > +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
+> > +{
+> > +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
+> > +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
+> > +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
+> > +
+> > +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
+> > +{
+> > +	hdmi_phy_test_clear(hdmi, 1);
+> > +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> > +		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> > +	hdmi_phy_test_clear(hdmi, 0);
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
+> 
+> Should this be called dw_hdmi_phy_gen2_set_slave_addr?
 
-Rob
+Probably. I will rename it in v2 to be consistent with other phy functions.
+
+Best regards,
+Jernej
+
+> 
+> Looks good otherwise. Same for patches 3 and 4 in this series.
+> 
+> Thanks,
+> Archit
+> 
+> > +
+> > 
+> >   static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+> >   {
+> >   
+> >   	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+> > 
+> > @@ -1204,15 +1223,12 @@ static int hdmi_phy_configure(struct dw_hdmi
+> > *hdmi)
+> > 
+> >   		dw_hdmi_phy_enable_svsret(hdmi, 1);
+> >   	
+> >   	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
+> > 
+> > -	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
+> > -	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
+> > +	dw_hdmi_phy_gen2_reset(hdmi, 1);
+> > +	dw_hdmi_phy_gen2_reset(hdmi, 0);
+> > 
+> >   	hdmi_writeb(hdmi, HDMI_MC_HEACPHY_RST_ASSERT, HDMI_MC_HEACPHY_RST);
+> > 
+> > -	hdmi_phy_test_clear(hdmi, 1);
+> > -	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> > -		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> > -	hdmi_phy_test_clear(hdmi, 0);
+> > +	dw_hdmi_phy_set_slave_addr(hdmi);
+> > 
+> >   	/* Write to the PHY as configured by the platform */
+> >   	if (pdata->configure_phy)
+> > 
+> > @@ -1251,15 +1267,16 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> > *hdmi, void *data)> 
+> >   	dw_hdmi_phy_power_off(hdmi);
+> >   
+> >   }
+> > 
+> > -static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi
+> > *hdmi, -						      void *data)
+> > +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> > +					       void *data)
+> > 
+> >   {
+> >   
+> >   	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+> >   	
+> >   		connector_status_connected : connector_status_disconnected;
+> >   
+> >   }
+> > 
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_read_hpd);
+> > 
+> > -static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> > -				   bool force, bool disabled, bool rxsense)
+> > +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> > +			    bool force, bool disabled, bool rxsense)
+> > 
+> >   {
+> >   
+> >   	u8 old_mask = hdmi->phy_mask;
+> > 
+> > @@ -1271,8 +1288,9 @@ static void dw_hdmi_phy_update_hpd(struct dw_hdmi
+> > *hdmi, void *data,> 
+> >   	if (old_mask != hdmi->phy_mask)
+> >   	
+> >   		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
+> >   
+> >   }
+> > 
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_update_hpd);
+> > 
+> > -static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
+> > +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
+> > 
+> >   {
+> >   
+> >   	/*
+> >   	
+> >   	 * Configure the PHY RX SENSE and HPD interrupts polarities and clear
+> > 
+> > @@ -1291,6 +1309,7 @@ static void dw_hdmi_phy_setup_hpd(struct dw_hdmi
+> > *hdmi, void *data)> 
+> >   	hdmi_writeb(hdmi, ~(HDMI_IH_PHY_STAT0_HPD |
+> >   	HDMI_IH_PHY_STAT0_RX_SENSE),
+> >   	
+> >   		    HDMI_IH_MUTE_PHY_STAT0);
+> >   
+> >   }
+> > 
+> > +EXPORT_SYMBOL_GPL(dw_hdmi_phy_setup_hpd);
+> > 
+> >   static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
+> >   
+> >   	.init = dw_hdmi_phy_init,
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
+> > 9d90eb9c46e5..fd150430d0b3 100644
+> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> > @@ -950,6 +950,8 @@ enum {
+> > 
+> >   /* MC_PHYRSTZ field values */
+> >   
+> >   	HDMI_MC_PHYRSTZ_PHYRSTZ = 0x01,
+> > 
+> > +	HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET = 0x00,
+> > +	HDMI_MC_PHYRSTZ_PHYRSTZ_MASK = 0x01,
+> > 
+> >   /* MC_HEACPHY_RST field values */
+> >   
+> >   	HDMI_MC_HEACPHY_RST_ASSERT = 0x1,
+> > 
+> > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> > index 182f83283e24..f5cca4362154 100644
+> > --- a/include/drm/bridge/dw_hdmi.h
+> > +++ b/include/drm/bridge/dw_hdmi.h
+> > @@ -159,5 +159,15 @@ void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+> > 
+> >   /* PHY configuration */
+> >   void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+> >   
+> >   			   unsigned char addr);
+> > 
+> > +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> > +					       void *data);
+> > +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> > +			    bool force, bool disabled, bool rxsense);
+> > +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
+> > +
+> > +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable);
+> > +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable);
+> > +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable);
+> > +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi);
+> > 
+> >   #endif /* __IMX_HDMI_H__ */
+> 
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
