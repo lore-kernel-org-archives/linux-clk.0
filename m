@@ -1,162 +1,194 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56140 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932986AbeAKKXl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 05:23:41 -0500
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-References: <20180106042326.46519-1-icenowy@aosc.io>
- <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
- <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <ba83f00d-c1e5-6f6a-84df-04169860c7eb@arm.com>
-Date: Thu, 11 Jan 2018 10:23:52 +0000
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Jose.Abreu@synopsys.com, devicetree@vger.kernel.org, narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/11] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+Date: Tue, 09 Jan 2018 15:30:22 +0200
+Message-ID: <4765263.5spOVExvvT@avalon>
+In-Reply-To: <20171230210203.24115-5-jernej.skrabec@siol.net>
+References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-5-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Jernej,
 
-On 11/01/18 10:14, Chen-Yu Tsai wrote:
-> On Thu, Jan 11, 2018 at 6:08 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->> Hi,
->>
->> On 06/01/18 04:23, Icenowy Zheng wrote:
->>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->>> have no bus gate clocks.
->>>
->>> Add support for this kind of pin controllers.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>>  2 files changed, 21 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> index 4b6cb25bc796..68cd505679d9 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->>>       unsigned int hosc_div, losc_div;
->>>       struct clk *hosc, *losc;
->>>       u8 div, src;
->>> -     int i, ret;
->>> +     int i, ret, clk_count;
->>> +
->>> +     if (pctl->desc->without_bus_gate)
->>> +             clk_count = 2;
->>> +     else
->>> +             clk_count = 3;
->>>
->>>       /* Deal with old DTs that didn't have the oscillators */
->>>       if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
->>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>>                       goto gpiochip_error;
->>>       }
->>>
->>> -     clk = devm_clk_get(&pdev->dev, NULL);
->>> -     if (IS_ERR(clk)) {
->>> -             ret = PTR_ERR(clk);
->>> -             goto gpiochip_error;
->>> -     }
->>> +     if (!desc->without_bus_gate) {
->>
->> Do we really need explicit support for that case?
->> Can't we have something that works automatically?
->>
->> if (node has clock-names property)              (A)
->>         use clocks as enumerated and named there
+Thank you for the patch.
+
+On Saturday, 30 December 2017 23:01:56 EET Jernej Skrabec wrote:
+> Parts of PHY code could be useful also for custom PHYs. For example,
+> Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
+> with few additional memory mapped registers, so most of the Synopsys PHY
+> related code could be reused.
 > 
-> You still need to know if the hardware has a bus gate or not.
-> If it's missing, and it's disabled, you end up with unusable
-> hardware.
+> It turns out that even completely custom HDMI PHYs, such as the one
+> found in Allwinner H3, can reuse some of those functions. This would
+> suggest that (some?) functions exported in this commit are actually part
+> of generic PHY interface and not really specific to Synopsys PHYs.
 
-Yes. So what? If you have a broken DT, it will not work. Just don't do
-it. I don't understand why we want to defend against this case.
+That's correct, those functions control the interface between the HDMI 
+controller and the PHY. They're not specific to Synopsys PHYs, but they're 
+specific to the PHY interface as designed by Synopsys.
 
-> Unless you are fully trusting the device tree to be correct.
-
-Sorry, but what else do we trust?
-
-> IMHO that makes for hard to find bugs during SoC bringup.
-
-I am not sure if that is really an issue. I would expect people doing
-SoC bringup to be able to cope with those kinds of problems.
-
-Cheers,
-Andre.
-
-
+> Export useful PHY functions.
 > 
-> ChenYu
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 ++++++++++++++++++++-------
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  2 ++
+>  include/drm/bridge/dw_hdmi.h              | 10 +++++++
+>  3 files changed, 44 insertions(+), 13 deletions(-)
 > 
->> else if (node has one clock reference)          (B)
->>         use this as gate clock, no debounce support
->> else if (node has no clock property at all)     (C)
->>         no gate clock needed, no debounce support
->>
->> On top of that we should add the clock-names property to all DTs, even
->> for those with only a "apb" clock. Shouldn't hurt existing kernels.
->> Possibly even add debounce support for those on the way, if applicable.
->>
->> So we would just support case (B) and (C) for legacy reasons.
->>
->> Does that make sense?
->>
->> Cheers,
->> Andre.
->>
->>> +             clk = devm_clk_get(&pdev->dev, NULL);
->>> +             if (IS_ERR(clk)) {
->>> +                     ret = PTR_ERR(clk);
->>> +                     goto gpiochip_error;
->>> +             }
->>>
->>> -     ret = clk_prepare_enable(clk);
->>> -     if (ret)
->>> -             goto gpiochip_error;
->>> +             ret = clk_prepare_enable(clk);
->>> +             if (ret)
->>> +                     goto gpiochip_error;
->>> +     } else {
->>> +             clk = NULL;
->>> +     }
->>>
->>>       pctl->irq = devm_kcalloc(&pdev->dev,
->>>                                pctl->desc->irq_banks,
->>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>>       return 0;
->>>
->>>  clk_error:
->>> -     clk_disable_unprepare(clk);
->>> +     if (clk)
->>> +             clk_disable_unprepare(clk);
->>>  gpiochip_error:
->>>       gpiochip_remove(pctl->chip);
->>>       return ret;
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> index 11b128f54ed2..ccb6230f0bb5 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>>       unsigned                        irq_bank_base;
->>>       bool                            irq_read_needs_mux;
->>>       bool                            disable_strict_mode;
->>> +     bool                            without_bus_gate;
->>>  };
->>>
->>>  struct sunxi_pinctrl_function {
->>>
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> 7ca14d7325b5..67467d0b683a 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct dw_hdmi
+> *hdmi, u8 enable) HDMI_PHY_CONF0_SVSRET_MASK);
+>  }
+> 
+> -static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+> +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
+>  {
+>  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+>  			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
+>  			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
+>  }
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
+> 
+> -static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
+> +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
+>  {
+>  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
+>  			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
+>  			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
+>  }
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
+> 
+>  static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
+>  {
+> @@ -1065,6 +1067,23 @@ static void dw_hdmi_phy_sel_interface_control(struct
+> dw_hdmi *hdmi, u8 enable) HDMI_PHY_CONF0_SELDIPIF_MASK);
+>  }
+> 
+> +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable)
+> +{
+> +	hdmi_mask_writeb(hdmi, enable, HDMI_MC_PHYRSTZ,
+> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET,
+> +			 HDMI_MC_PHYRSTZ_PHYRSTZ_MASK);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_reset);
+> +
+> +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi)
+> +{
+> +	hdmi_phy_test_clear(hdmi, 1);
+> +	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> +		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> +	hdmi_phy_test_clear(hdmi, 0);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_set_slave_addr);
+
+Should the I2C address be passed as an argument ?
+
+>  static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
+>  {
+>  	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+> @@ -1204,15 +1223,12 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>  		dw_hdmi_phy_enable_svsret(hdmi, 1);
+> 
+>  	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
+> -	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
+> -	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
+> +	dw_hdmi_phy_gen2_reset(hdmi, 1);
+> +	dw_hdmi_phy_gen2_reset(hdmi, 0);
+> 
+>  	hdmi_writeb(hdmi, HDMI_MC_HEACPHY_RST_ASSERT, HDMI_MC_HEACPHY_RST);
+> 
+> -	hdmi_phy_test_clear(hdmi, 1);
+> -	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
+> -		    HDMI_PHY_I2CM_SLAVE_ADDR);
+> -	hdmi_phy_test_clear(hdmi, 0);
+> +	dw_hdmi_phy_set_slave_addr(hdmi);
+> 
+>  	/* Write to the PHY as configured by the platform */
+>  	if (pdata->configure_phy)
+> @@ -1251,15 +1267,16 @@ static void dw_hdmi_phy_disable(struct dw_hdmi
+> *hdmi, void *data) dw_hdmi_phy_power_off(hdmi);
+>  }
+> 
+> -static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> -						      void *data)
+> +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> +					       void *data)
+>  {
+>  	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+>  		connector_status_connected : connector_status_disconnected;
+>  }
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_read_hpd);
+> 
+> -static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> -				   bool force, bool disabled, bool rxsense)
+> +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> +			    bool force, bool disabled, bool rxsense)
+>  {
+>  	u8 old_mask = hdmi->phy_mask;
+> 
+> @@ -1271,8 +1288,9 @@ static void dw_hdmi_phy_update_hpd(struct dw_hdmi
+> *hdmi, void *data, if (old_mask != hdmi->phy_mask)
+>  		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
+>  }
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_update_hpd);
+> 
+> -static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
+> +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
+>  {
+>  	/*
+>  	 * Configure the PHY RX SENSE and HPD interrupts polarities and clear
+> @@ -1291,6 +1309,7 @@ static void dw_hdmi_phy_setup_hpd(struct dw_hdmi
+> *hdmi, void *data) hdmi_writeb(hdmi, ~(HDMI_IH_PHY_STAT0_HPD |
+> HDMI_IH_PHY_STAT0_RX_SENSE), HDMI_IH_MUTE_PHY_STAT0);
+>  }
+> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_setup_hpd);
+> 
+>  static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
+>  	.init = dw_hdmi_phy_init,
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
+> 9d90eb9c46e5..fd150430d0b3 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> @@ -950,6 +950,8 @@ enum {
+> 
+>  /* MC_PHYRSTZ field values */
+>  	HDMI_MC_PHYRSTZ_PHYRSTZ = 0x01,
+> +	HDMI_MC_PHYRSTZ_PHYRSTZ_OFFSET = 0x00,
+> +	HDMI_MC_PHYRSTZ_PHYRSTZ_MASK = 0x01,
+> 
+>  /* MC_HEACPHY_RST field values */
+>  	HDMI_MC_HEACPHY_RST_ASSERT = 0x1,
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index 182f83283e24..f5cca4362154 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -159,5 +159,15 @@ void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+>  /* PHY configuration */
+>  void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+>  			   unsigned char addr);
+> +enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+> +					       void *data);
+> +void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+> +			    bool force, bool disabled, bool rxsense);
+> +void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
+> +
+> +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable);
+> +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable);
+> +void dw_hdmi_phy_gen2_reset(struct dw_hdmi *hdmi, u8 enable);
+> +void dw_hdmi_phy_set_slave_addr(struct dw_hdmi *hdmi);
+> 
+>  #endif /* __IMX_HDMI_H__ */
+
+-- 
+Regards,
+
+Laurent Pinchart
