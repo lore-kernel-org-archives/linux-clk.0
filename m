@@ -1,149 +1,57 @@
-Return-Path: <patrice.chotard@st.com>
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Russell King <linux@armlinux.org.uk>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "Linux Kernel
- Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: Re: [PATCH 03/14] mmc: mmci: Add support for setting pad type via
- pinctrl
-Date: Mon, 15 Jan 2018 17:42:18 +0000
-Message-ID: <c09970a6-0e6d-c26d-f41e-ab82b4cb8127@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
- <1515759368-16946-4-git-send-email-patrice.chotard@st.com>
- <CAPDyKFoBTKpwSJzg5_cMei0Vzze=eQTKFBuD6mgHdYZUhqxFPw@mail.gmail.com>
-In-Reply-To: <CAPDyKFoBTKpwSJzg5_cMei0Vzze=eQTKFBuD6mgHdYZUhqxFPw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Anson.Huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <horia.geanta@nxp.com>, <aymen.sghaier@nxp.com>,
+	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<fabio.estevam@nxp.com>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <adriana.reus@nxp.com>, <stefan@agner.ch>,
+	<dongas86@gmail.com>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
+Date: Tue, 9 Jan 2018 17:20:50 +0800
+Message-ID: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: Anson.Huang@nxp.com
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVWxmDQoNCk9uIDAxLzE1LzIwMTggMDE6NDMgUE0sIFVsZiBIYW5zc29uIHdyb3RlOg0KPiBP
-biAxMiBKYW51YXJ5IDIwMTggYXQgMTM6MTUsICA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4gd3Jv
-dGU6DQo+PiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+
-Pg0KPj4gVGhlIFNUTTMyIHZhcmlhbnQgaGFzbid0IHRoZSBjb250cm9sIGJpdCB0byBzd2l0Y2gg
-cGFkcyBpbiBvcGVuZHJhaW4gbW9kZS4NCj4+IEluIHRoaXMgY2FzZSB3ZSBjYW4gYWNoaWV2ZSB0
-aGUgc2FtZSByZXN1bHQgYnkgYXNraW5nIHRvIHRoZSBwaW5tdXggZHJpdmVyDQo+PiB0byBjb25m
-aWd1cmUgcGlucyBmb3IgdXMuDQo+Pg0KPj4gVGhpcyBwYXRjaCBtYWtlIHRoZSBtbWNpIGRyaXZl
-ciBhYmxlIHRvIGRvIHRoaXMgd2hlbmV2ZXIgbmVlZGVkLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6
-IEFuZHJlYSBNZXJlbGxvIDxhbmRyZWEubWVyZWxsb0BnbWFpbC5jb20+DQo+PiBTaWduZWQtb2Zm
-LWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+PiAtLS0NCj4+
-ICAgZHJpdmVycy9tbWMvaG9zdC9tbWNpLmMgfCA1NCArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrLS0tLS0tLS0tDQo+PiAgIGRyaXZlcnMvbW1jL2hvc3QvbW1jaS5oIHwg
-IDUgKysrKysNCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCA1MCBpbnNlcnRpb25zKCspLCA5IGRlbGV0
-aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L21tY2kuYyBiL2Ry
-aXZlcnMvbW1jL2hvc3QvbW1jaS5jDQo+PiBpbmRleCA3ZTU2Zjg1Li4zOGU4YzIwIDEwMDY0NA0K
-Pj4gLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9tbWNpLmMNCj4+ICsrKyBiL2RyaXZlcnMvbW1jL2hv
-c3QvbW1jaS5jDQo+PiBAQCAtODUsNiArODUsOCBAQA0KPj4gICAgKiBAbW1jaW1hc2sxOiB0cnVl
-IGlmIHZhcmlhbnQgaGF2ZSBhIE1NQ0lNQVNLMSByZWdpc3Rlci4NCj4+ICAgICogQHN0YXJ0X2Vy
-cjogdHJ1ZSBpcyB0aGUgdmFyaWFudCBoYXMgU1RBUlRCSVRFUlIgYml0IGluc2lkZSBNTUNJU1RB
-VFVTDQo+PiAgICAqICAgICAgICAgICAgcmVnaXN0ZXIuDQo+PiArICogQG9wZW5kcmFpbjogdHJ1
-ZSBpZiB2YXJpYW50IGhhdmUgZGVkaWNhdGVkIGJpdCBmb3Igb3BlbmRyYWluIHBpbnMNCj4+ICsg
-KiAgICAgICAgICAgIGNvbmZpZ3VyYXRpb24uDQo+PiAgICAqLw0KPj4gICBzdHJ1Y3QgdmFyaWFu
-dF9kYXRhIHsNCj4+ICAgICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgIGNsa3JlZzsNCj4+
-IEBAIC0xMTYsNiArMTE4LDcgQEAgc3RydWN0IHZhcmlhbnRfZGF0YSB7DQo+PiAgICAgICAgICBi
-b29sICAgICAgICAgICAgICAgICAgICByZXZlcnNlZF9pcnFfaGFuZGxpbmc7DQo+PiAgICAgICAg
-ICBib29sICAgICAgICAgICAgICAgICAgICBtbWNpbWFzazE7DQo+PiAgICAgICAgICBib29sICAg
-ICAgICAgICAgICAgICAgICBzdGFydF9lcnI7DQo+PiArICAgICAgIGJvb2wgICAgICAgICAgICAg
-ICAgICAgIG9wZW5kcmFpbjsNCj4gDQo+IFNpbWlsYXIgY29tbWVudCBhcyBmb3IgcGF0Y2gyLg0K
-PiANCj4gVG8gYmUgY29uc2lzdGVudCB3aXRoIGhvdyB3ZSBpbXBsZW1lbnQgc3VwcG9ydCBmb3Ig
-c2ltaWxhciB2YXJpYW50DQo+IHZhcmlhdGlvbnMsIEkgd291bGQgcHJlZmVyIHRvIGhhdmUgdGhp
-cyBiZWluZyBhIHUzMi4gU29tZXRoaW5nIGFsb25nDQo+IHRoZSBsaW5lcyBvZiBob3cgdGhlICJi
-dXN5X2RldGVjdF9mbGFnIiBpcyBiZWluZyB1c2VkLg0KDQpvaw0KDQo+IA0KPiBbLi4uXQ0KPiAN
-Cj4+IEBAIC0xMzk0LDkgKzE0MDUsMTEgQEAgc3RhdGljIHZvaWQgbW1jaV9zZXRfaW9zKHN0cnVj
-dCBtbWNfaG9zdCAqbW1jLCBzdHJ1Y3QgbW1jX2lvcyAqaW9zKQ0KPj4gICB7DQo+PiAgICAgICAg
-ICBzdHJ1Y3QgbW1jaV9ob3N0ICpob3N0ID0gbW1jX3ByaXYobW1jKTsNCj4+ICAgICAgICAgIHN0
-cnVjdCB2YXJpYW50X2RhdGEgKnZhcmlhbnQgPSBob3N0LT52YXJpYW50Ow0KPj4gKyAgICAgICBz
-dHJ1Y3QgcGluY3RybF9zdGF0ZSAqcGluczsNCj4+ICAgICAgICAgIHUzMiBwd3IgPSAwOw0KPj4g
-ICAgICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsNCj4+ICAgICAgICAgIGludCByZXQ7DQo+PiAr
-ICAgICAgIGJvb2wgaXNfb3BlbmRyYWluOw0KPj4NCj4+ICAgICAgICAgIGlmIChob3N0LT5wbGF0
-LT5pb3NfaGFuZGxlciAmJg0KPj4gICAgICAgICAgICAgICAgICBob3N0LT5wbGF0LT5pb3NfaGFu
-ZGxlcihtbWNfZGV2KG1tYyksIGlvcykpDQo+PiBAQCAtMTQ1NSwxNiArMTQ2OCwzMSBAQCBzdGF0
-aWMgdm9pZCBtbWNpX3NldF9pb3Moc3RydWN0IG1tY19ob3N0ICptbWMsIHN0cnVjdCBtbWNfaW9z
-ICppb3MpDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB+TUNJX1NUX0RBVEEy
-RElSRU4pOw0KPj4gICAgICAgICAgfQ0KPj4NCj4+IC0gICAgICAgaWYgKGlvcy0+YnVzX21vZGUg
-PT0gTU1DX0JVU01PREVfT1BFTkRSQUlOKSB7DQo+PiAtICAgICAgICAgICAgICAgaWYgKGhvc3Qt
-Pmh3X2Rlc2lnbmVyICE9IEFNQkFfVkVORE9SX1NUKQ0KPj4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgcHdyIHw9IE1DSV9ST0Q7DQo+PiAtICAgICAgICAgICAgICAgZWxzZSB7DQo+PiAtICAgICAg
-ICAgICAgICAgICAgICAgICAvKg0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICogVGhlIFNU
-IE1pY3JvIHZhcmlhbnQgdXNlIHRoZSBST0QgYml0IGZvciBzb21ldGhpbmcNCj4+IC0gICAgICAg
-ICAgICAgICAgICAgICAgICAqIGVsc2UgYW5kIG9ubHkgaGFzIE9EIChPcGVuIERyYWluKS4NCj4+
-IC0gICAgICAgICAgICAgICAgICAgICAgICAqLw0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAg
-cHdyIHw9IE1DSV9PRDsNCj4gDQo+IFNlZW1zIGxpa2UgeW91IHNob3VsZCBhY3R1YWxseSBzcGxp
-dCB0aGlzIGNoYW5nZSBpbnRvIHR3byBwYXJ0cy4NCj4gDQo+IE9uZSB0aGF0IGFkZHMgdGhlIHZh
-cmlhbnQgZmxhZyBmb3IgdGhlIG9wZW4gZHJhaW4gYml0LCB3aGVuIHRoZW4gY2FuDQo+IGNsZWFu
-IHVwIHRoaXMgY29kZS4gVGhlbiBhIHBhdGNoIG9uIHRvcCB0aGF0IHN0YXJ0cyB1c2luZyBwaW5j
-dHJsIGluDQo+IGNhc2UgdGhlcmUgaXMgbm8gb3BlbiBkcmFpbiBiaXQgc2V0Lg0KPiANCj4gRG9l
-cyB0aGF0IHNvdW5kcyByZWFzb25hYmxlPw0KDQpPZiBjb3Vyc2UNCg0KPiANCj4+ICsgICAgICAg
-aWYgKGhvc3QtPnZhcmlhbnQtPm9wZW5kcmFpbikgew0KPj4gKyAgICAgICAgICAgICAgIGlmIChp
-b3MtPmJ1c19tb2RlID09IE1NQ19CVVNNT0RFX09QRU5EUkFJTikgew0KPj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgaWYgKGhvc3QtPmh3X2Rlc2lnbmVyICE9IEFNQkFfVkVORE9SX1NUKSB7DQo+
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHB3ciB8PSBNQ0lfUk9EOw0KPj4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgfSBlbHNlIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLyoNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICogVGhlIFNU
-IE1pY3JvIHZhcmlhbnQgdXNlIHRoZSBST0QgYml0IGZvcg0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgKiBzb21ldGhpbmcgZWxzZSBhbmQgb25seSBoYXMgT0QgKE9wZW4gRHJh
-aW4pLg0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgcHdyIHw9IE1DSV9PRDsNCj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIH0NCj4+ICAgICAgICAgICAgICAgICAgfQ0KPj4gKyAgICAgICB9IGVsc2Ugew0K
-Pj4gKyAgICAgICAgICAgICAgIC8qDQo+PiArICAgICAgICAgICAgICAgICogSWYgdGhlIHZhcmlh
-bnQgY2Fubm90IGNvbmZpZ3VyZSB0aGUgcGFkcyBieSBpdHMgb3duLCB0aGVuIHdlDQo+PiArICAg
-ICAgICAgICAgICAgICogZXhwZWN0IHRoZSBwaW5jdHJsIHRvIGJlIGFibGUgdG8gZG8gdGhhdCBm
-b3IgdXMNCj4+ICsgICAgICAgICAgICAgICAgKi8NCj4+ICsgICAgICAgICAgICAgICBpc19vcGVu
-ZHJhaW4gPSAoaW9zLT5idXNfbW9kZSA9PSBNTUNfQlVTTU9ERV9PUEVORFJBSU4pOw0KPj4gKyAg
-ICAgICAgICAgICAgIHBpbnMgPSBwaW5jdHJsX2xvb2t1cF9zdGF0ZShob3N0LT5waW5jdHJsLCBp
-c19vcGVuZHJhaW4gPw0KPiANCj4gSG93IGFib3V0IGRvaW5nIHRoZSBsb29rdXAgaW4gLT5wcm9i
-ZSgpIGluc3RlYWQ/IFRoZW4ganVzdCBzZWxlY3QgdGhlDQo+IHN0YXRlIGhlcmUsIGlmIHN1cHBv
-cnRlZD8NCg0Kb2sNCg0KPiANCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBNTUNJX1BJTkNUUkxfU1RBVEVfT1BFTkRSQUlOIDoNCj4+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBNTUNJX1BJTkNUUkxfU1RBVEVfUFVTSFBVTEwpOw0KPj4g
-KyAgICAgICAgICAgICAgIGlmIChJU19FUlIocGlucykpDQo+PiArICAgICAgICAgICAgICAgICAg
-ICAgICBkZXZfd2FybihtbWNfZGV2KG1tYyksICJDYW5ub3Qgc2VsZWN0IHBpbiBkcml2ZSB0eXBl
-IHZpYSBwaW5jdHJsXG4iKTsNCj4+ICsgICAgICAgICAgICAgICBlbHNlDQo+PiArICAgICAgICAg
-ICAgICAgICAgICAgICBwaW5jdHJsX3NlbGVjdF9zdGF0ZShob3N0LT5waW5jdHJsLCBwaW5zKTsN
-Cj4+ICAgICAgICAgIH0NCj4+DQo+PiAgICAgICAgICAvKg0KPj4gQEAgLTE2MDksNiArMTYzNywx
-NCBAQCBzdGF0aWMgaW50IG1tY2lfcHJvYmUoc3RydWN0IGFtYmFfZGV2aWNlICpkZXYsDQo+PiAg
-ICAgICAgICBob3N0ID0gbW1jX3ByaXYobW1jKTsNCj4+ICAgICAgICAgIGhvc3QtPm1tYyA9IG1t
-YzsNCj4+DQo+PiArICAgICAgIGlmICghdmFyaWFudC0+b3BlbmRyYWluKSB7DQo+PiArICAgICAg
-ICAgICAgICAgaG9zdC0+cGluY3RybCA9IGRldm1fcGluY3RybF9nZXQoJmRldi0+ZGV2KTsNCj4+
-ICsgICAgICAgICAgICAgICBpZiAoSVNfRVJSKGhvc3QtPnBpbmN0cmwpKSB7DQo+PiArICAgICAg
-ICAgICAgICAgICAgICAgICBkZXZfZXJyKCZkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgcGluY3Ry
-bCIpOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZ290byBob3N0X2ZyZWU7DQo+PiArICAg
-ICAgICAgICAgICAgfQ0KPj4gKyAgICAgICB9DQo+PiArDQo+PiAgICAgICAgICBob3N0LT5od19k
-ZXNpZ25lciA9IGFtYmFfbWFuZihkZXYpOw0KPj4gICAgICAgICAgaG9zdC0+aHdfcmV2aXNpb24g
-PSBhbWJhX3JldihkZXYpOw0KPj4gICAgICAgICAgZGV2X2RiZyhtbWNfZGV2KG1tYyksICJkZXNp
-Z25lciBJRCA9IDB4JTAyeFxuIiwgaG9zdC0+aHdfZGVzaWduZXIpOw0KPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvbW1jL2hvc3QvbW1jaS5oIGIvZHJpdmVycy9tbWMvaG9zdC9tbWNpLmgNCj4+IGlu
-ZGV4IDgzMTYwYTkuLmRlM2QwYjMgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL21tYy9ob3N0L21t
-Y2kuaA0KPj4gKysrIGIvZHJpdmVycy9tbWMvaG9zdC9tbWNpLmgNCj4+IEBAIC0xOTIsNiArMTky
-LDEwIEBADQo+Pg0KPj4gICAjZGVmaW5lIE5SX1NHICAgICAgICAgIDEyOA0KPj4NCj4+ICsvKiBw
-aW5jdHJsIGNvbmZpZ3MgKi8NCj4+ICsjZGVmaW5lIE1NQ0lfUElOQ1RSTF9TVEFURV9QVVNIUFVM
-TCAiZGVmYXVsdCINCj4gDQo+IFNlZW1zIGxpa2Ugd2Ugc2hvdWxkIGJlIGFibGUgdG8gY29wZSBm
-aW5lIHdpdGhvdXQgaGF2aW5nIHRvIGFkZCBhDQo+IHNlcGFyYXRlIGRlZmluZSBmb3IgdGhlIFBV
-U0hQVUxMLCBidXQgcmF0aGVyIGp1c3Qgc2VsZWN0IHRoZSBkZWZhdWx0DQo+IHN0YXRlIGluc3Rl
-YWQuDQoNCnllcyBhZ3JlZQ0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQo+IA0KPj4gKyNkZWZpbmUg
-TU1DSV9QSU5DVFJMX1NUQVRFX09QRU5EUkFJTiAib3BlbmRyYWluIg0KPj4gKw0KPj4gICBzdHJ1
-Y3QgY2xrOw0KPj4gICBzdHJ1Y3QgdmFyaWFudF9kYXRhOw0KPj4gICBzdHJ1Y3QgZG1hX2NoYW47
-DQo+PiBAQCAtMjI3LDYgKzIzMSw3IEBAIHN0cnVjdCBtbWNpX2hvc3Qgew0KPj4gICAgICAgICAg
-Ym9vbCAgICAgICAgICAgICAgICAgICAgdnFtbWNfZW5hYmxlZDsNCj4+ICAgICAgICAgIHN0cnVj
-dCBtbWNpX3BsYXRmb3JtX2RhdGEgKnBsYXQ7DQo+PiAgICAgICAgICBzdHJ1Y3QgdmFyaWFudF9k
-YXRhICAgICAqdmFyaWFudDsNCj4+ICsgICAgICAgc3RydWN0IHBpbmN0cmwgICAgICAgICAgKnBp
-bmN0cmw7DQo+Pg0KPj4gICAgICAgICAgdTggICAgICAgICAgICAgICAgICAgICAgaHdfZGVzaWdu
-ZXI7DQo+PiAgICAgICAgICB1OCAgICAgICAgICAgICAgICAgICAgICBod19yZXZpc2lvbjo0Ow0K
-Pj4gLS0NCj4+IDEuOS4xDQo+Pg0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCj4g
+According to the i.MX7D Reference Manual,
+SNVS block has a clock gate, accessing SNVS block
+would need this clock gate to be enabled, add it
+into clock tree so that SNVS module driver can
+operate this clock gate.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 1 +
+ include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 80dc211..f34f1ec 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
++	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
+ 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
+ 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+ 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index e2f99ae..dc51904 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -452,5 +452,6 @@
+ #define IMX7D_OCOTP_CLK			439
+ #define IMX7D_NAND_RAWNAND_CLK		440
+ #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
+-#define IMX7D_CLK_END			442
++#define IMX7D_SNVS_CLK			442
++#define IMX7D_CLK_END			443
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+-- 
+1.9.1
