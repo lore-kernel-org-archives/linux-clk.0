@@ -1,92 +1,68 @@
-Return-Path: <groeck7@gmail.com>
-Return-Path: <groeck7@gmail.com>
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 26 Jan 2018 09:14:18 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC 22/37] watchdog: renesas_wdt: Add restart support
-Message-ID: <20180126171418.GA16194@roeck-us.net>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: =?utf-8?B?SG9yaWEgR2VhbnTEgw==?= <horia.geanta@nxp.com>, Aymen Sghaier
+	<aymen.sghaier@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S.
+ Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Russell King
+ - ARM Linux" <linux@armlinux.org.uk>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Adriana Reus
+	<adriana.reus@nxp.com>, Stefan Agner <stefan@agner.ch>, Dong Aisheng
+	<dongas86@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
+ BINDINGS" <devicetree@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2 2/2] ARM: dts: imx7s: add snvs rtc clock
+Date: Tue, 9 Jan 2018 09:36:00 +0000
+Message-ID: <AM3PR04MB1315C4E150966727F46A4029F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1515466276-5541-1-git-send-email-Anson.Huang@nxp.com>
+ <1515466276-5541-2-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5DKsgydHaoKrrRngMck_9aQqFja9SParvDiD6V79ryuHg@mail.gmail.com>
+In-Reply-To: <CAOMZO5DKsgydHaoKrrRngMck_9aQqFja9SParvDiD6V79ryuHg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 06:02:56PM +0000, Fabrizio Castro wrote:
-> This commit extends the driver to add restart support by implementing
-> the restart callback to trigger the watchdog as quickly as possible.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
->  drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 831ef83..120ddac 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
->  	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
->  }
->  
-> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-> +			void *data)
-> +{
-> +	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-> +
-> +	pm_runtime_get_sync(wdev->parent);
-> +
-> +	rwdt_write(priv, 0x00, RWTCSRB);
-> +	rwdt_write(priv, 0x00, RWTCSRA);
-> +	rwdt_write(priv, 0xffff, RWTCNT);
-> +
-> +	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-> +		cpu_relax();
-
-Can this get stuck forever or should there be a timeout ?
-
-Guenter
-
-> +
-> +	rwdt_write(priv, 0x80, RWTCSRA);
-> +	return 0;
-> +}
-> +
->  static const struct watchdog_info rwdt_ident = {
->  	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
->  	.identity = "Renesas WDT Watchdog",
-> @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
->  	.stop = rwdt_stop,
->  	.ping = rwdt_init_timeout,
->  	.get_timeleft = rwdt_get_timeleft,
-> +	.restart = rwdt_restart,
->  };
->  
->  static int rwdt_probe(struct platform_device *pdev)
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+DQoNCkJlc3QgUmVnYXJkcyENCkFuc29uIEh1YW5nDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1AZ21haWwuY29t
+XQ0KPiBTZW50OiAyMDE4LTAxLTA5IDU6MjcgUE0NCj4gVG86IEFuc29uIEh1YW5nIDxhbnNvbi5o
+dWFuZ0BueHAuY29tPg0KPiBDYzogSG9yaWEgR2VhbnTEgyA8aG9yaWEuZ2VhbnRhQG54cC5jb20+
+OyBBeW1lbiBTZ2hhaWVyDQo+IDxheW1lbi5zZ2hhaWVyQG54cC5jb20+OyBIZXJiZXJ0IFh1IDxo
+ZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+Ow0KPiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRh
+dmVtbG9mdC5uZXQ+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPjsNCj4gTWFyayBS
+dXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVs
+Lm9yZz47DQo+IFNhc2NoYSBIYXVlciA8a2VybmVsQHBlbmd1dHJvbml4LmRlPjsgRmFiaW8gRXN0
+ZXZhbQ0KPiA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4
+IDxsaW51eEBhcm1saW51eC5vcmcudWs+Ow0KPiBNaWNoYWVsIFR1cnF1ZXR0ZSA8bXR1cnF1ZXR0
+ZUBiYXlsaWJyZS5jb20+OyBTdGVwaGVuIEJveWQNCj4gPHNib3lkQGNvZGVhdXJvcmEub3JnPjsg
+QWRyaWFuYSBSZXVzIDxhZHJpYW5hLnJldXNAbnhwLmNvbT47IFN0ZWZhbg0KPiBBZ25lciA8c3Rl
+ZmFuQGFnbmVyLmNoPjsgRG9uZyBBaXNoZW5nIDxkb25nYXM4NkBnbWFpbC5jb20+OyBvcGVuDQo+
+IGxpc3Q6T1BFTiBGSVJNV0FSRSBBTkQgRkxBVFRFTkVEIERFVklDRSBUUkVFIEJJTkRJTkdTDQo+
+IDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LQ0KPiBjcnlwdG9Admdlci5rZXJuZWwub3JnOyBtb2RlcmF0ZWQgbGlzdDpBUk0vRlJF
+RVNDQUxFIElNWCAvIE1YQyBBUk0NCj4gQVJDSElURUNUVVJFIDxsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmc+OyBsaW51eC1rZXJuZWwgPGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5r
+ZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFYyIDIvMl0gQVJNOiBkdHM6IGlteDdz
+OiBhZGQgc252cyBydGMgY2xvY2sNCj4gDQo+IEhpIEFuc29uLA0KPiANCj4gT24gVHVlLCBKYW4g
+OSwgMjAxOCBhdCAxMjo1MSBBTSwgQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+
+IHdyb3RlOg0KPiANCj4gPiArICAgLSBjbG9ja3MNCj4gPiArICAgICAgVXNhZ2U6IHJlcXVpcmVk
+IGlmIFNOVlMgTFAgUlRDIHJlcXVpcmVzIGV4cGxpY2l0IGVuYWJsZW1lbnQgb2YgY2xvY2tzDQo+
+ID4gKyAgICAgIFZhbHVlIHR5cGU6IDxwcm9wX2VuY29kZWQtYXJyYXk+DQo+ID4gKyAgICAgIERl
+ZmluaXRpb246ICBBIGxpc3Qgb2YgcGhhbmRsZSBhbmQgY2xvY2sgc3BlY2lmaWVyIHBhaXJzIGRl
+c2NyaWJpbmcNCj4gPiArICAgICAgICAgIHRoZSBjbG9ja3MgcmVxdWlyZWQgZm9yIGVuYWJsaW5n
+IGFuZCBkaXNhYmxpbmcgU05WUyBMUCBSVEMuDQo+IA0KPiANCj4gSXQgaXMgYSBzaW5nbGUgY2xv
+Y2sgdGhhdCBpcyB1c2VkIGhlcmUsIHNvIGl0IHdvdWxkIGJlIGJldHRlciB0byBkZXNjcmliZSB0
+aGUgdGV4dCBhczoNCj4gDQo+ICAgICAgIERlZmluaXRpb246ICBBIGNsb2NrIHNwZWNpZmllciBk
+ZXNjcmliaW5nIHRoZSBjbG9jayByZXF1aXJlZCBmb3IgZW5hYmxpbmcgYW5kDQo+IGRpc2FibGlu
+ZyBTTlZTIExQIFJUQw0KPiANCj4gPiArICAgLSBjbG9jay1uYW1lcw0KPiA+ICsgICAgICBVc2Fn
+ZTogcmVxdWlyZWQgaWYgU05WUyBMUCBSVEMgcmVxdWlyZXMgZXhwbGljaXQgZW5hYmxlbWVudCBv
+ZiBjbG9ja3MNCj4gPiArICAgICAgVmFsdWUgdHlwZTogPHN0cmluZz4NCj4gPiArICAgICAgRGVm
+aW5pdGlvbjogQSBsaXN0IG9mIGNsb2NrIG5hbWUgc3RyaW5ncyBpbiB0aGUgc2FtZSBvcmRlciBh
+cyB0aGUNCj4gPiArICAgICAgICAgIGNsb2NrcyBwcm9wZXJ0eS4NCj4gDQo+IGFuZCBoZXJlIHlv
+dSBtdXN0IGRlc2NyaWJlIHRoYXQgdGhlIG5hbWUgc2hvdWxkIGJlICJzbnZzLXJ0YyI6DQo+IA0K
+PiAgICAgICBEZWZpbml0aW9uOiBDbG9jayBuYW1lIHN0cmluZyBzaG91bGQgYmUgInNudnMtcnRj
+Ii4NCg0KDQpBZ3JlZSwgdGhhbmtzLiBXaWxsIHJlc2VuZCB0aGUgcGF0Y2guDQoNCkFuc29uLg0K
+DQo=
