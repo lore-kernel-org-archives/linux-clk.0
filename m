@@ -1,63 +1,49 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1517217778.3153.1.camel@baylibre.com>
-Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	 <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King
- <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Quentin
- Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman
- <khilman@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Mon, 29 Jan 2018 10:22:58 +0100
-In-Reply-To: <20171222021520.GO7997@codeaurora.org>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
-	 <151373031022.33554.13905466641279532222@resonance>
-	 <20171222021520.GO7997@codeaurora.org>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1515466276-5541-2-git-send-email-Anson.Huang@nxp.com>
+References: <1515466276-5541-1-git-send-email-Anson.Huang@nxp.com> <1515466276-5541-2-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 9 Jan 2018 07:26:43 -0200
+Message-ID: <CAOMZO5DKsgydHaoKrrRngMck_9aQqFja9SParvDiD6V79ryuHg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx7s: add snvs rtc clock
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Horia Geanta Neag <horia.geanta@nxp.com>, aymen.sghaier@nxp.com,
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, adriana.reus@nxp.com,
+	Stefan Agner <stefan@agner.ch>, Dong Aisheng <dongas86@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-12-21 at 18:15 -0800, Stephen Boyd wrote:
-> On 12/19, Michael Turquette wrote:
-> > Quoting Jerome Brunet (2017-12-01 13:51:50)
-> > > This Patchset is related the RFC [0] and the discussion around
-> > > CLK_SET_RATE_GATE available here [1]
-> > > 
-> > > This patchset introduce clock protection to the CCF core. This can then
-> > > be used for:
-> > > 
-> > > * Provide a way for a consumer to claim exclusivity over the rate control
-> > >   of a provider. Some clock consumers require that a clock rate must not
-> > >   deviate from its selected frequency. There can be several reasons for
-> > >   this, not least of which is that some hardware may not be able to
-> > >   handle or recover from a glitch caused by changing the clock rate while
-> > >   the hardware is in operation. For such HW, The ability to get exclusive
-> > >   control of a clock's rate, and release that exclusivity, could be seen
-> > >   as a fundamental clock rate control primitive. The exclusivity is not
-> > >   preemptible, so when claimed more than once, is rate is effectively
-> > >   locked.
-> > > 
-> > > * Provide a similar functionality to providers themselves, fixing
-> > >   CLK_SET_RATE_GATE flag (enforce clock gating along the tree). While
-> > >   there might still be a few platforms relying the broken implementation,
-> > >   tests done has shown this change to be pretty safe.
-> > 
-> > Applied to clk-protect-rate, with the exception that I did not apply
-> > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
-> > qcom clk code.
-> > 
-> > Stephen, do you plan to fix up the qcom clock code so that the
-> > SET_RATE_GATE improvement can go in?
-> > 
-> 
-> I started working on it a while back. Let's see if I can finish
-> it off this weekend.
-> 
+Hi Anson,
 
-Hi Stephen,
+On Tue, Jan 9, 2018 at 12:51 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
 
-Have you been able find something to fix the qcom code regarding this issue ?
+> +   - clocks
+> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
+> +      Value type: <prop_encoded-array>
+> +      Definition:  A list of phandle and clock specifier pairs describing
+> +          the clocks required for enabling and disabling SNVS LP RTC.
 
-Cheers
-Jerome
+
+It is a single clock that is used here, so it would be better to
+describe the text as:
+
+      Definition:  A clock specifier describing the clock required for
+enabling and disabling SNVS LP RTC
+
+> +   - clock-names
+> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
+> +      Value type: <string>
+> +      Definition: A list of clock name strings in the same order as the
+> +          clocks property.
+
+and here you must describe that the name should be "snvs-rtc":
+
+      Definition: Clock name string should be "snvs-rtc".
