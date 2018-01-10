@@ -1,313 +1,75 @@
-Return-Path: <Anson.Huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<fabio.estevam@nxp.com>, <kernel@pengutronix.de>, <shawnguo@kernel.org>
-Subject: [PATCH] clk: imx: imx7d: correct video pll clock tree
-Date: Thu, 4 Jan 2018 01:09:21 +0800
-Message-ID: <1514999361-2723-1-git-send-email-Anson.Huang@nxp.com>
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 10 Jan 2018 21:29:02 -0200
+Message-ID: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
+Subject: Warnings from drivers/clk/clk.c
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>,
+	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a test divider and post divider in video PLL,
-test divider is placed before post divider, all clocks
-that can select parent from video PLL should be from
-post divider, NOT from pll_video_main, below are
-clock tree dump before and after this patch:
+Hi,
 
-Before:
-pll_video_main
-   pll_video_main_bypass
-      pll_video_main_clk
-         lcdif_pixel_src
-            lcdif_pixel_cg
-               lcdif_pixel_pre_div
-                  lcdif_pixel_post_div
-                     lcdif_pixel_root_clk
-After:
-pll_video_main
-   pll_video_main_bypass
-      pll_video_main_clk
-         pll_video_test_div
-            pll_video_post_div
-               lcdif_pixel_src
-                  lcdif_pixel_cg
-                     lcdif_pixel_pre_div
-                        lcdif_pixel_post_div
-                           lcdif_pixel_root_clk
+Bootling linux-next 20180110 on a imx53-qsb leads to the following
+warning that gets repeated several times:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 84 ++++++++++++++++++++++++---------------------
- 1 file changed, 44 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211..992938b 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -51,20 +51,20 @@
- 
- static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_enet_250m_clk", "pll_sys_pfd2_270m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
-+	"pll_audio_post_div", "pll_video_post_div", "pll_sys_pfd7_clk", };
- 
- static const char *disp_axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd6_clk",
--	"pll_sys_pfd7_clk", "pll_audio_post_div", "pll_video_main_clk", };
-+	"pll_sys_pfd7_clk", "pll_audio_post_div", "pll_video_post_div", };
- 
- static const char *enet_axi_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk",
--	"pll_sys_main_240m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_240m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", };
- 
- static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
-@@ -75,7 +75,7 @@
- static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
- 	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *dram_phym_sel[] = { "pll_dram_main_clk",
- 	"dram_phym_alt_clk", };
-@@ -86,7 +86,7 @@
- static const char *dram_phym_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
- 	"pll_usb_main_clk", "pll_sys_pfd7_clk", "pll_audio_post_div",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *dram_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
-@@ -108,62 +108,62 @@
- 
- static const char *epdc_pixel_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_sys_main_clk", "pll_sys_pfd5_clk",
--	"pll_sys_pfd6_clk", "pll_sys_pfd7_clk", "pll_video_main_clk", };
-+	"pll_sys_pfd6_clk", "pll_sys_pfd7_clk", "pll_video_post_div", };
- 
- static const char *lcdif_pixel_sel[] = { "osc", "pll_sys_pfd5_clk",
- 	"pll_dram_533m_clk", "ext_clk_3", "pll_sys_pfd4_clk",
--	"pll_sys_pfd2_270m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd2_270m_clk", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *mipi_dsi_sel[] = { "osc", "pll_sys_pfd5_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
-+	"pll_dram_533m_clk", "pll_video_post_div", "pll_audio_post_div", };
- 
- static const char *mipi_csi_sel[] = { "osc", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
-+	"pll_dram_533m_clk", "pll_video_post_div", "pll_audio_post_div", };
- 
- static const char *mipi_dphy_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd5_clk", "ref_1m_clk", "ext_clk_2",
--	"pll_video_main_clk", "ext_clk_3", };
-+	"pll_video_post_div", "ext_clk_3", };
- 
- static const char *sai1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai3_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_3", };
- 
- static const char *spdif_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_3_clk", };
- 
- static const char *enet1_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"ext_clk_4", };
- 
- static const char *enet1_time_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
--	"ext_clk_4", "pll_video_main_clk", };
-+	"ext_clk_4", "pll_video_post_div", };
- 
- static const char *enet2_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"ext_clk_4", };
- 
- static const char *enet2_time_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
--	"ext_clk_4", "pll_video_main_clk", };
-+	"ext_clk_4", "pll_video_post_div", };
- 
- static const char *enet_phy_ref_sel[] = { "osc", "pll_enet_25m_clk",
- 	"pll_enet_50m_clk", "pll_enet_125m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_sys_pfd3_clk", };
- 
- static const char *eim_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -174,7 +174,7 @@
- static const char *nand_sel[] = { "osc", "pll_sys_main_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk", "pll_sys_pfd3_clk",
- 	"pll_enet_500m_clk", "pll_enet_250m_clk",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *qspi_sel[] = { "osc", "pll_sys_pfd4_clk",
- 	"pll_dram_533m_clk", "pll_enet_500m_clk", "pll_sys_pfd3_clk",
-@@ -204,22 +204,22 @@
- 
- static const char *i2c1_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c2_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c3_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c4_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *uart1_sel[] = { "osc", "pll_sys_main_240m_clk",
-@@ -279,27 +279,27 @@
- 
- static const char *pwm1_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_1", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm2_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_1", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm3_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_2", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm4_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_2", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *flextimer1_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_3", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *flextimer2_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_3", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *sim1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
-@@ -308,23 +308,23 @@
- 
- static const char *sim2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_usb_main_clk", "pll_video_main_clk", "pll_enet_125m_clk",
-+	"pll_usb_main_clk", "pll_video_post_div", "pll_enet_125m_clk",
- 	"pll_sys_pfd7_clk", };
- 
- static const char *gpt1_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_1", };
- 
- static const char *gpt2_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_2", };
- 
- static const char *gpt3_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_3", };
- 
- static const char *gpt4_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_4", };
- 
- static const char *trace_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -339,12 +339,12 @@
- 
- static const char *csi_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *audio_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *wrclk_sel[] = { "osc", "pll_enet_40m_clk",
-@@ -358,13 +358,13 @@
- 
- static const char *clko2_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_sys_pfd1_166m_clk", "pll_sys_pfd4_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "ckil", };
-+	"pll_audio_post_div", "pll_video_post_div", "ckil", };
- 
- static const char *lvds1_sel[] = { "pll_arm_main_clk",
- 	"pll_sys_main_clk", "pll_sys_pfd0_392m_clk", "pll_sys_pfd1_332m_clk",
- 	"pll_sys_pfd2_270m_clk", "pll_sys_pfd3_clk", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd5_clk", "pll_sys_pfd6_clk", "pll_sys_pfd7_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_enet_500m_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_enet_500m_clk",
- 	"pll_enet_250m_clk", "pll_enet_125m_clk", "pll_enet_100m_clk",
- 	"pll_enet_50m_clk", "pll_enet_40m_clk", "pll_enet_25m_clk",
- 	"pll_dram_main_clk", };
-@@ -450,6 +450,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
- 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 22, 2, 0, post_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_VIDEO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_video_test_div", "pll_video_main_clk",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x130, 19, 2, 0, test_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_VIDEO_POST_DIV] = clk_register_divider_table(NULL, "pll_video_post_div", "pll_video_test_div",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x130, 22, 2, 0, post_div_table, &imx_ccm_lock);
- 
- 	clks[IMX7D_PLL_SYS_PFD0_392M_CLK] = imx_clk_pfd("pll_sys_pfd0_392m_clk", "pll_sys_main_clk", base + 0xc0, 0);
- 	clks[IMX7D_PLL_SYS_PFD1_332M_CLK] = imx_clk_pfd("pll_sys_pfd1_332m_clk", "pll_sys_main_clk", base + 0xc0, 1);
--- 
-1.9.1
+[    2.776154] ------------[ cut here ]------------
+[    2.780909] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:802
+clk_core_disable+0xc4/0xe0
+[    2.789107] Modules linked in:
+[    2.792198] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+4.15.0-rc7-next-20180110 #1
+[    2.799696] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    2.805805] Backtrace:
+[    2.808290] [<c010d1a0>] (dump_backtrace) from [<c010d460>]
+(show_stack+0x18/0x1c)
+[    2.815879]  r7:00000000 r6:60000093 r5:00000000 r4:c1079954
+[    2.821566] [<c010d448>] (show_stack) from [<c0a33bac>]
+(dump_stack+0xb4/0xe8)
+[    2.828813] [<c0a33af8>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
+[    2.835795]  r9:00000000 r8:00000322 r7:00000009 r6:c0d425e8
+r5:00000000 r4:00000000
+[    2.843558] [<c0126054>] (__warn) from [<c0126288>]
+(warn_slowpath_null+0x44/0x50)
+[    2.851148]  r8:c1008908 r7:c0e0777c r6:c04be730 r5:00000322 r4:c0d425e8
+[    2.857870] [<c0126244>] (warn_slowpath_null) from [<c04be730>]
+(clk_core_disable+0xc4/0xe0)
+[    2.866325]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
+[    2.870965] [<c04be66c>] (clk_core_disable) from [<c04bf9e8>]
+(clk_core_disable_lock+0x20/0x2c)
+[    2.879681]  r5:dc02a980 r4:80000013
+[    2.883278] [<c04bf9c8>] (clk_core_disable_lock) from [<c04bfa18>]
+(clk_disable+0x24/0x28)
+[    2.891559]  r5:c0f6b3e4 r4:0000001c
+[    2.895160] [<c04bf9f4>] (clk_disable) from [<c0f233b0>]
+(imx_clk_disable_uart+0x50/0x68)
+[    2.903365] [<c0f23360>] (imx_clk_disable_uart) from [<c010277c>]
+(do_one_initcall+0x50/0x19c)
+[    2.911996]  r7:c0e0777c r6:c0f63854 r5:c0f23360 r4:ffffe000
+[    2.917678] [<c010272c>] (do_one_initcall) from [<c0f00f00>]
+(kernel_init_freeable+0x118/0x1d0)
+[    2.926397]  r9:c0f63858 r8:000000f0 r7:c0e0777c r6:c0f63854
+r5:c107b540 r4:c0f7525c
+[    2.934169] [<c0f00de8>] (kernel_init_freeable) from [<c0a48ec8>]
+(kernel_init+0x10/0x118)
+[    2.942456]  r10:00000000 r9:00000000 r8:00000000 r7:00000000
+r6:00000000 r5:c0a48eb8
+[    2.950301]  r4:00000000
+[    2.952857] [<c0a48eb8>] (kernel_init) from [<c01010b4>]
+(ret_from_fork+0x14/0x20)
+[    2.960444] Exception stack(0xdc05dfb0 to 0xdc05dff8)
+[    2.965516] dfa0:                                     00000000
+00000000 00000000 00000000
+[    2.973715] dfc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    2.981912] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    2.988543]  r5:c0a48eb8 r4:00000000
+[    2.992135] ---[ end trace 5c23aee63f870994 ]---
+[    2.997359] ------------[ cut here ]------------
+
+Does anyone have any ideas on how to fix it?
+
+Thanks
