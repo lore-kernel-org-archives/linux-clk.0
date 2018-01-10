@@ -1,33 +1,34 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:14:07 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: Fix debugfs_create_*() usage
+Message-ID: <20180110211407.GK21040@codeaurora.org>
+References: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
+ <1514977577-11854-5-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20171230210203.24115-3-jernej.skrabec@siol.net>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-3-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 3 Jan 2018 13:46:14 +0800
-Message-ID: <CAGb2v64x8UqBNc1asw0oiudwLoebp0yGomY9W9LbnCTKW-HViQ@mail.gmail.com>
-Subject: Re: [PATCH 02/11] clk: sunxi-ng: a83t: Add M divider to TCON1 clock
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Archit Taneja <architt@codeaurora.org>, a.hajda@samsung.com,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jose.Abreu@synopsys.com,
-	Neil Armstrong <narmstrong@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514977577-11854-5-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Dec 31, 2017 at 5:01 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> TCON1 also has M divider, contrary to TCON0.
->
-> Fixes: 05359be1176b ("clk: sunxi-ng: Add driver for A83T CCU")
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 01/03, Geert Uytterhoeven wrote:
+> When exposing data access through debugfs, the correct
+> debugfs_create_*() functions must be used, matching the data types.
+> 
+> Remove all casts from data pointers passed to debugfs_create_*()
+> functions, as such casts prevent the compiler from flagging bugs.
+> 
+> clk_core.rate and .accuracy are "unsigned long", hence casting their
+> addresses to "u32 *" exposed the wrong halves on big-endian 64-bit
+> systems.  Fix this by using debugfs_create_ulong() instead.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Added "And the mux is only 2 bits wide, instead of 3." to the commit
-message and applied.
+Applied to clk-next
 
-ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
