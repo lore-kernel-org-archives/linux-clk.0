@@ -1,92 +1,30 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 03/11] drm/bridge/synopsys: dw-hdmi: Enable workaround for
- v1.32a
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
- maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org,
- mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
- a.hajda@samsung.com, Jose.Abreu@synopsys.com, devicetree@vger.kernel.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
- <20171230210203.24115-4-jernej.skrabec@siol.net> <3367423.0HCaRuLuz8@avalon>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <9e9269be-fde7-7654-30c0-85a26760b9ad@baylibre.com>
-Date: Tue, 9 Jan 2018 16:29:47 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:19:34 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Joel Stanley <joel@jms.id.au>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH -next] clk: aspeed: Fix return value check in
+ aspeed_cc_init()
+Message-ID: <20180110211934.GN21040@codeaurora.org>
+References: <1515116461-156320-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <3367423.0HCaRuLuz8@avalon>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515116461-156320-1-git-send-email-weiyongjun1@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-I think this question is for Jose.
-
-On 09/01/2018 13:56, Laurent Pinchart wrote:
-> Hi Jernej,
+On 01/05, Wei Yongjun wrote:
+> In case of error, the function of_iomap() returns NULL pointer not
+> ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
 > 
-> Thank you for the patch.
-> 
-> On Saturday, 30 December 2017 23:01:55 EET Jernej Skrabec wrote:
->> Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
->> magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
+> Fixes: a2e230c7b2ea ("clk: Add clock driver for ASPEED BMC SoCs")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-We observe the same issue on Amlogic SoCs with the dw hdmi controller v2.01a.
+Same comment for this. I suspect coccinelle is finding this but
+the semantic patch is not in the kernel repo?
 
-Rockchip seems to also use count=1 for 0x200a, 0x201a and 0x211a in
-https://github.com/rockchip-linux/kernel/commit/cafa8ebd5f4df41425d6f2f61633d5bc64f20e65
-
-Changelog is :
-The issue can be worked around by issuing a TMDS software reset and
-then write one of the FC registers several times. After tested, the
-number of iterations of RK3399/RK3328(v2.11a), RK3368(v2.01a),
-RK3288(v2.00a) is one.
-
-Can you confirm it is necessary ?
-
-Neil
-
->>
->> Tests show that one iteration is enough.
->>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> This does not break R-Car DU, so
-> 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
->> a38db40ce990..7ca14d7325b5 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
->> *hdmi) * then write one of the FC registers several times.
->>  	 *
->>  	 * The number of iterations matters and depends on the HDMI TX revision
->> -	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
->> -	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
->> -	 * 4 and 1 iterations respectively.
->> +	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
->> +	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
->> +	 * as needing the workaround, with 4 iterations for v1.30a and 1
->> +	 * iteration for others.
->>  	 */
->>
->>  	switch (hdmi->version) {
->> @@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
->> *hdmi) count = 4;
->>  		break;
->>  	case 0x131a:
->> +	case 0x132a:
->>  		count = 1;
->>  		break;
->>  	default:
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
