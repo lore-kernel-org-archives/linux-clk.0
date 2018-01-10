@@ -1,61 +1,50 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Mon, 8 Jan 2018 18:39:15 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-imx@nxp.com, shawnguo@kernel.org, kernel@pengutronix.de,
-	fabio.estevam@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-	stefan@agner.ch, linux@armlinux.org.uk
-Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
-Message-ID: <20180108103915.GD32635@b29396-OptiPlex-7040>
-References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
- <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 14:47:42 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.16, round 2
+Message-ID: <20180110224742.GG28313@codeaurora.org>
+References: <20180108034901.GA5577@wens.csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20180108034901.GA5577@wens.csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 04, 2018 at 11:06:42PM +0800, Anson Huang wrote:
-> Add i.MX7 SNVS RTC clock.
+On 01/08, Chen-Yu Tsai wrote:
+> Hi Mike, Stephen,
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-
-If this clock IMX7D_SNVS_CLK is used for all SNVS sub modules,
-then snvs_poweroff and snvs_pwrkey should also rely on it, right?
-
-How about add them all in one time?
-
-BTW, syscon-poweroff seems still not introduce clock support and
-fsl,sec-v4.0-pwrkey also does not handle clock, they may need to
-be added later.
-
-Regards
-Dong Aisheng
-
-> ---
->  arch/arm/boot/dts/imx7s.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+> Here are a few more clock changes for 4.16. The DE2 clock changes have
+> been around for awhile. The A83T clock fix was found by Jernej while
+> working on HDMI output for the SoC. We'd like to get these in so patches
+> don't pile up on the mailing lists.
 > 
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index e718fd2..f9b97f3 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -534,6 +534,8 @@
->  					offset = <0x34>;
->  					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
->  						     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-> +					clocks = <&clks IMX7D_SNVS_CLK>;
-> +					clock-names = "snvs-rtc";
->  				};
->  
->  				snvs_poweroff: snvs-poweroff {
-> -- 
-> 1.9.1
+> ChenYu
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The following changes since commit e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4:
+> 
+>   clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL (2017-12-08 10:08:32 +0100)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.16-2
+> 
+> for you to fetch changes up to 7dbc7f5f4904cfddc199af171ea095490a434f15:
+> 
+>   clk: sunxi-ng: a83t: Add M divider to TCON1 clock (2018-01-03 13:45:04 +0800)
+> 
+> ----------------------------------------------------------------
+> Allwinner clock changes for 4.16, part 2
+> 
+> The hardware description for the DE2 clocks on the A64 and H5 SoCs is
+> fixed, and support for these clocks on the H3 is added. Also, the
+> description for the TCON1 clock on the A83T is fixed. All these are
+> non-critical, as they have no users.
+
+Thanks. Pulled into clk-next.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
