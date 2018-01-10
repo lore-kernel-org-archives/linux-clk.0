@@ -1,58 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35600 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeAAVBx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Jan 2018 16:01:53 -0500
-Received: by mail-wm0-f65.google.com with SMTP id a79so19250031wma.0
-        for <linux-clk@vger.kernel.org>; Mon, 01 Jan 2018 13:01:53 -0800 (PST)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/1] add support for the NAND clocks on Meson8b
-Date: Mon,  1 Jan 2018 22:01:38 +0100
-Message-Id: <20180101210139.29808-1-martin.blumenstingl@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 09/12] drm/sun4i: Add support for A83T second DE2 mixer
+Date: Wed, 10 Jan 2018 20:25:09 +0100
+Message-Id: <20180110192512.19684-10-jernej.skrabec@siol.net>
+In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the NAND clocks found in the Meson8, Meson8b
-and Meson8m2 SoCs.
-The clocks consist of a simple gate, a divider and a mux. The mux
-parents are not documented in the public S805 datasheet [0], so I
-had to use a bit of math and take the vendor kernel as reference [1]
-to find the actual parent clocks.
-Some mux parents cannot be divided down without remainder to the
-target clocks (as expected by the vendor NAND driver) these clocks
-have the ROUND_CLOSEST flag set.
+It supports 1 VI and 1 UI plane and HW scaling on both planes.
 
-The new clocks are similar to gxbb_sd_emmc_c_clk0_sel,
-gxbb_sd_emmc_c_clk0_div and gxbb_sd_emmc_c_clk0 on the GX SoCs.
-Actual differences are:
-- mux parents are re-ordered
-- the gate is controlled by bit 8 (instead of bit 7 on GX)
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-
-Changes since v1 at [0]:
-- rebased so it still applies in 2018
-- dropped mux table (since the known parents are values 0..4)
-- replaced CLK_SET_RATE_NO_REPARENT with CLK_SET_RATE_PARENT on the mux
-- added CLK_SET_RATE_PARENT on the divider
-- fixed width of the divider (it's 7 bits wide, ranging from bit 0 to 6
-  while v1 only used a width of 6 bits)
-
-
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-April/003237.html
-
-
-Martin Blumenstingl (1):
-  clk: meson: meson8b: add support for the NAND clocks
-
- drivers/clk/meson/meson8b.c              | 51 ++++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              |  3 +-
- include/dt-bindings/clock/meson8b-clkc.h |  3 ++
- 3 files changed, 56 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 2cbb2de6d39c..9b0256d31a61 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -485,6 +485,13 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
+ 	.vi_num		= 1,
+ };
+ 
++static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
++	.ccsc		= 1,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
++
+ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.vi_num = 2,
+ 	.ui_num = 1,
+@@ -498,6 +505,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
+ 		.data = &sun8i_a83t_mixer0_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
++		.data = &sun8i_a83t_mixer1_cfg,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
 -- 
 2.15.1
-
