@@ -1,68 +1,32 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Tero Kristo <t-kristo@ti.com>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v2 28/34] clk: ti: fapll: change round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:54 +0000
-Message-Id: <1514835300-381-14-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:20:33 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arch@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/5] arch: Remove clkdev.h asm-generic from Kbuild
+Message-ID: <20180110212033.GQ21040@codeaurora.org>
+References: <20180103013516.18844-1-sboyd@codeaurora.org>
+ <20180103013516.18844-4-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180103013516.18844-4-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On 01/02, Stephen Boyd wrote:
+> Now that every architecture is using the generic clkdev.h file
+> and we no longer include asm/clkdev.h anywhere in the tree, we
+> can remove it.
+> 
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: <linux-arch@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Applied to clk-next
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/ti/fapll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 2e74437..f435a8c 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -227,12 +227,12 @@ static unsigned long ti_fapll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	int error;
- 
- 	if (!rate)
--		return -EINVAL;
-+		return 0;
- 
- 	error = ti_fapll_set_div_mult(rate, *parent_rate,
- 				      &pre_div_p, &mult_n);
- 	if (error)
--		return error;
-+		return 0;
- 
- 	rate = *parent_rate / pre_div_p;
- 	rate *= mult_n;
-@@ -414,7 +414,7 @@ static unsigned long ti_fapll_synth_round_rate(struct clk_hw *hw,
- 	unsigned long r;
- 
- 	if (ti_fapll_clock_is_bypass(fd) || !synth->div || !rate)
--		return -EINVAL;
-+		return 0;
- 
- 	/* Only post divider m available with no fractional divider? */
- 	if (!synth->freq) {
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
