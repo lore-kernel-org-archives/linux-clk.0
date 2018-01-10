@@ -1,54 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3333 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751188AbeAYOAY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 09:00:24 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-Date: Thu, 25 Jan 2018 16:00:09 +0200
-Message-ID: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 01/12] clk: sunxi-ng: Mask nkmp factors when setting register
+Date: Wed, 10 Jan 2018 20:25:01 +0100
+Message-Id: <20180110192512.19684-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series introduces the Memory Built-In Self Test (MBIST)
-work around (WAR) needed when power ungating certain domains. More
-details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-implement the WAR in the Tegra210 clock driver, because most accesses are
-to CAR registers and for the VENC domain, we need to make sure the CSI
-clock source is not changed during the WAR execution.
+Currently, if one of the factors isn't present, bit 0 gets always set to
+1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
+K is not specified, it's offset, width and shift is 0. Driver assumes
+that lowest value possible is 1, otherwise we would get division by 0.
+That situation causes that bit 0 is always set, which may change wanted
+clock rate.
 
-Changes in v4:
-* moved locking and clock control to tegra210_clk_handle_mbist_war()
-* propagate errors during WAR execution to user
-* rework error handling tegra210_mbist_clk_init() slightly
+Fix that by masking every factor according to it's specified width.
+Factors with width set to 0 won't have any influence to final register
+value.
 
-Changes in v3:
-* fix compile problem on non-Tegra210 platforms
-* fix clock handling bug in tegra210_generic_mbist_war()
-* addressed minor comments
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-Changes in v2:
-* Use readl for fence_delay() rather than readl_relaxed
-* clarify MBIST and WAR acronyms
-
-Peter De Schrijver (4):
-  clk: tegra: Add la clock for Tegra210
-  clk: tegra: add fence_delay for clock registers
-  clk: tegra: MBIST work around for Tegra210
-  soc/tegra: pmc: MBIST work around for Tegra210
-
- drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h                  |   7 +
- drivers/soc/tegra/pmc.c                  |   7 +
- include/dt-bindings/clock/tegra210-car.h |   2 +-
- include/linux/clk/tegra.h                |   6 +
- 5 files changed, 376 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..a99068a08315 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -134,6 +134,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
++	u32 n_mask, k_mask, m_mask, p_mask;
+ 	struct _ccu_nkmp _nkmp;
+ 	unsigned long flags;
+ 	u32 reg;
+@@ -149,18 +150,20 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
+ 
++	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
++	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
++	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
++	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
++
+ 	spin_lock_irqsave(nkmp->common.lock, flags);
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+-	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+-	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+-	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+-	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+-
+-	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+-	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+-	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+-	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
++	reg &= ~(n_mask | k_mask | m_mask | p_mask);
++
++	reg |= ((_nkmp.n - nkmp->n.offset) << nkmp->n.shift) & n_mask;
++	reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) & k_mask;
++	reg |= ((_nkmp.m - nkmp->m.offset) << nkmp->m.shift) & m_mask;
++	reg |= (ilog2(_nkmp.p) << nkmp->p.shift) & p_mask;
+ 
+ 	writel(reg, nkmp->common.base + nkmp->common.reg);
+ 
 -- 
-1.9.1
-
+2.15.1
