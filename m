@@ -1,72 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:51061 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932786AbeAKMS1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jan 2018 07:18:27 -0500
-Date: Thu, 11 Jan 2018 13:18:15 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
-        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 07/12] drm/sun4i: Add has_channel_0 TCON quirk
-Message-ID: <20180111121815.lzhfy7n7uppamznj@flea.lan>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
- <20180110192512.19684-8-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zok6ncilkcjhhzzp"
-In-Reply-To: <20180110192512.19684-8-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 9/9] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
+Date: Wed, 10 Jan 2018 23:48:38 +0100
+Message-Id: <20180110224838.16711-9-paul@crapouillou.net>
+In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add myself as maintainer for the ingenic-tcu-intc interrupt controller
+driver, the ingenic-tcu-clocks clock driver, and the ingenic-tcu
+clocksource driver.
 
---zok6ncilkcjhhzzp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On Wed, Jan 10, 2018 at 08:25:07PM +0100, Jernej Skrabec wrote:
-> Some TCONs on newer SoCs doesn't support channel 0, since they are meant
-> to be used only with TV or HDMI encoder.
->=20
-> Prepare support for them with adding has_channel_0 quirk.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+ v2: No change
+ v3: No change
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---zok6ncilkcjhhzzp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXVgYACgkQ0rTAlCFN
-r3T1HBAAhx3piBiWrfsjuBWDTSYsq/ELGiToYoMKJZK7poKdjb/Ikps83FKbFYEF
-KK7f/63s8ScjDBAxvCOoPO3nIVsIRfAmiqlcsaLzNbwkcdMF/oo6YHKi00GqETGf
-W1+8MhaEVuW/UWJG73oVsBJIQ8Mp5ertfZIeDpvWw/s70SlRHSNiaOfryMwx4OM0
-3M+ZcI9PK04AKT6V8pJ5/hPqsE0G85q/uDlBod+KtZ2NCosgPin48RLx38qjmRF3
-OAfc+iz3KwwpxxfXPNlkKAzWyTmmaPFYL8JSb0nqSXLIhwAdhcDCDB/RgBcUFbUa
-2HjrS2m3K/X397ngQCs7VsABBmYZlQBGFQ2xhgfw0ZRj7TdrkApG1uJhjGrjvXgm
-zAa9ocVcVDaDj9X43dpMFBZJWILQ3FbaPJl+nOgQHmq+Kven0pFuksKU4yhvEMRs
-k13kSi0c7WdxnHltoPz71QtmszrOLmXQ0zV0AsHRrp9Zwpwt1jo4nCWOisVShxM9
-xAOFYGD/rs3j2FnJ3WU4ubijf/OKl2zHfebF9GOIaJZ0JJ9sfzBVxud3ogUMsUwn
-QzbM6gzl7x235mOnWXfPWvzct54UXVOB+JboRXPIy+JS8+xSWIv67spSzn6Nnuhb
-MyHc74rHZ64hJ04UakLuHDFf1lKC+UHqj+9ouUwIHGvuY9hvW2o=
-=4PAM
------END PGP SIGNATURE-----
-
---zok6ncilkcjhhzzp--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 95c3fa1f520f..1d618abe04ec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6905,6 +6905,15 @@ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+ F:	drivers/mtd/nand/jz4780_*
+ 
++INGENIC JZ47xx TCU drivers
++M:	Paul Cercueil <paul@crapouillou.net>
++S:	Maintained
++F:	drivers/clk/ingenic/tcu.c
++F:	drivers/irqchip/irq-ingenic-tcu.c
++F:	drivers/clocksource/timer-ingenic.c
++F:	include/linux/mfd/syscon/ingenic-tcu.h
++F:	include/dt-bindings/clock/ingenic,tcu.h
++
+ INOTIFY
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
+-- 
+2.11.0
