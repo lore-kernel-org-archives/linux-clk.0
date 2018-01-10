@@ -1,282 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42930 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeADLK4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:10:56 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v2 10/11] DT: QCOM: Add cpufreq-dt to msm8996
-Date: Thu,  4 Jan 2018 13:10:14 +0200
-Message-Id: <1515064215-22202-11-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
-References: <1515064215-22202-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 3/9] doc: dt-bindings: Add doc for Ingenic TCU IRQ driver
+Date: Wed, 10 Jan 2018 23:48:32 +0100
+Message-Id: <20180110224838.16711-3-paul@crapouillou.net>
+In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree frequency table for the MSM8996 to be
-used by the upstream cpufreq-dt driver with the clk-cpu-8996
-driver as infrastructure.
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) IRQ driver from devicetree.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi       | 184 ++++++++++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt-platdev.c        |   3 +
- 3 files changed, 188 insertions(+), 1 deletion(-)
+ .../bindings/interrupt-controller/ingenic,tcu.txt  | 33 ++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-index 230e9c8..da23bda 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-@@ -17,5 +17,5 @@
- 
- / {
- 	model = "Qualcomm Technologies, Inc. DB820c";
--	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
-+	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 4b2afcc..8beea7e 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -86,6 +86,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -98,6 +100,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -106,6 +110,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -118,6 +124,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -144,6 +152,182 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
+ v3: New patch in this series
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..e3a7d2354172
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+@@ -0,0 +1,33 @@
++Ingenic SoCs Timer/Counter Unit Interrupt Controller
 +
-+		opp@307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@422400000 {
-+			opp-hz = /bits/ 64 <  422400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@844800000 {
-+			opp-hz = /bits/ 64 <  844800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@960000000 {
-+			opp-hz = /bits/ 64 <  960000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1228800000 {
-+			opp-hz = /bits/ 64 < 1228800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1593600000 {
-+			opp-hz = /bits/ 64 < 1593600000 >;
-+			clock-latency-ns = <200000>;
++Required properties:
++
++- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
++  * ingenic,jz4740-tcu-intc
++  * ingenic,jz4770-tcu-intc
++  * ingenic,jz4780-tcu-intc
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value shall be 1.
++- interrupt-parent : phandle of the interrupt controller.
++- interrupts : Specifies the interrupt the controller is connected to.
++
++Example:
++
++/ {
++	mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++
++		tcu_irq: interrupt-controller {
++			compatible = "ingenic,jz4740-tcu-intc";
++			reg = <0x10002020 0x20>;
++
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <15>;
 +		};
 +	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@403200000 {
-+			opp-hz = /bits/ 64 <  403200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@806400000 {
-+			opp-hz = /bits/ 64 <  806400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@883200000 {
-+			opp-hz = /bits/ 64 <  883200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@940800000 {
-+			opp-hz = /bits/ 64 <  940800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1248000000 {
-+			opp-hz = /bits/ 64 < 1248000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1552000000 {
-+			opp-hz = /bits/ 64 < 1552000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1632000000 {
-+			opp-hz = /bits/ 64 < 1632000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1708800000 {
-+			opp-hz = /bits/ 64 < 1708800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1785600000 {
-+			opp-hz = /bits/ 64 < 1785600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1824000000 {
-+			opp-hz = /bits/ 64 < 1824000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1920000000 {
-+			opp-hz = /bits/ 64 < 1920000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1996800000 {
-+			opp-hz = /bits/ 64 < 1996800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@2073600000 {
-+			opp-hz = /bits/ 64 < 2073600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@2150400000 {
-+			opp-hz = /bits/ 64 < 2150400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+
-+	};
- 	thermal-zones {
- 		cpu-thermal0 {
- 			polling-delay-passive = <250>;
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index ecc56e2..0feca0e 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -95,6 +95,9 @@
- 	{ .compatible = "xlnx,zynq-7000", },
- 	{ .compatible = "xlnx,zynqmp", },
- 
-+	{ .compatible = "qcom,msm8996", },
-+	{ .compatible = "qcom,apq8096", },
-+
- 	{ }
- };
- 
++};
 -- 
-1.9.1
-
+2.11.0
