@@ -1,41 +1,35 @@
-Return-Path: <aford173@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 23 Jan 2018 11:03:26 -0600
-Message-ID: <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:40:44 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-clk@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: fix reentrancy of clk_enable() on UP systems
+Message-ID: <20180110214044.GD28313@codeaurora.org>
+References: <1515116768-17089-1-git-send-email-david@lechnology.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515116768-17089-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com> wrote:
-> On 01/23/2018 10:03 AM, David Lechner wrote:
->>
->> You can see if the clock is enabled by running:
->>
->>      cat /sys/kernel/debug/clk/clk_summary
->>
->
-> I just realized if you can't boot, you can't do this. :-/
+On 01/04, David Lechner wrote:
+> Reentrant calls to clk_enable() are not working on UP systems. This is
+> caused by the fact spin_trylock_irqsave() always returns true when
+> CONFIG_SMP=n (and CONFIG_DEBUG_SPINLOCK=n) which causes the reference
+> counting to not work correctly when clk_enable_lock() is called twice
+> before clk_enable_unlock() is called (this happens when clk_enable()
+> is called from within another clk_enable()).
+> 
+> This fixes the problem by skipping the call to spin_trylock_irqsave() on UP
+> systems and relying solely on reference counting. We also make sure to set
+> flags in this case so that we are not returning an uninitialized value.
+> 
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-I can boot with the latest set in your git repo, but the Ethernet
-doesn't apparently fully operate.  I don't get errors, but I cannot
-get a dhcp address.
+Applied to clk-next
 
-I'll try to do a more exhaustive test later today to get an idea of
-what works and what doesn't.  When I ran my basic tests, I just did a
-feel-good boot test (and reboot test)
-
-adam
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
