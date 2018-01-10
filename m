@@ -1,256 +1,68 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/9] clk: meson: remove useless pll rate params tables
-Date: Fri, 19 Jan 2018 16:55:22 +0100
-Message-Id: <20180119155529.11532-3-jbrunet@baylibre.com>
-In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
-References: <20180119155529.11532-1-jbrunet@baylibre.com>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Philippe Ombredanne <pombredanne@nexb.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michal Simek <michal.simek@xilinx.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "moderated
+ list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+	Rajan Vaja <RAJANV@xilinx.com>, Tejas Patel <TEJASP@xilinx.com>,
+	"Shubhrajyoti Datta" <shubhraj@xilinx.com>
+Subject: RE: [RFC PATCH 2/2] drivers: clk: Add ZynqMP clock driver
+Date: Wed, 10 Jan 2018 20:15:09 +0000
+Message-ID: <DM2PR0201MB0767021EC0A57CF260E30895B8110@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
+ <1515449797-5629-3-git-send-email-jollys@xilinx.com>
+ <CAOFm3uFnzp4xPW=65A5Xyshaj-6PJx94PLi_nm4+c+csFznz-g@mail.gmail.com>
+In-Reply-To: <CAOFm3uFnzp4xPW=65A5Xyshaj-6PJx94PLi_nm4+c+csFznz-g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Read-only plls don't need param table to recalculate the rate.
-Providing them with a param table is just a waste of memory.
-
-Remove the useless tables from sys_pll on gxbb and axg.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c  | 94 ------------------------------------------------
- drivers/clk/meson/gxbb.c | 94 ------------------------------------------------
- 2 files changed, 188 deletions(-)
-
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 02f4401d7bc3..56806c6bd9d5 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -21,98 +21,6 @@
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(24000000, 56, 1, 2),
--	PLL_RATE(48000000, 64, 1, 2),
--	PLL_RATE(72000000, 72, 1, 2),
--	PLL_RATE(96000000, 64, 1, 2),
--	PLL_RATE(120000000, 80, 1, 2),
--	PLL_RATE(144000000, 96, 1, 2),
--	PLL_RATE(168000000, 56, 1, 1),
--	PLL_RATE(192000000, 64, 1, 1),
--	PLL_RATE(216000000, 72, 1, 1),
--	PLL_RATE(240000000, 80, 1, 1),
--	PLL_RATE(264000000, 88, 1, 1),
--	PLL_RATE(288000000, 96, 1, 1),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(408000000, 68, 1, 2),
--	PLL_RATE(432000000, 72, 1, 2),
--	PLL_RATE(456000000, 76, 1, 2),
--	PLL_RATE(480000000, 80, 1, 2),
--	PLL_RATE(504000000, 84, 1, 2),
--	PLL_RATE(528000000, 88, 1, 2),
--	PLL_RATE(552000000, 92, 1, 2),
--	PLL_RATE(576000000, 96, 1, 2),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(840000000, 70, 1, 1),
--	PLL_RATE(864000000, 72, 1, 1),
--	PLL_RATE(888000000, 74, 1, 1),
--	PLL_RATE(912000000, 76, 1, 1),
--	PLL_RATE(936000000, 78, 1, 1),
--	PLL_RATE(960000000, 80, 1, 1),
--	PLL_RATE(984000000, 82, 1, 1),
--	PLL_RATE(1008000000, 84, 1, 1),
--	PLL_RATE(1032000000, 86, 1, 1),
--	PLL_RATE(1056000000, 88, 1, 1),
--	PLL_RATE(1080000000, 90, 1, 1),
--	PLL_RATE(1104000000, 92, 1, 1),
--	PLL_RATE(1128000000, 94, 1, 1),
--	PLL_RATE(1152000000, 96, 1, 1),
--	PLL_RATE(1176000000, 98, 1, 1),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
--	PLL_RATE(1560000000, 65, 1, 0),
--	PLL_RATE(1584000000, 66, 1, 0),
--	PLL_RATE(1608000000, 67, 1, 0),
--	PLL_RATE(1632000000, 68, 1, 0),
--	PLL_RATE(1656000000, 68, 1, 0),
--	PLL_RATE(1680000000, 68, 1, 0),
--	PLL_RATE(1704000000, 68, 1, 0),
--	PLL_RATE(1728000000, 69, 1, 0),
--	PLL_RATE(1752000000, 69, 1, 0),
--	PLL_RATE(1776000000, 69, 1, 0),
--	PLL_RATE(1800000000, 69, 1, 0),
--	PLL_RATE(1824000000, 70, 1, 0),
--	PLL_RATE(1848000000, 70, 1, 0),
--	PLL_RATE(1872000000, 70, 1, 0),
--	PLL_RATE(1896000000, 70, 1, 0),
--	PLL_RATE(1920000000, 71, 1, 0),
--	PLL_RATE(1944000000, 71, 1, 0),
--	PLL_RATE(1968000000, 71, 1, 0),
--	PLL_RATE(1992000000, 71, 1, 0),
--	PLL_RATE(2016000000, 72, 1, 0),
--	PLL_RATE(2040000000, 72, 1, 0),
--	PLL_RATE(2064000000, 72, 1, 0),
--	PLL_RATE(2088000000, 72, 1, 0),
--	PLL_RATE(2112000000, 73, 1, 0),
--	{ /* sentinel */ },
--};
--
- static struct meson_clk_pll axg_fixed_pll = {
- 	.m = {
- 		.reg_off = HHI_MPLL_CNTL,
-@@ -154,8 +62,6 @@ static struct meson_clk_pll axg_sys_pll = {
- 		.shift   = 10,
- 		.width   = 2,
- 	},
--	.rate_table = sys_pll_rate_table,
--	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 472a3cfbfbc5..2d851bad13fa 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -29,98 +29,6 @@
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(24000000, 56, 1, 2),
--	PLL_RATE(48000000, 64, 1, 2),
--	PLL_RATE(72000000, 72, 1, 2),
--	PLL_RATE(96000000, 64, 1, 2),
--	PLL_RATE(120000000, 80, 1, 2),
--	PLL_RATE(144000000, 96, 1, 2),
--	PLL_RATE(168000000, 56, 1, 1),
--	PLL_RATE(192000000, 64, 1, 1),
--	PLL_RATE(216000000, 72, 1, 1),
--	PLL_RATE(240000000, 80, 1, 1),
--	PLL_RATE(264000000, 88, 1, 1),
--	PLL_RATE(288000000, 96, 1, 1),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(408000000, 68, 1, 2),
--	PLL_RATE(432000000, 72, 1, 2),
--	PLL_RATE(456000000, 76, 1, 2),
--	PLL_RATE(480000000, 80, 1, 2),
--	PLL_RATE(504000000, 84, 1, 2),
--	PLL_RATE(528000000, 88, 1, 2),
--	PLL_RATE(552000000, 92, 1, 2),
--	PLL_RATE(576000000, 96, 1, 2),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(840000000, 70, 1, 1),
--	PLL_RATE(864000000, 72, 1, 1),
--	PLL_RATE(888000000, 74, 1, 1),
--	PLL_RATE(912000000, 76, 1, 1),
--	PLL_RATE(936000000, 78, 1, 1),
--	PLL_RATE(960000000, 80, 1, 1),
--	PLL_RATE(984000000, 82, 1, 1),
--	PLL_RATE(1008000000, 84, 1, 1),
--	PLL_RATE(1032000000, 86, 1, 1),
--	PLL_RATE(1056000000, 88, 1, 1),
--	PLL_RATE(1080000000, 90, 1, 1),
--	PLL_RATE(1104000000, 92, 1, 1),
--	PLL_RATE(1128000000, 94, 1, 1),
--	PLL_RATE(1152000000, 96, 1, 1),
--	PLL_RATE(1176000000, 98, 1, 1),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
--	PLL_RATE(1560000000, 65, 1, 0),
--	PLL_RATE(1584000000, 66, 1, 0),
--	PLL_RATE(1608000000, 67, 1, 0),
--	PLL_RATE(1632000000, 68, 1, 0),
--	PLL_RATE(1656000000, 68, 1, 0),
--	PLL_RATE(1680000000, 68, 1, 0),
--	PLL_RATE(1704000000, 68, 1, 0),
--	PLL_RATE(1728000000, 69, 1, 0),
--	PLL_RATE(1752000000, 69, 1, 0),
--	PLL_RATE(1776000000, 69, 1, 0),
--	PLL_RATE(1800000000, 69, 1, 0),
--	PLL_RATE(1824000000, 70, 1, 0),
--	PLL_RATE(1848000000, 70, 1, 0),
--	PLL_RATE(1872000000, 70, 1, 0),
--	PLL_RATE(1896000000, 70, 1, 0),
--	PLL_RATE(1920000000, 71, 1, 0),
--	PLL_RATE(1944000000, 71, 1, 0),
--	PLL_RATE(1968000000, 71, 1, 0),
--	PLL_RATE(1992000000, 71, 1, 0),
--	PLL_RATE(2016000000, 72, 1, 0),
--	PLL_RATE(2040000000, 72, 1, 0),
--	PLL_RATE(2064000000, 72, 1, 0),
--	PLL_RATE(2088000000, 72, 1, 0),
--	PLL_RATE(2112000000, 73, 1, 0),
--	{ /* sentinel */ },
--};
--
- static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
- 	PLL_RATE(96000000, 32, 1, 3),
- 	PLL_RATE(99000000, 33, 1, 3),
-@@ -356,8 +264,6 @@ static struct meson_clk_pll gxbb_sys_pll = {
- 		.shift   = 10,
- 		.width   = 2,
- 	},
--	.rate_table = sys_pll_rate_table,
--	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
--- 
-2.14.3
+SGkgUGhpbGlwcGUsDQpUaGFua3MgZm9yIHRoZSByZXZpZXcuDQpXaWxsIGZpeCBhbGwgU1BEWCB0
+YWdzIGluIG5leHQgdmVyc2lvbi4NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0KDQo+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFBoaWxpcHBlIE9tYnJlZGFubmUgW21haWx0bzpw
+b21icmVkYW5uZUBuZXhiLmNvbV0NCj4gU2VudDogVHVlc2RheSwgSmFudWFyeSAwOSwgMjAxOCA0
+OjUzIEFNDQo+IFRvOiBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4NCj4gQ2M6IE1pY2hh
+ZWwgVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8
+c2JveWRAY29kZWF1cm9yYS5vcmc+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbC5zaW1la0B4aWxpbngu
+Y29tPjsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5vcmc7IG1vZGVyYXRlZCBsaXN0OkFSTS9G
+UkVFU0NBTEUgSU1YIC8gTVhDIEFSTQ0KPiBBUkNISVRFQ1RVUkUgPGxpbnV4LWFybS1rZXJuZWxA
+bGlzdHMuaW5mcmFkZWFkLm9yZz47IExLTUwgPGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwu
+b3JnPjsgSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+OyBSYWphbiBWYWphDQo+IDxSQUpB
+TlZAeGlsaW54LmNvbT47IFRlamFzIFBhdGVsIDxURUpBU1BAeGlsaW54LmNvbT47IFNodWJocmFq
+eW90aSBEYXR0YQ0KPiA8c2h1YmhyYWpAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtSRkMg
+UEFUQ0ggMi8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xvY2sgZHJpdmVyDQo+IA0KPiBK
+b2xseSwNCj4gDQo+IE9uIE1vbiwgSmFuIDgsIDIwMTggYXQgMTE6MTYgUE0sIEpvbGx5IFNoYWgg
+PGpvbGx5LnNoYWhAeGlsaW54LmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIENDRiBj
+b21wbGlhbnQgY2xvY2sgZHJpdmVyIGZvciBaeW5xTVAuDQo+ID4gQ2xvY2sgZHJpdmVyIHF1ZXJp
+ZXMgc3VwcG9ydGVkIGNsb2NrIGluZm9ybWF0aW9uIGZyb20NCj4gPiBmaXJtd2FyZSBhbmQgcmVn
+aXRlcnMgcGxsIGFuZCBvdXRwdXQgY2xvY2tzIHdpdGggQ0NGLg0KPiA+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogSm9sbHkgU2hhaCA8am9sbHlzQHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+UmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogVGVqYXMg
+UGF0ZWwgPHRlamFzcEB4aWxpbnguY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNodWJocmFqeW90
+aSBEYXR0YSA8c2h1YmhyYWp5b3RpLmRhdHRhQHhpbGlueC5jb20+DQo+ID4gLS0tDQo+IA0KPiA8
+c25pcD4NCj4gDQo+IA0KPiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay96eW5xX21w
+c29jLnR4dCAgICAgICB8IDE2MyArKysrKw0KPiA+ICBkcml2ZXJzL2Nsay9LY29uZmlnICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvY2xrL01ha2Vm
+aWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9j
+bGsvenlucW1wL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDggKw0KPiA+ICBk
+cml2ZXJzL2Nsay96eW5xbXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyAr
+DQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstZ2F0ZS16eW5xbXAuYyAgICAgICAgICAgICAg
+IHwgMTU4ICsrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstbXV4LXp5bnFtcC5jICAg
+ICAgICAgICAgICAgIHwgMTkwICsrKysrKw0KPiA+ICBkcml2ZXJzL2Nsay96eW5xbXAvY2xrYy5j
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8IDcwNyArKysrKysrKysrKysrKysrKysrKysNCj4g
+PiAgZHJpdmVycy9jbGsvenlucW1wL2RpdmlkZXIuYyAgICAgICAgICAgICAgICAgICAgICAgfCAy
+MzkgKysrKysrKw0KPiA+ICBkcml2ZXJzL2Nsay96eW5xbXAvcGxsLmMgICAgICAgICAgICAgICAg
+ICAgICAgICAgICB8IDM4NCArKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2xpbnV4L2Nsay96eW5x
+bXAuaCAgICAgICAgICAgICAgICAgICAgICAgICB8ICA0NiArKw0KPiA+ICAxMSBmaWxlcyBjaGFu
+Z2VkLCAxOTAwIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+IERvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay96eW5xX21wc29jLnR4dA0KPiA+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL0tjb25maWcNCj4gPiAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3p5bnFtcC9NYWtlZmlsZQ0KPiA+ICBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2Nsay1nYXRlLXp5bnFtcC5jDQo+ID4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay96eW5xbXAvY2xrLW11eC16eW5xbXAuYw0KPiA+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2Nsa2MuYw0KPiA+ICBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2RpdmlkZXIuYw0KPiA+ICBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL3BsbC5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBpbmNsdWRlL2xpbnV4L2Nsay96eW5xbXAuaA0KPiA+DQo=
