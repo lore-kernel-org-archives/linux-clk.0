@@ -1,139 +1,164 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, <linux-imx@nxp.com>,
-	<fabio.estevam@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V3 07/10] clk: imx: make mux parent strings const
-Date: Fri, 19 Jan 2018 21:11:07 +0800
-Message-ID: <1516367470-24340-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Message-id: <5A55DD71.2060808@samsung.com>
+Date: Wed, 10 Jan 2018 18:31:29 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, kgene@kernel.org, Tomasz Figa
+	<tomasz.figa@gmail.com>, chanwoo@kernel.org, Jaehoon Chung
+	<jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support
+ suspend-to-ram
+In-reply-to: 
+	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
+References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
+	<1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+	<1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
+	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+On 2018년 01월 09일 20:44, Krzysztof Kozlowski wrote:
+> On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
+>> to some clocks in order to avoid the hang-out in the suspend mode.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: linux-clk@vger.kernel.org
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index db270908037a..3dc53cd0c730 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -583,25 +583,25 @@
+>>                         CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>         GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
+>>                         ENABLE_ACLK_TOP, 13,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+>>                         ENABLE_ACLK_TOP, 12,
+>>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+>>                         ENABLE_ACLK_TOP, 11,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+>>                         ENABLE_ACLK_TOP, 10,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+>>                         ENABLE_ACLK_TOP, 9,
+>>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+>>                         ENABLE_ACLK_TOP, 8,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
+>>                         ENABLE_ACLK_TOP, 7,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+>>                         ENABLE_ACLK_TOP, 6,
+>>                         CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>> @@ -624,11 +624,11 @@
+>>
+>>         /* ENABLE_SCLK_TOP_CAM1 */
+>>         GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
+>>         GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
+>>                         ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
+>>         GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
+> 
+> Marking this and few others related to ISP as ignore_unused or
+> is_critical looks like a hacky workaround for wrong topology or
+> missing clock users. The real cause should be fixed instead marking
+> all the clocks as critical or ignore_unused.
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+I'm sorry. It is my mistake. When I tested the suspend again,
+following three clocks need CLK_IS_CRITICAL flag.
 
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
+- CLK_ACLK_CAM0_552 / CLK_SCLK_UFSUNIPRO_FSYS
+  : there are not clk consumer until now.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+- CLK_SCLK_AUD_UART is for serial_3.
+  : There are no problem for the clocks of other serial port.
+  Only this clock must need to enable it always on. If we have to
+  handle CLK_SCLK_AUD_UART on drivers/tty/serial/samsung.c,
+  we need to pass the 'serial port information and Exynos info'.
+  So, If possible, adding the CLK_IS_CRITICAL flag to CLK_SCLK_AUD_UART
+  is simple.
 
----
-ChangeLog:
-v1->v3: no changes
----
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+> 
+> Best regards,
+> Krzysztof
+> 
+>>         GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
+>>                         ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
+>>         GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
+>> @@ -636,7 +636,7 @@
+>>         GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
+>>                         ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
+>>         GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
+>>
+>>         /* ENABLE_SCLK_TOP_DISP */
+>>         GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+>> @@ -654,7 +654,7 @@
+>>                         ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+>>         GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
+>>                         "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
+>> -                       3, CLK_SET_RATE_PARENT, 0),
+>> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
+>>                         "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
+>>                         1, CLK_SET_RATE_PARENT, 0),
+>> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>>         GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
+>>                         ENABLE_PCLK_AUD, 6, 0, 0),
+>>         GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
+>> -                       ENABLE_PCLK_AUD, 5, 0, 0),
+>> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
+>>                         ENABLE_PCLK_AUD, 4, 0, 0),
+>>         GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
+>> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>>         GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+>>                         ENABLE_SCLK_AUD1, 4, 0, 0),
+>>         GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+>> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
+>> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
+>>         GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+>>                         ENABLE_SCLK_AUD1, 2, 0, 0),
+>>         GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+>> --
+>> 1.9.1
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 6df3389..ba1541f 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
- };
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index fed7660..956155c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk_hw *imx_clk_composite(const char *name,
- 				 const char * const *parent_names,
-@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -190,7 +191,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -198,7 +200,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -206,8 +209,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+
 -- 
-2.7.4
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
