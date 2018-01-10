@@ -1,37 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35453 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeAVIze (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jan 2018 03:55:34 -0500
-Received: by mail-it0-f68.google.com with SMTP id e1so8937898ita.0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2018 00:55:34 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1516375101-29836-2-git-send-email-geert+renesas@glider.be>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-2-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 22 Jan 2018 09:55:33 +0100
-Message-ID: <CACRpkdZMSU1GUbEaJs0H2upGLmWYtp188awMESGfn+fVVTODrQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: sunxi: Use of_clk_get_parent_count() instead
- of open coding
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-gpio@vger.kernel.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 4/9] doc: dt-bindings: Add doc for the Ingenic TCU clocks driver
+Date: Wed, 10 Jan 2018 23:48:33 +0100
+Message-Id: <20180110224838.16711-4-paul@crapouillou.net>
+In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 19, 2018 at 4:18 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) clocks driver from devicetree.
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ .../bindings/clock/ingenic,tcu-clocks.txt          | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
 
-Patch applied.
+ v3: New patch in this series
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+new file mode 100644
+index 000000000000..90bb30e07b86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+@@ -0,0 +1,36 @@
++Ingenic SoC TCU binding
++
++The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
++channels, each one having its own clock, that can be started and stopped,
++reparented, and reclocked.
++
++Required properties:
++- compatible : One of:
++  * ingenic,jz4740-tcu-clocks,
++  * ingenic,jz4770-tcu-clocks,
++  * ingenic,jz4780-tcu-clocks.
++- clocks : List of phandle & clock specifiers for clocks external to the TCU.
++  The "pclk", "rtc" and "ext" clocks should be provided.
++- clock-names : List of name strings for the external clocks.
++- #clock-cells: Should be 1.
++  Clock consumers specify this argument to identify a clock. The valid values
++  may be found in <dt-bindings/clock/ingenic,tcu.h>.
++
++Example:
++
++/ {
++	mfd@10002000 {
++		compatible = "ingenic,tcu", "simple-mfd", "syscon";
++		reg = <0x10002000 0x1000>;
++
++		tcu_clk: clocks {
++			compatible = "ingenic,jz4740-tcu-clocks";
++			reg = <0x10002010 0xFF0>;
++
++			clocks = <&ext>, <&rtc>, <&pclk>;
++			clock-names = "ext", "rtc", "pclk";
++
++			#clock-cells = <1>;
++		};
++	};
++};
+-- 
+2.11.0
