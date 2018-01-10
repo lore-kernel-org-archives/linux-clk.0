@@ -1,60 +1,34 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 03/25] ARM: dts: r8a7745: Adjust SMP routine size
-Date: Tue, 30 Jan 2018 20:22:36 +0000
-Message-Id: <1517343778-27902-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:14:09 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: Show symbolic clock flags in debugfs
+Message-ID: <20180110211409.GL21040@codeaurora.org>
+References: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
+ <1514977577-11854-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1514977577-11854-4-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On 01/03, Geert Uytterhoeven wrote:
+> Currently the virtual "clk_flags" file in debugfs shows the numeric
+> value of the top-level framework flags for the specified clock.
+> Hence the user must manually interpret these values.
+> 
+> Moreover, on big-endian 64-bit systems, the wrong half of the value is
+> shown, due to the cast from "unsigned long *" to "u32 *".
+> 
+> Fix both issues by showing the symbolic flag names instead.
+> Any non-standard flags are shown as a hex number.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* increased size to 0x100
+Applied to clk-next
 
- arch/arm/boot/dts/r8a7745.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index ddc3da2..6bc1cf4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -755,7 +755,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
