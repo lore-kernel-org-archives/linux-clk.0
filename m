@@ -1,347 +1,152 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 40/44] ARM: da8xx: Remove legacy clock init
-Date: Sun,  7 Jan 2018 20:25:03 -0600
-Message-Id: <1515378307-23718-1-git-send-email-david@lechnology.com>
+Return-Path: <aford173@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com> <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+ <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com> <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
+ <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com> <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 10 Jan 2018 16:24:13 -0600
+Message-ID: <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
+On Wed, Jan 10, 2018 at 12:52 PM, Sekhar Nori <nsekhar@ti.com> wrote:
+> On Wednesday 10 January 2018 08:31 AM, David Lechner wrote:
+>> On 01/09/2018 06:35 AM, Sekhar Nori wrote:
+>>> On Monday 08 January 2018 09:59 PM, David Lechner wrote:
+>>>> On 01/08/2018 08:00 AM, Sekhar Nori wrote:
+>>>>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> new file mode 100644
+>>>>>> index 0000000..99bf5da
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> @@ -0,0 +1,47 @@
+>>>>>> +Binding for TI DaVinci PLL Controllers
+>>>>>> +
+>>>>>> +The PLL provides clocks to most of the components on the SoC. In
+>>>>>> addition
+>>>>>> +to the PLL itself, this controller also contains bypasses, gates,
+>>>>>> dividers,
+>>>>>> +an multiplexers for various clock signals.
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible: shall be one of:
+>>>>>> +    - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>>>>> +    - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>>>>>
+>>>>> These PLLs are same IP so they should use the same compatible. You can
+>>>>> initialize both PLLs for DA850 based on the same compatible.
+>>>>>
+>>>>
+>>>> But they are not exactly the same. For example, PLL0 has 7 PLLDIV clocks
+>>>> while
+>>>> PLL1 only has 3. PLL0 has PREDIV while PLL1 does not. PLL0 has certain
+>>>> SYSCLKs
+>>>> that are fixed-ratio but PLL1 does not have any of these. There are even
+>>>> more
+>>>> differences, but these are the ones we are actually using.
+>>>
+>>> We need each element of the PLLC to be modeled individually as a clock
+>>> node.
+>>
+>> I gave this a good think while I have been working on this series
+>> and I came to the conclusion that we really don't need to do this.
+>> These components are all internal to the PLL IP block, so the
+>> compatible string is enough to tell us what we have. They only
+>> thing we need really in the device tree bindings are the connections
+>> that are external to the IP block.
+>>
+>>
+>>> That is, PLL should only model the multiplier, the dividers
+>>> including post and prediv should be modeled as divider clocks (hopefully
+>>> being able to use the clk-divider.c library). The sysclks can be
+>>> fixed-factor-clock type clocks.
+>>>
+>>> Without this flexible mechanism, we cannot (at least later) model things
+>>> like DIV4.5 clock which is the only clock which derives from the output
+>>> of PLL multiplier before the post divider is applied.
+>>>
+>>> Since with DT there are are no retakes, we need to get this right the
+>>> first time and modifying later will not be an option.
+>>>
+>>
+>> So, the full device tree binding would look something like this:
+>>
+>> +
+>> +    pll0: clock-controller@11000 {
+>> +        compatible = "ti,da850-pll0";
+>> +        reg = <0x11000 0x1000>;
+>> +        clocks = <&ref_clk>, <&pll1_sysclk 3>, <&pll1_obsclk>;
+>> +        clock-names = "oscin", pll1_sysclk3", "pll1_osbclk";
+>> +        oscin-square-wave;
+>> +
+>> +        pll0_sysclk: sysclk {
+>> +            #clock-cells = <1>;
+>> +        };
+>> +
+>> +        pll0_auxclk: auxclk {
+>> +            #clock-cells = <0>;
+>> +        };
+>> +
+>> +        pll0_div45: div4.5 {
+>> +            #clock-cells = <0>;
+>> +        };
+>> +
+>> +        pll0_obsclk: obsclk {
+>> +            #clock-cells = <0>;
+>> +            assigned-clocks = <&pll0_sysclk 1>;
+>> +            assigned-clock-names = "ocsrc";
+>> +        };
+>> +    };
+>
+> Well, I guess this will work as well. And I am probably biased towards
+> the style I mentioned because AM335x and other TI OMAP processors
+> follow that.
+>
+> To make it easy to review that we have all bases covered, can you model
+> the all PLLC0 and PLLC1 (input and output) clocks for the next version?
+>
+>>
+>> There are three clocks coming into the IP block and there are 11 clocks
+>> going out (sysclk is 7 clocks). And you can specify the board-specific
+>> configuration, like having the "oscin-square-wave" flag when a square wave
+>> is used instead of a crystal oscillator and you can assign the multiplexer
+>
+> Ideally the OSCIN vs CLKIN selection should be another clock mux whose
+> output is one of the input clocks to PLL controller. But I can see the
+> difficulty in handling that as the mux itself is controlled by the PLL
+> controller.
+>
+>> input that will be used by obsclk. (And, this binding is totally compatible
+>> with the binding I have already proposed - although, I see now it would
+>> be better to go ahead and add the clocks-names property.)
+>
+> Also, please add the oscin-square-wave to the binding definition too.
+>
+> For the benefit of others reviewing and not familiar with the hardware,
+> the users guide for DA850 is here:
+> http://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
+>
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/devices-da8xx.c |  29 -----
- arch/arm/mach-davinci/usb-da8xx.c     | 238 ----------------------------------
- 2 files changed, 267 deletions(-)
+I am available tomorrow to build and test patches against the
+da850-evm.  I just need to know which version(s) to test.
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 7ffacb9..d3660fd 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -31,11 +31,6 @@
- #include "cpuidle.h"
- #include "sram.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
- #define DA8XX_TPTC1_BASE		0x01c08400
-@@ -1046,29 +1041,6 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
--#ifndef CONFIG_COMMON_CLK
--static struct clk sata_refclk = {
--	.name		= "sata_refclk",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup sata_refclk_lookup =
--		CLK("ahci_da850", "refclk", &sata_refclk);
--
--int __init da850_register_sata_refclk(int rate)
--{
--	int ret;
--
--	sata_refclk.rate = rate;
--	ret = clk_register(&sata_refclk);
--	if (ret)
--		return ret;
--
--	clkdev_add(&sata_refclk_lookup);
--
--	return 0;
--}
--#else
- int __init da850_register_sata_refclk(int rate)
- {
- 	struct clk *clk;
-@@ -1079,7 +1051,6 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return clk_register_clkdev(clk, "refclk", "ahci_da850");
- }
--#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index d7340670..d05a6c7 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -21,18 +21,9 @@
- #include <mach/da8xx.h>
- #include <mach/irqs.h>
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct clk *usb20_clk;
--#endif
--
- static struct platform_device da8xx_usb_phy = {
- 	.name		= "da8xx-usb-phy",
- 	.id		= -1,
-@@ -136,234 +127,6 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
- }
- 
--#ifndef CONFIG_COMMON_CLK
--static struct clk usb_refclkin = {
--	.name		= "usb_refclkin",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup usb_refclkin_lookup =
--	CLK(NULL, "usb_refclkin", &usb_refclkin);
--
--/**
-- * da8xx_register_usb_refclkin - register USB_REFCLKIN clock
-- *
-- * @rate: The clock rate in Hz
-- *
-- * This clock is only needed if the board provides an external USB_REFCLKIN
-- * signal, in which case it will be used as the parent of usb20_phy_clk and/or
-- * usb11_phy_clk.
-- */
--int __init da8xx_register_usb_refclkin(int rate)
--{
--	int ret;
--
--	usb_refclkin.rate = rate;
--	ret = clk_register(&usb_refclkin);
--	if (ret)
--		return ret;
--
--	clkdev_add(&usb_refclkin_lookup);
--
--	return 0;
--}
--
--static void usb20_phy_clk_enable(struct clk *clk)
--{
--	u32 val;
--	u32 timeout = 500000; /* 500 msec */
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* The USB 2.O PLL requires that the USB 2.O PSC is enabled as well. */
--	davinci_clk_enable(usb20_clk);
--
--	/*
--	 * Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
--	 * host may use the PLL clock without USB 2.0 OTG being used.
--	 */
--	val &= ~(CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN);
--	val |= CFGCHIP2_PHY_PLLON;
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	while (--timeout) {
--		val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--		if (val & CFGCHIP2_PHYCLKGD)
--			goto done;
--		udelay(1);
--	}
--
--	pr_err("Timeout waiting for USB 2.0 PHY clock good\n");
--done:
--	davinci_clk_disable(usb20_clk);
--}
--
--static void usb20_phy_clk_disable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--	val |= CFGCHIP2_PHYPWRDN;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--}
--
--static int usb20_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the mux depending on the parent clock. */
--	if (parent == &usb_refclkin) {
--		val &= ~CFGCHIP2_USB2PHYCLKMUX;
--	} else if (strcmp(parent->name, "pll0_aux_clk") == 0) {
--		val |= CFGCHIP2_USB2PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	/* reference frequency also comes from parent clock */
--	val &= ~CFGCHIP2_REFFREQ_MASK;
--	switch (clk_get_rate(parent)) {
--	case 12000000:
--		val |= CFGCHIP2_REFFREQ_12MHZ;
--		break;
--	case 13000000:
--		val |= CFGCHIP2_REFFREQ_13MHZ;
--		break;
--	case 19200000:
--		val |= CFGCHIP2_REFFREQ_19_2MHZ;
--		break;
--	case 20000000:
--		val |= CFGCHIP2_REFFREQ_20MHZ;
--		break;
--	case 24000000:
--		val |= CFGCHIP2_REFFREQ_24MHZ;
--		break;
--	case 26000000:
--		val |= CFGCHIP2_REFFREQ_26MHZ;
--		break;
--	case 38400000:
--		val |= CFGCHIP2_REFFREQ_38_4MHZ;
--		break;
--	case 40000000:
--		val |= CFGCHIP2_REFFREQ_40MHZ;
--		break;
--	case 48000000:
--		val |= CFGCHIP2_REFFREQ_48MHZ;
--		break;
--	default:
--		pr_err("Bad parent clock rate on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb20_phy_clk = {
--	.name		= "usb20_phy",
--	.clk_enable	= usb20_phy_clk_enable,
--	.clk_disable	= usb20_phy_clk_disable,
--	.set_parent	= usb20_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb20_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb20_phy", &usb20_phy_clk);
--
--/**
-- * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "pll0_aux" if false.
-- */
--int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret;
--
--	usb20_clk = clk_get(&da8xx_usb20_dev.dev, "usb20");
--	ret = PTR_ERR_OR_ZERO(usb20_clk);
--	if (ret)
--		return ret;
--
--	parent = clk_get(NULL, use_usb_refclkin ? "usb_refclkin" : "pll0_aux");
--	ret = PTR_ERR_OR_ZERO(parent);
--	if (ret) {
--		clk_put(usb20_clk);
--		return ret;
--	}
--
--	usb20_phy_clk.parent = parent;
--	ret = clk_register(&usb20_phy_clk);
--	if (!ret)
--		clkdev_add(&usb20_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--
--static int usb11_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
--	if (parent == &usb20_phy_clk) {
--		val &= ~CFGCHIP2_USB1PHYCLKMUX;
--	} else if (parent == &usb_refclkin) {
--		val |= CFGCHIP2_USB1PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 1.1 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb11_phy_clk = {
--	.name		= "usb11_phy",
--	.set_parent	= usb11_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb11_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb11_phy", &usb11_phy_clk);
--
--/**
-- * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "usb20_phy" if false.
-- */
--int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret = 0;
--
--	if (use_usb_refclkin)
--		parent = clk_get(NULL, "usb_refclkin");
--	else
--		parent = clk_get(&da8xx_usb_phy.dev, "usb20_phy");
--	if (IS_ERR(parent))
--		return PTR_ERR(parent);
--
--	usb11_phy_clk.parent = parent;
--	ret = clk_register(&usb11_phy_clk);
--	if (!ret)
--		clkdev_add(&usb11_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--#else
- /**
-  * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-  *
-@@ -435,4 +198,3 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
- 
- 	return clk_register_clkdev(clk, "usb11_phy", "da8xx-usb-phy");
- }
--#endif
--- 
-2.7.4
+adam
+
+> and the PLL block diagram is on page 143 (Figure 8-1).
+>
+> Thanks,
+> Sekhar
