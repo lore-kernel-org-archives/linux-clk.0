@@ -1,71 +1,196 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: Guenter Roeck <linux@roeck-us.net>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
-	<linux-watchdog@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
-	<ramesh.shanmugasundaram@bp.renesas.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>, Russell King
-	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>
-Subject: RE: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
- trigger for Gen2
-Date: Fri, 26 Jan 2018 16:59:05 +0000
-Message-ID: <TY1PR06MB0895CA9B4668F49991FD607FC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
- <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
-In-Reply-To: <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 11/12] ARM: dts: sun8i: a83t: Add HDMI display pipeline
+Date: Wed, 10 Jan 2018 20:25:11 +0100
+Message-Id: <20180110192512.19684-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQp0aGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suDQoNCj4gU3ViamVj
-dDogUmU6IFtSRkMgMTAvMzddIHNvYzogcmVuZXNhczogcmNhci1yc3Q6IEVuYWJsZSB3YXRjaGRv
-ZyBhcyByZXNldCB0cmlnZ2VyIGZvciBHZW4yDQo+DQo+IEhlbGxvIQ0KPg0KPiBPbiAxLzI1LzIw
-MTggOTowMiBQTSwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPg0KPiA+IFRoaXMgcGF0Y2ggYWxs
-b3dzIGZvciBwbGF0Zm9ybSBzcGVjaWZpYyBxdWlya3MgYXMgc29tZSBvZiB0aGUgU29DIG5lZWQN
-Cj4gPiBmdXJ0aGVyIGN1c3RvbWl6YXRpb24gZm9yIHRoZSB3YXRjaGRvZyB0byB3b3JrIHByb3Bl
-cmx5LCBsaWtlIGZvciBSLUNhcg0KPiA+IEdlbjIgYW5kIGZvciBSWi9HLg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5j
-b20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5z
-aGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9z
-b2MvcmVuZXNhcy9yY2FyLXJzdC5jIHwgMjEgKysrKysrKysrKysrKysrKysrKystDQo+ID4gICAx
-IGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3JlbmVzYXMvcmNhci1yc3QuYyBiL2RyaXZlcnMvc29j
-L3JlbmVzYXMvcmNhci1yc3QuYw0KPiA+IGluZGV4IGY3YTBkNTQuLjVmNTJhZWEgMTAwNjQ0DQo+
-ID4gLS0tIGEvZHJpdmVycy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gKysrIGIvZHJpdmVy
-cy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gQEAgLTEzLDggKzEzLDE4IEBADQo+ID4gICAj
-aW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+ICAgI2luY2x1ZGUgPGxpbnV4L3NvYy9y
-ZW5lc2FzL3JjYXItcnN0Lmg+DQo+ID4NCj4gPiArI2RlZmluZSBXRFRSU1RDUl9SRVNFVDB4QTU1
-QTAwMDINCj4gPiArI2RlZmluZSBXRFRSU1RDUjB4MDA1NA0KPiA+ICsNCj4gPiArc3RhdGljIGlu
-dCBnZW4yX2NvbmZpZ3VyYXRpb24odm9pZCBfX2lvbWVtICpiYXNlKQ0KPiA+ICt7DQo+ID4gK2lv
-d3JpdGUzMihXRFRSU1RDUl9SRVNFVCwgYmFzZSArIFdEVFJTVENSKTsNCj4gPiArcmV0dXJuIDA7
-DQo+ID4gK30NCj4gPiArDQo+ID4gICBzdHJ1Y3QgcnN0X2NvbmZpZyB7DQo+ID4gLXVuc2lnbmVk
-IGludCBtb2RlbXI7LyogTW9kZSBNb25pdG9yaW5nIFJlZ2lzdGVyIE9mZnNldCAqLw0KPiA+ICt1
-bnNpZ25lZCBpbnQgbW9kZW1yOy8qIE1vZGUgTW9uaXRvcmluZyBSZWdpc3RlciBPZmZzZXQgKi8N
-Cj4gPiAraW50ICgqY29uZmlndXJlKSh2b2lkICpiYXNlKTsvKiBQbGF0Zm9ybSBzcGVjaWZpYyBj
-b25maWd1cmF0aW9uICovDQo+ID4gICB9Ow0KPiA+DQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0
-IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2luaXRjb25zdCA9IHsNCj4gPiBAQCAtMjMsNiAr
-MzMsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2lu
-aXRjb25zdCA9IHsNCj4gPg0KPiA+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCByc3RfY29uZmlnIHJj
-YXJfcnN0X2dlbjIgX19pbml0Y29uc3QgPSB7DQo+ID4gICAubW9kZW1yID0gMHg2MCwNCj4gPiAr
-LmNvbmZpZ3VyZSA9IGdlbjJfY29uZmlndXJhdGlvbiwNCj4NCj4gICAgIFdoeSBub3QgY2FsbCB0
-aGUgbWV0aG9kIGdlbjJfY29uZmlndXJlKCkgdGhlbj8NCg0KWWVhaCwgdGhlIG5hbWUgZ2VuMl9j
-b25maWd1cmF0aW9uIGlzbid0IGdyZWF0IQ0KQXMgeW91IG1heSBoYXZlIG5vdGljZWQgYWxyZWFk
-eSwgR2VlcnQgc3VnZ2VzdGVkIHJjYXJfcnN0X2VuYWJsZV93ZHRfcmVzZXQuDQpJIGFtIGRlZmlu
-aXRlbHkgZ29pbmcgdG8gY2hhbmdlIGl0IChpZiBJIGFtIGtlZXBpbmcgdGhlIGZ1bmN0aW9uIHBv
-aW50ZXIgYXQgYWxsISksIGV4cGVjdCB0byBzZWUgYW5vdGhlciB2ZXJzaW9uIG9mIHRoaXMgcGF0
-Y2ggaW4gdGhlIG5leHQgZmV3IGRheXMgdG8gYWRkcmVzcyB0aGlzLg0KDQpUaGFua3MsDQpGYWIN
-Cg0KPg0KPiBbLi4uXQ0KPg0KPiBNQlIsIFNlcmdlaQ0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmlj
-cyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBC
-dWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxl
-cyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
+hdmi, hdmi phy and hdmi pinctrl entries.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 119 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 118 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 7f4955a5fab7..c2638966d338 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -155,7 +155,7 @@
+ 
+ 	de: display-engine {
+ 		compatible = "allwinner,sun8i-a83t-display-engine";
+-		allwinner,pipelines = <&mixer0>;
++		allwinner,pipelines = <&mixer0>, <&mixer1>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -208,6 +208,32 @@
+ 			};
+ 		};
+ 
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer1_out_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_in_mixer1>;
++					};
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
+@@ -256,6 +282,43 @@
+ 			};
+ 		};
+ 
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun8i-a83t-mmc",
+ 				     "allwinner,sun7i-a20-mmc";
+@@ -427,6 +490,11 @@
+ 				drive-strength = <40>;
+ 			};
+ 
++			hdmi_pins: hdmi-pins {
++				pins = "PH6", "PH7", "PH8";
++				function = "hdmi";
++			};
++
+ 			i2c0_pins: i2c0-pins {
+ 				pins = "PH0", "PH1";
+ 				function = "i2c0";
+@@ -685,6 +753,55 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
++			clock-names = "iahb", "isfr";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			pinctrl-names = "default";
++			pinctrl-0 = <&hdmi_pins>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun8i-a83t-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "bus", "mod", "tmds";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		r_intc: interrupt-controller@1f00c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-intc",
+ 				     "allwinner,sun6i-a31-r-intc";
+-- 
+2.15.1
