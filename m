@@ -1,66 +1,34 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/9] clk: meson: pll fixes
-Date: Fri, 19 Jan 2018 16:55:20 +0100
-Message-Id: <20180119155529.11532-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:20:28 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arch@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH 2/5] clk: Prepare to remove asm-generic/clkdev.h
+Message-ID: <20180110212028.GP21040@codeaurora.org>
+References: <20180103013516.18844-1-sboyd@codeaurora.org>
+ <20180103013516.18844-3-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180103013516.18844-3-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset is a collection of fixes and clean-up around the pll clock
-provider. This has been triggered by the discussion around the ethernet
-clock on the axg [0].
+On 01/02, Stephen Boyd wrote:
+> Now that all the users of asm/clkdev.h have been replaced with
+> the generic file we can get rid of the asm-generic file as well
+> and implement that code directly where it's used.
+> 
+> We only have one caller of __clkdev_alloc(), in clkdev.c so we
+> can easily remove that and drop the include of asm/clkdev.h in
+> linux/clkdev.h by putting the __clk_get/__clk_put inlines in
+> their respective location.
+> 
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-On the axg the rate reported by the fixed_pll is off by 8Mhz, which leads
-the internal mux of the ethernet driver to pick an mpll2 instead of the
-fdiv4.
-
-With this series applied, the fixed_pll of the axg now reports
-1999998046 Hz, which is coherent with measurements (~2GHz)
-
-While debugging this, we uncovered quite a mess around the hdmi_pll
-of the gxbb and gxl family. This is also fixed by this series.
-
-Last, the parameters table provided to the read-only sys_plls have
-been removed, saving a bit of memory
-
-There is still work to be done on this clock provider. Someday,
-I hope to see the parameter tables go away completely. This pll
-is just a (quite complex) fractional divider, we sould be able to
-figure something out at runtime.
-
-Changes since v1: [1]
-* fix several typos in the comments
-* fix arm32 u64 math in patch 3 (Thanks a lot Martin!!)
-
-[0]: https://lkml.kernel.org/r/1516095424.2608.36.camel@baylibre.com
-[1]: https://lkml.kernel.org/r/20180118184532.6856-1-jbrunet@baylibre.com
-
-Jerome Brunet (9):
-  clk: meson: check pll rate param table before using it
-  clk: meson: remove useless pll rate params tables
-  clk: meson: remove unnecessary rounding in the pll clock
-  clk: meson: use the frac parameter width instead of a constant
-  clk: meson: add od3 to the pll driver
-  clk: meson: add the gxl hdmi pll
-  clk: meson: fix rate calculation of plls with a fractional part
-  clk: meson: gxbb: add the fractional part of the fixed_pll
-  clk: meson: axg: add the fractional part of the fixed_pll
-
- drivers/clk/meson/axg.c     |  99 ++------------------------
- drivers/clk/meson/clk-pll.c |  41 ++++++++---
- drivers/clk/meson/clkc.h    |   2 +
- drivers/clk/meson/gxbb.c    | 166 +++++++++++++++++++-------------------------
- drivers/clk/meson/gxbb.h    |   3 +-
- 5 files changed, 111 insertions(+), 200 deletions(-)
+Applied to clk-next
 
 -- 
-2.14.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
