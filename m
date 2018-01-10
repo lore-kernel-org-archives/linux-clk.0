@@ -1,68 +1,84 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Philippe Ombredanne <pombredanne@nexb.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michal Simek <michal.simek@xilinx.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "moderated
- list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-	<linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	Rajan Vaja <RAJANV@xilinx.com>, Tejas Patel <TEJASP@xilinx.com>,
-	"Shubhrajyoti Datta" <shubhraj@xilinx.com>
-Subject: RE: [RFC PATCH 2/2] drivers: clk: Add ZynqMP clock driver
-Date: Wed, 10 Jan 2018 20:15:09 +0000
-Message-ID: <DM2PR0201MB0767021EC0A57CF260E30895B8110@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
- <1515449797-5629-3-git-send-email-jollys@xilinx.com>
- <CAOFm3uFnzp4xPW=65A5Xyshaj-6PJx94PLi_nm4+c+csFznz-g@mail.gmail.com>
-In-Reply-To: <CAOFm3uFnzp4xPW=65A5Xyshaj-6PJx94PLi_nm4+c+csFznz-g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 02/12] clk: sunxi-ng: Change formula for NKMP PLLs
+Date: Wed, 10 Jan 2018 20:25:02 +0100
+Message-Id: <20180110192512.19684-3-jernej.skrabec@siol.net>
+In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUGhpbGlwcGUsDQpUaGFua3MgZm9yIHRoZSByZXZpZXcuDQpXaWxsIGZpeCBhbGwgU1BEWCB0
-YWdzIGluIG5leHQgdmVyc2lvbi4NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0KDQo+IC0tLS0tT3Jp
-Z2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFBoaWxpcHBlIE9tYnJlZGFubmUgW21haWx0bzpw
-b21icmVkYW5uZUBuZXhiLmNvbV0NCj4gU2VudDogVHVlc2RheSwgSmFudWFyeSAwOSwgMjAxOCA0
-OjUzIEFNDQo+IFRvOiBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4NCj4gQ2M6IE1pY2hh
-ZWwgVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8
-c2JveWRAY29kZWF1cm9yYS5vcmc+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbC5zaW1la0B4aWxpbngu
-Y29tPjsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5vcmc7IG1vZGVyYXRlZCBsaXN0OkFSTS9G
-UkVFU0NBTEUgSU1YIC8gTVhDIEFSTQ0KPiBBUkNISVRFQ1RVUkUgPGxpbnV4LWFybS1rZXJuZWxA
-bGlzdHMuaW5mcmFkZWFkLm9yZz47IExLTUwgPGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwu
-b3JnPjsgSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+OyBSYWphbiBWYWphDQo+IDxSQUpB
-TlZAeGlsaW54LmNvbT47IFRlamFzIFBhdGVsIDxURUpBU1BAeGlsaW54LmNvbT47IFNodWJocmFq
-eW90aSBEYXR0YQ0KPiA8c2h1YmhyYWpAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtSRkMg
-UEFUQ0ggMi8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xvY2sgZHJpdmVyDQo+IA0KPiBK
-b2xseSwNCj4gDQo+IE9uIE1vbiwgSmFuIDgsIDIwMTggYXQgMTE6MTYgUE0sIEpvbGx5IFNoYWgg
-PGpvbGx5LnNoYWhAeGlsaW54LmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIENDRiBj
-b21wbGlhbnQgY2xvY2sgZHJpdmVyIGZvciBaeW5xTVAuDQo+ID4gQ2xvY2sgZHJpdmVyIHF1ZXJp
-ZXMgc3VwcG9ydGVkIGNsb2NrIGluZm9ybWF0aW9uIGZyb20NCj4gPiBmaXJtd2FyZSBhbmQgcmVn
-aXRlcnMgcGxsIGFuZCBvdXRwdXQgY2xvY2tzIHdpdGggQ0NGLg0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogSm9sbHkgU2hhaCA8am9sbHlzQHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-UmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogVGVqYXMg
-UGF0ZWwgPHRlamFzcEB4aWxpbnguY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNodWJocmFqeW90
-aSBEYXR0YSA8c2h1YmhyYWp5b3RpLmRhdHRhQHhpbGlueC5jb20+DQo+ID4gLS0tDQo+IA0KPiA8
-c25pcD4NCj4gDQo+IA0KPiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay96eW5xX21w
-c29jLnR4dCAgICAgICB8IDE2MyArKysrKw0KPiA+ICBkcml2ZXJzL2Nsay9LY29uZmlnICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvY2xrL01ha2Vm
-aWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9j
-bGsvenlucW1wL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDggKw0KPiA+ICBk
-cml2ZXJzL2Nsay96eW5xbXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyAr
-DQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstZ2F0ZS16eW5xbXAuYyAgICAgICAgICAgICAg
-IHwgMTU4ICsrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstbXV4LXp5bnFtcC5jICAg
-ICAgICAgICAgICAgIHwgMTkwICsrKysrKw0KPiA+ICBkcml2ZXJzL2Nsay96eW5xbXAvY2xrYy5j
-ICAgICAgICAgICAgICAgICAgICAgICAgICB8IDcwNyArKysrKysrKysrKysrKysrKysrKysNCj4g
-PiAgZHJpdmVycy9jbGsvenlucW1wL2RpdmlkZXIuYyAgICAgICAgICAgICAgICAgICAgICAgfCAy
-MzkgKysrKysrKw0KPiA+ICBkcml2ZXJzL2Nsay96eW5xbXAvcGxsLmMgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB8IDM4NCArKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2xpbnV4L2Nsay96eW5x
-bXAuaCAgICAgICAgICAgICAgICAgICAgICAgICB8ICA0NiArKw0KPiA+ICAxMSBmaWxlcyBjaGFu
-Z2VkLCAxOTAwIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+IERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay96eW5xX21wc29jLnR4dA0KPiA+ICBj
-cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL0tjb25maWcNCj4gPiAgY3JlYXRl
-IG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3p5bnFtcC9NYWtlZmlsZQ0KPiA+ICBjcmVhdGUgbW9k
-ZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2Nsay1nYXRlLXp5bnFtcC5jDQo+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay96eW5xbXAvY2xrLW11eC16eW5xbXAuYw0KPiA+ICBj
-cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2Nsa2MuYw0KPiA+ICBjcmVhdGUg
-bW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL2RpdmlkZXIuYw0KPiA+ICBjcmVhdGUgbW9k
-ZSAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL3BsbC5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBpbmNsdWRlL2xpbnV4L2Nsay96eW5xbXAuaA0KPiA+DQo=
+This commit changes formula from this:
+
+Freq = (parent_freq * N * K) / (M * P)
+
+to this:
+
+Freq = (parent_freq / M) * N * K / P
+
+This improves situation when N is in the range 1-255. PLL parent clock
+is almost always 24 MHz, which means that for N >= 180 original formula
+overflows and result becomes useless. Situation can be improved if M is
+used as predivider as it can be seen in the second formula. That way at
+least M > 1 is considered, but it still leaves small gap for wrong result
+when M = 1 and N >= 180.
+
+Using M as predivider shouldn't cause any issue, because it is in range
+1-4 at most, so there is no or only minimal rounding error.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index a99068a08315..e6c996ad4483 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -33,7 +33,7 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
+ 				for (_p = nkmp->min_p; _p <= nkmp->max_p; _p <<= 1) {
+ 					unsigned long tmp_rate;
+ 
+-					tmp_rate = parent * _n * _k / (_m * _p);
++					tmp_rate = (parent / _m) * _n * _k / _p;
+ 
+ 					if (tmp_rate > rate)
+ 						continue;
+@@ -107,7 +107,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 	p = reg >> nkmp->p.shift;
+ 	p &= (1 << nkmp->p.width) - 1;
+ 
+-	return (parent_rate * n * k >> p) / m;
++	return (parent_rate / m) * n * k >> p;
+ }
+ 
+ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -127,7 +127,7 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
+ 
+-	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
++	return (*parent_rate / _nkmp.m) * _nkmp.n * _nkmp.k / _nkmp.p;
+ }
+ 
+ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.15.1
