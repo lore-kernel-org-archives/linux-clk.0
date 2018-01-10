@@ -1,41 +1,60 @@
-Return-Path: <weiyongjun1@huawei.com>
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa
-	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] clk: samsung: exynos5433: Remove redundant dev_err call in exynos5433_cmu_probe()
-Date: Wed, 17 Jan 2018 11:26:27 +0000
-Message-ID: <1516188387-144930-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-MIME-Version: 1.0
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 08/12] drm/sun4i: Add support for A83T second TCON
+Date: Wed, 10 Jan 2018 20:25:08 +0100
+Message-Id: <20180110192512.19684-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+This TCON is connected to HDMI encoder.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index db27090..9323e6b 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5513,10 +5513,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0815c528d08e..adfa39f372cf 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1154,6 +1154,10 @@ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+ 	.has_channel_0		= true,
+ };
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg_base)) {
--		dev_err(dev, "failed to map registers\n");
-+	if (IS_ERR(reg_base))
- 		return PTR_ERR(reg_base);
--	}
- 
- 	for (i = 0; i < info->nr_clk_ids; ++i)
- 		ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
++static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
++	.has_channel_1		= true,
++};
++
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+ 	.has_channel_0		= true,
+ };
+@@ -1167,6 +1171,7 @@ const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
++	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+-- 
+2.15.1
