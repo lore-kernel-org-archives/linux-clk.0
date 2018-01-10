@@ -1,37 +1,27 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 29/44] ARM: da8xx: add new USB PHY clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-30-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
-Date: Thu, 18 Jan 2018 20:44:24 +0530
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jan 2018 13:20:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH 1/5] blackfin: Use generic clkdev.h header
+Message-ID: <20180110212017.GO21040@codeaurora.org>
+References: <20180103013516.18844-1-sboyd@codeaurora.org>
+ <20180103013516.18844-2-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1515377863-20358-30-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180103013516.18844-2-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:47 AM, David Lechner wrote:
-> +int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
-> +{
-> +	struct regmap *cfgchip;
-> +	struct clk *usb0_psc_clk, *clk;
-> +	struct clk_hw *parent;
-> +
-> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+On 01/02, Stephen Boyd wrote:
+> The generic header file is equivalent to the blackfin version, so
+> just use the generic one.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Am I right in understanding that this API is only called for non-DT
-boot? If yes, do we really need the lookup by compatible?
+Applied to clk-next
 
-Thanks,
-Sekhar
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
