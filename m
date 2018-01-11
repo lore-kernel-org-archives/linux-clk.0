@@ -1,79 +1,47 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/2] clk: meson: use dev pointer where possible
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180118120831.8349-1-jbrunet@baylibre.com>
- <20180118120831.8349-2-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <6689fcc2-6f9d-1c6d-c6fe-4ccd4928b7dd@baylibre.com>
-Date: Thu, 18 Jan 2018 16:25:58 +0100
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "michal.simek@xilinx.com"
+	<michal.simek@xilinx.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
+Date: Thu, 11 Jan 2018 20:29:12 +0000
+Message-ID: <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
+ <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
+In-Reply-To: <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180118120831.8349-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18/01/2018 13:08, Jerome Brunet wrote:
-> The 'dev' pointer is directly available in gxbb and axg clock
-> controller, so consistently use it instead of going the through the
-> 'pdev' pointer once in while
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/axg.c  | 8 ++++----
->  drivers/clk/meson/gxbb.c | 2 +-
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index 1294f3ad7cd5..87aba8e871a0 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-> @@ -873,7 +873,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
->  	void __iomem *clk_base;
->  	int ret, clkid, i;
->  
-> -	clkc_data = of_device_get_match_data(&pdev->dev);
-> +	clkc_data = of_device_get_match_data(dev);
->  	if (!clkc_data)
->  		return -EINVAL;
->  
-> @@ -881,9 +881,9 @@ static int axg_clkc_probe(struct platform_device *pdev)
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!res)
->  		return -EINVAL;
-> -	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> +	clk_base = devm_ioremap(dev, res->start, resource_size(res));
->  	if (!clk_base) {
-> -		dev_err(&pdev->dev, "Unable to map clk base\n");
-> +		dev_err(dev, "Unable to map clk base\n");
->  		return -ENXIO;
->  	}
->  
-> @@ -918,7 +918,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
->  		ret = devm_clk_hw_register(dev,
->  					clkc_data->hw_onecell_data->hws[clkid]);
->  		if (ret) {
-> -			dev_err(&pdev->dev, "Clock registration failed\n");
-> +			dev_err(dev, "Clock registration failed\n");
->  			return ret;
->  		}
->  	}
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index af24455af5b4..ba1023983d79 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1976,7 +1976,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->  	int ret, clkid, i;
->  	struct device *dev = &pdev->dev;
->  
-> -	clkc_data = of_device_get_match_data(&pdev->dev);
-> +	clkc_data = of_device_get_match_data(dev);
->  	if (!clkc_data)
->  		return -EINVAL;
->  
-> 
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+SGkgU3VkZWVwLA0KDQpUaGVyZSBhcmUgMyB0aGluZ3M6DQoNCjE+IElQSSBtYWlsYm94IHRyYW5z
+cG9ydCAtIHNlcmllcyBpcyBhbHJlYWR5IHBvc3RlZA0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVs
+Lm9yZy9wYXRjaC8xMDE0NTc5NS8NCjI+IEVFTUkgLSBQb3N0ZWQgYnkgbWUgYmVsb3cNCmh0dHBz
+Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAxNTA2NjUvDQozPiBFRU1JIFVzZXJzDQpD
+dXJyZW50bHkgcG9zdGVkIGFzIFJGQyBhcyB0aGV5IGFyZSBkZXBlbmRlbnQgb24gIzIuDQoNCiMy
+IGRvZXNu4oCZdCB1c2UgbWFpbGJveCBzbyBpdCBpcyBhIHBvc3RlZCBhcyBhIHNlcGFyYXRlIHNl
+cmllcy4gDQoNClRoYW5rcywNCkpvbGx5IFNoYWgNCg0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gRnJvbTogU3VkZWVwIEhvbGxhIFttYWlsdG86c3VkZWVwLmhvbGxhQGFybS5j
+b21dDQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDExLCAyMDE4IDI6NTUgQU0NCj4gVG86IEpv
+bGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPjsgbWljaGFsLnNpbWVrQHhpbGlueC5jb207IGxp
+bnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBtdHVycXVldHRlQGJheWxpYnJlLmNv
+bTsgc2JveWRAY29kZWF1cm9yYS5vcmc7IFN1ZGVlcCBIb2xsYQ0KPiA8c3VkZWVwLmhvbGxhQGFy
+bS5jb20+OyBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IGxpbnV4LQ0KPiBrZXJuZWxA
+dmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4g
+U3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMC8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xv
+Y2sgZHJpdmVyIHN1cHBvcnQNCj4gDQo+IA0KPiANCj4gT24gMDgvMDEvMTggMjI6MTYsIEpvbGx5
+IFNoYWggd3JvdGU6DQo+ID4gQWRkIGNsb2NrIGRyaXZlciBmb3IgWnlucU1QDQo+ID4NCj4gDQo+
+IENhbiB5b3UgcG9zdCB0aGUgY29tcGxldGUgc2VyaWVzIGluIG9uZSBzZXQgZm9yIGVhc3kgb2Yg
+cmV2aWV3LiBJdCdzIGN1cnJlbnRseQ0KPiBicm9rZW4gaW50byAqNiAtIDgqIGRpZmZlcmVudCBz
+ZXRzIGJ5IGRpZmZlcmVudCBhdXRob3JzIGFuZCBpdCdzIGV4dHJlbWVseSBoYXJkIHRvDQo+IGdl
+dCB0aGUgZnVsbCB2aWV3IG9mIGhvdyB0aGVzZSBwaWVjZXMgYXJlIGNvbm5lY3RlZCBhbmQgZXh0
+cmVtZWx5IG1pc2xlYWRpbmcuDQo+IENhbiBzb21lb25lIHBvc3QgdGhlbSBjb2xsZWN0aXZlbHkg
+YXMgeW91IHdvdWxkIGFscmVhZHkgaGF2ZSBpdCBpZiB5b3UgYXJlDQo+IGRvaW5nIHNvbWUgdGVz
+dGluZyBidWlsZGluZyBvbiBlYWNoIHBhdGNoIHNldC4NCj4gDQo+IElJVUMgbWFpbGJveCBpcyB1
+c2VkIGZvciBhbGwgdGhlIGNvbW11bmljYXRpb24sIHJpZ2h0ID8NCj4gSWYgc28sIHRvIHN0YXJ0
+IHdpdGgganVzdCBoYXZlIDIgc2VyaWVzIG9uZSBmb3IgbWFpbGJveC90cmFuc3BvcnQgYW5kIGFu
+b3RoZXIgZm9yDQo+IHRoZSB3aG9sZSBwcm90b2NvbChlZW1pPykgYW5kIHVzZXJzIG9mIGl0Lg0K
+PiANCj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQo=
