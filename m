@@ -1,85 +1,162 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 10/44] clk: davinci: New driver for davinci PSC clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-11-git-send-email-david@lechnology.com>
- <e0a9af55-a8b1-c359-fe88-d038648e02f1@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <83f3d207-9645-cbdf-d6cf-b6e6a8458abe@lechnology.com>
-Date: Tue, 16 Jan 2018 10:51:45 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:56140 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932986AbeAKKXl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Jan 2018 05:23:41 -0500
+Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20180106042326.46519-1-icenowy@aosc.io>
+ <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
+ <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <ba83f00d-c1e5-6f6a-84df-04169860c7eb@arm.com>
+Date: Thu, 11 Jan 2018 10:23:52 +0000
 MIME-Version: 1.0
-In-Reply-To: <e0a9af55-a8b1-c359-fe88-d038648e02f1@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/16/2018 05:03 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> This adds a new driver for mach-davinci PSC clocks. This is porting the
->> code from arch/arm/mach-davinci/psc.c to the common clock framework and
->> is converting it to use regmap to simplify the code. Additionally, it adds
->> device tree support for these clocks.
+Hi,
+
+On 11/01/18 10:14, Chen-Yu Tsai wrote:
+> On Thu, Jan 11, 2018 at 6:08 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+>> Hi,
 >>
->> Note: although there are similar clocks for TI Keystone we are not able
->> to share the code for a few reasons. The keystone clocks are device tree
->> only and use legacy one-node-per-clock bindings. Also the keystone driver
->> makes the assumption that there is only one PSC per SoC and uses global
->> variables, but here we have two controllers per SoC.
+>> On 06/01/18 04:23, Icenowy Zheng wrote:
+>>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+>>> have no bus gate clocks.
+>>>
+>>> Add support for this kind of pin controllers.
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
+>>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+>>>  2 files changed, 21 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> index 4b6cb25bc796..68cd505679d9 100644
+>>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+>>>       unsigned int hosc_div, losc_div;
+>>>       struct clk *hosc, *losc;
+>>>       u8 div, src;
+>>> -     int i, ret;
+>>> +     int i, ret, clk_count;
+>>> +
+>>> +     if (pctl->desc->without_bus_gate)
+>>> +             clk_count = 2;
+>>> +     else
+>>> +             clk_count = 3;
+>>>
+>>>       /* Deal with old DTs that didn't have the oscillators */
+>>>       if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
+>>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>>>                       goto gpiochip_error;
+>>>       }
+>>>
+>>> -     clk = devm_clk_get(&pdev->dev, NULL);
+>>> -     if (IS_ERR(clk)) {
+>>> -             ret = PTR_ERR(clk);
+>>> -             goto gpiochip_error;
+>>> -     }
+>>> +     if (!desc->without_bus_gate) {
 >>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
-
->> +static void psc_config(struct davinci_psc_clk *psc,
->> +		       enum davinci_psc_state next_state)
->> +{
->> +	u32 epcpr, pdstat, mdstat, mdctl, ptstat;
->> +
->> +	mdctl = next_state;
->> +	if (psc->flags & LPSC_FORCE)
->> +		mdctl |= MDCTL_FORCE;
->> +	regmap_write_bits(psc->regmap, MDCTL(psc->lpsc), MDSTAT_STATE_MASK,
->> +			  mdctl);
+>> Do we really need explicit support for that case?
+>> Can't we have something that works automatically?
+>>
+>> if (node has clock-names property)              (A)
+>>         use clocks as enumerated and named there
 > 
-> Wont this ignore the MDCTL_FORCE bit since MDSTAT_STATE_MASK does not
-> cover that?
-> 
->> +
->> +	regmap_read(psc->regmap, PDSTAT(psc->pd), &pdstat);
->> +	if ((pdstat & PDSTAT_STATE_MASK) == 0) {
->> +		regmap_write_bits(psc->regmap, PDSTAT(psc->pd),
->> +				  PDSTAT_STATE_MASK, PDCTL_NEXT);
-> 
-> Shouldn't this be a write to PDCTL register?
-> 
+> You still need to know if the hardware has a bus gate or not.
+> If it's missing, and it's disabled, you end up with unusable
+> hardware.
 
-Looks like I have some mistakes here. Thank you.
+Yes. So what? If you have a broken DT, it will not work. Just don't do
+it. I don't understand why we want to defend against this case.
 
-...
+> Unless you are fully trusting the device tree to be correct.
 
->> +static struct clk *davinci_psc_clk_register(const char *name,
->> +					    const char *parent_name,
->> +					    struct regmap *regmap,
->> +					    u32 lpsc, u32 pd, u32 flags)
->> +{
->> +	struct clk_init_data init;
->> +	struct davinci_psc_clk *psc;
->> +	struct clk *clk;
->> +
->> +	psc = kzalloc(sizeof(*psc), GFP_KERNEL);
->> +	if (!psc)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	init.name = name;
->> +	init.ops = &davinci_psc_clk_ops;
->> +	init.parent_names = (parent_name ? &parent_name : NULL);
->> +	init.num_parents = (parent_name ? 1 : 0);
->> +	init.flags = CLK_SET_RATE_PARENT;
+Sorry, but what else do we trust?
+
+> IMHO that makes for hard to find bugs during SoC bringup.
+
+I am not sure if that is really an issue. I would expect people doing
+SoC bringup to be able to cope with those kinds of problems.
+
+Cheers,
+Andre.
+
+
 > 
-> Is this needed since PSC does not cause any rate change?
-
-Yes, because one of the PSCs is the ARM clock and for cpufreq, we
-need to propagate the rate change up the chain to SYSCLK6.
+> ChenYu
+> 
+>> else if (node has one clock reference)          (B)
+>>         use this as gate clock, no debounce support
+>> else if (node has no clock property at all)     (C)
+>>         no gate clock needed, no debounce support
+>>
+>> On top of that we should add the clock-names property to all DTs, even
+>> for those with only a "apb" clock. Shouldn't hurt existing kernels.
+>> Possibly even add debounce support for those on the way, if applicable.
+>>
+>> So we would just support case (B) and (C) for legacy reasons.
+>>
+>> Does that make sense?
+>>
+>> Cheers,
+>> Andre.
+>>
+>>> +             clk = devm_clk_get(&pdev->dev, NULL);
+>>> +             if (IS_ERR(clk)) {
+>>> +                     ret = PTR_ERR(clk);
+>>> +                     goto gpiochip_error;
+>>> +             }
+>>>
+>>> -     ret = clk_prepare_enable(clk);
+>>> -     if (ret)
+>>> -             goto gpiochip_error;
+>>> +             ret = clk_prepare_enable(clk);
+>>> +             if (ret)
+>>> +                     goto gpiochip_error;
+>>> +     } else {
+>>> +             clk = NULL;
+>>> +     }
+>>>
+>>>       pctl->irq = devm_kcalloc(&pdev->dev,
+>>>                                pctl->desc->irq_banks,
+>>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>>>       return 0;
+>>>
+>>>  clk_error:
+>>> -     clk_disable_unprepare(clk);
+>>> +     if (clk)
+>>> +             clk_disable_unprepare(clk);
+>>>  gpiochip_error:
+>>>       gpiochip_remove(pctl->chip);
+>>>       return ret;
+>>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> index 11b128f54ed2..ccb6230f0bb5 100644
+>>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+>>>       unsigned                        irq_bank_base;
+>>>       bool                            irq_read_needs_mux;
+>>>       bool                            disable_strict_mode;
+>>> +     bool                            without_bus_gate;
+>>>  };
+>>>
+>>>  struct sunxi_pinctrl_function {
+>>>
