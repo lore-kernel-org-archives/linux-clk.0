@@ -1,231 +1,247 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:48447 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932749AbeASXS6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jan 2018 18:18:58 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 8/9] ARM: dts: suniv: add initial DTSI file for suniv and F1C100s
-Date: Sat, 20 Jan 2018 07:17:34 +0800
-Message-Id: <20180119231735.61504-9-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
+To: Paul Cercueil <paul@crapouillou.net>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
+ <20180110224838.16711-6-paul@crapouillou.net>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
+Date: Thu, 11 Jan 2018 15:38:42 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180110224838.16711-6-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have the support for suniv pin controller and CCU now, add a
-initial DTSI for it.
+On 10/01/18 22:48, Paul Cercueil wrote:
+> This simple driver handles the IRQ chip of the TCU
+> (Timer Counter Unit) of the JZ47xx Ingenic SoCs.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/irqchip/Kconfig           |   6 ++
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-ingenic-tcu.c | 153 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 160 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-ingenic-tcu.c
+> 
+>  v2: - Use SPDX identifier for the license
+>      - Make KConfig option select CONFIG_IRQ_DOMAIN since we depend on it
+>  v3: - Move documentation to its own patch
+>      - Add comment explaining why we only use IRQCHIP_DECLARE
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index c70476b34a53..74668f3605b0 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -267,6 +267,12 @@ config INGENIC_IRQ
+>  	depends on MACH_INGENIC
+>  	default y
+>  
+> +config INGENIC_TCU_IRQ
+> +	bool
+> +	depends on MACH_INGENIC || COMPILE_TEST
+> +	select IRQ_DOMAIN
+> +	default y
+> +
+>  config RENESAS_H8300H_INTC
+>          bool
+>  	select IRQ_DOMAIN
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index d2df34a54d38..6effe0271cd6 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -70,6 +70,7 @@ obj-$(CONFIG_RENESAS_H8300H_INTC)	+= irq-renesas-h8300h.o
+>  obj-$(CONFIG_RENESAS_H8S_INTC)		+= irq-renesas-h8s.o
+>  obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
+>  obj-$(CONFIG_INGENIC_IRQ)		+= irq-ingenic.o
+> +obj-$(CONFIG_INGENIC_TCU_IRQ)		+= irq-ingenic-tcu.o
+>  obj-$(CONFIG_IMX_GPCV2)			+= irq-imx-gpcv2.o
+>  obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
+>  obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
+> diff --git a/drivers/irqchip/irq-ingenic-tcu.c b/drivers/irqchip/irq-ingenic-tcu.c
+> new file mode 100644
+> index 000000000000..52e9688b31f6
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-ingenic-tcu.c
+> @@ -0,0 +1,153 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * JZ47xx SoCs TCU IRQ driver
+> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/mfd/syscon/ingenic-tcu.h>
+> +
+> +static void ingenic_tcu_intc_cascade(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *irq_chip = irq_data_get_irq_chip(&desc->irq_data);
+> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
+> +	struct irq_chip_generic *gc = irq_get_domain_generic_chip(domain, 0);
+> +	struct regmap *map = gc->private;
+> +	uint32_t irq_reg, irq_mask;
+> +	unsigned int i;
+> +
+> +	regmap_read(map, TCU_REG_TFR, &irq_reg);
+> +	regmap_read(map, TCU_REG_TMR, &irq_mask);
+> +
+> +	chained_irq_enter(irq_chip, desc);
+> +
+> +	irq_reg &= ~irq_mask;
+> +
+> +	for (i = 0; i < 32; i++) {
+> +		if (irq_reg & BIT(i))
+> +			generic_handle_irq(irq_linear_revmap(domain, i));
+> +	}
+> +
+> +	chained_irq_exit(irq_chip, desc);
+> +}
+> +
+> +static void ingenic_tcu_gc_unmask_enable_reg(struct irq_data *d)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+> +	struct regmap *map = gc->private;
+> +	u32 mask = d->mask;
+> +
+> +	irq_gc_lock(gc);
+> +	regmap_write(map, ct->regs.ack, mask);
+> +	regmap_write(map, ct->regs.enable, mask);
+> +	*ct->mask_cache |= mask;
+> +	irq_gc_unlock(gc);
+> +}
+> +
+> +static void ingenic_tcu_gc_mask_disable_reg(struct irq_data *d)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+> +	struct regmap *map = gc->private;
+> +	u32 mask = d->mask;
+> +
+> +	irq_gc_lock(gc);
+> +	regmap_write(map, ct->regs.disable, mask);
+> +	*ct->mask_cache &= ~mask;
+> +	irq_gc_unlock(gc);
+> +}
+> +
+> +static void ingenic_tcu_gc_mask_disable_reg_and_ack(struct irq_data *d)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+> +	struct regmap *map = gc->private;
+> +	u32 mask = d->mask;
+> +
+> +	irq_gc_lock(gc);
+> +	regmap_write(map, ct->regs.ack, mask);
+> +	regmap_write(map, ct->regs.disable, mask);
+> +	irq_gc_unlock(gc);
+> +}
+> +
+> +static int __init ingenic_tcu_intc_of_init(struct device_node *node,
+> +	struct device_node *parent)
+> +{
+> +	struct irq_domain *domain;
+> +	struct irq_chip_generic *gc;
+> +	struct irq_chip_type *ct;
+> +	int err, i, num_parent_irqs;
+> +	unsigned int parent_irqs[3];
 
-F1C100s is one product with the suniv die, which has a 32MiB co-packaged
-DDR1 DRAM chip. As there's nothing special for it, add a dummy DTSI file
-for it.
+3 parent interrupts? Really? How do you pick one? Also, given the useage
+model below, "int" is the wrong type. Probably should be u32.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/Makefile           |   2 +
- arch/arm/boot/dts/suniv-f1c100s.dtsi |   6 ++
- arch/arm/boot/dts/suniv.dtsi         | 157 +++++++++++++++++++++++++++++++++++
- 3 files changed, 165 insertions(+)
- create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
- create mode 100644 arch/arm/boot/dts/suniv.dtsi
+> +	struct regmap *map;
+> +
+> +	num_parent_irqs = of_property_count_elems_of_size(
+> +			node, "interrupts", 4);
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index d0381e9caf21..b877e0bf1823 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -972,6 +972,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
- 	sun9i-a80-cubieboard4.dtb
-+dtb-$(CONFIG_MACH_SUNIV) += \
-+	suniv-f1c100s-licheepi-nano.dtb
- dtb-$(CONFIG_ARCH_TANGO) += \
- 	tango4-vantage-1172.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
-diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-new file mode 100644
-index 000000000000..f084bc8dd19b
---- /dev/null
-+++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR X11)
-+/*
-+ * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+#include "suniv.dtsi"
-diff --git a/arch/arm/boot/dts/suniv.dtsi b/arch/arm/boot/dts/suniv.dtsi
-new file mode 100644
-index 000000000000..af1903237514
---- /dev/null
-+++ b/arch/arm/boot/dts/suniv.dtsi
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR X11)
-+/*
-+ * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+#include <dt-bindings/clock/suniv-ccu.h>
-+#include <dt-bindings/reset/suniv-ccu.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&intc>;
-+
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		osc24M: clk-24M {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+			clock-output-names = "osc24M";
-+		};
-+
-+		osc32k: clk-32k {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+			clock-output-names = "osc32k";
-+		};
-+
-+		fake100M: clk-100M {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <100000000>;
-+			clock-output-names = "fake-100M";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <0>;
-+		#size-cells = <0>;
-+
-+		cpu {
-+			compatible = "arm,arm926ej-s";
-+			device_type = "cpu";
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun4i-a10-sram-controller";
-+			reg = <0x01c00000 0x30>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_d: sram@10000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00010000 0x1000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00010000 0x1000>;
-+
-+				otg_sram: sram-section@0 {
-+					compatible = "allwinner,sun4i-a10-sram-d";
-+					reg = <0x0000 0x1000>;
-+					status = "disabled";
-+				};
-+			};
-+		};
-+
-+		ccu: clock@1c20000 {
-+			compatible = "allwinner,suniv-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		intc: interrupt-controller@1c20400 {
-+			compatible = "allwinner,suniv-ic";
-+			reg = <0x01c20400 0x400>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
-+
-+		pio: pinctrl@1c20800 {
-+			compatible = "allwinner,suniv-pinctrl";
-+			reg = <0x01c20800 0x400>;
-+			interrupts = <38>, <39>, <40>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#gpio-cells = <3>;
-+
-+			uart0_pins_a: uart-pins-pe {
-+				pins = "PE0", "PE1";
-+				function = "uart0";
-+			};
-+		};
-+
-+		timer@1c20c00 {
-+			compatible = "allwinner,suniv-timer";
-+			reg = <0x01c20c00 0x90>;
-+			interrupts = <13>;
-+			clocks = <&osc24M>;
-+		};
-+
-+		wdt: watchdog@1c20ca0 {
-+			compatible = "allwinner,sun6i-a31-wdt";
-+			reg = <0x01c20ca0 0x20>;
-+		};
-+
-+		uart0: serial@1c25000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25000 0x400>;
-+			interrupts = <1>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@1c25400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25400 0x400>;
-+			interrupts = <2>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@1c25800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25800 0x400>;
-+			interrupts = <3>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+	};
-+};
+Nit: on a single line, as here is nothing that hurts my eyes more than
+reading something like(
+this). Also, 4 is better expressed as sizeof(u32).
+
+
+> +	if (num_parent_irqs < 0 || num_parent_irqs > ARRAY_SIZE(parent_irqs))
+> +		return -EINVAL;
+> +
+> +	map = syscon_node_to_regmap(node->parent);
+> +	if (IS_ERR(map))
+> +		return PTR_ERR(map);
+> +
+> +	domain = irq_domain_add_linear(node, 32, &irq_generic_chip_ops, NULL);
+> +	if (!domain)
+> +		return -ENOMEM;
+> +
+> +	err = irq_alloc_domain_generic_chips(domain, 32, 1, "TCU",
+> +			handle_level_irq, 0, IRQ_NOPROBE | IRQ_LEVEL, 0);
+> +	if (err)
+> +		goto out_domain_remove;
+> +
+> +	gc = irq_get_domain_generic_chip(domain, 0);
+> +	ct = gc->chip_types;
+> +
+> +	gc->wake_enabled = IRQ_MSK(32);
+> +	gc->private = map;
+> +
+> +	ct->regs.disable = TCU_REG_TMSR;
+> +	ct->regs.enable = TCU_REG_TMCR;
+> +	ct->regs.ack = TCU_REG_TFCR;
+> +	ct->chip.irq_unmask = ingenic_tcu_gc_unmask_enable_reg;
+> +	ct->chip.irq_mask = ingenic_tcu_gc_mask_disable_reg;
+> +	ct->chip.irq_mask_ack = ingenic_tcu_gc_mask_disable_reg_and_ack;
+> +	ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
+> +
+> +	/* Mask all IRQs by default */
+> +	regmap_write(map, TCU_REG_TMSR, IRQ_MSK(32));
+> +
+> +	for (i = 0; i < num_parent_irqs; i++) {
+> +		parent_irqs[i] = irq_of_parse_and_map(node, i);
+> +		if (!parent_irqs[i]) {
+> +			err = -EINVAL;
+> +			goto out_unmap_irqs;
+> +		}
+> +
+> +		irq_set_chained_handler_and_data(parent_irqs[i],
+> +				ingenic_tcu_intc_cascade, domain);
+> +	}
+
+I don't get the multiple parent irq at all. How are the source interrupt
+routed to the various cascades?
+
+> +
+> +	return 0;
+> +
+> +out_unmap_irqs:
+> +	for (; i > 0; i--)
+> +		irq_dispose_mapping(parent_irqs[i - 1]);
+> +out_domain_remove:
+> +	irq_domain_remove(domain);
+> +	return err;
+> +}
+> +
+> +/* We only probe via devicetree, no need for a platform driver */
+> +IRQCHIP_DECLARE(jz4740_tcu_intc, "ingenic,jz4740-tcu-intc",
+> +		ingenic_tcu_intc_of_init);
+> +IRQCHIP_DECLARE(jz4770_tcu_intc, "ingenic,jz4770-tcu-intc",
+> +		ingenic_tcu_intc_of_init);
+> +IRQCHIP_DECLARE(jz4780_tcu_intc, "ingenic,jz4780-tcu-intc",
+> +		ingenic_tcu_intc_of_init);
+> 
+
+Thanks,
+
+	M.
 -- 
-2.14.2
-
+Jazz is not dead. It just smells funny...
