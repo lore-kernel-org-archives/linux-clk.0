@@ -1,67 +1,126 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 24/26] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-Date: Wed, 31 Jan 2018 18:24:28 +0000
-Message-Id: <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59302 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933688AbeAKLs3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Jan 2018 06:48:29 -0500
+Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180106042326.46519-1-icenowy@aosc.io>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
+Date: Thu, 11 Jan 2018 11:48:40 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7794 dtsi.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->4:
-* no change
+another take to avoid this patch at all, I just remembered this from an
+IRC discussion before:
 
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 06/01/18 04:23, Icenowy Zheng wrote:
+> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+> have no bus gate clocks.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index e47c5f4..1c9b149 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -119,6 +119,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7794-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7794",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.7.4
+I don't think this is true. The pin controller *needs* an APB clock,
+it's just not gate-able or not exposed or documented.
+The "system bus tree" on page 90 in the manual shows that the "GPIO"
+block is located on the APB1 bus.
+So can't we just reference this apb clock directly? That would be much
+cleaner, "more" correct and require less changes: "The best patch is no
+patch":
+
+	clocks = <&ccu APB1>, <&osc24M>, <&osc32k>;
+	/* or whatever this APB clock is actually called. */
+	clock-names = "apb", "hosc", "losc";
+
+Cheers,
+Andre.
+
+> 
+> Add support for this kind of pin controllers.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+>  2 files changed, 21 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> index 4b6cb25bc796..68cd505679d9 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+>  	unsigned int hosc_div, losc_div;
+>  	struct clk *hosc, *losc;
+>  	u8 div, src;
+> -	int i, ret;
+> +	int i, ret, clk_count;
+> +
+> +	if (pctl->desc->without_bus_gate)
+> +		clk_count = 2;
+> +	else
+> +		clk_count = 3;
+>  
+>  	/* Deal with old DTs that didn't have the oscillators */
+>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
+> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>  			goto gpiochip_error;
+>  	}
+>  
+> -	clk = devm_clk_get(&pdev->dev, NULL);
+> -	if (IS_ERR(clk)) {
+> -		ret = PTR_ERR(clk);
+> -		goto gpiochip_error;
+> -	}
+> +	if (!desc->without_bus_gate) {
+> +		clk = devm_clk_get(&pdev->dev, NULL);
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			goto gpiochip_error;
+> +		}
+>  
+> -	ret = clk_prepare_enable(clk);
+> -	if (ret)
+> -		goto gpiochip_error;
+> +		ret = clk_prepare_enable(clk);
+> +		if (ret)
+> +			goto gpiochip_error;
+> +	} else {
+> +		clk = NULL;
+> +	}
+>  
+>  	pctl->irq = devm_kcalloc(&pdev->dev,
+>  				 pctl->desc->irq_banks,
+> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>  	return 0;
+>  
+>  clk_error:
+> -	clk_disable_unprepare(clk);
+> +	if (clk)
+> +		clk_disable_unprepare(clk);
+>  gpiochip_error:
+>  	gpiochip_remove(pctl->chip);
+>  	return ret;
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> index 11b128f54ed2..ccb6230f0bb5 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+>  	unsigned			irq_bank_base;
+>  	bool				irq_read_needs_mux;
+>  	bool				disable_strict_mode;
+> +	bool				without_bus_gate;
+>  };
+>  
+>  struct sunxi_pinctrl_function {
+> 
