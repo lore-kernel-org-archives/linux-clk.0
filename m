@@ -1,61 +1,39 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Thu, 11 Jan 2018 22:29:57 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>
+Subject: Re: Warnings from drivers/clk/clk.c
+Message-ID: <20180111212957.fiyw2eozi5cubt5v@pengutronix.de>
+References: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
+ <20180111211948.GL28313@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2Qpbr6EB+qWMQqCLkbnVddL+MHx1sFNs-+97ZQ=QaHeg@mail.gmail.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-13-chunyan.zhang@spreadtrum.com> <CAK8P3a3XA+p__p9+B-jCONUDe1MuOgsee6oD0USmwK06iXqH9g@mail.gmail.com>
- <CAK8P3a2Qpbr6EB+qWMQqCLkbnVddL+MHx1sFNs-+97ZQ=QaHeg@mail.gmail.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 5 Jan 2018 13:27:08 +0800
-Message-ID: <CAAfSe-uOkPd+T98N8SqytcTQD=L0VR_SAw3SGKAKT_gHuLaPcg@mail.gmail.com>
-Subject: Re: [PATCH V7 12/12] arm64: dts: add clocks for SC9860
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180111211948.GL28313@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5 January 2018 at 07:01, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Jan 4, 2018 at 10:34 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Thu, Dec 7, 2017 at 1:57 PM, Chunyan Zhang
->> <chunyan.zhang@spreadtrum.com> wrote:
->>> Some clocks on SC9860 are in the same address area with syscon devices,
->>> those are what have a property of 'sprd,syscon' which would refer to
->>> syscon devices, others would have a reg property indicated their address
->>> ranges.
->>>
->>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->>> ---
->>>  arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
->>>  arch/arm64/boot/dts/sprd/whale2.dtsi |  18 +++++-
->>>  2 files changed, 131 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
->>> index 7b7d8ce..bf03da4 100644
->>> --- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
->>> +++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
->>> @@ -7,6 +7,7 @@
->>>   */
->>>
->>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +#include <dt-bindings/clock/sprd,sc9860-clk.h>
->>>  #include "whale2.dtsi"
->>
->> This caused a build error since the sprd,sc9860-clk.h file does not
->> exist, I'll revert or undo the patch tomorrow.
->
-> I've taken another look, and fixing it by removing the broken #include
-> was easier than undoing the patches, so I did that now, see
-> https://patchwork.kernel.org/patch/10145773/
+On Thu, Jan 11, 2018 at 01:19:48PM -0800, Stephen Boyd wrote:
+> On 01/10, Fabio Estevam wrote:
+> > Hi,
+> > 
+> > Bootling linux-next 20180110 on a imx53-qsb leads to the following
+> > warning that gets repeated several times:
+> > 
+> > 
+> > [    2.776154] ------------[ cut here ]------------
+> > [    2.780909] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:802
+> > clk_core_disable+0xc4/0xe0
+> 
+> We have two WARN_ON in this function. Do you know which one hit
+> (makes me think we should put a printk in here now and also
+> include the clk name).
 
-Ok, thanks Arnd!
+It's the one in line 802 as noted above :-)
+ 
+Uwe
 
-Chunyan
-
->
->       Arnd
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
