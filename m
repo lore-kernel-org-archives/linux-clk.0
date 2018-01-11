@@ -1,59 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs3.siol.net ([213.250.19.136]:40708 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752673AbeABIbM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jan 2018 03:31:12 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-sunxi] [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
-Date: Tue, 02 Jan 2018 09:31:05 +0100
-Message-ID: <3000562.rVDEqMHngn@jernej-laptop>
-In-Reply-To: <2823749.lCJ0TQNemj@ice-x220i>
-References: <20171230113043.30237-1-icenowy@aosc.io> <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com> <2823749.lCJ0TQNemj@ice-x220i>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20180110224838.16711-8-paul@crapouillou.net>
+References: <20180101143344.2099-1-paul@crapouillou.net> <20180110224838.16711-1-paul@crapouillou.net>
+ <20180110224838.16711-8-paul@crapouillou.net>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 11 Jan 2018 08:53:22 -0600
+Message-ID: <CAL_Jsq+StZS1+qTd9CG1X2_3ay5onMgEmYG9MRUVWs-4K4-EZA@mail.gmail.com>
+Subject: Re: [PATCH v3 8/9] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones <lee.jones@linaro.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Wed, Jan 10, 2018 at 4:48 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+> This driver will use the TCU (Timer Counter Unit) present on the Ingenic
+> JZ47xx SoCs to provide the kernel with a clocksource and timers.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/clocksource/Kconfig         |   8 ++
+>  drivers/clocksource/Makefile        |   1 +
+>  drivers/clocksource/timer-ingenic.c | 258 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 267 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-ingenic.c
+>
+>  v2: Use SPDX identifier for the license
+>  v3: - Move documentation to its own patch
+>      - Search the devicetree for PWM clients, and use all the TCU
+>            channels that won't be used for PWM
 
-Dne torek, 02. januar 2018 ob 09:14:37 CET je Icenowy Zheng napisal(a):
-> 在 2018年1月2日星期二 CST 下午4:11:04，Chen-Yu Tsai 写道：
-> 
-> > On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> > > The H3/H5 SoCs have a HDMI output and a TV Composite output.
-> > > 
-> > > Add simplefb nodes for these outputs.
-> > > 
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
-> > > Changes in v4:
-> > > - Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
-> > > 
-> > >   clocks that are needed to display framebuffer to the monitor.
-> > 
-> > Looks good. I assume you've tested this? It does continue to work
-> > with the bus and DDC clocks disabled, right?
-> 
-> Yes. This patchset is tested in Orange Pi PC and SoPine w/ Baseboard "Model
-> A".
+[...]
 
-I think DDC clock is misnamed and according to DW HDMI binding should be named 
-ISFR (clock for special function registers). I did few test tests when writing 
-U-Boot driver and it has to be enabled all the time for driver to work 
-correctly. I did few additional tests few days back - if only DDC clock is 
-enabled and PLL video/HDMI clock disabled, DW HDMI registers are accessible.
+> +static int __init ingenic_tcu_init(struct device_node *np)
+> +{
+> +       unsigned long available_channels = GENMASK(NUM_CHANNELS - 1, 0);
+> +       struct device_node *node;
+> +       struct ingenic_tcu *tcu;
+> +       unsigned int i, channel;
+> +       int err;
+> +       u32 val;
+> +
+> +       for_each_node_with_property(node, "pwms") {
+> +               err = of_property_read_u32_index(node, "pwms", 1, &val);
 
-I guess DDC clock in your case is not needed because controller is already 
-configured correctly.
+This is the right idea, but a bit fragile. Perhaps its good enough for
+your platform, but it would fail if you have another PWM provider like
+the gpio-pwm binding or the cell size is not 1 (BTW, I thought the PWM
+binding defined 3 cells typically).
 
-Best regards,
-Jernej
-
-
+Rob
