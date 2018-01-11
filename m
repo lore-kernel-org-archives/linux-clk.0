@@ -1,67 +1,162 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 2/9] dt-bindings: ingenic: Add DT bindings for TCU clocks
-Date: Wed, 10 Jan 2018 23:48:31 +0100
-Message-Id: <20180110224838.16711-2-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+Return-Path: <aford173@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com> <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+ <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com> <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
+ <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com> <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+ <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+ <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com> <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
+ <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com> <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
+ <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com> <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
+ <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com> <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
+ <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Thu, 11 Jan 2018 15:34:12 -0600
+Message-ID: <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This header provides clock numbers for the ingenic,tcu
-DT binding.
+On Thu, Jan 11, 2018 at 3:04 PM, David Lechner <david@lechnology.com> wrote:
+> On 01/11/2018 02:58 PM, Adam Ford wrote:
+>>
+>> On Thu, Jan 11, 2018 at 2:04 PM, David Lechner <david@lechnology.com>
+>> wrote:
+>>>
+>>> On 01/11/2018 12:50 PM, Adam Ford wrote:
+>>>>
+>>>>
+>>>> On Thu, Jan 11, 2018 at 12:29 PM, David Lechner <david@lechnology.com>
+>>>> wrote:
+>>>>>
+>>>>>
+>>>>> If removing the "clk_ignore_unused" option causes the board to not
+>>>>> boot,
+>>>>> then we still have problems that need to be fixed, so please also test
+>>>>> without this option.
+>>>>
+>>>>
+>>>>
+>>>> Without this option, it still does not boot.  Without device tree it
+>>>> hangs after:
+>>>>
+>>>> [snip]
+>>>>
+>>>> NET: Registered protocol family 17
+>>>> Loading compiled-in X.509 certificates
+>>>> console [netcon0] enabled
+>>>> netconsole: network logging started
+>>>> davinci_emac davinci_emac.1: using random MAC addr: 5e:38:1a:1f:4f:77
+>>>> mmc0: host does not support reading read-only switch, assuming
+>>>> write-enable
+>>>> hctosys: unable to open rtc device (rtc0)
+>>>> mmc0: new high speed SDHC card at address b368
+>>>>
+>>>>
+>>>> With device tree it hangs after:
+>>>>
+>>>> [snip]
+>>>> mmc0: host does not support reading read-only switch, assuming
+>>>> write-enable
+>>>> mmc0: new high speed SDHC card at address b368
+>>>> mmcblk0: mmc0:b368 00000 3.75 GiB
+>>>>    mmcblk0: p1 p2
+>>>> pca953x 0-0020: 0-0020 supply vcc not found, using dummy regulator
+>>>> pca953x 0-0020: failed reading register
+>>>> pca953x: probe of 0-0020 failed with error -121
+>>>> console [netcon0] enabled
+>>>> netconsole: network logging started
+>>>> davinci_emac 1e20000.ethernet: incompatible machine/device type for
+>>>> reading mac address
+>>>> hctosys: unable to open rtc device (rtc0)
+>>>>
+>>>>
+>>>
+>>> Please try this change:
+>>>
+>>> diff --git a/drivers/clk/davinci/psc-da850.c
+>>> b/drivers/clk/davinci/psc-da850.c
+>>> index 3fd6b49..a526cc2 100644
+>>> --- a/drivers/clk/davinci/psc-da850.c
+>>> +++ b/drivers/clk/davinci/psc-da850.c
+>>> @@ -17,7 +17,7 @@ static const struct davinci_psc_clk_info
+>>> da850_psc0_info[]
+>>> __initconst = {
+>>>          LPSC(0, 0, tpcc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>          LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>          LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>> -       LPSC(3, 0, aemif, pll0_sysclk3, 0),
+>>> +       LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
+>>>          LPSC(4, 0, spi0, pll0_sysclk2, 0),
+>>>          LPSC(5, 0, mmcsd0, pll0_sysclk2, 0),
+>>>          LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
+>>>
+>>>
+>>>
+>>> If that does not work, try adding LPSC_ALWAYS_ENABLED to all of the
+>>> clocks
+>>> in this file and then eliminate them one by one until you find which one
+>>> is
+>>> preventing boot.
+>>>
+>> Unfortunately, that didn't work.  I switch all the entries in both
+>> tables that had a 0 to LPSC_ALWAYS_ENABLED, but no luck booting.
+>>
+>>> If it still does not boot, there is a similar DIVCLK_ALWAYS_ENABLED flag
+>>> in
+>>> drivers/clk/davinci/pll-da850.c that you can repeat the exercise with.
+>>> Add
+>>> DIVCLK_ALWAYS_ENABLED to all of the clocks there and then eliminate it
+>>> one
+>>> by one until you find the clock that is causing the problem.
+>>
+>>
+>> Still no good news.  I switched all the entries with a 0 to
+>> DIVCLK_ALWAYS_ENABLED and it still didn't finish booting.
+>>
+>> I wonder if Sekhar Nori might have some suggestions.  I didn't look at
+>> the code or try to understand it.  I just changed the settings.
+>>>
+>>>
+>
+> Even if a clock had another flag besides zero, you will need to add
+> LPSC_ALWAYS_ENABLED by or-ing it with the other flag.
+>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
+[snip]
 
- v2: Use SPDX identifier for the license
- v3: No change
 
-diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-new file mode 100644
-index 000000000000..179815d7b3bb
---- /dev/null
-+++ b/include/dt-bindings/clock/ingenic,tcu.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,tcu DT binding.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+
-+#define JZ4740_CLK_TIMER0	0
-+#define JZ4740_CLK_TIMER1	1
-+#define JZ4740_CLK_TIMER2	2
-+#define JZ4740_CLK_TIMER3	3
-+#define JZ4740_CLK_TIMER4	4
-+#define JZ4740_CLK_TIMER5	5
-+#define JZ4740_CLK_TIMER6	6
-+#define JZ4740_CLK_TIMER7	7
-+#define JZ4740_CLK_WDT		8
-+#define JZ4740_CLK_LAST		JZ4740_CLK_WDT
-+
-+#define JZ4770_CLK_OST		9
-+#define JZ4770_CLK_LAST		JZ4770_CLK_OST
-+
-+#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
--- 
-2.11.0
+Thanks for clarifying.  I was able to make it work with the following patch:
+
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+index 3b4583d..a76b8682 100644
+--- a/drivers/clk/davinci/psc-da850.c
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -25,7 +25,7 @@ static const struct davinci_psc_clk_info
+da850_psc0_info[] __initconst = {
+        LPSC(9, 0, uart0, pll0_sysclk2, 0),
+        LPSC(13, 0, pruss, pll0_sysclk2, 0),
+        LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
+-       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
++       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET |
+LPSC_ALWAYS_ENABLED),
+        { }
+ };
+
+
+If you have an updated patch series with those two fixes, I add my
+name to the tested-by list.
+
+
+>
+>
+[snip]
+>
