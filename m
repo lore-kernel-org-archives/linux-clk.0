@@ -1,53 +1,71 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:55836 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeABPJD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:03 -0500
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 02/15] clk: ingenic: Fix recalc_rate for clocks with fixed divider
-Date: Tue,  2 Jan 2018 16:08:35 +0100
-Message-Id: <20180102150848.11314-2-paul@crapouillou.net>
-In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net>
+Received: from mail.free-electrons.com ([62.4.15.54]:54354 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934772AbeAKPj3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jan 2018 10:39:29 -0500
+Date: Thu, 11 Jan 2018 16:39:28 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi-ng: defaultly enable DE2 CCU for sun8i/sun50i
+Message-ID: <20180111153928.qys3efun4jjrx4pz@flea.lan>
+References: <20180111030451.9217-1-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fhqkf5mtjzbmefeo"
+In-Reply-To: <20180111030451.9217-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously, the clocks with a fixed divider would report their rate
-as being the same as the one of their parent, independently of the
-divider in use. This commit fixes this behaviour.
 
-This went unnoticed as neither the jz4740 nor the jz4780 CGU code
-have clocks with fixed dividers yet.
+--fhqkf5mtjzbmefeo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ingenic/cgu.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jan 11, 2018 at 11:04:51AM +0800, Icenowy Zheng wrote:
+> As DE2 support for more SoCs are introducing, there's many reports that
+> the DE2 is not functional due to DE2 CCU code not included in kernel.
+>=20
+> Defaultly enable DE2 CCU for sun8i/sun50i to reduce this kind of
+> problems.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
- v2: No changes
- v3: No changes
- v4: No changes
- v5: No changes
+One way to avoid this would have been to add the symbol to the sunxi
+and multi_v7 defconfigs...
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index ab393637f7b0..a2e73a6d60fd 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 		div *= clk_info->div.div;
- 
- 		rate /= div;
-+	} else if (clk_info->type & CGU_CLK_FIXDIV) {
-+		rate /= clk_info->fixdiv.div;
- 	}
- 
- 	return rate;
--- 
-2.11.0
+You're also adding a depends on. This should be explained or at least
+mentionned in your commit log.
 
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--fhqkf5mtjzbmefeo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXhS8ACgkQ0rTAlCFN
+r3Te/w/+MSz8pNeBDrNgX6H9KX+0ZR8NxKwzpqJzIRZf7QfbceS6RFxkinF8gFxE
+9cp6OSJb1yXQrsCbRolYrRzYwteXnx30jIqaS9/8mw9WIeFRiQDvzqXlyfE4BN7E
+e9MReV9SJ6tannusF6z+UZs0KqE8tIbBG4bsOC0/03P6lJdSnsxpDJCXdvBRl21N
+vjSa+4YuRnQf+PGzD3HOnZNLz3bbdppqWwDvaHsdTXIO3HYSMTZ8I+4zTBBau9O1
+k8llCx8Ol50ar73b4IGmCbw00gm0Gc8wxF+3fS0hpJev0C/lR8yL11DeQEk4xeeR
+NUriNAJpUKBzDt4SE0OXaTvKXFE222nw3sDdKN6mkIPGbzaq4/GwyGXaivryRBD7
+cfEc1BlvzJLc829PcxgPe119bwxW3Y5+iplCOyBoZF8tTBPggly+sBJxJub//7KC
+rZzmtIrZme4j9I7yGUFb+sMb04NEy6Yx+0oSrFe41q5lEk8x6n4GEhS2g+a3tzdk
+y236B22qtE/0tJn2H/CZ6JDmPO4Vo5SkHmExqd45o9gfsi+pRPJQi2o3NJX99mqh
+O/mVTMKeubRf0dta6EQUtBRgmyoVsL5tXqyiJTeWkmov3Ug/RP2SH8/4tX5FDCTb
+7TDnn2w7f2e8wWv9puswNlnlomqYTXgT6/wLG92T8/bZXNZaR7g=
+=gtsa
+-----END PGP SIGNATURE-----
+
+--fhqkf5mtjzbmefeo--
