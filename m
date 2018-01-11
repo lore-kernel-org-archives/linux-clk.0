@@ -1,47 +1,35 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Adam Ford <aford173@gmail.com>, Sekhar Nori <nsekhar@ti.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com>
+ <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+ <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
+ <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
+ <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
+ <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+ <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
+Date: Wed, 10 Jan 2018 20:50:25 -0600
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1517343778-27902-8-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-8-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 31 Jan 2018 09:43:49 +0100
-Message-ID: <CAMuHMdVY5XMN01diHN4h_yF+u9KJs8oQ8U89FMOVEg0E22ivyw@mail.gmail.com>
-Subject: Re: [RFC v3 07/25] ARM: dts: r8a7793: Adjust SMP routine size
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adjusts the definition of the SMP routine size according
-> to the latest changes made by commit:
-> "ARM: shmobile: Add watchdog support"
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+On 01/10/2018 04:24 PM, Adam Ford wrote:
+> 
+> I am available tomorrow to build and test patches against the
+> da850-evm.  I just need to know which version(s) to test.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Great. As per the cover letter:
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+You can find a working branch with everything included in the "common-clk-v5"
+branch of https://github.com/dlech/ev3dev-kernel.git.
