@@ -1,67 +1,88 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 11 Jan 2018 15:45:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 23/25] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:56 +0000
-Message-Id: <1517343778-27902-24-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 17/44] dt-bindings: clock: Add bindings for DA8XX
+ CFGCHIP gate clocks
+Message-ID: <20180111214516.quplp3kwwfrzocfp@rob-hp-laptop>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-18-git-send-email-david@lechnology.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1515377863-20358-18-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7794 dtsi.
+On Sun, Jan 07, 2018 at 08:17:16PM -0600, David Lechner wrote:
+> This adds a new binding for the gate clocks present in the CFGCHIP syscon
+> registers in TI DA8XX SoCs. There are actually other gate clocks in this
+> block that could be added in the future, but TBCLK is currently the only
+> one being used.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v3:
-* rwdt moved before gpio@e6050000
+Like how many? 2 more?, then fine. 20 more, then perhaps cfgchip should 
+be the clock provider.
 
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+In any case, I'd prefer to see all the cfgchip clocks documented in one 
+doc.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index e47c5f4..1c9b149 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -119,6 +119,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7794-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7794",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.7.4
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  .../clock/ti/davinci/da8xx-cfgchip-gate.txt        | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
+> new file mode 100644
+> index 0000000..55821b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
+> @@ -0,0 +1,38 @@
+> +Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP gate clocks
+> +
+> +TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
+> +registers call CFGCHIPn. Some of these registers function as clock
+> +gates. This document describes the bindings for those clocks.
+> +
+> +Required properties:
+> +- compatible: shall be "ti,da830-tbclk".
+> +- #clock-cells: from common clock binding; shall be set to 0.
+> +- clocks: phandle to the parent clock
+> +
+> +Optional properties:
+> +- clock-output-names: from common clock binding.
+> +
+> +Parent:
+> +This node must be a child of a "ti,da830-cfgchip" node.
+> +
+> +Assignment:
+> +The assigned-clocks and assigned-clock-parents from the common clock bindings
+> +can be used to indicate which parent clock should be used.
+> +
+> +Examples:
+> +
+> +	cfgchip: syscon@1417c {
+> +		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
+> +		reg = <0x1417c 0x14>;
+> +
+> +		ehrpwm_tbclk: tbclk {
+> +			compatible = "ti,da830-tbclk";
+> +			#clock-cells = <0>;
+> +			clocks = <&psc1 17>;
+> +			clock-output-names = "ehrpwm_tbclk";
+> +		};
+> +	};
+> +
+> +Also see:
+> +- Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> -- 
+> 2.7.4
+> 
