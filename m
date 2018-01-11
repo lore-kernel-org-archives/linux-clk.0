@@ -1,84 +1,44 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 02/12] clk: sunxi-ng: Change formula for NKMP PLLs
-Date: Wed, 10 Jan 2018 20:25:02 +0100
-Message-Id: <20180110192512.19684-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:45134 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754098AbeAKDFW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Jan 2018 22:05:22 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] clk: sunxi-ng: defaultly enable DE2 CCU for sun8i/sun50i
+Date: Thu, 11 Jan 2018 11:04:51 +0800
+Message-Id: <20180111030451.9217-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit changes formula from this:
+As DE2 support for more SoCs are introducing, there's many reports that
+the DE2 is not functional due to DE2 CCU code not included in kernel.
 
-Freq = (parent_freq * N * K) / (M * P)
+Defaultly enable DE2 CCU for sun8i/sun50i to reduce this kind of
+problems.
 
-to this:
-
-Freq = (parent_freq / M) * N * K / P
-
-This improves situation when N is in the range 1-255. PLL parent clock
-is almost always 24 MHz, which means that for N >= 180 original formula
-overflows and result becomes useless. Situation can be improved if M is
-used as predivider as it can be seen in the second formula. That way at
-least M > 1 is considered, but it still leaves small gap for wrong result
-when M = 1 and N >= 180.
-
-Using M as predivider shouldn't cause any issue, because it is in range
-1-4 at most, so there is no or only minimal rounding error.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/sunxi-ng/ccu_nkmp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/sunxi-ng/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index a99068a08315..e6c996ad4483 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -33,7 +33,7 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 				for (_p = nkmp->min_p; _p <= nkmp->max_p; _p <<= 1) {
- 					unsigned long tmp_rate;
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 6427d0ebe2de..c2b04dcb6f18 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -60,6 +60,8 @@ config SUN8I_V3S_CCU
  
--					tmp_rate = parent * _n * _k / (_m * _p);
-+					tmp_rate = (parent / _m) * _n * _k / _p;
+ config SUN8I_DE2_CCU
+ 	bool "Support for the Allwinner SoCs DE2 CCU"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
  
- 					if (tmp_rate > rate)
- 						continue;
-@@ -107,7 +107,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	p = reg >> nkmp->p.shift;
- 	p &= (1 << nkmp->p.width) - 1;
- 
--	return (parent_rate * n * k >> p) / m;
-+	return (parent_rate / m) * n * k >> p;
- }
- 
- static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -127,7 +127,7 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
- 
--	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
-+	return (*parent_rate / _nkmp.m) * _nkmp.n * _nkmp.k / _nkmp.p;
- }
- 
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ config SUN8I_R40_CCU
+ 	bool "Support for the Allwinner R40 CCU"
 -- 
-2.15.1
+2.14.2
+
