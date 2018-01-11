@@ -1,53 +1,42 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 05/34] clk: at91: update clk_pll_get_best_div_mul to return unsigned long
-Date: Mon,  1 Jan 2018 19:42:44 +0000
-Message-Id: <1514835793-1104-6-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 17/44] dt-bindings: clock: Add bindings for DA8XX
+ CFGCHIP gate clocks
+To: Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+ Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-18-git-send-email-david@lechnology.com>
+ <20180111214516.quplp3kwwfrzocfp@rob-hp-laptop>
+From: David Lechner <david@lechnology.com>
+Message-ID: <fa5f1bff-42e7-0c1e-5f35-58493336ee74@lechnology.com>
+Date: Thu, 11 Jan 2018 15:51:45 -0600
+MIME-Version: 1.0
+In-Reply-To: <20180111214516.quplp3kwwfrzocfp@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_pll_get_best_div_mul() returns a value directly as the return
-value to round_rate(). clk_ops->round_rate() has been changed to an
-unsigned long so for the sake of completeness and neatness this patch
-updates the helper function to return the same data-type.
+On 01/11/2018 03:45 PM, Rob Herring wrote:
+> On Sun, Jan 07, 2018 at 08:17:16PM -0600, David Lechner wrote:
+>> This adds a new binding for the gate clocks present in the CFGCHIP syscon
+>> registers in TI DA8XX SoCs. There are actually other gate clocks in this
+>> block that could be added in the future, but TBCLK is currently the only
+>> one being used.
+> 
+> Like how many? 2 more?, then fine. 20 more, then perhaps cfgchip should
+> be the clock provider.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/at91/clk-pll.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Like, one more. Same goes for the mux clock. The USB PHY clocks are also
+part of the CFGCHIP.
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 4e7da3e..630203e 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -147,10 +147,11 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 	return (parent_rate / div) * (mul + 1);
- }
- 
--static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
--				     unsigned long parent_rate,
--				     u32 *div, u32 *mul,
--				     u32 *index) {
-+static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
-+					      unsigned long rate,
-+					      unsigned long parent_rate,
-+					      u32 *div, u32 *mul, u32 *index)
-+{
- 	const struct clk_pll_layout *layout = pll->layout;
- 	const struct clk_pll_characteristics *characteristics =
- 							pll->characteristics;
--- 
-2.7.4
+All of these clocks are randomly spread out, so I didn't really see a logical
+way to make a single clock provider with #clock-cells = <1>.
+
+> 
+> In any case, I'd prefer to see all the cfgchip clocks documented in one
+> doc.
+
+I will do that.
