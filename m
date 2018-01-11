@@ -1,53 +1,153 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	yang.zheng@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 1/7] clk: rockchip: fix hclk_vio_niu on rk3328
-Date: Mon, 22 Jan 2018 15:15:24 +0100
-Message-Id: <20180122141530.12398-2-heiko@sntech.de>
-In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
-References: <20180122141530.12398-1-heiko@sntech.de>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-2-git-send-email-david@lechnology.com>
+ <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
+ <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
+ <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
+ <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
+ <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <6ecfacde-64e4-0e9e-a44f-a3f28b3109dd@lechnology.com>
+Date: Wed, 10 Jan 2018 20:54:12 -0600
+MIME-Version: 1.0
+In-Reply-To: <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock wrongly was called hclk_vio and exported, while it actually is
-a clock of the interconnect-vio connection and should therefore be always
-on till we actually model the interconnect.
+On 01/10/2018 12:52 PM, Sekhar Nori wrote:
+> On Wednesday 10 January 2018 08:31 AM, David Lechner wrote:
+>> On 01/09/2018 06:35 AM, Sekhar Nori wrote:
+>>> On Monday 08 January 2018 09:59 PM, David Lechner wrote:
+>>>> On 01/08/2018 08:00 AM, Sekhar Nori wrote:
+>>>>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> 
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> new file mode 100644
+>>>>>> index 0000000..99bf5da
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>>>> @@ -0,0 +1,47 @@
+>>>>>> +Binding for TI DaVinci PLL Controllers
+>>>>>> +
+>>>>>> +The PLL provides clocks to most of the components on the SoC. In
+>>>>>> addition
+>>>>>> +to the PLL itself, this controller also contains bypasses, gates,
+>>>>>> dividers,
+>>>>>> +an multiplexers for various clock signals.
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible: shall be one of:
+>>>>>> +    - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>>>>> +    - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>>>>>
+>>>>> These PLLs are same IP so they should use the same compatible. You can
+>>>>> initialize both PLLs for DA850 based on the same compatible.
+>>>>>
+>>>>
+>>>> But they are not exactly the same. For example, PLL0 has 7 PLLDIV clocks
+>>>> while
+>>>> PLL1 only has 3. PLL0 has PREDIV while PLL1 does not. PLL0 has certain
+>>>> SYSCLKs
+>>>> that are fixed-ratio but PLL1 does not have any of these. There are even
+>>>> more
+>>>> differences, but these are the ones we are actually using.
+>>>
+>>> We need each element of the PLLC to be modeled individually as a clock
+>>> node.
+>>
+>> I gave this a good think while I have been working on this series
+>> and I came to the conclusion that we really don't need to do this.
+>> These components are all internal to the PLL IP block, so the
+>> compatible string is enough to tell us what we have. They only
+>> thing we need really in the device tree bindings are the connections
+>> that are external to the IP block.
+>>
+>>
+>>> That is, PLL should only model the multiplier, the dividers
+>>> including post and prediv should be modeled as divider clocks (hopefully
+>>> being able to use the clk-divider.c library). The sysclks can be
+>>> fixed-factor-clock type clocks.
+>>>
+>>> Without this flexible mechanism, we cannot (at least later) model things
+>>> like DIV4.5 clock which is the only clock which derives from the output
+>>> of PLL multiplier before the post divider is applied.
+>>>
+>>> Since with DT there are are no retakes, we need to get this right the
+>>> first time and modifying later will not be an option.
+>>>
+>>
+>> So, the full device tree binding would look something like this:
+>>
+>> +
+>> +    pll0: clock-controller@11000 {
+>> +        compatible = "ti,da850-pll0";
+>> +        reg = <0x11000 0x1000>;
+>> +        clocks = <&ref_clk>, <&pll1_sysclk 3>, <&pll1_obsclk>;
+>> +        clock-names = "oscin", pll1_sysclk3", "pll1_osbclk";
+>> +        oscin-square-wave;
+>> +
+>> +        pll0_sysclk: sysclk {
+>> +            #clock-cells = <1>;
+>> +        };
+>> +
+>> +        pll0_auxclk: auxclk {
+>> +            #clock-cells = <0>;
+>> +        };
+>> +
+>> +        pll0_div45: div4.5 {
+>> +            #clock-cells = <0>;
+>> +        };
+>> +
+>> +        pll0_obsclk: obsclk {
+>> +            #clock-cells = <0>;
+>> +            assigned-clocks = <&pll0_sysclk 1>;
+>> +            assigned-clock-names = "ocsrc";
+>> +        };
+>> +    };
+> 
+> Well, I guess this will work as well. And I am probably biased towards
+> the style I mentioned because AM335x and other TI OMAP processors
+> follow that.
+> 
+> To make it easy to review that we have all bases covered, can you model
+> the all PLLC0 and PLLC1 (input and output) clocks for the next version?
 
-So fix that and don't export it as HCLK_VIO.
+Sure thing.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3328.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index b04f29774ee7..17816aec206a 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -727,7 +727,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	GATE(0, "pclk_vio_h2p", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(21), 13, GFLAGS),
- 	GATE(0, "hclk_vio_h2p", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(21), 14, GFLAGS),
- 	GATE(HCLK_HDCP, "hclk_hdcp", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 0, GFLAGS),
--	GATE(HCLK_VIO, "hclk_vio", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 1, GFLAGS),
-+	GATE(0, "hclk_vio_niu", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 1, GFLAGS),
- 	GATE(PCLK_HDMI, "pclk_hdmi", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 4, GFLAGS),
- 	GATE(PCLK_HDCP, "pclk_hdcp", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 5, GFLAGS),
- 
-@@ -861,6 +861,7 @@ static const char *const rk3328_critical_clocks[] __initconst = {
- 	"aclk_rga_niu",
- 	"pclk_vio_h2p",
- 	"hclk_vio_h2p",
-+	"hclk_vio_niu",
- };
- 
- static void __init rk3328_clk_init(struct device_node *np)
--- 
-2.14.2
+> 
+>>
+>> There are three clocks coming into the IP block and there are 11 clocks
+>> going out (sysclk is 7 clocks). And you can specify the board-specific
+>> configuration, like having the "oscin-square-wave" flag when a square wave
+>> is used instead of a crystal oscillator and you can assign the multiplexer
+> 
+> Ideally the OSCIN vs CLKIN selection should be another clock mux whose
+> output is one of the input clocks to PLL controller. But I can see the
+> difficulty in handling that as the mux itself is controlled by the PLL
+> controller.
+> 
+>> input that will be used by obsclk. (And, this binding is totally compatible
+>> with the binding I have already proposed - although, I see now it would
+>> be better to go ahead and add the clocks-names property.)
+> 
+> Also, please add the oscin-square-wave to the binding definition too.
+> 
+> For the benefit of others reviewing and not familiar with the hardware,
+> the users guide for DA850 is here:
+> http://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
+> 
+> and the PLL block diagram is on page 143 (Figure 8-1).
+> 
+> Thanks,
+> Sekhar
+> 
