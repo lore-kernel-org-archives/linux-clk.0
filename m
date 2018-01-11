@@ -1,51 +1,45 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v3 27/34] clk: ti: composite: change clk_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:43:06 +0000
-Message-Id: <1514835793-1104-28-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20180106041813.46256-1-icenowy@aosc.io>
+References: <20180106041813.46256-1-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 11 Jan 2018 10:36:39 +0100
+Message-ID: <CACRpkdY3xY-7-YTCS=QmRQ3hmXiJZ_2M=ZhJRTTMx7XNfXRRSw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Initial Allwinner H6 support
+To: Icenowy Zheng <icenowy@aosc.io>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-gpio@vger.kernel.org, linux-sunxi <linux-sunxi@googlegroups.com>,
+ Rob Herring <robh+dt@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Sat, Jan 6, 2018 at 5:18 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+> This patchset adds initial support for the Allwinner H6 SoC.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/ti/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can I apply the pin control patches without the clock patches?
 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 2477cf1..0e82b61 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -38,7 +38,7 @@ static unsigned long ti_composite_round_rate(struct clk_hw *hw,
- 					     unsigned long rate,
- 					     unsigned long *prate)
- {
--	return -EINVAL;
-+	return 0;
- }
- 
- static int ti_composite_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.7.4
+Also waiting for Maxime and/or Chen-Yu to provide some review
+before merging this.
+
+Yours,
+Linus Walleij
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
