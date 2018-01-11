@@ -1,67 +1,169 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 19/25] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:52 +0000
-Message-Id: <1517343778-27902-20-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56336 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933299AbeAKKl3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Jan 2018 05:41:29 -0500
+Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+To: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180106042326.46519-1-icenowy@aosc.io>
+ <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
+ <08CB03C2-1253-4072-B8AC-D3F1253C8A85@aosc.io>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <7c3b4294-117a-c293-03d4-a35a823a796e@arm.com>
+Date: Thu, 11 Jan 2018 10:41:39 +0000
+MIME-Version: 1.0
+In-Reply-To: <08CB03C2-1253-4072-B8AC-D3F1253C8A85@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7743 SoC dtsi.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v3:
-* no change
+On 11/01/18 10:15, Icenowy Zheng wrote:
+> 
+> 
+> 于 2018年1月11日 GMT+08:00 下午6:08:19, Andre Przywara <andre.przywara@arm.com> 写到:
+>> Hi,
+>>
+>> On 06/01/18 04:23, Icenowy Zheng wrote:
+>>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+>>> have no bus gate clocks.
+>>>
+>>> Add support for this kind of pin controllers.
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30
+>> ++++++++++++++++++++----------
+>>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+>>>  2 files changed, 21 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> index 4b6cb25bc796..68cd505679d9 100644
+>>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct
+>> sunxi_pinctrl *pctl,
+>>>  	unsigned int hosc_div, losc_div;
+>>>  	struct clk *hosc, *losc;
+>>>  	u8 div, src;
+>>> -	int i, ret;
+>>> +	int i, ret, clk_count;
+>>> +
+>>> +	if (pctl->desc->without_bus_gate)
+>>> +		clk_count = 2;
+>>> +	else
+>>> +		clk_count = 3;
+>>>  
+>>>  	/* Deal with old DTs that didn't have the oscillators */
+>>>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") !=
+>> 3)
 
- arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Just spotted: I guess you wanted to compare against that computed value
+here?
+But I wonder if we can get rid of this check at all? Don't we rely on
+clock-names and input-debounce anyway? So we will bail out later anyway
+if the DT does not have those?
+Why do we need this check then?
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c2943d7..1d4505f 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -368,6 +368,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7743-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7743-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
--- 
-2.7.4
+>>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct
+>> platform_device *pdev,
+>>>  			goto gpiochip_error;
+>>>  	}
+>>>  
+>>> -	clk = devm_clk_get(&pdev->dev, NULL);
+>>> -	if (IS_ERR(clk)) {
+>>> -		ret = PTR_ERR(clk);
+>>> -		goto gpiochip_error;
+>>> -	}
+>>> +	if (!desc->without_bus_gate) {
+>>
+>> Do we really need explicit support for that case?
+>> Can't we have something that works automatically?
+> 
+> It can be a sanity check. When a SoC comes with bus gate
+> support but no apb is provided, there's something wrong.
+> 
+>>
+>> if (node has clock-names property)		(A)
+>> 	use clocks as enumerated and named there
+>> else if (node has one clock reference)		(B)
+>> 	use this as gate clock, no debounce support
+>> else if (node has no clock property at all)	(C)
+>> 	no gate clock needed, no debounce support
+> 
+> This should not happen in practice, as no gate clock is implemented
+> after debounce.
+
+But still you seem to somewhat support it with your changes above - by
+bailing out if there aren't two clocks.
+This kind of explicitly checking for a certain number of clocks sounds
+not very robust and future proof to me, hence the suggestion to get rid
+of it.
+
+Cheers,
+Andre.
+
+>>
+>> On top of that we should add the clock-names property to all DTs, even
+>> for those with only a "apb" clock. Shouldn't hurt existing kernels.
+>> Possibly even add debounce support for those on the way, if applicable.
+>>
+>> So we would just support case (B) and (C) for legacy reasons.
+>>
+>> Does that make sense?
+>>
+>> Cheers,
+>> Andre.
+>>
+>>> +		clk = devm_clk_get(&pdev->dev, NULL);
+>>> +		if (IS_ERR(clk)) {
+>>> +			ret = PTR_ERR(clk);
+>>> +			goto gpiochip_error;
+>>> +		}
+>>>  
+>>> -	ret = clk_prepare_enable(clk);
+>>> -	if (ret)
+>>> -		goto gpiochip_error;
+>>> +		ret = clk_prepare_enable(clk);
+>>> +		if (ret)
+>>> +			goto gpiochip_error;
+>>> +	} else {
+>>> +		clk = NULL;
+>>> +	}
+>>>  
+>>>  	pctl->irq = devm_kcalloc(&pdev->dev,
+>>>  				 pctl->desc->irq_banks,
+>>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct
+>> platform_device *pdev,
+>>>  	return 0;
+>>>  
+>>>  clk_error:
+>>> -	clk_disable_unprepare(clk);
+>>> +	if (clk)
+>>> +		clk_disable_unprepare(clk);
+>>>  gpiochip_error:
+>>>  	gpiochip_remove(pctl->chip);
+>>>  	return ret;
+>>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>> b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> index 11b128f54ed2..ccb6230f0bb5 100644
+>>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+>>>  	unsigned			irq_bank_base;
+>>>  	bool				irq_read_needs_mux;
+>>>  	bool				disable_strict_mode;
+>>> +	bool				without_bus_gate;
+>>>  };
+>>>  
+>>>  struct sunxi_pinctrl_function {
+>>>
