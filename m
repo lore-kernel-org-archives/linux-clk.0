@@ -1,36 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:45728 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750802AbeAPKGe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jan 2018 05:06:34 -0500
-Received: by mail-oi0-f54.google.com with SMTP id j129so10205813oib.12
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2018 02:06:34 -0800 (PST)
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 11 Jan 2018 13:18:39 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
+	wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 08/12] drm/sun4i: Add support for A83T second TCON
+Message-ID: <20180111121839.z2barh5shgfrfs3x@flea.lan>
+References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+ <20180110192512.19684-9-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <1516023719.10524.6.camel@pengutronix.de>
-References: <1516022463-12953-1-git-send-email-festevam@gmail.com> <1516023719.10524.6.camel@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 16 Jan 2018 08:06:33 -0200
-Message-ID: <CAOMZO5DxRJ1JY-uVcU9zXbFGEYrMxjEyPrxSsdKC5+oKA2SVMA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx51-imx53: Fix UART4/5 registration on i.MX50 and i.MX53
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yqyk7qmeenbq4if2"
+In-Reply-To: <20180110192512.19684-9-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
 
-On Mon, Jan 15, 2018 at 11:41 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+--yqyk7qmeenbq4if2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I think the cleanest solution would be to add the UART[123] gates
-> to the uart_clks_mx50_mx53 array as well, to remove the remaining
-> imx_register_uart_clocks from common init, and add it to
-> mx51_clocks_init instead.
+On Wed, Jan 10, 2018 at 08:25:08PM +0100, Jernej Skrabec wrote:
+> This TCON is connected to HDMI encoder.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Yes, I did as you suggested in v2.
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Thanks
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--yqyk7qmeenbq4if2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXVh4ACgkQ0rTAlCFN
+r3QWjg/9ERz2Z9SgOodVXhoBLT/K/URDsT4+bjBTzc5OvkXQSWK+QB4P2KhEGWsg
+8uDy38AdMEghM3g63yOttC11glw0RBUCfTxPN4Ccu9n1hi4CkTaHqfFM/ZyurRri
+NIa2+mwhIaiOlPHAozjrldH/ous7rLgcwDLoSE8DTuKw9kfm0dmVLB/mxTYk+2fK
+vgQfbKeZRKIKfpPS43f/YEzUqm0/w8HuV5UnWPy42vfPUlwJIv38/Z/TdoVAoDSz
+DKu47MX/DwqLKBvKbadbuSuUY/v5xeoBKQh1ToFbfA9eT5ws89Kz8WMerp5vnRMy
+5ojJlQb1t1OnMlIUUlbhENjlJM7SKBtYGE3kZ8O6ezBSsiJR8/HPtnbrgHuGOpf3
+4YwOg30iIOb5xhvwCFqQGTQ64d1Kw12U3dpJLpdnSyHoBN2nU1FXv9CWMls8faf4
+5tkP+0DxIDymyst8vgPutQBKEwj+8u49q7PvZKk0+0ityKdhgAVtTqrUrZyEacQ1
+FD8NJkyqTCGweHBY6zhHGepuZjehLmFzHDUJ6v6cah/dc9HaRxRWF0sKVCXHNmS6
+YqT66rKAHpGX52uDVseLKlqkxUyctYxSU5h/4hm+7AKzc02M0ZOTleQ9dG18TUX0
+gvbM5Cyw8VVpqKYPA0kPrh1rRcQsoM4B4bIYoODdo/mRlkcgfj4=
+=k3vJ
+-----END PGP SIGNATURE-----
+
+--yqyk7qmeenbq4if2--
