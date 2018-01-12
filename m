@@ -1,244 +1,558 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47114 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752140AbeAFE0q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jan 2018 23:26:46 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/7] pinctrl: sunxi: support pin controllers with holes among IRQ banks
-Date: Sat,  6 Jan 2018 12:23:21 +0800
-Message-Id: <20180106042326.46519-2-icenowy@aosc.io>
-In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
-References: <20180106042326.46519-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-3-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
+Date: Fri, 12 Jan 2018 14:51:54 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-3-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. This
-situation cannot be processed with the current pinctrl IRQ code, as it
-only expects a offset to all IRQ banks.
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds a new driver for mach-davinci PLL clocks. This is porting the
+> code from arch/arm/mach-davinci/clock.c to the common clock framework.
+> Additionally, it adds device tree support for these clocks.
+> 
+> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
+> compile errors until the clock code in arch/arm/mach-davinci is removed.
+> 
+> Note: although there are similar clocks for TI Keystone we are not able
+> to share the code for a few reasons. The keystone clocks are device tree
+> only and use legacy one-node-per-clock bindings. Also the register
+> layouts are a bit different, which would add even more if/else mess
+> to the keystone clocks. And the keystone PLL driver doesn't support
+> setting clock rates.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  MAINTAINERS                  |   6 +
+>  drivers/clk/Makefile         |   1 +
+>  drivers/clk/davinci/Makefile |   5 +
+>  drivers/clk/davinci/pll.c    | 564 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/davinci/pll.h    |  61 +++++
+>  5 files changed, 637 insertions(+)
+>  create mode 100644 drivers/clk/davinci/Makefile
+>  create mode 100644 drivers/clk/davinci/pll.c
+>  create mode 100644 drivers/clk/davinci/pll.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a6e86e2..1db0cf0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13554,6 +13554,12 @@ F:	arch/arm/mach-davinci/
+>  F:	drivers/i2c/busses/i2c-davinci.c
+>  F:	arch/arm/boot/dts/da850*
+>  
+> +TI DAVINCI SERIES CLOCK DRIVER
+> +M:	David Lechner <david@lechnology.com>
 
-Update the code to use a logical IRQ bank to hardware IRQ bank map, so
-the new situation in H6 main pin controller can be processed. The old
-special situation which uses a constant offset (on A33 and V3s, both
-with a offset of 1) can be also processed with the new code.
+Please also add:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c |  4 ++-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c |  4 ++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c     | 16 ++++++------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 41 +++++++++++++++++++++----------
- 4 files changed, 42 insertions(+), 23 deletions(-)
+R: Sekhar Nori <nsekhar@ti.com>
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-index da387211a75e..f043afa1aac5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-@@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[] = {
- 		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
- };
- 
-+static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data = {
- 	.pins = sun8i_a33_pins,
- 	.npins = ARRAY_SIZE(sun8i_a33_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_a33_pinctrl_irq_bank_map,
- 	.disable_strict_mode = true,
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-index 496ba34e1f5f..6704ce8e5e3d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-@@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
- 		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
- };
- 
-+static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data = {
- 	.pins = sun8i_v3s_pins,
- 	.npins = ARRAY_SIZE(sun8i_v3s_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_v3s_pinctrl_irq_bank_map,
- 	.irq_read_needs_mux = true
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 68cd505679d9..67ceb40fcb86 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -832,7 +832,7 @@ static void sunxi_pinctrl_irq_release_resources(struct irq_data *d)
- static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
--	u32 reg = sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_base);
-+	u32 reg = sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_map);
- 	u8 index = sunxi_irq_cfg_offset(d->hwirq);
- 	unsigned long flags;
- 	u32 regval;
-@@ -880,7 +880,7 @@ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
- {
- 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
- 	u32 status_reg = sunxi_irq_status_reg(d->hwirq,
--					      pctl->desc->irq_bank_base);
-+					      pctl->desc->irq_bank_map);
- 	u8 status_idx = sunxi_irq_status_offset(d->hwirq);
- 
- 	/* Clear the IRQ */
-@@ -890,7 +890,7 @@ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
- static void sunxi_pinctrl_irq_mask(struct irq_data *d)
- {
- 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
--	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
-+	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_map);
- 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
- 	unsigned long flags;
- 	u32 val;
-@@ -907,7 +907,7 @@ static void sunxi_pinctrl_irq_mask(struct irq_data *d)
- static void sunxi_pinctrl_irq_unmask(struct irq_data *d)
- {
- 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
--	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
-+	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_map);
- 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
- 	unsigned long flags;
- 	u32 val;
-@@ -999,7 +999,7 @@ static void sunxi_pinctrl_irq_handler(struct irq_desc *desc)
- 	if (bank == pctl->desc->irq_banks)
- 		return;
- 
--	reg = sunxi_irq_status_reg_from_bank(bank, pctl->desc->irq_bank_base);
-+	reg = sunxi_irq_status_reg_from_bank(bank, pctl->desc->irq_bank_map);
- 	val = readl(pctl->membase + reg);
- 
- 	if (val) {
-@@ -1237,7 +1237,7 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
- 		writel(src | div << 4,
- 		       pctl->membase +
- 		       sunxi_irq_debounce_reg_from_bank(i,
--							pctl->desc->irq_bank_base));
-+							pctl->desc->irq_bank_map));
- 	}
- 
- 	return 0;
-@@ -1417,10 +1417,10 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
- 	for (i = 0; i < pctl->desc->irq_banks; i++) {
- 		/* Mask and clear all IRQs before registering a handler */
- 		writel(0, pctl->membase + sunxi_irq_ctrl_reg_from_bank(i,
--						pctl->desc->irq_bank_base));
-+						pctl->desc->irq_bank_map));
- 		writel(0xffffffff,
- 		       pctl->membase + sunxi_irq_status_reg_from_bank(i,
--						pctl->desc->irq_bank_base));
-+						pctl->desc->irq_bank_map));
- 
- 		irq_set_chained_handler_and_data(pctl->irq[i],
- 						 sunxi_pinctrl_irq_handler,
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index ccb6230f0bb5..c9fc40506e48 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
- 	int				npins;
- 	unsigned			pin_base;
- 	unsigned			irq_banks;
--	unsigned			irq_bank_base;
-+	const unsigned int		*irq_bank_map;
- 	bool				irq_read_needs_mux;
- 	bool				disable_strict_mode;
- 	bool				without_bus_gate;
-@@ -264,12 +264,21 @@ static inline u32 sunxi_pull_offset(u16 pin)
- 	return pin_num * PULL_PINS_BITS;
- }
- 
--static inline u32 sunxi_irq_cfg_reg(u16 irq, unsigned bank_base)
-+static inline u32 sunxi_irq_hw_bank_num(u8 bank, const unsigned int *bank_map)
-+{
-+	if (!bank_map)
-+		return bank;
-+	else
-+		return bank_map[bank];
-+}
-+
-+static inline u32 sunxi_irq_cfg_reg(u16 irq, const unsigned int *bank_map)
- {
- 	u8 bank = irq / IRQ_PER_BANK;
- 	u8 reg = (irq % IRQ_PER_BANK) / IRQ_CFG_IRQ_PER_REG * 0x04;
- 
--	return IRQ_CFG_REG + (bank_base + bank) * IRQ_MEM_SIZE + reg;
-+	return IRQ_CFG_REG +
-+	       sunxi_irq_hw_bank_num(bank, bank_map) * IRQ_MEM_SIZE + reg;
- }
- 
- static inline u32 sunxi_irq_cfg_offset(u16 irq)
-@@ -278,16 +287,18 @@ static inline u32 sunxi_irq_cfg_offset(u16 irq)
- 	return irq_num * IRQ_CFG_IRQ_BITS;
- }
- 
--static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank, unsigned bank_base)
-+static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank,
-+					       const unsigned int *bank_map)
- {
--	return IRQ_CTRL_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_CTRL_REG +
-+	       sunxi_irq_hw_bank_num(bank, bank_map) * IRQ_MEM_SIZE;
- }
- 
--static inline u32 sunxi_irq_ctrl_reg(u16 irq, unsigned bank_base)
-+static inline u32 sunxi_irq_ctrl_reg(u16 irq, const unsigned int *bank_map)
- {
- 	u8 bank = irq / IRQ_PER_BANK;
- 
--	return sunxi_irq_ctrl_reg_from_bank(bank, bank_base);
-+	return sunxi_irq_ctrl_reg_from_bank(bank, bank_map);
- }
- 
- static inline u32 sunxi_irq_ctrl_offset(u16 irq)
-@@ -296,21 +307,25 @@ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
- 	return irq_num * IRQ_CTRL_IRQ_BITS;
- }
- 
--static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank, unsigned bank_base)
-+static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank,
-+						   const unsigned int *bank_map)
- {
--	return IRQ_DEBOUNCE_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_DEBOUNCE_REG +
-+	       sunxi_irq_hw_bank_num(bank, bank_map) * IRQ_MEM_SIZE;
- }
- 
--static inline u32 sunxi_irq_status_reg_from_bank(u8 bank, unsigned bank_base)
-+static inline u32 sunxi_irq_status_reg_from_bank(u8 bank,
-+						 const unsigned int *bank_map)
- {
--	return IRQ_STATUS_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_STATUS_REG +
-+	       sunxi_irq_hw_bank_num(bank, bank_map) * IRQ_MEM_SIZE;
- }
- 
--static inline u32 sunxi_irq_status_reg(u16 irq, unsigned bank_base)
-+static inline u32 sunxi_irq_status_reg(u16 irq, const unsigned int *bank_map)
- {
- 	u8 bank = irq / IRQ_PER_BANK;
- 
--	return sunxi_irq_status_reg_from_bank(bank, bank_base);
-+	return sunxi_irq_status_reg_from_bank(bank, bank_map);
- }
- 
- static inline u32 sunxi_irq_status_offset(u16 irq)
--- 
-2.14.2
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/clock/ti/davinci/
+> +F:	drivers/clk/davinci/
+> +
+>  TI DAVINCI SERIES GPIO DRIVER
+>  M:	Keerthy <j-keerthy@ti.com>
+>  L:	linux-gpio@vger.kernel.org
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f7f761b..c865fd0 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -60,6 +60,7 @@ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+>  obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+>  obj-y					+= bcm/
+>  obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+> +obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+>  obj-$(CONFIG_H8300)			+= h8300/
+>  obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+>  obj-y					+= imgtec/
+> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+> new file mode 100644
+> index 0000000..d9673bd
+> --- /dev/null
+> +++ b/drivers/clk/davinci/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +ifeq ($(CONFIG_COMMON_CLK), y)
+> +obj-y += pll.o
+> +endif
+> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+> new file mode 100644
+> index 0000000..46f9c18
+> --- /dev/null
+> +++ b/drivers/clk/davinci/pll.c
+> @@ -0,0 +1,564 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PLL clock driver for TI Davinci SoCs
+> + *
+> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
+> + *
+> + * Based on drivers/clk/keystone/pll.c
+> + * Copyright (C) 2013 Texas Instruments Inc.
+> + *	Murali Karicheri <m-karicheri2@ti.com>
+> + *	Santosh Shilimkar <santosh.shilimkar@ti.com>
+> + *
+> + * And on arch/arm/mach-davinci/clock.c
+> + * Copyright (C) 2006-2007 Texas Instruments.
+> + * Copyright (C) 2008-2009 Deep Root Systems, LLC
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
+> +
+> +#include "pll.h"
+> +
+> +#define REVID		0x000
+> +#define PLLCTL		0x100
+> +#define OCSEL		0x104
+> +#define PLLSECCTL	0x108
+> +#define PLLM		0x110
+> +#define PREDIV		0x114
+> +#define PLLDIV1		0x118
+> +#define PLLDIV2		0x11c
+> +#define PLLDIV3		0x120
+> +#define OSCDIV		0x124
+> +#define POSTDIV		0x128
+> +#define BPDIV		0x12c
+> +#define PLLCMD		0x138
+> +#define PLLSTAT		0x13c
+> +#define ALNCTL		0x140
+> +#define DCHANGE		0x144
+> +#define CKEN		0x148
+> +#define CKSTAT		0x14c
+> +#define SYSTAT		0x150
+> +#define PLLDIV4		0x160
+> +#define PLLDIV5		0x164
+> +#define PLLDIV6		0x168
+> +#define PLLDIV7		0x16c
+> +#define PLLDIV8		0x170
+> +#define PLLDIV9		0x174
+> +
+> +#define PLLCTL_PLLEN	BIT(0)
+> +#define PLLCTL_PLLPWRDN	BIT(1)
+> +#define PLLCTL_PLLRST	BIT(3)
+> +#define PLLCTL_PLLDIS	BIT(4)
+> +#define PLLCTL_PLLENSRC	BIT(5)
+> +#define PLLCTL_CLKMODE	BIT(8)
+> +
+> +#define PLLM_MASK		0x1f
+> +#define PREDIV_RATIO_MASK	0x1f
 
+May be use the mode modern GENMASK()?
+
+> +#define PREDIV_PREDEN		BIT(15)
+> +#define PLLDIV_RATIO_WIDTH	5
+> +#define PLLDIV_ENABLE_SHIFT	15
+> +#define OSCDIV_RATIO_WIDTH	5
+> +#define POSTDIV_RATIO_MASK	0x1f
+> +#define POSTDIV_POSTDEN		BIT(15)
+> +#define BPDIV_RATIO_SHIFT	0
+> +#define BPDIV_RATIO_WIDTH	5
+> +#define CKEN_OBSCLK_SHIFT	1
+> +#define CKEN_AUXEN_SHIFT	0
+> +
+> +/*
+> + * OMAP-L138 system reference guide recommends a wait for 4 OSCIN/CLKIN
+> + * cycles to ensure that the PLLC has switched to bypass mode. Delay of 1us
+> + * ensures we are good for all > 4MHz OSCIN/CLKIN inputs. Typically the input
+> + * is ~25MHz. Units are micro seconds.
+> + */
+> +#define PLL_BYPASS_TIME		1
+> +/* From OMAP-L138 datasheet table 6-4. Units are micro seconds */
+
+An empty line before the comment make it easier to read.
+
+> +#define PLL_RESET_TIME		1
+> +/*
+> + * From OMAP-L138 datasheet table 6-4; assuming prediv = 1, sqrt(pllm) = 4
+> + * Units are micro seconds.
+> + */
+> +#define PLL_LOCK_TIME		20
+> +
+> +/**
+> + * struct davinci_pll_clk - Main PLL clock
+> + * @hw: clk_hw for the pll
+> + * @base: Base memory address
+> + * @parent_rate: Saved parent rate used by some child clocks
+
+You don't have parent_rate in the structure below.
+
+> + */
+> +struct davinci_pll_clk {
+> +	struct clk_hw hw;
+> +	void __iomem *base;
+> +};
+> +
+> +#define to_davinci_pll_clk(_hw) container_of((_hw), struct davinci_pll_clk, hw)
+> +
+> +static unsigned long davinci_pll_clk_recalc(struct clk_hw *hw,
+> +					    unsigned long parent_rate)
+> +{
+> +	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
+> +	unsigned long rate = parent_rate;
+> +	u32 prediv, mult, postdiv;
+> +
+> +	prediv = readl(pll->base + PREDIV) & PREDIV_RATIO_MASK;
+> +	mult = readl(pll->base + PLLM) & PLLM_MASK;
+> +	postdiv = readl(pll->base + POSTDIV) & POSTDIV_RATIO_MASK;
+
+Shouldn't we check if the pre and post dividers are enabled before using
+them?
+
+> +
+> +	rate /= prediv + 1;
+> +	rate *= mult + 1;
+> +	rate /= postdiv + 1;
+> +
+> +	return rate;
+> +}
+> +
+> +/**
+> + * davinci_pll_get_best_rate - Calculate PLL output closest to a given rate
+> + * @rate: The target rate
+> + * @parent_rate: The PLL input clock rate
+> + * @mult: Pointer to hold the multiplier value (optional)
+> + * @postdiv: Pointer to hold the postdiv value (optional)
+> + *
+> + * Returns: The closest rate less than or equal to @rate that the PLL can
+> + * generate. @mult and @postdiv will contain the values required to generate
+> + * that rate.
+> + */
+> +static long davinci_pll_get_best_rate(u32 rate, u32 parent_rate, u32 *mult,
+> +				      u32 *postdiv)
+> +{
+> +	u32 r, m, d;
+> +	u32 best_rate = 0;
+> +	u32 best_mult = 0;
+> +	u32 best_postdiv = 0;
+> +
+> +	for (d = 1; d <= 4; d++) {> +		for (m = min(32U, rate * d / parent_rate); m > 0; m--) {
+> +			r = parent_rate * m / d;
+> +
+> +			if (r < best_rate)
+> +				break;
+> +
+> +			if (r > best_rate && r <= rate) {
+> +				best_rate = r;
+> +				best_mult = m;
+> +				best_postdiv = d;
+> +			}
+> +
+> +			if (best_rate == rate)
+> +				goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	if (mult)
+> +		*mult = best_mult;
+> +	if (postdiv)
+> +		*postdiv = best_postdiv;
+> +
+> +	return best_rate;
+> +}
+
+PLL output on DA850 must never be below 300MHz or above 600MHz (see
+datasheet table "Allowed PLL Operating Conditions"). Does this take care
+of that? Thats one of the main reasons I recall I went with some
+specific values of prediv, pllm and post div in
+arch/arm/mach-davinci/da850.c
+
+> +
+> +static long davinci_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				   unsigned long *parent_rate)
+> +{
+> +	return davinci_pll_get_best_rate(rate, *parent_rate, NULL, NULL);
+> +}
+> +
+> +/**
+> + * __davinci_pll_set_rate - set the output rate of a given PLL.
+> + *
+> + * Note: Currently tested to work with OMAP-L138 only.
+> + *
+> + * @pll: pll whose rate needs to be changed.
+> + * @prediv: The pre divider value. Passing 0 disables the pre-divider.
+> + * @pllm: The multiplier value. Passing 0 leads to multiply-by-one.
+> + * @postdiv: The post divider value. Passing 0 disables the post-divider.
+> + */
+> +static void __davinci_pll_set_rate(struct davinci_pll_clk *pll, u32 prediv,
+> +				   u32 mult, u32 postdiv)
+> +{
+> +	u32 ctrl, locktime;
+> +
+> +	/*
+> +	 * PLL lock time required per OMAP-L138 datasheet is
+> +	 * (2000 * prediv)/sqrt(pllm) OSCIN cycles. We approximate sqrt(pllm)
+> +	 * as 4 and OSCIN cycle as 25 MHz.
+> +	 */
+> +	if (prediv) {
+> +		locktime = ((2000 * prediv) / 100);
+> +		prediv = (prediv - 1) | PREDIV_PREDEN;
+> +	} else {
+> +		locktime = PLL_LOCK_TIME;
+> +	}
+
+Empty line here will be nice.
+
+> +	if (postdiv)
+> +		postdiv = (postdiv - 1) | POSTDIV_POSTDEN;
+> +	if (mult)
+> +		mult = mult - 1;
+> +
+> +	ctrl = readl(pll->base + PLLCTL);
+> +
+> +	/* Switch the PLL to bypass mode */
+> +	ctrl &= ~(PLLCTL_PLLENSRC | PLLCTL_PLLEN);
+> +	writel(ctrl, pll->base + PLLCTL);
+> +
+> +	udelay(PLL_BYPASS_TIME);
+> +
+> +	/* Reset and enable PLL */
+> +	ctrl &= ~(PLLCTL_PLLRST | PLLCTL_PLLDIS);
+> +	writel(ctrl, pll->base + PLLCTL);
+> +
+> +	writel(prediv, pll->base + PREDIV);
+> +	writel(mult, pll->base + PLLM);
+> +	writel(postdiv, pll->base + POSTDIV);
+> +
+> +	udelay(PLL_RESET_TIME);
+> +
+> +	/* Bring PLL out of reset */
+> +	ctrl |= PLLCTL_PLLRST;
+> +	writel(ctrl, pll->base + PLLCTL);
+> +
+> +	udelay(locktime);
+> +
+> +	/* Remove PLL from bypass mode */
+> +	ctrl |= PLLCTL_PLLEN;
+> +	writel(ctrl, pll->base + PLLCTL);
+> +}
+
+[...]
+
+> +/**
+> + * davinci_pll_obs_clk_register - Register oscillator divider clock (OBSCLK)
+> + * @name: The clock name
+> + * @parent_names: The parent clock names
+> + * @num_parents: The number of paren clocks
+> + * @base: The PLL memory region
+> + * @table: A table of values cooresponding to the parent clocks (see OCSEL
+> + *         register in SRM for values)
+> + */
+> +struct clk *davinci_pll_obs_clk_register(const char *name,
+> +					 const char * const *parent_names,
+> +					 u8 num_parents,
+> +					 void __iomem *base,
+> +					 u32 *table)
+> +{
+> +	struct clk_mux *mux;
+> +	struct clk_gate *gate;
+> +	struct clk_divider *divider;
+> +	struct clk *clk;
+> +
+> +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +	if (!mux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mux->reg = base + OCSEL;
+> +	mux->table = table;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate) {
+> +		kfree(mux);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	gate->reg = base + CKEN;
+> +	gate->bit_idx = CKEN_OBSCLK_SHIFT;
+> +
+> +	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+> +	if (!divider) {
+> +		kfree(gate);
+> +		kfree(mux);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	divider->reg = base + OSCDIV;
+> +	divider->width = OSCDIV_RATIO_WIDTH;
+
+can you write OD1EN of OSCDIV here? I guess the reset default is 1 so
+you didnt need to do that. But not doing exposes us to settings that
+bootloader left us in.
+
+> +
+> +	clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> +				     &mux->hw, &clk_mux_ops,
+> +				     &divider->hw, &clk_divider_ops,
+> +				     &gate->hw, &clk_gate_ops, 0);
+> +	if (IS_ERR(clk)) {
+> +		kfree(divider);
+> +		kfree(gate);
+> +		kfree(mux);
+> +	}
+> +
+> +	return clk;
+> +}
+> +
+> +struct clk *
+> +davinci_pll_divclk_register(const struct davinci_pll_divclk_info *info,
+> +			    void __iomem *base)
+> +{
+> +	const struct clk_ops *divider_ops = &clk_divider_ops;
+
+setting the sysclk divider requires GOSTAT handling apart from setting
+the divider value. So I think .set_rate ops above wont work. Other ops
+can be used, I guess. So we need a private structure here.
+
+Can you port over davinci_set_sysclk_rate() too? I understand you cannot
+test it due to lack of cpufreq support in DT, but I can help testing there.
+
+Or leave .set_rate NULL and it can be added later.
+
+> +	struct clk_gate *gate;
+> +	struct clk_divider *divider;
+> +	struct clk *clk;
+> +	u32 reg;
+> +	u32 flags = 0;
+> +
+> +	/* PLLDIVn registers are not entirely consecutive */
+> +	if (info->id < 4)
+> +		reg = PLLDIV1 + 4 * (info->id - 1);
+> +	else
+> +		reg = PLLDIV4 + 4 * (info->id - 4);
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	gate->reg = base + reg;
+> +	gate->bit_idx = PLLDIV_ENABLE_SHIFT;
+> +
+> +	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+> +	if (!divider) {
+> +		kfree(gate);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	divider->reg = base + reg;
+> +	divider->width = PLLDIV_RATIO_WIDTH;
+> +	divider->flags = 0;
+> +
+> +	if (info->flags & DIVCLK_FIXED_DIV) {
+> +		flags |= CLK_DIVIDER_READ_ONLY;
+> +		divider_ops = &clk_divider_ro_ops;
+> +	}
+> +
+> +	/* Only the ARM clock can change the parent PLL rate */
+> +	if (info->flags & DIVCLK_ARM_RATE)
+> +		flags |= CLK_SET_RATE_PARENT;
+> +
+> +	if (info->flags & DIVCLK_ALWAYS_ENABLED)
+> +		flags |= CLK_IS_CRITICAL;
+> +
+> +	clk = clk_register_composite(NULL, info->name, &info->parent_name, 1,
+> +				     NULL, NULL, &divider->hw, divider_ops,
+> +				     &gate->hw, &clk_gate_ops, flags);
+> +	if (IS_ERR(clk)) {
+> +		kfree(divider);
+> +		kfree(gate);
+> +	}
+> +
+> +	return clk;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +#define MAX_NAME_SIZE 20
+> +
+> +void of_davinci_pll_init(struct device_node *node, const char *name,
+> +			 const struct davinci_pll_divclk_info *info,
+> +			 u8 max_divclk_id)
+> +{
+> +	struct device_node *child;
+> +	const char *parent_name;
+> +	void __iomem *base;
+> +	struct clk *clk;
+> +
+> +	base = of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("%s: ioremap failed\n", __func__);
+> +		return;
+> +	}
+> +
+> +	parent_name = of_clk_get_parent_name(node, 0);
+> +
+> +	clk = davinci_pll_clk_register(name, parent_name, base);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("%s: failed to register %s (%ld)\n", __func__, name,
+> +		       PTR_ERR(clk));
+
+You can probably avoid these line breaks by adding on top of the file
+
+#define pr_fmt(fmt) "%s: " fmt "\n", __func__
+
+> +		return;
+> +	}
+> +
+> +	child = of_get_child_by_name(node, "sysclk");
+> +	if (child && of_device_is_available(child)) {
+> +		struct clk_onecell_data *clk_data;
+> +
+> +		clk_data = clk_alloc_onecell_data(max_divclk_id + 1);
+> +		if (!clk_data) {
+> +			pr_err("%s: out of memory\n", __func__);
+> +			return;
+> +		}
+> +
+> +		for (; info->name; info++) {
+> +			clk = davinci_pll_divclk_register(info, base);
+> +			if (IS_ERR(clk))
+> +				pr_warn("%s: failed to register %s (%ld)\n",
+> +					__func__, info->name, PTR_ERR(clk));
+> +			else
+> +				clk_data->clks[info->id] = clk;
+> +		}
+> +		of_clk_add_provider(child, of_clk_src_onecell_get, clk_data);
+> +	}
+> +	of_node_put(child);
+> +
+> +	child = of_get_child_by_name(node, "auxclk");
+> +	if (child && of_device_is_available(child)) {
+> +		char child_name[MAX_NAME_SIZE];
+> +
+> +		snprintf(child_name, MAX_NAME_SIZE, "%s_aux_clk", name);
+> +
+> +		clk = davinci_pll_aux_clk_register(child_name, parent_name, base);
+> +		if (IS_ERR(clk))
+> +			pr_warn("%s: failed to register %s (%ld)\n", __func__,
+> +				child_name, PTR_ERR(clk));
+> +		else
+> +			of_clk_add_provider(child, of_clk_src_simple_get, clk);
+> +	}
+
+davinci_pll_obs_clk_register() should also be handled here?
+
+Thanks,
+Sekhar
