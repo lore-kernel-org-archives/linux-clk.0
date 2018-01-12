@@ -1,33 +1,51 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        <daniel.thompson@linaro.org>, <philippe.cornu@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <gabriel.fernandez@st.com>
-Subject: [PATCH 0/2] Add dsi clock for stm32f469 board
-Date: Thu, 18 Jan 2018 15:49:38 +0100
-Message-ID: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH 11/14] ARM: configs: stm32: Enable MMC_ARMMMCI support
+Date: Fri, 12 Jan 2018 13:16:05 +0100
+Message-ID: <1515759368-16946-12-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+From: Patrice Chotard <patrice.chotard@st.com>
 
-This patch-set adds the dsi clock for stm32f469 board.
+Enable MMC_ARMMCI support to add SDIO support for
+STM32F4 and STM32F7 SoCs family
 
-Gabriel Fernandez (2):
-  clk: stm32: END_PRIMARY_CLK should be declare after CLK_SYSCLK
-  clk: stm32: Add DSI clock for STM32F469 Board
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/configs/stm32_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/clk/clk-stm32f4.c                 | 11 ++++++++++-
- include/dt-bindings/clock/stm32fx-clock.h |  7 ++++---
- 2 files changed, 14 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
+index 21b2bf7..8b64a9e 100644
+--- a/arch/arm/configs/stm32_defconfig
++++ b/arch/arm/configs/stm32_defconfig
+@@ -56,6 +56,8 @@ CONFIG_MFD_STMPE=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_USB_SUPPORT is not set
++CONFIG_MMC=y
++CONFIG_MMC_ARMMMCI=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
 -- 
 1.9.1
