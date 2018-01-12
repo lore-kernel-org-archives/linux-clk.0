@@ -1,98 +1,51 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: David Lechner <david@lechnology.com>, Adam Ford <aford173@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman
+	<khilman@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
+ <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
+ <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
+ <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+ <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
+ <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
+ <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com>
+ <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
+ <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com>
+ <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
+ <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com>
+ <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
+ <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com>
+ <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
+ <c1e27013-cbad-3b09-0e0d-f68d75162c1f@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <31d5baa2-2a4a-5014-2d0e-dfd45a1699c8@ti.com>
+Date: Fri, 12 Jan 2018 11:33:47 +0530
 MIME-Version: 1.0
-In-Reply-To: <1515016576.1642.2@smtp.crapouillou.net>
-References: <20171229125942.27305-2-paul@crapouillou.net> <20180101143344.2099-1-paul@crapouillou.net>
- <20180101143344.2099-5-paul@crapouillou.net> <20180103210840.hsh4kghuxz7btu5f@rob-hp-laptop>
- <1515016576.1642.2@smtp.crapouillou.net>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 5 Jan 2018 17:27:56 -0600
-Message-ID: <CAL_Jsq+DQnfX29AOJWMtH9ZB7=neOVwiyZggEuwOmazzVQ6MVg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] clocksource: Add a new timer-ingenic driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones <lee.jones@linaro.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c1e27013-cbad-3b09-0e0d-f68d75162c1f@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 3, 2018 at 3:56 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-> Hi,
->
-> Le mer. 3 janv. 2018 =C3=A0 22:08, Rob Herring <robh@kernel.org> a =C3=A9=
-crit :
->>
->> On Mon, Jan 01, 2018 at 03:33:43PM +0100, Paul Cercueil wrote:
->>>
->>>  This driver will use the TCU (Timer Counter Unit) present on the Ingen=
-ic
->>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
->>>
->>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>>  ---
->>>   .../devicetree/bindings/timer/ingenic,tcu.txt      |  35 +++
->>
->>
->> Separate patch please.
->
->
-> OK.
->
->
->>>   drivers/clocksource/Kconfig                        |   8 +
->>>   drivers/clocksource/Makefile                       |   1 +
->>>   drivers/clocksource/timer-ingenic.c                | 256
->>> +++++++++++++++++++++
->>>   4 files changed, 300 insertions(+)
->>>   create mode 100644
->>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>>   create mode 100644 drivers/clocksource/timer-ingenic.c
->>>
->>>   v2: Use SPDX identifier for the license
->>>
->>>  diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>>  new file mode 100644
->>>  index 000000000000..e4944972ea53
->>>  --- /dev/null
->>>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>>  @@ -0,0 +1,35 @@
->>>  +Ingenic JZ47xx SoCs Timer/Counter Unit driver
->>>  +---------------------------------------------
->>>  +
->>>  +Required properties:
->>>  +
->>>  +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
->>>  +  * ingenic,jz4740-tcu
->>>  +  * ingenic,jz4770-tcu
->>>  +  * ingenic,jz4780-tcu
->>>  +- interrupt-parent : phandle of the TCU interrupt controller.
->>>  +- interrupts : Specifies the interrupts the controller is connected t=
-o.
->>>  +- clocks : List of phandle & clock specifiers for the TCU clocks.
->>>  +- clock-names : List of name strings for the TCU clocks.
->>>  +- ingenic,channels: a list of TCU channels to be used as timers.
->>
->>
->> Why is this needed? This looks like you are trying to assign certain
->> timers to clocksource and clockevent. A common problem, but one that
->> should be decided by describing h/w features. There must be some
->> property present or missing to make you decide to use a given channel or
->> not.
->
->
-> Well, it's not easy; some TCU channels will be used as PWM, and there's n=
-o
-> way
-> to know that when the clocksource driver probes. And which ones are PWM /
-> which
-> ones are not, is board-specific. If you have a better solution though, I
-> take it.
+On Friday 12 January 2018 03:16 AM, David Lechner wrote:
+> 
+> Sekhar, have you had a chance to look at the rest of the patches in the
+> series?
 
-Aren't the PWMs connected to something? Describe those in DT and then
-you can find the free ones.
+Not yet. Sorry about the slow (and piecemeal) review.
 
-Rob
+> 
+> I'll wait a bit before I send a v6 to see if any other comments come.
+
+Yes. I will let you know once I am done reviewing the whole series.
+
+Thanks,
+Sekhar
