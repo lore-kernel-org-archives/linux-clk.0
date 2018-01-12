@@ -1,57 +1,46 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 25/34] clk: tegra: bpmp: change tegra_bpmp_clk_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:43:04 +0000
-Message-Id: <1514835793-1104-26-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "michal.simek@xilinx.com"
+	<michal.simek@xilinx.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: RE: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
+Date: Fri, 12 Jan 2018 23:52:22 +0000
+Message-ID: <DM2PR0201MB07675C4F818CEB58F78C838AB8170@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
+ <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
+ <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
+ <bb8d1c16-f10e-5e5e-8a7b-54851e5d9de7@arm.com>
+In-Reply-To: <bb8d1c16-f10e-5e5e-8a7b-54851e5d9de7@arm.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
-
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/tegra/clk-bpmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 0c1197b..4297bb2 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -190,7 +190,7 @@ static unsigned long tegra_bpmp_clk_round_rate(struct clk_hw *hw,
- 
- 	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
- 	if (err < 0)
--		return err;
-+		return 0;
- 
- 	return response.rate;
- }
--- 
-2.7.4
+SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBGcmlkYXksIEph
+bnVhcnkgMTIsIDIwMTggMzo0NyBBTQ0KPiBUbzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5j
+b20+OyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5v
+cmcNCj4gQ2M6IFN1ZGVlcCBIb2xsYSA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBtdHVycXVldHRl
+QGJheWxpYnJlLmNvbTsNCj4gc2JveWRAY29kZWF1cm9yYS5vcmc7IGxpbnV4LWtlcm5lbEB2Z2Vy
+Lmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4g
+U3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMC8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xv
+Y2sgZHJpdmVyIHN1cHBvcnQNCj4gDQo+IA0KPiANCj4gT24gMTEvMDEvMTggMjA6MjksIEpvbGx5
+IFNoYWggd3JvdGU6DQo+ID4gSGkgU3VkZWVwLA0KPiA+DQo+ID4gVGhlcmUgYXJlIDMgdGhpbmdz
+Og0KPiA+DQo+ID4gMT4gSVBJIG1haWxib3ggdHJhbnNwb3J0IC0gc2VyaWVzIGlzIGFscmVhZHkg
+cG9zdGVkDQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDE0NTc5NS8N
+Cj4gPiAyPiBFRU1JIC0gUG9zdGVkIGJ5IG1lIGJlbG93DQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsu
+a2VybmVsLm9yZy9wYXRjaC8xMDE1MDY2NS8NCj4gPiAzPiBFRU1JIFVzZXJzDQo+ID4gQ3VycmVu
+dGx5IHBvc3RlZCBhcyBSRkMgYXMgdGhleSBhcmUgZGVwZW5kZW50IG9uICMyLg0KPiA+IE9LLCBj
+YW4gIzIgYW5kICMzIGNhbiBiZSBwdXQgdG9nZXRoZXIgdW50aWwgaW5pdGlhbCByZXZpZXcgPw0K
+PiANCj4gPiAjMiBkb2VzbuKAmXQgdXNlIG1haWxib3ggc28gaXQgaXMgYSBwb3N0ZWQgYXMgYSBz
+ZXBhcmF0ZSBzZXJpZXMuDQo+IA0KPiBPSywgZG9lcyBpdCB1c2Ugc21jID8gSWYgc28sIHRoZSBw
+b2ludCBpcyB0cmVhdCBpdCBhcyBzbWMgbWFpbGJveCBzbyB0aGF0IHNtYyBpcyBqdXN0DQo+IGEg
+dHJhbnNwb3J0IGFuZCBFRU1JIGNhbiBiZSBzdGlsbCB1c2VkIHdpdGggb3RoZXIgdHJhbnNwb3J0
+IHRlY2huaWNhbGx5Lg0KPiANCj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQoNCg0KSSBhbSBu
+b3Qgc3VyZSBpZiBJIGdldCB5b3UgY29ycmVjdGx5LiANClllcywgRUVNSSB1c2VzIFNNQyBpbnRl
+cmZhY2UgdG8gY29tbXVuaWNhdGUgdG8gUE1VLiBEbyB5b3Ugc3VnZ2VzdCB0byB1c2UgQW5kcmUn
+cyBTTUMgbWFpbGJveCBkcml2ZXIgYXMgdHJhbnNwb3J0IGZvciBFRU1JPyANCg0KVGhhbmtzLA0K
+Sm9sbHkgU2hhaA0KIA0K
