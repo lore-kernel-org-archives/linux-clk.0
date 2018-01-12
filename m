@@ -1,36 +1,74 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v8 0/3] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early 
-Date: Mon, 29 Jan 2018 21:45:57 +0530
-Message-Id: <1517242560-22157-1-git-send-email-sriramx.periyasamy@intel.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH 09/14] ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
+Date: Fri, 12 Jan 2018 13:16:03 +0100
+Message-ID: <1515759368-16946-10-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock driver patches have been applied. These remaining patches are rebased
-on "topic/intel". The first patch enables the mclk and ssp sclk early for
-eve machine driver and the remaining two patches are effort to add more
-meaning to the DSP replies for easy debugging.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Naveen M (1):
-  ASoC: Intel: eve: Enable mclk and ssp sclk early
+This patch adds SDIO related DT nodes for stm32429i-eval board.
 
-Subhransu S. Prusty (2):
-  ASoC: Intel: Skylake: Make DSP replies more human readable
-  ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/boot/dts/stm32429i-eval.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
- sound/soc/intel/boards/Kconfig                     |  1 +
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 94 ++++++++++++++++++++++
- sound/soc/intel/skylake/skl-sst-ipc.c              | 50 +++++++++---
- 3 files changed, 134 insertions(+), 11 deletions(-)
-
+diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
+index 1e3d4c6..6a5c701 100644
+--- a/arch/arm/boot/dts/stm32429i-eval.dts
++++ b/arch/arm/boot/dts/stm32429i-eval.dts
+@@ -144,6 +144,13 @@
+ 			};
+ 		};
+ 	};
++
++	mmc_vcard: mmc_vcard {
++		compatible = "regulator-fixed";
++		regulator-name = "mmc_vcard";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
+ };
+ 
+ &adc {
+@@ -254,6 +261,18 @@
+ 	status = "okay";
+ };
+ 
++&sdio {
++	status = "okay";
++	vmmc-supply = <&mmc_vcard>;
++	cd-gpios = <&stmpegpio 15 GPIO_ACTIVE_HIGH>;
++	cd-inverted;
++	pinctrl-names = "default", "opendrain";
++	pinctrl-0 = <&sdio_pins>;
++	pinctrl-1 = <&sdio_pins_od>;
++	bus-width = <4>;
++	max-frequency = <12500000>;
++};
++
+ &timers1 {
+ 	status = "okay";
+ 
 -- 
-2.7.4
+1.9.1
