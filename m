@@ -1,288 +1,82 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, <linux-imx@nxp.com>,
-	<fabio.estevam@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V3 04/10] clk: imx: add pfdv2 support
-Date: Fri, 19 Jan 2018 21:11:04 +0800
-Message-ID: <1516367470-24340-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH 07/14] ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
+Date: Fri, 12 Jan 2018 13:16:01 +0100
+Message-ID: <1515759368-16946-8-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
-Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
+From: Andrea Merello <andrea.merello@gmail.com>
 
-NOTE pfdv2 can only be operated when clk is gated.
+This patch adds the pin configuration for SDIO controller on
+stm32f4.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * change to readl_poll_timeout
- * add pfd lock to protect share reg access between rate and enable/disable
-   operations and multiple pfd instances.
- * use clk_hw_register
----
- drivers/clk/imx/Makefile    |   3 +-
- drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 212 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 2f00b03..9c04ae4 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-pfdv2.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
-new file mode 100644
-index 0000000..5421bdf
---- /dev/null
-+++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -0,0 +1,207 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
+diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+index ae94d86..3520289 100644
+--- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+@@ -338,6 +338,37 @@
+ 					slew-rate = <3>;
+ 				};
+ 			};
 +
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
++			sdio_pins: sdio_pins@0 {
++				pins {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
++						 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
++			};
 +
-+/**
-+ * struct clk_pfdv2 - IMX PFD clock
-+ * @clk_hw:	clock source
-+ * @reg:	PFD register address
-+ * @gate_bit:	Gate bit offset
-+ * @vld_bit:	Valid bit offset
-+ * @frac_off:	PLL Fractional Divider offset
-+ */
++			sdio_pins_od: sdio_pins_od@0 {
++				pins1 {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
 +
-+struct clk_pfdv2 {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		gate_bit;
-+	u8		vld_bit;
-+	u8		frac_off;
-+};
-+
-+#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
-+
-+#define CLK_PFDV2_FRAC_MASK 0x3f
-+
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static DEFINE_SPINLOCK(pfd_lock);
-+
-+static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
-+				  0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pfdv2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return clk_pfdv2_wait(pfd);
-+}
-+
-+static void clk_pfdv2_disable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val |= pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+}
-+
-+static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	u64 tmp = parent_rate;
-+	u8 frac;
-+
-+	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
-+		& CLK_PFDV2_FRAC_MASK;
-+
-+	if (!frac) {
-+		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
-+			 clk_hw_get_name(hw));
-+		return 0;
-+	}
-+
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	u64 tmp = *prate;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	tmp = *prate;
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static int clk_pfdv2_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+
-+	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u64 tmp = parent_rate;
-+	u32 val;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
-+	val |= frac << pfd->frac_off;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_pfdv2_ops = {
-+	.enable		= clk_pfdv2_enable,
-+	.disable	= clk_pfdv2_disable,
-+	.recalc_rate	= clk_pfdv2_recalc_rate,
-+	.round_rate	= clk_pfdv2_round_rate,
-+	.set_rate	= clk_pfdv2_set_rate,
-+	.is_enabled     = clk_pfdv2_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx)
-+{
-+	struct clk_init_data init;
-+	struct clk_pfdv2 *pfd;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	WARN_ON(idx > 3);
-+
-+	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
-+	if (!pfd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pfd->reg = reg;
-+	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
-+	pfd->vld_bit = pfd->gate_bit - 1;
-+	pfd->frac_off = idx * 8;
-+
-+	init.name = name;
-+	init.ops = &clk_pfdv2_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	pfd->hw.init = &init;
-+
-+	hw = &pfd->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pfd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 52f7c9d..ccd7181 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
- 
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx);
-+
- struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 				 void __iomem *reg, u8 shift, u8 width,
- 				 void __iomem *busy_reg, u8 busy_shift);
++				pins2 {
++					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-open-drain;
++					slew-rate = <2>;
++				};
++			};
+ 		};
+ 	};
+ };
 -- 
-2.7.4
+1.9.1
