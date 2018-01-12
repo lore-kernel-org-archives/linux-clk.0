@@ -1,46 +1,81 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "michal.simek@xilinx.com"
-	<michal.simek@xilinx.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
-Date: Fri, 12 Jan 2018 23:52:22 +0000
-Message-ID: <DM2PR0201MB07675C4F818CEB58F78C838AB8170@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
- <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
- <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <bb8d1c16-f10e-5e5e-8a7b-54851e5d9de7@arm.com>
-In-Reply-To: <bb8d1c16-f10e-5e5e-8a7b-54851e5d9de7@arm.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH 04/14] mmc: mmci: Add STM32 variant
+Date: Fri, 12 Jan 2018 13:15:58 +0100
+Message-ID: <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
-cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBGcmlkYXksIEph
-bnVhcnkgMTIsIDIwMTggMzo0NyBBTQ0KPiBUbzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5j
-b20+OyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5lbC5v
-cmcNCj4gQ2M6IFN1ZGVlcCBIb2xsYSA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBtdHVycXVldHRl
-QGJheWxpYnJlLmNvbTsNCj4gc2JveWRAY29kZWF1cm9yYS5vcmc7IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4g
-U3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMC8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xv
-Y2sgZHJpdmVyIHN1cHBvcnQNCj4gDQo+IA0KPiANCj4gT24gMTEvMDEvMTggMjA6MjksIEpvbGx5
-IFNoYWggd3JvdGU6DQo+ID4gSGkgU3VkZWVwLA0KPiA+DQo+ID4gVGhlcmUgYXJlIDMgdGhpbmdz
-Og0KPiA+DQo+ID4gMT4gSVBJIG1haWxib3ggdHJhbnNwb3J0IC0gc2VyaWVzIGlzIGFscmVhZHkg
-cG9zdGVkDQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDE0NTc5NS8N
-Cj4gPiAyPiBFRU1JIC0gUG9zdGVkIGJ5IG1lIGJlbG93DQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsu
-a2VybmVsLm9yZy9wYXRjaC8xMDE1MDY2NS8NCj4gPiAzPiBFRU1JIFVzZXJzDQo+ID4gQ3VycmVu
-dGx5IHBvc3RlZCBhcyBSRkMgYXMgdGhleSBhcmUgZGVwZW5kZW50IG9uICMyLg0KPiA+IE9LLCBj
-YW4gIzIgYW5kICMzIGNhbiBiZSBwdXQgdG9nZXRoZXIgdW50aWwgaW5pdGlhbCByZXZpZXcgPw0K
-PiANCj4gPiAjMiBkb2VzbuKAmXQgdXNlIG1haWxib3ggc28gaXQgaXMgYSBwb3N0ZWQgYXMgYSBz
-ZXBhcmF0ZSBzZXJpZXMuDQo+IA0KPiBPSywgZG9lcyBpdCB1c2Ugc21jID8gSWYgc28sIHRoZSBw
-b2ludCBpcyB0cmVhdCBpdCBhcyBzbWMgbWFpbGJveCBzbyB0aGF0IHNtYyBpcyBqdXN0DQo+IGEg
-dHJhbnNwb3J0IGFuZCBFRU1JIGNhbiBiZSBzdGlsbCB1c2VkIHdpdGggb3RoZXIgdHJhbnNwb3J0
-IHRlY2huaWNhbGx5Lg0KPiANCj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQoNCg0KSSBhbSBu
-b3Qgc3VyZSBpZiBJIGdldCB5b3UgY29ycmVjdGx5LiANClllcywgRUVNSSB1c2VzIFNNQyBpbnRl
-cmZhY2UgdG8gY29tbXVuaWNhdGUgdG8gUE1VLiBEbyB5b3Ugc3VnZ2VzdCB0byB1c2UgQW5kcmUn
-cyBTTUMgbWFpbGJveCBkcml2ZXIgYXMgdHJhbnNwb3J0IGZvciBFRU1JPyANCg0KVGhhbmtzLA0K
-Sm9sbHkgU2hhaA0KIA0K
+From: Patrice Chotard <patrice.chotard@st.com>
+
+STM32F4 and STM32F7 MCUs has a SDIO controller that looks like
+an ARM pl810.
+This patch adds the STM32 variant so that mmci driver supports it.
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ drivers/mmc/host/mmci.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 38e8c20..9fb5035 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -245,6 +245,23 @@ struct variant_data {
+ 	.opendrain		= true,
+ };
+ 
++static struct variant_data variant_stm32 = {
++	.fifosize		= 32 * 4,
++	.fifohalfsize		= 8 * 4,
++	.clkreg			= MCI_CLK_ENABLE,
++	.clkreg_enable		= MCI_ST_UX500_HWFCEN,
++	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
++	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
++	.datalength_bits	= 24,
++	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
++	.st_sdio		= true,
++	.st_clkdiv		= true,
++	.pwrreg_powerup		= MCI_PWR_ON,
++	.f_max			= 48000000,
++	.pwrreg_clkgate		= true,
++	.pwrreg_nopower		= true,
++};
++
+ static struct variant_data variant_qcom = {
+ 	.fifosize		= 16 * 4,
+ 	.fifohalfsize		= 8 * 4,
+@@ -2019,6 +2036,11 @@ static int mmci_runtime_resume(struct device *dev)
+ 		.mask   = 0xf0ffffff,
+ 		.data	= &variant_ux500v2,
+ 	},
++	{
++		.id     = 0x00880180,
++		.mask   = 0x00ffffff,
++		.data	= &variant_stm32,
++	},
+ 	/* Qualcomm variants */
+ 	{
+ 		.id     = 0x00051180,
+-- 
+1.9.1
