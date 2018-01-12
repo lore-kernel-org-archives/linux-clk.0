@@ -1,47 +1,83 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH 00/14] Add MMCI support for STM32F SoCs family
+Date: Fri, 12 Jan 2018 13:15:54 +0100
+Message-ID: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1517343778-27902-9-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-9-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 31 Jan 2018 09:44:02 +0100
-Message-ID: <CAMuHMdXPyOfAYPLNCCwjA8-O5Bu6Fuf0Op+Noc3O3ATGWGN8OQ@mail.gmail.com>
-Subject: Re: [RFC v3 08/25] ARM: dts: r8a7794: Adjust SMP routine size
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adjusts the definition of the SMP routine size according
-> to the latest changes made by commit:
-> "ARM: shmobile: Add watchdog support"
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series reworks patches submitted one year ago by Andrea Merello [1] 
+but without succeed to merged it.
 
-Gr{oetje,eeting}s,
+STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell 
+PL18x SD host controller, for which the mmci driver exists. 
+This series adds support for these SoCs to the mmci driver.
 
-                        Geert
+As other variants, this one need some specific quirks, that this 
+series address. 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This series has been tested on following boards :
+	_ stm32f429-eval
+	_ stm32f469-disco
+	_ stm32f746-eval
+	_ stm32f769-disco
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
+will be sent later to avoid conflict with pending stm32f7 series [1] which
+is not yet merged on kernel mainline.
+
+[1] https://www.spinics.net/lists/linux-mmc/msg41616.html
+[2] https://patchwork.kernel.org/patch/10104447/
+
+
+Andrea Merello (2):
+  ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
+  ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
+
+Patrice Chotard (12):
+  mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
+  mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
+  mmc: mmci: Add support for setting pad type via pinctrl
+  mmc: mmci: Add STM32 variant
+  ARM: dts: stm32: Add SDIO controller for stm32f746
+  ARM: dts: stm32: Add SDIO controller for stm32f429
+  ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
+  ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
+  ARM: configs: stm32: Enable MMC_ARMMMCI support
+  ARM: configs: stm32: Enable EXT3_FS support
+  clk: stm32: Add clk entry for SDMMC2 on stm32F769
+  gpio: stmpe: i2c transfer are forbiden in atomic context
+
+ arch/arm/boot/dts/stm32429i-eval.dts   |  19 ++++++
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
+ arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
+ arch/arm/boot/dts/stm32f469-disco.dts  |  19 ++++++
+ arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
+ arch/arm/configs/stm32_defconfig       |   3 +
+ arch/arm/mach-stm32/Kconfig            |   3 +
+ drivers/clk/clk-stm32f4.c              |   3 +-
+ drivers/gpio/gpio-stmpe.c              |  20 +++---
+ drivers/mmc/host/mmci.c                | 120 ++++++++++++++++++++++++++++-----
+ drivers/mmc/host/mmci.h                |   6 ++
+ 11 files changed, 231 insertions(+), 26 deletions(-)
+
+-- 
+1.9.1
