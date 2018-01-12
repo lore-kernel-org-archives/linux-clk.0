@@ -1,40 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 10 Jan 2018 13:23:36 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.16 (take two)
-Message-ID: <20180110212336.GA28313@codeaurora.org>
-References: <1515148385-5448-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH 10/14] ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
+Date: Fri, 12 Jan 2018 13:16:04 +0100
+Message-ID: <1515759368-16946-11-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515148385-5448-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit 7aff266552d6042b43d3d5a9b13f0009ef862033:
-> 
->   clk: renesas: cpg-mssr: Keep wakeup sources active during system suspend (2017-12-14 16:40:36 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.16-tag2
-> 
-> for you to fetch changes up to a115f6362cee01813c66e10e397b25f2a06aecfb:
-> 
->   clk: renesas: r8a7796: Add FDP clock (2018-01-05 11:14:38 +0100)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.16 (take two)
-> 
->   - Add support for the FDP1-0 module clock on R-Car M3-W.
-> 
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Pulled into clk-next.
+As both STM32F4 and STM32F7 SoCs embeds an AMBA PL180 mmci IP,
+we need to enable AMBA support in mach-stm32.
 
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/mach-stm32/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+index 0d1889b..f53a8db 100644
+--- a/arch/arm/mach-stm32/Kconfig
++++ b/arch/arm/mach-stm32/Kconfig
+@@ -13,16 +13,19 @@ config ARCH_STM32
+ config MACH_STM32F429
+ 	bool "STMicrolectronics STM32F429"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
+ 
+ config MACH_STM32F469
+ 	bool "STMicrolectronics STM32F469"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
+ 
+ config MACH_STM32F746
+ 	bool "STMicrolectronics STM32F746"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
+ 
+ config MACH_STM32H743
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
