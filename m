@@ -1,120 +1,157 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] clk: Show symbolic clock flags in debugfs
-Date: Wed,  3 Jan 2018 12:06:16 +0100
-Message-Id: <1514977577-11854-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
-References: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/9] clk: samsung: exynos5433: Add clock flag to support
+ suspend-to-ram
+To: Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi
+	<cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene@kernel.org, Tomasz
+	Figa <tomasz.figa@gmail.com>, chanwoo@kernel.org, Jaehoon Chung
+	<jh80.chung@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <79ff6d0d-fd7f-08d0-0f10-f4531632c08a@samsung.com>
+Date: Fri, 12 Jan 2018 14:24:05 +0100
+MIME-version: 1.0
+In-reply-to: 
+	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20180109075905epcas1p1486543d8fec46f47d9d5ac350d841337@epcas1p1.samsung.com>
+	<1515484746-10656-1-git-send-email-cw00.choi@samsung.com>
+	<1515484746-10656-2-git-send-email-cw00.choi@samsung.com>
+	<CAJKOXPc2Y0KX=gozGaMfJJM1B2gsPgLQ4rF5_R8wq5F6=Sxc7g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the virtual "clk_flags" file in debugfs shows the numeric
-value of the top-level framework flags for the specified clock.
-Hence the user must manually interpret these values.
+Hi Krzysztof and Chanwoo,
 
-Moreover, on big-endian 64-bit systems, the wrong half of the value is
-shown, due to the cast from "unsigned long *" to "u32 *".
+On 2018-01-09 12:44, Krzysztof Kozlowski wrote:
+> On Tue, Jan 9, 2018 at 8:58 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> This patch adds the CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flag
+>> to some clocks in order to avoid the hang-out in the suspend mode.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: linux-clk@vger.kernel.org
+>> ---
+>>   drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>>   1 file changed, 11 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index db270908037a..3dc53cd0c730 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -583,25 +583,25 @@
+>>                          CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>          GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
+>>                          ENABLE_ACLK_TOP, 13,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+>>                          ENABLE_ACLK_TOP, 12,
+>>                          CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+>>                          ENABLE_ACLK_TOP, 11,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+>>                          ENABLE_ACLK_TOP, 10,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+>>                          ENABLE_ACLK_TOP, 9,
+>>                          CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+>>                          ENABLE_ACLK_TOP, 8,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
+>>                          ENABLE_ACLK_TOP, 7,
+>> -                       CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>> +                       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+>>                          ENABLE_ACLK_TOP, 6,
+>>                          CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>> @@ -624,11 +624,11 @@
+>>
+>>          /* ENABLE_SCLK_TOP_CAM1 */
+>>          GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 7, CLK_IGNORE_UNUSED, 0),
+>>          GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
+>>                          ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
+>>          GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 5, CLK_IGNORE_UNUSED, 0),
+> Marking this and few others related to ISP as ignore_unused or
+> is_critical looks like a hacky workaround for wrong topology or
+> missing clock users. The real cause should be fixed instead marking
+> all the clocks as critical or ignore_unused.
 
-Fix both issues by showing the symbolic flag names instead.
-Any non-standard flags are shown as a hex number.
+I think that instead of using CLK_IGNORE_UNUSED / CLK_IS_CRITICAL 
+workaround,
+exynos5433 clk driver should simply use *_suspend_regs infrastructure.
+See suspend_regs entry in samsung_cmu_info and similar solution in
+exynos5420.c clk driver (see exynos5420_clk_suspend function).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/clk/clk.c            | 54 ++++++++++++++++++++++++++++++++++++++++++--
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 54 insertions(+), 2 deletions(-)
+There is no point guessing why those clocks have to be enabled for proper
+suspend cycle and which client driver should handle it. The documentation
+misses such information at all. Just handle it in clk driver internally
+without exposing it to clock clients. We already do this in case of other
+Exynos SoCs.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 240b1d427fadab66..7cb5143c654cd78f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2559,6 +2559,56 @@ static const struct file_operations clk_dump_fops = {
- 	.release	= single_release,
- };
- 
-+static const struct {
-+	unsigned long flag;
-+	const char *name;
-+} clk_flags[] = {
-+	{ CLK_SET_RATE_GATE,		"CLK_SET_RATE_GATE",		},
-+	{ CLK_SET_PARENT_GATE,		"CLK_SET_PARENT_GATE",		},
-+	{ CLK_SET_RATE_PARENT,		"CLK_SET_RATE_PARENT",		},
-+	{ CLK_IGNORE_UNUSED,		"CLK_IGNORE_UNUSED",		},
-+	{ CLK_IS_BASIC,			"CLK_IS_BASIC",			},
-+	{ CLK_GET_RATE_NOCACHE,		"CLK_GET_RATE_NOCACHE",		},
-+	{ CLK_SET_RATE_NO_REPARENT,	"CLK_SET_RATE_NO_REPARENT",	},
-+	{ CLK_GET_ACCURACY_NOCACHE,	"CLK_GET_ACCURACY_NOCACHE",	},
-+	{ CLK_RECALC_NEW_RATES,		"CLK_RECALC_NEW_RATES",		},
-+	{ CLK_SET_RATE_UNGATE,		"CLK_SET_RATE_UNGATE",		},
-+	{ CLK_IS_CRITICAL,		"CLK_IS_CRITICAL",		},
-+	{ CLK_OPS_PARENT_ENABLE,	"CLK_OPS_PARENT_ENABLE",	},
-+};
-+
-+static int clk_flags_dump(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core = s->private;
-+	unsigned long flags = core->flags;
-+	unsigned int i;
-+
-+	for (i = 0; flags && i < ARRAY_SIZE(clk_flags); i++) {
-+		if (flags & clk_flags[i].flag) {
-+			seq_printf(s, "%s\n", clk_flags[i].name);
-+			flags &= ~clk_flags[i].flag;
-+		}
-+	}
-+	if (flags) {
-+		/* Unknown flags */
-+		seq_printf(s, "0x%lx\n", flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static int clk_flags_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, clk_flags_dump, inode->i_private);
-+}
-+
-+static const struct file_operations clk_flags_fops = {
-+	.open		= clk_flags_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- static int possible_parents_dump(struct seq_file *s, void *data)
- {
- 	struct clk_core *core = s->private;
-@@ -2615,8 +2665,8 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_x32("clk_flags", 0444, core->dentry,
--			(u32 *)&core->flags);
-+	d = debugfs_create_file("clk_flags", 0444, core->dentry, core,
-+				&clk_flags_fops);
- 	if (!d)
- 		goto err_out;
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 411db2423bd45818..73add58e7d666083 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -20,6 +20,8 @@
-  * flags used across common struct clk.  these flags should only affect the
-  * top-level framework.  custom flags for dealing with hardware specifics
-  * belong in struct clk_foo
-+ *
-+ * Please update clk_flags[] in drivers/clk/clk.c when making changes here!
-  */
- #define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
- #define CLK_SET_PARENT_GATE	BIT(1) /* must be gated across re-parent */
+>
+> Best regards,
+> Krzysztof
+>
+>>          GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "oscclk",
+>>                          ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
+>>          GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
+>> @@ -636,7 +636,7 @@
+>>          GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
+>>                          ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
+>>          GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+>> -                       ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
+>> +                       ENABLE_SCLK_TOP_CAM1, 0, CLK_IGNORE_UNUSED, 0),
+>>
+>>          /* ENABLE_SCLK_TOP_DISP */
+>>          GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+>> @@ -654,7 +654,7 @@
+>>                          ENABLE_SCLK_TOP_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+>>          GATE(CLK_SCLK_UFSUNIPRO_FSYS, "sclk_ufsunipro_fsys",
+>>                          "div_sclk_ufsunipro", ENABLE_SCLK_TOP_FSYS,
+>> -                       3, CLK_SET_RATE_PARENT, 0),
+>> +                       3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_SCLK_USBHOST30_FSYS, "sclk_usbhost30_fsys",
+>>                          "div_sclk_usbhost30", ENABLE_SCLK_TOP_FSYS,
+>>                          1, CLK_SET_RATE_PARENT, 0),
+>> @@ -2982,7 +2982,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>>          GATE(CLK_PCLK_AUD_SLIMBUS, "pclk_aud_slimbus", "div_aclk_aud",
+>>                          ENABLE_PCLK_AUD, 6, 0, 0),
+>>          GATE(CLK_PCLK_AUD_UART, "pclk_aud_uart", "div_aclk_aud",
+>> -                       ENABLE_PCLK_AUD, 5, 0, 0),
+>> +                       ENABLE_PCLK_AUD, 5, CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_PCLK_AUD_PCM, "pclk_aud_pcm", "div_aclk_aud",
+>>                          ENABLE_PCLK_AUD, 4, 0, 0),
+>>          GATE(CLK_PCLK_AUD_I2S, "pclk_aud_i2s", "div_aclk_aud",
+>> @@ -3008,7 +3008,7 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
+>>          GATE(CLK_SCLK_AUD_SLIMBUS, "sclk_aud_slimbus", "div_sclk_aud_slimbus",
+>>                          ENABLE_SCLK_AUD1, 4, 0, 0),
+>>          GATE(CLK_SCLK_AUD_UART, "sclk_aud_uart", "div_sclk_aud_uart",
+>> -                       ENABLE_SCLK_AUD1, 3, CLK_IGNORE_UNUSED, 0),
+>> +                       ENABLE_SCLK_AUD1, 3, CLK_IS_CRITICAL, 0),
+>>          GATE(CLK_SCLK_AUD_PCM, "sclk_aud_pcm", "div_sclk_aud_pcm",
+>>                          ENABLE_SCLK_AUD1, 2, 0, 0),
+>>          GATE(CLK_SCLK_I2S_BCLK, "sclk_i2s_bclk", "ioclk_i2s_bclk",
+>> --
+>> 1.9.1
+>>
+>
+>
+
+Best regards
 -- 
-2.7.4
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
