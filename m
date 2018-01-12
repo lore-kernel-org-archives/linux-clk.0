@@ -1,62 +1,62 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH 06/14] ARM: dts: stm32: Add SDIO controller for stm32f429
+Date: Fri, 12 Jan 2018 13:16:00 +0100
+Message-ID: <1515759368-16946-7-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 15 Jan 2018 13:32:14 +0100
-Message-ID: <CAPDyKFpqENchQs7c1BSJnorTgidbwHFAHByHJU3t9TV6uHurxA@mail.gmail.com>
-Subject: Re: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have
- MCI_STARBITERR flag
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12 January 2018 at 13:15,  <patrice.chotard@st.com> wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> This patch prepares for supporting the STM32 variant that
-> has no such bit in the status register.
->
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> ---
->  drivers/mmc/host/mmci.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 3125dc0..7e56f85 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -83,6 +83,8 @@
->   * @qcom_dml: enables qcom specific dma glue for dma transfers.
->   * @reversed_irq_handling: handle data irq before cmd irq.
->   * @mmcimask1: true if variant have a MMCIMASK1 register.
-> + * @start_err: true is the variant has STARTBITERR bit inside MMCISTATUS
-> + *            register.
->   */
->  struct variant_data {
->         unsigned int            clkreg;
-> @@ -113,6 +115,7 @@ struct variant_data {
->         bool                    qcom_dml;
->         bool                    reversed_irq_handling;
->         bool                    mmcimask1;
-> +       bool                    start_err;
+From: Patrice Chotard <patrice.chotard@st.com>
 
-To be consistent with how we implement support for similar variant
-variations, I would prefer to have this being a u32. Something along
-the lines of how the "busy_detect_flag" is being used.
+stm32f429 embeds ARM_PL180 sdi IP, adds SDIO controller
+node to allow MMC support.
 
-Otherwise this looks good to me.
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-[...]
-
-Kind regards
-Uffe
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index 10099df..ede77e0 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -511,6 +511,17 @@
+ 			};
+ 		};
+ 
++		sdio: sdio@40012c00 {
++			compatible = "arm,pl180", "arm,primecell";
++			arm,primecell-periphid = <0x00880180>;
++			reg = <0x40012c00 0x400>;
++			clocks = <&rcc 0 STM32F4_APB2_CLOCK(SDIO)>;
++			clock-names = "apb_pclk";
++			interrupts = <49>;
++			max-frequency = <48000000>;
++			status = "disabled";
++		};
++
+ 		syscfg: system-config@40013800 {
+ 			compatible = "syscon";
+ 			reg = <0x40013800 0x400>;
+-- 
+1.9.1
