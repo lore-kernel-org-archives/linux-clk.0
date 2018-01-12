@@ -1,50 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 10 Jan 2018 14:47:42 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.16, round 2
-Message-ID: <20180110224742.GG28313@codeaurora.org>
-References: <20180108034901.GA5577@wens.csie.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
+To: Adam Ford <aford173@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-3-git-send-email-david@lechnology.com>
+ <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
+ <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
+ <CAHCN7xK44_zv27xe5yxL8Efey=VC-nypK6hY6VWqsoLqnKe04g@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <c5cea4a3-0e52-d9ce-339b-b3dcd1be5a42@lechnology.com>
+Date: Fri, 12 Jan 2018 09:48:31 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180108034901.GA5577@wens.csie.org>
+In-Reply-To: <CAHCN7xK44_zv27xe5yxL8Efey=VC-nypK6hY6VWqsoLqnKe04g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/08, Chen-Yu Tsai wrote:
-> Hi Mike, Stephen,
+On 01/12/2018 09:30 AM, Adam Ford wrote:
+> On Fri, Jan 12, 2018 at 9:25 AM, David Lechner <david@lechnology.com> wrote:
+>>
+>> Yes, I noticed that I missed this after I submitted this series. And I
+>> will have to rework things to coordinate with the PLL as mentioned above.
+>>
+>> FYI, I do have cpufreq-dt working, although the LEGO EV3 has a fixed 1.2V
+>> regulator, so I am limited in what I can test. Basically, I can only switch
 > 
-> Here are a few more clock changes for 4.16. The DE2 clock changes have
-> been around for awhile. The A83T clock fix was found by Jernej while
-> working on HDMI output for the SoC. We'd like to get these in so patches
-> don't pile up on the mailing lists.
+> I can test the cpufreq-dt.  Are there additional patches or are they
+> part of the same git repo I have been testing?
 > 
-> ChenYu
+> The DA850 I have may not run all the way to highest speed, but I'll
+> see what I can find.  I think I had a few at one point, but I don't
+> think it was part of Logic PD's standard product lineup.
 > 
-> The following changes since commit e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4:
-> 
->   clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL (2017-12-08 10:08:32 +0100)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.16-2
-> 
-> for you to fetch changes up to 7dbc7f5f4904cfddc199af171ea095490a434f15:
-> 
->   clk: sunxi-ng: a83t: Add M divider to TCON1 clock (2018-01-03 13:45:04 +0800)
-> 
-> ----------------------------------------------------------------
-> Allwinner clock changes for 4.16, part 2
-> 
-> The hardware description for the DE2 clocks on the A64 and H5 SoCs is
-> fixed, and support for these clocks on the H3 is added. Also, the
-> description for the TCON1 clock on the A83T is fixed. All these are
-> non-critical, as they have no users.
 
-Thanks. Pulled into clk-next.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+There are some extra patches I have not submitted yet. However, based on the
+other comments here, I don't have things implemented correctly, so you probably
+want to wait to test until I get that straightened out anyway.
