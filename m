@@ -1,72 +1,50 @@
 Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-3-git-send-email-david@lechnology.com>
+ <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
+ <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
+ <eb2b1a63-9c7c-aeca-170f-d38642442438@ti.com>
 From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH 3/7] clk: qoriq: make use of clk_alloc_onecell_data()
-Date: Thu,  4 Jan 2018 18:38:08 -0600
-Message-Id: <1515112695-3160-4-git-send-email-david@lechnology.com>
-In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
-References: <1515112695-3160-1-git-send-email-david@lechnology.com>
+Message-ID: <4a32c52f-4335-52c0-fa63-625a449b00b5@lechnology.com>
+Date: Fri, 12 Jan 2018 19:11:26 -0600
+MIME-Version: 1.0
+In-Reply-To: <eb2b1a63-9c7c-aeca-170f-d38642442438@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Use helper function clk_alloc_onecell_data() to allocate struct
-clk_onecell_data.
+On 01/12/2018 10:18 AM, Sekhar Nori wrote:
+> On Friday 12 January 2018 08:55 PM, David Lechner wrote:
+>>>
+>>> PLL output on DA850 must never be below 300MHz or above 600MHz (see
+>>> datasheet table "Allowed PLL Operating Conditions"). Does this take care
+>>> of that? Thats one of the main reasons I recall I went with some
+>>> specific values of prediv, pllm and post div in
+>>> arch/arm/mach-davinci/da850.c
+>>
+>> Apparently, I missed this requirement. It looks like I am going to have to
+>> rework things so that there is some coordination between the PLL and the
+>> PLLDIV clocks in order to get the < 300MHz operating points.
+> 
+> Just to make sure we are on the same page. The datasheet
+> constraint is 600 >= PLLOUT >= 300. PLLOUT is output of POSTDIV.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/clk-qoriq.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Hmm... I am on a different page. It looks to me like PLLOUT is the output
+of PLLM, not POSTDIV. The datasheet says nothing at all and the TRM does
+not say it explicitly, but footnote 2 on the table "System PLLC Output
+Clocks", for example, makes it pretty clear.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f..5278cc7 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -1175,13 +1175,11 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
- 	count = of_property_count_strings(np, "clock-output-names");
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(pll->div) < 4);
--	subclks = kcalloc(4, sizeof(struct clk *), GFP_KERNEL);
--	if (!subclks)
-+	onecell_data = clk_alloc_onecell_data(4);
-+	if (!onecell_data)
- 		return;
- 
--	onecell_data = kmalloc(sizeof(*onecell_data), GFP_KERNEL);
--	if (!onecell_data)
--		goto err_clks;
-+	subclks = onecell_data->clks;
- 
- 	if (count <= 3) {
- 		subclks[0] = pll->div[0].clk;
-@@ -1194,7 +1192,6 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
- 		subclks[3] = pll->div[3].clk;
- 	}
- 
--	onecell_data->clks = subclks;
- 	onecell_data->clk_num = count;
- 
- 	rc = of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
-@@ -1206,9 +1203,7 @@ static void __init legacy_pll_init(struct device_node *np, int idx)
- 
- 	return;
- err_cell:
--	kfree(onecell_data);
--err_clks:
--	kfree(subclks);
-+	clk_free_onecell_data(onecell_data);
- }
- 
- /* Legacy node */
--- 
-2.7.4
+> 
+> The operating points are defined in terms of ARM frequency (and
+> voltage). The OPPs defined in kernel today are here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci.git/tree/arch/arm/mach-davinci/da850.c#n1092
+> 
+> Thanks,
+> Sekhar
+> 
