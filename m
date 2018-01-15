@@ -1,66 +1,62 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v3 14/14] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Thu, 18 Jan 2018 15:34:30 +0100
-Message-ID: <1516286070-24927-15-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 15 Jan 2018 13:32:14 +0100
+Message-ID: <CAPDyKFpqENchQs7c1BSJnorTgidbwHFAHByHJU3t9TV6uHurxA@mail.gmail.com>
+Subject: Re: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have
+ MCI_STARBITERR flag
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On 12 January 2018 at 13:15,  <patrice.chotard@st.com> wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+>
+> This patch prepares for supporting the STM32 variant that
+> has no such bit in the status register.
+>
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+> ---
+>  drivers/mmc/host/mmci.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index 3125dc0..7e56f85 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -83,6 +83,8 @@
+>   * @qcom_dml: enables qcom specific dma glue for dma transfers.
+>   * @reversed_irq_handling: handle data irq before cmd irq.
+>   * @mmcimask1: true if variant have a MMCIMASK1 register.
+> + * @start_err: true is the variant has STARTBITERR bit inside MMCISTATUS
+> + *            register.
+>   */
+>  struct variant_data {
+>         unsigned int            clkreg;
+> @@ -113,6 +115,7 @@ struct variant_data {
+>         bool                    qcom_dml;
+>         bool                    reversed_irq_handling;
+>         bool                    mmcimask1;
+> +       bool                    start_err;
 
-STM32F769 has 2 SDMMC port, add clock entry for the second one.
+To be consistent with how we implement support for similar variant
+variations, I would prefer to have this being a u32. Something along
+the lines of how the "busy_detect_flag" is being used.
 
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Otherwise this looks good to me.
 
-v3: _ none
+[...]
 
-v2: _ Add Acked-by
-
-
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index da44f8d..e7e3965 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
- 
- 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
- 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
-+	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
-@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
- 
- static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
- 						      0x0000000000000003ull,
--						      0x04f77f033e01c9ffull };
-+						      0x04f77f833e01c9ffull };
- 
- static const u64 *stm32f4_gate_map;
- 
--- 
-1.9.1
+Kind regards
+Uffe
