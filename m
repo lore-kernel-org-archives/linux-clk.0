@@ -1,61 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:55670 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751332AbeABPJD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:03 -0500
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 01/15] clk: ingenic: Use const pointer to clk_ops in struct
-Date: Tue,  2 Jan 2018 16:08:34 +0100
-Message-Id: <20180102150848.11314-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <patrice.chotard@st.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Linux
+ ARM" <linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>
+Subject: Re: [PATCH 04/14] mmc: mmci: Add STM32 variant
+Date: Mon, 15 Jan 2018 17:17:54 +0000
+Message-ID: <ce14077b-2b8b-f8a7-2107-78b1d9dcab27@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+ <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
+ <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com>
+In-Reply-To: <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The CGU common code does not modify the pointed clk_ops structure, so it
-should be marked as const.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ingenic/cgu.h        | 2 +-
- drivers/clk/ingenic/jz4780-cgu.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
- v2: New patch in this series
- v3: No change
- v4: No change
- v5: No change
-
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index e78b586536ea..f1527cf75b3f 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -120,7 +120,7 @@ struct ingenic_cgu_gate_info {
-  * @clk_ops: custom clock operation callbacks
-  */
- struct ingenic_cgu_custom_info {
--	struct clk_ops *clk_ops;
-+	const struct clk_ops *clk_ops;
- };
- 
- /**
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index ac3585ed8228..6427be117ff1 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -203,7 +203,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	return 0;
- }
- 
--static struct clk_ops jz4780_otg_phy_ops = {
-+static const struct clk_ops jz4780_otg_phy_ops = {
- 	.get_parent = jz4780_otg_phy_get_parent,
- 	.set_parent = jz4780_otg_phy_set_parent,
- 
--- 
-2.11.0
-
+SGkgTGludXMNCg0KT24gMDEvMTUvMjAxOCAwMjoxMyBBTSwgTGludXMgV2FsbGVpaiB3cm90ZToN
+Cj4gT24gRnJpLCBKYW4gMTIsIDIwMTggYXQgMToxNSBQTSwgIDxwYXRyaWNlLmNob3RhcmRAc3Qu
+Y29tPiB3cm90ZToNCj4gDQo+PiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFy
+ZEBzdC5jb20+DQo+Pg0KPj4gU1RNMzJGNCBhbmQgU1RNMzJGNyBNQ1VzIGhhcyBhIFNESU8gY29u
+dHJvbGxlciB0aGF0IGxvb2tzIGxpa2UNCj4+IGFuIEFSTSBwbDgxMC4NCj4gDQo+IFBMMTgwIHlv
+dSBtZWFuLiBVbGYgY2FuIGZpeCB3aGlsZSBhcHBseWluZy4NCg0KSSBuZWVkIHRvIHNlbmQgYSB2
+MiwgaSB3aWxsIGZpeCBpdC4NCg0KPiANCj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgU1RNMzIgdmFy
+aWFudCBzbyB0aGF0IG1tY2kgZHJpdmVyIHN1cHBvcnRzIGl0Lg0KPj4NCj4+IFNpZ25lZC1vZmYt
+Ynk6IEFuZHJlYSBNZXJlbGxvIDxhbmRyZWEubWVyZWxsb0BnbWFpbC5jb20+DQo+PiBTaWduZWQt
+b2ZmLWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiAo
+Li4uKQ0KPj4gK3N0YXRpYyBzdHJ1Y3QgdmFyaWFudF9kYXRhIHZhcmlhbnRfc3RtMzIgPSB7DQo+
+PiArICAgICAgIC5maWZvc2l6ZSAgICAgICAgICAgICAgID0gMzIgKiA0LA0KPj4gKyAgICAgICAu
+Zmlmb2hhbGZzaXplICAgICAgICAgICA9IDggKiA0LA0KPj4gKyAgICAgICAuY2xrcmVnICAgICAg
+ICAgICAgICAgICA9IE1DSV9DTEtfRU5BQkxFLA0KPj4gKyAgICAgICAuY2xrcmVnX2VuYWJsZSAg
+ICAgICAgICA9IE1DSV9TVF9VWDUwMF9IV0ZDRU4sDQo+IA0KPiBJZiB0aGUgYXNpYyBkZXNpZ25l
+ZCBkZXJpdmVkIHRoaXMgZnJvbSB1eDUwMCBJIGd1ZXNzIGl0IGlzIHByb3Blci4NCj4gDQo+PiAr
+ICAgICAgIC5jbGtyZWdfOGJpdF9idXNfZW5hYmxlID0gTUNJX1NUXzhCSVRfQlVTLA0KPj4gKyAg
+ICAgICAuY2xrcmVnX25lZ19lZGdlX2VuYWJsZSA9IE1DSV9TVF9VWDUwMF9ORUdfRURHRSwNCj4+
+ICsgICAgICAgLmRhdGFsZW5ndGhfYml0cyAgICAgICAgPSAyNCwNCj4+ICsgICAgICAgLmRhdGFj
+dHJsX21hc2tfc2RpbyAgICAgPSBNQ0lfRFBTTV9TVF9TRElPRU4sDQo+PiArICAgICAgIC5zdF9z
+ZGlvICAgICAgICAgICAgICAgID0gdHJ1ZSwNCj4gDQo+IERpZCB5b3UgdGVzdCBTRElPPyBJIHRo
+aW5rIHdlIGxhY2sgZmVhdHVyZXMgZm9yIHRoYXQuDQoNCm5vLCB0aGUgYm9hcmQgYWNjZXB0IG9u
+bHkgbWljcm8gU0QgY2FyZCwgc28gb25seSBNTUMgbW9kZSBjYW4gYmUgdGVzdGVkLg0KDQo+IA0K
+Pj4gKyAgICAgICB7DQo+PiArICAgICAgICAgICAgICAgLmlkICAgICA9IDB4MDA4ODAxODAsDQo+
+PiArICAgICAgICAgICAgICAgLm1hc2sgICA9IDB4MDBmZmZmZmYsDQo+PiArICAgICAgICAgICAg
+ICAgLmRhdGEgICA9ICZ2YXJpYW50X3N0bTMyLA0KPj4gKyAgICAgICB9LA0KPiANCj4gU2luY2Ug
+dXg1MDAgd2FzIDQ4MDE4MCBJIHdvbmRlciB3aGF0IHZhcmlhbnRzIDUsNiw3IGFyZS4uLg0KDQpX
+aGF0IGlzIHRoZSBydWxlIHRvIGRlZmluZSB0aGUgaWQgPyBmb3IgU1QgTWljcm8gdmFyaWFudHMg
+d2UgZ290IHRoZSANCmxpc3QgYmVsb3cgOg0KCS5pZCAgICAgPSAweDAwMTgwMTgwLCAgdTMwMA0K
+CS5pZCAgICAgPSAweDEwMTgwMTgwLCAgbm9tYWRpaw0KCS5pZCAgICAgPSAweDAwMjgwMTgwLCAg
+bm9tYWRpaw0KCS5pZCAgICAgPSAweDAwNDgwMTgwLCAgdXg1MDANCgkuaWQgICAgID0gMHgxMDQ4
+MDE4MCwgIHV4NTAwdjINCgkuaWQgICAgID0gMHgwMDg4MDE4MCwgIHZhcmlhbnRfc3RtMzINCg0K
+SSBzaW1wbHkgdXBkYXRlIHRoZSBzaXh0aCBkaWdpdCBmb3Igc3RtMzIgdmFyaWFudC4NCg0KDQpQ
+YXRyaWNlDQoNCj4gDQo+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlq
+QGxpbmFyby5vcmc+DQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KPiA=
