@@ -1,152 +1,67 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v2 03/15] mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
-Date: Tue, 16 Jan 2018 13:30:47 +0100
-Message-ID: <1516105859-3525-4-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	gabriel.fernandez@st.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] clk: stm32: add configuration flags for each of the stm32 drivers
+Date: Mon, 15 Jan 2018 15:21:51 +0100
+Message-Id: <20180115142151.22225-1-benjamin.gaignard@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Add two configuration flags to be able to not compile all the time
+stm32f and stm32h7 drivers when ARCH_STM32 is set.
+That help to save some space on those small platforms.
 
-This patch prepares for supporting STM32 variant which doesn't
-have opendrain bit in MMCIPOWER register.
-ST others variant (u300, nomadik and ux500) uses MCI_OD bit whereas
-others variants uses MCI_ROD bit.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
+ drivers/clk/Kconfig  | 15 +++++++++++++++
+ drivers/clk/Makefile |  4 ++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-v2: _ Replace opendrain bool type by u32
-    _ Clean opendrain bit management code
-
- drivers/mmc/host/mmci.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 8a4fbc2..eb5fcfe 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -85,6 +85,7 @@
-  * @mmcimask1: true if variant have a MMCIMASK1 register.
-  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
-  *	       register.
-+ * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
-  */
- struct variant_data {
- 	unsigned int		clkreg;
-@@ -116,6 +117,7 @@ struct variant_data {
- 	bool			reversed_irq_handling;
- 	bool			mmcimask1;
- 	u32			start_err;
-+	u32			opendrain;
- };
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1c4e1aa6767e..c876eb828fc4 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -226,6 +226,21 @@ config COMMON_CLK_VC5
+ 	  This driver supports the IDT VersaClock 5 and VersaClock 6
+ 	  programmable clock generators.
  
- static struct variant_data variant_arm = {
-@@ -127,6 +129,7 @@ struct variant_data {
- 	.reversed_irq_handling	= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
- 
- static struct variant_data variant_arm_extended_fifo = {
-@@ -137,6 +140,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
- 
- static struct variant_data variant_arm_extended_fifo_hwfc = {
-@@ -148,6 +152,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
- 
- static struct variant_data variant_u300 = {
-@@ -165,6 +170,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_nomadik = {
-@@ -183,6 +189,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_ux500 = {
-@@ -207,6 +214,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_ux500v2 = {
-@@ -233,6 +241,7 @@ struct variant_data {
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_OD,
- };
- 
- static struct variant_data variant_qcom = {
-@@ -253,6 +262,7 @@ struct variant_data {
- 	.qcom_dml		= true,
- 	.mmcimask1		= true,
- 	.start_err		= MCI_STARTBITERR,
-+	.opendrain		= MCI_ROD,
- };
- 
- /* Busy detection for the ST Micro variant */
-@@ -1455,16 +1465,13 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 				~MCI_ST_DATA2DIREN);
- 	}
- 
--	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
--		if (host->hw_designer != AMBA_VENDOR_ST)
--			pwr |= MCI_ROD;
--		else {
--			/*
--			 * The ST Micro variant use the ROD bit for something
--			 * else and only has OD (Open Drain).
--			 */
--			pwr |= MCI_OD;
--		}
-+	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN &&
-+	    host->variant->opendrain) {
-+		/*
-+		 * The ST Micro variant use the ROD bit for
-+		 * something else and only has OD (Open Drain).
-+		 */
-+		pwr |= host->variant->opendrain;
- 	}
- 
- 	/*
++config COMMON_CLK_STM32F
++	bool "Clock driver for stm32f4 and stm32f7 SoC families"
++	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
++	help
++	---help---
++	  Support for stm32f4 and stm32f7 SoC families clocks
++
++config COMMON_CLK_STM32H7
++	bool "Clock driver for stm32h7 SoC family"
++	depends on MACH_STM32H743
++	help
++	---help---
++	  Support for stm32h7 SoC family clocks
++
++
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7f761b02bed..4a8e063a7159 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -44,8 +44,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+-obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+-obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
++obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
++obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
+ obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+ obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
 -- 
-1.9.1
+2.15.0
