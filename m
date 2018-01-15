@@ -1,244 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 3/5] clk: mediatek: add audsys support for MT2701
-Date: Wed, 31 Jan 2018 15:42:43 +0800
-Message-ID: <99afcd2aeb87ad30dd565cb9bf86ee3239142e08.1515639336.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1515639336.git.ryder.lee@mediatek.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
+Return-Path: <patrice.chotard@st.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "Linux Kernel
+ Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: Re: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have
+ MCI_STARBITERR flag
+Date: Mon, 15 Jan 2018 17:27:13 +0000
+Message-ID: <5ffa4035-0cde-119e-b53e-1af6daab83cc@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+ <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
+ <CAPDyKFpqENchQs7c1BSJnorTgidbwHFAHByHJU3t9TV6uHurxA@mail.gmail.com>
+In-Reply-To: <CAPDyKFpqENchQs7c1BSJnorTgidbwHFAHByHJU3t9TV6uHurxA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock driver support for MT2701 audsys.
-
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/Kconfig          |   6 ++
- drivers/clk/mediatek/Makefile         |   1 +
- drivers/clk/mediatek/clk-mt2701-aud.c | 175 ++++++++++++++++++++++++++++++++++
- 3 files changed, 182 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
-
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 59dc0aa..efb6f58 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -50,6 +50,12 @@ config COMMON_CLK_MT2701_BDPSYS
- 	---help---
- 	  This driver supports Mediatek MT2701 bdpsys clocks.
- 
-+config COMMON_CLK_MT2701_AUDSYS
-+	bool "Clock driver for Mediatek MT2701 audsys"
-+	depends on COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports Mediatek MT2701 audsys clocks.
-+
- config COMMON_CLK_MT2712
- 	bool "Clock driver for Mediatek MT2712"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index c421ffc..c4ab7d3 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
- obj-$(CONFIG_COMMON_CLK_MT6797_VDECSYS) += clk-mt6797-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT6797_VENCSYS) += clk-mt6797-venc.o
- obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
-+obj-$(CONFIG_COMMON_CLK_MT2701_AUDSYS) += clk-mt2701-aud.o
- obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
- obj-$(CONFIG_COMMON_CLK_MT2701_ETHSYS) += clk-mt2701-eth.o
- obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
-diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
-new file mode 100644
-index 0000000..d8005b3
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt2701-aud.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Ryder Lee <ryder.lee@mediatek.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt2701-clk.h>
-+
-+#define GATE_AUDIO0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO2(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio2_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+#define GATE_AUDIO3(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &audio3_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+static const struct mtk_gate_regs audio0_cg_regs = {
-+	.set_ofs = 0x0,
-+	.clr_ofs = 0x0,
-+	.sta_ofs = 0x0,
-+};
-+
-+static const struct mtk_gate_regs audio1_cg_regs = {
-+	.set_ofs = 0x10,
-+	.clr_ofs = 0x10,
-+	.sta_ofs = 0x10,
-+};
-+
-+static const struct mtk_gate_regs audio2_cg_regs = {
-+	.set_ofs = 0x14,
-+	.clr_ofs = 0x14,
-+	.sta_ofs = 0x14,
-+};
-+
-+static const struct mtk_gate_regs audio3_cg_regs = {
-+	.set_ofs = 0x634,
-+	.clr_ofs = 0x634,
-+	.sta_ofs = 0x634,
-+};
-+
-+static const struct mtk_gate audio_clks[] = {
-+	/* AUDIO0 */
-+	GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
-+	GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
-+	GATE_AUDIO0(CLK_AUD_SPDF, "audio_spdf", "audpll_sel", 21),
-+	GATE_AUDIO0(CLK_AUD_SPDF2, "audio_spdf2", "audpll_sel", 22),
-+	GATE_AUDIO0(CLK_AUD_APLL, "audio_apll", "audpll_sel", 23),
-+	/* AUDIO1 */
-+	GATE_AUDIO1(CLK_AUD_I2SIN1, "audio_i2sin1", "aud_mux1_sel", 0),
-+	GATE_AUDIO1(CLK_AUD_I2SIN2, "audio_i2sin2", "aud_mux1_sel", 1),
-+	GATE_AUDIO1(CLK_AUD_I2SIN3, "audio_i2sin3", "aud_mux1_sel", 2),
-+	GATE_AUDIO1(CLK_AUD_I2SIN4, "audio_i2sin4", "aud_mux1_sel", 3),
-+	GATE_AUDIO1(CLK_AUD_I2SIN5, "audio_i2sin5", "aud_mux1_sel", 4),
-+	GATE_AUDIO1(CLK_AUD_I2SIN6, "audio_i2sin6", "aud_mux1_sel", 5),
-+	GATE_AUDIO1(CLK_AUD_I2SO1, "audio_i2so1", "aud_mux1_sel", 6),
-+	GATE_AUDIO1(CLK_AUD_I2SO2, "audio_i2so2", "aud_mux1_sel", 7),
-+	GATE_AUDIO1(CLK_AUD_I2SO3, "audio_i2so3", "aud_mux1_sel", 8),
-+	GATE_AUDIO1(CLK_AUD_I2SO4, "audio_i2so4", "aud_mux1_sel", 9),
-+	GATE_AUDIO1(CLK_AUD_I2SO5, "audio_i2so5", "aud_mux1_sel", 10),
-+	GATE_AUDIO1(CLK_AUD_I2SO6, "audio_i2so6", "aud_mux1_sel", 11),
-+	GATE_AUDIO1(CLK_AUD_ASRCI1, "audio_asrci1", "asm_h_sel", 12),
-+	GATE_AUDIO1(CLK_AUD_ASRCI2, "audio_asrci2", "asm_h_sel", 13),
-+	GATE_AUDIO1(CLK_AUD_ASRCO1, "audio_asrco1", "asm_h_sel", 14),
-+	GATE_AUDIO1(CLK_AUD_ASRCO2, "audio_asrco2", "asm_h_sel", 15),
-+	GATE_AUDIO1(CLK_AUD_INTDIR, "audio_intdir", "intdir_sel", 20),
-+	GATE_AUDIO1(CLK_AUD_A1SYS, "audio_a1sys", "aud_mux1_sel", 21),
-+	GATE_AUDIO1(CLK_AUD_A2SYS, "audio_a2sys", "aud_mux2_sel", 22),
-+	GATE_AUDIO1(CLK_AUD_AFE_CONN, "audio_afe_conn", "aud_mux1_sel", 23),
-+	GATE_AUDIO1(CLK_AUD_AFE_MRGIF, "audio_afe_mrgif", "aud_mux1_sel", 25),
-+	/* AUDIO2 */
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL1, "audio_ul1", "aud_mux1_sel", 0),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL2, "audio_ul2", "aud_mux1_sel", 1),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL3, "audio_ul3", "aud_mux1_sel", 2),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL4, "audio_ul4", "aud_mux1_sel", 3),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL5, "audio_ul5", "aud_mux1_sel", 4),
-+	GATE_AUDIO2(CLK_AUD_MMIF_UL6, "audio_ul6", "aud_mux1_sel", 5),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL1, "audio_dl1", "aud_mux1_sel", 6),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL2, "audio_dl2", "aud_mux1_sel", 7),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL3, "audio_dl3", "aud_mux1_sel", 8),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL4, "audio_dl4", "aud_mux1_sel", 9),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL5, "audio_dl5", "aud_mux1_sel", 10),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DL6, "audio_dl6", "aud_mux1_sel", 11),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DLMCH, "audio_dlmch", "aud_mux1_sel", 12),
-+	GATE_AUDIO2(CLK_AUD_MMIF_ARB1, "audio_arb1", "aud_mux1_sel", 13),
-+	GATE_AUDIO2(CLK_AUD_MMIF_AWB1, "audio_awb", "aud_mux1_sel", 14),
-+	GATE_AUDIO2(CLK_AUD_MMIF_AWB2, "audio_awb2", "aud_mux1_sel", 15),
-+	GATE_AUDIO2(CLK_AUD_MMIF_DAI, "audio_dai", "aud_mux1_sel", 16),
-+	/* AUDIO3 */
-+	GATE_AUDIO3(CLK_AUD_ASRCI3, "audio_asrci3", "asm_h_sel", 2),
-+	GATE_AUDIO3(CLK_AUD_ASRCI4, "audio_asrci4", "asm_h_sel", 3),
-+	GATE_AUDIO3(CLK_AUD_ASRCI5, "audio_asrci5", "asm_h_sel", 4),
-+	GATE_AUDIO3(CLK_AUD_ASRCI6, "audio_asrci6", "asm_h_sel", 5),
-+	GATE_AUDIO3(CLK_AUD_ASRCO3, "audio_asrco3", "asm_h_sel", 6),
-+	GATE_AUDIO3(CLK_AUD_ASRCO4, "audio_asrco4", "asm_h_sel", 7),
-+	GATE_AUDIO3(CLK_AUD_ASRCO5, "audio_asrco5", "asm_h_sel", 8),
-+	GATE_AUDIO3(CLK_AUD_ASRCO6, "audio_asrco6", "asm_h_sel", 9),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC1, "audio_mem_asrc1", "asm_h_sel", 10),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC2, "audio_mem_asrc2", "asm_h_sel", 11),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC3, "audio_mem_asrc3", "asm_h_sel", 12),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC4, "audio_mem_asrc4", "asm_h_sel", 13),
-+	GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
-+};
-+
-+static const struct of_device_id of_match_clk_mt2701_aud[] = {
-+	{ .compatible = "mediatek,mt2701-audsys", },
-+	{}
-+};
-+
-+static int clk_mt2701_aud_probe(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *pnode = pdev->dev.parent->of_node;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
-+
-+	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
-+			       clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
-+
-+	return r;
-+}
-+
-+static struct platform_driver clk_mt2701_aud_drv = {
-+	.probe = clk_mt2701_aud_probe,
-+	.driver = {
-+		.name = "clk-mt2701-aud",
-+		.of_match_table = of_match_clk_mt2701_aud,
-+	},
-+};
-+
-+builtin_platform_driver(clk_mt2701_aud_drv);
--- 
-1.9.1
+SGkgVWxmDQoNCk9uIDAxLzE1LzIwMTggMDE6MzIgUE0sIFVsZiBIYW5zc29uIHdyb3RlOg0KPiBP
+biAxMiBKYW51YXJ5IDIwMTggYXQgMTM6MTUsICA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4gd3Jv
+dGU6DQo+PiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+
+Pg0KPj4gVGhpcyBwYXRjaCBwcmVwYXJlcyBmb3Igc3VwcG9ydGluZyB0aGUgU1RNMzIgdmFyaWFu
+dCB0aGF0DQo+PiBoYXMgbm8gc3VjaCBiaXQgaW4gdGhlIHN0YXR1cyByZWdpc3Rlci4NCj4+DQo+
+PiBTaWduZWQtb2ZmLWJ5OiBBbmRyZWEgTWVyZWxsbyA8YW5kcmVhLm1lcmVsbG9AZ21haWwuY29t
+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3Qu
+Y29tPg0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvbW1jL2hvc3QvbW1jaS5jIHwgMTYgKysrKysrKysr
+KysrKystLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
+bnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9tbWNpLmMgYi9kcml2
+ZXJzL21tYy9ob3N0L21tY2kuYw0KPj4gaW5kZXggMzEyNWRjMC4uN2U1NmY4NSAxMDA2NDQNCj4+
+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3QvbW1jaS5jDQo+PiArKysgYi9kcml2ZXJzL21tYy9ob3N0
+L21tY2kuYw0KPj4gQEAgLTgzLDYgKzgzLDggQEANCj4+ICAgICogQHFjb21fZG1sOiBlbmFibGVz
+IHFjb20gc3BlY2lmaWMgZG1hIGdsdWUgZm9yIGRtYSB0cmFuc2ZlcnMuDQo+PiAgICAqIEByZXZl
+cnNlZF9pcnFfaGFuZGxpbmc6IGhhbmRsZSBkYXRhIGlycSBiZWZvcmUgY21kIGlycS4NCj4+ICAg
+ICogQG1tY2ltYXNrMTogdHJ1ZSBpZiB2YXJpYW50IGhhdmUgYSBNTUNJTUFTSzEgcmVnaXN0ZXIu
+DQo+PiArICogQHN0YXJ0X2VycjogdHJ1ZSBpcyB0aGUgdmFyaWFudCBoYXMgU1RBUlRCSVRFUlIg
+Yml0IGluc2lkZSBNTUNJU1RBVFVTDQo+PiArICogICAgICAgICAgICByZWdpc3Rlci4NCj4+ICAg
+ICovDQo+PiAgIHN0cnVjdCB2YXJpYW50X2RhdGEgew0KPj4gICAgICAgICAgdW5zaWduZWQgaW50
+ICAgICAgICAgICAgY2xrcmVnOw0KPj4gQEAgLTExMyw2ICsxMTUsNyBAQCBzdHJ1Y3QgdmFyaWFu
+dF9kYXRhIHsNCj4+ICAgICAgICAgIGJvb2wgICAgICAgICAgICAgICAgICAgIHFjb21fZG1sOw0K
+Pj4gICAgICAgICAgYm9vbCAgICAgICAgICAgICAgICAgICAgcmV2ZXJzZWRfaXJxX2hhbmRsaW5n
+Ow0KPj4gICAgICAgICAgYm9vbCAgICAgICAgICAgICAgICAgICAgbW1jaW1hc2sxOw0KPj4gKyAg
+ICAgICBib29sICAgICAgICAgICAgICAgICAgICBzdGFydF9lcnI7DQo+IA0KPiBUbyBiZSBjb25z
+aXN0ZW50IHdpdGggaG93IHdlIGltcGxlbWVudCBzdXBwb3J0IGZvciBzaW1pbGFyIHZhcmlhbnQN
+Cj4gdmFyaWF0aW9ucywgSSB3b3VsZCBwcmVmZXIgdG8gaGF2ZSB0aGlzIGJlaW5nIGEgdTMyLiBT
+b21ldGhpbmcgYWxvbmcNCj4gdGhlIGxpbmVzIG9mIGhvdyB0aGUgImJ1c3lfZGV0ZWN0X2ZsYWci
+IGlzIGJlaW5nIHVzZWQuDQoNCk9LIGkgd2lsbCB1cGRhdGUgdGhpcyBpbiB2Mg0KDQpUaGFua3MN
+Cg0KUGF0cmljZQ0KDQo+IA0KPiBPdGhlcndpc2UgdGhpcyBsb29rcyBnb29kIHRvIG1lLg0KPiAN
+Cj4gWy4uLl0NCj4gDQo+IEtpbmQgcmVnYXJkcw0KPiBVZmZlDQo+IA==
