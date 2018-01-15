@@ -1,235 +1,43 @@
-Return-Path: <benh@kernel.crashing.org>
-Message-ID: <1514872125.2743.132.camel@kernel.crashing.org>
-Subject: Re: [PATCH v7 1/5] clk: Add clock driver for ASPEED BMC SoCs
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
-        Michael
-	Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Andrew Jeffery <andrew@aj.id.au>,
-        Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-        Ryan Chen
- <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 02 Jan 2018 16:48:45 +1100
-In-Reply-To: <20171222024522.10362-2-joel@jms.id.au>
-References: <20171222024522.10362-1-joel@jms.id.au>
-	 <20171222024522.10362-2-joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+Message-ID: <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+Date: Mon, 15 Jan 2018 13:56:18 +0300
+MIME-Version: 1.0
+In-Reply-To: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-12-22 at 13:15 +1030, Joel Stanley wrote:
-> This adds the stub of a driver for the ASPEED SoCs. The clocks are
-> defined and the static registration is set up.
+On 10.01.2018 16:59, Dmitry Osipenko wrote:
+> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+> as critical.
 > 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+> 
+> Change log:
+> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>         and Tegra30.
+> 
+> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>         not so critical. Although, I still haven't got a definitive answer
+>         about what exact HW functions are affected by the fixed-clocks.
+>         Anyway it should be cleaner to correct the actual drivers.
 
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> ---
-> v7:
->  - Rebase on dt-bindings patch
->  - Add ASPEED_NUM_CLKS as it no longer lives in the header
-> v6:
->  - Add SPDX copyright notices
-> v5:
->  - Add Andrew's reviewed-by
->  - Make aspeed_gates not initconst to avoid section mismatch warning
-> v3:
->  - use named initlisers for aspeed_gates table
->  - fix clocks typo
->  - Move ASPEED_NUM_CLKS to the bottom of the list
->  - Put gates at the start of the list, so we can use them to initalise
->    the aspeed_gates table
->  - Add ASPEED_CLK_SELECTION_2
->  - Set parent of network MAC gates
-> ---
->  drivers/clk/Kconfig      |  12 ++++
->  drivers/clk/Makefile     |   1 +
->  drivers/clk/clk-aspeed.c | 141 +++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 154 insertions(+)
->  create mode 100644 drivers/clk/clk-aspeed.c
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 1c4e1aa6767e..9abe063ef8d2 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -142,6 +142,18 @@ config COMMON_CLK_GEMINI
->  	  This driver supports the SoC clocks on the Cortina Systems Gemini
->  	  platform, also known as SL3516 or CS3516.
->  
-> +config COMMON_CLK_ASPEED
-> +	bool "Clock driver for Aspeed BMC SoCs"
-> +	depends on ARCH_ASPEED || COMPILE_TEST
-> +	default ARCH_ASPEED
-> +	select MFD_SYSCON
-> +	select RESET_CONTROLLER
-> +	---help---
-> +	  This driver supports the SoC clocks on the Aspeed BMC platforms.
-> +
-> +	  The G4 and G5 series, including the ast2400 and ast2500, are supported
-> +	  by this driver.
-> +
->  config COMMON_CLK_S2MPS11
->  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->  	depends on MFD_SEC_CORE || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index f7f761b02bed..d260da4809f8 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -27,6 +27,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
->  obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
->  obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
->  obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
-> +obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
->  obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
->  obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
->  obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> new file mode 100644
-> index 000000000000..7a86ee08ea4f
-> --- /dev/null
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -0,0 +1,141 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +
-> +#define pr_fmt(fmt) "clk-aspeed: " fmt
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_address.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <dt-bindings/clock/aspeed-clock.h>
-> +
-> +#define ASPEED_NUM_CLKS		35
-> +
-> +#define ASPEED_STRAP		0x70
-> +
-> +/* Keeps track of all clocks */
-> +static struct clk_hw_onecell_data *aspeed_clk_data;
-> +
-> +static void __iomem *scu_base;
-> +
-> +/**
-> + * struct aspeed_gate_data - Aspeed gated clocks
-> + * @clock_idx: bit used to gate this clock in the clock register
-> + * @reset_idx: bit used to reset this IP in the reset register. -1 if no
-> + *             reset is required when enabling the clock
-> + * @name: the clock name
-> + * @parent_name: the name of the parent clock
-> + * @flags: standard clock framework flags
-> + */
-> +struct aspeed_gate_data {
-> +	u8		clock_idx;
-> +	s8		reset_idx;
-> +	const char	*name;
-> +	const char	*parent_name;
-> +	unsigned long	flags;
-> +};
-> +
-> +/**
-> + * struct aspeed_clk_gate - Aspeed specific clk_gate structure
-> + * @hw:		handle between common and hardware-specific interfaces
-> + * @reg:	register controlling gate
-> + * @clock_idx:	bit used to gate this clock in the clock register
-> + * @reset_idx:	bit used to reset this IP in the reset register. -1 if no
-> + *		reset is required when enabling the clock
-> + * @flags:	hardware-specific flags
-> + * @lock:	register lock
-> + *
-> + * Some of the clocks in the Aspeed SoC must be put in reset before enabling.
-> + * This modified version of clk_gate allows an optional reset bit to be
-> + * specified.
-> + */
-> +struct aspeed_clk_gate {
-> +	struct clk_hw	hw;
-> +	struct regmap	*map;
-> +	u8		clock_idx;
-> +	s8		reset_idx;
-> +	u8		flags;
-> +	spinlock_t	*lock;
-> +};
-> +
-> +#define to_aspeed_clk_gate(_hw) container_of(_hw, struct aspeed_clk_gate, hw)
-> +
-> +/* TODO: ask Aspeed about the actual parent data */
-> +static const struct aspeed_gate_data aspeed_gates[] = {
-> +	/*				 clk rst   name			parent	flags */
-> +	[ASPEED_CLK_GATE_ECLK] =	{  0, -1, "eclk-gate",		"eclk",	0 }, /* Video Engine */
-> +	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
-> +	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
-> +	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
-> +	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
-> +	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
-> +	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
-> +	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
-> +	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
-> +	[ASPEED_CLK_GATE_USBUHCICLK] =	{  9, 15, "usb-uhci-gate",	NULL,	0 }, /* USB1.1 (requires port 2 enabled) */
-> +	[ASPEED_CLK_GATE_D1CLK] =	{ 10, 13, "d1clk-gate",		NULL,	0 }, /* GFX CRT */
-> +	[ASPEED_CLK_GATE_YCLK] =	{ 13,  4, "yclk-gate",		NULL,	0 }, /* HAC */
-> +	[ASPEED_CLK_GATE_USBPORT1CLK] = { 14, 14, "usb-port1-gate",	NULL,	0 }, /* USB2 hub/USB2 host port 1/USB1.1 dev */
-> +	[ASPEED_CLK_GATE_UART1CLK] =	{ 15, -1, "uart1clk-gate",	"uart",	0 }, /* UART1 */
-> +	[ASPEED_CLK_GATE_UART2CLK] =	{ 16, -1, "uart2clk-gate",	"uart",	0 }, /* UART2 */
-> +	[ASPEED_CLK_GATE_UART5CLK] =	{ 17, -1, "uart5clk-gate",	"uart",	0 }, /* UART5 */
-> +	[ASPEED_CLK_GATE_ESPICLK] =	{ 19, -1, "espiclk-gate",	NULL,	0 }, /* eSPI */
-> +	[ASPEED_CLK_GATE_MAC1CLK] =	{ 20, 11, "mac1clk-gate",	"mac",	0 }, /* MAC1 */
-> +	[ASPEED_CLK_GATE_MAC2CLK] =	{ 21, 12, "mac2clk-gate",	"mac",	0 }, /* MAC2 */
-> +	[ASPEED_CLK_GATE_RSACLK] =	{ 24, -1, "rsaclk-gate",	NULL,	0 }, /* RSA */
-> +	[ASPEED_CLK_GATE_UART3CLK] =	{ 25, -1, "uart3clk-gate",	"uart",	0 }, /* UART3 */
-> +	[ASPEED_CLK_GATE_UART4CLK] =	{ 26, -1, "uart4clk-gate",	"uart",	0 }, /* UART4 */
-> +	[ASPEED_CLK_GATE_SDCLKCLK] =	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* SDIO/SD */
-> +	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
-> +};
-> +
-> +static void __init aspeed_cc_init(struct device_node *np)
-> +{
-> +	struct regmap *map;
-> +	u32 val;
-> +	int ret;
-> +	int i;
-> +
-> +	scu_base = of_iomap(np, 0);
-> +	if (IS_ERR(scu_base))
-> +		return;
-> +
-> +	aspeed_clk_data = kzalloc(sizeof(*aspeed_clk_data) +
-> +			sizeof(*aspeed_clk_data->hws) * ASPEED_NUM_CLKS,
-> +			GFP_KERNEL);
-> +	if (!aspeed_clk_data)
-> +		return;
-> +
-> +	/*
-> +	 * This way all clocks fetched before the platform device probes,
-> +	 * except those we assign here for early use, will be deferred.
-> +	 */
-> +	for (i = 0; i < ASPEED_NUM_CLKS; i++)
-> +		aspeed_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	map = syscon_node_to_regmap(np);
-> +	if (IS_ERR(map)) {
-> +		pr_err("no syscon regmap\n");
-> +		return;
-> +	}
-> +	/*
-> +	 * We check that the regmap works on this very first access,
-> +	 * but as this is an MMIO-backed regmap, subsequent regmap
-> +	 * access is not going to fail and we skip error checks from
-> +	 * this point.
-> +	 */
-> +	ret = regmap_read(map, ASPEED_STRAP, &val);
-> +	if (ret) {
-> +		pr_err("failed to read strapping register\n");
-> +		return;
-> +	}
-> +
-> +	aspeed_clk_data->num = ASPEED_NUM_CLKS;
-> +	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, aspeed_clk_data);
-> +	if (ret)
-> +		pr_err("failed to add DT provider: %d\n", ret);
-> +};
-> +CLK_OF_DECLARE_DRIVER(aspeed_cc_g5, "aspeed,ast2500-scu", aspeed_cc_init);
-> +CLK_OF_DECLARE_DRIVER(aspeed_cc_g4, "aspeed,ast2400-scu", aspeed_cc_init);
+Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+happen to work with the opensource u-boot, but not with the proprietary
+bootloader. It's probably not a big deal that out-of-tree devices are broken,
+although would be nice to have one problem less.
