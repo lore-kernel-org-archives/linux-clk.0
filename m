@@ -1,32 +1,39 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 9 Jan 2018 18:26:13 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@codeaurora.org, adriana.reus@nxp.com,
-	stefan@agner.ch, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH V4 2/2] ARM: dts: imx7s: add snvs rtc clock
-Message-ID: <20180109102613.GI26312@b29396-OptiPlex-7040>
-References: <1515491526-14060-1-git-send-email-Anson.Huang@nxp.com>
- <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1515759368-16946-4-git-send-email-patrice.chotard@st.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-4-git-send-email-patrice.chotard@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 15 Jan 2018 02:07:24 +0100
+Message-ID: <CACRpkdYRXhfwZW6t3zoGg8dhizGw2ktQ1-pFh7mFZ++sab8ddQ@mail.gmail.com>
+Subject: Re: [PATCH 03/14] mmc: mmci: Add support for setting pad type via pinctrl
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>, linux-mmc <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andrea Merello <andrea.merello@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 05:52:06PM +0800, Anson Huang wrote:
-> Add i.MX7 SNVS RTC clock.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Fri, Jan 12, 2018 at 1:15 PM,  <patrice.chotard@st.com> wrote:
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> From: Patrice Chotard <patrice.chotard@st.com>
+>
+> The STM32 variant hasn't the control bit to switch pads in opendrain mode.
+> In this case we can achieve the same result by asking to the pinmux driver
+> to configure pins for us.
+>
+> This patch make the mmci driver able to do this whenever needed.
+>
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 
-Regards
-Dong Aisheng
+Nice and clean way to use pin control for this.
+Hats off!
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
