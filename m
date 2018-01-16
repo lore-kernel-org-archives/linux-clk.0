@@ -1,57 +1,140 @@
-Return-Path: <Anson.Huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: <horia.geanta@nxp.com>, <aymen.sghaier@nxp.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<fabio.estevam@nxp.com>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <adriana.reus@nxp.com>, <stefan@agner.ch>,
-	<dongas86@gmail.com>
-CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
-Date: Tue, 9 Jan 2018 17:20:50 +0800
-Message-ID: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v2 02/15] mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
+Date: Tue, 16 Jan 2018 13:30:46 +0100
+Message-ID: <1516105859-3525-3-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the i.MX7D Reference Manual,
-SNVS block has a clock gate, accessing SNVS block
-would need this clock gate to be enabled, add it
-into clock tree so that SNVS module driver can
-operate this clock gate.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+This patch prepares for supporting the STM32 variant that
+has no such bit in the status register.
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- drivers/clk/imx/clk-imx7d.c             | 1 +
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211..f34f1ec 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
-+	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index e2f99ae..dc51904 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -452,5 +452,6 @@
- #define IMX7D_OCOTP_CLK			439
- #define IMX7D_NAND_RAWNAND_CLK		440
- #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
--#define IMX7D_CLK_END			442
-+#define IMX7D_SNVS_CLK			442
-+#define IMX7D_CLK_END			443
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+v2: _ replace start_err bool type by u32
+
+ drivers/mmc/host/mmci.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 3125dc0..8a4fbc2 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -83,6 +83,8 @@
+  * @qcom_dml: enables qcom specific dma glue for dma transfers.
+  * @reversed_irq_handling: handle data irq before cmd irq.
+  * @mmcimask1: true if variant have a MMCIMASK1 register.
++ * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
++ *	       register.
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -113,6 +115,7 @@ struct variant_data {
+ 	bool			qcom_dml;
+ 	bool			reversed_irq_handling;
+ 	bool			mmcimask1;
++	u32			start_err;
+ };
+ 
+ static struct variant_data variant_arm = {
+@@ -123,6 +126,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.reversed_irq_handling	= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo = {
+@@ -132,6 +136,7 @@ struct variant_data {
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo_hwfc = {
+@@ -142,6 +147,7 @@ struct variant_data {
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_u300 = {
+@@ -158,6 +164,7 @@ struct variant_data {
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_nomadik = {
+@@ -175,6 +182,7 @@ struct variant_data {
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_ux500 = {
+@@ -198,6 +206,7 @@ struct variant_data {
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_ux500v2 = {
+@@ -223,6 +232,7 @@ struct variant_data {
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_qcom = {
+@@ -242,6 +252,7 @@ struct variant_data {
+ 	.qcom_fifo		= true,
+ 	.qcom_dml		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ /* Busy detection for the ST Micro variant */
+@@ -935,8 +946,9 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
+ 		return;
+ 
+ 	/* First check for errors */
+-	if (status & (MCI_DATACRCFAIL|MCI_DATATIMEOUT|MCI_STARTBITERR|
+-		      MCI_TXUNDERRUN|MCI_RXOVERRUN)) {
++	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
++		      host->variant->start_err |
++		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
+ 		u32 remain, success;
+ 
+ 		/* Terminate the DMA transfer */
 -- 
 1.9.1
