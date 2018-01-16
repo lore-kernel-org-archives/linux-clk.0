@@ -1,68 +1,63 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Dong Aisheng <dongas86@gmail.com>
-CC: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>, Aymen Sghaier
-	<aymen.sghaier@nxp.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, Adriana Reus <adriana.reus@nxp.com>,
-	"stefan@agner.ch" <stefan@agner.ch>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
-Date: Tue, 9 Jan 2018 10:10:09 +0000
-Message-ID: <AM3PR04MB1315A6E9A645EC6256914285F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
- <20180109094348.GG26312@b29396-OptiPlex-7040>
-In-Reply-To: <20180109094348.GG26312@b29396-OptiPlex-7040>
-Content-Type: text/plain; charset="iso-8859-2"
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Tue, 16 Jan 2018 13:30:58 +0100
+Message-ID: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Patrice Chotard <patrice.chotard@st.com>
 
+STM32F769 has 2 SDMMC port, add clock entry for the second one.
 
-Best Regards!
-Anson Huang
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
+v2 _ Add Acked-by
 
-> -----Original Message-----
-> From: Dong Aisheng [mailto:dongas86@gmail.com]
-> Sent: 2018-01-09 5:44 PM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: Horia Geant=E3 <horia.geanta@nxp.com>; Aymen Sghaier
-> <aymen.sghaier@nxp.com>; herbert@gondor.apana.org.au;
-> davem@davemloft.net; robh+dt@kernel.org; mark.rutland@arm.com;
-> shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; linux@armlinux.org.uk;
-> mturquette@baylibre.com; sboyd@codeaurora.org; Adriana Reus
-> <adriana.reus@nxp.com>; stefan@agner.ch; linux-crypto@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-clk@vger.kernel.org; dl-linux-imx <linu=
-x-
-> imx@nxp.com>
-> Subject: Re: [PATCH V3 1/2] clk: imx: imx7d: add the snvs clock
->=20
-> On Tue, Jan 09, 2018 at 05:20:50PM +0800, Anson Huang wrote:
-> > According to the i.MX7D Reference Manual, SNVS block has a clock gate,
-> > accessing SNVS block would need this clock gate to be enabled, add it
-> > into clock tree so that SNVS module driver can operate this clock
-> > gate.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->=20
-> You missed the last round review tags.
->=20
-> Regards
-> Dong Aisheng
+ drivers/clk/clk-stm32f4.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-Thanks for reminder, already sent out a V4 patch set to add tags.
-
-Anson.
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 96c6b6b..8f8a178 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
+ 
+ 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
+ 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
+ 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
+@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
+ 
+ static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
+ 						      0x0000000000000003ull,
+-						      0x04f77f033e01c9ffull };
++						      0x04f77f833e01c9ffull };
+ 
+ static const u64 *stm32f4_gate_map;
+ 
+-- 
+1.9.1
