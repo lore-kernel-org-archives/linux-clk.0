@@ -1,50 +1,57 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] clk: meson: axg: add the fractional part of the fixed_pll
-Date: Fri, 19 Jan 2018 16:55:29 +0100
-Message-Id: <20180119155529.11532-10-jbrunet@baylibre.com>
-In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
-References: <20180119155529.11532-1-jbrunet@baylibre.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 04/44] clk: davinci: Add platform information for TI
+ DA850 PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-5-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <f9c0c0c5-ca81-ec0c-358d-f45299250f42@ti.com>
+Date: Tue, 16 Jan 2018 14:07:07 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-5-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The fixed_pll also has a fractional part. On axg s400 board, without
-this parameter, the calculated rate is off by ~8Mhz (0,4%). The fixed_pll
-being the root of the peripheral clock tree, this error is propagated to
-the rest of the clocks
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> +void __init da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1)
+> +{
+> +	const struct davinci_pll_divclk_info *info;
+> +
+> +	davinci_pll_clk_register("pll0", "ref_clk", pll0);
 
-Adding the definition of the parameter fixes the problem
+I think this will be more readable with empty lines between these
+function calls. So here ..
 
-Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> +	davinci_pll_aux_clk_register("pll0_aux_clk", "ref_clk", pll0);
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 56806c6bd9d5..953e119635a2 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -37,6 +37,11 @@ static struct meson_clk_pll axg_fixed_pll = {
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-+	.frac = {
-+		.reg_off = HHI_MPLL_CNTL2,
-+		.shift   = 0,
-+		.width   = 12,
-+	},
- 	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
--- 
-2.14.3
+.. here
+
+> +	for (info = da850_pll0_divclk_info; info->name; info++)
+> +		davinci_pll_divclk_register(info, pll0);
+> +
+> +	davinci_pll_clk_register("pll1", "ref_clk", pll1);
+
+.. and here.
+
+> +	for (info = da850_pll1_divclk_info; info->name; info++)
+> +		davinci_pll_divclk_register(info, pll1);
+
+I see that you have included empty line only when changing the PLL, but
+I feel its more readable with the additional spacing suggested.
+
+Same comment for other patches too with similar function implemented.
+With that minor comment:
+
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+
+Thanks,
+Sekhar
