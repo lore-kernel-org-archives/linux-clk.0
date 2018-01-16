@@ -1,55 +1,85 @@
-Return-Path: <arndbergmann@gmail.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH v2 08/15] ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
+Date: Tue, 16 Jan 2018 13:30:52 +0100
+Message-ID: <1516105859-3525-9-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <CAK8P3a3XA+p__p9+B-jCONUDe1MuOgsee6oD0USmwK06iXqH9g@mail.gmail.com>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <20171207125715.16160-13-chunyan.zhang@spreadtrum.com> <CAK8P3a3XA+p__p9+B-jCONUDe1MuOgsee6oD0USmwK06iXqH9g@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 5 Jan 2018 00:01:03 +0100
-Message-ID: <CAK8P3a2Qpbr6EB+qWMQqCLkbnVddL+MHx1sFNs-+97ZQ=QaHeg@mail.gmail.com>
-Subject: Re: [PATCH V7 12/12] arm64: dts: add clocks for SC9860
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 10:34 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Dec 7, 2017 at 1:57 PM, Chunyan Zhang
-> <chunyan.zhang@spreadtrum.com> wrote:
->> Some clocks on SC9860 are in the same address area with syscon devices,
->> those are what have a property of 'sprd,syscon' which would refer to
->> syscon devices, others would have a reg property indicated their address
->> ranges.
->>
->> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->> ---
->>  arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
->>  arch/arm64/boot/dts/sprd/whale2.dtsi |  18 +++++-
->>  2 files changed, 131 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
->> index 7b7d8ce..bf03da4 100644
->> --- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
->> +++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
->> @@ -7,6 +7,7 @@
->>   */
->>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/sprd,sc9860-clk.h>
->>  #include "whale2.dtsi"
->
-> This caused a build error since the sprd,sc9860-clk.h file does not
-> exist, I'll revert or undo the patch tomorrow.
+From: Andrea Merello <andrea.merello@gmail.com>
 
-I've taken another look, and fixing it by removing the broken #include
-was easier than undoing the patches, so I did that now, see
-https://patchwork.kernel.org/patch/10145773/
+This patch adds the pin configuration for SDIO controller on
+stm32f4.
 
-      Arnd
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+
+v2 _ none
+
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+index ae94d86..3520289 100644
+--- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+@@ -338,6 +338,37 @@
+ 					slew-rate = <3>;
+ 				};
+ 			};
++
++			sdio_pins: sdio_pins@0 {
++				pins {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
++						 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
++			};
++
++			sdio_pins_od: sdio_pins_od@0 {
++				pins1 {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
++
++				pins2 {
++					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-open-drain;
++					slew-rate = <2>;
++				};
++			};
+ 		};
+ 	};
+ };
+-- 
+1.9.1
