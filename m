@@ -1,167 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34096 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeABQC6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 11:02:58 -0500
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 10/44] clk: davinci: New driver for davinci PSC clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-11-git-send-email-david@lechnology.com>
+ <e0a9af55-a8b1-c359-fe88-d038648e02f1@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <83f3d207-9645-cbdf-d6cf-b6e6a8458abe@lechnology.com>
+Date: Tue, 16 Jan 2018 10:51:45 -0600
 MIME-Version: 1.0
-In-Reply-To: <20180102150848.11314-10-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-10-paul@crapouillou.net>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Tue, 2 Jan 2018 21:32:57 +0530
-Message-ID: <CANc+2y7ePJ9PwXQp2EQS_CFj541iOkWLbZm7K3U0G7j0bx4RDg@mail.gmail.com>
-Subject: Re: [PATCH v5 10/15] MIPS: ingenic: Add machine info for supported boards
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <e0a9af55-a8b1-c359-fe88-d038648e02f1@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+On 01/16/2018 05:03 AM, Sekhar Nori wrote:
+> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>> This adds a new driver for mach-davinci PSC clocks. This is porting the
+>> code from arch/arm/mach-davinci/psc.c to the common clock framework and
+>> is converting it to use regmap to simplify the code. Additionally, it adds
+>> device tree support for these clocks.
+>>
+>> Note: although there are similar clocks for TI Keystone we are not able
+>> to share the code for a few reasons. The keystone clocks are device tree
+>> only and use legacy one-node-per-clock bindings. Also the keystone driver
+>> makes the assumption that there is only one PSC per SoC and uses global
+>> variables, but here we have two controllers per SoC.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
 
-On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net> wrote:
-> This makes sure that 'mips_machtype' will be initialized to the SoC
-> version used on the board.
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  arch/mips/Kconfig         |  1 +
->  arch/mips/jz4740/Makefile |  2 +-
->  arch/mips/jz4740/boards.c | 12 ++++++++++++
->  arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
->  4 files changed, 43 insertions(+), 6 deletions(-)
->  create mode 100644 arch/mips/jz4740/boards.c
->
->  v2: No change
->  v3: No change
->  v4: No change
->  v5: Use SPDX license identifier
->
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 350a990fc719..83243e427e36 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -376,6 +376,7 @@ config MACH_INGENIC
->         select BUILTIN_DTB
->         select USE_OF
->         select LIBFDT
-> +       select MIPS_MACHINE
->
->  config LANTIQ
->         bool "Lantiq based platforms"
-> diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
-> index 88d6aa7d000b..fc2d3b3c4a80 100644
-> --- a/arch/mips/jz4740/Makefile
-> +++ b/arch/mips/jz4740/Makefile
-> @@ -6,7 +6,7 @@
->  # Object file lists.
->
->  obj-y += prom.o time.o reset.o setup.o \
-> -       platform.o timer.o
-> +       platform.o timer.o boards.o
->
->  CFLAGS_setup.o = -I$(src)/../../../scripts/dtc/libfdt
->
-> diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-> new file mode 100644
-> index 000000000000..13b0bddd8cb7
-> --- /dev/null
-> +++ b/arch/mips/jz4740/boards.c
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Ingenic boards support
-> + * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <asm/bootinfo.h>
-> +#include <asm/mips_machine.h>
-> +
-> +MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-> +MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
-> +                       "Imagination Technologies CI20", NULL);
-> diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-> index 6d0152321819..afd84ee966e8 100644
-> --- a/arch/mips/jz4740/setup.c
-> +++ b/arch/mips/jz4740/setup.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of_fdt.h>
->
->  #include <asm/bootinfo.h>
-> +#include <asm/mips_machine.h>
->  #include <asm/prom.h>
->
->  #include <asm/mach-jz4740/base.h>
-> @@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
->         add_memory_region(0, size, BOOT_MEM_RAM);
->  }
->
-> +static unsigned long __init get_board_mach_type(const void *fdt)
-> +{
-> +       const struct mips_machine *mach;
-> +
-> +       for (mach = (struct mips_machine *)&__mips_machines_start;
-> +                       mach < (struct mips_machine *)&__mips_machines_end;
-> +                       mach++) {
-> +               if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
-> +                       return mach->mach_type;
-> +       }
-> +
-> +       return MACH_INGENIC_JZ4740;
-> +}
-> +
->  void __init plat_mem_setup(void)
->  {
->         int offset;
->
-> +       if (!early_init_dt_scan(__dtb_start))
-> +               return;
-> +
->         jz4740_reset_init();
-> -       __dt_setup_arch(__dtb_start);
->
->         offset = fdt_path_offset(__dtb_start, "/memory");
->         if (offset < 0)
->                 jz4740_detect_mem();
-> +
-> +       mips_machtype = get_board_mach_type(__dtb_start);
->  }
->
->  void __init device_tree_init(void)
-> @@ -75,13 +94,18 @@ void __init device_tree_init(void)
->
->  const char *get_system_type(void)
->  {
-> -       if (IS_ENABLED(CONFIG_MACH_JZ4780))
-> -               return "JZ4780";
-> -
-> -       return "JZ4740";
-> +       return mips_get_machine_name();
->  }
->
->  void __init arch_init_irq(void)
->  {
->         irqchip_init();
->  }
-> +
-> +static int __init jz4740_machine_setup(void)
-> +{
-> +       mips_machine_setup();
-> +
-> +       return 0;
-> +}
-> +arch_initcall(jz4740_machine_setup);
-> --
-> 2.11.0
->
->
+>> +static void psc_config(struct davinci_psc_clk *psc,
+>> +		       enum davinci_psc_state next_state)
+>> +{
+>> +	u32 epcpr, pdstat, mdstat, mdctl, ptstat;
+>> +
+>> +	mdctl = next_state;
+>> +	if (psc->flags & LPSC_FORCE)
+>> +		mdctl |= MDCTL_FORCE;
+>> +	regmap_write_bits(psc->regmap, MDCTL(psc->lpsc), MDSTAT_STATE_MASK,
+>> +			  mdctl);
+> 
+> Wont this ignore the MDCTL_FORCE bit since MDSTAT_STATE_MASK does not
+> cover that?
+> 
+>> +
+>> +	regmap_read(psc->regmap, PDSTAT(psc->pd), &pdstat);
+>> +	if ((pdstat & PDSTAT_STATE_MASK) == 0) {
+>> +		regmap_write_bits(psc->regmap, PDSTAT(psc->pd),
+>> +				  PDSTAT_STATE_MASK, PDCTL_NEXT);
+> 
+> Shouldn't this be a write to PDCTL register?
+> 
 
-Why add another file in arch/mips/jz4740/? I think declaring a machine
-and compatible string in dts would suffice. Please feel free to
-correct me if I am wrong.
+Looks like I have some mistakes here. Thank you.
 
-Regards,
-PrasannaKumar
+...
+
+>> +static struct clk *davinci_psc_clk_register(const char *name,
+>> +					    const char *parent_name,
+>> +					    struct regmap *regmap,
+>> +					    u32 lpsc, u32 pd, u32 flags)
+>> +{
+>> +	struct clk_init_data init;
+>> +	struct davinci_psc_clk *psc;
+>> +	struct clk *clk;
+>> +
+>> +	psc = kzalloc(sizeof(*psc), GFP_KERNEL);
+>> +	if (!psc)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	init.name = name;
+>> +	init.ops = &davinci_psc_clk_ops;
+>> +	init.parent_names = (parent_name ? &parent_name : NULL);
+>> +	init.num_parents = (parent_name ? 1 : 0);
+>> +	init.flags = CLK_SET_RATE_PARENT;
+> 
+> Is this needed since PSC does not cause any rate change?
+
+Yes, because one of the PSCs is the ARM clock and for cpufreq, we
+need to propagate the rate change up the chain to SYSCLK6.
