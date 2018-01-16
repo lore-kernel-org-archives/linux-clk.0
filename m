@@ -1,77 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35123 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbeA2Tsm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 14:48:42 -0500
-Date: Mon, 29 Jan 2018 13:48:40 -0600
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9
- SoC
-Message-ID: <20180129194840.fcwlre3wmikphg2f@rob-hp-laptop>
-References: <20180119231735.61504-1-icenowy@aosc.io>
- <20180122121435.bpayxk4uzfqbhqse@flea.lan>
- <14593819.uISRktVE4V@ice-x220i>
- <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 06/44] clk: davinci: Add platform information for TI
+ DM365 PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-7-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ada2321c-3058-0dcc-c04b-9ef3260f8c12@ti.com>
+Date: Tue, 16 Jan 2018 14:18:58 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1515377863-20358-7-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 04:35:20PM +0100, Maxime Ripard wrote:
-> Hi,
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds platform-specific declarations for the PLL clocks on TI
+> DaVinci 365 based systems.
 > 
-> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
-> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 SoC.
-> > > > 
-> > > > The same die is packaged differently, come with different co-packaged
-> > > > DRAM or shipped with different SDK; and then made many model names: F23,
-> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs all
-> > > > share a common feature set and are packaged similarly (eLQFP128 for SoCs
-> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > > > functionality hidden on the QFN88 models (except DRAM interface not
-> > > > exported), it's not clever to differentiate them. So I will use suniv as
-> > > > common name of all these SoCs.
-> > > 
-> > > Where is that suniv prefix coming from?
-> > 
-> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK and 
-> > "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  drivers/clk/davinci/Makefile    |  1 +
+>  drivers/clk/davinci/pll-dm365.c | 64 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/clk/davinci.h     |  1 +
+>  3 files changed, 66 insertions(+)
+>  create mode 100644 drivers/clk/davinci/pll-dm365.c
 > 
-> Do you have a link to that BSP?
-> 
-> > > You should really answer two questions here:
-> > >   - Are you able to predict whether you'll find an SoC part of that
-> > >     family in the future that derives a bit and will need a compatible
-> > >     of its own?
-> > >   - Are you able to predict which quirks we'll need along the way to
-> > >     support all the SoCs you've listed there?
-> > > 
-> > > If you can't answer yes to both these questions, with a 100%
-> > > certainty, then you'll need a SoC name in the compatible.
-> > > 
-> > > Which doesn't prevent you from sharing as much as possible the DT like
-> > > we did between the A10s and the A13 for example.
-> > 
-> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals known 
-> > should go through suniv.dtsi.
-> 
-> Sorry if I wasn't really clear. You can totally keep the current DT
-> structure if that makes sense (and judging by what you're saying, it
-> does.), but the compatibles should have the SoC name in it.
+> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+> index 6720bd0..353aa02 100644
+> --- a/drivers/clk/davinci/Makefile
+> +++ b/drivers/clk/davinci/Makefile
+> @@ -5,4 +5,5 @@ obj-y += pll.o
+>  obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+>  obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+>  obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+> +obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+>  endif
+> diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+> new file mode 100644
+> index 0000000..9892b0b
+> --- /dev/null
+> +++ b/drivers/clk/davinci/pll-dm365.c
+> @@ -0,0 +1,64 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PLL clock descriptions for TI DM365
+> + *
+> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +
+> +#include "pll.h"
+> +
+> +static const char * const dm365_pll_obsclk_parent_names[] = {
+> +	"ref_clk",
+> +};
+> +
+> +static u32 dm365_pll_obsclk_table[] = {
+> +	0x10,
 
-In case it's not clear, the compatible strings and any new bindings need 
-to be documented.
+Perhaps use a #define here. Something like OBSCLK_SEL_OSC.
 
-Rob
+> +void __init dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
+> +{
+> +	const struct davinci_pll_divclk_info *info;
+> +
+> +	davinci_pll_clk_register("pll1", "ref_clk", pll1);
+> +	davinci_pll_aux_clk_register("pll1_aux_clk", "ref_clk", pll1);
+> +	davinci_pll_bpdiv_clk_register("pll1_sysclkbp", "ref_clk", pll1);
+> +	davinci_pll_obs_clk_register("clkout0", dm365_pll_obsclk_parent_names,
+> +				     ARRAY_SIZE(dm365_pll_obsclk_parent_names),
+> +				     pll1, dm365_pll_obsclk_table);
+> +	for (info = dm365_pll1_divclk_info; info->name; info++)
+> +		davinci_pll_divclk_register(info, pll1);
+> +
+> +	davinci_pll_clk_register("pll2", "ref_clk", pll2);
+> +	davinci_pll_aux_clk_register("clkout1", "ref_clk", pll2);
+> +	davinci_pll_obs_clk_register("clkout1", dm365_pll_obsclk_parent_names,
+> +				    ARRAY_SIZE(dm365_pll_obsclk_parent_names),
+> +				    pll2, dm365_pll_obsclk_table);
+> +	for (info = dm365_pll2_divclk_info; info->name; info++)
+> +		davinci_pll_divclk_register(info, pll2);
+> +}
+
+With that and the empty line comment I gave earlier.
+
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+
+Thanks,
+Sekhar
