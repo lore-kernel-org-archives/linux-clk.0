@@ -1,57 +1,36 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 24/34] clk: tegra: change clk_sync_source_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:50 +0000
-Message-Id: <1514835300-381-10-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 08/44] clk: davinci: Add platform information for TI
+ DM646x PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-9-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <51b68de7-9202-a23f-00e7-c654ddce661f@ti.com>
+Date: Tue, 16 Jan 2018 14:31:43 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-9-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds platform-specific declarations for the PLL clocks on TI
+> DaVinci 646x based systems.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Some minor comments I gave on other patches apply here too. Apart from
+those:
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/tegra/clk-audio-sync.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-index 9784d58..5fd825b 100644
---- a/drivers/clk/tegra/clk-audio-sync.c
-+++ b/drivers/clk/tegra/clk-audio-sync.c
-@@ -35,7 +35,7 @@ static unsigned long clk_sync_source_round_rate(struct clk_hw *hw,
- 	struct tegra_clk_sync_source *sync = to_clk_sync_source(hw);
- 
- 	if (rate > sync->max_rate)
--		return -EINVAL;
-+		return 0;
- 	else
- 		return rate;
- }
--- 
-2.7.4
+Thanks,
+Sekhar
