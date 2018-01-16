@@ -1,51 +1,63 @@
 Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: David Lechner <david@lechnology.com>, Adam Ford <aford173@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman
-	<khilman@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
 References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
- <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
- <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
- <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
- <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
- <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com>
- <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
- <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com>
- <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
- <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com>
- <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
- <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com>
- <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
- <c1e27013-cbad-3b09-0e0d-f68d75162c1f@lechnology.com>
+ <1515377863-20358-3-git-send-email-david@lechnology.com>
+ <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
+ <01fbde0e-36a0-2b19-e385-e63bc4a3ae4a@lechnology.com>
+ <eb2b1a63-9c7c-aeca-170f-d38642442438@ti.com>
+ <4a32c52f-4335-52c0-fa63-625a449b00b5@lechnology.com>
 From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <31d5baa2-2a4a-5014-2d0e-dfd45a1699c8@ti.com>
-Date: Fri, 12 Jan 2018 11:33:47 +0530
+Message-ID: <7620b3a1-8806-2e39-4b08-b21064160e06@ti.com>
+Date: Tue, 16 Jan 2018 12:18:19 +0530
 MIME-Version: 1.0
-In-Reply-To: <c1e27013-cbad-3b09-0e0d-f68d75162c1f@lechnology.com>
+In-Reply-To: <4a32c52f-4335-52c0-fa63-625a449b00b5@lechnology.com>
 Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 12 January 2018 03:16 AM, David Lechner wrote:
+On Saturday 13 January 2018 06:41 AM, David Lechner wrote:
+> On 01/12/2018 10:18 AM, Sekhar Nori wrote:
+>> On Friday 12 January 2018 08:55 PM, David Lechner wrote:
+>>>>
+>>>> PLL output on DA850 must never be below 300MHz or above 600MHz (see
+>>>> datasheet table "Allowed PLL Operating Conditions"). Does this take
+>>>> care
+>>>> of that? Thats one of the main reasons I recall I went with some
+>>>> specific values of prediv, pllm and post div in
+>>>> arch/arm/mach-davinci/da850.c
+>>>
+>>> Apparently, I missed this requirement. It looks like I am going to
+>>> have to
+>>> rework things so that there is some coordination between the PLL and the
+>>> PLLDIV clocks in order to get the < 300MHz operating points.
+>>
+>> Just to make sure we are on the same page. The datasheet
+>> constraint is 600 >= PLLOUT >= 300. PLLOUT is output of POSTDIV.
 > 
-> Sekhar, have you had a chance to look at the rest of the patches in the
-> series?
+> Hmm... I am on a different page. It looks to me like PLLOUT is the output
+> of PLLM, not POSTDIV. The datasheet says nothing at all and the TRM does
+> not say it explicitly, but footnote 2 on the table "System PLLC Output
+> Clocks", for example, makes it pretty clear.
 
-Not yet. Sorry about the slow (and piecemeal) review.
+You are right. There is also this note in "Device clock generation" of
+TRM which makes this clear.
 
-> 
-> I'll wait a bit before I send a v6 to see if any other comments come.
-
-Yes. I will let you know once I am done reviewing the whole series.
+"
+The PLLOUT stage in PLLC0 and PLLC1 is capable of providing frequencies
+greater than what the SYSCLK dividers can handle. The POSTDIV stage
+should be programmed to keep the input to the SYSCLK dividers within
+operating limits. See the device datasheet for the maximum operating
+frequencies.
+"
 
 Thanks,
 Sekhar
