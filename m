@@ -1,67 +1,125 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	gabriel.fernandez@st.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] clk: stm32: add configuration flags for each of the stm32 drivers
-Date: Mon, 15 Jan 2018 15:21:51 +0100
-Message-Id: <20180115142151.22225-1-benjamin.gaignard@st.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516106529-19703-1-git-send-email-fabio.estevam@nxp.com>
+References: <1516106529-19703-1-git-send-email-fabio.estevam@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Jan 2018 14:19:18 +0100
+Message-ID: <CAMuHMdUURgzHV_jsU0o9DGuyCjhd8j7iU_Fs86GY2pEEx+Xh9g@mail.gmail.com>
+Subject: Re: [PATCH] clk: Print the clock name in the warnings
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add two configuration flags to be able to not compile all the time
-stm32f and stm32h7 drivers when ARCH_STM32 is set.
-That help to save some space on those small platforms.
+Hi Fabio,
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/clk/Kconfig  | 15 +++++++++++++++
- drivers/clk/Makefile |  4 ++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+On Tue, Jan 16, 2018 at 1:42 PM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+> When getting the clock related warnings, it is useful to know what
+> is the clock name that is causing the problem.
+>
+> Add it to the warning message, so that the output becomes clearer
+> like this:
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1c4e1aa6767e..c876eb828fc4 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -226,6 +226,21 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
- 
-+config COMMON_CLK_STM32F
-+	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-+	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	help
-+	---help---
-+	  Support for stm32f4 and stm32f7 SoC families clocks
-+
-+config COMMON_CLK_STM32H7
-+	bool "Clock driver for stm32h7 SoC family"
-+	depends on MACH_STM32H743
-+	help
-+	---help---
-+	  Support for stm32h7 SoC family clocks
-+
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f7f761b02bed..4a8e063a7159 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,8 +44,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-+obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
-+obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
- obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
- obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
--- 
-2.15.0
+I love your patch! Yet something to improve:
+
+> [    2.388129] ------------[ cut here ]------------
+> [    2.392883] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:812 clk_core_disable+0xd4/0xec
+> [    2.400822] clock name: uart4_ipg_gate
+
+This means we still have to look into the sources, to find out which
+condition triggered. So what about improving the warning messages,
+cfr. e.g. below?
+
+> ...
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+>  drivers/clk/clk.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0f686a9..42dbb1f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -548,7 +548,7 @@ static void clk_core_rate_unprotect(struct clk_core *core)
+>         if (!core)
+>                 return;
+>
+> -       if (WARN_ON(core->protect_count == 0))
+> +       if (WARN(core->protect_count == 0, "clock name: %s\n", core->name))
+
+"%s already unprotected\n"?
+
+>                 return;
+>
+>         if (--core->protect_count > 0)
+> @@ -681,16 +681,17 @@ static void clk_core_unprepare(struct clk_core *core)
+>         if (!core)
+>                 return;
+>
+> -       if (WARN_ON(core->prepare_count == 0))
+> +       if (WARN(core->prepare_count == 0, "clock name: %s\n", core->name))
+
+"%s already unprepared\n"?
+
+>                 return;
+>
+> -       if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
+> +       if (WARN(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL,
+> +           "clock name: %s\n", core->name))
+
+"Unpreparing critical %s\n"?
+
+>                 return;
+>
+>         if (--core->prepare_count > 0)
+>                 return;
+>
+> -       WARN_ON(core->enable_count > 0);
+> +       WARN(core->enable_count > 0, "clock name: %s\n", core->name);
+
+"Unpreparing enabled %s\n"?
+
+>         trace_clk_unprepare(core);
+>
+> @@ -808,10 +809,11 @@ static void clk_core_disable(struct clk_core *core)
+>         if (!core)
+>                 return;
+>
+> -       if (WARN_ON(core->enable_count == 0))
+> +       if (WARN(core->enable_count == 0, "clock name: %s\n", core->name))
+
+"%s already disabled\n"?
+
+>                 return;
+>
+> -       if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
+> +       if (WARN(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL,
+> +           "clock name: %s\n", core->name))
+
+"Disabling critical %s\n"?
+
+>                 return;
+>
+>         if (--core->enable_count > 0)
+> @@ -866,7 +868,7 @@ static int clk_core_enable(struct clk_core *core)
+>         if (!core)
+>                 return 0;
+>
+> -       if (WARN_ON(core->prepare_count == 0))
+> +       if (WARN(core->prepare_count == 0, "clock name: %s\n", core->name))
+
+"Enabling unprepared %s\n"?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
