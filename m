@@ -1,60 +1,88 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-From: David Lechner <david@lechnology.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
- devicetree <devicetree@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
- <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
- <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
- <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
- <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
- <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
- <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
- <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
- <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
- <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
-Message-ID: <fc54ab26-72be-1377-2ccb-72d34360c5eb@lechnology.com>
-Date: Tue, 23 Jan 2018 14:23:10 -0600
+Return-Path: <fabio.estevam@nxp.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
+To: <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <geert@linux-m68k.org>, <festevam@gmail.com>,
+	<linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH] clk: Print the clock name in the warnings
+Date: Tue, 16 Jan 2018 10:42:09 -0200
+Message-ID: <1516106529-19703-1-git-send-email-fabio.estevam@nxp.com>
+Return-Path: fabio.estevam@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/23/2018 02:05 PM, David Lechner wrote:
-> On 01/23/2018 02:01 PM, David Lechner wrote:
->> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
->>>
->>> In the mdio case - the problem is that devm_clk_get() doesn't fail,
->>> but somehow the clock doesn't end up in the list of the device's
->>> clocks - which is why it's not enabled by pm_runtime_get_sync().
->>>
->>
->>
->> Right. This is because devm_clk_get() now finds the clock via device
->> tree instead of a clkdev lookup entry. However, I think that the PM
->> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
->> the clkdev lookup to match the con_id and does not use device tree.
->> The same thing is happing in mdio, emac and lcdc.
->>
-> 
-> Minor correction: It looks like emac doesn't do this because it doesn't
-> have a con_id of "fck". But, the same clock is shared by emac and mdio, so
-> since mdio enables the clock, emac doesn't notice or care that it did
-> not enable the clock itself.
+When getting the clock related warnings, it is useful to know what
+is the clock name that is causing the problem.
 
-How about using pm_clk_add_clk() in these drivers to explicitly use the
-clocks for power management instead of relying on pm_clk_add_notifier()
-to do this implicitly?
+Add it to the warning message, so that the output becomes clearer
+like this:
+
+[    2.388129] ------------[ cut here ]------------
+[    2.392883] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:812 clk_core_disable+0xd4/0xec
+[    2.400822] clock name: uart4_ipg_gate
+...
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/clk.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0f686a9..42dbb1f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -548,7 +548,7 @@ static void clk_core_rate_unprotect(struct clk_core *core)
+ 	if (!core)
+ 		return;
+ 
+-	if (WARN_ON(core->protect_count == 0))
++	if (WARN(core->protect_count == 0, "clock name: %s\n", core->name))
+ 		return;
+ 
+ 	if (--core->protect_count > 0)
+@@ -681,16 +681,17 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	if (!core)
+ 		return;
+ 
+-	if (WARN_ON(core->prepare_count == 0))
++	if (WARN(core->prepare_count == 0, "clock name: %s\n", core->name))
+ 		return;
+ 
+-	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
++	if (WARN(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL,
++	    "clock name: %s\n", core->name))
+ 		return;
+ 
+ 	if (--core->prepare_count > 0)
+ 		return;
+ 
+-	WARN_ON(core->enable_count > 0);
++	WARN(core->enable_count > 0, "clock name: %s\n", core->name);
+ 
+ 	trace_clk_unprepare(core);
+ 
+@@ -808,10 +809,11 @@ static void clk_core_disable(struct clk_core *core)
+ 	if (!core)
+ 		return;
+ 
+-	if (WARN_ON(core->enable_count == 0))
++	if (WARN(core->enable_count == 0, "clock name: %s\n", core->name))
+ 		return;
+ 
+-	if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
++	if (WARN(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL,
++	    "clock name: %s\n", core->name))
+ 		return;
+ 
+ 	if (--core->enable_count > 0)
+@@ -866,7 +868,7 @@ static int clk_core_enable(struct clk_core *core)
+ 	if (!core)
+ 		return 0;
+ 
+-	if (WARN_ON(core->prepare_count == 0))
++	if (WARN(core->prepare_count == 0, "clock name: %s\n", core->name))
+ 		return -ESHUTDOWN;
+ 
+ 	if (core->enable_count == 0) {
+-- 
+2.7.4
