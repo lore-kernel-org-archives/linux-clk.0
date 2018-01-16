@@ -1,110 +1,120 @@
-Return-Path: <jdelvare@suse.de>
-Date: Sat, 23 Dec 2017 12:20:02 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: <sean.wang@mediatek.com>
-Cc: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
- <matthias.bgg@gmail.com>, <jamesjj.liao@mediatek.com>,
- <weiyi.lu@mediatek.com>, <arnd@arndb.de>,
- <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <kbuild-all@01.org>
-Subject: Re: [PATCH] clk: mediatek: Fix all warnings for missing struct
- clk_onecell_data
-Message-ID: <20171223122002.2cb629d1@endymion>
-In-Reply-To: <a7e0a625fb6a71b7fab810f1cc8ec196b1732305.1514015506.git.sean.wang@mediatek.com>
-References: <a7e0a625fb6a71b7fab810f1cc8ec196b1732305.1514015506.git.sean.wang@mediatek.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v2 15/15] gpio: stmpe: i2c transfer are forbiden in atomic context
+Date: Tue, 16 Jan 2018 13:30:59 +0100
+Message-ID: <1516105859-3525-16-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sean,
+From: Patrice Chotard <patrice.chotard@st.com>
 
-On Sat, 23 Dec 2017 15:56:36 +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> In fact, the clk-mtk.h header is unnecessary for reset.c and thus it's
-> safe to remove it from the file to get rid of below build warnings.
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/clk/mediatek/reset.c:22:0:
-> >>drivers/clk/mediatek/clk-mtk.h:44:19: warning: 'struct clk_onecell_data'  
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->       int num, struct clk_onecell_data *clk_data);
->                       ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:63:19: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->       int num, struct clk_onecell_data *clk_data);
->                       ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:145:10: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->       struct clk_onecell_data *clk_data);
->              ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:164:11: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of
-> this definition or declaration
->        struct clk_onecell_data *clk_data);
->               ^~~~~~~~~~~~~~~~
-> drivers/clk/mediatek/clk-mtk.h:190:12: warning: 'struct clk_onecell_data'
-> declared inside parameter list will not be visible outside of this
-> definition or declaration
->         struct clk_onecell_data *clk_data);
->                ^~~~~~~~~~~~~~~~
+Move the workaround from stmpe_gpio_irq_unmask() which is executed
+in atomic context to stmpe_gpio_irq_sync_unlock() which is not.
 
-That's not the proper fix. The actual problem here is in clk-mtk.h,
-which declares functions which need struct clk_onecell_data without
-declaring that structure first. This can be fixed in 2 ways:
+It fixes the following issue:
 
-1* #Include whatever header file provides the definition of struct
-   clk_onecell_data (I think <linux/clk-provider.h>) in clk-mtk.h
-   itself.
+[    1.500000] BUG: scheduling while atomic: swapper/1/0x00000002
+[    1.500000] CPU: 0 PID: 1 Comm: swapper Not tainted 4.15.0-rc2-00020-gbd4301f-dirty #28
+[    1.520000] Hardware name: STM32 (Device Tree Support)
+[    1.520000] [<0000bfc9>] (unwind_backtrace) from [<0000b347>] (show_stack+0xb/0xc)
+[    1.530000] [<0000b347>] (show_stack) from [<0001fc49>] (__schedule_bug+0x39/0x58)
+[    1.530000] [<0001fc49>] (__schedule_bug) from [<00168211>] (__schedule+0x23/0x2b2)
+[    1.550000] [<00168211>] (__schedule) from [<001684f7>] (schedule+0x57/0x64)
+[    1.550000] [<001684f7>] (schedule) from [<0016a513>] (schedule_timeout+0x137/0x164)
+[    1.550000] [<0016a513>] (schedule_timeout) from [<00168b91>] (wait_for_common+0x8d/0xfc)
+[    1.570000] [<00168b91>] (wait_for_common) from [<00139753>] (stm32f4_i2c_xfer+0xe9/0xfe)
+[    1.580000] [<00139753>] (stm32f4_i2c_xfer) from [<00138545>] (__i2c_transfer+0x111/0x148)
+[    1.590000] [<00138545>] (__i2c_transfer) from [<001385cf>] (i2c_transfer+0x53/0x70)
+[    1.590000] [<001385cf>] (i2c_transfer) from [<001388a5>] (i2c_smbus_xfer+0x12f/0x36e)
+[    1.600000] [<001388a5>] (i2c_smbus_xfer) from [<00138b49>] (i2c_smbus_read_byte_data+0x1f/0x2a)
+[    1.610000] [<00138b49>] (i2c_smbus_read_byte_data) from [<00124fdd>] (__stmpe_reg_read+0xd/0x24)
+[    1.620000] [<00124fdd>] (__stmpe_reg_read) from [<001252b3>] (stmpe_reg_read+0x19/0x24)
+[    1.630000] [<001252b3>] (stmpe_reg_read) from [<0002c4d1>] (unmask_irq+0x17/0x22)
+[    1.640000] [<0002c4d1>] (unmask_irq) from [<0002c57f>] (irq_startup+0x6f/0x78)
+[    1.650000] [<0002c57f>] (irq_startup) from [<0002b7a1>] (__setup_irq+0x319/0x47c)
+[    1.650000] [<0002b7a1>] (__setup_irq) from [<0002bad3>] (request_threaded_irq+0x6b/0xe8)
+[    1.660000] [<0002bad3>] (request_threaded_irq) from [<0002d0b9>] (devm_request_threaded_irq+0x3b/0x6a)
+[    1.670000] [<0002d0b9>] (devm_request_threaded_irq) from [<001446e7>] (mmc_gpiod_request_cd_irq+0x49/0x8a)
+[    1.680000] [<001446e7>] (mmc_gpiod_request_cd_irq) from [<0013d45d>] (mmc_start_host+0x49/0x60)
+[    1.690000] [<0013d45d>] (mmc_start_host) from [<0013e40b>] (mmc_add_host+0x3b/0x54)
+[    1.700000] [<0013e40b>] (mmc_add_host) from [<00148119>] (mmci_probe+0x4d1/0x60c)
+[    1.710000] [<00148119>] (mmci_probe) from [<000f903b>] (amba_probe+0x7b/0xbe)
+[    1.720000] [<000f903b>] (amba_probe) from [<001170e5>] (driver_probe_device+0x169/0x1f8)
+[    1.730000] [<001170e5>] (driver_probe_device) from [<001171b7>] (__driver_attach+0x43/0x5c)
+[    1.740000] [<001171b7>] (__driver_attach) from [<0011618d>] (bus_for_each_dev+0x3d/0x46)
+[    1.740000] [<0011618d>] (bus_for_each_dev) from [<001165cd>] (bus_add_driver+0xcd/0x124)
+[    1.740000] [<001165cd>] (bus_add_driver) from [<00117713>] (driver_register+0x4d/0x7a)
+[    1.760000] [<00117713>] (driver_register) from [<001fc765>] (do_one_initcall+0xbd/0xe8)
+[    1.770000] [<001fc765>] (do_one_initcall) from [<001fc88b>] (kernel_init_freeable+0xfb/0x134)
+[    1.780000] [<001fc88b>] (kernel_init_freeable) from [<00167ee3>] (kernel_init+0x7/0x9c)
+[    1.790000] [<00167ee3>] (kernel_init) from [<00009b65>] (ret_from_fork+0x11/0x2c)
 
-2* As you only manipulate pointers and not the structure itself, you
-   could simply declare that this struct exists, without defining it,
-   prior to referencing it in clk-mtk.h. As easy as:
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ drivers/gpio/gpio-stmpe.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-   struct clk_onecell_data;
-
-In this case option 1 seems preferable.
-
-The reason why the problem is only visible in reset.c is because other
-source files under drivers/clk/mediatek #include <linux/clk-provider.h>
-explicitly before #including clk-mtk.h. But it only works "by
-accident". Ideally header files should be self-sufficient, so you don't
-depend on #include order.
-
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: kbuild-all@01.org
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/mediatek/reset.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> index d3551d5..70ebb2e 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -19,8 +19,6 @@
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  
-> -#include "clk-mtk.h"
-> -
->  struct mtk_reset {
->  	struct regmap *regmap;
->  	int regofs;
-
-If the header file is indeed not needed then that's still a good
-change, even if it doesn't fix the problem, so:
-
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-
-However the patch description should be adjusted accordingly.
-
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index e6e5cca..91c8ae2 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -190,6 +190,16 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
+ 	};
+ 	int i, j;
+ 
++	/*
++	 * STMPE1600: to be able to get IRQ from pins,
++	 * a read must be done on GPMR register, or a write in
++	 * GPSR or GPCR registers
++	 */
++	if (stmpe->partnum == STMPE1600) {
++		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_LSB]);
++		stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_GPMR_CSB]);
++	};
++
+ 	for (i = 0; i < CACHE_NR_REGS; i++) {
+ 		/* STMPE801 and STMPE1600 don't have RE and FE registers */
+ 		if ((stmpe->partnum == STMPE801 ||
+@@ -227,21 +237,11 @@ static void stmpe_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+-	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = BIT(offset % 8);
+ 
+ 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
+-
+-	/*
+-	 * STMPE1600 workaround: to be able to get IRQ from pins,
+-	 * a read must be done on GPMR register, or a write in
+-	 * GPSR or GPCR registers
+-	 */
+-	if (stmpe->partnum == STMPE1600)
+-		stmpe_reg_read(stmpe,
+-			       stmpe->regs[STMPE_IDX_GPMR_LSB + regoffset]);
+ }
+ 
+ static void stmpe_dbg_show_one(struct seq_file *s,
 -- 
-Jean Delvare
-SUSE L3 Support
+1.9.1
