@@ -1,60 +1,25 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH 1/5] blackfin: Use generic clkdev.h header
-Date: Tue,  2 Jan 2018 17:35:12 -0800
-Message-Id: <20180103013516.18844-2-sboyd@codeaurora.org>
-In-Reply-To: <20180103013516.18844-1-sboyd@codeaurora.org>
-References: <20180103013516.18844-1-sboyd@codeaurora.org>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU4zyKvpMbbJpOTxnMtACEQc_X9yWceUoB3xUp3RcFWvg@mail.gmail.com>
+References: <CAOMZO5AspF1OmJkAFRtiPWr68xe42_kY90_3JXygt+Jr4A=PWQ@mail.gmail.com>
+ <20180111211948.GL28313@codeaurora.org> <CAOMZO5BfDRsO=gn_SjkDa_09KEf_EjZcfM5VQawaR1-dQE0o0g@mail.gmail.com>
+ <CAMuHMdU4zyKvpMbbJpOTxnMtACEQc_X9yWceUoB3xUp3RcFWvg@mail.gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 16 Jan 2018 07:45:07 -0200
+Message-ID: <CAOMZO5DN_hqs+FaE6=3g2StoaHbGJKYyzaExAPCX45rKEvVOew@mail.gmail.com>
+Subject: Re: Warnings from drivers/clk/clk.c
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic header file is equivalent to the blackfin version, so
-just use the generic one.
+Hi Geert,
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/blackfin/include/asm/Kbuild   |  1 +
- arch/blackfin/include/asm/clkdev.h | 17 -----------------
- 2 files changed, 1 insertion(+), 17 deletions(-)
- delete mode 100644 arch/blackfin/include/asm/clkdev.h
+On Tue, Jan 16, 2018 at 7:42 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-diff --git a/arch/blackfin/include/asm/Kbuild b/arch/blackfin/include/asm/Kbuild
-index fe736973630f..40e44231743f 100644
---- a/arch/blackfin/include/asm/Kbuild
-+++ b/arch/blackfin/include/asm/Kbuild
-@@ -1,4 +1,5 @@
- generic-y += bugs.h
-+generic-y += clkdev.h
- generic-y += current.h
- generic-y += device.h
- generic-y += div64.h
-diff --git a/arch/blackfin/include/asm/clkdev.h b/arch/blackfin/include/asm/clkdev.h
-deleted file mode 100644
-index ded0209348c7..000000000000
---- a/arch/blackfin/include/asm/clkdev.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_CLKDEV__H_
--#define __ASM_CLKDEV__H_
--
--#include <linux/slab.h>
--
--static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
--{
--	return kzalloc(size, GFP_KERNEL);
--}
--
--#ifndef CONFIG_COMMON_CLK
--#define __clk_put(clk)
--#define __clk_get(clk) ({ 1; })
--#endif
--
--#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> I believe you can just replace WARN_ON() by WARN(condition, format...)?
+
+Yes, this looks nicer. Thanks for the hint!
