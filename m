@@ -1,45 +1,36 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 05/44] clk: davinci: Add platform information for TI
+ DM355 PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-6-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <b480aeaa-f643-b329-8564-c7cf187102d9@ti.com>
+Date: Tue, 16 Jan 2018 14:08:09 +0530
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-32-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-32-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:27:53 +0100
-Message-ID: <CAMuHMdXM-xVhG0FiZ9vtHKy4=rVo8P+J1S0U3gst5e9s2163sw@mail.gmail.com>
-Subject: Re: [RFC 31/37] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1515377863-20358-6-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adds watchdog support to the r8a7743 SoC dtsi.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds platform-specific declarations for the PLL clocks on TI
+> DaVinci 355 based systems.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+DM355
 
-Gr{oetje,eeting}s,
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-                        Geert
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Sekhar
