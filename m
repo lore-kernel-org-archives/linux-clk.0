@@ -1,148 +1,215 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:57663 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932684AbeAKKQQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 05:16:16 -0500
-Date: Thu, 11 Jan 2018 18:15:21 +0800
-In-Reply-To: <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
-References: <20180106042326.46519-1-icenowy@aosc.io> <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v2 01/15] mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
+Date: Tue, 16 Jan 2018 13:30:45 +0100
+Message-ID: <1516105859-3525-2-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin controllers without bus gate
-To: andre.przywara@arm.com, Andre Przywara <andre.przywara@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <08CB03C2-1253-4072-B8AC-D3F1253C8A85@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Patrice Chotard <patrice.chotard@st.com>
 
+Two mask registers are used in order to select which events have to
+actually generate an interrupt on each IRQ line.
 
-于 2018年1月11日 GMT+08:00 下午6:08:19, Andre Przywara <andre.przywara@arm.com> 写到:
->Hi,
->
->On 06/01/18 04:23, Icenowy Zheng wrote:
->> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->> have no bus gate clocks.
->> 
->> Add support for this kind of pin controllers.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30
->++++++++++++++++++++----------
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>  2 files changed, 21 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> index 4b6cb25bc796..68cd505679d9 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct
->sunxi_pinctrl *pctl,
->>  	unsigned int hosc_div, losc_div;
->>  	struct clk *hosc, *losc;
->>  	u8 div, src;
->> -	int i, ret;
->> +	int i, ret, clk_count;
->> +
->> +	if (pctl->desc->without_bus_gate)
->> +		clk_count = 2;
->> +	else
->> +		clk_count = 3;
->>  
->>  	/* Deal with old DTs that didn't have the oscillators */
->>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") !=
->3)
->> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct
->platform_device *pdev,
->>  			goto gpiochip_error;
->>  	}
->>  
->> -	clk = devm_clk_get(&pdev->dev, NULL);
->> -	if (IS_ERR(clk)) {
->> -		ret = PTR_ERR(clk);
->> -		goto gpiochip_error;
->> -	}
->> +	if (!desc->without_bus_gate) {
->
->Do we really need explicit support for that case?
->Can't we have something that works automatically?
+It seems that in the single-IRQ case it's assumed that the IRQs lines
+are simply OR-ed, while the two mask registers are still present. The
+driver still programs the two mask registers separately.
 
-It can be a sanity check. When a SoC comes with bus gate
-support but no apb is provided, there's something wrong.
+However the STM32 variant has only one IRQ, and also has only one mask
+register.
 
->
->if (node has clock-names property)		(A)
->	use clocks as enumerated and named there
->else if (node has one clock reference)		(B)
->	use this as gate clock, no debounce support
->else if (node has no clock property at all)	(C)
->	no gate clock needed, no debounce support
+This patch prepares for STM32 variant support by making the driver using
+only one mask register.
 
-This should not happen in practice, as no gate clock is implemented
-after debounce.
+This patch also optimize the MMCIMASK1 mask usage by caching it into
+host->mask1_reg which avoid to read it into mmci_irq().
 
->
->On top of that we should add the clock-names property to all DTs, even
->for those with only a "apb" clock. Shouldn't hurt existing kernels.
->Possibly even add debounce support for those on the way, if applicable.
->
->So we would just support case (B) and (C) for legacy reasons.
->
->Does that make sense?
->
->Cheers,
->Andre.
->
->> +		clk = devm_clk_get(&pdev->dev, NULL);
->> +		if (IS_ERR(clk)) {
->> +			ret = PTR_ERR(clk);
->> +			goto gpiochip_error;
->> +		}
->>  
->> -	ret = clk_prepare_enable(clk);
->> -	if (ret)
->> -		goto gpiochip_error;
->> +		ret = clk_prepare_enable(clk);
->> +		if (ret)
->> +			goto gpiochip_error;
->> +	} else {
->> +		clk = NULL;
->> +	}
->>  
->>  	pctl->irq = devm_kcalloc(&pdev->dev,
->>  				 pctl->desc->irq_banks,
->> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct
->platform_device *pdev,
->>  	return 0;
->>  
->>  clk_error:
->> -	clk_disable_unprepare(clk);
->> +	if (clk)
->> +		clk_disable_unprepare(clk);
->>  gpiochip_error:
->>  	gpiochip_remove(pctl->chip);
->>  	return ret;
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> index 11b128f54ed2..ccb6230f0bb5 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>  	unsigned			irq_bank_base;
->>  	bool				irq_read_needs_mux;
->>  	bool				disable_strict_mode;
->> +	bool				without_bus_gate;
->>  };
->>  
->>  struct sunxi_pinctrl_function {
->> 
+Tested only on STM32 variant. RFT for variants other than STM32
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+v2: _ Add Reviewed-by
+
+ drivers/mmc/host/mmci.c | 28 ++++++++++++++++++++++++----
+ drivers/mmc/host/mmci.h |  1 +
+ 2 files changed, 25 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 97da0fc..3125dc0 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -82,6 +82,7 @@
+  * @qcom_fifo: enables qcom specific fifo pio read logic.
+  * @qcom_dml: enables qcom specific dma glue for dma transfers.
+  * @reversed_irq_handling: handle data irq before cmd irq.
++ * @mmcimask1: true if variant have a MMCIMASK1 register.
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -111,6 +112,7 @@ struct variant_data {
+ 	bool			qcom_fifo;
+ 	bool			qcom_dml;
+ 	bool			reversed_irq_handling;
++	bool			mmcimask1;
+ };
+ 
+ static struct variant_data variant_arm = {
+@@ -120,6 +122,7 @@ struct variant_data {
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.reversed_irq_handling	= true,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo = {
+@@ -128,6 +131,7 @@ struct variant_data {
+ 	.datalength_bits	= 16,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo_hwfc = {
+@@ -137,6 +141,7 @@ struct variant_data {
+ 	.datalength_bits	= 16,
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_u300 = {
+@@ -152,6 +157,7 @@ struct variant_data {
+ 	.signal_direction	= true,
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_nomadik = {
+@@ -168,6 +174,7 @@ struct variant_data {
+ 	.signal_direction	= true,
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_ux500 = {
+@@ -190,6 +197,7 @@ struct variant_data {
+ 	.busy_detect_flag	= MCI_ST_CARDBUSY,
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_ux500v2 = {
+@@ -214,6 +222,7 @@ struct variant_data {
+ 	.busy_detect_flag	= MCI_ST_CARDBUSY,
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
++	.mmcimask1		= true,
+ };
+ 
+ static struct variant_data variant_qcom = {
+@@ -232,6 +241,7 @@ struct variant_data {
+ 	.explicit_mclk_control	= true,
+ 	.qcom_fifo		= true,
+ 	.qcom_dml		= true,
++	.mmcimask1		= true,
+ };
+ 
+ /* Busy detection for the ST Micro variant */
+@@ -396,6 +406,7 @@ static void mmci_set_clkreg(struct mmci_host *host, unsigned int desired)
+ static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
+ {
+ 	void __iomem *base = host->base;
++	struct variant_data *variant = host->variant;
+ 
+ 	if (host->singleirq) {
+ 		unsigned int mask0 = readl(base + MMCIMASK0);
+@@ -406,7 +417,10 @@ static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
+ 		writel(mask0, base + MMCIMASK0);
+ 	}
+ 
+-	writel(mask, base + MMCIMASK1);
++	if (variant->mmcimask1)
++		writel(mask, base + MMCIMASK1);
++
++	host->mask1_reg = mask;
+ }
+ 
+ static void mmci_stop_data(struct mmci_host *host)
+@@ -1286,7 +1300,7 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
+ 		status = readl(host->base + MMCISTATUS);
+ 
+ 		if (host->singleirq) {
+-			if (status & readl(host->base + MMCIMASK1))
++			if (status & host->mask1_reg)
+ 				mmci_pio_irq(irq, dev_id);
+ 
+ 			status &= ~MCI_IRQ1MASK;
+@@ -1729,7 +1743,10 @@ static int mmci_probe(struct amba_device *dev,
+ 	spin_lock_init(&host->lock);
+ 
+ 	writel(0, host->base + MMCIMASK0);
+-	writel(0, host->base + MMCIMASK1);
++
++	if (variant->mmcimask1)
++		writel(0, host->base + MMCIMASK1);
++
+ 	writel(0xfff, host->base + MMCICLEAR);
+ 
+ 	/*
+@@ -1809,6 +1826,7 @@ static int mmci_remove(struct amba_device *dev)
+ 
+ 	if (mmc) {
+ 		struct mmci_host *host = mmc_priv(mmc);
++		struct variant_data *variant = host->variant;
+ 
+ 		/*
+ 		 * Undo pm_runtime_put() in probe.  We use the _sync
+@@ -1819,7 +1837,9 @@ static int mmci_remove(struct amba_device *dev)
+ 		mmc_remove_host(mmc);
+ 
+ 		writel(0, host->base + MMCIMASK0);
+-		writel(0, host->base + MMCIMASK1);
++
++		if (variant->mmcimask1)
++			writel(0, host->base + MMCIMASK1);
+ 
+ 		writel(0, host->base + MMCICOMMAND);
+ 		writel(0, host->base + MMCIDATACTRL);
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 4a8bef1..83160a9 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -223,6 +223,7 @@ struct mmci_host {
+ 	u32			clk_reg;
+ 	u32			datactrl_reg;
+ 	u32			busy_status;
++	u32			mask1_reg;
+ 	bool			vqmmc_enabled;
+ 	struct mmci_platform_data *plat;
+ 	struct variant_data	*variant;
+-- 
+1.9.1
