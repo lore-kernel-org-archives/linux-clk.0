@@ -1,57 +1,54 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 10/34] clk: bcm: iproc: change iproc_asiu_clk_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:07:37 +0000
-Message-Id: <1514833681-30737-11-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v2 12/15] ARM: configs: stm32: Enable MMC_ARMMMCI support
+Date: Tue, 16 Jan 2018 13:30:56 +0100
+Message-ID: <1516105859-3525-13-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Enable MMC_ARMMCI support to add SDIO support for
+STM32F4 and STM32F7 SoCs family
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- drivers/clk/bcm/clk-iproc-asiu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-iproc-asiu.c b/drivers/clk/bcm/clk-iproc-asiu.c
-index ae40d08..f89872e 100644
---- a/drivers/clk/bcm/clk-iproc-asiu.c
-+++ b/drivers/clk/bcm/clk-iproc-asiu.c
-@@ -115,7 +115,7 @@ static unsigned long iproc_asiu_clk_round_rate(struct clk_hw *hw,
- 	unsigned int div;
- 
- 	if (rate == 0 || *parent_rate == 0)
--		return -EINVAL;
-+		return 0;
- 
- 	if (rate == *parent_rate)
- 		return *parent_rate;
+v2 _ none
+
+ arch/arm/configs/stm32_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
+index 21b2bf7..8b64a9e 100644
+--- a/arch/arm/configs/stm32_defconfig
++++ b/arch/arm/configs/stm32_defconfig
+@@ -56,6 +56,8 @@ CONFIG_MFD_STMPE=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_USB_SUPPORT is not set
++CONFIG_MMC=y
++CONFIG_MMC_ARMMMCI=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
 -- 
-2.7.4
+1.9.1
