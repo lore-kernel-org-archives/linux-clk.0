@@ -1,195 +1,75 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-rockchip@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	yang.zheng@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4/7] clk: rockchip: protect all remaining rk3328 interconnect clocks
-Date: Mon, 22 Jan 2018 15:15:27 +0100
-Message-Id: <20180122141530.12398-5-heiko@sntech.de>
-In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
-References: <20180122141530.12398-1-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37727 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbeAPKLH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jan 2018 05:11:07 -0500
+Message-ID: <1516097462.9022.7.camel@pengutronix.de>
+Subject: Re: [PATCH v2] clk: imx51-imx53: Fix UART4/5 registration on i.MX50
+ and i.MX53
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>, sboyd@codeaurora.org
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, shawnguo@kernel.org,
+        kernel@pengutronix.de, linux-clk@vger.kernel.org
+Date: Tue, 16 Jan 2018 11:11:02 +0100
+In-Reply-To: <1516029708-17204-1-git-send-email-festevam@gmail.com>
+References: <1516029708-17204-1-git-send-email-festevam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-NIU clocks are supplying the interconnect connections to specific
-peripherals and are currently not controlled in any way.
-So to prevent things falling apart at strange moments, mark all
-niu clocks as critical.
+On Mon, 2018-01-15 at 13:21 -0200, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Since commit 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on
+> imx50, imx53") the following warnings are seen on i.MX53:
+> 
+> [    2.776190] ------------[ cut here ]------------
+> [    2.780948] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:811 clk_core_disable+0xc4/0xe0
+> [    2.789145] Modules linked in:
+> [    2.792236] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115 #1
+> [    2.799735] Hardware name: Freescale i.MX53 (Device Tree Support)
+> [    2.805845] Backtrace: 
+> [    2.808329] [<c010d1a0>] (dump_backtrace) from [<c010d460>] (show_stack+0x18/0x1c)
+> [    2.815919]  r7:00000000 r6:60000093 r5:00000000 r4:c10798d4
+> [    2.821607] [<c010d448>] (show_stack) from [<c0a353ec>] (dump_stack+0xb4/0xe8)
+> [    2.828854] [<c0a35338>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
+> [    2.835837]  r9:00000000 r8:0000032b r7:00000009 r6:c0d429f8 r5:00000000 r4:00000000
+> [    2.843601] [<c0126054>] (__warn) from [<c0126288>] (warn_slowpath_null+0x44/0x50)
+> [    2.851191]  r8:c1008908 r7:c0e08874 r6:c04bfac8 r5:0000032b r4:c0d429f8
+> [    2.857913] [<c0126244>] (warn_slowpath_null) from [<c04bfac8>] (clk_core_disable+0xc4/0xe0)
+> [    2.866369]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
+> [    2.871011] [<c04bfa04>] (clk_core_disable) from [<c04c0e54>] (clk_core_disable_lock+0x20/0x2c)
+> [    2.879726]  r5:dc02a980 r4:80000013
+> [    2.883323] [<c04c0e34>] (clk_core_disable_lock) from [<c04c0e84>] (clk_disable+0x24/0x28)
+> [    2.891604]  r5:c0f6b3e4 r4:0000001c
+> [    2.895209] [<c04c0e60>] (clk_disable) from [<c0f2340c>] (imx_clk_disable_uart+0x50/0x68)
+> [    2.903412] [<c0f233bc>] (imx_clk_disable_uart) from [<c010277c>] (do_one_initcall+0x50/0x19c)
+> [    2.912043]  r7:c0e08874 r6:c0f63854 r5:c0f233bc r4:ffffe000
+> [    2.917726] [<c010272c>] (do_one_initcall) from [<c0f00f00>] (kernel_init_freeable+0x118/0x1d0)
+> [    2.926447]  r9:c0f63858 r8:000000f0 r7:c0e08874 r6:c0f63854 r5:c107b500 r4:c0f75260
+> [    2.934220] [<c0f00de8>] (kernel_init_freeable) from [<c0a4a5f0>] (kernel_init+0x10/0x118)
+> [    2.942506]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0a4a5e0
+> [    2.950351]  r4:00000000
+> [    2.952908] [<c0a4a5e0>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> [    2.960496] Exception stack(0xdc05dfb0 to 0xdc05dff8)
+> [    2.965569] dfa0:                                     00000000 00000000 00000000 00000000
+> [    2.973768] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [    2.981965] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> [    2.988596]  r5:c0a4a5e0 r4:00000000
+> [    2.992188] ---[ end trace 346e26f708876edd ]---
+> [    2.997420] ------------[ cut here ]------------
+> 
+> In order to fix the problem UART4/5 registration needs to happen only on
+> i.MX50 and i.MX53.
+> 
+> So let mx51_clocks_init() register only UART1-3 and 
+> mx50_clocks_init()/mx53_clocks_init register all the UART1-5 ports.
+> 
+> Fixes: 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on imx50, imx53") 
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-Most of them where marked as CLK_IGNORE_UNUSED, but that doesn't
-help if a parent clock then gets disabled.
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3328.c | 56 ++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index b7a28f2814e2..c5b381ab23b1 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -304,7 +304,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "aclk_core", "armclk", CLK_IGNORE_UNUSED,
- 			RK3328_CLKSEL_CON(1), 4, 3, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3328_CLKGATE_CON(7), 1, GFLAGS),
--	GATE(0, "aclk_core_niu", "aclk_core", CLK_IGNORE_UNUSED,
-+	GATE(0, "aclk_core_niu", "aclk_core", 0,
- 			RK3328_CLKGATE_CON(13), 0, GFLAGS),
- 	GATE(0, "aclk_gic400", "aclk_core", CLK_IGNORE_UNUSED,
- 			RK3328_CLKGATE_CON(13), 1, GFLAGS),
-@@ -318,7 +318,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 			RK3328_CLKGATE_CON(6), 6, GFLAGS),
- 	GATE(ACLK_GPU, "aclk_gpu", "aclk_gpu_pre", CLK_SET_RATE_PARENT,
- 			RK3328_CLKGATE_CON(14), 0, GFLAGS),
--	GATE(0, "aclk_gpu_niu", "aclk_gpu_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "aclk_gpu_niu", "aclk_gpu_pre", 0,
- 			RK3328_CLKGATE_CON(14), 1, GFLAGS),
- 
- 	/* PD_DDR */
-@@ -513,9 +513,9 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 			RK3328_CLKGATE_CON(24), 0, GFLAGS),
- 	GATE(HCLK_RKVDEC, "hclk_rkvdec", "hclk_rkvdec_pre", CLK_SET_RATE_PARENT,
- 			RK3328_CLKGATE_CON(24), 1, GFLAGS),
--	GATE(0, "aclk_rkvdec_niu", "aclk_rkvdec_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "aclk_rkvdec_niu", "aclk_rkvdec_pre", 0,
- 			RK3328_CLKGATE_CON(24), 2, GFLAGS),
--	GATE(0, "hclk_rkvdec_niu", "hclk_rkvdec_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "hclk_rkvdec_niu", "hclk_rkvdec_pre", 0,
- 			RK3328_CLKGATE_CON(24), 3, GFLAGS),
- 
- 	COMPOSITE(SCLK_VDEC_CABAC, "sclk_vdec_cabac", mux_4plls_p, 0,
-@@ -535,9 +535,9 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 			RK3328_CLKGATE_CON(23), 0, GFLAGS),
- 	GATE(HCLK_VPU, "hclk_vpu", "hclk_vpu_pre", CLK_SET_RATE_PARENT,
- 			RK3328_CLKGATE_CON(23), 1, GFLAGS),
--	GATE(0, "aclk_vpu_niu", "aclk_vpu_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "aclk_vpu_niu", "aclk_vpu_pre", 0,
- 			RK3328_CLKGATE_CON(23), 2, GFLAGS),
--	GATE(0, "hclk_vpu_niu", "hclk_vpu_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "hclk_vpu_niu", "hclk_vpu_pre", 0,
- 			RK3328_CLKGATE_CON(23), 3, GFLAGS),
- 
- 	COMPOSITE(ACLK_RKVENC, "aclk_rkvenc", mux_4plls_p, 0,
-@@ -545,9 +545,9 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 			RK3328_CLKGATE_CON(6), 3, GFLAGS),
- 	FACTOR_GATE(HCLK_RKVENC, "hclk_rkvenc", "aclk_rkvenc", 0, 1, 4,
- 			RK3328_CLKGATE_CON(11), 4, GFLAGS),
--	GATE(0, "aclk_rkvenc_niu", "aclk_rkvenc", CLK_IGNORE_UNUSED,
-+	GATE(0, "aclk_rkvenc_niu", "aclk_rkvenc", 0,
- 			RK3328_CLKGATE_CON(25), 0, GFLAGS),
--	GATE(0, "hclk_rkvenc_niu", "hclk_rkvenc", CLK_IGNORE_UNUSED,
-+	GATE(0, "hclk_rkvenc_niu", "hclk_rkvenc", 0,
- 			RK3328_CLKGATE_CON(25), 1, GFLAGS),
- 	GATE(ACLK_H265, "aclk_h265", "aclk_rkvenc", 0,
- 			RK3328_CLKGATE_CON(25), 0, GFLAGS),
-@@ -709,14 +709,14 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 
- 	/* PD_VOP */
- 	GATE(ACLK_RGA, "aclk_rga", "aclk_rga_pre", 0, RK3328_CLKGATE_CON(21), 10, GFLAGS),
--	GATE(0, "aclk_rga_niu", "aclk_rga_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(22), 3, GFLAGS),
-+	GATE(0, "aclk_rga_niu", "aclk_rga_pre", 0, RK3328_CLKGATE_CON(22), 3, GFLAGS),
- 	GATE(ACLK_VOP, "aclk_vop", "aclk_vop_pre", 0, RK3328_CLKGATE_CON(21), 2, GFLAGS),
--	GATE(0, "aclk_vop_niu", "aclk_vop_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(21), 4, GFLAGS),
-+	GATE(0, "aclk_vop_niu", "aclk_vop_pre", 0, RK3328_CLKGATE_CON(21), 4, GFLAGS),
- 
- 	GATE(ACLK_IEP, "aclk_iep", "aclk_vio_pre", 0, RK3328_CLKGATE_CON(21), 6, GFLAGS),
- 	GATE(ACLK_CIF, "aclk_cif", "aclk_vio_pre", 0, RK3328_CLKGATE_CON(21), 8, GFLAGS),
- 	GATE(ACLK_HDCP, "aclk_hdcp", "aclk_vio_pre", 0, RK3328_CLKGATE_CON(21), 15, GFLAGS),
--	GATE(0, "aclk_vio_niu", "aclk_vio_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(22), 2, GFLAGS),
-+	GATE(0, "aclk_vio_niu", "aclk_vio_pre", 0, RK3328_CLKGATE_CON(22), 2, GFLAGS),
- 
- 	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(21), 3, GFLAGS),
- 	GATE(0, "hclk_vop_niu", "hclk_vio_pre", 0, RK3328_CLKGATE_CON(21), 5, GFLAGS),
-@@ -743,19 +743,19 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	GATE(HCLK_HOST0_ARB, "hclk_host0_arb", "hclk_peri", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(19), 7, GFLAGS),
- 	GATE(HCLK_OTG, "hclk_otg", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 8, GFLAGS),
- 	GATE(HCLK_OTG_PMU, "hclk_otg_pmu", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 9, GFLAGS),
--	GATE(0, "hclk_peri_niu", "hclk_peri", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(19), 12, GFLAGS),
--	GATE(0, "pclk_peri_niu", "hclk_peri", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(19), 13, GFLAGS),
-+	GATE(0, "hclk_peri_niu", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 12, GFLAGS),
-+	GATE(0, "pclk_peri_niu", "hclk_peri", 0, RK3328_CLKGATE_CON(19), 13, GFLAGS),
- 
- 	/* PD_GMAC */
- 	GATE(ACLK_MAC2PHY, "aclk_mac2phy", "aclk_gmac", 0, RK3328_CLKGATE_CON(26), 0, GFLAGS),
- 	GATE(ACLK_MAC2IO, "aclk_mac2io", "aclk_gmac", 0, RK3328_CLKGATE_CON(26), 2, GFLAGS),
--	GATE(0, "aclk_gmac_niu", "aclk_gmac", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(26), 4, GFLAGS),
-+	GATE(0, "aclk_gmac_niu", "aclk_gmac", 0, RK3328_CLKGATE_CON(26), 4, GFLAGS),
- 	GATE(PCLK_MAC2PHY, "pclk_mac2phy", "pclk_gmac", 0, RK3328_CLKGATE_CON(26), 1, GFLAGS),
- 	GATE(PCLK_MAC2IO, "pclk_mac2io", "pclk_gmac", 0, RK3328_CLKGATE_CON(26), 3, GFLAGS),
--	GATE(0, "pclk_gmac_niu", "pclk_gmac", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(26), 5, GFLAGS),
-+	GATE(0, "pclk_gmac_niu", "pclk_gmac", 0, RK3328_CLKGATE_CON(26), 5, GFLAGS),
- 
- 	/* PD_BUS */
--	GATE(0, "aclk_bus_niu", "aclk_bus_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 12, GFLAGS),
-+	GATE(0, "aclk_bus_niu", "aclk_bus_pre", 0, RK3328_CLKGATE_CON(15), 12, GFLAGS),
- 	GATE(ACLK_DCF, "aclk_dcf", "aclk_bus_pre", 0, RK3328_CLKGATE_CON(15), 11, GFLAGS),
- 	GATE(ACLK_TSP, "aclk_tsp", "aclk_bus_pre", 0, RK3328_CLKGATE_CON(17), 12, GFLAGS),
- 	GATE(0, "aclk_intmem", "aclk_bus_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 0, GFLAGS),
-@@ -769,10 +769,10 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	GATE(HCLK_TSP, "hclk_tsp", "hclk_bus_pre", 0, RK3328_CLKGATE_CON(17), 11, GFLAGS),
- 	GATE(HCLK_CRYPTO_MST, "hclk_crypto_mst", "hclk_bus_pre", 0, RK3328_CLKGATE_CON(15), 7, GFLAGS),
- 	GATE(HCLK_CRYPTO_SLV, "hclk_crypto_slv", "hclk_bus_pre", 0, RK3328_CLKGATE_CON(15), 8, GFLAGS),
--	GATE(0, "hclk_bus_niu", "hclk_bus_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 13, GFLAGS),
-+	GATE(0, "hclk_bus_niu", "hclk_bus_pre", 0, RK3328_CLKGATE_CON(15), 13, GFLAGS),
- 	GATE(HCLK_PDM, "hclk_pdm", "hclk_bus_pre", 0, RK3328_CLKGATE_CON(28), 0, GFLAGS),
- 
--	GATE(0, "pclk_bus_niu", "pclk_bus", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 14, GFLAGS),
-+	GATE(0, "pclk_bus_niu", "pclk_bus", 0, RK3328_CLKGATE_CON(15), 14, GFLAGS),
- 	GATE(0, "pclk_efuse", "pclk_bus", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 9, GFLAGS),
- 	GATE(0, "pclk_otp", "pclk_bus", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(28), 4, GFLAGS),
- 	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_bus", 0, RK3328_CLKGATE_CON(15), 10, GFLAGS),
-@@ -807,7 +807,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 	GATE(0, "pclk_acodecphy", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(17), 5, GFLAGS),
- 	GATE(PCLK_HDMIPHY, "pclk_hdmiphy", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(17), 7, GFLAGS),
- 	GATE(0, "pclk_vdacphy", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(17), 8, GFLAGS),
--	GATE(0, "pclk_phy_niu", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK3328_CLKGATE_CON(15), 15, GFLAGS),
-+	GATE(0, "pclk_phy_niu", "pclk_phy_pre", 0, RK3328_CLKGATE_CON(15), 15, GFLAGS),
- 
- 	/* PD_MMC */
- 	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "sclk_sdmmc",
-@@ -833,11 +833,16 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
- 
- static const char *const rk3328_critical_clocks[] __initconst = {
- 	"aclk_bus",
-+	"aclk_bus_niu",
- 	"pclk_bus",
-+	"pclk_bus_niu",
- 	"hclk_bus",
-+	"hclk_bus_niu",
- 	"aclk_peri",
- 	"hclk_peri",
-+	"hclk_peri_niu",
- 	"pclk_peri",
-+	"pclk_peri_niu",
- 	"pclk_dbg",
- 	"aclk_core_niu",
- 	"aclk_gic400",
-@@ -861,7 +866,20 @@ static const char *const rk3328_critical_clocks[] __initconst = {
- 	"aclk_rga_niu",
- 	"pclk_vio_h2p",
- 	"hclk_vio_h2p",
-+	"aclk_vio_niu",
- 	"hclk_vio_niu",
-+	"aclk_vop_niu",
-+	"hclk_vop_niu",
-+	"aclk_gpu_niu",
-+	"aclk_rkvdec_niu",
-+	"hclk_rkvdec_niu",
-+	"aclk_vpu_niu",
-+	"hclk_vpu_niu",
-+	"aclk_rkvenc_niu",
-+	"hclk_rkvenc_niu",
-+	"aclk_gmac_niu",
-+	"pclk_gmac_niu",
-+	"pclk_phy_niu",
- };
- 
- static void __init rk3328_clk_init(struct device_node *np)
--- 
-2.14.2
+regards
+Philipp
