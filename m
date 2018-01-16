@@ -1,66 +1,59 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 18/26] clk: renesas: r8a7791/r8a7793: Add rwdt clock
-Date: Wed, 31 Jan 2018 18:24:22 +0000
-Message-Id: <1517423070-24236-19-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <aford173@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <8184c7b5-5f82-5590-9caf-fd038e1d07ac@ti.com>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com> <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
+ <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com> <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
+ <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com> <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
+ <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com> <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
+ <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com> <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
+ <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com> <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
+ <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com> <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
+ <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com> <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
+ <8184c7b5-5f82-5590-9caf-fd038e1d07ac@ti.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 16 Jan 2018 06:21:22 -0600
+Message-ID: <CAHCN7x+zowPn-c7X37=r2V96zVfFj3WGBO4cS5w-R6VGU=FUqw@mail.gmail.com>
+Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+On Tue, Jan 16, 2018 at 5:22 AM, Sekhar Nori <nsekhar@ti.com> wrote:
+> Hi Adam, David,
+>
+> On Friday 12 January 2018 03:04 AM, Adam Ford wrote:
+>> Thanks for clarifying.  I was able to make it work with the following patch:
+>>
+>> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+>> index 3b4583d..a76b8682 100644
+>> --- a/drivers/clk/davinci/psc-da850.c
+>> +++ b/drivers/clk/davinci/psc-da850.c
+>> @@ -25,7 +25,7 @@ static const struct davinci_psc_clk_info
+>> da850_psc0_info[] __initconst = {
+>>         LPSC(9, 0, uart0, pll0_sysclk2, 0),
+>>         LPSC(13, 0, pruss, pll0_sysclk2, 0),
+>>         LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
+>> -       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
+>> +       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET |
+>> LPSC_ALWAYS_ENABLED),
+>
+> Keeping the DSP clock always enabled was not needed earlier AFAICS, so
+> this needs to be investigated.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v3->4:
-* no change
+I was testing the DA850-evm and found it was required or the DA850
+wouldn't boot.  I don't know enough of why to explain it.  I went
+through all the clocks as suggested by David, and this one-line patch
+fixed the hanging problem I had.  Without it the AM1808 board I have
+won't boot.
 
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-index c0b51f9..820b220 100644
---- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7791_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
-@@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
--- 
-2.7.4
+adam
+>
+> Thanks,
+> Sekhar
