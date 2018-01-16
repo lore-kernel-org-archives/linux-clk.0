@@ -1,34 +1,152 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 17:46:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v7 1/5] clk: Add clock driver for ASPEED BMC SoCs
-Message-ID: <20180103014656.GP7997@codeaurora.org>
-References: <20171222024522.10362-1-joel@jms.id.au>
- <20171222024522.10362-2-joel@jms.id.au>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v2 03/15] mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
+Date: Tue, 16 Jan 2018 13:30:47 +0100
+Message-ID: <1516105859-3525-4-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171222024522.10362-2-joel@jms.id.au>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Joel Stanley wrote:
-> This adds the stub of a driver for the ASPEED SoCs. The clocks are
-> defined and the static registration is set up.
-> 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Applied to clk-next
+This patch prepares for supporting STM32 variant which doesn't
+have opendrain bit in MMCIPOWER register.
+ST others variant (u300, nomadik and ux500) uses MCI_OD bit whereas
+others variants uses MCI_ROD bit.
 
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+
+v2: _ Replace opendrain bool type by u32
+    _ Clean opendrain bit management code
+
+ drivers/mmc/host/mmci.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 8a4fbc2..eb5fcfe 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -85,6 +85,7 @@
+  * @mmcimask1: true if variant have a MMCIMASK1 register.
+  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
+  *	       register.
++ * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -116,6 +117,7 @@ struct variant_data {
+ 	bool			reversed_irq_handling;
+ 	bool			mmcimask1;
+ 	u32			start_err;
++	u32			opendrain;
+ };
+ 
+ static struct variant_data variant_arm = {
+@@ -127,6 +129,7 @@ struct variant_data {
+ 	.reversed_irq_handling	= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo = {
+@@ -137,6 +140,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo_hwfc = {
+@@ -148,6 +152,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_u300 = {
+@@ -165,6 +170,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_nomadik = {
+@@ -183,6 +189,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_ux500 = {
+@@ -207,6 +214,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_ux500v2 = {
+@@ -233,6 +241,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_qcom = {
+@@ -253,6 +262,7 @@ struct variant_data {
+ 	.qcom_dml		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ /* Busy detection for the ST Micro variant */
+@@ -1455,16 +1465,13 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 				~MCI_ST_DATA2DIREN);
+ 	}
+ 
+-	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
+-		if (host->hw_designer != AMBA_VENDOR_ST)
+-			pwr |= MCI_ROD;
+-		else {
+-			/*
+-			 * The ST Micro variant use the ROD bit for something
+-			 * else and only has OD (Open Drain).
+-			 */
+-			pwr |= MCI_OD;
+-		}
++	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN &&
++	    host->variant->opendrain) {
++		/*
++		 * The ST Micro variant use the ROD bit for
++		 * something else and only has OD (Open Drain).
++		 */
++		pwr |= host->variant->opendrain;
+ 	}
+ 
+ 	/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
