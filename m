@@ -1,57 +1,34 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 9/9] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
-Date: Wed, 10 Jan 2018 23:48:38 +0100
-Message-Id: <20180110224838.16711-9-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 14/44] clk: davinci: Add platform information for TI
+ DM365 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-15-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <082041b1-3d22-210e-bc8e-b4b2b5021bc3@ti.com>
+Date: Tue, 16 Jan 2018 19:46:03 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-15-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add myself as maintainer for the ingenic-tcu-intc interrupt controller
-driver, the ingenic-tcu-clocks clock driver, and the ingenic-tcu
-clocksource driver.
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds platform-specific declarations for the PSC clocks on TI
+> DaVinci 365 based systems.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Apart from some comments on other patches that apply to this too, I have
+no new comments.
 
- v2: No change
- v3: No change
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 95c3fa1f520f..1d618abe04ec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6905,6 +6905,15 @@ L:	linux-mtd@lists.infradead.org
- S:	Maintained
- F:	drivers/mtd/nand/jz4780_*
- 
-+INGENIC JZ47xx TCU drivers
-+M:	Paul Cercueil <paul@crapouillou.net>
-+S:	Maintained
-+F:	drivers/clk/ingenic/tcu.c
-+F:	drivers/irqchip/irq-ingenic-tcu.c
-+F:	drivers/clocksource/timer-ingenic.c
-+F:	include/linux/mfd/syscon/ingenic-tcu.h
-+F:	include/dt-bindings/clock/ingenic,tcu.h
-+
- INOTIFY
- M:	Jan Kara <jack@suse.cz>
- R:	Amir Goldstein <amir73il@gmail.com>
--- 
-2.11.0
+Thanks,
+Sekhar
