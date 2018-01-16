@@ -1,48 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:52388 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbeACCrc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 21:47:32 -0500
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-3-git-send-email-david@lechnology.com>
+ <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
+ <d8171267-dc49-e573-ca69-c2b77b44a119@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <f0a09394-aa44-4a0a-5d5d-ac0d9f8bcb4e@ti.com>
+Date: Tue, 16 Jan 2018 12:02:47 +0530
 MIME-Version: 1.0
-In-Reply-To: <2823749.lCJ0TQNemj@ice-x220i>
-References: <20171230113043.30237-1-icenowy@aosc.io> <20171230113043.30237-2-icenowy@aosc.io>
- <CAGb2v64V7KYw5W95-E=b=Li13ZFXy7JakK4+Dx1dsrXXSJZ+wg@mail.gmail.com> <2823749.lCJ0TQNemj@ice-x220i>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 3 Jan 2018 10:47:07 +0800
-Message-ID: <CAGb2v67Cz-8pNOSEhYC_3jgJ8KNhT6jqd3diTUmdf2KwixSUVg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 1/6] ARM: sunxi: h3/h5: add simplefb nodes
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <d8171267-dc49-e573-ca69-c2b77b44a119@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 4:14 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> 在 2018年1月2日星期二 CST 下午4:11:04，Chen-Yu Tsai 写道：
->> On Sat, Dec 30, 2017 at 7:30 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> > The H3/H5 SoCs have a HDMI output and a TV Composite output.
->> >
->> > Add simplefb nodes for these outputs.
->> >
->> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> > ---
->> > Changes in v4:
->> > - Dropped extra clocks (bus clocks and HDMI DDC clocks), only keep the
->> >
->> >   clocks that are needed to display framebuffer to the monitor.
+On Saturday 13 January 2018 07:43 AM, David Lechner wrote:
+> On 01/12/2018 03:21 AM, Sekhar Nori wrote:
+>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>>> +static unsigned long davinci_pll_clk_recalc(struct clk_hw *hw,
+>>> +                        unsigned long parent_rate)
+>>> +{
+>>> +    struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
+>>> +    unsigned long rate = parent_rate;
+>>> +    u32 prediv, mult, postdiv;
+>>> +
+>>> +    prediv = readl(pll->base + PREDIV) & PREDIV_RATIO_MASK;
+>>> +    mult = readl(pll->base + PLLM) & PLLM_MASK;
+>>> +    postdiv = readl(pll->base + POSTDIV) & POSTDIV_RATIO_MASK;
 >>
->> Looks good. I assume you've tested this? It does continue to work
->> with the bus and DDC clocks disabled, right?
->
-> Yes. This patchset is tested in Orange Pi PC and SoPine w/ Baseboard "Model
-> A".
+>> Shouldn't we check if the pre and post dividers are enabled before using
+>> them?
+> 
+> I dug into this and the answer is no. The enable bit acts like a gate, not
+> a bypass, so it does not affect the rate calculation.
 
-Applied this one.
+Alright, thanks for checking this.
 
-ChenYu
+Regards,
+Sekhar
