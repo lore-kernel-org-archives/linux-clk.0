@@ -1,59 +1,85 @@
-Return-Path: <aford173@gmail.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH v2 09/15] ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
+Date: Tue, 16 Jan 2018 13:30:53 +0100
+Message-ID: <1516105859-3525-10-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <8184c7b5-5f82-5590-9caf-fd038e1d07ac@ti.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com> <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com> <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com> <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
- <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com> <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
- <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com> <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
- <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com> <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
- <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com> <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
- <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com> <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
- <8184c7b5-5f82-5590-9caf-fd038e1d07ac@ti.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 16 Jan 2018 06:21:22 -0600
-Message-ID: <CAHCN7x+zowPn-c7X37=r2V96zVfFj3WGBO4cS5w-R6VGU=FUqw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 16, 2018 at 5:22 AM, Sekhar Nori <nsekhar@ti.com> wrote:
-> Hi Adam, David,
->
-> On Friday 12 January 2018 03:04 AM, Adam Ford wrote:
->> Thanks for clarifying.  I was able to make it work with the following patch:
->>
->> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
->> index 3b4583d..a76b8682 100644
->> --- a/drivers/clk/davinci/psc-da850.c
->> +++ b/drivers/clk/davinci/psc-da850.c
->> @@ -25,7 +25,7 @@ static const struct davinci_psc_clk_info
->> da850_psc0_info[] __initconst = {
->>         LPSC(9, 0, uart0, pll0_sysclk2, 0),
->>         LPSC(13, 0, pruss, pll0_sysclk2, 0),
->>         LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
->> -       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
->> +       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET |
->> LPSC_ALWAYS_ENABLED),
->
-> Keeping the DSP clock always enabled was not needed earlier AFAICS, so
-> this needs to be investigated.
+From: Andrea Merello <andrea.merello@gmail.com>
 
-I was testing the DA850-evm and found it was required or the DA850
-wouldn't boot.  I don't know enough of why to explain it.  I went
-through all the clocks as suggested by David, and this one-line patch
-fixed the hanging problem I had.  Without it the AM1808 board I have
-won't boot.
+This patch adds SDIO-related DT nodes required by stm32f469 board
 
-adam
->
-> Thanks,
-> Sekhar
+There is a hardware issue on these boards, it misses a pullup on
+the GPIO line used as card detect to allow correct SD card
+detection. To allow correct card detection "broken-cd" property
+is used.
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+
+v2 _ none
+
+ arch/arm/boot/dts/stm32f469-disco.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index 318fb12..ebb97c3 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -66,6 +66,13 @@
+ 		serial0 = &usart3;
+ 	};
+ 
++	mmc_vcard: mmc_vcard {
++		compatible = "regulator-fixed";
++		regulator-name = "mmc_vcard";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	soc {
+ 		dma-ranges = <0xc0000000 0x0 0x10000000>;
+ 	};
+@@ -120,6 +127,18 @@
+ 	};
+ };
+ 
++&sdio {
++	status = "okay";
++	vmmc-supply = <&mmc_vcard>;
++	cd-gpios = <&gpiog 2 0>;
++	cd-inverted;
++	broken-cd;
++	pinctrl-names = "default", "opendrain";
++	pinctrl-0 = <&sdio_pins>;
++	pinctrl-1 = <&sdio_pins_od>;
++	bus-width = <4>;
++};
++
+ &usart3 {
+ 	pinctrl-0 = <&usart3_pins_a>;
+ 	pinctrl-names = "default";
+-- 
+1.9.1
