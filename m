@@ -1,50 +1,59 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 16 Jan 2018 15:00:34 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc: ALSA ML <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v7 0/6] ASoC: Intel: Skylake: Add a clk
+ driver to enable ssp clks early
+Message-ID: <20180116150034.GA8392@sirena.org.uk>
+References: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+ <20180116112407.GA4786@intel.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-7-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-7-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 10:53:33 +0100
-Message-ID: <CAMuHMdXKEDHc6WX1oNbBtj7p0HcMXhqyAhmcFnekwgSJMdCjkA@mail.gmail.com>
-Subject: Re: [RFC 06/37] ARM: dts: r8a7792: Adjust SMP routine size
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+In-Reply-To: <20180116112407.GA4786@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adjusts the definition of the SMP routine size according
-> to the latest changes made by commit:
-> "ARM: shmobile: Add watchdog support"
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-I would make it a bit larger, though. "0x64" is the strict minimum =>
-0x80? 0x100?
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Jan 16, 2018 at 04:54:07PM +0530, Sriram Periyasamy wrote:
 
-Gr{oetje,eeting}s,
+> Is this in your review queue? Stephen has given his "Reviewed-by", in case
+> you are waiting for his ack.
 
-                        Geert
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, though there are some other maintainers who like them - if in
+doubt look at how patches for the subsystem are normally handled.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpeE5IACgkQJNaLcl1U
+h9DusAf/dipt4EWS1it393+k4iUJrEwvQv5USRufXq0TMipBQu1wyx/ixSuunIJ3
+87skXguT1Q+ToWgiEHGBsWGNMFIhKUx9/nBoea6r+o2AP77PDp/EU+f8jxIPo4OO
+phXUI9hr7ZMS0tCygjrCXZP8xfUeM/4uiDmszrZc7oXQuET9LGW35vanxCcIMBJP
+QB0fQ4s8qAkzugn5AabliMnI6eJ50QowC/tVYQ0nZjzEPiwxJOeShNBKXeRKwTo1
++W1BDNxhNf7V5KCLt/Z/Pno6O2YoaLCCq4l7/JmGNt1QA2X+diSSY+VFOQ3+mQoz
+DcuQZ9g9mkZ5bpEmiOXHF4NviQbypA==
+=Hp82
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
