@@ -1,83 +1,111 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH 00/14] Add MMCI support for STM32F SoCs family
-Date: Fri, 12 Jan 2018 13:15:54 +0100
-Message-ID: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 11/44] clk: davinci: Add platform information for TI
+ DA830 PSC
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-12-git-send-email-david@lechnology.com>
+ <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
+ <4dd36ca7-e41d-58d8-ec8c-787978307943@lechnology.com>
+ <86581de6-a982-7a7b-9a83-22c869417211@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <72abb187-1c84-f307-d4f8-be5403787bac@lechnology.com>
+Date: Wed, 17 Jan 2018 11:32:31 -0600
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <86581de6-a982-7a7b-9a83-22c869417211@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On 01/17/2018 06:18 AM, Sekhar Nori wrote:
+> On Tuesday 16 January 2018 10:46 PM, David Lechner wrote:
+> 
+>>>> +static const struct davinci_psc_clk_info da830_psc0_info[]
+>>>> __initconst = {
+>>>> +    LPSC(0, 0, tpcc, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(4, 0, spi0, pll0_sysclk2, 0),
+>>>> +    LPSC(5, 0, mmcsd, pll0_sysclk2, 0),
+>>>> +    LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(8, 0, secu_mgr, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(9, 0, uart0, pll0_sysclk2, 0),
+>>>> +    LPSC(10, 0, scr0_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(11, 0, scr1_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(12, 0, scr2_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>> +    LPSC(13, 0, dmax, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
+>>>
+>>> pruss is better (I know the name is coming from existing code).
+>>>
+>>>> +    LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
+>>>
+>>> This is LPSC 15 which controls DSP too. But its missing from existing
+>>> code. Not sure why. Probably a note for future. For now okay with
+>>> ignoring it.
+>>>
+>>>> +    { }
+>>>> +};
+>>>
+>>> Tables like these are much easier to parse if columns are spaced using a
+>>> tab.
+>>>
+>>
+>> Tabs make the lines over 80 columns. How about spaces instead?
+> 
+> That works for me. I guess checkpatch will complain, but hopefully
+> maintainers will agree on the exception.
+> 
+>>>> +void __init da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
+>>>> +{
+>>>> +    struct clk_onecell_data *clk_data;
+>>>> +
+>>>> +    clk_data = davinci_psc_register_clocks(psc0, da830_psc0_info, 16);
+>>>> +    if (!clk_data)
+>>>> +        return;
+>>>> +
+>>>> +    clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
+>>>> +    clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
+>>>> +    clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
+>>>> +    clk_register_clkdev(clk_data->clks[14], "arm", NULL);
+>>>> +
+>>>> +    clk_free_onecell_data(clk_data);
+>>>> +
+>>>> +    clk_data = davinci_psc_register_clocks(psc1, da830_psc1_info, 32);
+>>>> +    if (!clk_data)
+>>>> +        return;
+>>>> +
+>>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
+>>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
+>>>> +    clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
+>>>> +    clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
+>>>
+>>> This is pretty bad (and no fault of yours) - having a con_id but no
+>>> device name. Can you please make a pre-series which passes NULL con_id
+>>> in gpio-davinci.c?
+>>
+>> I'll give it a try. This is complicated by the fact that the con_id has
+>> made it's way into the device tree bindings. However, I think we can
+>> safely deprecate clock-names = "gpio" in the device tree bindings since
+>> we can make the driver ignore that property to preserve backwards
+>> compatibility.
 
-This series reworks patches submitted one year ago by Andrea Merello [1] 
-but without succeed to merged it.
+Agreed.
 
-STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell 
-PL18x SD host controller, for which the mmci driver exists. 
-This series adds support for these SoCs to the mmci driver.
+> I don't think this breaks DT-backward compatibility. Passing a NULL
+> con_id in driver should find the clock for that device even if DT entry
+> has clock-names present. As far as I can read clk_find().
+> 
+> The less intrusive alternate is to add the GPIO device name in the table
+> here, while keeping the con_id and keeping the driver untouched. The
+> advantage of that is lesser number of dependent patches for this series
+> to go in.
+> 
+> Later once CCF conversion has been there in the kernel for one full
+> release and no regressions, these other clean-ups can be done.
 
-As other variants, this one need some specific quirks, that this 
-series address. 
-
-This series has been tested on following boards :
-	_ stm32f429-eval
-	_ stm32f469-disco
-	_ stm32f746-eval
-	_ stm32f769-disco
-
-DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
-will be sent later to avoid conflict with pending stm32f7 series [1] which
-is not yet merged on kernel mainline.
-
-[1] https://www.spinics.net/lists/linux-mmc/msg41616.html
-[2] https://patchwork.kernel.org/patch/10104447/
-
-
-Andrea Merello (2):
-  ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
-  ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
-
-Patrice Chotard (12):
-  mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
-  mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
-  mmc: mmci: Add support for setting pad type via pinctrl
-  mmc: mmci: Add STM32 variant
-  ARM: dts: stm32: Add SDIO controller for stm32f746
-  ARM: dts: stm32: Add SDIO controller for stm32f429
-  ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
-  ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-  ARM: configs: stm32: Enable MMC_ARMMMCI support
-  ARM: configs: stm32: Enable EXT3_FS support
-  clk: stm32: Add clk entry for SDMMC2 on stm32F769
-  gpio: stmpe: i2c transfer are forbiden in atomic context
-
- arch/arm/boot/dts/stm32429i-eval.dts   |  19 ++++++
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
- arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
- arch/arm/boot/dts/stm32f469-disco.dts  |  19 ++++++
- arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
- arch/arm/configs/stm32_defconfig       |   3 +
- arch/arm/mach-stm32/Kconfig            |   3 +
- drivers/clk/clk-stm32f4.c              |   3 +-
- drivers/gpio/gpio-stmpe.c              |  20 +++---
- drivers/mmc/host/mmci.c                | 120 ++++++++++++++++++++++++++++-----
- drivers/mmc/host/mmci.h                |   6 ++
- 11 files changed, 231 insertions(+), 26 deletions(-)
-
--- 
-1.9.1
+I like this approach.
