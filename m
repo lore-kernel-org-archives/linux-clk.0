@@ -1,95 +1,41 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-Date: Wed, 31 Jan 2018 18:24:17 +0000
-Message-Id: <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [3/5] clk: divider: add divider_ro_round_rate helper
+To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
+ Sylvain Lemieux <slemieux.tyco@gmail.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+References: <20180105170959.17266-4-jbrunet@baylibre.com>
+ <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
+ <1516211221.2608.140.camel@baylibre.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <d8b71ac7-5929-8450-e932-926e7fe1b629@lechnology.com>
+Date: Wed, 17 Jan 2018 11:55:54 -0600
+MIME-Version: 1.0
+In-Reply-To: <1516211221.2608.140.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-by means of the watchdog.
-This patch adds a restart handler to rwdt_ops, and also makes sure we
-keep its priority to a medium level, in order to not override other more
-effective handlers.
+On 01/17/2018 11:47 AM, Jerome Brunet wrote:
+> On Thu, 2018-01-11 at 17:08 -0600, David Lechner wrote:
+>> On 01/05/2018 11:09 AM, Jerome Brunet wrote:
+>>> Like divider_round_rate, a couple a of driver are doing more or less
+>>> the same operation to round the rate of the divider when it is read-only.
+>>>
+>>> We can factor this code so let's provide an helper function for this
+>>
+>> Perhaps you could also make use of this new helper here (clk-divider.c):
+>>
+>> const struct clk_ops clk_divider_ro_ops = {
+>> 	.recalc_rate = clk_divider_recalc_rate,
+>> 	.round_rate = clk_divider_round_rate,
+>> };
+>> EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+> 
+> The helper is used in this driver and ro_ops will use it.
+> I don't get this comment, could you be more specific
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v3->v4:
-* New patch spawn out from patch 12/16. The restart handler on Gen3 is
-  controversial, hopefully this patch will help finalizing the discussion.
-
- drivers/watchdog/renesas_wdt.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 0a1a402..6d1c4b9 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
- }
- 
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	pm_runtime_get_sync(wdev->parent);
-+
-+	rwdt_write(priv, 0x00, RWTCSRB);
-+	rwdt_write(priv, 0x00, RWTCSRA);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+
-+	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-+		cpu_relax();
-+
-+	rwdt_write(priv, 0x80, RWTCSRA);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
- 
- static int rwdt_probe(struct platform_device *pdev)
-@@ -176,6 +195,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_set_restart_priority(&priv->wdev, 128);
- 
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
--- 
-2.7.4
+I suppose I am trying to make things too complicated. Let's just forget
+about this.
