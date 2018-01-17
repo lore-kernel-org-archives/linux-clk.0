@@ -1,29 +1,41 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1517339575.3153.11.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: add axg misc bit to the mpll driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	 <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Date: Tue, 30 Jan 2018 20:12:55 +0100
-In-Reply-To: <20180119154236.9797-1-jbrunet@baylibre.com>
-References: <20180119154236.9797-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <weiyongjun1@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa
+	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] clk: samsung: exynos-audss: Remove redundant dev_err call in exynos_audss_clk_probe()
+Date: Wed, 17 Jan 2018 11:26:18 +0000
+Message-ID: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-19 at 16:42 +0100, Jerome Brunet wrote:
-> On axg, the rate of the mpll is stuck as if sdm value was 4 and could not
-> change (expect for mpll2 strangely). Looking at the vendor kernel, it
-> turns out a new magic bit from the undocumented HHI_PLL_TOP_MISC register
-> is required.
-> 
-> Setting this bit solves the problem and the mpll rates are back to normal
-> 
-> Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Applied to clk-meson next/drivers
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 5bfc92e..b4b057c 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -143,10 +143,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg_base)) {
+-		dev_err(dev, "failed to map audss registers\n");
++	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+-	}
+ 
+ 	epll = ERR_PTR(-ENODEV);
+ 
