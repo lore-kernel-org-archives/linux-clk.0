@@ -1,133 +1,128 @@
 Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 05/41] clk: davinci: Add platform information for TI DM355 PLL
-Date: Sat, 20 Jan 2018 11:13:44 -0600
-Message-Id: <1516468460-4908-6-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
+ <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
+ <bb1f446e-5900-7e73-c1b7-955662a9541b@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <7b33c9a1-468c-15e6-2899-be334b4f3807@lechnology.com>
+Date: Wed, 17 Jan 2018 13:08:34 -0600
+MIME-Version: 1.0
+In-Reply-To: <bb1f446e-5900-7e73-c1b7-955662a9541b@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM355 based systems.
+On 01/17/2018 05:57 AM, Sekhar Nori wrote:
+> On Tuesday 16 January 2018 10:51 PM, David Lechner wrote:
+>> On 01/16/2018 08:00 AM, Sekhar Nori wrote:
+>>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>>>> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
+>>>> +{
+>>>> +    struct clk_onecell_data *clk_data;
+>>>> +
+>>>> +    clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
+>>>> +    if (!clk_data)
+>>>> +        return;
+>>>> +
+>>>> +    clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
+>>>> +    clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
+>>>> +    clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
+>>>> +    clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
+>>>> +    clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
+>>>> +    clk_register_clkdev(clk_data->clks[14], "arm", NULL);
+>>>> +    clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
+>>>> +
+>>>> +    clk_free_onecell_data(clk_data);
+>>>> +
+>>>> +    clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
+>>>> +    if (!clk_data)
+>>>> +        return;
+>>>> +
+>>>> +    clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
+>>>
+>>> Is this con_id really needed now? Searching for "usb20_psc_clk" in your
+>>> tree results in only this one hit.
+>>
+>> Yes, this is left over from previous attempts.
+>>
+>>>
+>>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
+>>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
+>>>
+>>> I guess multiple dev_id matches like these are another hurdle in moving
+>>> them to davinci_psc_clk_info[] table? If its too cumbersome to keep
+>>> multiple entries in the table, they can be handled as an exception at
+>>> the end of processing the table? Still they are not the norm so I hope
+>>> the normal case will still benefit.
+>>
+>> Right, as I mentioned in the reply to the previous patch, instead of
+>> assigning a con_id and dev_id to each clock, we would need to assign
+>> an array with a list of clocks. I think that would work better than
+>> trying to handle the extras as an exception since there, on average,
+>> about 5 per SoC.
+> 
+> Okay, are you going to try this to see how it looks?
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+It is looking like this:
 
-v6 changes:
-- Added dm355_pll{1,2}_info with controller-specific information
-- Add empty lines between function calls
 
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/pll-dm355.c | 66 +++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h     |  1 +
- 3 files changed, 68 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm355.c
+static const struct davinci_psc_clkdev_info emfia_clkdev[] __initconst = {
+	LPSC_CLKDEV(NULL,	"ti-aemif"),
+	LPSC_CLKDEV("aemif",	"davinci-nand.0"),
+	{ }
+};
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 13049d4..6720bd0 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-new file mode 100644
-index 0000000..ac93c52
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM355
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+static const struct davinci_pll_clk_info dm355_pll1_info __initconst = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(7, 0),
-+	.pllm_min = 92,
-+	.pllm_max = 184,
-+	.flags = PLL_HAS_OSCIN | PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED |
-+		 PLL_PREDIV_FIXED8 | PLL_HAS_POSTDIV |
-+		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm355_pll1_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+static const struct davinci_pll_clk_info dm355_pll2_info __initconst = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(7, 0),
-+	.pllm_min = 92,
-+	.pllm_max = 184,
-+	.flags = PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED | PLL_HAS_POSTDIV |
-+		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm355_pll2_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV),
-+	SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+void __init dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
-+{
-+	const struct davinci_pll_sysclk_info *info;
-+
-+	davinci_pll_clk_register(&dm355_pll1_info, "ref_clk", pll1);
-+
-+	for (info = dm355_pll1_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(info, pll1);
-+
-+	davinci_pll_auxclk_register("pll1_auxclk", pll1);
-+
-+	davinci_pll_sysclkbp_clk_register("pll1_sysclkbp", pll1);
-+
-+	davinci_pll_clk_register(&dm355_pll2_info, "oscin", pll2);
-+
-+	for (info = dm355_pll2_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(info, pll2);
-+
-+	davinci_pll_sysclkbp_clk_register("pll2_sysclkbp", pll2);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 7b08fe0..95333fe 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -11,5 +11,6 @@
- 
- void da830_pll_clk_init(void __iomem *pll);
- void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
-+void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
- 
- #endif /* __LINUX_CLK_DAVINCI_H__ */
--- 
-2.7.4
+static const struct davinci_psc_clkdev_info spi0_clkdev[] __initconst = {
+	LPSC_CLKDEV(NULL,	"spi_davinci.0"),
+	{ }
+};
+
+static const struct davinci_psc_clkdev_info mmcsd0_clkdev[] __initconst = {
+	LPSC_CLKDEV(NULL,	"da830-mmc.0"),
+	{ }
+};
+
+static const struct davinci_psc_clkdev_info uart0_clkdev[] __initconst = {
+	LPSC_CLKDEV(NULL,	"serial8250.0"),
+	{ }
+};
+
+static const struct davinci_psc_clkdev_info arm_clkdev[] __initconst = {
+	/*
+	 * REVISIT: cpufreq-davinci should be modified to use dev_id and drop
+	 * use of con_id.
+	 */
+	LPSC_CLKDEV("arm",	NULL),
+	{ }
+};
+
+static const struct davinci_psc_clkdev_info dsp_clkdev[] __initconst = {
+	LPSC_CLKDEV(NULL,	"davinci-rproc.0"),
+	{ }
+};
+
+static const struct davinci_psc_clk_info da850_psc0_info[] __initconst = {
+	LPSC(0,  0, tpcc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+	LPSC(1,  0, tptc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+	LPSC(2,  0, tptc1,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+	LPSC(3,  0, emifa,   async1,       emfia_clkdev,  0),
+	LPSC(4,  0, spi0,    pll0_sysclk2, spi0_clkdev,   0),
+	LPSC(5,  0, mmcsd0,  pll0_sysclk2, mmcsd0_clkdev, 0),
+	LPSC(6,  0, aintc,   pll0_sysclk4, NULL,          LPSC_ALWAYS_ENABLED),
+	LPSC(7,  0, arm_rom, pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+	LPSC(9,  0, uart0,   pll0_sysclk2, uart0_clkdev,  0),
+	LPSC(13, 0, pruss,   pll0_sysclk2, NULL,          0),
+	LPSC(14, 0, arm,     pll0_sysclk6, arm_clkdev,    LPSC_ALWAYS_ENABLED |
+							  LPSC_ARM_RATE),
+	LPSC(15, 1, dsp,     pll0_sysclk1, dsp_clkdev,    LPSC_FORCE |
+							  LPSC_LOCAL_RESET),
+	{ }
+};
