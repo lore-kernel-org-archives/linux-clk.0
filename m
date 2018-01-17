@@ -1,87 +1,99 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
- <20180110224838.16711-6-paul@crapouillou.net>
- <58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
- <1515687945.2170.1@smtp.crapouillou.net>
- <20180120130649.7f326f75@why.wild-wind.fr.eu.org>
- <20180122092617.36ggqqike4gwwgrd@dell>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <bdae1be4-0ed2-1b7d-8b08-7439ce06e762@arm.com>
-Date: Mon, 22 Jan 2018 09:55:34 +0000
+Return-Path: <aford173@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180122092617.36ggqqike4gwwgrd@dell>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180117211907.GE4042@atomide.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+ <1489236606-24023-16-git-send-email-t-kristo@ti.com> <CAHCN7x+oKEmXBpogy4VOB8UgmTd6+X5fBiP66yzUqXmvDWdqaw@mail.gmail.com>
+ <6b4c5bf2-1260-0e79-0414-9870f21e4a75@ti.com> <CAHCN7xLaP-th=vAzN8C1QXstf3c5SP4JADAZZXTb1Nd6N6QdsQ@mail.gmail.com>
+ <20180117211907.GE4042@atomide.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 17 Jan 2018 15:44:18 -0600
+Message-ID: <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
+Subject: Re: [PATCHv2 15/15] clk: ti: convert to use proper register
+ definition for all accesses
+To: Tony Lindgren <tony@atomide.com>
+Cc: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/01/18 09:26, Lee Jones wrote:
-> On Sat, 20 Jan 2018, Marc Zyngier wrote:
-> 
->> On Thu, 11 Jan 2018 17:25:45 +0100
->> Paul Cercueil <paul@crapouillou.net> wrote:
+On Wed, Jan 17, 2018 at 3:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Adam Ford <aford173@gmail.com> [180117 15:15]:
+>> On Wed, Jan 17, 2018 at 8:02 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>> > On 17/01/18 15:27, Adam Ford wrote:
+>> >>
+>> >> On Sat, Mar 11, 2017 at 6:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>> >>>
+>> >>> Currently, TI clock driver uses an encapsulated struct that is cast into
+>> >>> a void pointer to store all register addresses. This can be considered
+>> >>> as rather nasty hackery, and prevents from expanding the register
+>> >>> address field also. Instead, replace all the code to use proper struct
+>> >>> in place for this, which contains all the previously used data.
+>> >>>
+>> >>> This patch is rather large as it is touching multiple files, but this
+>> >>> can't be split up as we need to avoid any boot breakage.
+>> >>>
+>> >>
+>> >> I know it's late coming, but according to git bisect, this patch is
+>> >> causing some problems with Logic PD Torpedo 37xx Dev kit.
+>> >
+>> >
+>> > Oh reporting bugs is never too late, thanks for posting this out.
+>> >
+>> >>
+>> >> It it is a DM3730 that has a WL1283 chipset attached to the SDIO
+>> >> interface on MMC3.  The driver seems to load properly, but when
+>> >> loading wpa_supplicant to activate the WL1283, we get a giant crash.
+>> >> I checked kernel revisions starting at 4.14 and working back to when
+>> >> it worked, then used git bisect from there.
+>> >>
+>> >> I am hoping it might be a simple fix for something that just needs to
+>> >> get added or tweaked in the device tree.
+>> >
+>> >
+>> > I don't have access to the specific hw, but can you try to dig out which
+>> > hwmod is causing the crash? Just print out the oh->name from the
+>> > _wait_softreset_complete. That would help root causing the issue.
+>> >
 >>
->>> Hi Marc,
->>>
->>>>>  +static int __init ingenic_tcu_intc_of_init(struct device_node 
->>>>> *node,
->>>>>  +	struct device_node *parent)
->>>>>  +{
->>>>>  +	struct irq_domain *domain;
->>>>>  +	struct irq_chip_generic *gc;
->>>>>  +	struct irq_chip_type *ct;
->>>>>  +	int err, i, num_parent_irqs;
->>>>>  +	unsigned int parent_irqs[3];  
->>>>
->>>> 3 parent interrupts? Really? How do you pick one? Also, given the 
->>>> useage
->>>> model below, "int" is the wrong type. Probably should be u32.  
->>>
->>> See below.
->>>
->>>>>  +	struct regmap *map;
->>>>>  +
->>>>>  +	num_parent_irqs = of_property_count_elems_of_size(
->>>>>  +			node, "interrupts", 4);  
->>>>
->>>> Nit: on a single line, as here is nothing that hurts my eyes more than
->>>> reading something like(
->>>> this). Also, 4 is better expressed as sizeof(u32).  
->>>
->>> That will make checkpatch.pl unhappy :(
+>> With one small patch, I was able to make it work again.
 >>
->> And I don't care about checkpatch. I maintain the irqchip stuff, while
->> checkpatch doesn't. Hence, I win.
-> 
-> 	num_parent_irqs =
-> 		of_property_count_elems_of_size(node, "interrupts", 4);  
-> 
-> Everybody wins!
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+>> index 2dbd632..ed1f625 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+>> @@ -477,7 +477,7 @@ static int _wait_softreset_complete(struct omap_hwmod *oh)
+>>         int c = 0;
+>>
+>>         sysc = oh->class->sysc;
+>> -
+>> +pr_warn("_wait_softreset_complete: %s\n", oh->name);
+>>         if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
+>>                 omap_test_timeout((omap_hwmod_read(oh, sysc->syss_offs)
+>>                                    & SYSS_RESETDONE_MASK),
+>>
+>>
+>> This leads me to believe that the omap_test_timeout functions might
+>> not be working quite right.
+>
+> There may be a srst_udelay needed for some module, see commit
+> ebf244148092 ("ARM: OMAP2+: Use srst_udelay for USB on dm814x")
+> for example.
+>
+> You might be able to find which module it is by commenting out
+> postcore_initcall_sync(omap3_l3_init) in drivers/bus/omap_l3_smx.c
+> temporarily as the system will most likely hang right there.
 
-<old_git_rant>
+I commented out that line as you suggested, but the system boots as
+normal and I get the crash (as normal)
 
-As I said before, I've stopped using a physical DEC VT100 around 1990,
-and gained the ability to extend my terminal to a bit more that 80
-columns. And even the VT100 could be coerced into using a 132 column mode...
+I am looking through the DM3730 and OMAP3630 TRM now.  Any thought on
+a keyword search I should use to see which hwmods might require
+srst_udelay?
 
-</old_git_rant>
+adam
 
-Adhering to a convention can be good, but common sense must apply first.
-Splitting an assignment is visually annoying and in that case, it
-doesn't make much sense. I'll happily take a line that goes beyond 80
-cols, and if you really wanted to stay within boundaries, how about
-turning "num_parent_irqs" something shorter?
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>
+> Regards,
+>
+> Tony
