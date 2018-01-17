@@ -1,107 +1,26 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH 1/7] clk: add helper functions for managing clk_onecell_data
-Date: Thu,  4 Jan 2018 18:38:06 -0600
-Message-Id: <1515112695-3160-2-git-send-email-david@lechnology.com>
-In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
-References: <1515112695-3160-1-git-send-email-david@lechnology.com>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180117150256.7430-1-l.stach@pengutronix.de>
+References: <20180117150256.7430-1-l.stach@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 17 Jan 2018 16:52:22 -0200
+Message-ID: <CAOMZO5Db5TMQ2ugG1NumVnxuBPiS23R1WUOvbqpc0N2U1eFTzQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: pllv2: avoid using uninitialized values
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	patchwork-lst@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds helper functions for allocating and freeing struct
-clk_onecell_data.
+On Wed, Jan 17, 2018 at 1:02 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> Forward the errors returned by __clk_pllv2_set_rate() in the recalc rate
+> function, to avoid using uninitialized values for the rate calculation.
+>
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/clk.c            | 49 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  3 +++
- 2 files changed, 52 insertions(+)
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e24968f..83c8df7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3551,6 +3551,55 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec, void *data)
- }
- EXPORT_SYMBOL_GPL(of_clk_hw_simple_get);
- 
-+/**
-+ * clk_alloc_onecell_data - allocate new struct clk_onecell_data
-+ * @num_clks: Number of clock pointers to allocate
-+ *
-+ * An array of clock pointers is allocated and each clock pointer is
-+ * initialized to ERR_PTR(-ENOENT).
-+ *
-+ * Returns: Pointer to struct clk_onecell_data or NULL on failure.
-+ */
-+struct clk_onecell_data *clk_alloc_onecell_data(size_t num_clks)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int i;
-+
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return NULL;
-+
-+	clk_data->clks = kcalloc(num_clks, sizeof(*clk_data->clks), GFP_KERNEL);
-+	if (!clk_data->clks) {
-+		kfree(clk_data);
-+		return NULL;
-+	}
-+
-+	for (i = 0; i < num_clks; i++)
-+		clk_data->clks[i] = ERR_PTR(-ENOENT);
-+
-+	clk_data->clk_num = num_clks;
-+
-+	return clk_data;
-+}
-+EXPORT_SYMBOL_GPL(clk_alloc_onecell_data);
-+
-+/**
-+ * clk_free_onecell_data - frees @clk_data and associated resources
-+ * @clk_data: Pointer to struct clk_onecelldata that was allocated with
-+ *            clk_alloc_onecell_data()
-+ *
-+ * It is safe to call this function even if @clk_data is NULL or an error value.
-+ */
-+void clk_free_onecell_data(struct clk_onecell_data *clk_data)
-+{
-+	if (IS_ERR_OR_NULL(clk_data))
-+		return;
-+
-+	kfree(clk_data->clks);
-+	kfree(clk_data);
-+}
-+
- struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data)
- {
- 	struct clk_onecell_data *clk_data = data;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 175a62a..b1f51f7 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -786,6 +786,9 @@ struct clk_onecell_data {
- 	unsigned int clk_num;
- };
- 
-+struct clk_onecell_data *clk_alloc_onecell_data(size_t num_clks);
-+void clk_free_onecell_data(struct clk_onecell_data *clk_data);
-+
- struct clk_hw_onecell_data {
- 	unsigned int num;
- 	struct clk_hw *hws[];
--- 
-2.7.4
+Thanks
