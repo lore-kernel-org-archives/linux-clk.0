@@ -1,37 +1,56 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 02/44] clk: davinci: New driver for davinci PLL clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-3-git-send-email-david@lechnology.com>
- <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <d8171267-dc49-e573-ca69-c2b77b44a119@lechnology.com>
-Date: Fri, 12 Jan 2018 20:13:41 -0600
-MIME-Version: 1.0
-In-Reply-To: <7fc8bd35-0416-216d-8e1e-53a0ec6e8790@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH 3/4] dt-bindings: add binding for i.MX8MQ CCM
+Date: Wed, 17 Jan 2018 19:29:49 +0100
+Message-Id: <20180117182950.26460-3-l.stach@pengutronix.de>
+In-Reply-To: <20180117182950.26460-1-l.stach@pengutronix.de>
+References: <20180117182950.26460-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/12/2018 03:21 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> +static unsigned long davinci_pll_clk_recalc(struct clk_hw *hw,
->> +					    unsigned long parent_rate)
->> +{
->> +	struct davinci_pll_clk *pll = to_davinci_pll_clk(hw);
->> +	unsigned long rate = parent_rate;
->> +	u32 prediv, mult, postdiv;
->> +
->> +	prediv = readl(pll->base + PREDIV) & PREDIV_RATIO_MASK;
->> +	mult = readl(pll->base + PLLM) & PLLM_MASK;
->> +	postdiv = readl(pll->base + POSTDIV) & POSTDIV_RATIO_MASK;
-> 
-> Shouldn't we check if the pre and post dividers are enabled before using
-> them?
+This adds the binding for the i.MX8MQ Clock Controller Module.
 
-I dug into this and the answer is no. The enable bit acts like a gate, not
-a bypass, so it does not affect the rate calculation.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ .../devicetree/bindings/clock/imx8mq-clock.txt       | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+new file mode 100644
+index 000000000000..c9b0123b80d0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+@@ -0,0 +1,20 @@
++* Clock bindings for NXP i.MX8M Quad
++
++Required properties:
++- compatible: Should be "nxp,imx8mq-ccm"
++- reg: Address and length of the register set
++- #clock-cells: Should be <1>
++- clocks: list of clock specifiers, must contain an entry for each required
++          entry in clock-names
++- clock-names: should include the following entries:
++    - "ckil"
++    - "osc_25m"
++    - "osc_27m"
++    - "clk_ext1"
++    - "clk_ext2"
++    - "clk_ext3"
++    - "clk_ext4"
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clock.h
++for the full list of i.MX8M Quad clock IDs.
+-- 
+2.11.0
