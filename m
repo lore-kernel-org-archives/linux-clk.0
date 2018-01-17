@@ -1,64 +1,92 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 21/34] clk: lpc32xx: change clk_hclk_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:47 +0000
-Message-Id: <1514835300-381-7-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
+ <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <bb1f446e-5900-7e73-c1b7-955662a9541b@ti.com>
+Date: Wed, 17 Jan 2018 17:27:17 +0530
+MIME-Version: 1.0
+In-Reply-To: <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Tuesday 16 January 2018 10:51 PM, David Lechner wrote:
+> On 01/16/2018 08:00 AM, Sekhar Nori wrote:
+>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>>> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
+>>> +{
+>>> +    struct clk_onecell_data *clk_data;
+>>> +
+>>> +    clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
+>>> +    if (!clk_data)
+>>> +        return;
+>>> +
+>>> +    clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
+>>> +    clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
+>>> +    clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
+>>> +    clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
+>>> +    clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
+>>> +    clk_register_clkdev(clk_data->clks[14], "arm", NULL);
+>>> +    clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
+>>> +
+>>> +    clk_free_onecell_data(clk_data);
+>>> +
+>>> +    clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
+>>> +    if (!clk_data)
+>>> +        return;
+>>> +
+>>> +    clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
+>>
+>> Is this con_id really needed now? Searching for "usb20_psc_clk" in your
+>> tree results in only this one hit.
+> 
+> Yes, this is left over from previous attempts.
+> 
+>>
+>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
+>>> +    clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
+>>
+>> I guess multiple dev_id matches like these are another hurdle in moving
+>> them to davinci_psc_clk_info[] table? If its too cumbersome to keep
+>> multiple entries in the table, they can be handled as an exception at
+>> the end of processing the table? Still they are not the norm so I hope
+>> the normal case will still benefit.
+> 
+> Right, as I mentioned in the reply to the previous patch, instead of
+> assigning a con_id and dev_id to each clock, we would need to assign
+> an array with a list of clocks. I think that would work better than
+> trying to handle the extras as an exception since there, on average,
+> about 5 per SoC.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Okay, are you going to try this to see how it looks? It looks like
+samsung (clk-s3c2410.c) and tegra (clk-tegra20.c) use such tables
+(although both use separate tables mapping just the gate number to
+con_id/dev_id).
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/nxp/clk-lpc32xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Others like u8540_clk.c and clk-mmp2.c have multiple calls in code to
+clk_register_clkdev() like you have, but they keep them right after the
+gate clock registration which makes it easy to see the mapping.
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 81ab57d..76c17f4 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -595,7 +595,7 @@ static unsigned long clk_hclk_pll_round_rate(struct clk_hw *hw,
- 	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
- 
- 	if (rate > 266500000)
--		return -EINVAL;
-+		return 0;
- 
- 	/* Have to check all 20 possibilities to find the minimal M */
- 	for (p_i = 4; p_i >= 0; p_i--) {
-@@ -622,7 +622,7 @@ static unsigned long clk_hclk_pll_round_rate(struct clk_hw *hw,
- 	if (d == (u64)rate << 6) {
- 		pr_err("%s: %lu: no valid PLL parameters are found\n",
- 		       clk_hw_get_name(hw), rate);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	clk->m_div = m;
--- 
-2.7.4
+clk-imx35.c has multiple clk_register_clkdev() calls, but uses an enum
+for the gates so its easy to see the mapping. This approach looks fine
+to me as well.
+
+So looks like there is a whole gamut of ways people have approached
+this. But I do think we need to change the scheme you have currently
+since it is difficult to review and audit (believe me on this one :))
+
+Thanks,
+Sekhar
