@@ -1,105 +1,55 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 06/34] clk: at91: change clk_pll_get_best_div_mul() return logic
-Date: Mon,  1 Jan 2018 19:07:33 +0000
-Message-Id: <1514833681-30737-7-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 10/44] clk: davinci: New driver for davinci PSC clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-11-git-send-email-david@lechnology.com>
+ <e0a9af55-a8b1-c359-fe88-d038648e02f1@ti.com>
+ <83f3d207-9645-cbdf-d6cf-b6e6a8458abe@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <1b568e12-dd45-f371-a1a8-576c97a6b58e@ti.com>
+Date: Wed, 17 Jan 2018 17:55:16 +0530
+MIME-Version: 1.0
+In-Reply-To: <83f3d207-9645-cbdf-d6cf-b6e6a8458abe@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Tuesday 16 January 2018 10:21 PM, David Lechner wrote:
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+>>> +static struct clk *davinci_psc_clk_register(const char *name,
+>>> +                        const char *parent_name,
+>>> +                        struct regmap *regmap,
+>>> +                        u32 lpsc, u32 pd, u32 flags)
+>>> +{
+>>> +    struct clk_init_data init;
+>>> +    struct davinci_psc_clk *psc;
+>>> +    struct clk *clk;
+>>> +
+>>> +    psc = kzalloc(sizeof(*psc), GFP_KERNEL);
+>>> +    if (!psc)
+>>> +        return ERR_PTR(-ENOMEM);
+>>> +
+>>> +    init.name = name;
+>>> +    init.ops = &davinci_psc_clk_ops;
+>>> +    init.parent_names = (parent_name ? &parent_name : NULL);
+>>> +    init.num_parents = (parent_name ? 1 : 0);
+>>> +    init.flags = CLK_SET_RATE_PARENT;
+>>
+>> Is this needed since PSC does not cause any rate change?
+> 
+> Yes, because one of the PSCs is the ARM clock and for cpufreq, we
+> need to propagate the rate change up the chain to SYSCLK6.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/at91/clk-pll.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Good point. But how about treating that as an exception with a new LPSC_
+quirk flag?
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 630203e..1c90ae7 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -157,14 +157,14 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 							pll->characteristics;
- 	unsigned long bestremainder = ULONG_MAX;
- 	unsigned long maxdiv, mindiv, tmpdiv;
--	long bestrate = -ERANGE;
-+	unsigned long bestrate = 0;
- 	unsigned long bestdiv;
- 	unsigned long bestmul;
- 	int i = 0;
- 
- 	/* Check if parent_rate is a valid input rate */
- 	if (parent_rate < characteristics->input.min)
--		return -ERANGE;
-+		return 0;
- 
- 	/*
- 	 * Calculate minimum divider based on the minimum multiplier, the
-@@ -179,7 +179,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	if (parent_rate > characteristics->input.max) {
- 		tmpdiv = DIV_ROUND_UP(parent_rate, characteristics->input.max);
- 		if (tmpdiv > PLL_DIV_MAX)
--			return -ERANGE;
-+			return 0;
- 
- 		if (tmpdiv > mindiv)
- 			mindiv = tmpdiv;
-@@ -234,8 +234,8 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 			break;
- 	}
- 
--	/* We haven't found any multiplier/divider pair => return -ERANGE */
--	if (bestrate < 0)
-+	/* We haven't found any multiplier/divider pair => return 0 */
-+	if (bestrate == 0)
- 		return bestrate;
- 
- 	/* Check if bestrate is a valid output rate  */
-@@ -246,7 +246,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	}
- 
- 	if (i >= characteristics->num_output)
--		return -ERANGE;
-+		return 0;
- 
- 	if (div)
- 		*div = bestdiv;
-@@ -271,15 +271,15 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
--	long ret;
-+	unsigned long ret;
- 	u32 div;
- 	u32 mul;
- 	u32 index;
- 
- 	ret = clk_pll_get_best_div_mul(pll, rate, parent_rate,
- 				       &div, &mul, &index);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ERANGE;
- 
- 	pll->range = index;
- 	pll->div = div;
--- 
-2.7.4
+Thanks,
+Sekhar
