@@ -1,97 +1,127 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Subject: [PATCH v2 02/34] clk: core: update divider_round_rate functions to return unsigned long
-Date: Mon,  1 Jan 2018 19:07:29 +0000
-Message-Id: <1514833681-30737-3-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 19/44] clk: davinci: New driver for TI DA8XX CFGCHIP
+ clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-20-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c3c0f9cf-b93e-6d1e-1e44-7dcef1ea11cf@ti.com>
+Date: Wed, 17 Jan 2018 21:01:53 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-20-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Returning a long from round_rate() class functions is rooted in the notion
-that we will propagate a negative number on some class of failure to round
-a clock rate; however this approach does not scale to 32 bit systems which
-legitimately round a clock over LONG_MAX as the returned clock rate is
-indistinguishable from an error number.
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds a new driver for the gate and multiplexer clocks in the
+> CFGCHIPn syscon registers on TI DA8XX-type SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>  drivers/clk/davinci/Makefile        |   2 +
+>  drivers/clk/davinci/da8xx-cfgchip.c | 203 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 205 insertions(+)
+>  create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
+> 
+> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+> index 6c388d4..11178b7 100644
+> --- a/drivers/clk/davinci/Makefile
+> +++ b/drivers/clk/davinci/Makefile
+> @@ -1,6 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+>  ifeq ($(CONFIG_COMMON_CLK), y)
+> +obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
+> +
+>  obj-y += pll.o
+>  obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+>  obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+> new file mode 100644
+> index 0000000..772e09a
+> --- /dev/null
+> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
+> @@ -0,0 +1,203 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
+> + *
+> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
 
-A better approach is to return zero when we cannot round a clock and
-non-zero when we can - thus supporting the full range of the unsigned long
-rate input value to round_rate() functions.
+2018
 
-Update the signature of divider_round_rate functions to do this now.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/da8xx-cfgchip.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#ifdef CONFIG_OF
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-divider.c    | 10 ++++++----
- include/linux/clk-provider.h | 19 +++++++++++--------
- 2 files changed, 17 insertions(+), 12 deletions(-)
+Is this ifdef really needed, or included to save space for non-OF
+builds? I think it can be removed if not really needed.
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index a26ec7c..e827304 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -332,10 +332,12 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
- 	return bestdiv;
- }
- 
--long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--			       unsigned long rate, unsigned long *prate,
--			       const struct clk_div_table *table,
--			       u8 width, unsigned long flags)
-+unsigned long divider_round_rate_parent(struct clk_hw *hw,
-+					struct clk_hw *parent,
-+					unsigned long rate,
-+					unsigned long *prate,
-+					const struct clk_div_table *table,
-+					u8 width, unsigned long flags)
- {
- 	int div;
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 79b1d6e..e763d94 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -413,10 +413,12 @@ extern const struct clk_ops clk_divider_ro_ops;
- unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 		unsigned int val, const struct clk_div_table *table,
- 		unsigned long flags);
--long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--			       unsigned long rate, unsigned long *prate,
--			       const struct clk_div_table *table,
--			       u8 width, unsigned long flags);
-+unsigned long divider_round_rate_parent(struct clk_hw *hw,
-+					struct clk_hw *parent,
-+					unsigned long rate,
-+					unsigned long *prate,
-+					const struct clk_div_table *table,
-+					u8 width, unsigned long flags);
- int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 		const struct clk_div_table *table, u8 width,
- 		unsigned long flags);
-@@ -762,10 +764,11 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- 	dst->core = src->core;
- }
- 
--static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *prate,
--				      const struct clk_div_table *table,
--				      u8 width, unsigned long flags)
-+static inline unsigned long divider_round_rate(struct clk_hw *hw,
-+					       unsigned long rate,
-+					       unsigned long *prate,
-+					       const struct clk_div_table *table,
-+					       u8 width, unsigned long flags)
- {
- 	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
- 					 rate, prate, table, width, flags);
--- 
-2.7.4
+> +static void da8xx_cfgchip_gate_clk_init(struct device_node *np, u32 reg,
+> +					u32 mask)
+> +{
+> +	struct da8xx_cfgchip_gate_clk *clk;
+> +	struct clk_init_data init;
+> +	const char *name = np->name;
+> +	const char *parent_name;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	of_property_read_string(np, "clock-output-names", &name);
+> +	parent_name = of_clk_get_parent_name(np, 0);
+> +
+> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+> +	if (IS_ERR(regmap)) {
+> +		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
+> +		       __func__, np->full_name, PTR_ERR(regmap));
+
+please use pr_fmt for this driver too.
+
+> +static void da8xx_cfgchip_mux_clk_init(struct device_node *np, u32 reg,
+> +				       u32 mask)
+> +{
+> +	struct da8xx_cfgchip_mux_clk *clk;
+> +	struct clk_init_data init;
+> +	const char *name = np->name;
+> +	const char *parent_names[2];
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	ret = of_property_match_string(np, "clock-names", "pll0_sysclk2");
+> +	parent_names[0] = of_clk_get_parent_name(np, ret);
+> +	if (!parent_names[0]) {
+> +		pr_err("%s: missing pll0_sysclk2 clock\n", __func__);
+> +		return;
+> +	}
+> +
+> +	ret = of_property_match_string(np, "clock-names", "pll1_sysclk2");
+> +	parent_names[1] = of_clk_get_parent_name(np, ret);
+> +	if (!parent_names[1]) {
+> +		pr_err("%s: missing pll1_sysclk2 clock\n", __func__);
+> +		return;
+> +	}
+
+The fact that you are looking specifically for pll0_sysclk2 and
+pll1_sysclk2 makes it really specific to async3 and the same function
+cannot be used for something like EMIFA clock source. Can this part of
+the function be factored out so rest of the function can still be reused
+for another clock?
+
+Thanks,
+Sekhar
