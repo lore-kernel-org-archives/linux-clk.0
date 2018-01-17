@@ -1,111 +1,166 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: maxime.ripard@free-electrons.com
-Date: Thu, 4 Jan 2018 15:25:30 +0100
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
-	wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 01/11] clk: sunxi-ng: Don't set k if width is 0 for nkmp
- plls
-Message-ID: <20180104142530.ffz26qs66c6y7b2h@flea.lan>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net>
- <20171230210203.24115-2-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ahqsuwxynlnofbo3"
-In-Reply-To: <20171230210203.24115-2-jernej.skrabec@siol.net>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1516211221.2608.140.camel@baylibre.com>
+Subject: Re: [3/5] clk: divider: add divider_ro_round_rate helper
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: David Lechner <david@lechnology.com>, Stephen Boyd
+ <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, Sylvain
+ Lemieux <slemieux.tyco@gmail.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>
+Date: Wed, 17 Jan 2018 18:47:01 +0100
+In-Reply-To: <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
+References: <20180105170959.17266-4-jbrunet@baylibre.com>
+	 <f32ed81b-685e-acf6-d2d9-ecd27fd9b8ba@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, 2018-01-11 at 17:08 -0600, David Lechner wrote:
+> On 01/05/2018 11:09 AM, Jerome Brunet wrote:
+> > Like divider_round_rate, a couple a of driver are doing more or less
+> > the same operation to round the rate of the divider when it is read-only.
+> > 
+> > We can factor this code so let's provide an helper function for this
+> 
+> Perhaps you could also make use of this new helper here (clk-divider.c):
+> 
+> const struct clk_ops clk_divider_ro_ops = {
+> 	.recalc_rate = clk_divider_recalc_rate,
+> 	.round_rate = clk_divider_round_rate,
+> };
+> EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
 
---ahqsuwxynlnofbo3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The helper is used in this driver and ro_ops will use it.
+I don't get this comment, could you be more specific
 
-Hi,
+> 
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >   drivers/clk/clk-divider.c    | 43 ++++++++++++++++++++++++++++---------------
+> >   include/linux/clk-provider.h | 15 +++++++++++++++
+> >   2 files changed, 43 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > index a851d3e04c7f..3eb2b27f3513 100644
+> > --- a/drivers/clk/clk-divider.c
+> > +++ b/drivers/clk/clk-divider.c
+> > @@ -344,29 +344,42 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> >   }
+> >   EXPORT_SYMBOL_GPL(divider_round_rate_parent);
+> >   
+> 
+> It is nice to have documentation comments on public functions. Especially
+> in this case where @prate is an in/out parameter and @table is optional.
 
-On Sat, Dec 30, 2017 at 10:01:53PM +0100, Jernej Skrabec wrote:
-> For example, A83T have nmp plls which are modelled as nkmp plls. Since k
-> is not specified, it has offset 0, shift 0 and lowest value 1. This
-> means that LSB bit is always set to 1, which may change clock rate.
->=20
-> Fix that by applying k factor only if k width is greater than 0.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Sure, but divider_round_rate_parent was already and undocumented. There is no
+reason to change this is this particular patch (it is not the topic)
 
-This looks fine...
+The RO helper being the counter part of this one, it did not do it differently
 
-> ---
->  drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_n=
-kmp.c
-> index e58c95787f94..709f528af2b3 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> @@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw=
- *hw,
->  					unsigned long parent_rate)
->  {
->  	struct ccu_nkmp *nkmp =3D hw_to_ccu_nkmp(hw);
-> -	unsigned long n, m, k, p;
-> +	unsigned long n, m, k =3D 1, p;
->  	u32 reg;
-> =20
->  	reg =3D readl(nkmp->common.base + nkmp->common.reg);
-> @@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_=
-hw *hw,
->  	if (!n)
->  		n++;
-> =20
-> -	k =3D reg >> nkmp->k.shift;
-> -	k &=3D (1 << nkmp->k.width) - 1;
-> -	k +=3D nkmp->k.offset;
-> -	if (!k)
-> -		k++;
-> +	if (nkmp->k.width) {
-> +		k =3D reg >> nkmp->k.shift;
-> +		k &=3D (1 << nkmp->k.width) - 1;
-> +		k +=3D nkmp->k.offset;
-> +		if (!k)
-> +			k++;
-> +	}
+I suppose a documentation could be added in another patch.
 
-=2E.. but could you add a comment there to explain why you're using a
-different construct than the one used for the other factors?
+However, I don't know if there is policy regarding the documentation of
+functions internal to CCF. Maybe Stephen can tell us ?
 
-Thanks!
-Maxime
+Cheers
+Jerome
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
 
---ahqsuwxynlnofbo3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpOOVkACgkQ0rTAlCFN
-r3Q/xg//aq4lc1fhAw5dqvwjrUqCxtH6bbhwFwxzez16WJlyRn4lh9/i1INor6MI
-vDChUuzOOb8pwvXc6yDzy/A0zbU9PQmn5ZHuPQ1J0cTygvoUlNZ5KKepOWUmWrbX
-7sbSze+zSSB1EC3GYx1xYN7NnZwi89NrXJ2fVxK4J6XHK8wiZy+hOQ141pP9lnzf
-HRt61dHP0sfbuO2977wMkEvTuzw7vmMQblg0kHNjICEzNMOvPU1hdG7gZNsZ8aXu
-OqZRpDK3oBr7I2V3m2gz0IQpJnHJUh+iSsiELEMpnq5Kw/7TGzMkKzJBZlNyq0/q
-VXmfaM9MzWqOxW55E8l9not65gy5eGaSNel1xJG7anQDC7feA7zRb/NOvRGDrsaQ
-UFuEpQZzWeoAqbP+MgoyQSkD5aWml+YPDHrIkiPGCIwnVEmNhiQ74CeIetLIZdI2
-AN5DUO7o8WusnX4bLSoR5VUEb1naTGPA2wcsXl/WhgYQaVK4cHn074Og75pvbUmw
-wkGsEYZMDhXJv16tLTQJqOMllLMlCoLZyneVKb9s+O9coyB4uIvJkRueDqgSk7Vx
-GRx5GDPxrw9pl7gurkV38KfA5DbZRtBiUe9MNWqY3w8a9ViEP/QO+u4IacuewaVv
-jM/XfXMtrxvdYdm9zp2CbJHi3cOI455dLXTDKO9CO96afwPmmQo=
-=EQyV
------END PGP SIGNATURE-----
-
---ahqsuwxynlnofbo3--
+> 
+> > +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> > +				  unsigned long rate, unsigned long *prate,
+> > +				  const struct clk_div_table *table, u8 width,
+> > +				  unsigned long flags, unsigned int val)
+> > +{
+> > +	int div;
+> > +
+> > +	div = _get_div(table, val, flags, width);
+> > +
+> > +	/* Even a read-only clock can propagate a rate change */
+> > +	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+> > +		if (!parent)
+> > +			return -EINVAL;
+> > +
+> > +		*prate = clk_hw_round_rate(parent, rate * div);
+> > +	}
+> > +
+> > +	return DIV_ROUND_UP_ULL((u64)*prate, div);
+> > +}
+> > +EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
+> > +
+> > +
+> >   static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> >   				unsigned long *prate)
+> >   {
+> >   	struct clk_divider *divider = to_clk_divider(hw);
+> > -	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
+> > -	int bestdiv;
+> > +	u32 val;
+> >   
+> >   	/* if read only, just return current value */
+> >   	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> > -		bestdiv = clk_readl(divider->reg) >> divider->shift;
+> > -		bestdiv &= div_mask(divider->width);
+> > -		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+> > -			divider->width);
+> > -
+> > -		/* Even a read-only clock can propagate a rate change */
+> > -		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+> > -			if (!hw_parent)
+> > -				return -EINVAL;
+> > -
+> > -			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
+> > -		}
+> > +		val = clk_readl(divider->reg) >> divider->shift;
+> > +		val &= div_mask(divider->width);
+> >   
+> > -		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+> > +		return divider_ro_round_rate(hw, rate, prate, divider->table,
+> > +					     divider->width, divider->flags,
+> > +					     val);
+> >   	}
+> >   
+> >   	return divider_round_rate(hw, rate, prate, divider->table,
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 175a62a15619..eb2c3a035e98 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -417,6 +417,10 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> >   			       unsigned long rate, unsigned long *prate,
+> >   			       const struct clk_div_table *table,
+> >   			       u8 width, unsigned long flags);
+> > +long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> > +				  unsigned long rate, unsigned long *prate,
+> > +				  const struct clk_div_table *table, u8 width,
+> > +				  unsigned long flags, unsigned int val);
+> >   int divider_get_val(unsigned long rate, unsigned long parent_rate,
+> >   		const struct clk_div_table *table, u8 width,
+> >   		unsigned long flags);
+> > @@ -772,6 +776,17 @@ static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> >   					 rate, prate, table, width, flags);
+> >   }
+> >   
+> 
+> Same here (about documentation comment).
+> 
+> > +static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +					 unsigned long *prate,
+> > +					 const struct clk_div_table *table,
+> > +					 u8 width, unsigned long flags,
+> > +					 unsigned int val)
+> > +{
+> > +	return divider_ro_round_rate_parent(hw, clk_hw_get_parent(hw),
+> > +					    rate, prate, table, width, flags,
+> > +					    val);
+> > +}
+> > +
+> >   /*
+> >    * FIXME clock api without lock protection
+> >    */
+> > 
+> 
+> 
