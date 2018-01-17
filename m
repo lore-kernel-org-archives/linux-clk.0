@@ -1,100 +1,54 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 04/12] drm/bridge/synopsys: dw-hdmi: Export some PHY
- related functions
-To: =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org,
- mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
- a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
- <20180110192512.19684-5-jernej.skrabec@siol.net>
- <2850049.ORu4oj41BJ@jernej-laptop>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <3ea0c21c-0ab4-651e-3779-abdc71dcb599@baylibre.com>
-Date: Mon, 15 Jan 2018 16:13:22 +0100
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Wed, 17 Jan 2018 15:58:55 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	"Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>,
+	Wei Yongjun <weiyongjun1@huawei.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kaihua Zhong <zhongkaihua@huawei.com>,
+	Ruyi Wang <wangruyi@huawei.com>, Kai Zhao <zhaokai1@hisilicon.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH -next] clk: =?utf-8?Q?hisilicon?=
+ =?utf-8?B?OiBoaTM2NjDvvJpGaQ==?= =?utf-8?Q?x?= potential NULL dereference in
+ hi3660_stub_clk_probe()
+Message-ID: <20180117075855.GB1800@leoy-linaro>
+References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
+ <CAK7LNAQXTg=A6udMPs4dptbaLz1U5+D4JBJaW0W8d_EgH_R1_A@mail.gmail.com>
+ <20180105084004.GC26855@leoy-linaro>
+ <7454cc50-7b92-2531-4261-45bd1703f1fb@hisilicon.com>
+ <CAK7LNAQcieqS0vrGKrtr3paQADpG0GEM_k9zPdLiKF8ykv5PaA@mail.gmail.com>
+ <20180108042235.GA21618@leoy-ThinkPad-T440>
+ <20180110224820.GH28313@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <2850049.ORu4oj41BJ@jernej-laptop>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180110224820.GH28313@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/01/2018 21:42, Jernej Škrabec wrote:
-> Hi all,
+On Wed, Jan 10, 2018 at 02:48:20PM -0800, Stephen Boyd wrote:
+> On 01/08, Leo Yan wrote:
+> > 
+> > I verified Yongjun patch v2 for using devm_ioremap_resource(), just as
+> > Kevin mentioned after using devm_ioremap_resource() the kernel has
+> > memory mapping conflict between stub clock driver and mailbox driver.
+> > 
+> > Following Masahiro suggestion, I changed the stub clock driver to use
+> > syscon & regmap to access the memory, I can confirm this can work
+> > well, you could review in below change.
+> > 
+> > But this change should note two things, one thing is it is dependent on
+> > mailbox driver upstreaming, so I prefer we can commit one patch for this
+> > change along with mailbox driver patch set; the second thing is we
+> > need change DT binding document.
+> > 
+> > If you have any better solution for this, also very welcome.
+> > 
 > 
-> Dne sreda, 10. januar 2018 ob 20:25:04 CET je Jernej Skrabec napisal(a):
->> Parts of PHY code could be useful also for custom PHYs. For example,
->> Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
->> with few additional memory mapped registers, so most of the Synopsys PHY
->> related code could be reused.
->>
->> Functions exported here are actually not specific to Synopsys PHYs but
->> to DWC HDMI controller PHY interface. This means that even if the PHY is
->> completely custom, i.e. not designed by Synopsys, exported functions can
->> be useful.
->>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 44
->> +++++++++++++++++++++---------- include/drm/bridge/dw_hdmi.h              |
->> 11 ++++++++
->>  2 files changed, 41 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
->> 7ca14d7325b5..7d80f4b56683 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct dw_hdmi
->> *hdmi, u8 enable) HDMI_PHY_CONF0_SVSRET_MASK);
->>  }
->>
->> -static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
->> +void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
->>  {
->>  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
->>  			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
->>  			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
->>  }
->> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
->>
->> -static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
->> +void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
->>  {
->>  	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
->>  			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
->>  			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
->>  }
->> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
->>
->>  static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
->>  {
->> @@ -1065,6 +1067,22 @@ static void dw_hdmi_phy_sel_interface_control(struct
->> dw_hdmi *hdmi, u8 enable) HDMI_PHY_CONF0_SELDIPIF_MASK);
->>  }
->>
->> +void dw_hdmi_phy_reset(struct dw_hdmi *hdmi)
->> +{
->> +	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
->> +	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
->> +	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
->> +}
->> +EXPORT_SYMBOL_GPL(dw_hdmi_phy_reset);
-> 
-> I just noticed that meson dw hdmi driver uses function with the same name, 
-> which break compilation. Is it ok if I rename meson specific reset to 
-> meson_dw_hdmi_phy_reset()?
+> So I'll apply the original patch it sounds like.
 
-Hi Jernej,
+Thanks for this and it's good for me, this is simple way to fix the
+NULL checking issue.
 
-Yes,
-
-Neil
-
-> 
-> Best regards,
-> Jernej
-> 
-[...]
+Thanks,
+Leo Yan
