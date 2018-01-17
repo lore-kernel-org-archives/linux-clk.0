@@ -1,166 +1,87 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v2 01/37] ARM: shmobile: Add watchdog support
-Date: Fri, 26 Jan 2018 16:08:56 +0000
-Message-Id: <1516982937-29245-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <TY1PR06MB08950BD28BEC28D55C6D80EDC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <TY1PR06MB08950BD28BEC28D55C6D80EDC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 12/12] ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+Date: Wed, 17 Jan 2018 21:14:21 +0100
+Message-Id: <20180117201421.25954-13-jernej.skrabec@siol.net>
+In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
+References: <20180117201421.25954-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-The value contained in the SBAR registers is not initialized by a WDT
-triggered reset, which means that after a WDT triggered reset we jump
-to the SMP bring up routine, preventing the system from executing the
-bootrom code.
+BananaPi M3 includes HDMI connector, so add support for it.
 
-The purpose of this patch is to jump to the bootrom code in case of a
-WDT triggered reset, and keep the SMP functionality untouched.
-In order to tell if the code had been called due to the WDT overflowing
-we need to inspect flag WOVF from register RWTCSRA, however for this
-to work smoothly we need to make sure that RWDT clock is ON.
-Since it's not wise to interfere with the clock configuration from
-within this routine, a flag has been put in place
-(shmobile_wdt_clock_status) so that the watchdog driver can tell
-shmobile_boot_vector_gen2 when the clock is ON, and therefore there is
-no need for shmobile_boot_vector to mess up with the clock registers.
-
-Bit WOVF survives a watchdog triggered reset, and it is usually cleared
-by the bootloader. Checking the MMU enable bit from register SCTLR
-allows us to make the code a little bit more robust (just in case the
-bit wasn't cleared up), as right after a reset the MMU is disabled,
-and when Linux is running the MMU is enabled. Also, accessing RWTCSRA
-physical address is safe when the MMU is down.
-
-New function shmobile_boot_vector_gen2 isn't replacing
-shmobile_boot_vector for backward compatibility reasons. The kernel
-will install the best option (either shmobile_boot_vector or
-shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree.
-
-SMP bringup, CPU hot plug, and suspend to RAM work as normal.
-
-Since shmobile_boot_vector has become bigger, "reg" property of nodes
-compatible with "renesas,smp-sram" now need to be set to "<0 0x64>".
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/mach-shmobile/headsmp.S | 74 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 32e0bf6..4b14d4c 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,6 +16,13 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index 6550bf0e594b..00e47423cd07 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+#define RWDT_CLOCK_ON	0xdeadbeef
-+#define RWDT_CLOCK_OFF	0x00000000
-+#define SCTLR_MMU	0x01
-+#define BOOTROM_ADDRESS	0xE6340000
-+#define RWTCSRA_ADDRESS 0xE6020004
-+#define RWTCSRA_WOVF	0x10
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-@@ -37,6 +44,73 @@ shmobile_boot_fn:
- shmobile_boot_size:
- 	.long	. - shmobile_boot_vector
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	reg_usb1_vbus: reg-usb1-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1-vbus";
+@@ -82,6 +93,10 @@
+ 	};
+ };
  
-+#ifdef CONFIG_ARCH_RCAR_GEN2
-+/*
-+ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
-+ * This will be mapped at address 0 by SBAR register.
-+ */
-+ENTRY(shmobile_boot_vector_gen2)
-+/*
-+	if (SCTLR_MMU == 1)
-+		goto shmobile_smp_continue_gen2;
-+*/
-+	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
-+	and	r0, r1, #SCTLR_MMU
-+	cmp	r0, #SCTLR_MMU
-+	beq	shmobile_smp_continue_gen2
++&de {
++	status = "okay";
++};
 +
-+/*
-+	if (shmobile_wdt_clock_status != RWDT_CLOCK_ON)
-+		goto shmobile_smp_continue_gen2;
-+*/
-+	ldr	r0, #shmobile_wdt_clock_status
-+	ldr	r1, #clock_on
-+	cmp	r0, r1
-+	bne	shmobile_smp_continue_gen2
+ &ehci0 {
+ 	/* Terminus Tech FE 1.1s 4-port USB 2.0 hub here */
+ 	status = "okay";
+@@ -100,6 +115,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
 +
-+/*
-+	if (RWTCSRA_WOVF == 0)
-+		goto shmobile_smp_continue_gen2;
-+*/
-+	ldr	r0, rwtcsra
-+	mov	r1, #0
-+	ldrb	r1, [r0]
-+	and	r0, r1, #RWTCSRA_WOVF
-+	cmp	r0, #RWTCSRA_WOVF
-+	bne	shmobile_smp_continue_gen2
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+/*
-+	goto bootrom;
-+*/
-+	ldr	r0, bootrom
-+	bx	r0
-+
-+shmobile_smp_continue_gen2:
-+	ldr     r1, shmobile_boot_fn_gen2
-+	bx	r1
-+
-+ENDPROC(shmobile_boot_vector_gen2)
-+
-+	.align	4
-+rwtcsra:
-+	.word	RWTCSRA_ADDRESS
-+bootrom:
-+	.word	BOOTROM_ADDRESS
-+clock_on:
-+	.word	RWDT_CLOCK_ON
-+	.globl	shmobile_wdt_clock_status
-+shmobile_wdt_clock_status:
-+	.word	RWDT_CLOCK_OFF
-+
-+	.align	2
-+	.globl	shmobile_boot_fn_gen2
-+shmobile_boot_fn_gen2:
-+	.space	4
-+	.globl	shmobile_boot_size_gen2
-+shmobile_boot_size_gen2:
-+	.long	. - shmobile_boot_vector_gen2
-+#endif /* CONFIG_ARCH_RCAR_GEN2 */
-+
- /*
-  * Per-CPU SMP boot function/argument selection code based on MPIDR
-  */
+ &mdio {
+ 	rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-2.7.4
+2.15.1
