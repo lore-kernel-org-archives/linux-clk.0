@@ -1,185 +1,291 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <7066d1ff-6da4-203d-57ea-cf179fea17be@nvidia.com>
-Date: Wed, 31 Jan 2018 10:43:04 +0000
-MIME-Version: 1.0
-In-Reply-To: <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH 1/4] clk: imx: add fractional PLL output clock
+Date: Wed, 17 Jan 2018 19:29:47 +0100
+Message-Id: <20180117182950.26460-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+This is a new clock type introduced on i.MX8.
 
-On 24/01/18 12:45, Peter De Schrijver wrote:
-> When using a PWM controlled regulator, the voltage step and offset are
-> determined by the regulator IC in use. This is specified in DT rather
-> than fixed in the CVB table. Hence pass this information to the CVB table
-> calculation function. For backwards compatibility the table values are us=
-ed
-> if the corresponding parameter is 0.
->=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
->  drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
->  drivers/clk/tegra/cvb.h                    |  5 +++--
->  3 files changed, 38 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
-ra/clk-tegra124-dfll-fcpu.c
-> index 440eb8d..6205ce1 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_d=
-evice *pdev)
->  	struct tegra_dfll_soc_data *soc;
->  	const struct of_device_id *of_id;
->  	const struct dfll_fcpu_data *fcpu_data;
-> +	struct rail_alignment align;
-> =20
->  	of_id =3D of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
->  	fcpu_data =3D of_id->data;
-> @@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform=
-_device *pdev)
->  		return -ENODEV;
->  	}
-> =20
-> +	err =3D of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv=
-",
-> +					&align.offset_uv);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev,
-> +			"offset uv not found, default to table value\n");
-> +		align.offset_uv =3D 0;
-> +	}
-> +
-> +	err =3D of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-> +					&align.step_uv);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev,
-> +			"step uv not found, default to table value\n");
-> +		align.step_uv =3D 0;
-> +	}
-> +
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/Makefile       |   1 +
+ drivers/clk/imx/clk-frac-pll.c | 229 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   3 +
+ 3 files changed, 233 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-frac-pll.c
 
-I am a bit confused by this ...
-
-1. Isn't this going to break Tegra124 DFLL support?
-2. These DT properties are not defined anywhere (so the binding doc
-   needs updating).
-3. I don't see any patches in this series that populate these properties
-   in DT.
-
-So I am not sure how this works?!?
-
->  	soc->max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-> =20
->  	soc->cvb =3D tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_table=
-s,
->  					   fcpu_data->cpu_cvb_tables_size,
-> -					   process_id, speedo_id, speedo_value,
-> -					   soc->max_freq);
-> +					   &align, process_id, speedo_id,
-> +					   speedo_value, soc->max_freq);
-> +	soc->alignment =3D align;
-> +
-
-This is not defined yet and so breaks compile.
-
-drivers/clk/tegra/clk-tegra124-dfll-fcpu.c: In function
-=E2=80=98tegra124_dfll_fcpu_probe=E2=80=99:
-drivers/clk/tegra/clk-tegra124-dfll-fcpu.c:161:5: error: =E2=80=98struct
-tegra_dfll_soc_data=E2=80=99 has no member named =E2=80=98alignment=E2=80=
-=99
-  soc->alignment =3D align;
-     ^
-
-What about Tegra124? This is set to NULL? Can we not set this before
-calling tegra_cvb_add_opp_table() and then just pass soc->alignment for
-both Tegra124 and Tegra210? Then you can avoid the if-statements in
-build_opp_table.
-
->  	if (IS_ERR(soc->cvb)) {
->  		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
->  			PTR_ERR(soc->cvb));
-> diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-> index da9e8e7..561012a 100644
-> --- a/drivers/clk/tegra/cvb.c
-> +++ b/drivers/clk/tegra/cvb.c
-> @@ -62,11 +62,19 @@ static int round_voltage(int mv, const struct rail_al=
-ignment *align, int up)
->  }
-> =20
->  static int build_opp_table(struct device *dev, const struct cvb_table *t=
-able,
-> +			   struct rail_alignment *align,
->  			   int speedo_value, unsigned long max_freq)
->  {
-> -	const struct rail_alignment *align =3D &table->alignment;
->  	int i, ret, dfll_mv, min_mv, max_mv;
-> =20
-> +	if (!align->step_uv)
-> +		align->step_uv =3D table->alignment.step_uv;
-> +	if (!align->step_uv)
-> +		return -EINVAL;
-> +
-> +	if (!align->offset_uv)
-> +		align->offset_uv =3D table->alignment.offset_uv;
-> +
->  	min_mv =3D round_voltage(table->min_millivolts, align, UP);
->  	max_mv =3D round_voltage(table->max_millivolts, align, DOWN);
-> =20
-> @@ -109,8 +117,9 @@ static int build_opp_table(struct device *dev, const =
-struct cvb_table *table,
->   */
->  const struct cvb_table *
->  tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tabl=
-es,
-> -			size_t count, int process_id, int speedo_id,
-> -			int speedo_value, unsigned long max_freq)
-> +			size_t count, struct rail_alignment *align,
-> +			int process_id, int speedo_id, int speedo_value,
-> +			unsigned long max_freq)
->  {
->  	size_t i;
->  	int ret;
-> @@ -124,7 +133,8 @@ static int build_opp_table(struct device *dev, const =
-struct cvb_table *table,
->  		if (table->process_id !=3D -1 && table->process_id !=3D process_id)
->  			continue;
-> =20
-> -		ret =3D build_opp_table(dev, table, speedo_value, max_freq);
-> +		ret =3D build_opp_table(dev, table, align, speedo_value,
-> +				      max_freq);
->  		return ret ? ERR_PTR(ret) : table;
->  	}
-> =20
-> diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-> index c1f0779..cfa110f 100644
-> --- a/drivers/clk/tegra/cvb.h
-> +++ b/drivers/clk/tegra/cvb.h
-> @@ -59,8 +59,9 @@ struct cvb_table {
-> =20
->  const struct cvb_table *
->  tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_=
-tables,
-> -			size_t count, int process_id, int speedo_id,
-> -			int speedo_value, unsigned long max_freq);
-> +			size_t count, struct rail_alignment *align,
-> +			int process_id, int speedo_id, int speedo_value,
-> +			unsigned long max_freq);
->  void tegra_cvb_remove_opp_table(struct device *dev,
->  				const struct cvb_table *table,
->  				unsigned long max_freq);
->=20
-
-Cheers
-Jon
-
---=20
-nvpublic
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index f91f2b2e11cd..9892ae63539c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -6,6 +6,7 @@ obj-y += \
+ 	clk-cpu.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
++	clk-frac-pll.o \
+ 	clk-gate-exclusive.o \
+ 	clk-gate2.o \
+ 	clk-pllv1.o \
+diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
+new file mode 100644
+index 000000000000..30736d53dfbe
+--- /dev/null
++++ b/drivers/clk/imx/clk-frac-pll.c
+@@ -0,0 +1,229 @@
++/*
++ * Copyright 2017 NXP.
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/jiffies.h>
++
++#include "clk.h"
++
++#define PLL_CFG0 	0x0
++#define PLL_CFG1	0x4
++
++#define PLL_LOCK_STATUS	(0x1 << 31)
++#define PLL_CLKE	21
++#define PLL_PD		19
++#define PLL_BYPASS	14
++#define PLL_NEWDIV_VAL		(1 << 12)
++#define PLL_NEWDIV_ACK		(1 << 11)
++#define PLL_FRAC_DIV_MASK	0xffffff
++#define PLL_INT_DIV_MASK	0x7f
++#define PLL_FRAC_DENOM		0x1000000
++
++struct clk_frac_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
++
++#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
++
++static int clk_wait_lock(struct clk_frac_pll *pll)
++{
++	unsigned long timeout = jiffies + msecs_to_jiffies(10);
++
++	/* Wait for PLL to lock */
++	do {
++		if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
++			break;
++		if (time_after(jiffies, timeout))
++			break;
++	} while (1);
++
++	return readl_relaxed(pll->base) & PLL_LOCK_STATUS ? 0 : -ETIMEDOUT;
++}
++
++static int clk_wait_ack(struct clk_frac_pll *pll)
++{
++	unsigned long timeout = jiffies + msecs_to_jiffies(50);
++
++	/* return directly if the pll is in powerdown or in bypass */
++	if (readl_relaxed(pll->base) & ((1 << PLL_PD) | (1 << PLL_BYPASS)))
++		return 0;
++
++	/* Wait for the pll's divfi and divff to be reloaded */
++	do {
++		if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
++			break;
++		if (time_after(jiffies, timeout))
++			break;
++	} while (1);
++
++	return readl_relaxed(pll->base) & PLL_NEWDIV_ACK ? 0 : ETIMEDOUT;
++}
++
++static int clk_pll_prepare(struct clk_hw *hw)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~(1 << PLL_PD);
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	return clk_wait_lock(pll);
++}
++
++static void clk_pll_unprepare(struct clk_hw *hw)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val |= (1 << PLL_PD);
++	writel_relaxed(val, pll->base + PLL_CFG0);
++}
++
++static int clk_pll_is_prepared(struct clk_hw *hw)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	return (val & (1 << PLL_PD)) ? 0 : 1;
++}
++
++static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val, divff, divfi, divq;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	divq = ((val & 0x1f) + 1) * 2;
++	val = readl_relaxed(pll->base + PLL_CFG1);
++	divff = (val >> 7) & PLL_FRAC_DIV_MASK;
++	divfi = (val & PLL_INT_DIV_MASK);
++
++	temp64 = (u64)parent_rate * 8;
++	temp64 *= divff;
++	do_div(temp64, PLL_FRAC_DENOM);
++	temp64 /= divq;
++
++	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
++}
++
++static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 divff, divfi;
++	u64 temp64;
++	unsigned long parent_rate = *prate;
++
++	parent_rate *= 8;
++	rate *= 2;
++	divfi = rate / parent_rate;
++	temp64 = (u64)(rate - divfi * parent_rate);
++	temp64 *= PLL_FRAC_DENOM;
++	do_div(temp64, parent_rate);
++	divff = temp64;
++
++	temp64 = (u64)parent_rate;
++	temp64 *= divff;
++	do_div(temp64, PLL_FRAC_DENOM);
++
++	return (parent_rate * divfi + (unsigned long)temp64) / 2;
++}
++
++/*
++ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
++ * (means the PLL output will be divided by 2). So the PLL output can use
++ * the below formula:
++ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
++ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
++ */
++static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val, divfi, divff;
++	u64 temp64;
++	int ret;
++
++	parent_rate *= 8;
++	rate *= 2;
++	divfi = rate / parent_rate;
++	temp64 = (u64) (rate - divfi * parent_rate);
++	temp64 *= PLL_FRAC_DENOM;
++	do_div(temp64, parent_rate);
++	divff = temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG1);
++	val &= ~((PLL_FRAC_DIV_MASK << 7) | (PLL_INT_DIV_MASK));
++	val |= ((divff << 7) | (divfi - 1));
++	writel_relaxed(val, pll->base + PLL_CFG1);
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~0x1f;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val |= PLL_NEWDIV_VAL;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	ret = clk_wait_ack(pll);
++
++	/* clear the NEV_DIV_VAL */
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~PLL_NEWDIV_VAL;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	return ret;
++}
++
++static const struct clk_ops clk_frac_pll_ops = {
++	.prepare	= clk_pll_prepare,
++	.unprepare	= clk_pll_unprepare,
++	.is_prepared	= clk_pll_is_prepared,
++	.recalc_rate	= clk_pll_recalc_rate,
++	.round_rate	= clk_pll_round_rate,
++	.set_rate	= clk_pll_set_rate,
++};
++
++struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
++			     void __iomem *base)
++{
++	struct clk_frac_pll *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++	init.name = name;
++	init.ops = &clk_frac_pll_ops;
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bbf3597..287610902ea8 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ 		void __iomem *base);
+ 
++struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
++			     void __iomem *base);
++
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
+-- 
+2.11.0
