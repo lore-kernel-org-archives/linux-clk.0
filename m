@@ -1,532 +1,309 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 06/15] clk: Add Ingenic jz4770 CGU driver
-Date: Tue,  2 Jan 2018 16:08:39 +0100
-Message-Id: <20180102150848.11314-6-paul@crapouillou.net>
-In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 06/12] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+Date: Wed, 17 Jan 2018 21:14:15 +0100
+Message-Id: <20180117201421.25954-7-jernej.skrabec@siol.net>
+In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
+References: <20180117201421.25954-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the clocks provided by the CGU in the Ingenic JZ4770
-SoC.
+This commit adds all necessary compatibles and descriptions needed to
+implement A83T HDMI pipeline.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Mixer is already properly described, so only compatible is added.
+
+However, A83T TV TCON, which is connected to HDMI, doesn't have channel 0,
+contrary to all TCONs currently described. Because of that, TCON
+documentation is extended.
+
+A83T features Synopsys DW HDMI controller with a custom PHY which looks
+like Synopsys Gen2 PHY with few additions. Since there is no
+documentation, needed properties were found out through experimentation
+and reading BSP code.
+
+At the end, example is added for newer SoCs, which feature DE2 and DW
+HDMI.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/ingenic/Makefile     |   1 +
- drivers/clk/ingenic/jz4770-cgu.c | 483 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 484 insertions(+)
- create mode 100644 drivers/clk/ingenic/jz4770-cgu.c
+ .../bindings/display/sunxi/sun4i-drm.txt           | 197 ++++++++++++++++++++-
+ 1 file changed, 190 insertions(+), 7 deletions(-)
 
- v2: Make structures static const
- v3: <dt-bindings/clock/jz4770-cgu.h> is now added in a separate patch
- v4: No change
- v5: Use SPDX license identifier
-
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index cd47b0664c2b..1456e4cdb562 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -1,3 +1,4 @@
- obj-y				+= cgu.o
- obj-$(CONFIG_MACH_JZ4740)	+= jz4740-cgu.o
-+obj-$(CONFIG_MACH_JZ4770)	+= jz4770-cgu.o
- obj-$(CONFIG_MACH_JZ4780)	+= jz4780-cgu.o
-diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
-new file mode 100644
-index 000000000000..c78d369b9403
---- /dev/null
-+++ b/drivers/clk/ingenic/jz4770-cgu.c
-@@ -0,0 +1,483 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * JZ4770 SoC CGU driver
-+ * Copyright 2018, Paul Cercueil <paul@crapouillou.net>
-+ */
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index cd626ee1147a..4fb380f3e53d 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -64,6 +64,52 @@ Required properties:
+     first port should be the input endpoint. The second should be the
+     output, usually to an HDMI connector.
+ 
++DWC HDMI TX Encoder
++-------------------
 +
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <linux/syscore_ops.h>
-+#include <dt-bindings/clock/jz4770-cgu.h>
-+#include "cgu.h"
++The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
++with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
 +
-+/*
-+ * CPM registers offset address definition
-+ */
-+#define CGU_REG_CPCCR		0x00
-+#define CGU_REG_LCR		0x04
-+#define CGU_REG_CPPCR0		0x10
-+#define CGU_REG_CLKGR0		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_CLKGR1		0x28
-+#define CGU_REG_CPPCR1		0x30
-+#define CGU_REG_USBPCR1		0x48
-+#define CGU_REG_USBCDR		0x50
-+#define CGU_REG_I2SCDR		0x60
-+#define CGU_REG_LPCDR		0x64
-+#define CGU_REG_MSC0CDR		0x68
-+#define CGU_REG_UHCCDR		0x6c
-+#define CGU_REG_SSICDR		0x74
-+#define CGU_REG_CIMCDR		0x7c
-+#define CGU_REG_GPSCDR		0x80
-+#define CGU_REG_PCMCDR		0x84
-+#define CGU_REG_GPUCDR		0x88
-+#define CGU_REG_MSC1CDR		0xA4
-+#define CGU_REG_MSC2CDR		0xA8
-+#define CGU_REG_BCHCDR		0xAC
++These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
++Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
++following device-specific properties.
 +
-+/* bits within the LCR register */
-+#define LCR_LPM			BIT(0)		/* Low Power Mode */
++Required properties:
 +
-+/* bits within the OPCR register */
-+#define OPCR_SPENDH		BIT(5)		/* UHC PHY suspend */
-+#define OPCR_SPENDN		BIT(7)		/* OTG PHY suspend */
++  - compatible: value must be one of:
++    * "allwinner,sun8i-a83t-dw-hdmi"
++  - reg: base address and size of memory-mapped region
++  - reg-io-width: See dw_hdmi.txt. Shall be 1.
++  - interrupts: HDMI interrupt number
++  - clocks: phandles to the clocks feeding the HDMI encoder
++    * iahb: the HDMI bus clock
++    * isfr: the HDMI register clock
++  - clock-names: the clock names mentioned above
++  - resets: phandle to the reset controller
++  - reset-names: must be "ctrl"
++  - phys: phandle to the DWC HDMI PHY
++  - phy-names: must be "phy"
 +
-+/* bits within the USBPCR1 register */
-+#define USBPCR1_UHC_POWER	BIT(5)		/* UHC PHY power down */
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint. The second should be the
++    output, usually to an HDMI connector.
 +
-+static struct ingenic_cgu *cgu;
++DWC HDMI PHY
++------------
 +
-+static int jz4770_uhc_phy_enable(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+	void __iomem *reg_usbpcr1	= cgu->base + CGU_REG_USBPCR1;
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-a83t-hdmi-phy
++  - reg: base address and size of memory-mapped region
++  - clocks: phandles to the clocks feeding the HDMI PHY
++    * bus: the HDMI PHY interface clock
++    * mod: the HDMI PHY module clock
++    * tmds: TMDS clock
++  - clock-names: the clock names mentioned above
++  - resets: phandle to the reset controller driving the PHY
++  - reset-names: must be "phy"
 +
-+	writel(readl(reg_opcr) & ~OPCR_SPENDH, reg_opcr);
-+	writel(readl(reg_usbpcr1) | USBPCR1_UHC_POWER, reg_usbpcr1);
-+	return 0;
-+}
+ TV Encoder
+ ----------
+ 
+@@ -94,24 +140,23 @@ Required properties:
+    * allwinner,sun7i-a20-tcon
+    * allwinner,sun8i-a33-tcon
+    * allwinner,sun8i-a83t-tcon-lcd
++   * allwinner,sun8i-a83t-tcon-tv
+    * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+- - clocks: phandles to the clocks feeding the TCON. Three are needed:
++ - clocks: phandles to the clocks feeding the TCON. One is needed:
+    - 'ahb': the interface clocks
+-   - 'tcon-ch0': The clock driving the TCON channel 0
+  - resets: phandles to the reset controllers driving the encoder
+    - "lcd": the reset line for the TCON channel 0
+ 
+  - clock-names: the clock names mentioned above
+  - reset-names: the reset names mentioned above
+- - clock-output-names: Name of the pixel clock created
+ 
+ - ports: A ports node with endpoint definitions as defined in
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoint, the second one the output
+ 
+-  The output may have multiple endpoints. The TCON has two channels,
++  The output may have multiple endpoints. TCON can have two channels,
+   usually with the first channel being used for the panels interfaces
+   (RGB, LVDS, etc.), and the second being used for the outputs that
+   require another controller (TV Encoder, HDMI, etc.). The endpoints
+@@ -119,11 +164,16 @@ Required properties:
+   channel the endpoint is associated to. If that property is not
+   present, the endpoint number will be used as the channel number.
+ 
++When TCON supports channel 0 (all TCONs except TV TCON on A83T), two
++more clocks are needed:
++   - 'tcon-ch0': The clock driving the TCON channel 0
++   - clock-output-names: Name of the pixel clock created
 +
-+static void jz4770_uhc_phy_disable(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+	void __iomem *reg_usbpcr1	= cgu->base + CGU_REG_USBPCR1;
+ On SoCs other than the A33 and V3s, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+-On SoCs that support LVDS (all SoCs but the A13, H3, H5 and V3s), you
+-need one more reset line:
++When TCON support LVDS (all TCONs except TV TCON on A83T and those found
++in A13, H3, H5 and V3s SoCs), you need one more reset line:
+    - 'lvds': The reset line driving the LVDS logic
+ 
+ And on the A23, A31, A31s and A33, you need one more clock line:
+@@ -226,6 +276,7 @@ supported.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-de2-mixer-0
++    * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -261,7 +312,7 @@ Required properties:
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
+ 
+-Example:
++Example 1:
+ 
+ panel: panel {
+ 	compatible = "olimex,lcd-olinuxino-43-ts";
+@@ -460,3 +511,135 @@ display-engine {
+ 	compatible = "allwinner,sun5i-a13-display-engine";
+ 	allwinner,pipelines = <&fe0>;
+ };
 +
-+	writel(readl(reg_usbpcr1) & ~USBPCR1_UHC_POWER, reg_usbpcr1);
-+	writel(readl(reg_opcr) | OPCR_SPENDH, reg_opcr);
-+}
++Example 2:
 +
-+static int jz4770_uhc_phy_is_enabled(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+	void __iomem *reg_usbpcr1	= cgu->base + CGU_REG_USBPCR1;
++connector {
++	compatible = "hdmi-connector";
++	type = "a";
 +
-+	return !(readl(reg_opcr) & OPCR_SPENDH) &&
-+		(readl(reg_usbpcr1) & USBPCR1_UHC_POWER);
-+}
-+
-+static const struct clk_ops jz4770_uhc_phy_ops = {
-+	.enable = jz4770_uhc_phy_enable,
-+	.disable = jz4770_uhc_phy_disable,
-+	.is_enabled = jz4770_uhc_phy_is_enabled,
++	port {
++		hdmi_con_in: endpoint {
++			remote-endpoint = <&hdmi_out_con>;
++		};
++	};
 +};
 +
-+static int jz4770_otg_phy_enable(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+
-+	writel(readl(reg_opcr) | OPCR_SPENDN, reg_opcr);
-+
-+	/* Wait for the clock to be stable */
-+	udelay(50);
-+	return 0;
-+}
-+
-+static void jz4770_otg_phy_disable(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+
-+	writel(readl(reg_opcr) & ~OPCR_SPENDN, reg_opcr);
-+}
-+
-+static int jz4770_otg_phy_is_enabled(struct clk_hw *hw)
-+{
-+	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
-+
-+	return !!(readl(reg_opcr) & OPCR_SPENDN);
-+}
-+
-+static const struct clk_ops jz4770_otg_phy_ops = {
-+	.enable = jz4770_otg_phy_enable,
-+	.disable = jz4770_otg_phy_disable,
-+	.is_enabled = jz4770_otg_phy_is_enabled,
++de: display-engine {
++	compatible = "allwinner,sun8i-a83t-display-engine";
++	allwinner,pipelines = <&mixer1>;
 +};
 +
-+static const s8 pll_od_encoding[8] = {
-+	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
++mixer1: mixer@1200000 {
++	compatible = "allwinner,sun8i-a83t-de2-mixer-1";
++	reg = <0x01200000 0x100000>;
++	clocks = <&display_clocks CLK_BUS_MIXER1>,
++		 <&display_clocks CLK_MIXER1>;
++	clock-names = "bus",
++		      "mod";
++	resets = <&display_clocks RST_WB>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mixer1_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			mixer1_out_tcon1: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon1_in_mixer1>;
++			};
++		};
++	};
 +};
 +
-+static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
++tcon1: lcd-controller@1c0d000 {
++	compatible = "allwinner,sun8i-a83t-tcon-tv";
++	reg = <0x01c0d000 0x1000>;
++	interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++	clock-names = "ahb", "tcon-ch1";
++	resets = <&ccu RST_BUS_TCON1>;
++	reset-names = "lcd";
 +
-+	/* External clocks */
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	[JZ4770_CLK_EXT] = { "ext", CGU_CLK_EXT },
-+	[JZ4770_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
++		tcon1_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
 +
-+	/* PLLs */
++			tcon1_in_mixer1: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&mixer1_out_tcon1>;
++			};
++		};
 +
-+	[JZ4770_CLK_PLL0] = {
-+		"pll0", CGU_CLK_PLL,
-+		.parents = { JZ4770_CLK_EXT },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR0,
-+			.m_shift = 24,
-+			.m_bits = 7,
-+			.m_offset = 1,
-+			.n_shift = 18,
-+			.n_bits = 5,
-+			.n_offset = 1,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 8,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = 9,
-+			.enable_bit = 8,
-+			.stable_bit = 10,
-+		},
-+	},
++		tcon1_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
 +
-+	[JZ4770_CLK_PLL1] = {
-+		/* TODO: PLL1 can depend on PLL0 */
-+		"pll1", CGU_CLK_PLL,
-+		.parents = { JZ4770_CLK_EXT },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR1,
-+			.m_shift = 24,
-+			.m_bits = 7,
-+			.m_offset = 1,
-+			.n_shift = 18,
-+			.n_bits = 5,
-+			.n_offset = 1,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 8,
-+			.od_encoding = pll_od_encoding,
-+			.enable_bit = 7,
-+			.stable_bit = 6,
-+			.no_bypass_bit = true,
-+		},
-+	},
-+
-+	/* Main clocks */
-+
-+	[JZ4770_CLK_CCLK] = {
-+		"cclk", CGU_CLK_DIV,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
-+	},
-+	[JZ4770_CLK_H0CLK] = {
-+		"h0clk", CGU_CLK_DIV,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
-+	},
-+	[JZ4770_CLK_H1CLK] = {
-+		"h1clk", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 24, 1, 4, 22, -1, -1 },
-+		.gate = { CGU_REG_LCR, 30 },
-+	},
-+	[JZ4770_CLK_H2CLK] = {
-+		"h2clk", CGU_CLK_DIV,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1 },
-+	},
-+	[JZ4770_CLK_C1CLK] = {
-+		"c1clk", CGU_CLK_DIV,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1 },
-+	},
-+	[JZ4770_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { JZ4770_CLK_PLL0, },
-+		.div = { CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1 },
-+	},
-+
-+	/* Those divided clocks can connect to PLL0 or PLL1 */
-+
-+	[JZ4770_CLK_MMC0_MUX] = {
-+		"mmc0_mux", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_MSC0CDR, 30, 1 },
-+		.div = { CGU_REG_MSC0CDR, 0, 1, 7, -1, -1, 31 },
-+		.gate = { CGU_REG_MSC0CDR, 31 },
-+	},
-+	[JZ4770_CLK_MMC1_MUX] = {
-+		"mmc1_mux", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_MSC1CDR, 30, 1 },
-+		.div = { CGU_REG_MSC1CDR, 0, 1, 7, -1, -1, 31 },
-+		.gate = { CGU_REG_MSC1CDR, 31 },
-+	},
-+	[JZ4770_CLK_MMC2_MUX] = {
-+		"mmc2_mux", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_MSC2CDR, 30, 1 },
-+		.div = { CGU_REG_MSC2CDR, 0, 1, 7, -1, -1, 31 },
-+		.gate = { CGU_REG_MSC2CDR, 31 },
-+	},
-+	[JZ4770_CLK_CIM] = {
-+		"cim", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_CIMCDR, 31, 1 },
-+		.div = { CGU_REG_CIMCDR, 0, 1, 8, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 26 },
-+	},
-+	[JZ4770_CLK_UHC] = {
-+		"uhc", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_UHCCDR, 29, 1 },
-+		.div = { CGU_REG_UHCCDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 24 },
-+	},
-+	[JZ4770_CLK_GPU] = {
-+		"gpu", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, -1 },
-+		.mux = { CGU_REG_GPUCDR, 31, 1 },
-+		.div = { CGU_REG_GPUCDR, 0, 1, 3, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR1, 9 },
-+	},
-+	[JZ4770_CLK_BCH] = {
-+		"bch", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_BCHCDR, 31, 1 },
-+		.div = { CGU_REG_BCHCDR, 0, 1, 3, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 1 },
-+	},
-+	[JZ4770_CLK_LPCLK_MUX] = {
-+		"lpclk", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_LPCDR, 29, 1 },
-+		.div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 28 },
-+	},
-+	[JZ4770_CLK_GPS] = {
-+		"gps", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_PLL0, JZ4770_CLK_PLL1, },
-+		.mux = { CGU_REG_GPSCDR, 31, 1 },
-+		.div = { CGU_REG_GPSCDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 22 },
-+	},
-+
-+	/* Those divided clocks can connect to EXT, PLL0 or PLL1 */
-+
-+	[JZ4770_CLK_SSI_MUX] = {
-+		"ssi_mux", CGU_CLK_DIV | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_EXT, -1,
-+			JZ4770_CLK_PLL0, JZ4770_CLK_PLL1 },
-+		.mux = { CGU_REG_SSICDR, 30, 2 },
-+		.div = { CGU_REG_SSICDR, 0, 1, 6, -1, -1, -1 },
-+	},
-+	[JZ4770_CLK_PCM_MUX] = {
-+		"pcm_mux", CGU_CLK_DIV | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_EXT, -1,
-+			JZ4770_CLK_PLL0, JZ4770_CLK_PLL1 },
-+		.mux = { CGU_REG_PCMCDR, 30, 2 },
-+		.div = { CGU_REG_PCMCDR, 0, 1, 9, -1, -1, -1 },
-+	},
-+	[JZ4770_CLK_I2S] = {
-+		"i2s", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_EXT, -1,
-+			JZ4770_CLK_PLL0, JZ4770_CLK_PLL1 },
-+		.mux = { CGU_REG_I2SCDR, 30, 2 },
-+		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR1, 13 },
-+	},
-+	[JZ4770_CLK_OTG] = {
-+		"usb", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_EXT, -1,
-+			JZ4770_CLK_PLL0, JZ4770_CLK_PLL1 },
-+		.mux = { CGU_REG_USBCDR, 30, 2 },
-+		.div = { CGU_REG_USBCDR, 0, 1, 8, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 2 },
-+	},
-+
-+	/* Gate-only clocks */
-+
-+	[JZ4770_CLK_SSI0] = {
-+		"ssi0", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 4 },
-+	},
-+	[JZ4770_CLK_SSI1] = {
-+		"ssi1", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 19 },
-+	},
-+	[JZ4770_CLK_SSI2] = {
-+		"ssi2", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_SSI_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 20 },
-+	},
-+	[JZ4770_CLK_PCM0] = {
-+		"pcm0", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_PCM_MUX, },
-+		.gate = { CGU_REG_CLKGR1, 8 },
-+	},
-+	[JZ4770_CLK_PCM1] = {
-+		"pcm1", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_PCM_MUX, },
-+		.gate = { CGU_REG_CLKGR1, 10 },
-+	},
-+	[JZ4770_CLK_DMA] = {
-+		"dma", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_H2CLK, },
-+		.gate = { CGU_REG_CLKGR0, 21 },
-+	},
-+	[JZ4770_CLK_I2C0] = {
-+		"i2c0", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 5 },
-+	},
-+	[JZ4770_CLK_I2C1] = {
-+		"i2c1", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 6 },
-+	},
-+	[JZ4770_CLK_I2C2] = {
-+		"i2c2", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR1, 15 },
-+	},
-+	[JZ4770_CLK_UART0] = {
-+		"uart0", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 15 },
-+	},
-+	[JZ4770_CLK_UART1] = {
-+		"uart1", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 16 },
-+	},
-+	[JZ4770_CLK_UART2] = {
-+		"uart2", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 17 },
-+	},
-+	[JZ4770_CLK_UART3] = {
-+		"uart3", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 18 },
-+	},
-+	[JZ4770_CLK_IPU] = {
-+		"ipu", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_H0CLK, },
-+		.gate = { CGU_REG_CLKGR0, 29 },
-+	},
-+	[JZ4770_CLK_ADC] = {
-+		"adc", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 14 },
-+	},
-+	[JZ4770_CLK_AIC] = {
-+		"aic", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_EXT, },
-+		.gate = { CGU_REG_CLKGR0, 8 },
-+	},
-+	[JZ4770_CLK_AUX] = {
-+		"aux", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_C1CLK, },
-+		.gate = { CGU_REG_CLKGR1, 14 },
-+	},
-+	[JZ4770_CLK_VPU] = {
-+		"vpu", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_H1CLK, },
-+		.gate = { CGU_REG_CLKGR1, 7 },
-+	},
-+	[JZ4770_CLK_MMC0] = {
-+		"mmc0", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_MMC0_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 3 },
-+	},
-+	[JZ4770_CLK_MMC1] = {
-+		"mmc1", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_MMC1_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 11 },
-+	},
-+	[JZ4770_CLK_MMC2] = {
-+		"mmc2", CGU_CLK_GATE,
-+		.parents = { JZ4770_CLK_MMC2_MUX, },
-+		.gate = { CGU_REG_CLKGR0, 12 },
-+	},
-+
-+	/* Custom clocks */
-+
-+	[JZ4770_CLK_UHC_PHY] = {
-+		"uhc_phy", CGU_CLK_CUSTOM,
-+		.parents = { JZ4770_CLK_UHC, -1, -1, -1 },
-+		.custom = { &jz4770_uhc_phy_ops },
-+	},
-+	[JZ4770_CLK_OTG_PHY] = {
-+		"usb_phy", CGU_CLK_CUSTOM,
-+		.parents = { JZ4770_CLK_OTG, -1, -1, -1 },
-+		.custom = { &jz4770_otg_phy_ops },
-+	},
-+
-+	[JZ4770_CLK_EXT512] = {
-+		"ext/512", CGU_CLK_FIXDIV,
-+		.parents = { JZ4770_CLK_EXT },
-+		.fixdiv = { 512 },
-+	},
-+
-+	[JZ4770_CLK_RTC] = {
-+		"rtc", CGU_CLK_MUX,
-+		.parents = { JZ4770_CLK_EXT512, JZ4770_CLK_OSC32K, },
-+		.mux = { CGU_REG_OPCR, 2, 1},
-+	},
++			tcon1_out_hdmi: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&hdmi_in_tcon1>;
++			};
++		};
++	};
 +};
 +
-+#if IS_ENABLED(CONFIG_PM_SLEEP)
-+static int jz4770_cgu_pm_suspend(void)
-+{
-+	u32 val;
++hdmi: hdmi@1ee0000 {
++	compatible = "allwinner,sun8i-a83t-dw-hdmi";
++	reg = <0x01ee0000 0x10000>;
++	reg-io-width = <1>;
++	interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
++	clock-names = "iahb", "isfr";
++	resets = <&ccu RST_BUS_HDMI1>;
++	reset-names = "ctrl";
++	phys = <&hdmi_phy>;
++	phy-names = "hdmi-phy";
++	status = "disabled";
 +
-+	val = readl(cgu->base + CGU_REG_LCR);
-+	writel(val | LCR_LPM, cgu->base + CGU_REG_LCR);
-+	return 0;
-+}
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+static void jz4770_cgu_pm_resume(void)
-+{
-+	u32 val;
++		hdmi_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
 +
-+	val = readl(cgu->base + CGU_REG_LCR);
-+	writel(val & ~LCR_LPM, cgu->base + CGU_REG_LCR);
-+}
++			hdmi_in_tcon1: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon1_out_hdmi>;
++			};
++		};
 +
-+static struct syscore_ops jz4770_cgu_pm_ops = {
-+	.suspend = jz4770_cgu_pm_suspend,
-+	.resume = jz4770_cgu_pm_resume,
++		hdmi_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			hdmi_out_con: endpoint {
++				remote-endpoint = <&hdmi_con_in>;
++			};
++		};
++	};
 +};
-+#endif /* CONFIG_PM_SLEEP */
 +
-+static void __init jz4770_cgu_init(struct device_node *np)
-+{
-+	int retval;
-+
-+	cgu = ingenic_cgu_new(jz4770_cgu_clocks,
-+			      ARRAY_SIZE(jz4770_cgu_clocks), np);
-+	if (!cgu)
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval)
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+
-+#if IS_ENABLED(CONFIG_PM_SLEEP)
-+	register_syscore_ops(&jz4770_cgu_pm_ops);
-+#endif
-+}
-+
-+/* We only probe via devicetree, no need for a platform driver */
-+CLK_OF_DECLARE(jz4770_cgu, "ingenic,jz4770-cgu", jz4770_cgu_init);
++hdmi_phy: hdmi-phy@1ef0000 {
++	compatible = "allwinner,sun8i-a83t-hdmi-phy";
++	reg = <0x01ef0000 0x10000>;
++	clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
++		 <&ccu CLK_HDMI>;
++	clock-names = "bus", "mod", "tmds";
++	resets = <&ccu RST_BUS_HDMI0>;
++	reset-names = "phy";
++	#phy-cells = <0>;
++};
 -- 
-2.11.0
+2.15.1
