@@ -1,49 +1,190 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v3 30/34] clk: axs10x: change axs10x_pll_round_rate return logic
-Date: Mon,  1 Jan 2018 19:43:09 +0000
-Message-Id: <1514835793-1104-31-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 07/12] drm/sun4i: Add has_channel_0 TCON quirk
+Date: Wed, 17 Jan 2018 21:14:16 +0100
+Message-Id: <20180117201421.25954-8-jernej.skrabec@siol.net>
+In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
+References: <20180117201421.25954-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Some TCONs on newer SoCs doesn't support channel 0, since they are meant
+to be used only with TV or HDMI encoder.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Prepare support for them with adding has_channel_0 quirk.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/axs10x/pll_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 41 +++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
+ 2 files changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/axs10x/pll_clock.c b/drivers/clk/axs10x/pll_clock.c
-index 27498eb..e90ae9e 100644
---- a/drivers/clk/axs10x/pll_clock.c
-+++ b/drivers/clk/axs10x/pll_clock.c
-@@ -162,7 +162,7 @@ static unsigned long axs10x_pll_round_rate(struct clk_hw *hw,
- 	const struct axs10x_pll_cfg *pll_cfg = clk->pll_cfg;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index b78fed809992..0815c528d08e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
  
- 	if (pll_cfg[0].rate == 0)
--		return -EINVAL;
-+		return 0;
+ 	switch (channel) {
+ 	case 0:
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE,
+ 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
+@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 reg, val = 0;
  
- 	best_rate = pll_cfg[0].rate;
++	WARN_ON(!tcon->quirks->has_channel_0);
++
+ 	tcon->dclk_min_div = 7;
+ 	tcon->dclk_max_div = 7;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 val = 0;
  
++	WARN_ON(!tcon->quirks->has_channel_0);
++
+ 	tcon->dclk_min_div = 6;
+ 	tcon->dclk_max_div = 127;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+ 	}
+ 	clk_prepare_enable(tcon->clk);
+ 
+-	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+-	if (IS_ERR(tcon->sclk0)) {
+-		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+-		return PTR_ERR(tcon->sclk0);
++	if (tcon->quirks->has_channel_0) {
++		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
++		if (IS_ERR(tcon->sclk0)) {
++			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
++			return PTR_ERR(tcon->sclk0);
++		}
+ 	}
+ 
+ 	if (tcon->quirks->has_channel_1) {
+@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_clocks;
+ 	}
+ 
+-	ret = sun4i_dclk_create(dev, tcon);
+-	if (ret) {
+-		dev_err(dev, "Couldn't create our TCON dot clock\n");
+-		goto err_free_clocks;
++	if (tcon->quirks->has_channel_0) {
++		ret = sun4i_dclk_create(dev, tcon);
++		if (ret) {
++			dev_err(dev, "Couldn't create our TCON dot clock\n");
++			goto err_free_clocks;
++		}
+ 	}
+ 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	return 0;
+ 
+ err_free_dotclock:
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
+ 	list_del(&tcon->list);
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
+ }
+ 
+@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
+ }
+ 
+ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun5i_a13_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.has_lvds_alt		= true,
+ 	.needs_de_be_mux	= true,
+@@ -1119,26 +1133,29 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.needs_de_be_mux	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	/* Same display pipeline structure as A10 */
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
++	.has_channel_0		= true,
+ 	.has_lvds_alt		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ /* sun4i_drv uses this list to check if a device node is a TCON */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index b761c7b823c5..78d55e7cd2b3 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -172,6 +172,7 @@
+ struct sun4i_tcon;
+ 
+ struct sun4i_tcon_quirks {
++	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
+ 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
 -- 
-2.7.4
+2.15.1
