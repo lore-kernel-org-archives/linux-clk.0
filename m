@@ -1,199 +1,84 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 11/44] clk: davinci: Add platform information for TI
- DA830 PSC
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-12-git-send-email-david@lechnology.com>
- <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <4dd36ca7-e41d-58d8-ec8c-787978307943@lechnology.com>
-Date: Tue, 16 Jan 2018 11:16:37 -0600
-MIME-Version: 1.0
-In-Reply-To: <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	wens@csie.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Jose.Abreu@synopsys.com,
+	narmstrong@baylibre.com,
+	jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 02/12] clk: sunxi-ng: Change formula for NKMP PLLs
+Date: Wed, 17 Jan 2018 21:14:11 +0100
+Message-Id: <20180117201421.25954-3-jernej.skrabec@siol.net>
+In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
+References: <20180117201421.25954-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/16/2018 07:38 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> This adds platform-specific declarations for the PSC clocks on TI DA830/
->> OMAP-L137/AM17XX SoCs.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>   drivers/clk/davinci/Makefile    |  1 +
->>   drivers/clk/davinci/psc-da830.c | 96 +++++++++++++++++++++++++++++++++++++++++
->>   include/linux/clk/davinci.h     |  2 +
->>   3 files changed, 99 insertions(+)
->>   create mode 100644 drivers/clk/davinci/psc-da830.c
->>
->> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
->> index cd1bf2c..fb14c8c 100644
->> --- a/drivers/clk/davinci/Makefile
->> +++ b/drivers/clk/davinci/Makefile
->> @@ -10,4 +10,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
->>   obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
->>   
->>   obj-y += psc.o
->> +obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
->>   endif
->> diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
->> new file mode 100644
->> index 0000000..193b08f
->> --- /dev/null
->> +++ b/drivers/clk/davinci/psc-da830.c
->> @@ -0,0 +1,96 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PSC clock descriptions for TI DA830/OMAP-L137/AM17XX
->> + *
->> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/init.h>
->> +#include <linux/types.h>
->> +
->> +#include "psc.h"
->> +
->> +static const struct davinci_psc_clk_info da830_psc0_info[] __initconst = {
->> +	LPSC(0, 0, tpcc, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
->> +	LPSC(4, 0, spi0, pll0_sysclk2, 0),
->> +	LPSC(5, 0, mmcsd, pll0_sysclk2, 0),
->> +	LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->> +	LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(8, 0, secu_mgr, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->> +	LPSC(9, 0, uart0, pll0_sysclk2, 0),
->> +	LPSC(10, 0, scr0_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(11, 0, scr1_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(12, 0, scr2_ss, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +	LPSC(13, 0, dmax, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
-> 
-> pruss is better (I know the name is coming from existing code).
-> 
->> +	LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
-> 
-> This is LPSC 15 which controls DSP too. But its missing from existing
-> code. Not sure why. Probably a note for future. For now okay with
-> ignoring it.
-> 
->> +	{ }
->> +};
-> 
-> Tables like these are much easier to parse if columns are spaced using a
-> tab.
-> 
+This commit changes formula from this:
 
-Tabs make the lines over 80 columns. How about spaces instead?
+Freq = (parent_freq * N * K) / (M * P)
 
+to this:
 
->> +
->> +static const struct davinci_psc_clk_info da830_psc1_info[] __initconst = {
->> +	LPSC(1, 0, usb0, pll0_sysclk2, 0),
->> +	LPSC(2, 0, usb1, pll0_sysclk4, 0),
->> +	LPSC(3, 0, gpio, pll0_sysclk4, 0),
-> 
-> There is LPSC 4 controlling UHPI. Again, lets ignore for now.
-> 
->> +	LPSC(5, 0, emac, pll0_sysclk4, 0),
->> +	LPSC(6, 0, emif3, pll0_sysclk5, LPSC_ALWAYS_ENABLED),
->> +	LPSC(7, 0, mcasp0, pll0_sysclk2, 0),
->> +	LPSC(8, 0, mcasp1, pll0_sysclk2, 0),
->> +	LPSC(9, 0, mcasp2, pll0_sysclk2, 0),
->> +	LPSC(10, 0, spi1, pll0_sysclk2, 0),
->> +	LPSC(11, 0, i2c1, pll0_sysclk4, 0),
->> +	LPSC(12, 0, uart1, pll0_sysclk2, 0),
->> +	LPSC(13, 0, uart2, pll0_sysclk2, 0),
->> +	LPSC(16, 0, lcdc, pll0_sysclk2, 0),
->> +	LPSC(17, 0, pwm, pll0_sysclk2, 0),
->> +	LPSC(20, 0, ecap, pll0_sysclk2, 0),
->> +	LPSC(21, 0, eqep, pll0_sysclk2, 0),
->> +	{ }
->> +};
->> +
->> +void __init da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->> +{
->> +	struct clk_onecell_data *clk_data;
->> +
->> +	clk_data = davinci_psc_register_clocks(psc0, da830_psc0_info, 16);
->> +	if (!clk_data)
->> +		return;
->> +
->> +	clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->> +	clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->> +	clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->> +	clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->> +
->> +	clk_free_onecell_data(clk_data);
->> +
->> +	clk_data = davinci_psc_register_clocks(psc1, da830_psc1_info, 32);
->> +	if (!clk_data)
->> +		return;
->> +
->> +	clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->> +	clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
->> +	clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
->> +	clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
-> 
-> This is pretty bad (and no fault of yours) - having a con_id but no
-> device name. Can you please make a pre-series which passes NULL con_id
-> in gpio-davinci.c?
+Freq = (parent_freq / M) * N * K / P
 
-I'll give it a try. This is complicated by the fact that the con_id has
-made it's way into the device tree bindings. However, I think we can
-safely deprecate clock-names = "gpio" in the device tree bindings since
-we can make the driver ignore that property to preserve backwards
-compatibility.
+This improves situation when N is in the range 1-255. PLL parent clock
+is almost always 24 MHz, which means that for N >= 180 original formula
+overflows and result becomes useless. Situation can be improved if M is
+used as predivider as it can be seen in the second formula. That way at
+least M > 1 is considered, but it still leaves small gap for wrong result
+when M = 1 and N >= 180.
 
-> 
->> +	clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
->> +	clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
->> +	clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
->> +	clk_register_clkdev(clk_data->clks[8], NULL, "davinci-mcasp.1");
->> +	clk_register_clkdev(clk_data->clks[9], NULL, "davinci-mcasp.2");
->> +	clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
->> +	clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
->> +	clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
->> +	clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
->> +	clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
->> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
->> +	clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
->> +	clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
->> +	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.0");
->> +	clk_register_clkdev(clk_data->clks[21], NULL, "eqep.1");
-> 
-> This is going to be very difficult to audit for mistakes. How do you
-> feel about adding the con_id and dev_id to davinci_psc_clk_info[] so
-> they can be initialized as part of a single static table? And then here
-> you go over the table looking for non-NULL con_id/dev_id to call
-> clk_register_clkdev()?
-> 
-> I am guessing you did not take that route because the DT path does not
-> need those. But still, I think that will be much less error prone.
+Using M as predivider shouldn't cause any issue, because it is in range
+1-4 at most, so there is no or only minimal rounding error.
 
-I wasn't really happy with this either, but I haven't come up with
-anything better. The reason I think this is good enough is that the
-array index is the LPSC number, so it is not actually that hard to
-audit. You can use the clock declarations above (or the datasheet/
-TRM) to know exactly which clock you are dealing with by matching
-the array index. I considered using macros instead of the numbers,
-but then lines are over 80 columns and it gets hard to read with
-wrapped lines.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Any other solution will be much more verbose and require helper
-functions for looping through the clocks. I'm thinking that I would
-define a list of con_id, dev_id pairs for each clock, so that would
-be 15 extra static arrays here.
-
-I'll think about it a little more, but for now, I would like to push
-for just calling this "good enough" and leave it as-is.
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index a99068a08315..e6c996ad4483 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -33,7 +33,7 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
+ 				for (_p = nkmp->min_p; _p <= nkmp->max_p; _p <<= 1) {
+ 					unsigned long tmp_rate;
+ 
+-					tmp_rate = parent * _n * _k / (_m * _p);
++					tmp_rate = (parent / _m) * _n * _k / _p;
+ 
+ 					if (tmp_rate > rate)
+ 						continue;
+@@ -107,7 +107,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 	p = reg >> nkmp->p.shift;
+ 	p &= (1 << nkmp->p.width) - 1;
+ 
+-	return (parent_rate * n * k >> p) / m;
++	return (parent_rate / m) * n * k >> p;
+ }
+ 
+ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -127,7 +127,7 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
+ 
+-	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
++	return (*parent_rate / _nkmp.m) * _nkmp.n * _nkmp.k / _nkmp.p;
+ }
+ 
+ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.15.1
