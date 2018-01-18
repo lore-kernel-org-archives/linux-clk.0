@@ -1,47 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19818 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751442AbeAYOA0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 09:00:26 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 2/4] clk: tegra: add fence_delay for clock registers
-Date: Thu, 25 Jan 2018 16:00:11 +0200
-Message-ID: <1516888813-32180-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5/9] clk: meson: add od3 to the pll driver
+Date: Thu, 18 Jan 2018 19:45:28 +0100
+Message-Id: <20180118184532.6856-6-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-To ensure writes to clock registers have properly propagated through the
-clock control logic and state machines, we need to ensure the writes have
-been posted in the registers and wait for 1us after that.
+Some meson plls, such as the hdmi pll, are using a 3rd od parameter,
+which is yet another "power of 2" post divider. Add it to fix the
+calculation of the hdmi_pll rate
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/tegra/clk.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/meson/clk-pll.c | 17 +++++++++++++++--
+ drivers/clk/meson/clkc.h    |  2 ++
+ drivers/clk/meson/gxbb.c    |  5 +++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 3b2763d..ba7e20e 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -812,4 +812,11 @@ static inline struct clk *tegra_clk_register_emc(void __iomem *base,
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index d9efe725b7ad..3f560b2cd83b 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -52,7 +52,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 	struct meson_clk_pll *pll = to_meson_clk_pll(hw);
+ 	struct parm *p;
+ 	u64 rate;
+-	u16 n, m, frac = 0, od, od2 = 0;
++	u16 n, m, frac = 0, od, od2 = 0, od3 = 0;
+ 	u32 reg;
  
-+/* Combined read fence with delay */
-+#define fence_udelay(delay, reg)	\
-+	do {				\
-+		readl(reg);		\
-+		udelay(delay);		\
-+	} while (0)
+ 	p = &pll->n;
+@@ -73,6 +73,12 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 		od2 = PARM_GET(p->width, p->shift, reg);
+ 	}
+ 
++	p = &pll->od3;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		od3 = PARM_GET(p->width, p->shift, reg);
++	}
 +
- #endif /* TEGRA_CLK_H */
+ 	rate = (u64)m * parent_rate;
+ 
+ 	p = &pll->frac;
+@@ -84,7 +90,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 		rate *= 2;
+ 	}
+ 
+-	return (rate / n) >> od >> od2;
++	return (rate / n) >> od >> od2 >> od3;
+ }
+ 
+ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -225,6 +231,13 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		writel(reg, pll->base + p->reg_off);
+ 	}
+ 
++	p = &pll->od3;
++	if (p->width) {
++		reg = readl(pll->base + p->reg_off);
++		reg = PARM_SET(p->width, p->shift, reg, rate_set->od3);
++		writel(reg, pll->base + p->reg_off);
++	}
++
+ 	p = &pll->frac;
+ 	if (p->width) {
+ 		reg = readl(pll->base + p->reg_off);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index c2ff0520ce53..4acb35bda669 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -41,6 +41,7 @@ struct pll_rate_table {
+ 	u16		n;
+ 	u16		od;
+ 	u16		od2;
++	u16		od3;
+ 	u16		frac;
+ };
+ 
+@@ -92,6 +93,7 @@ struct meson_clk_pll {
+ 	struct parm frac;
+ 	struct parm od;
+ 	struct parm od2;
++	struct parm od3;
+ 	const struct pll_setup_params params;
+ 	const struct pll_rate_table *rate_table;
+ 	unsigned int rate_count;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 2d851bad13fa..cf083a1906d1 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -238,6 +238,11 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
+ 		.shift   = 22,
+ 		.width   = 2,
+ 	},
++	.od3 = {
++		.reg_off = HHI_HDMI_PLL_CNTL2,
++		.shift   = 18,
++		.width   = 2,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "hdmi_pll",
 -- 
-1.9.1
-
+2.14.3
