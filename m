@@ -1,48 +1,62 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1517339457.3153.9.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/9] clk: meson: pll fixes
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 30 Jan 2018 20:10:57 +0100
-In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
-References: <20180119155529.11532-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 11/44] clk: davinci: Add platform information for TI
+ DA830 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-12-git-send-email-david@lechnology.com>
+ <91fe16dc-907e-6dbb-c8db-c27561132093@ti.com>
+ <4dd36ca7-e41d-58d8-ec8c-787978307943@lechnology.com>
+ <86581de6-a982-7a7b-9a83-22c869417211@ti.com>
+ <72abb187-1c84-f307-d4f8-be5403787bac@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <9be7d712-33ae-3e5b-beeb-a14faa51e777@ti.com>
+Date: Thu, 18 Jan 2018 13:23:08 +0530
+MIME-Version: 1.0
+In-Reply-To: <72abb187-1c84-f307-d4f8-be5403787bac@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-19 at 16:55 +0100, Jerome Brunet wrote:
-> This changeset is a collection of fixes and clean-up around the pll clock
-> provider. This has been triggered by the discussion around the ethernet
-> clock on the axg [0].
+On Wednesday 17 January 2018 11:02 PM, David Lechner wrote:
+>>>>> +    clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
+>>>>
+>>>> This is pretty bad (and no fault of yours) - having a con_id but no
+>>>> device name. Can you please make a pre-series which passes NULL con_id
+>>>> in gpio-davinci.c?
+>>>
+>>> I'll give it a try. This is complicated by the fact that the con_id has
+>>> made it's way into the device tree bindings. However, I think we can
+>>> safely deprecate clock-names = "gpio" in the device tree bindings since
+>>> we can make the driver ignore that property to preserve backwards
+>>> compatibility.
 > 
-> On the axg the rate reported by the fixed_pll is off by 8Mhz, which leads
-> the internal mux of the ethernet driver to pick an mpll2 instead of the
-> fdiv4.
+> Agreed.
 > 
-> With this series applied, the fixed_pll of the axg now reports
-> 1999998046 Hz, which is coherent with measurements (~2GHz)
+>> I don't think this breaks DT-backward compatibility. Passing a NULL
+>> con_id in driver should find the clock for that device even if DT entry
+>> has clock-names present. As far as I can read clk_find().
+>>
+>> The less intrusive alternate is to add the GPIO device name in the table
+>> here, while keeping the con_id and keeping the driver untouched. The
+>> advantage of that is lesser number of dependent patches for this series
+>> to go in.
+>>
+>> Later once CCF conversion has been there in the kernel for one full
+>> release and no regressions, these other clean-ups can be done.
 > 
-> While debugging this, we uncovered quite a mess around the hdmi_pll
-> of the gxbb and gxl family. This is also fixed by this series.
-> 
-> Last, the parameters table provided to the read-only sys_plls have
-> been removed, saving a bit of memory
-> 
-> There is still work to be done on this clock provider. Someday,
-> I hope to see the parameter tables go away completely. This pll
-> is just a (quite complex) fractional divider, we sould be able to
-> figure something out at runtime.
-> 
-> Changes since v1: [1]
-> * fix several typos in the comments
-> * fix arm32 u64 math in patch 3 (Thanks a lot Martin!!)
-> 
-> [0]: https://lkml.kernel.org/r/1516095424.2608.36.camel@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180118184532.6856-1-jbrunet@baylibre.com
+> I like this approach.
 
-Series applied clk-meson next/drivers
+One downside is that we will have to have clock-names = "gpio" in da850
+device-tree too. Since its already present in keystone already, I don't
+think adding one more is such a big issue.
+
+Thanks,
+Sekhar
