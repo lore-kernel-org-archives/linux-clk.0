@@ -1,147 +1,256 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Dong Aisheng <dongas86@gmail.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "stefan@agner.ch"
-	<stefan@agner.ch>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Subject: RE: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
-Date: Tue, 9 Jan 2018 02:20:57 +0000
-Message-ID: <AM3PR04MB1315E7F99FAB7F0720B37756F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
- <1515078402-22135-2-git-send-email-Anson.Huang@nxp.com>
- <20180108103915.GD32635@b29396-OptiPlex-7040>
- <AM3PR04MB131588945BE9C5504C6EC0E8F5100@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180109021704.GG32635@b29396-OptiPlex-7040>
-In-Reply-To: <20180109021704.GG32635@b29396-OptiPlex-7040>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/9] clk: meson: remove useless pll rate param tables
+Date: Thu, 18 Jan 2018 19:45:25 +0100
+Message-Id: <20180118184532.6856-3-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Read-only pll don't need param table to recalculate the rate. Providing
+them with a param table is just a waste of memory.
 
+Remove the useless tables from sys_pll on gxbb and axg.
 
-Best Regards!
-Anson Huang
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c  | 94 ------------------------------------------------
+ drivers/clk/meson/gxbb.c | 94 ------------------------------------------------
+ 2 files changed, 188 deletions(-)
 
-
-> -----Original Message-----
-> From: Dong Aisheng [mailto:dongas86@gmail.com]
-> Sent: 2018-01-09 10:17 AM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org; linu=
-x-
-> kernel@vger.kernel.org; devicetree@vger.kernel.org; dl-linux-imx <linux-
-> imx@nxp.com>; shawnguo@kernel.org; kernel@pengutronix.de; Fabio
-> Estevam <fabio.estevam@nxp.com>; mturquette@baylibre.com;
-> sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
-> stefan@agner.ch; linux@armlinux.org.uk
-> Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
->=20
-> On Tue, Jan 09, 2018 at 01:43:25AM +0000, Anson Huang wrote:
-> >
-> >
-> > Best Regards!
-> > Anson Huang
-> >
-> >
-> > > -----Original Message-----
-> > > From: Dong Aisheng [mailto:dongas86@gmail.com]
-> > > Sent: 2018-01-08 6:39 PM
-> > > To: Anson Huang <anson.huang@nxp.com>
-> > > Cc: linux-arm-kernel@lists.infradead.org; linux-clk@vger.kernel.org;
-> > > linux- kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > dl-linux-imx <linux- imx@nxp.com>; shawnguo@kernel.org;
-> > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > > mturquette@baylibre.com; sboyd@codeaurora.org; robh+dt@kernel.org;
-> > > mark.rutland@arm.com; stefan@agner.ch; linux@armlinux.org.uk
-> > > Subject: Re: [PATCH 2/2] ARM: dts: imx7s: add snvs rtc clock
-> > >
-> > > On Thu, Jan 04, 2018 at 11:06:42PM +0800, Anson Huang wrote:
-> > > > Add i.MX7 SNVS RTC clock.
-> > > >
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > >
-> > > If this clock IMX7D_SNVS_CLK is used for all SNVS sub modules, then
-> > > snvs_poweroff and snvs_pwrkey should also rely on it, right?
-> > >
-> > > How about add them all in one time?
-> > >
-> > > BTW, syscon-poweroff seems still not introduce clock support and
-> > > fsl,sec-v4.0- pwrkey also does not handle clock, they may need to be =
-added
-> later.
-> > >
-> > > Regards
-> > > Dong Aisheng
-> >
-> > Yes, I thought about it before sending patch, but currently the
-> > poweroff and pwrkey driver do NOT handle clocks, so I plan to add them =
-later,
-> including handling clocks in driver and dtb.
-> >
->=20
-> SNVS RTC binding doc does not claim a optional clock support, you probabl=
-y
-> may need update the binding doc as well.
->=20
-> BTW, Should mx6 platforms need the same fixes?
-> If yes, we'd better fix them all.
-
-I.MX6 platforms has no such SNVS CCGR clock gate, no need to change.
-OK, I will update the SNVS RTC binding doc and send out a V2 patch set.
-
-Anson.
-
->=20
-> Regards
-> Dong Aisheng
->=20
-> > Anson
-> >
-> > >
-> > > > ---
-> > > >  arch/arm/boot/dts/imx7s.dtsi | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/imx7s.dtsi
-> > > > b/arch/arm/boot/dts/imx7s.dtsi index e718fd2..f9b97f3 100644
-> > > > --- a/arch/arm/boot/dts/imx7s.dtsi
-> > > > +++ b/arch/arm/boot/dts/imx7s.dtsi
-> > > > @@ -534,6 +534,8 @@
-> > > >  					offset =3D <0x34>;
-> > > >  					interrupts =3D <GIC_SPI 19
-> > > IRQ_TYPE_LEVEL_HIGH>,
-> > > >  						     <GIC_SPI 20
-> > > IRQ_TYPE_LEVEL_HIGH>;
-> > > > +					clocks =3D <&clks IMX7D_SNVS_CLK>;
-> > > > +					clock-names =3D "snvs-rtc";
-> > > >  				};
-> > > >
-> > > >  				snvs_poweroff: snvs-poweroff {
-> > > > --
-> > > > 1.9.1
-> > > >
-> > > > --
-> > > > To unsubscribe from this list: send the line "unsubscribe linux-clk=
-"
-> > > > in the body of a message to majordomo@vger.kernel.org More
-> > > > majordomo info at
-> > > > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2=
-F
-> > > > vger
-> > > > .kernel.org%2Fmajordomo-
-> > > info.html&data=3D02%7C01%7CAnson.Huang%40nxp.com
-> > > > %7Cd10ff23b822b4cd16c2708d5568417c6%7C686ea1d3bc2b4c6fa92cd99c5
-> c30
-> > > 1635
-> > > > %7C0%7C0%7C636510047707248763&sdata=3DFMx22hfKxs7YA%2F1zCVeYC
-> nVX
-> > > 9Ck4MmB9
-> > > > GuolA51V2eg%3D&reserved=3D0
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 02f4401d7bc3..56806c6bd9d5 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -21,98 +21,6 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(24000000, 56, 1, 2),
+-	PLL_RATE(48000000, 64, 1, 2),
+-	PLL_RATE(72000000, 72, 1, 2),
+-	PLL_RATE(96000000, 64, 1, 2),
+-	PLL_RATE(120000000, 80, 1, 2),
+-	PLL_RATE(144000000, 96, 1, 2),
+-	PLL_RATE(168000000, 56, 1, 1),
+-	PLL_RATE(192000000, 64, 1, 1),
+-	PLL_RATE(216000000, 72, 1, 1),
+-	PLL_RATE(240000000, 80, 1, 1),
+-	PLL_RATE(264000000, 88, 1, 1),
+-	PLL_RATE(288000000, 96, 1, 1),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(408000000, 68, 1, 2),
+-	PLL_RATE(432000000, 72, 1, 2),
+-	PLL_RATE(456000000, 76, 1, 2),
+-	PLL_RATE(480000000, 80, 1, 2),
+-	PLL_RATE(504000000, 84, 1, 2),
+-	PLL_RATE(528000000, 88, 1, 2),
+-	PLL_RATE(552000000, 92, 1, 2),
+-	PLL_RATE(576000000, 96, 1, 2),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(840000000, 70, 1, 1),
+-	PLL_RATE(864000000, 72, 1, 1),
+-	PLL_RATE(888000000, 74, 1, 1),
+-	PLL_RATE(912000000, 76, 1, 1),
+-	PLL_RATE(936000000, 78, 1, 1),
+-	PLL_RATE(960000000, 80, 1, 1),
+-	PLL_RATE(984000000, 82, 1, 1),
+-	PLL_RATE(1008000000, 84, 1, 1),
+-	PLL_RATE(1032000000, 86, 1, 1),
+-	PLL_RATE(1056000000, 88, 1, 1),
+-	PLL_RATE(1080000000, 90, 1, 1),
+-	PLL_RATE(1104000000, 92, 1, 1),
+-	PLL_RATE(1128000000, 94, 1, 1),
+-	PLL_RATE(1152000000, 96, 1, 1),
+-	PLL_RATE(1176000000, 98, 1, 1),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
+-	PLL_RATE(1560000000, 65, 1, 0),
+-	PLL_RATE(1584000000, 66, 1, 0),
+-	PLL_RATE(1608000000, 67, 1, 0),
+-	PLL_RATE(1632000000, 68, 1, 0),
+-	PLL_RATE(1656000000, 68, 1, 0),
+-	PLL_RATE(1680000000, 68, 1, 0),
+-	PLL_RATE(1704000000, 68, 1, 0),
+-	PLL_RATE(1728000000, 69, 1, 0),
+-	PLL_RATE(1752000000, 69, 1, 0),
+-	PLL_RATE(1776000000, 69, 1, 0),
+-	PLL_RATE(1800000000, 69, 1, 0),
+-	PLL_RATE(1824000000, 70, 1, 0),
+-	PLL_RATE(1848000000, 70, 1, 0),
+-	PLL_RATE(1872000000, 70, 1, 0),
+-	PLL_RATE(1896000000, 70, 1, 0),
+-	PLL_RATE(1920000000, 71, 1, 0),
+-	PLL_RATE(1944000000, 71, 1, 0),
+-	PLL_RATE(1968000000, 71, 1, 0),
+-	PLL_RATE(1992000000, 71, 1, 0),
+-	PLL_RATE(2016000000, 72, 1, 0),
+-	PLL_RATE(2040000000, 72, 1, 0),
+-	PLL_RATE(2064000000, 72, 1, 0),
+-	PLL_RATE(2088000000, 72, 1, 0),
+-	PLL_RATE(2112000000, 73, 1, 0),
+-	{ /* sentinel */ },
+-};
+-
+ static struct meson_clk_pll axg_fixed_pll = {
+ 	.m = {
+ 		.reg_off = HHI_MPLL_CNTL,
+@@ -154,8 +62,6 @@ static struct meson_clk_pll axg_sys_pll = {
+ 		.shift   = 10,
+ 		.width   = 2,
+ 	},
+-	.rate_table = sys_pll_rate_table,
+-	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll",
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 472a3cfbfbc5..2d851bad13fa 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -29,98 +29,6 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(24000000, 56, 1, 2),
+-	PLL_RATE(48000000, 64, 1, 2),
+-	PLL_RATE(72000000, 72, 1, 2),
+-	PLL_RATE(96000000, 64, 1, 2),
+-	PLL_RATE(120000000, 80, 1, 2),
+-	PLL_RATE(144000000, 96, 1, 2),
+-	PLL_RATE(168000000, 56, 1, 1),
+-	PLL_RATE(192000000, 64, 1, 1),
+-	PLL_RATE(216000000, 72, 1, 1),
+-	PLL_RATE(240000000, 80, 1, 1),
+-	PLL_RATE(264000000, 88, 1, 1),
+-	PLL_RATE(288000000, 96, 1, 1),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(408000000, 68, 1, 2),
+-	PLL_RATE(432000000, 72, 1, 2),
+-	PLL_RATE(456000000, 76, 1, 2),
+-	PLL_RATE(480000000, 80, 1, 2),
+-	PLL_RATE(504000000, 84, 1, 2),
+-	PLL_RATE(528000000, 88, 1, 2),
+-	PLL_RATE(552000000, 92, 1, 2),
+-	PLL_RATE(576000000, 96, 1, 2),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(840000000, 70, 1, 1),
+-	PLL_RATE(864000000, 72, 1, 1),
+-	PLL_RATE(888000000, 74, 1, 1),
+-	PLL_RATE(912000000, 76, 1, 1),
+-	PLL_RATE(936000000, 78, 1, 1),
+-	PLL_RATE(960000000, 80, 1, 1),
+-	PLL_RATE(984000000, 82, 1, 1),
+-	PLL_RATE(1008000000, 84, 1, 1),
+-	PLL_RATE(1032000000, 86, 1, 1),
+-	PLL_RATE(1056000000, 88, 1, 1),
+-	PLL_RATE(1080000000, 90, 1, 1),
+-	PLL_RATE(1104000000, 92, 1, 1),
+-	PLL_RATE(1128000000, 94, 1, 1),
+-	PLL_RATE(1152000000, 96, 1, 1),
+-	PLL_RATE(1176000000, 98, 1, 1),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
+-	PLL_RATE(1560000000, 65, 1, 0),
+-	PLL_RATE(1584000000, 66, 1, 0),
+-	PLL_RATE(1608000000, 67, 1, 0),
+-	PLL_RATE(1632000000, 68, 1, 0),
+-	PLL_RATE(1656000000, 68, 1, 0),
+-	PLL_RATE(1680000000, 68, 1, 0),
+-	PLL_RATE(1704000000, 68, 1, 0),
+-	PLL_RATE(1728000000, 69, 1, 0),
+-	PLL_RATE(1752000000, 69, 1, 0),
+-	PLL_RATE(1776000000, 69, 1, 0),
+-	PLL_RATE(1800000000, 69, 1, 0),
+-	PLL_RATE(1824000000, 70, 1, 0),
+-	PLL_RATE(1848000000, 70, 1, 0),
+-	PLL_RATE(1872000000, 70, 1, 0),
+-	PLL_RATE(1896000000, 70, 1, 0),
+-	PLL_RATE(1920000000, 71, 1, 0),
+-	PLL_RATE(1944000000, 71, 1, 0),
+-	PLL_RATE(1968000000, 71, 1, 0),
+-	PLL_RATE(1992000000, 71, 1, 0),
+-	PLL_RATE(2016000000, 72, 1, 0),
+-	PLL_RATE(2040000000, 72, 1, 0),
+-	PLL_RATE(2064000000, 72, 1, 0),
+-	PLL_RATE(2088000000, 72, 1, 0),
+-	PLL_RATE(2112000000, 73, 1, 0),
+-	{ /* sentinel */ },
+-};
+-
+ static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
+ 	PLL_RATE(96000000, 32, 1, 3),
+ 	PLL_RATE(99000000, 33, 1, 3),
+@@ -356,8 +264,6 @@ static struct meson_clk_pll gxbb_sys_pll = {
+ 		.shift   = 10,
+ 		.width   = 2,
+ 	},
+-	.rate_table = sys_pll_rate_table,
+-	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll",
+-- 
+2.14.3
