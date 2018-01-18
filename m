@@ -1,57 +1,78 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 25/34] clk: tegra: bpmp: change tegra_bpmp_clk_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:51 +0000
-Message-Id: <1514835300-381-11-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: meson: use dev pointer where possible
+Date: Thu, 18 Jan 2018 13:08:30 +0100
+Message-Id: <20180118120831.8349-2-jbrunet@baylibre.com>
+In-Reply-To: <20180118120831.8349-1-jbrunet@baylibre.com>
+References: <20180118120831.8349-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+The 'dev' pointer is directly available in gxbb and axg clock
+controller, so consistently use it instead of going the through the
+'pdev' pointer once in while
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/tegra/clk-bpmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/meson/axg.c  | 8 ++++----
+ drivers/clk/meson/gxbb.c | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 0c1197b..4297bb2 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -190,7 +190,7 @@ static unsigned long tegra_bpmp_clk_round_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 1294f3ad7cd5..87aba8e871a0 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -873,7 +873,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	void __iomem *clk_base;
+ 	int ret, clkid, i;
  
- 	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
- 	if (err < 0)
--		return err;
-+		return 0;
+-	clkc_data = of_device_get_match_data(&pdev->dev);
++	clkc_data = of_device_get_match_data(dev);
+ 	if (!clkc_data)
+ 		return -EINVAL;
  
- 	return response.rate;
- }
+@@ -881,9 +881,9 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+-	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!clk_base) {
+-		dev_err(&pdev->dev, "Unable to map clk base\n");
++		dev_err(dev, "Unable to map clk base\n");
+ 		return -ENXIO;
+ 	}
+ 
+@@ -918,7 +918,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 		ret = devm_clk_hw_register(dev,
+ 					clkc_data->hw_onecell_data->hws[clkid]);
+ 		if (ret) {
+-			dev_err(&pdev->dev, "Clock registration failed\n");
++			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
+ 		}
+ 	}
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index af24455af5b4..ba1023983d79 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1976,7 +1976,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	int ret, clkid, i;
+ 	struct device *dev = &pdev->dev;
+ 
+-	clkc_data = of_device_get_match_data(&pdev->dev);
++	clkc_data = of_device_get_match_data(dev);
+ 	if (!clkc_data)
+ 		return -EINVAL;
+ 
 -- 
-2.7.4
+2.14.3
