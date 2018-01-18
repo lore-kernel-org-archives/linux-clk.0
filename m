@@ -1,61 +1,88 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 02/26] ARM: dts: r8a7743: Adjust SMP routine size
-Date: Wed, 31 Jan 2018 18:24:06 +0000
-Message-Id: <1517423070-24236-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
+ <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
+ <bb1f446e-5900-7e73-c1b7-955662a9541b@ti.com>
+ <7b33c9a1-468c-15e6-2899-be334b4f3807@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <674907e2-a182-6239-5871-88245475f2e5@ti.com>
+Date: Thu, 18 Jan 2018 12:07:05 +0530
+MIME-Version: 1.0
+In-Reply-To: <7b33c9a1-468c-15e6-2899-be334b4f3807@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On Thursday 18 January 2018 12:38 AM, David Lechner wrote:
+> It is looking like this:
+> 
+> 
+> static const struct davinci_psc_clkdev_info emfia_clkdev[] __initconst = {
+>     LPSC_CLKDEV(NULL,    "ti-aemif"),
+>     LPSC_CLKDEV("aemif",    "davinci-nand.0"),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clkdev_info spi0_clkdev[] __initconst = {
+>     LPSC_CLKDEV(NULL,    "spi_davinci.0"),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clkdev_info mmcsd0_clkdev[] __initconst = {
+>     LPSC_CLKDEV(NULL,    "da830-mmc.0"),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clkdev_info uart0_clkdev[] __initconst = {
+>     LPSC_CLKDEV(NULL,    "serial8250.0"),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clkdev_info arm_clkdev[] __initconst = {
+>     /*
+>      * REVISIT: cpufreq-davinci should be modified to use dev_id and drop
+>      * use of con_id.
+>      */
+>     LPSC_CLKDEV("arm",    NULL),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clkdev_info dsp_clkdev[] __initconst = {
+>     LPSC_CLKDEV(NULL,    "davinci-rproc.0"),
+>     { }
+> };
+> 
+> static const struct davinci_psc_clk_info da850_psc0_info[] __initconst = {
+>     LPSC(0,  0, tpcc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+>     LPSC(1,  0, tptc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+>     LPSC(2,  0, tptc1,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+>     LPSC(3,  0, emifa,   async1,       emfia_clkdev,  0),
+>     LPSC(4,  0, spi0,    pll0_sysclk2, spi0_clkdev,   0),
+>     LPSC(5,  0, mmcsd0,  pll0_sysclk2, mmcsd0_clkdev, 0),
+>     LPSC(6,  0, aintc,   pll0_sysclk4, NULL,          LPSC_ALWAYS_ENABLED),
+>     LPSC(7,  0, arm_rom, pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
+>     LPSC(9,  0, uart0,   pll0_sysclk2, uart0_clkdev,  0),
+>     LPSC(13, 0, pruss,   pll0_sysclk2, NULL,          0),
+>     LPSC(14, 0, arm,     pll0_sysclk6, arm_clkdev,    LPSC_ALWAYS_ENABLED |
+>                               LPSC_ARM_RATE),
+>     LPSC(15, 1, dsp,     pll0_sysclk1, dsp_clkdev,    LPSC_FORCE |
+>                               LPSC_LOCAL_RESET),
+>     { }
+> };
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->4:
-* no change
+This looks good to me!
 
- arch/arm/boot/dts/r8a7743.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 47b62f6..c2943d7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -973,7 +973,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+Regards,
+Sekhar
