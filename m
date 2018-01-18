@@ -1,140 +1,82 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH 6/7] clk: st: make use of clk_alloc_onecell_data()
-Date: Thu,  4 Jan 2018 18:38:11 -0600
-Message-Id: <1515112695-3160-7-git-send-email-david@lechnology.com>
-In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
-References: <1515112695-3160-1-git-send-email-david@lechnology.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 24/44] ARM: da850: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-25-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4ccda6ea-057d-11ed-84fc-a2db50b21467@ti.com>
+Date: Thu, 18 Jan 2018 20:54:45 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-25-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Use helper function clk_alloc_onecell_data() to allocate struct
-clk_onecell_data.
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/st/clk-flexgen.c | 17 +++++------------
- drivers/clk/st/clkgen-fsyn.c | 11 +----------
- drivers/clk/st/clkgen-pll.c  | 12 ++----------
- 3 files changed, 8 insertions(+), 32 deletions(-)
+> +#ifndef CONFIG_COMMON_CLK
+>  static int da850_set_armrate(struct clk *clk, unsigned long rate);
+>  static int da850_round_armrate(struct clk *clk, unsigned long rate);
+>  static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
+> @@ -583,6 +588,7 @@ static struct clk_lookup da850_clks[] = {
+>  	CLK("ecap.2",		"fck",		&ecap2_clk),
+>  	CLK(NULL,		NULL,		NULL),
+>  };
+> +#endif
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 918ba31..29ff00d 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -310,7 +310,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- {
- 	struct device_node *pnode;
- 	void __iomem *reg;
--	struct clk_onecell_data *clk_data;
-+	struct clk_onecell_data *clk_data = NULL;
- 	const char **parents;
- 	int num_parents, i;
- 	spinlock_t *rlock = NULL;
-@@ -341,21 +341,15 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 		clk_mode = data->mode;
- 	}
- 
--	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
--	if (!clk_data)
--		goto err;
--
- 	ret = of_property_count_strings(np, "clock-output-names");
- 	if (ret <= 0) {
- 		pr_err("%s: Failed to get number of output clocks (%d)",
--				__func__, clk_data->clk_num);
-+				__func__, ret);
- 		goto err;
- 	}
--	clk_data->clk_num = ret;
- 
--	clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
--			GFP_KERNEL);
--	if (!clk_data->clks)
-+	clk_data = clk_alloc_onecell_data(ret);
-+	if (!clk_data)
- 		goto err;
- 
- 	rlock = kzalloc(sizeof(spinlock_t), GFP_KERNEL);
-@@ -397,8 +391,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 
- err:
- 	iounmap(reg);
--	if (clk_data)
--		kfree(clk_data->clks);
-+	clk_free_onecell_data(clk_data);
- 	kfree(clk_data);
- 	kfree(parents);
- 	kfree(rlock);
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index 14819d9..48e6bff 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -869,19 +869,10 @@ static void __init st_of_create_quadfs_fsynths(
- 	struct clk_onecell_data *clk_data;
- 	int fschan;
- 
--	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	clk_data = clk_alloc_onecell_data(QUADFS_MAX_CHAN);
- 	if (!clk_data)
- 		return;
- 
--	clk_data->clk_num = QUADFS_MAX_CHAN;
--	clk_data->clks = kzalloc(QUADFS_MAX_CHAN * sizeof(struct clk *),
--				 GFP_KERNEL);
--
--	if (!clk_data->clks) {
--		kfree(clk_data);
--		return;
--	}
--
- 	for (fschan = 0; fschan < QUADFS_MAX_CHAN; fschan++) {
- 		struct clk *clk;
- 		const char *clk_name;
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 25bda48..07795ee 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -733,17 +733,10 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
- 
- 	num_odfs = data->num_odfs;
- 
--	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	clk_data = clk_alloc_onecell_data(num_odfs);
- 	if (!clk_data)
- 		return;
- 
--	clk_data->clk_num = num_odfs;
--	clk_data->clks = kzalloc(clk_data->clk_num * sizeof(struct clk *),
--				 GFP_KERNEL);
--
--	if (!clk_data->clks)
--		goto err;
--
- 	for (odf = 0; odf < num_odfs; odf++) {
- 		struct clk *clk;
- 		const char *clk_name;
-@@ -768,8 +761,7 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
- 
- err:
- 	kfree(pll_name);
--	kfree(clk_data->clks);
--	kfree(clk_data);
-+	clk_free_onecell_data(clk_data);
- }
- static void __init clkgen_c32_pll0_setup(struct device_node *np)
- {
--- 
-2.7.4
+Don't like these temporary ifdefs (which I am sure is the case with you
+too). But don't have any other good idea for splitting these patches
+into review-able and build-able pieces. So lets go with this for now.
+
+>  void __init da850_init_time(void)
+>  {
+> +#ifdef CONFIG_COMMON_CLK
+> +	void __iomem *pll0, *pll1, *psc0, *psc1;
+> +	struct clk *clk;
+> +	struct clk_hw *parent;
+> +
+> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
+> +	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
+> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
+> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
+> +
+> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
+
+Overall, this and other functions like this in this series need some
+more line spacing. Please add a space here..
+
+> +	da850_pll_clk_init(pll0, pll1);
+
+.. and here.
+
+> +	clk = clk_register_mux(NULL, "async3",
+> +		(const char * const[]){ "pll0_sysclk2", "pll1_sysclk2" },
+> +		2, 0, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG),
+> +		ilog2(CFGCHIP3_ASYNC3_CLKSRC), 1, 0, NULL);
+
+.. here before the comment ..
+
+> +	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
+> +	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
+> +	if (parent)
+> +		clk_set_parent(clk, parent->clk);
+> +	else
+> +		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
+
+.. and here. And so on.
+
+I have not taken a closer look at mach patches. But may be you should
+send the next version anyway and make sure everyone is happy with the
+driver first.
+
+Thanks,
+Sekhar
