@@ -1,178 +1,50 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 06/41] clk: davinci: Add platform information for TI DM365 PLL
-Date: Sat, 20 Jan 2018 11:13:45 -0600
-Message-Id: <1516468460-4908-7-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 9/9] clk: meson: axg: add the fractional part of the fixed_pll
+Date: Thu, 18 Jan 2018 19:45:32 +0100
+Message-Id: <20180118184532.6856-10-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM365 based systems.
+The fixed_pll also has a fractional part. On axg s400 board, without
+this parameter, the calculated rate is off by ~8Mhz (0,4%). The fixed_pll
+being the root of peripheral clock tree, this error is propagated to the
+rest of the clocks
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Adding the definition of the parameter fixes the problem
+
+Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
+ drivers/clk/meson/axg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-v6 changes:
-- Added dm365_pll{1,2}_info with controller-specific information
-- Changed OBSCLK data
-- Add empty lines between function calls
-
- drivers/clk/davinci/Makefile    |   1 +
- drivers/clk/davinci/pll-dm365.c | 110 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h     |   1 +
- 3 files changed, 112 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm365.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6720bd0..353aa02 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -5,4 +5,5 @@ obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
-new file mode 100644
-index 0000000..1be7785
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm365.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM365
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+#define OCSEL_OCSRC_ENABLE	0
-+
-+static const struct davinci_pll_clk_info dm365_pll1_info __initconst = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_OSCIN | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
-+		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm365_pll1_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+/*
-+ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
-+ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
-+ * multiplexer. By modeling it as a single parent mux clock, the clock code will
-+ * still do the right thing in this case.
-+ */
-+static const char * const dm365_pll_obsclk_parent_names[] __initconst = {
-+	"oscin",
-+};
-+
-+static u32 dm365_pll_obsclk_table[] = {
-+	OCSEL_OCSRC_ENABLE,
-+};
-+
-+static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info __initconst = {
-+	.name = "pll1_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+static const struct davinci_pll_clk_info dm365_pll2_info __initconst = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
-+		 PLL_PLLM_2X,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm365_pll2_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info __initconst = {
-+	.name = "pll2_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+void __init dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
-+{
-+	const struct davinci_pll_sysclk_info *info;
-+
-+	davinci_pll_clk_register(&dm365_pll1_info, "ref_clk", pll1);
-+
-+	davinci_pll_auxclk_register("pll1_auxclk", pll1);
-+
-+	davinci_pll_sysclkbp_clk_register("pll1_sysclkbp", pll1);
-+
-+	davinci_pll_obsclk_register(&dm365_pll1_obsclk_info, pll1);
-+
-+	for (info = dm365_pll1_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(info, pll1);
-+
-+	davinci_pll_clk_register(&dm365_pll2_info, "oscin", pll2);
-+
-+	davinci_pll_auxclk_register("pll2_auxclk", pll2);
-+
-+	davinci_pll_obsclk_register(&dm365_pll2_obsclk_info, pll2);
-+
-+	for (info = dm365_pll2_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(info, pll2);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 95333fe..5bf60a7 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -12,5 +12,6 @@
- void da830_pll_clk_init(void __iomem *pll);
- void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
- void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
-+void dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
- 
- #endif /* __LINUX_CLK_DAVINCI_H__ */
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 56806c6bd9d5..953e119635a2 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -37,6 +37,11 @@ static struct meson_clk_pll axg_fixed_pll = {
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.frac = {
++		.reg_off = HHI_MPLL_CNTL2,
++		.shift   = 0,
++		.width   = 12,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "fixed_pll",
 -- 
-2.7.4
+2.14.3
