@@ -1,311 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 4/5] clk: sunxi: Use CLK_IS_CRITICAL flag for critical clks
-Date: Tue,  2 Jan 2018 17:35:15 -0800
-Message-Id: <20180103013516.18844-5-sboyd@codeaurora.org>
-In-Reply-To: <20180103013516.18844-1-sboyd@codeaurora.org>
-References: <20180103013516.18844-1-sboyd@codeaurora.org>
+Return-Path: <patrice.chotard@st.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "Linux Kernel
+ Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: Re: [PATCH v2 04/15] mmc: mmci: Add support for setting pad type via
+ pinctrl
+Date: Thu, 18 Jan 2018 13:35:05 +0000
+Message-ID: <0c73774b-f06e-2db8-ef50-3bf590b57cff@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
+ <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-We'd like to privatize __clk_get(), but the sunxi clk driver is
-calling this function to keep a reference held on the clk and
-call clk_prepare_enable() on it. We support this design in the
-clk core now with the CLK_IS_CRITICAL flag, so let's just use
-that instead.
-
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/sunxi/clk-factors.c    | 26 +++++++++++++++++++++-----
- drivers/clk/sunxi/clk-factors.h    |  4 ++++
- drivers/clk/sunxi/clk-mod0.c       |  9 ++-------
- drivers/clk/sunxi/clk-sun8i-mbus.c |  7 ++-----
- drivers/clk/sunxi/clk-sun9i-core.c |  9 ++-------
- drivers/clk/sunxi/clk-sunxi.c      | 36 +++++++++++++-----------------------
- 6 files changed, 44 insertions(+), 47 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 856fef65433b..f6f4757d2dd1 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -176,10 +176,10 @@ static const struct clk_ops clk_factors_ops = {
- 	.set_rate = clk_factors_set_rate,
- };
- 
--struct clk *sunxi_factors_register(struct device_node *node,
--				   const struct factors_data *data,
--				   spinlock_t *lock,
--				   void __iomem *reg)
-+struct clk *__sunxi_factors_register(struct device_node *node,
-+				     const struct factors_data *data,
-+				     spinlock_t *lock, void __iomem *reg,
-+				     unsigned long flags)
- {
- 	struct clk *clk;
- 	struct clk_factors *factors;
-@@ -249,7 +249,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 			parents, i,
- 			mux_hw, &clk_mux_ops,
- 			&factors->hw, &clk_factors_ops,
--			gate_hw, &clk_gate_ops, 0);
-+			gate_hw, &clk_gate_ops, CLK_IS_CRITICAL);
- 	if (IS_ERR(clk))
- 		goto err_register;
- 
-@@ -272,6 +272,22 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	return NULL;
- }
- 
-+struct clk *sunxi_factors_register(struct device_node *node,
-+				   const struct factors_data *data,
-+				   spinlock_t *lock,
-+				   void __iomem *reg)
-+{
-+	return __sunxi_factors_register(node, data, lock, reg, 0);
-+}
-+
-+struct clk *sunxi_factors_register_critical(struct device_node *node,
-+					    const struct factors_data *data,
-+					    spinlock_t *lock,
-+					    void __iomem *reg)
-+{
-+	return __sunxi_factors_register(node, data, lock, reg, CLK_IS_CRITICAL);
-+}
-+
- void sunxi_factors_unregister(struct device_node *node, struct clk *clk)
- {
- 	struct clk_hw *hw = __clk_get_hw(clk);
-diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
-index 824f746b2567..7ad2ca924d0d 100644
---- a/drivers/clk/sunxi/clk-factors.h
-+++ b/drivers/clk/sunxi/clk-factors.h
-@@ -55,6 +55,10 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 				   const struct factors_data *data,
- 				   spinlock_t *lock,
- 				   void __iomem *reg);
-+struct clk *sunxi_factors_register_critical(struct device_node *node,
-+					    const struct factors_data *data,
-+					    spinlock_t *lock,
-+					    void __iomem *reg);
- 
- void sunxi_factors_unregister(struct device_node *node, struct clk *clk);
- 
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index 4417ae129ac7..a27c264cc9b4 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -15,7 +15,6 @@
-  */
- 
- #include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -155,7 +154,6 @@ static DEFINE_SPINLOCK(sun5i_a13_mbus_lock);
- 
- static void __init sun5i_a13_mbus_setup(struct device_node *node)
- {
--	struct clk *mbus;
- 	void __iomem *reg;
- 
- 	reg = of_iomap(node, 0);
-@@ -164,12 +162,9 @@ static void __init sun5i_a13_mbus_setup(struct device_node *node)
- 		return;
- 	}
- 
--	mbus = sunxi_factors_register(node, &sun4i_a10_mod0_data,
--				      &sun5i_a13_mbus_lock, reg);
--
- 	/* The MBUS clocks needs to be always enabled */
--	__clk_get(mbus);
--	clk_prepare_enable(mbus);
-+	sunxi_factors_register_critical(node, &sun4i_a10_mod0_data,
-+					&sun5i_a13_mbus_lock, reg);
- }
- CLK_OF_DECLARE(sun5i_a13_mbus, "allwinner,sun5i-a13-mbus-clk", sun5i_a13_mbus_setup);
- 
-diff --git a/drivers/clk/sunxi/clk-sun8i-mbus.c b/drivers/clk/sunxi/clk-sun8i-mbus.c
-index b200ebf159ee..56db89b6979f 100644
---- a/drivers/clk/sunxi/clk-sun8i-mbus.c
-+++ b/drivers/clk/sunxi/clk-sun8i-mbus.c
-@@ -15,7 +15,6 @@
-  */
- 
- #include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -82,11 +81,12 @@ static void __init sun8i_a23_mbus_setup(struct device_node *node)
- 	mux->mask = SUN8I_MBUS_MUX_MASK;
- 	mux->lock = &sun8i_a23_mbus_lock;
- 
-+	/* The MBUS clocks needs to be always enabled */
- 	clk = clk_register_composite(NULL, clk_name, parents, num_parents,
- 				     &mux->hw, &clk_mux_ops,
- 				     &div->hw, &clk_divider_ops,
- 				     &gate->hw, &clk_gate_ops,
--				     0);
-+				     CLK_IS_CRITICAL);
- 	if (IS_ERR(clk))
- 		goto err_free_gate;
- 
-@@ -95,9 +95,6 @@ static void __init sun8i_a23_mbus_setup(struct device_node *node)
- 		goto err_unregister_clk;
- 
- 	kfree(parents); /* parents is deep copied */
--	/* The MBUS clocks needs to be always enabled */
--	__clk_get(clk);
--	clk_prepare_enable(clk);
- 
- 	return;
- 
-diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
-index 43f014f85803..e9295c286d5d 100644
---- a/drivers/clk/sunxi/clk-sun9i-core.c
-+++ b/drivers/clk/sunxi/clk-sun9i-core.c
-@@ -15,7 +15,6 @@
-  */
- 
- #include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -140,7 +139,6 @@ static DEFINE_SPINLOCK(sun9i_a80_gt_lock);
- static void __init sun9i_a80_gt_setup(struct device_node *node)
- {
- 	void __iomem *reg;
--	struct clk *gt;
- 
- 	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
- 	if (IS_ERR(reg)) {
-@@ -149,12 +147,9 @@ static void __init sun9i_a80_gt_setup(struct device_node *node)
- 		return;
- 	}
- 
--	gt = sunxi_factors_register(node, &sun9i_a80_gt_data,
--				    &sun9i_a80_gt_lock, reg);
--
- 	/* The GT bus clock needs to be always enabled */
--	__clk_get(gt);
--	clk_prepare_enable(gt);
-+	sunxi_factors_register_critical(node, &sun9i_a80_gt_data,
-+					&sun9i_a80_gt_lock, reg);
- }
- CLK_OF_DECLARE(sun9i_a80_gt, "allwinner,sun9i-a80-gt-clk", sun9i_a80_gt_setup);
- 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index aa4add580516..012714d94b42 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -656,7 +656,8 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
- };
- 
- static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
--					       const struct mux_data *data)
-+					       const struct mux_data *data,
-+					       unsigned long flags)
- {
- 	struct clk *clk;
- 	const char *clk_name = node->name;
-@@ -678,7 +679,7 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 	}
- 
- 	clk = clk_register_mux(NULL, clk_name, parents, i,
--			       CLK_SET_RATE_PARENT, reg,
-+			       CLK_SET_RATE_PARENT | flags, reg,
- 			       data->shift, SUNXI_MUX_GATE_WIDTH,
- 			       0, &clk_lock);
- 
-@@ -703,29 +704,22 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
- 
- static void __init sun4i_cpu_clk_setup(struct device_node *node)
- {
--	struct clk *clk;
--
--	clk = sunxi_mux_clk_setup(node, &sun4i_cpu_mux_data);
--	if (!clk)
--		return;
--
- 	/* Protect CPU clock */
--	__clk_get(clk);
--	clk_prepare_enable(clk);
-+	sunxi_mux_clk_setup(node, &sun4i_cpu_mux_data, CLK_IS_CRITICAL);
- }
- CLK_OF_DECLARE(sun4i_cpu, "allwinner,sun4i-a10-cpu-clk",
- 	       sun4i_cpu_clk_setup);
- 
- static void __init sun6i_ahb1_mux_clk_setup(struct device_node *node)
- {
--	sunxi_mux_clk_setup(node, &sun6i_a31_ahb1_mux_data);
-+	sunxi_mux_clk_setup(node, &sun6i_a31_ahb1_mux_data, 0);
- }
- CLK_OF_DECLARE(sun6i_ahb1_mux, "allwinner,sun6i-a31-ahb1-mux-clk",
- 	       sun6i_ahb1_mux_clk_setup);
- 
- static void __init sun8i_ahb2_clk_setup(struct device_node *node)
- {
--	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
-+	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data, 0);
- }
- CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-h3-ahb2-clk",
- 	       sun8i_ahb2_clk_setup);
-@@ -900,6 +894,7 @@ struct divs_data {
- 		u8 shift; /* otherwise it's a normal divisor with this shift */
- 		u8 pow;   /* is it power-of-two based? */
- 		u8 gate;  /* is it independently gateable? */
-+		bool critical;
- 	} div[SUNXI_DIVS_MAX_QTY];
- };
- 
-@@ -915,7 +910,8 @@ static const struct divs_data pll5_divs_data __initconst = {
- 	.factors = &sun4i_pll5_data,
- 	.ndivs = 2,
- 	.div = {
--		{ .shift = 0, .pow = 0, }, /* M, DDR */
-+		/* Protect PLL5_DDR */
-+		{ .shift = 0, .pow = 0, .critical = true }, /* M, DDR */
- 		{ .shift = 16, .pow = 1, }, /* P, other */
- 		/* No output for the base factor clock */
- 	}
-@@ -1089,7 +1085,9 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 						 NULL, NULL,
- 						 rate_hw, rate_ops,
- 						 gate_hw, &clk_gate_ops,
--						 clkflags);
-+						 clkflags |
-+						 data->div[i].critical ?
-+							CLK_IS_CRITICAL : 0);
- 
- 		WARN_ON(IS_ERR(clk_data->clks[i]));
- 	}
-@@ -1117,15 +1115,7 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
- 
- static void __init sun4i_pll5_clk_setup(struct device_node *node)
- {
--	struct clk **clks;
--
--	clks = sunxi_divs_clk_setup(node, &pll5_divs_data);
--	if (!clks)
--		return;
--
--	/* Protect PLL5_DDR */
--	__clk_get(clks[0]);
--	clk_prepare_enable(clks[0]);
-+	sunxi_divs_clk_setup(node, &pll5_divs_data);
- }
- CLK_OF_DECLARE(sun4i_pll5, "allwinner,sun4i-a10-pll5-clk",
- 	       sun4i_pll5_clk_setup);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGkgVWxmDQoNCk9uIDAxLzE3LzIwMTggMTA6MzQgQU0sIFVsZiBIYW5zc29uIHdyb3RlOg0KPiBb
+Li4uXQ0KPiANCj4+ICAgICAgICAgIC8qDQo+PiBAQCAtMTYxNiw2ICsxNjI1LDMyIEBAIHN0YXRp
+YyBpbnQgbW1jaV9wcm9iZShzdHJ1Y3QgYW1iYV9kZXZpY2UgKmRldiwNCj4+ICAgICAgICAgIGhv
+c3QgPSBtbWNfcHJpdihtbWMpOw0KPj4gICAgICAgICAgaG9zdC0+bW1jID0gbW1jOw0KPj4NCj4+
+ICsgICAgICAgLyoNCj4+ICsgICAgICAgICogU29tZSB2YXJpYW50IChTVE0zMikgZG9lc24ndCBo
+YXZlIG9wZW5kcmFpbiBiaXQsIG5ldmVydGhlbGVzcw0KPj4gKyAgICAgICAgKiBwaW5zIGNhbiBi
+ZSBzZXQgYWNjb3JkaW5nbHkgdXNpbmcgcGluY3RybA0KPj4gKyAgICAgICAgKi8NCj4+ICsgICAg
+ICAgaWYgKCF2YXJpYW50LT5vcGVuZHJhaW4pIHsNCj4+ICsgICAgICAgICAgICAgICBob3N0LT5w
+aW5jdHJsID0gZGV2bV9waW5jdHJsX2dldCgmZGV2LT5kZXYpOw0KPj4gKyAgICAgICAgICAgICAg
+IGlmIChJU19FUlIoaG9zdC0+cGluY3RybCkpIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+IGRldl9lcnIoJmRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBwaW5jdHJsIik7DQo+PiArICAgICAg
+ICAgICAgICAgICAgICAgICBnb3RvIGhvc3RfZnJlZTsNCj4+ICsgICAgICAgICAgICAgICB9DQo+
+PiArDQo+PiArICAgICAgICAgICAgICAgaG9zdC0+cGluc19kZWZhdWx0ID0gcGluY3RybF9sb29r
+dXBfc3RhdGUoaG9zdC0+cGluY3RybCwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQSU5DVFJMX1NUQVRFX0RFRkFVTFQpOw0KPj4g
+KyAgICAgICAgICAgICAgIGlmIChJU19FUlIoaG9zdC0+cGluc19kZWZhdWx0KSkgew0KPj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgZGV2X3dhcm4obW1jX2RldihtbWMpLCAiQ2FuJ3Qgc2VsZWN0
+IGRlZmF1bHQgcGluc1xuIik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBob3N0LT5waW5z
+X2RlZmF1bHQgPSBOVUxMOw0KPiANCj4gVGhpcyBpcyB3cm9uZywgSSB0aGluayB5b3Ugc2hvdWxk
+IGJhaWwgb3V0IGFuZCByZXR1cm4gdGhlIGVycm9yIGNvZGUgaW5zdGVhZC4NCg0KT2sNCg0KPiAN
+Cj4gTW9yZW92ZXIsIGNhbGxpbmcgcGluY3RybF9zZWxlY3Rfc3RhdGUoKSBmcm9tIC0+c2V0X2lv
+cyBieSB1c2luZyBhDQo+IE5VTEwgc3RhdGUsIHdpbGwgbGlrZWx5IHRyaWdnZXIgYSBOVUxMIHBv
+aW50ZXIgZGVmZXJlbmNlIGJ1ZyBpbiB0aGUNCj4gcGluY3RybCBsYXllci4NCg0KUmVnYXJkaW5n
+IHBpbmN0cmxfc2VsZWN0X3N0YXRlKCkgY2FsbCB3aXRoIGEgTlVMTCBzdGF0ZSwgdGhpcyBjYXNl
+IGlzIA0KbWFuYWdlZCBpbnNpZGUgcGluY3RybF9zdGF0ZSgpLCBidXQgb2ssIGl0IHdpbGwgYmUg
+bW9yZSBlbGVnYW50IHRvIGV4aXQgDQpkaXJlY3RseSBpbiBjYXNlIG9mIG5vIERUIHBpbnMgZGVm
+aW5pdGlvbiBmb3VuZC4NCg0KPiANCj4+ICsgICAgICAgICAgICAgICB9DQo+PiArDQo+PiArICAg
+ICAgICAgICAgICAgaG9zdC0+cGluc19vcGVuZHJhaW4gPSBwaW5jdHJsX2xvb2t1cF9zdGF0ZSho
+b3N0LT5waW5jdHJsLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgTU1DSV9QSU5DVFJMX1NUQVRFX09QRU5EUkFJTik7DQo+PiAr
+ICAgICAgICAgICAgICAgaWYgKElTX0VSUihob3N0LT5waW5zX29wZW5kcmFpbikpIHsNCj4+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGRldl93YXJuKG1tY19kZXYobW1jKSwgIkNhbid0IHNlbGVj
+dCBvcGVuZHJhaW4gcGluc1xuIik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBob3N0LT5w
+aW5zX29wZW5kcmFpbiA9IE5VTEw7DQo+IA0KPiBEaXR0by4NCg0Kb2sNCg0KVGhhbmtzDQoNClBh
+dHJpY2UNCj4gDQo+PiArICAgICAgICAgICAgICAgfQ0KPj4gKyAgICAgICB9DQo+PiArDQo+IA0K
+PiBbLi4uXQ0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCj4g
