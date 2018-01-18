@@ -1,40 +1,32 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180103013516.18844-4-sboyd@codeaurora.org>
-References: <20180103013516.18844-1-sboyd@codeaurora.org> <20180103013516.18844-4-sboyd@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Jan 2018 09:43:37 +0100
-Message-ID: <CAMuHMdX7m8Wx994pfJpsg-CR_O+uORLMfU0PuvQsSDt=L+3yQQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arch: Remove clkdev.h asm-generic from Kbuild
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: meson: probe clean-ups
+Date: Thu, 18 Jan 2018 13:08:29 +0100
+Message-Id: <20180118120831.8349-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 3, 2018 at 2:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Now that every architecture is using the generic clkdev.h file
-> and we no longer include asm/clkdev.h anywhere in the tree, we
-> can remove it.
->
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: <linux-arch@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+This changeset feature a couple of clean-ups in the probe
+function of meson's clock controllers. It is the beginning
+of a refactoring of meson's clock controllers
 
-For m68k part:
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Jerome Brunet (2):
+  clk: meson: use dev pointer where possible
+  clk: meson: use devm_of_clk_add_hw_provider
 
-Gr{oetje,eeting}s,
+ drivers/clk/meson/axg.c     | 12 ++++++------
+ drivers/clk/meson/gxbb.c    |  7 ++++---
+ drivers/clk/meson/meson8b.c |  4 ++--
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.14.3
