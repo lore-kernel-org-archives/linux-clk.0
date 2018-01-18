@@ -1,32 +1,37 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] clk: meson: probe clean-ups
-Date: Thu, 18 Jan 2018 13:08:29 +0100
-Message-Id: <20180118120831.8349-1-jbrunet@baylibre.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 29/44] ARM: da8xx: add new USB PHY clock init using
+ common clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-30-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
+Date: Thu, 18 Jan 2018 20:44:24 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-30-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset feature a couple of clean-ups in the probe
-function of meson's clock controllers. It is the beginning
-of a refactoring of meson's clock controllers
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> +int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
+> +{
+> +	struct regmap *cfgchip;
+> +	struct clk *usb0_psc_clk, *clk;
+> +	struct clk_hw *parent;
+> +
+> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
 
-Jerome Brunet (2):
-  clk: meson: use dev pointer where possible
-  clk: meson: use devm_of_clk_add_hw_provider
+Am I right in understanding that this API is only called for non-DT
+boot? If yes, do we really need the lookup by compatible?
 
- drivers/clk/meson/axg.c     | 12 ++++++------
- drivers/clk/meson/gxbb.c    |  7 ++++---
- drivers/clk/meson/meson8b.c |  4 ++--
- 3 files changed, 12 insertions(+), 11 deletions(-)
-
--- 
-2.14.3
+Thanks,
+Sekhar
