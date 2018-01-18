@@ -1,63 +1,79 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sun, 21 Jan 2018 12:03:19 +0100
-From: Rask Ingemann Lambertsen <rask@formelder.dk>
-To: Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [RFC PATCH 8/9] ARM: dts: suniv: add initial DTSI file for suniv
- and F1C100s
-Message-ID: <20180121110319.GD3421@localhost>
-References: <20180119231735.61504-1-icenowy@aosc.io>
- <20180119231735.61504-9-icenowy@aosc.io>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: meson: use dev pointer where possible
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180118120831.8349-1-jbrunet@baylibre.com>
+ <20180118120831.8349-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <6689fcc2-6f9d-1c6d-c6fe-4ccd4928b7dd@baylibre.com>
+Date: Thu, 18 Jan 2018 16:25:58 +0100
 MIME-Version: 1.0
-In-Reply-To: <20180119231735.61504-9-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20180118120831.8349-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 20, 2018 at 07:17:34AM +0800, Icenowy Zheng wrote:
-> As we have the support for suniv pin controller and CCU now, add a
-> initial DTSI for it.
+On 18/01/2018 13:08, Jerome Brunet wrote:
+> The 'dev' pointer is directly available in gxbb and axg clock
+> controller, so consistently use it instead of going the through the
+> 'pdev' pointer once in while
 > 
-> F1C100s is one product with the suniv die, which has a 32MiB co-packaged
-> DDR1 DRAM chip. As there's nothing special for it, add a dummy DTSI file
-> for it.
-[...]
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index d0381e9caf21..b877e0bf1823 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -972,6 +972,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
->  dtb-$(CONFIG_MACH_SUN9I) += \
->  	sun9i-a80-optimus.dtb \
->  	sun9i-a80-cubieboard4.dtb
-> +dtb-$(CONFIG_MACH_SUNIV) += \
-> +	suniv-f1c100s-licheepi-nano.dtb
->  dtb-$(CONFIG_ARCH_TANGO) += \
->  	tango4-vantage-1172.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/axg.c  | 8 ++++----
+>  drivers/clk/meson/gxbb.c | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 1294f3ad7cd5..87aba8e871a0 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -873,7 +873,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+>  	void __iomem *clk_base;
+>  	int ret, clkid, i;
+>  
+> -	clkc_data = of_device_get_match_data(&pdev->dev);
+> +	clkc_data = of_device_get_match_data(dev);
+>  	if (!clkc_data)
+>  		return -EINVAL;
+>  
+> @@ -881,9 +881,9 @@ static int axg_clkc_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!res)
+>  		return -EINVAL;
+> -	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+> +	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+>  	if (!clk_base) {
+> -		dev_err(&pdev->dev, "Unable to map clk base\n");
+> +		dev_err(dev, "Unable to map clk base\n");
+>  		return -ENXIO;
+>  	}
+>  
+> @@ -918,7 +918,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+>  		ret = devm_clk_hw_register(dev,
+>  					clkc_data->hw_onecell_data->hws[clkid]);
+>  		if (ret) {
+> -			dev_err(&pdev->dev, "Clock registration failed\n");
+> +			dev_err(dev, "Clock registration failed\n");
+>  			return ret;
+>  		}
+>  	}
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index af24455af5b4..ba1023983d79 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -1976,7 +1976,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>  	int ret, clkid, i;
+>  	struct device *dev = &pdev->dev;
+>  
+> -	clkc_data = of_device_get_match_data(&pdev->dev);
+> +	clkc_data = of_device_get_match_data(dev);
+>  	if (!clkc_data)
+>  		return -EINVAL;
+>  
+> 
 
-The hunk above should go with your patch
-"[RFC PATCH 9/9] ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
-instead.
-
--- 
-Rask Ingemann Lambertsen
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
