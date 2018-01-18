@@ -1,244 +1,125 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 2/4] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Wed, 31 Jan 2018 16:24:33 +0530
-Message-Id: <1517396075-29297-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
-References: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 15/15] clk: ti: convert to use proper register
+ definition for all accesses
+To: Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+ <1489236606-24023-16-git-send-email-t-kristo@ti.com>
+ <CAHCN7x+oKEmXBpogy4VOB8UgmTd6+X5fBiP66yzUqXmvDWdqaw@mail.gmail.com>
+ <6b4c5bf2-1260-0e79-0414-9870f21e4a75@ti.com>
+ <CAHCN7xLaP-th=vAzN8C1QXstf3c5SP4JADAZZXTb1Nd6N6QdsQ@mail.gmail.com>
+ <20180117211907.GE4042@atomide.com>
+ <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <4f0f185a-2890-3747-7060-1f5b5a77022a@ti.com>
+Date: Thu, 18 Jan 2018 09:34:37 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAHCN7xJ-NaKoeZOqrdc48fFCLNQvm_uRXC0ErtiG+Ac86a14+w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-For some root clock generators, there could be child branches which are
-controlled by an entity other than application processor subsystem. For
-such RCGs, as per application processor subsystem clock driver, all of its
-downstream clocks are disabled and RCG is in disabled state but in actual
-downstream clocks can be left enabled before.
+On 17/01/18 23:44, Adam Ford wrote:
+> On Wed, Jan 17, 2018 at 3:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+>> * Adam Ford <aford173@gmail.com> [180117 15:15]:
+>>> On Wed, Jan 17, 2018 at 8:02 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>>>> On 17/01/18 15:27, Adam Ford wrote:
+>>>>>
+>>>>> On Sat, Mar 11, 2017 at 6:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>>>>>>
+>>>>>> Currently, TI clock driver uses an encapsulated struct that is cast into
+>>>>>> a void pointer to store all register addresses. This can be considered
+>>>>>> as rather nasty hackery, and prevents from expanding the register
+>>>>>> address field also. Instead, replace all the code to use proper struct
+>>>>>> in place for this, which contains all the previously used data.
+>>>>>>
+>>>>>> This patch is rather large as it is touching multiple files, but this
+>>>>>> can't be split up as we need to avoid any boot breakage.
+>>>>>>
+>>>>>
+>>>>> I know it's late coming, but according to git bisect, this patch is
+>>>>> causing some problems with Logic PD Torpedo 37xx Dev kit.
+>>>>
+>>>>
+>>>> Oh reporting bugs is never too late, thanks for posting this out.
+>>>>
+>>>>>
+>>>>> It it is a DM3730 that has a WL1283 chipset attached to the SDIO
+>>>>> interface on MMC3.  The driver seems to load properly, but when
+>>>>> loading wpa_supplicant to activate the WL1283, we get a giant crash.
+>>>>> I checked kernel revisions starting at 4.14 and working back to when
+>>>>> it worked, then used git bisect from there.
+>>>>>
+>>>>> I am hoping it might be a simple fix for something that just needs to
+>>>>> get added or tweaked in the device tree.
+>>>>
+>>>>
+>>>> I don't have access to the specific hw, but can you try to dig out which
+>>>> hwmod is causing the crash? Just print out the oh->name from the
+>>>> _wait_softreset_complete. That would help root causing the issue.
+>>>>
+>>>
+>>> With one small patch, I was able to make it work again.
+>>>
+>>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+>>> index 2dbd632..ed1f625 100644
+>>> --- a/arch/arm/mach-omap2/omap_hwmod.c
+>>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+>>> @@ -477,7 +477,7 @@ static int _wait_softreset_complete(struct omap_hwmod *oh)
+>>>          int c = 0;
+>>>
+>>>          sysc = oh->class->sysc;
+>>> -
+>>> +pr_warn("_wait_softreset_complete: %s\n", oh->name);
+>>>          if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
+>>>                  omap_test_timeout((omap_hwmod_read(oh, sysc->syss_offs)
+>>>                                     & SYSS_RESETDONE_MASK),
+>>>
+>>>
+>>> This leads me to believe that the omap_test_timeout functions might
+>>> not be working quite right.
+>>
+>> There may be a srst_udelay needed for some module, see commit
+>> ebf244148092 ("ARM: OMAP2+: Use srst_udelay for USB on dm814x")
+>> for example.
+>>
+>> You might be able to find which module it is by commenting out
+>> postcore_initcall_sync(omap3_l3_init) in drivers/bus/omap_l3_smx.c
+>> temporarily as the system will most likely hang right there.
+> 
+> I commented out that line as you suggested, but the system boots as
+> normal and I get the crash (as normal)
+> 
+> I am looking through the DM3730 and OMAP3630 TRM now.  Any thought on
+> a keyword search I should use to see which hwmods might require
+> srst_udelay?
 
-So in this scenario, when RCG is disabled as per clock driver's point of
-view and when rate scaling request comes before downstream clock enable
-request, then RCG fails to update its configuration because in actual RCG
-is on and it expects its new source to alredy in enable state  but in
-reality new source is in off state. In order to avoid letting the RCG to
-go into an invalid state, add support to just cache the rate of RCG during
-set_rate(), defer actual RCG configuration update to be done during
-clk_enable() as at this point of time, both its new parent and safe source
-will be already enabled and RCG can safely switch to new parent.
+Looking at the log you provided, it looks like only mmc1, mmc3 and i2c1 
+are reset during the wlan probe. Based on the prints coming out in the 
+failing case, it looks like the culprit might be mmc3 for some reason.
 
-During clk_disable() request, configure it to safe source as both
-its parents, safe source and current parent will be enabled and RCG can
-safely execute a switch. Also add support to have safe configuration
-frequency table structure for each shared RCG.
+[   18.239746] _wait_softreset_complete: mmc3
+[   18.638580] _wait_softreset_complete: mmc3
+[   18.657562] _wait_softreset_complete: mmc1
+[   18.833374] wlcore: firmware booted (Rev 7.3.10.0.141)
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h  |   8 ++-
- drivers/clk/qcom/clk-rcg2.c | 149 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 156 insertions(+), 1 deletion(-)
+^ the firmware notification above does not come out in the crash.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 2a7489a..0df89e5 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -146,6 +146,9 @@ struct clk_dyn_rcg {
-  * @hid_width: number of bits in half integer divider
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-+ * @current_freq: last cached frequency when using branches with shared RCGs
-+ * @safe_src_freq_tbl : frequency table of safe source when using branches
-+ *			with shared RCGs
-  * @clkr: regmap clock handle
-  *
-  */
-@@ -155,6 +158,8 @@ struct clk_rcg2 {
- 	u8			hid_width;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
-+	unsigned long		current_freq;
-+	const struct freq_tbl	*safe_src_freq_tbl;
- 	struct clk_regmap	clkr;
- };
- 
-@@ -167,5 +172,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
- 
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index ef8b14a..1816e10 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -790,3 +790,152 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.determine_rate = clk_gfx3d_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-+
-+static int clk_rcg2_set_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
-+
-+	/* Force enable bit */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		if (clk_rcg2_is_enabled(hw))
-+			return 0;
-+
-+		/* Delay for 1usec and retry polling the status bit */
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Clear force enable bit */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+					CMD_ROOT_EN, 0);
-+}
-+
-+static int
-+clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, unsigned long rate)
-+{
-+	int ret;
-+
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	/* set clock rate */
-+	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	/*
-+	 * Return if the RCG is currently disabled. This configuration
-+	 * update will happen as part of the RCG enable sequence.
-+	 */
-+	if (!__clk_is_enabled(hw->clk)) {
-+		rcg->current_freq = rate;
-+		return 0;
-+	}
-+
-+	ret = clk_rcg2_shared_force_enable_clear(hw, rate);
-+	if (ret)
-+		return ret;
-+
-+	/* Update current frequency with the requested frequency. */
-+	rcg->current_freq = rate;
-+
-+	return ret;
-+}
-+
-+static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+}
-+
-+static unsigned long
-+clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (!__clk_is_enabled(hw->clk)) {
-+		if (!rcg->current_freq)
-+			rcg->current_freq = rcg->safe_src_freq_tbl->freq;
-+
-+		return rcg->current_freq;
-+	}
-+
-+	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (rcg->current_freq == rcg->safe_src_freq_tbl->freq) {
-+		clk_rcg2_set_force_enable(hw);
-+		clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-+		clk_rcg2_clear_force_enable(hw);
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * Switch from safe source to the stashed mux selection. The current
-+	 * parent has already been prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its source.
-+	 */
-+
-+	return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/*
-+	 * Park the RCG at a safe configuration - sourced off from safe source.
-+	 * Force enable and disable the RCG while configuring it to safeguard
-+	 * against any update signal coming from the downstream clock.
-+	 * The current parent is still prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its parent.
-+	 */
-+	clk_rcg2_set_force_enable(hw);
-+	clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-+	clk_rcg2_clear_force_enable(hw);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+-Tero
+
+> 
+> adam
+> 
+>>
+>> Regards,
+>>
+>> Tony
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
