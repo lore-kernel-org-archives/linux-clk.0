@@ -1,153 +1,132 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:57292 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753435AbeABPJK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:10 -0500
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 10/15] MIPS: ingenic: Add machine info for supported boards
-Date: Tue,  2 Jan 2018 16:08:43 +0100
-Message-Id: <20180102150848.11314-10-paul@crapouillou.net>
-In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v3 04/14] mmc: mmci: Add support for setting pad type via pinctrl
+Date: Thu, 18 Jan 2018 15:34:20 +0100
+Message-ID: <1516286070-24927-5-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This makes sure that 'mips_machtype' will be initialized to the SoC
-version used on the board.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+If variant hasn't the control bit to switch pads in opendrain mode,
+we can achieve the same result by asking to the pinmux driver to
+configure pins for us.
+
+This patch make the mmci driver able to do this whenever needed.
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- arch/mips/Kconfig         |  1 +
- arch/mips/jz4740/Makefile |  2 +-
- arch/mips/jz4740/boards.c | 12 ++++++++++++
- arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
- 4 files changed, 43 insertions(+), 6 deletions(-)
- create mode 100644 arch/mips/jz4740/boards.c
 
- v2: No change
- v3: No change
- v4: No change
- v5: Use SPDX license identifier
+v3: _ Exit from probe() if no DT pinctrl node are found.
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 350a990fc719..83243e427e36 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -376,6 +376,7 @@ config MACH_INGENIC
- 	select BUILTIN_DTB
- 	select USE_OF
- 	select LIBFDT
-+	select MIPS_MACHINE
+v2: _ Add pinctrl pin management when open drain bit is not available
+
+
+ drivers/mmc/host/mmci.c | 41 +++++++++++++++++++++++++++++++++++++++--
+ drivers/mmc/host/mmci.h |  5 +++++
+ 2 files changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index f0edfe7..9918a5f 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -1465,8 +1465,19 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 				~MCI_ST_DATA2DIREN);
+ 	}
  
- config LANTIQ
- 	bool "Lantiq based platforms"
-diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
-index 88d6aa7d000b..fc2d3b3c4a80 100644
---- a/arch/mips/jz4740/Makefile
-+++ b/arch/mips/jz4740/Makefile
-@@ -6,7 +6,7 @@
- # Object file lists.
+-	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN && variant->opendrain)
+-		pwr |= variant->opendrain;
++	if (variant->opendrain) {
++		if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
++			pwr |= variant->opendrain;
++	} else {
++		/*
++		 * If the variant cannot configure the pads by its own, then we
++		 * expect the pinctrl to be able to do that for us
++		 */
++		if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
++			pinctrl_select_state(host->pinctrl, host->pins_opendrain);
++		else
++			pinctrl_select_state(host->pinctrl, host->pins_default);
++	}
  
- obj-y += prom.o time.o reset.o setup.o \
--	platform.o timer.o
-+	platform.o timer.o boards.o
+ 	/*
+ 	 * If clock = 0 and the variant requires the MMCIPOWER to be used for
+@@ -1610,6 +1621,32 @@ static int mmci_probe(struct amba_device *dev,
+ 	host = mmc_priv(mmc);
+ 	host->mmc = mmc;
  
- CFLAGS_setup.o = -I$(src)/../../../scripts/dtc/libfdt
- 
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-new file mode 100644
-index 000000000000..13b0bddd8cb7
---- /dev/null
-+++ b/arch/mips/jz4740/boards.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic boards support
-+ * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
-+ */
++	/*
++	 * Some variant (STM32) doesn't have opendrain bit, nevertheless
++	 * pins can be set accordingly using pinctrl
++	 */
++	if (!variant->opendrain) {
++		host->pinctrl = devm_pinctrl_get(&dev->dev);
++		if (IS_ERR(host->pinctrl)) {
++			dev_err(&dev->dev, "failed to get pinctrl");
++			goto host_free;
++		}
 +
-+#include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
++		host->pins_default = pinctrl_lookup_state(host->pinctrl,
++							  PINCTRL_STATE_DEFAULT);
++		if (IS_ERR(host->pins_default)) {
++			dev_err(mmc_dev(mmc), "Can't select default pins\n");
++			goto host_free;
++		}
 +
-+MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
-+			"Imagination Technologies CI20", NULL);
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index 6d0152321819..afd84ee966e8 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -22,6 +22,7 @@
- #include <linux/of_fdt.h>
- 
- #include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
- 	add_memory_region(0, size, BOOT_MEM_RAM);
- }
- 
-+static unsigned long __init get_board_mach_type(const void *fdt)
-+{
-+	const struct mips_machine *mach;
-+
-+	for (mach = (struct mips_machine *)&__mips_machines_start;
-+			mach < (struct mips_machine *)&__mips_machines_end;
-+			mach++) {
-+		if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
-+			return mach->mach_type;
++		host->pins_opendrain = pinctrl_lookup_state(host->pinctrl,
++							    MMCI_PINCTRL_STATE_OPENDRAIN);
++		if (IS_ERR(host->pins_opendrain)) {
++			dev_err(mmc_dev(mmc), "Can't select opendrain pins\n");
++			goto host_free;
++		}
 +	}
 +
-+	return MACH_INGENIC_JZ4740;
-+}
-+
- void __init plat_mem_setup(void)
- {
- 	int offset;
+ 	host->hw_designer = amba_manf(dev);
+ 	host->hw_revision = amba_rev(dev);
+ 	dev_dbg(mmc_dev(mmc), "designer ID = 0x%02x\n", host->hw_designer);
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 83160a9..f91cdf7 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -192,6 +192,8 @@
  
-+	if (!early_init_dt_scan(__dtb_start))
-+		return;
-+
- 	jz4740_reset_init();
--	__dt_setup_arch(__dtb_start);
+ #define NR_SG		128
  
- 	offset = fdt_path_offset(__dtb_start, "/memory");
- 	if (offset < 0)
- 		jz4740_detect_mem();
++#define MMCI_PINCTRL_STATE_OPENDRAIN "opendrain"
 +
-+	mips_machtype = get_board_mach_type(__dtb_start);
- }
+ struct clk;
+ struct variant_data;
+ struct dma_chan;
+@@ -227,6 +229,9 @@ struct mmci_host {
+ 	bool			vqmmc_enabled;
+ 	struct mmci_platform_data *plat;
+ 	struct variant_data	*variant;
++	struct pinctrl		*pinctrl;
++	struct pinctrl_state	*pins_default;
++	struct pinctrl_state	*pins_opendrain;
  
- void __init device_tree_init(void)
-@@ -75,13 +94,18 @@ void __init device_tree_init(void)
- 
- const char *get_system_type(void)
- {
--	if (IS_ENABLED(CONFIG_MACH_JZ4780))
--		return "JZ4780";
--
--	return "JZ4740";
-+	return mips_get_machine_name();
- }
- 
- void __init arch_init_irq(void)
- {
- 	irqchip_init();
- }
-+
-+static int __init jz4740_machine_setup(void)
-+{
-+	mips_machine_setup();
-+
-+	return 0;
-+}
-+arch_initcall(jz4740_machine_setup);
+ 	u8			hw_designer;
+ 	u8			hw_revision:4;
 -- 
-2.11.0
-
+1.9.1
