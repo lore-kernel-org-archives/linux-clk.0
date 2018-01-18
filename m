@@ -1,64 +1,143 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 0/4] Misc patches to support clocks for SDM845
-Date: Wed, 31 Jan 2018 16:24:31 +0530
-Message-Id: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v3 02/14] mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
+Date: Thu, 18 Jan 2018 15:34:18 +0100
+Message-ID: <1516286070-24927-3-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series does the miscellaneous changes to support
-clock nodes for SDM845. Below are the major changes for
-which the existing code does not have support.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-1. Clear hardware clock control bit of RCGs where HW clock
-   control bit is set by default so that software can control
-   those root clocks.
-2. Introduces clk_rcg2_shared_ops to support clock controller
-   drivers for SDM845. With new shared ops, RCGs with shared
-   branches will be configured to a safe source in disable
-   path and actual RCG update configuration will be done in
-   enable path instead of doing config update in set_rate.
-   In set_rate(), just cache the rate instead of doing actual
-   configuration update. Also each RCG in clock controller
-   driver will have their own safe configuration frequency
-   table to switch to safe frequency.
-3. Add support for controlling Fabia PLL for which the support
-   is not available in existing alpha PLL code.
-4. Add Global Clock controller (GCC) driver for SDM845. This
-   should allow most non-multimedia device drivers to probe
-   and control their clocks.
+This patch prepares for supporting the STM32 variant that
+has no such bit in the status register.
 
-Amit Nischal (3):
-  clk: qcom: Clear hardware clock control bit of RCG
-  clk: qcom: Configure the RCGs to a safe source as needed
-  clk: qcom: Add support for controlling Fabia PLL
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
 
-Taniya Das (1):
-  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+v3: _ none
 
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |   11 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  322 +-
- drivers/clk/qcom/clk-alpha-pll.h                   |   16 +
- drivers/clk/qcom/clk-rcg.h                         |    8 +-
- drivers/clk/qcom/clk-rcg2.c                        |  154 +-
- drivers/clk/qcom/gcc-sdm845.c                      | 3619 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
- 9 files changed, 4365 insertions(+), 9 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+v2: _ replace start_err bool type by u32
 
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+
+ drivers/mmc/host/mmci.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 3125dc0..8a4fbc2 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -83,6 +83,8 @@
+  * @qcom_dml: enables qcom specific dma glue for dma transfers.
+  * @reversed_irq_handling: handle data irq before cmd irq.
+  * @mmcimask1: true if variant have a MMCIMASK1 register.
++ * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
++ *	       register.
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -113,6 +115,7 @@ struct variant_data {
+ 	bool			qcom_dml;
+ 	bool			reversed_irq_handling;
+ 	bool			mmcimask1;
++	u32			start_err;
+ };
+ 
+ static struct variant_data variant_arm = {
+@@ -123,6 +126,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.reversed_irq_handling	= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo = {
+@@ -132,6 +136,7 @@ struct variant_data {
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo_hwfc = {
+@@ -142,6 +147,7 @@ struct variant_data {
+ 	.pwrreg_powerup		= MCI_PWR_UP,
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_u300 = {
+@@ -158,6 +164,7 @@ struct variant_data {
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_nomadik = {
+@@ -175,6 +182,7 @@ struct variant_data {
+ 	.pwrreg_clkgate		= true,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_ux500 = {
+@@ -198,6 +206,7 @@ struct variant_data {
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_ux500v2 = {
+@@ -223,6 +232,7 @@ struct variant_data {
+ 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ static struct variant_data variant_qcom = {
+@@ -242,6 +252,7 @@ struct variant_data {
+ 	.qcom_fifo		= true,
+ 	.qcom_dml		= true,
+ 	.mmcimask1		= true,
++	.start_err		= MCI_STARTBITERR,
+ };
+ 
+ /* Busy detection for the ST Micro variant */
+@@ -935,8 +946,9 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
+ 		return;
+ 
+ 	/* First check for errors */
+-	if (status & (MCI_DATACRCFAIL|MCI_DATATIMEOUT|MCI_STARTBITERR|
+-		      MCI_TXUNDERRUN|MCI_RXOVERRUN)) {
++	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
++		      host->variant->start_err |
++		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
+ 		u32 remain, success;
+ 
+ 		/* Terminate the DMA transfer */
+-- 
+1.9.1
