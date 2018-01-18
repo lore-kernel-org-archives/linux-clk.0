@@ -1,89 +1,62 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 12 Jan 2018 09:51:34 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Andre Przywara <andre.przywara@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-Message-ID: <20180112085134.dcsikciujsxuuwhx@flea.lan>
-References: <20180106042326.46519-1-icenowy@aosc.io>
- <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
- <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 02/12] clk: sunxi-ng: Change formula for NKMP PLLs
+Date: Thu, 18 Jan 2018 17:17:45 +0100
+Message-ID: <4724479.MCcHYbe7Bl@jernej-laptop>
+In-Reply-To: <20180118105841.73rwj3he2exd7pno@flea.lan>
+References: <20180117201421.25954-1-jernej.skrabec@siol.net> <20180117201421.25954-3-jernej.skrabec@siol.net> <20180118105841.73rwj3he2exd7pno@flea.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sqfzuowjuk7oe46v"
-In-Reply-To: <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
---sqfzuowjuk7oe46v
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-1;5002;0c
-On Thu, Jan 11, 2018 at 09:21:06PM +0800, Icenowy Zheng wrote:
+Dne =C4=8Detrtek, 18. januar 2018 ob 11:58:41 CET je Maxime Ripard napisal(=
+a):
+> Hi,
 >=20
+> On Wed, Jan 17, 2018 at 09:14:11PM +0100, Jernej Skrabec wrote:
+> > This commit changes formula from this:
+> >=20
+> > Freq =3D (parent_freq * N * K) / (M * P)
+> >=20
+> > to this:
+> >=20
+> > Freq =3D (parent_freq / M) * N * K / P
+> >=20
+> > This improves situation when N is in the range 1-255. PLL parent clock
+> > is almost always 24 MHz, which means that for N >=3D 180 original formu=
+la
+> > overflows and result becomes useless. Situation can be improved if M is
+> > used as predivider as it can be seen in the second formula. That way at
+> > least M > 1 is considered, but it still leaves small gap for wrong resu=
+lt
+> > when M =3D 1 and N >=3D 180.
+> >=20
+> > Using M as predivider shouldn't cause any issue, because it is in range
+> > 1-4 at most, so there is no or only minimal rounding error.
+> >=20
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 >=20
-> =E4=BA=8E 2018=E5=B9=B41=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-7:48:40, Andre Przywara <andre.przywara@arm.com> =E5=86=99=E5=88=B0:
-> >Hi,
-> >
-> >another take to avoid this patch at all, I just remembered this from an
-> >IRC discussion before:
-> >
-> >On 06/01/18 04:23, Icenowy Zheng wrote:
-> >> The Allwinner H6 pin controllers (both the main one and the CPUs one)
-> >> have no bus gate clocks.
-> >
-> >I don't think this is true. The pin controller *needs* an APB clock,
-> >it's just not gate-able or not exposed or documented.
-> >The "system bus tree" on page 90 in the manual shows that the "GPIO"
-> >block is located on the APB1 bus.
-> >So can't we just reference this apb clock directly? That would be much
-> >cleaner, "more" correct and require less changes: "The best patch is no
-> >patch":
+> I'd really prefer to stick to the formula documented and that we've
+> used so far. NKMP clocks are most notably used for the CPU PLLs and
+> I've debugged way too many cpufreq bugs already :)
 >=20
-> I can accept this. (In fact I have considered this, but
-> I don't dare to directly use bus clock in a device, as it's not
-> exported before.
->=20
-> Maxime, Chen-Yu, can you agree the following code?
+> What about using long long types for the parent * n * k result?
 
-Yes, that works for me.
+Yes, using long long is the best possible solution and covers all cases=20
+whereas this patch does not.
 
-Maxime
+I thought that do_div() would cause a lot of overhead, but I noticed that i=
+t's=20
+not big if both numbers fit in 32 bit, which in our case is true most of th=
+e=20
+time.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+I will make a helper function for calculating rate, since using long long=20
+needs more than one line of code.
 
---sqfzuowjuk7oe46v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpYdxUACgkQ0rTAlCFN
-r3QKiw/9Hae+QLluYxYJP3sdeGHTY9+aEY/fvPXv/9YjXAN2a1UKHtvC7d/tciwA
-v5BULn6zZ/Pky/8N3AXttmNcfpjJSFMj7BQCw41dlzWL91RCfCsVet2HEmC1xCrq
-3TRmqWEHflDZiHzbG+SNealqOHh7/Ey7wvPMO8YGB/bxNBWb8HTz2nN7s51zD+RS
-W3pWUSZDUYAw1PZyV9RONZTJkcPdnlUJceockBxlrWlojJ+Ya8XqWL4mNy5ZEzR5
-um6WBGYb7x/mdCmIw+6kWY8OgocNgkdSv5oS+HLxr6Vl0Naz/NEiXFo//iFm0BU8
-Db14SUeEdKbwy53WCpr251Nsu/WnXIxnWkPj9d0Pef+XIxh7gt+OcCQsng4tnQ+H
-zQVXcAuRn8yW7FuIm2Ok9DzZYEikRUC8KpqP0VgWMQovnwkel0gKKq6jTtBdiree
-WE+0h+klY0jdCECIqoySgKh/9GWkSSWTHOJDHvk2XapTDEBbgFww7E7gmKNo4rAi
-sFmGqnoL2/wGA4fOrgPF3w+qjabwxxNaQ9Z9YMiWtVVt81xcKfUVGhS1cfkYUir2
-0NSufc/EACIwwHMNOlYrvP+PPuXPAd6lLwitEL0lRc13zj0s26BWMQrPW+nMWGY2
-SGDuo/nKtHb0a2rloBecsZIT5ZZCN0aigYtt6WSDVQrfEkJob+4=
-=jHXY
------END PGP SIGNATURE-----
-
---sqfzuowjuk7oe46v--
+Best regards,
+Jernej
