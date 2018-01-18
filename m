@@ -1,80 +1,67 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Subject: [PATCH v3 34/34] clk: change handling of round_rate() such that only zero is an error
-Date: Mon,  1 Jan 2018 19:43:13 +0000
-Message-Id: <1514835793-1104-35-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v3 11/14] ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
+Date: Thu, 18 Jan 2018 15:34:27 +0100
+Message-ID: <1516286070-24927-12-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Change the handling of clk_ops->round_rate() return values such that only
-zero is treated as an error. All implementations of clk_ops->round_rate()
-will have previously been updated to match this change.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Using zero as the determinant for an error means its possible to pass an
-unsigned long as req->rate to a clk_ops->round_rate() function and return a
-rounded clock which is as high as the original req->rate. This allows us on
-32 bit systems to return rounded rates of (2^32)-1 Hz or ULONG_MAX Hz -
-whereas without this change and the associated clk_ops->round_rate() change
-the maximum value that can be returned via clk_ops->round_rate() is
-LONG_MAX Hz - after which a higher-frequency clock looks like a negative
-error code - due to sign extension.
+As both STM32F4 and STM32F7 SoCs embeds an AMBA PL180 mmci IP,
+we need to enable AMBA support in mach-stm32.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- drivers/clk/clk.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8a1860a..6af2ece 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -909,7 +909,6 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 				      struct clk_rate_request *req)
- {
- 	struct clk_core *parent;
--	long rate;
+v3: _ none
+
+v2: _ none
+
+ arch/arm/mach-stm32/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+index 0d1889b..f53a8db 100644
+--- a/arch/arm/mach-stm32/Kconfig
++++ b/arch/arm/mach-stm32/Kconfig
+@@ -13,16 +13,19 @@ config ARCH_STM32
+ config MACH_STM32F429
+ 	bool "STMicrolectronics STM32F429"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
  
- 	lockdep_assert_held(&prepare_lock);
+ config MACH_STM32F469
+ 	bool "STMicrolectronics STM32F469"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
  
-@@ -928,12 +927,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 	if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
- 	} else if (core->ops->round_rate) {
--		rate = core->ops->round_rate(core->hw, req->rate,
-+		req->rate = core->ops->round_rate(core->hw, req->rate,
- 					     &req->best_parent_rate);
--		if (rate < 0)
--			return rate;
--
--		req->rate = rate;
- 	} else if (core->flags & CLK_SET_RATE_PARENT) {
- 		return clk_core_round_rate_nolock(parent, req);
- 	} else {
-@@ -1454,12 +1449,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 		new_rate = req.rate;
- 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
- 	} else if (core->ops->round_rate) {
--		ret = core->ops->round_rate(core->hw, rate,
--					    &best_parent_rate);
--		if (ret < 0)
--			return NULL;
--
--		new_rate = ret;
-+		new_rate = core->ops->round_rate(core->hw, rate,
-+						 &best_parent_rate);
- 		if (new_rate < min_rate || new_rate > max_rate)
- 			return NULL;
- 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+ config MACH_STM32F746
+ 	bool "STMicrolectronics STM32F746"
+ 	depends on ARCH_STM32
++	select ARM_AMBA
+ 	default y
+ 
+ config MACH_STM32H743
 -- 
-2.7.4
+1.9.1
