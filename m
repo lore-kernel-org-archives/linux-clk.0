@@ -1,57 +1,76 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 07/34] clk: axs10x: change i2s_pll_round_rate return logic
-Date: Mon,  1 Jan 2018 19:07:34 +0000
-Message-Id: <1514833681-30737-8-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v3 06/14] ARM: dts: stm32: Add SDIO controller for stm32f746
+Date: Thu, 18 Jan 2018 15:34:22 +0100
+Message-ID: <1516286070-24927-7-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+stm32f746 embeds ARM_PL180 sdio IP, adds SDIO controller
+nodes to allow MMC support.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- drivers/clk/axs10x/i2s_pll_clock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-index 061260c..20f7ebf 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -119,14 +119,14 @@ static unsigned long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+v3: _ none
+
+v2: _ none
+
+ arch/arm/boot/dts/stm32f746.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
+index 5f66d15..7f55d00 100644
+--- a/arch/arm/boot/dts/stm32f746.dtsi
++++ b/arch/arm/boot/dts/stm32f746.dtsi
+@@ -429,6 +429,28 @@
+ 			status = "disabled";
+ 		};
  
- 	if (!pll_cfg) {
- 		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	for (i = 0; pll_cfg[i].rate != 0; i++)
- 		if (pll_cfg[i].rate == rate)
- 			return rate;
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++		sdio2: sdio2@40011c00 {
++			compatible = "arm,pl180", "arm,primecell";
++			arm,primecell-periphid = <0x00880180>;
++			reg = <0x40011c00 0x400>;
++			clocks = <&rcc 0 167>;
++			clock-names = "apb_pclk";
++			interrupts = <103>;
++			max-frequency = <48000000>;
++			status = "disabled";
++		};
++
++		sdio1: sdio1@40012c00 {
++			compatible = "arm,pl180", "arm,primecell";
++			arm,primecell-periphid = <0x00880180>;
++			reg = <0x40012c00 0x400>;
++			clocks = <&rcc 0 171>;
++			clock-names = "apb_pclk";
++			interrupts = <49>;
++			max-frequency = <48000000>;
++			status = "disabled";
++		};
++
+ 		syscfg: system-config@40013800 {
+ 			compatible = "syscon";
+ 			reg = <0x40013800 0x400>;
 -- 
-2.7.4
+1.9.1
