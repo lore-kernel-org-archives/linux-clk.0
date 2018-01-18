@@ -1,62 +1,151 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 32/37] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-Date: Thu, 25 Jan 2018 18:03:06 +0000
-Message-Id: <1516903391-30467-33-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v3 03/14] mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
+Date: Thu, 18 Jan 2018 15:34:19 +0100
+Message-ID: <1516286070-24927-4-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7745 SoC dtsi.
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This patch prepares for supporting STM32 variant which doesn't
+have opendrain bit in MMCIPOWER register.
+ST others variant (u300, nomadik and ux500) uses MCI_OD bit whereas
+others variants uses MCI_ROD bit.
+
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 9009056..bf24c2e4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -322,6 +322,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
+v3: _ use variant->opendrain instead of host->variant->opendrain
+    _ remove comment about OD and ROD bit
+
+v2: _ Replace opendrain bool type by u32
+    _ Clean opendrain bit management code
+
+ drivers/mmc/host/mmci.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 8a4fbc2..f0edfe7 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -85,6 +85,7 @@
+  * @mmcimask1: true if variant have a MMCIMASK1 register.
+  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
+  *	       register.
++ * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -116,6 +117,7 @@ struct variant_data {
+ 	bool			reversed_irq_handling;
+ 	bool			mmcimask1;
+ 	u32			start_err;
++	u32			opendrain;
+ };
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7745-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7745-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
+ static struct variant_data variant_arm = {
+@@ -127,6 +129,7 @@ struct variant_data {
+ 	.reversed_irq_handling	= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo = {
+@@ -137,6 +140,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_arm_extended_fifo_hwfc = {
+@@ -148,6 +152,7 @@ struct variant_data {
+ 	.f_max			= 100000000,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ static struct variant_data variant_u300 = {
+@@ -165,6 +170,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_nomadik = {
+@@ -183,6 +189,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_ux500 = {
+@@ -207,6 +214,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_ux500v2 = {
+@@ -233,6 +241,7 @@ struct variant_data {
+ 	.pwrreg_nopower		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_OD,
+ };
+ 
+ static struct variant_data variant_qcom = {
+@@ -253,6 +262,7 @@ struct variant_data {
+ 	.qcom_dml		= true,
+ 	.mmcimask1		= true,
+ 	.start_err		= MCI_STARTBITERR,
++	.opendrain		= MCI_ROD,
+ };
+ 
+ /* Busy detection for the ST Micro variant */
+@@ -1455,17 +1465,8 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 				~MCI_ST_DATA2DIREN);
+ 	}
+ 
+-	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
+-		if (host->hw_designer != AMBA_VENDOR_ST)
+-			pwr |= MCI_ROD;
+-		else {
+-			/*
+-			 * The ST Micro variant use the ROD bit for something
+-			 * else and only has OD (Open Drain).
+-			 */
+-			pwr |= MCI_OD;
+-		}
+-	}
++	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN && variant->opendrain)
++		pwr |= variant->opendrain;
+ 
+ 	/*
+ 	 * If clock = 0 and the variant requires the MMCIPOWER to be used for
 -- 
-2.7.4
+1.9.1
