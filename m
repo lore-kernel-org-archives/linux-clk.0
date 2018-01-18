@@ -1,60 +1,163 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v3 31/34] clk: at91: change round_rate() return logic
-Date: Mon,  1 Jan 2018 19:43:10 +0000
-Message-Id: <1514835793-1104-32-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: mux: add helper function for index/value translation
+Date: Thu, 18 Jan 2018 12:01:44 +0100
+Message-Id: <20180118110144.30619-3-jbrunet@baylibre.com>
+In-Reply-To: <20180118110144.30619-1-jbrunet@baylibre.com>
+References: <20180118110144.30619-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Add helper functions for the translation between parent index and
+register value in the generic multiplexer function. The purpose of
+this change is avoid duplicating the code in other clock providers,
+using the same generic logic.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/at91/clk-audio-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-mux.c        | 75 +++++++++++++++++++++++++-------------------
+ include/linux/clk-provider.h |  4 +++
+ 2 files changed, 47 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index 56227cb..48231e3 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -278,7 +278,7 @@ static unsigned long clk_audio_pll_pad_round_rate(struct clk_hw *hw,
- 						  unsigned long *parent_rate)
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 39cabe157163..ac4a042f8658 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -26,35 +26,24 @@
+  * parent - parent is adjustable through clk_set_parent
+  */
+ 
+-static u8 clk_mux_get_parent(struct clk_hw *hw)
++int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
++			 unsigned int val)
  {
- 	struct clk_hw *pclk = clk_hw_get_parent(hw);
--	long best_rate = -EINVAL;
-+	unsigned long best_rate = 0;
- 	unsigned long best_parent_rate;
- 	unsigned long tmp_qd;
- 	u32 div;
-@@ -330,7 +330,7 @@ static unsigned long clk_audio_pll_pmc_round_rate(struct clk_hw *hw,
- 						  unsigned long *parent_rate)
+-	struct clk_mux *mux = to_clk_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+-	u32 val;
+ 
+-	/*
+-	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
+-	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
+-	 * to 0x7 (index starts at one)
+-	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+-	 * val = 0x4 really means "bit 2, index starts at bit 0"
+-	 */
+-	val = clk_readl(mux->reg) >> mux->shift;
+-	val &= mux->mask;
+-
+-	if (mux->table) {
++	if (table) {
+ 		int i;
+ 
+ 		for (i = 0; i < num_parents; i++)
+-			if (mux->table[i] == val)
++			if (table[i] == val)
+ 				return i;
+ 		return -EINVAL;
+ 	}
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
++	if (val && (flags & CLK_MUX_INDEX_BIT))
+ 		val = ffs(val) - 1;
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
++	if (val && (flags & CLK_MUX_INDEX_ONE))
+ 		val--;
+ 
+ 	if (val >= num_parents)
+@@ -62,36 +51,58 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	return val;
+ }
++EXPORT_SYMBOL_GPL(clk_mux_val_to_index);
+ 
+-static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index)
  {
- 	struct clk_hw *pclk = clk_hw_get_parent(hw);
--	long best_rate = -EINVAL;
-+	unsigned long best_rate = 0;
- 	unsigned long best_parent_rate = 0;
- 	u32 tmp_qd = 0, div;
- 	long tmp_rate;
+-	struct clk_mux *mux = to_clk_mux(hw);
+-	u32 val;
+-	unsigned long flags = 0;
++	unsigned int val = index;
+ 
+-	if (mux->table) {
+-		index = mux->table[index];
++	if (table) {
++		val = table[index];
+ 	} else {
+-		if (mux->flags & CLK_MUX_INDEX_BIT)
+-			index = 1 << index;
++		if (flags & CLK_MUX_INDEX_BIT)
++			val = 1 << index;
+ 
+-		if (mux->flags & CLK_MUX_INDEX_ONE)
+-			index++;
++		if (flags & CLK_MUX_INDEX_ONE)
++			val++;
+ 	}
+ 
++	return val;
++}
++EXPORT_SYMBOL_GPL(clk_mux_index_to_val);
++
++static u8 clk_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_mux *mux = to_clk_mux(hw);
++	u32 val;
++
++	val = clk_readl(mux->reg) >> mux->shift;
++	val &= mux->mask;
++
++	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
++}
++
++static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux *mux = to_clk_mux(hw);
++	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
++	unsigned long flags = 0;
++	u32 reg;
++
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
+ 	else
+ 		__acquire(mux->lock);
+ 
+ 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+-		val = mux->mask << (mux->shift + 16);
++		reg = mux->mask << (mux->shift + 16);
+ 	} else {
+-		val = clk_readl(mux->reg);
+-		val &= ~(mux->mask << mux->shift);
++		reg = clk_readl(mux->reg);
++		reg &= ~(mux->mask << mux->shift);
+ 	}
+-	val |= index << mux->shift;
+-	clk_writel(val, mux->reg);
++	val = val << mux->shift;
++	reg |= val;
++	clk_writel(reg, mux->reg);
+ 
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 38861e75b017..cf3bf8aabced 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -514,6 +514,10 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 		void __iomem *reg, u8 shift, u32 mask,
+ 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
+ 
++int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
++			 unsigned int val);
++unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index);
++
+ void clk_unregister_mux(struct clk *clk);
+ void clk_hw_unregister_mux(struct clk_hw *hw);
+ 
 -- 
-2.7.4
+2.14.3
