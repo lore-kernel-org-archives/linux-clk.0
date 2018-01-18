@@ -1,49 +1,61 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	ABE Hiroshige <hiroshige.abe.zc@renesas.com>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7796: Add FDP clock
-Date: Tue,  2 Jan 2018 16:21:43 +0100
-Message-Id: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX
+ USB PHY clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-21-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
+Date: Thu, 18 Jan 2018 17:40:29 +0530
+MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-21-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+> This adds a new binding for TI DA8XX USB PHY clocks. These clocks are part
+> of a syscon register called CFGCHIP3.
 
-This patch adds FDP1-0 clock to the R8A7796 SoC.
+CFGCHIP2
 
-Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: s/fdp0/fdp1-0/]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This gets rid of the following error messages during boot and system
-resume:
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-    renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 119: -2
-    rcar_fdp1 fe940000.fdp1: failed to add to PM domain a3vc: -2
+> +Examples:
+> +
+> +	cfgchip: syscon@1417c {
+> +		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
+> +		reg = <0x1417c 0x14>;
+> +
+> +		usb0_phy_clk: usb0-phy-clock {
+> +			compatible = "ti,da830-usb0-phy-clock";
+> +			#clock-cells = <0>;
+> +			clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
+> +			clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
+> +			clock-output-names = "usb0_phy_clk";
 
-To be queued in clk-renesas-for-v4.16.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Probably call this "usb0_phy" to match with the input name used for
+usb1_phy_clk?
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 83a68e51e4ec1d12..dfb267a92f2a20d3 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -117,6 +117,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-+	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
- 	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
- 	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
- 	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
--- 
-2.7.4
+> +		};
+> +
+> +		usb1_phy_clk: usb1-phy-clock {
+> +			compatible = "ti,da830-usb1-phy-clock";
+> +			#clock-cells = <0>;
+> +			clocks = <&usb0_phy_clk>, <&usb_refclkin>;
+> +			clock-names = "usb0_phy", "usb_refclkin";
+> +			clock-output-names = "usb1_phy_clk";
+> +		};
+> +	};
+
+Thanks,
+Sekhar
