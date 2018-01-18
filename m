@@ -1,140 +1,59 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v2 02/15] mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
-Date: Tue, 16 Jan 2018 13:30:46 +0100
-Message-ID: <1516105859-3525-3-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] clk: meson: check pll rate param table before using it
+Date: Thu, 18 Jan 2018 19:45:24 +0100
+Message-Id: <20180118184532.6856-2-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Make sure the rate param table is available before using it.
+Some read-only pll don't provide it, which is ok because the
+table is not used by read-only clock. R/W clock are supposed
+to provide it, but it does not hurt check it.
 
-This patch prepares for supporting the STM32 variant that
-has no such bit in the status register.
-
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
+ drivers/clk/meson/clk-pll.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-v2: _ replace start_err bool type by u32
-
- drivers/mmc/host/mmci.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 3125dc0..8a4fbc2 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -83,6 +83,8 @@
-  * @qcom_dml: enables qcom specific dma glue for dma transfers.
-  * @reversed_irq_handling: handle data irq before cmd irq.
-  * @mmcimask1: true if variant have a MMCIMASK1 register.
-+ * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
-+ *	       register.
-  */
- struct variant_data {
- 	unsigned int		clkreg;
-@@ -113,6 +115,7 @@ struct variant_data {
- 	bool			qcom_dml;
- 	bool			reversed_irq_handling;
- 	bool			mmcimask1;
-+	u32			start_err;
- };
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 01341553f50b..2614341fc4ad 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -94,6 +94,13 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	const struct pll_rate_table *rate_table = pll->rate_table;
+ 	int i;
  
- static struct variant_data variant_arm = {
-@@ -123,6 +126,7 @@ struct variant_data {
- 	.f_max			= 100000000,
- 	.reversed_irq_handling	= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
++	/*
++	 * if the table is missing, just return the current rate
++	 * since we don't have the other available frequencies
++	 */
++	if (!rate_table)
++		return meson_clk_pll_recalc_rate(hw, *parent_rate);
++
+ 	for (i = 0; i < pll->rate_count; i++) {
+ 		if (rate <= rate_table[i].rate)
+ 			return rate_table[i].rate;
+@@ -109,6 +116,9 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
+ 	const struct pll_rate_table *rate_table = pll->rate_table;
+ 	int i;
  
- static struct variant_data variant_arm_extended_fifo = {
-@@ -132,6 +136,7 @@ struct variant_data {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_arm_extended_fifo_hwfc = {
-@@ -142,6 +147,7 @@ struct variant_data {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_u300 = {
-@@ -158,6 +164,7 @@ struct variant_data {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_nomadik = {
-@@ -175,6 +182,7 @@ struct variant_data {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_ux500 = {
-@@ -198,6 +206,7 @@ struct variant_data {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_ux500v2 = {
-@@ -223,6 +232,7 @@ struct variant_data {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- static struct variant_data variant_qcom = {
-@@ -242,6 +252,7 @@ struct variant_data {
- 	.qcom_fifo		= true,
- 	.qcom_dml		= true,
- 	.mmcimask1		= true,
-+	.start_err		= MCI_STARTBITERR,
- };
- 
- /* Busy detection for the ST Micro variant */
-@@ -935,8 +946,9 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
- 		return;
- 
- 	/* First check for errors */
--	if (status & (MCI_DATACRCFAIL|MCI_DATATIMEOUT|MCI_STARTBITERR|
--		      MCI_TXUNDERRUN|MCI_RXOVERRUN)) {
-+	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
-+		      host->variant->start_err |
-+		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
- 		u32 remain, success;
- 
- 		/* Terminate the DMA transfer */
++	if (!rate_table)
++		return NULL;
++
+ 	for (i = 0; i < pll->rate_count; i++) {
+ 		if (rate == rate_table[i].rate)
+ 			return &rate_table[i];
 -- 
-1.9.1
+2.14.3
