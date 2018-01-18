@@ -1,83 +1,119 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v3 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber
+ drvdata
+To: Jernej Skrabec <jernej.skrabec@siol.net>,
+ maxime.ripard@free-electrons.com, airlied@linux.ie, robh+dt@kernel.org,
+ mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org,
+ a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+ p.zabel@pengutronix.de, hjc@rock-chips.com, heiko@sntech.de
+References: <20180117201421.25954-1-jernej.skrabec@siol.net>
+ <20180117201421.25954-6-jernej.skrabec@siol.net>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <91cd3ffd-e5cc-8149-2c57-6f93da55a0e4@baylibre.com>
+Date: Thu, 18 Jan 2018 14:04:08 +0100
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-10-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-10-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:00:11 +0100
-Message-ID: <CAMuHMdVpM42_D+2ZCyUCCq4QZKbM_xUwivby=5Ujqg_WDz4smA@mail.gmail.com>
-Subject: Re: [RFC 09/37] soc: renesas: rcar-rst: Add generic compatible strings
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180117201421.25954-6-jernej.skrabec@siol.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
+On 17/01/2018 21:14, Jernej Skrabec wrote:
+> dw_hdmi shouldn't set drvdata since some drivers might need to store
+> it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
+> instead to store it in drvdata. This way drivers are responsible to
+> store and pass structure when needed.
+> 
+> Idea was taken from the following commit:
+> 8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
+> 
+> Cc: p.zabel@pengutronix.de
+> Cc: narmstrong@baylibre.com
+> Cc: Laurent.pinchart@ideasonboard.com
+> Cc: hjc@rock-chips.com
+> Cc: heiko@sntech.de
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 31 ++++++++++++-----------------
+>  drivers/gpu/drm/imx/dw_hdmi-imx.c           | 13 +++++++++---
+>  drivers/gpu/drm/meson/meson_dw_hdmi.c       | 14 +++++++++----
+>  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c      | 12 +++++++++--
+>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 13 +++++++++---
+>  include/drm/bridge/dw_hdmi.h                | 13 ++++++------
+>  6 files changed, 60 insertions(+), 36 deletions(-)
+> 
 
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This commit introduces generic compatible strings to use as fallback,
-> so that devices compatible with the generic implementation may avoid
-> changing the driver.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-
-Thanks for your patch!
-
->From commit 527c02f66d263d2e ("soc: renesas: Add R-Car RST driver"):
-
-    Despite the current simple and almost identical handling for all
-    supported SoCs, the driver matches against SoC-specific compatible
-    values, as the features provided by the hardware module differ a lot
-    across the various SoC families and members.
-
-In fact the only commonalities are the presence of the MODEMR register
-(the mode bits differ), and the Watchdog Timer Reset Control Register.
-All other registers and bits depend on the SoC's CPU core configuration.
-
-Hence that's why I did not add generic compatible values.
-So unless you really need them (from this series, it looks like you
-don't?), I wouldn't add them.
-
-> --- a/drivers/soc/renesas/rcar-rst.c
-> +++ b/drivers/soc/renesas/rcar-rst.c
-> @@ -25,8 +25,16 @@ static const struct rst_config rcar_rst_gen2 __initconst = {
->         .modemr = 0x60,
+[...]
+> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> index e8c3ef8a94ce..d49af17310c9 100644
+> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> @@ -140,6 +140,7 @@ struct meson_dw_hdmi {
+>  	struct clk *venci_clk;
+>  	struct regulator *hdmi_supply;
+>  	u32 irq_stat;
+> +	struct dw_hdmi *hdmi;
 >  };
->
-> +static const struct rst_config rcar_rst_gen3 __initconst = {
-> +       .modemr = 0x60,
-> +};
+>  #define encoder_to_meson_dw_hdmi(x) \
+>  	container_of(x, struct meson_dw_hdmi, encoder)
+> @@ -878,9 +879,12 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>  	dw_plat_data->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
+>  	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
+>  
+> -	ret = dw_hdmi_bind(pdev, encoder, &meson_dw_hdmi->dw_plat_data);
+> -	if (ret)
+> -		return ret;
+> +	platform_set_drvdata(pdev, meson_dw_hdmi);
 > +
->  static const struct of_device_id rcar_rst_matches[] __initconst = {
-> -       /* RZ/G is handled like R-Car Gen2 */
-> +       /* generic compatible strings */
-> +       { .compatible = "renesas,rcar-gen1-rst", .data = &rcar_rst_gen1 },
-> +       { .compatible = "renesas,rcar-gen2-rst", .data = &rcar_rst_gen2 },
-> +       { .compatible = "renesas,rcar-gen3-rst", .data = &rcar_rst_gen3 },
+> +	meson_dw_hdmi->hdmi = dw_hdmi_bind(pdev, encoder,
+> +					   &meson_dw_hdmi->dw_plat_data);
+> +	if (IS_ERR(meson_dw_hdmi->hdmi))
+> +		return PTR_ERR(meson_dw_hdmi->hdmi);
+>  
+>  	DRM_DEBUG_DRIVER("HDMI controller initialized\n");
+>  
+> @@ -890,7 +894,9 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+>  static void meson_dw_hdmi_unbind(struct device *dev, struct device *master,
+>  				   void *data)
+>  {
+> -	dw_hdmi_unbind(dev);
+> +	struct meson_dw_hdmi *meson_dw_hdmi = dev_get_drvdata(dev);
+> +
+> +	dw_hdmi_unbind(meson_dw_hdmi->hdmi);
+>  }
+>  
+>  static const struct component_ops meson_dw_hdmi_ops = {
 
-Usually we put generic compatible values at the bottom.
+[..]
 
-Gr{oetje,eeting}s,
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index f3f3f0e1b2d3..dd2a8cf7d20b 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -143,12 +143,13 @@ struct dw_hdmi_plat_data {
+>  			     unsigned long mpixelclock);
+>  };
+>  
+> -int dw_hdmi_probe(struct platform_device *pdev,
+> -		  const struct dw_hdmi_plat_data *plat_data);
+> -void dw_hdmi_remove(struct platform_device *pdev);
+> -void dw_hdmi_unbind(struct device *dev);
+> -int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
+> -		 const struct dw_hdmi_plat_data *plat_data);
+> +struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+> +			      const struct dw_hdmi_plat_data *plat_data);
+> +void dw_hdmi_remove(struct dw_hdmi *hdmi);
+> +void dw_hdmi_unbind(struct dw_hdmi *hdmi);
+> +struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
+> +			     struct drm_encoder *encoder,
+> +			     const struct dw_hdmi_plat_data *plat_data);
+>  
+>  void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
+>  
+> 
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+For meson-drm and dw-hdmi bridge changes :
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
