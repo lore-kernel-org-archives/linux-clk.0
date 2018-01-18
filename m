@@ -1,131 +1,36 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 1/6] clk: tegra: dfll registration for multiple SoCs
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <954797d1-ff6b-5aab-69cc-65c1a034a571@nvidia.com>
-Date: Wed, 31 Jan 2018 10:13:50 +0000
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 29/44] ARM: da8xx: add new USB PHY clock init using
+ common clock framework
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-30-git-send-email-david@lechnology.com>
+ <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <c31d26b6-fb79-4581-039f-b977d737da2d@lechnology.com>
+Date: Thu, 18 Jan 2018 12:43:59 -0600
 MIME-Version: 1.0
-In-Reply-To: <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 24/01/18 12:45, Peter De Schrijver wrote:
-> In a future patch, support for the DFLL in Tegra210 will be introduced.
-> This requires support for more than 1 set of CVB and CPU max frequency
-> tables.
+On 01/18/2018 09:14 AM, Sekhar Nori wrote:
+> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>> +int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
+>> +{
+>> +	struct regmap *cfgchip;
+>> +	struct clk *usb0_psc_clk, *clk;
+>> +	struct clk_hw *parent;
+>> +
+>> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index 269d359..440eb8d 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -21,6 +21,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <soc/tegra/fuse.h>
->  
-> @@ -28,8 +29,15 @@
->  #include "clk-dfll.h"
->  #include "cvb.h"
->  
-> +struct dfll_fcpu_data {
-> +	const unsigned long *cpu_max_freq_table;
-> +	unsigned int cpu_max_freq_table_size;
-> +	const struct cvb_table *cpu_cvb_tables;
-> +	unsigned int cpu_cvb_tables_size;
-> +};
-> +
->  /* Maximum CPU frequency, indexed by CPU speedo id */
-> -static const unsigned long cpu_max_freq_table[] = {
-> +static const unsigned long tegra124_cpu_max_freq_table[] = {
->  	[0] = 2014500000UL,
->  	[1] = 2320500000UL,
->  	[2] = 2116500000UL,
-> @@ -82,16 +90,36 @@
->  	},
->  };
->  
-> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
-> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
-> +};
-> +
-> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> +	{
-> +		.compatible = "nvidia,tegra124-dfll",
-> +		.data = &tegra124_dfll_fcpu_data,
-> +	},
-> +	{ },
-> +};
-> +
->  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  {
->  	int process_id, speedo_id, speedo_value, err;
->  	struct tegra_dfll_soc_data *soc;
-> +	const struct of_device_id *of_id;
-> +	const struct dfll_fcpu_data *fcpu_data;
-> +
-> +	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-> +	fcpu_data = of_id->data;
->  
->  	process_id = tegra_sku_info.cpu_process_id;
->  	speedo_id = tegra_sku_info.cpu_speedo_id;
->  	speedo_value = tegra_sku_info.cpu_speedo_value;
->  
-> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
->  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
->  			speedo_id);
->  		return -ENODEV;
-> @@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
->  
-> -	soc->max_freq = cpu_max_freq_table[speedo_id];
-> +	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
->  
-> -	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
-> -					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-> +	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-> +					   fcpu_data->cpu_cvb_tables_size,
->  					   process_id, speedo_id, speedo_value,
->  					   soc->max_freq);
->  	if (IS_ERR(soc->cvb)) {
-> @@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> -	{ .compatible = "nvidia,tegra124-dfll", },
-> -	{ },
-> -};
-> -
->  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
->  			   tegra_dfll_runtime_resume, NULL)
-> 
+> Am I right in understanding that this API is only called for non-DT
+> boot? If yes, do we really need the lookup by compatible?
 
-Thanks!
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+This code is used in DT boot until [PATCH v5 43/44] "ARM: da8xx-dt:
+switch to device tree clocks". So, yes it is needed temporarily to
+prevent breaking USB.
