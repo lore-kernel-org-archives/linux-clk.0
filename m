@@ -1,53 +1,62 @@
-Return-Path: <philippe.cornu@st.com>
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 21/44] clk: davinci: New driver for TI DA8XX USB PHY
+ clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>
-Subject: Re: [PATCH 1/2] clk: stm32: END_PRIMARY_CLK should be declare after
- CLK_SYSCLK
-Date: Thu, 18 Jan 2018 16:37:15 +0000
-Message-ID: <1dd9d895-016f-f74b-ec9d-8e02959a561d@st.com>
-References: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
- <1516286980-8603-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1516286980-8603-2-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="utf-8"
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-22-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <493e4809-6b77-7772-70c7-ad0fa04e9033@ti.com>
+Date: Thu, 18 Jan 2018 18:35:39 +0530
 MIME-Version: 1.0
+In-Reply-To: <1515377863-20358-22-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2FicmllbCwNCg0KVGVzdGVkIHN1Y2Nlc3NmdWxseSBvbiBmNDY5IGRpc2NvIGJvYXJkLg0K
-DQpUZXN0ZWQtYnk6IFBoaWxpcHBlIENvcm51IDxwaGlsaXBwZS5jb3JudUBzdC5jb20+DQoNCk1h
-bnkgdGhhbmtzLA0KUGhpbGlwcGUgOi0pDQoNCk9uIDAxLzE4LzIwMTggMDM6NDkgUE0sIGdhYnJp
-ZWwuZmVybmFuZGV6QHN0LmNvbSB3cm90ZToNCj4gRnJvbTogR2FicmllbCBGZXJuYW5kZXogPGdh
-YnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4gDQo+IFVwZGF0ZSBvZiBFTkRfUFJJTUFSWV9DTEsg
-d2FzIG1pc3NlZCwgaXQgc2hvdWxkIGJlIGFmdGVyIENMS19TWVNDTEsNCj4gaHNpIGFuZCBzeXNj
-bGsgYXJlIG92ZXJ3cml0dGVuIGJ5IGdwaW9hIGFuZCBncGlvYi4NCj4gDQo+IFNpZ25lZC1vZmYt
-Ynk6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+IC0tLQ0K
-PiAgIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJmeC1jbG9jay5oIHwgNiArKystLS0N
-Cj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJmeC1jbG9jay5o
-IGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zdG0zMmZ4LWNsb2NrLmgNCj4gaW5kZXggNDli
-YjNjMi4uNGQ1MjNiMCAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9z
-dG0zMmZ4LWNsb2NrLmgNCj4gKysrIGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zdG0zMmZ4
-LWNsb2NrLmgNCj4gQEAgLTMzLDExICszMywxMSBAQA0KPiAgICNkZWZpbmUgQ0xLX1NBSTIJCTEx
-DQo+ICAgI2RlZmluZSBDTEtfSTJTUV9QRElWCQkxMg0KPiAgICNkZWZpbmUgQ0xLX1NBSVFfUERJ
-VgkJMTMNCj4gLQ0KPiAtI2RlZmluZSBFTkRfUFJJTUFSWV9DTEsJCTE0DQo+IC0NCj4gICAjZGVm
-aW5lIENMS19IU0kJCQkxNA0KPiAgICNkZWZpbmUgQ0xLX1NZU0NMSwkJMTUNCj4gKw0KPiArI2Rl
-ZmluZSBFTkRfUFJJTUFSWV9DTEsJCTE2DQo+ICsNCj4gICAjZGVmaW5lIENMS19IRE1JX0NFQwkJ
-MTYNCj4gICAjZGVmaW5lIENMS19TUERJRgkJMTcNCj4gICAjZGVmaW5lIENMS19VU0FSVDEJCTE4
-DQo+IA==
+On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+
+> +static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
+> +	unsigned int mask, val;
+> +
+> +	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
+> +	mask = CFGCHIP2_USB1PHYCLKMUX;
+> +	switch (index) {
+> +	case DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN:
+> +		val = CFGCHIP2_USB1PHYCLKMUX;
+> +		break;
+> +	case DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL:
+> +		val = 0;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
+
+This function can be simplified quite a bit if you use a shift.
+
+#define CFGCHIP2_USB1PHYCLKMUX_SHIFT	12
+
+static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
+{
+	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
+
+	regmap_write_bits(clk->regmap, CFGCHIP(2),
+			  CFGCHIP2_USB1PHYCLKMUX,
+			  index << CFGCHIP2_USB1PHYCLKMUX_SHIFT);
+}
+
+Same thing for da8xx_usb0_phy_clk_set_parent() as well.
+
+Thanks,
+Sekhar
