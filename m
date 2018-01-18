@@ -1,65 +1,48 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v2 11/15] ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-Date: Tue, 16 Jan 2018 13:30:55 +0100
-Message-ID: <1516105859-3525-12-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 8/9] clk: meson: gxbb: add the fractional part of the fixed_pll
+Date: Thu, 18 Jan 2018 19:45:31 +0100
+Message-Id: <20180118184532.6856-9-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+The fixed_pll of gxbb and gxl also has a fractional parameter. This has
+not been a problem so far because fractional part is actually set to 0
+on these platforms, so the rate remains correct when it is ignored.
+Still, it is better represent the pll the way it is, so add the frac
+parameter now
 
-As both STM32F4 and STM32F7 SoCs embeds an AMBA PL180 mmci IP,
-we need to enable AMBA support in mach-stm32.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
+ drivers/clk/meson/gxbb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-v2 _ none
-
- arch/arm/mach-stm32/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 0d1889b..f53a8db 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -13,16 +13,19 @@ config ARCH_STM32
- config MACH_STM32F429
- 	bool "STMicrolectronics STM32F429"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F469
- 	bool "STMicrolectronics STM32F469"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F746
- 	bool "STMicrolectronics STM32F746"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32H743
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 9a92e64b428c..3202f85e69e5 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -202,6 +202,11 @@ static struct meson_clk_pll gxbb_fixed_pll = {
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.frac = {
++		.reg_off = HHI_MPLL_CNTL2,
++		.shift   = 0,
++		.width   = 12,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "fixed_pll",
 -- 
-1.9.1
+2.14.3
