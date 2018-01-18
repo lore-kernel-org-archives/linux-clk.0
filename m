@@ -1,109 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51204 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeADLP3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:15:29 -0500
-From: <ilialin@codeaurora.org>
-To: "'Rob Herring'" <robh@kernel.org>
-Cc: <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <mark.rutland@arm.com>,
-        <will.deacon@arm.com>, <rnayak@codeaurora.org>,
-        <qualcomm-lt@lists.linaro.org>, <celster@codeaurora.org>,
-        <tfinkel@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org> <1513081897-31612-5-git-send-email-ilialin@codeaurora.org> <20171215223525.tzcycllxsl72hway@rob-hp-laptop>
-In-Reply-To: <20171215223525.tzcycllxsl72hway@rob-hp-laptop>
-Subject: RE: [PATCH 04/10] clk: qcom: Add CPU clock driver for msm8996
-Date: Thu, 4 Jan 2018 13:15:23 +0200
-Message-ID: <027f01d3854d$52fa55b0$f8ef0110$@codeaurora.org>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Andrea Merello
+	<andrea.merello@gmail.com>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH v3 08/14] ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
+Date: Thu, 18 Jan 2018 15:34:24 +0100
+Message-ID: <1516286070-24927-9-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This is address in the V2: https://patchwork.kernel.org/patch/10144489/
+From: Andrea Merello <andrea.merello@gmail.com>
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Saturday, December 16, 2017 12:35 AM
-> To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> arm-msm@vger.kernel.org; sboyd@codeaurora.org;
-> devicetree@vger.kernel.org; mark.rutland@arm.com;
-> will.deacon@arm.com; rnayak@codeaurora.org; qualcomm-
-> lt@lists.linaro.org; celster@codeaurora.org; tfinkel@codeaurora.org
-> Subject: Re: [PATCH 04/10] clk: qcom: Add CPU clock driver for msm8996
-> 
-> On Tue, Dec 12, 2017 at 02:31:31PM +0200, Ilia Lin wrote:
-> > From: Rajendra Nayak <rnayak@codeaurora.org>
-> >
-> > Each of the CPU clusters (Power and Perf) on msm8996 are clocked via 2
-> > PLLs, a primary and alternate. There are also
-> > 2 Mux'es, a primary and secondary all connected together as shown
-> > below
-> >
-> >                              +-------+
-> >               XO             |       |
-> >           +------------------>0      |
-> >                              |       |
-> >                    PLL/2     | SMUX  +----+
-> >                      +------->1      |    |
-> >                      |       |       |    |
-> >                      |       +-------+    |    +-------+
-> >                      |                    +---->0      |
-> >                      |                         |       |
-> > +---------------+    |             +----------->1      | CPU clk
-> > |Primary PLL    +----+ PLL_EARLY   |           |       +------>
-> > |               +------+-----------+    +------>2 PMUX |
-> > +---------------+      |                |      |       |
-> >                        |   +------+     |   +-->3      |
-> >                        +--^+  ACD +-----+   |  +-------+
-> > +---------------+          +------+         |
-> > |Alt PLL        |                           |
-> > |               +---------------------------+
-> > +---------------+         PLL_EARLY
-> >
-> > The primary PLL is what drives the CPU clk, except for times when we
-> > are reprogramming the PLL itself (for rate changes) when we
-> > temporarily switch to an alternate PLL. A subsequent patch adds
-> > support to switch between primary and alternate PLL during rate
-> > changes.
-> >
-> > The primary PLL operates on a single VCO range, between 600Mhz and
-> > 3Ghz. However the CPUs do support OPPs with frequencies between
-> 300Mhz
-> > and 600Mhz. In order to support running the CPUs at those frequencies
-> > we end up having to lock the PLL at twice the rate and drive the CPU
-> > clk via the PLL/2 output and SMUX.
-> >
-> > So for frequencies above 600Mhz we follow the following path  Primary
-> > PLL --> PLL_EARLY --> PMUX(1) --> CPU clk and for frequencies between
-> > 300Mhz and 600Mhz we follow  Primary PLL --> PLL/2 --> SMUX(1) -->
-> > PMUX(0) --> CPU clk Support for this is added in a subsequent patch as
-> > well.
-> >
-> > ACD stands for Adaptive Clock Distribution and is used to detect
-> > voltage droops. We do not add support for ACD as yet.
-> > This can be added at a later point as needed.
-> >
-> > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
-> 
-> If you respin, please make bindings a separate patch. In any case,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> >  drivers/clk/qcom/Kconfig                           |   8 +
-> >  drivers/clk/qcom/Makefile                          |   1 +
-> >  drivers/clk/qcom/clk-cpu-8996.c                    | 388
-> +++++++++++++++++++++
-> >  4 files changed, 414 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> >  create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+This patch adds the pin configuration for SDIO controller on
+stm32f4.
 
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+
+v3: _ none
+
+v2: _ none
+
+
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+index ae94d86..3520289 100644
+--- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+@@ -338,6 +338,37 @@
+ 					slew-rate = <3>;
+ 				};
+ 			};
++
++			sdio_pins: sdio_pins@0 {
++				pins {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
++						 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
++			};
++
++			sdio_pins_od: sdio_pins_od@0 {
++				pins1 {
++					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
++						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
++						 <STM32_PINMUX('C', 10, AF12)>, /* SDIO_D2 */
++						 <STM32_PINMUX('C', 11, AF12)>, /* SDIO_D3 */
++						 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
++					drive-push-pull;
++					slew-rate = <2>;
++				};
++
++				pins2 {
++					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
++					drive-open-drain;
++					slew-rate = <2>;
++				};
++			};
+ 		};
+ 	};
+ };
+-- 
+1.9.1
