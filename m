@@ -1,54 +1,36 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 23 Jan 2018 20:52:53 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-imx@nxp.com
-Subject: Re: [PATCH 1/1] clk: remove invalid __clk_set_parent comment in
- __clk_core_init
-Message-ID: <20180123125253.GB16865@b29396-OptiPlex-7040>
-References: <1513936041-13010-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 43/44] ARM: da8xx-dt: switch to device tree clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515378307-23718-1-git-send-email-david@lechnology.com>
+ <1515378307-23718-4-git-send-email-david@lechnology.com>
+ <8b30f1e6-74dc-3fd6-71a6-c9ceaf77a9d1@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <b9443e4c-b8c6-5388-955e-696d0f7b3151@lechnology.com>
+Date: Thu, 18 Jan 2018 12:40:05 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1513936041-13010-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <8b30f1e6-74dc-3fd6-71a6-c9ceaf77a9d1@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 05:47:21PM +0800, Dong Aisheng wrote:
-> Those comments are invalid anymore. So remove them.
+On 01/18/2018 09:27 AM, Sekhar Nori wrote:
+> On Monday 08 January 2018 07:55 AM, David Lechner wrote:
+>> This removes all of the clock init code from da8xx-dt.c. This includes
+>> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+>>
+>> Note: You need to have clocks defined in your device tree or your system
+>> won't boot after this patch.
 > 
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Ping
-
-Regards
-Dong Aisheng
-
-> ---
->  drivers/clk/clk.c | 4 ----
->  1 file changed, 4 deletions(-)
+> I am not sure we can do this then, as we cannot break DT compatibility.
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d6e2d5c..4675adf 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2927,10 +2927,6 @@ static int __clk_core_init(struct clk_core *core)
->  		struct clk_core *parent = __clk_init_parent(orphan);
->  		unsigned long flags;
->  
-> -		/*
-> -		 * we could call __clk_set_parent, but that would result in a
-> -		 * redundant call to the .set_rate op, if it exists
-> -		 */
->  		if (parent) {
->  			/* update the clk tree topology */
->  			flags = clk_enable_lock();
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+In the past, you have told me that you don't want the .dts changes and code
+changes in the same patch. In this case, if you apply either one separately,
+it will break clocks. It does not matter which one is first.
+
+So either we have to squash [PATCH v5 44/44] ARM: dts: da850: Add clocks
+into this patch or deal with the breakage.
