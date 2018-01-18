@@ -1,91 +1,76 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
-Date: Thu, 18 Jan 2018 15:34:16 +0100
-Message-ID: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX
+ USB PHY clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-21-git-send-email-david@lechnology.com>
+ <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
+Date: Thu, 18 Jan 2018 13:00:22 -0600
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On 01/18/2018 06:10 AM, Sekhar Nori wrote:
+> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>> This adds a new binding for TI DA8XX USB PHY clocks. These clocks are part
+>> of a syscon register called CFGCHIP3.
+> 
+> CFGCHIP2
+> 
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+> 
+>> +Examples:
+>> +
+>> +	cfgchip: syscon@1417c {
+>> +		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
+>> +		reg = <0x1417c 0x14>;
+>> +
+>> +		usb0_phy_clk: usb0-phy-clock {
+>> +			compatible = "ti,da830-usb0-phy-clock";
+>> +			#clock-cells = <0>;
+>> +			clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
+>> +			clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
+>> +			clock-output-names = "usb0_phy_clk";
+> 
+> Probably call this "usb0_phy" to match with the input name used for
+> usb1_phy_clk?
 
-This series reworks patches submitted one year ago by Andrea Merello [1] 
-but without succeed to merged it.
+I was planning on just dropping clock-output-names altogether actually
+since they don't really do anything useful.
 
-STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell 
-PL18x SD host controller, for which the mmci driver exists. 
-This series adds support for these SoCs to the mmci driver.
+Also, I was considering sending a series to change the con_id for the
+PHY clocks.
 
-As other variants, this one need some specific quirks, that this 
-series address. 
+My current revision of the device tree bindings is looking like this:
 
-This series has been tested on following boards :
-	_ stm32f429-eval
-	_ stm32f469-disco
-	_ stm32f746-eval
-	_ stm32f769-disco
+	usb_phy: usb-phy {
+		compatible = "ti,da830-usb-phy";
+		#phy-cells = <1>;
+		clocks = <&usb_phy_clk 0>, <&usb_phy_clk 1>;
+		clock-names = "usb20_phy", "usb11_phy";
+		status = "disabled";
+	};
+	usb_phy_clk: usb-phy-clocks {
+		compatible = "ti,da830-usb-phy-clocks";
+		#clock-cells = <1>;
+		clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
+		clock-names = "fck", "usb_refclkin", "auxclk";
+	};
 
-DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
-will be sent later to avoid conflict with pending stm32f7 series [1] which
-is not yet merged on kernel mainline.
+The clock-names = "usb20_phy", "usb11_phy" comes from the existing con_ids
+in the PHY driver's clk_get()s.
 
-[1] https://www.spinics.net/lists/linux-mmc/msg41616.html
-[2] https://patchwork.kernel.org/patch/10104447/
-
-v3: _ patch 3: use variant->opendrain instead of host->variant->opendrain
-    _ patch 4: exit from probe() if no pinctrl dt node are found
-    _ previous patch 15: removed as already applied in pinctrl tree
-
-v2: _ add Revievied-by, Acked-by in some patches
-    _ replace bool by u32 for start_err and opendrain fields of struct variant_data
-    _ split previous patch 3 in two parts, first patch clean the open drain bit code
-      and second part add pinctrl pins management when no open drain bit is available.
-    _ replace "pl180" by "PL180" in patch "mmc: mmci: Add STM32 variant"
-
-Andrea Merello (2):
-  ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
-  ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
-
-Patrice Chotard (12):
-  mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
-  mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
-  mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
-  mmc: mmci: Add support for setting pad type via pinctrl
-  mmc: mmci: Add STM32 variant
-  ARM: dts: stm32: Add SDIO controller for stm32f746
-  ARM: dts: stm32: Add SDIO controller for stm32f429
-  ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
-  ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-  ARM: configs: stm32: Enable MMC_ARMMMCI support
-  ARM: configs: stm32: Enable EXT3_FS support
-  clk: stm32: Add clk entry for SDMMC2 on stm32F769
-
- arch/arm/boot/dts/stm32429i-eval.dts   |  19 +++++
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
- arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
- arch/arm/boot/dts/stm32f469-disco.dts  |  19 +++++
- arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
- arch/arm/configs/stm32_defconfig       |   3 +
- arch/arm/mach-stm32/Kconfig            |   3 +
- drivers/clk/clk-stm32f4.c              |   3 +-
- drivers/mmc/host/mmci.c                | 124 ++++++++++++++++++++++++++++-----
- drivers/mmc/host/mmci.h                |   6 ++
- 10 files changed, 224 insertions(+), 17 deletions(-)
-
--- 
-1.9.1
+However, in device tree, we are usually referring to the USB devices as
+usb0 and usb1 instead of usb20 and usb11, respectively. Figure 6-2 "USB
+Clocking Diagram" in spruh82c.pdf (AM1808 TRM) calls these clocks "CLK48"
+and "CLK48MHz from USB 2.0 PHY", so I was thinking of changing the con_ids
+(and therefore also clock-names) to "usb0_clk48" and "usb1_clk48".
