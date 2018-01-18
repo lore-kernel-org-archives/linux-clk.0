@@ -1,104 +1,109 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Shawn
-	Guo <shawnguo@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-Subject: [PATCH v2] clk: Properly update prepare/enable count on orphan
- clock reparent
-Date: Fri, 26 Jan 2018 10:18:45 +0100
-Message-id: <20180126091845.11902-1-m.szyprowski@samsung.com>
-References: <CGME20180126091902eucas1p2b3ad9978e3ab09bd7a2bd9123c9eecaa@eucas1p2.samsung.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6/9] clk: meson: add gxl hdmi pll
+Date: Thu, 18 Jan 2018 19:45:29 +0100
+Message-Id: <20180118184532.6856-7-jbrunet@baylibre.com>
+In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If orphaned clock has been already prepared/enabled (for example if it or
-one of its children has CLK_IS_CRITICAL flag), then the prepare/enable
-counters of the newly assigned parent are not updated correctly. This
-might later cause warnings during changing clock parents.
+The hdmi pll used in the gxl family is actually different from the gxbb.
+The register layout is completely different, which explain why the hdmi
+pll rate has always been rubbish on the gxl.
 
-This patch fixes following warning on Exynos5422-based boards:
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 59 at drivers/clk/clk.c:811 clk_core_disable_lock+0x18/0x24
-Modules linked in:
-CPU: 0 PID: 59 Comm: kworker/0:1 Not tainted 4.15.0-rc7-next-20180115 #106
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: pm genpd_power_off_work_fn
-[<c0111504>] (unwind_backtrace) from [<c010dbec>] (show_stack+0x10/0x14)
-[<c010dbec>] (show_stack) from [<c09b3f34>] (dump_stack+0x90/0xc8)
-[<c09b3f34>] (dump_stack) from [<c0125060>] (__warn+0xe4/0x110)
-[<c0125060>] (__warn) from [<c01250cc>] (warn_slowpath_null+0x40/0x48)
-[<c01250cc>] (warn_slowpath_null) from [<c048d584>] (clk_core_disable_lock+0x18/0x24)
-[<c048d584>] (clk_core_disable_lock) from [<c048e490>] (clk_core_disable_unprepare+0xc/0x20)
-[<c048e490>] (clk_core_disable_unprepare) from [<c048ea60>] (__clk_set_parent_after+0x48/0x4c)
-[<c048ea60>] (__clk_set_parent_after) from [<c048ec88>] (clk_core_set_parent_nolock+0x224/0x5b4)
-[<c048ec88>] (clk_core_set_parent_nolock) from [<c048f23c>] (clk_set_parent+0x38/0x6c)
-[<c048f23c>] (clk_set_parent) from [<c049c41c>] (exynos_pd_power+0x74/0x1cc)
-[<c049c41c>] (exynos_pd_power) from [<c0550768>] (genpd_power_off+0x164/0x264)
-[<c0550768>] (genpd_power_off) from [<c0550b34>] (genpd_power_off_work_fn+0x2c/0x40)
-[<c0550b34>] (genpd_power_off_work_fn) from [<c01432e4>] (process_one_work+0x1d0/0x7bc)
-[<c01432e4>] (process_one_work) from [<c014393c>] (worker_thread+0x34/0x4dc)
-[<c014393c>] (worker_thread) from [<c014a0d0>] (kthread+0x128/0x164)
-[<c014a0d0>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xeeb01fb0 to 0xeeb01ff8)
-1fa0:                                     00000000 00000000 00000000 00000000
-1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
----[ end trace 503c239fb760f17a ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 59 at drivers/clk/clk.c:684 clk_core_disable_unprepare+0x18/0x20
-Modules linked in:
-CPU: 0 PID: 59 Comm: kworker/0:1 Tainted: G        W        4.15.0-rc7-next-20180115 #106
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: pm genpd_power_off_work_fn
-[<c0111504>] (unwind_backtrace) from [<c010dbec>] (show_stack+0x10/0x14)
-[<c010dbec>] (show_stack) from [<c09b3f34>] (dump_stack+0x90/0xc8)
-[<c09b3f34>] (dump_stack) from [<c0125060>] (__warn+0xe4/0x110)
-[<c0125060>] (__warn) from [<c01250cc>] (warn_slowpath_null+0x40/0x48)
-[<c01250cc>] (warn_slowpath_null) from [<c048e49c>] (clk_core_disable_unprepare+0x18/0x20)
-[<c048e49c>] (clk_core_disable_unprepare) from [<c048ea60>] (__clk_set_parent_after+0x48/0x4c)
-[<c048ea60>] (__clk_set_parent_after) from [<c048ec88>] (clk_core_set_parent_nolock+0x224/0x5b4)
-[<c048ec88>] (clk_core_set_parent_nolock) from [<c048f23c>] (clk_set_parent+0x38/0x6c)
-[<c048f23c>] (clk_set_parent) from [<c049c41c>] (exynos_pd_power+0x74/0x1cc)
-[<c049c41c>] (exynos_pd_power) from [<c0550768>] (genpd_power_off+0x164/0x264)
-[<c0550768>] (genpd_power_off) from [<c0550b34>] (genpd_power_off_work_fn+0x2c/0x40)
-[<c0550b34>] (genpd_power_off_work_fn) from [<c01432e4>] (process_one_work+0x1d0/0x7bc)
-[<c01432e4>] (process_one_work) from [<c014393c>] (worker_thread+0x34/0x4dc)
-[<c014393c>] (worker_thread) from [<c014a0d0>] (kthread+0x128/0x164)
-[<c014a0d0>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xeeb01fb0 to 0xeeb01ff8)
-1fa0:                                     00000000 00000000 00000000 00000000
-1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
----[ end trace 503c239fb760f17b ]---
-------------[ cut here ]------------
+Adding the correct register field is the first part of the fix to get a
+correct rate out the hdmi pll
 
-Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 0d48fc558d01 ("clk: meson-gxbb: Add GXL/GXM GP0 Variant")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-v2:
-- moved clk_core_prepare(parent) before clk_enable_lock() to avoid calling
-  it under a spinlock
----
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/meson/gxbb.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 48 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9dac3e..a14d64fa6a28 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2981,7 +2981,11 @@ static int __clk_core_init(struct clk_core *core)
- 		 */
- 		if (parent) {
- 			/* update the clk tree topology */
-+			if (orphan->prepare_count)
-+				clk_core_prepare(parent);
- 			flags = clk_enable_lock();
-+			if (orphan->enable_count)
-+				clk_core_enable(parent);
- 			clk_reparent(orphan, parent);
- 			clk_enable_unlock(flags);
- 			__clk_recalc_accuracies(orphan);
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index cf083a1906d1..08b3e1cdba5b 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -253,6 +253,52 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
+ 	},
+ };
+ 
++static struct meson_clk_pll gxl_hdmi_pll = {
++	.m = {
++		.reg_off = HHI_HDMI_PLL_CNTL,
++		.shift   = 0,
++		.width   = 9,
++	},
++	.n = {
++		.reg_off = HHI_HDMI_PLL_CNTL,
++		.shift   = 9,
++		.width   = 5,
++	},
++	.frac = {
++		/*
++		 * On gxl, there a register shift due to HHI_HDMI_PLL_CNTL1
++		 * which does not exist on gxbb, so we compute the register
++		 * offset based on the PLL base to get it right
++		 */
++		.reg_off = HHI_HDMI_PLL_CNTL + 4,
++		.shift   = 0,
++		.width   = 12,
++	},
++	.od = {
++		.reg_off = HHI_HDMI_PLL_CNTL + 8,
++		.shift   = 21,
++		.width   = 2,
++	},
++	.od2 = {
++		.reg_off = HHI_HDMI_PLL_CNTL + 8,
++		.shift   = 23,
++		.width   = 2,
++	},
++	.od3 = {
++		.reg_off = HHI_HDMI_PLL_CNTL + 8,
++		.shift   = 19,
++		.width   = 2,
++	},
++	.lock = &meson_clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll",
++		.ops = &meson_clk_pll_ro_ops,
++		.parent_names = (const char *[]){ "xtal" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
+ static struct meson_clk_pll gxbb_sys_pll = {
+ 	.m = {
+ 		.reg_off = HHI_SYS_PLL_CNTL,
+@@ -1520,7 +1566,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 	.hws = {
+ 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
+-		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
++		[CLKID_HDMI_PLL]	    = &gxl_hdmi_pll.hw,
+ 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
+ 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
+ 		[CLKID_FCLK_DIV3]	    = &gxbb_fclk_div3.hw,
+@@ -1675,7 +1721,7 @@ static struct meson_clk_pll *const gxbb_clk_plls[] = {
+ 
+ static struct meson_clk_pll *const gxl_clk_plls[] = {
+ 	&gxbb_fixed_pll,
+-	&gxbb_hdmi_pll,
++	&gxl_hdmi_pll,
+ 	&gxbb_sys_pll,
+ 	&gxl_gp0_pll,
+ };
 -- 
-2.15.0
+2.14.3
