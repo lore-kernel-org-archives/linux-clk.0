@@ -1,188 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50478 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeADLO4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 06:14:56 -0500
-From: <ilialin@codeaurora.org>
-To: "'Julien Thierry'" <julien.thierry@arm.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <sboyd@codeaurora.org>
-Cc: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <rnayak@codeaurora.org>, <will.deacon@arm.com>,
-        <tfinkel@codeaurora.org>, <qualcomm-lt@lists.linaro.org>,
-        <celster@codeaurora.org>, "'Taniya Das'" <tdas@codeaurora.org>
-References: <1513081897-31612-1-git-send-email-ilialin@codeaurora.org> <1513081897-31612-3-git-send-email-ilialin@codeaurora.org> <ee78b47f-4fdb-01eb-ba04-c1172b7b7b00@arm.com>
-In-Reply-To: <ee78b47f-4fdb-01eb-ba04-c1172b7b7b00@arm.com>
-Subject: RE: [PATCH 02/10] clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
-Date: Thu, 4 Jan 2018 13:14:50 +0200
-Message-ID: <027d01d3854d$3f94aac0$bebe0040$@codeaurora.org>
+Return-Path: <patrice.chotard@st.com>
+From: <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@st.com>
+Subject: [PATCH v3 13/14] ARM: configs: stm32: Enable EXT3_FS support
+Date: Thu, 18 Jan 2018 15:34:29 +0100
+Message-ID: <1516286070-24927-14-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This is address in the V2: https://patchwork.kernel.org/patch/10144477/
+From: Patrice Chotard <patrice.chotard@st.com>
 
-> -----Original Message-----
-> From: Julien Thierry [mailto:julien.thierry@arm.com]
-> Sent: Tuesday, December 12, 2017 5:06 PM
-> To: Ilia Lin <ilialin@codeaurora.org>; linux-clk@vger.kernel.org; =
-linux-arm-
-> kernel@lists.infradead.org; linux-arm-msm@vger.kernel.org;
-> sboyd@codeaurora.org
-> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
-> rnayak@codeaurora.org; will.deacon@arm.com; tfinkel@codeaurora.org;
-> qualcomm-lt@lists.linaro.org; celster@codeaurora.org; Taniya Das
-> <tdas@codeaurora.org>
-> Subject: Re: [PATCH 02/10] clk: qcom: Fix .set_rate to handle alpha =
-PLLs
-> w/wo dynamic update
->=20
-> Hi,
->=20
-> On 12/12/17 12:31, Ilia Lin wrote:
-> > From: Taniya Das <tdas@codeaurora.org>
-> >
-> > From: Taniya Das <tdas@codeaurora.org>
-> >
-> > Alpha PLLs which do not support dynamic update feature need to be
-> > explicitly disabled before a rate change.
-> > The ones which do support dynamic update do so within a single vco
-> > range, so add a min/max freq check for such PLLs so they fall in the
-> > vco range.
-> >
-> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >   drivers/clk/qcom/clk-alpha-pll.c | 71
-> +++++++++++++++++++++++++++++++++-------
-> >   drivers/clk/qcom/clk-alpha-pll.h |  5 +++
-> >   2 files changed, 65 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c
-> > b/drivers/clk/qcom/clk-alpha-pll.c
-> > index 47a1da3..ecb9e7f 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > @@ -376,19 +376,46 @@ static unsigned long alpha_pll_calc_rate(u64
-> prate, u32 l, u32 a)
-> >   	return alpha_pll_calc_rate(prate, l, a);
-> >   }
-> >
-> > -static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long =
-rate,
-> > -				  unsigned long prate)
-> > +static int alpha_pll_set_rate(struct clk_hw *hw, unsigned long =
-rate,
-> > +			      unsigned long prate,
-> > +			      int (*enable)(struct clk_hw *hw),
-> > +			      void (*disable)(struct clk_hw *hw))
-> >   {
-> > +	bool enabled;
->=20
-> Some remarks about this.
->=20
-> >   	struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
-> >   	const struct pll_vco *vco;
-> >   	u32 l, off =3D pll->offset;
-> >   	u64 a;
-> >
-> >   	rate =3D alpha_pll_round_rate(rate, prate, &l, &a);
-> > -	vco =3D alpha_pll_find_vco(pll, rate);
-> > -	if (!vco) {
-> > -		pr_err("alpha pll not in a valid vco range\n");
-> > -		return -EINVAL;
-> > +	enabled =3D clk_hw_is_enabled(hw);
->=20
-> This is not needed unless we go through the 'else' branch.
->=20
-> > +
-> > +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-> > +		/*
-> > +		 * PLLs which support dynamic updates support one single
-> > +		 * vco range, between min_rate and max_rate supported
-> > +		 */
-> > +		if (rate < pll->min_rate || rate > pll->max_rate) {
-> > +			pr_err("alpha pll rate outside supported min/max
-> range\n");
-> > +			return -EINVAL;
-> > +		}
-> > +	} else {
-> > +		/*
-> > +		 * All alpha PLLs which do not support dynamic update,
-> > +		 * should be disabled before a vco update.
-> > +		 */
-> > +		if (enabled)
-> > +			disable(hw);
-> > +
-> > +		vco =3D alpha_pll_find_vco(pll, rate);
-> > +		if (!vco) {
-> > +			pr_err("alpha pll not in a valid vco range\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-> > +				   PLL_VCO_MASK << PLL_VCO_SHIFT,
-> > +				   vco->val << PLL_VCO_SHIFT);
-> >   	}
-> >
-> >   	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l); @@ -401,16
-> > +428,29 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, =
-unsigned
-> long rate,
-> >   		regmap_write(pll->clkr.regmap, off + PLL_ALPHA_VAL_U, a
-> >> 32);
-> >   	}
-> >
-> > -	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-> > -			   PLL_VCO_MASK << PLL_VCO_SHIFT,
-> > -			   vco->val << PLL_VCO_SHIFT);
-> > -
-> >   	regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-> PLL_ALPHA_EN,
-> >   			   PLL_ALPHA_EN);
-> >
-> > +	if (!(pll->flags & SUPPORTS_DYNAMIC_UPDATE) && enabled)
-> > +		enable(hw);
-> > +
->=20
-> This condition is only "did we disable the clock and need to reenable =
-it?".
->=20
-> To make it clearer, I'd suggest renaming 'enabled' to something like
-> 'need_reenabling' and the code look like this:
->=20
-> static int alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> 			      unsigned long prate,
-> 			      int (*enable)(struct clk_hw *hw),
-> 			      void (*disable)(struct clk_hw *hw)) {
-> 	bool need_reenabling =3D false;
->=20
-> 	[...]
->=20
-> 	if(pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-> 		[...]
-> 	} else {
-> 		if (clk_hw_is_enabled(hw)) {
-> 			disable(hw);
-> 			need_reenabling =3D true;
-> 		}
-> 		[...]
-> 	}
->=20
-> 	[...]
->=20
-> 	if (need_reenabling)
-> 		enable(hw);
->=20
-> }
->=20
->=20
-> Cheers,
->=20
-> --
-> Julien Thierry
+Enable EXT3_FS support to be able to read rootfs from MMC partition
+formatted in EXT2/3/4 .
 
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+
+v3: _ none
+
+v2: _ none
+
+
+ arch/arm/configs/stm32_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
+index 8b64a9e..b736823 100644
+--- a/arch/arm/configs/stm32_defconfig
++++ b/arch/arm/configs/stm32_defconfig
+@@ -72,6 +72,7 @@ CONFIG_STM32_MDMA=y
+ CONFIG_IIO=y
+ CONFIG_STM32_ADC_CORE=y
+ CONFIG_STM32_ADC=y
++CONFIG_EXT3_FS=y
+ # CONFIG_FILE_LOCKING is not set
+ # CONFIG_DNOTIFY is not set
+ # CONFIG_INOTIFY_USER is not set
+-- 
+1.9.1
