@@ -1,63 +1,57 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Tony Prisk <linux@prisktech.co.nz>
-Subject: [PATCH v3 16/34] clk: vt8500: change vtwm_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:55 +0000
-Message-Id: <1514835793-1104-17-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:35026 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755735AbeASPSb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jan 2018 10:18:31 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 19 Jan 2018 16:18:20 +0100
+Message-Id: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Tony Prisk <linux@prisktech.co.nz>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-vt8500.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/soc/rockchip/pm_domains.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 43c88f6..750c087 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -610,7 +610,7 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	u32 filter, mul, div1, div2;
- 	long round_rate;
--	int ret;
-+	int ret = 1;
- 
- 	switch (pll->type) {
- 	case PLL_TYPE_VT8500:
-@@ -634,11 +634,11 @@ static unsigned long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 			round_rate = WM8850_BITS_TO_FREQ(*prate, mul, div1, div2);
- 		break;
- 	default:
--		ret = -EINVAL;
-+		break;
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 5c342167b9db7a16..9936038d38771784 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -16,6 +16,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+ #include <dt-bindings/power/rk3288-power.h>
+@@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 		return -EINVAL;
  	}
  
- 	if (ret)
--		return ret;
-+		return 0;
- 
- 	return round_rate;
- }
+-	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
++	clk_cnt = of_clk_get_parent_count(node);
+ 	pd = devm_kzalloc(pmu->dev,
+ 			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+ 			  GFP_KERNEL);
 -- 
 2.7.4
+
