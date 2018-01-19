@@ -1,526 +1,139 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 37/44] ARM: dm365: Remove legacy clock init
-Date: Sun,  7 Jan 2018 20:23:56 -0600
-Message-Id: <1515378238-23105-8-git-send-email-david@lechnology.com>
-In-Reply-To: <1515378238-23105-1-git-send-email-david@lechnology.com>
-References: <1515378238-23105-1-git-send-email-david@lechnology.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, <linux-imx@nxp.com>,
+	<fabio.estevam@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V3 07/10] clk: imx: make mux parent strings const
+Date: Fri, 19 Jan 2018 21:11:07 +0800
+Message-ID: <1516367470-24340-8-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm365.c.
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
-Signed-off-by: David Lechner <david@lechnology.com>
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
 ---
- arch/arm/mach-davinci/dm365.c | 449 +-----------------------------------------
- 1 file changed, 1 insertion(+), 448 deletions(-)
+ChangeLog:
+v1->v3: no changes
+---
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index fbbe31c..220596c 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -40,11 +40,6 @@
- #include "davinci.h"
- #include "mux.h"
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 6df3389..ba1541f 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
  
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
- #define DM365_KEYSCAN_BASE		0x01c69400
-@@ -60,441 +55,6 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num		= 1,
--	.phys_base	= DAVINCI_PLL1_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct pll_data pll2_data = {
--	.num		= 2,
--	.phys_base	= DAVINCI_PLL2_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DM365_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name		= "pll1",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll1_data,
--};
--
--static struct clk pll1_aux_clk = {
--	.name		= "pll1_aux_clk",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name		= "pll1_sysclkbp",
--	.parent		= &pll1_clk,
--	.flags 		= CLK_PLL | PRE_PLL,
--	.div_reg	= BPDIV
--};
--
--static struct clk clkout0_clk = {
--	.name		= "clkout0",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name		= "pll1_sysclk1",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name		= "pll1_sysclk2",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name		= "pll1_sysclk3",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll1_sysclk4 = {
--	.name		= "pll1_sysclk4",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll1_sysclk5 = {
--	.name		= "pll1_sysclk5",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll1_sysclk6 = {
--	.name		= "pll1_sysclk6",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll1_sysclk7 = {
--	.name		= "pll1_sysclk7",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll1_sysclk8 = {
--	.name		= "pll1_sysclk8",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll1_sysclk9 = {
--	.name		= "pll1_sysclk9",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk pll2_clk = {
--	.name		= "pll2",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll2_data,
--};
--
--static struct clk pll2_aux_clk = {
--	.name		= "pll2_aux_clk",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk clkout1_clk = {
--	.name		= "clkout1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name		= "pll2_sysclk1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll2_sysclk2 = {
--	.name		= "pll2_sysclk2",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll2_sysclk3 = {
--	.name		= "pll2_sysclk3",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll2_sysclk4 = {
--	.name		= "pll2_sysclk4",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll2_sysclk5 = {
--	.name		= "pll2_sysclk5",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll2_sysclk6 = {
--	.name		= "pll2_sysclk6",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll2_sysclk7 = {
--	.name		= "pll2_sysclk7",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll2_sysclk8 = {
--	.name		= "pll2_sysclk8",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll2_sysclk9 = {
--	.name		= "pll2_sysclk9",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk vpss_dac_clk = {
--	.name		= "vpss_dac",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_DAC_CLK,
--};
--
--static struct clk vpss_master_clk = {
--	.name		= "vpss_master",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DM365_LPSC_VPSSMSTR,
--	.flags		= CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name		= "vpss_slave",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm_clk",
--	.parent		= &pll2_sysclk2,
--	.lpsc		= DAVINCI_LPSC_ARM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_UART1,
--};
--
--static struct clk i2c_clk = {
--	.name		= "i2c",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_I2C,
--};
--
--static struct clk mmcsd0_clk = {
--	.name		= "mmcsd0",
--	.parent		= &pll1_sysclk8,
--	.lpsc		= DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk mmcsd1_clk = {
--	.name		= "mmcsd1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_MMC_SD1,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_SPI,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI1,
--};
--
--static struct clk spi2_clk = {
--	.name		= "spi2",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI2,
--};
--
--static struct clk spi3_clk = {
--	.name		= "spi3",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI3,
--};
--
--static struct clk spi4_clk = {
--	.name		= "spi4",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_SPI4,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_GPIO,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name		= "pwm0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name		= "pwm1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name		= "pwm2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM2,
--};
--
--static struct clk pwm3_clk = {
--	.name		= "pwm3",
--	.parent		= &ref_clk,
--	.lpsc		= DM365_LPSC_PWM3,
--};
--
--static struct clk timer0_clk = {
--	.name		= "timer0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name		= "timer1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name		= "timer2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER2,
--	.usecount	= 1,
--};
--
--static struct clk timer3_clk = {
--	.name		= "timer3",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_TIMER3,
--};
--
--static struct clk usb_clk = {
--	.name		= "usb",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_USB,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_EMAC,
--};
--
--static struct clk voicecodec_clk = {
--	.name		= "voice_codec",
--	.parent		= &pll2_sysclk4,
--	.lpsc		= DM365_LPSC_VOICE_CODEC,
--};
--
--static struct clk asp0_clk = {
--	.name		= "asp0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_McBSP1,
--};
--
--static struct clk rto_clk = {
--	.name		= "rto",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_RTO,
--};
--
--static struct clk mjcp_clk = {
--	.name		= "mjcp",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_MJCP,
--};
--
--static struct clk_lookup dm365_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "clkout0", &clkout0_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_sysclk6", &pll1_sysclk6),
--	CLK(NULL, "pll1_sysclk7", &pll1_sysclk7),
--	CLK(NULL, "pll1_sysclk8", &pll1_sysclk8),
--	CLK(NULL, "pll1_sysclk9", &pll1_sysclk9),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_aux", &pll2_aux_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclk3", &pll2_sysclk3),
--	CLK(NULL, "pll2_sysclk4", &pll2_sysclk4),
--	CLK(NULL, "pll2_sysclk5", &pll2_sysclk5),
--	CLK(NULL, "pll2_sysclk6", &pll2_sysclk6),
--	CLK(NULL, "pll2_sysclk7", &pll2_sysclk7),
--	CLK(NULL, "pll2_sysclk8", &pll2_sysclk8),
--	CLK(NULL, "pll2_sysclk9", &pll2_sysclk9),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("da830-mmc.0", NULL, &mmcsd0_clk),
--	CLK("da830-mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK("spi_davinci.3", NULL, &spi3_clk),
--	CLK("spi_davinci.4", NULL, &spi4_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_mdio.0", "fck", &emac_clk),
--	CLK("davinci_voicecodec", NULL, &voicecodec_clk),
--	CLK("davinci-mcbsp", NULL, &asp0_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--/*----------------------------------------------------------------------*/
--
- #define INTMUX		0x18
- #define EVTMUX		0x1c
- 
-@@ -1061,8 +621,6 @@ static struct davinci_id dm365_ids[] = {
- 	},
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e..44817c1 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
  };
  
--static u32 dm365_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- static struct davinci_timer_info dm365_timer_info = {
- 	.timers		= davinci_timer_instance,
- 	.clockevent_id	= T0_BOT,
-@@ -1123,8 +681,6 @@ static const struct davinci_soc_info davinci_soc_info_dm365 = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm365_ids,
- 	.ids_num		= ARRAY_SIZE(dm365_ids),
--	.psc_bases		= dm365_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm365_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm365_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm365_pins),
-@@ -1178,7 +734,6 @@ void __init dm365_init(void)
- 
- void __init dm365_init_time(void)
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
  {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *pll2, *psc;
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index fed7660..956155c 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
  
- 	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_4K);
-@@ -1188,9 +743,7 @@ void __init dm365_init_time(void)
- 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
- 	dm365_pll_clk_init(pll1, pll2);
- 	dm365_psc_clk_init(psc);
--#else
--	davinci_clk_init(dm365_clks);
--#endif
-+
- 	davinci_timer_init();
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk_hw *imx_clk_composite(const char *name,
+ 				 const char * const *parent_names,
+@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
  }
  
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -190,7 +191,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -198,7 +200,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -206,8 +209,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.7.4
