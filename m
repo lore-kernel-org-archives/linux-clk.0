@@ -1,68 +1,54 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v3 07/14] ARM: dts: stm32: Add SDIO controller for stm32f429
-Date: Thu, 18 Jan 2018 15:34:23 +0100
-Message-ID: <1516286070-24927-8-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <clabbe.montjoie@gmail.com>
+Return-Path: <clabbe.montjoie@gmail.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: maxime.ripard@free-electrons.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	wens@csie.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: remove select on obsolete SUNXI_CCU_X kconfig name
+Date: Fri, 19 Jan 2018 15:19:06 +0100
+Message-Id: <20180119141906.7339-1-clabbe.montjoie@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+The following symbols:
+SUNXI_CCU_DIV
+SUNXI_CCU_MULT
+SUNXI_CCU_NK
+SUNXI_CCU_NKM
+SUNXI_CCU_NM
+SUNXI_CCU_MP
+SUNXI_CCU_PHASE
+were removed with the commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a library")
+So selecting them is useless.
 
-stm32f429 embeds ARM_PL180 sdi IP, adds SDIO controller
-node to allow MMC support.
-
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Fixes: c84f5683f6e9 ("clk: sunxi-ng: Add sun4i/sun7i CCU driver")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
+ drivers/clk/sunxi-ng/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
 
-v3: _ none
-
-v2: _ none
-
-
- arch/arm/boot/dts/stm32f429.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index 10099df..ede77e0 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -511,6 +511,17 @@
- 			};
- 		};
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 6427d0ebe2de..33168f94ee39 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -13,13 +13,6 @@ config SUN50I_A64_CCU
  
-+		sdio: sdio@40012c00 {
-+			compatible = "arm,pl180", "arm,primecell";
-+			arm,primecell-periphid = <0x00880180>;
-+			reg = <0x40012c00 0x400>;
-+			clocks = <&rcc 0 STM32F4_APB2_CLOCK(SDIO)>;
-+			clock-names = "apb_pclk";
-+			interrupts = <49>;
-+			max-frequency = <48000000>;
-+			status = "disabled";
-+		};
-+
- 		syscfg: system-config@40013800 {
- 			compatible = "syscon";
- 			reg = <0x40013800 0x400>;
+ config SUN4I_A10_CCU
+ 	bool "Support for the Allwinner A10/A20 CCU"
+-	select SUNXI_CCU_DIV
+-	select SUNXI_CCU_MULT
+-	select SUNXI_CCU_NK
+-	select SUNXI_CCU_NKM
+-	select SUNXI_CCU_NM
+-	select SUNXI_CCU_MP
+-	select SUNXI_CCU_PHASE
+ 	default MACH_SUN4I
+ 	default MACH_SUN7I
+ 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
 -- 
-1.9.1
+2.13.6
