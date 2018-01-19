@@ -1,76 +1,59 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 33/34] clk: lpc32xx: change round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:59 +0000
-Message-Id: <1514835300-381-19-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/9] clk: meson: check pll rate param table before using it
+Date: Fri, 19 Jan 2018 16:55:21 +0100
+Message-Id: <20180119155529.11532-2-jbrunet@baylibre.com>
+In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
+References: <20180119155529.11532-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Make sure the rate param table is available before using it.
+Some read-only plls don't provide it, which is ok since the
+table is not used by read-only clocks. R/W clocks are supposed
+to provide it, but it does not hurt check it.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/nxp/clk-lpc32xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/meson/clk-pll.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 76c17f4..0e0d258 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -664,17 +664,17 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
- 	 * USB divider, USB PLL N and M parameters.
- 	 */
- 	if (rate != 48000000)
--		return -EINVAL;
-+		return 0;
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 01341553f50b..2614341fc4ad 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -94,6 +94,13 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	const struct pll_rate_table *rate_table = pll->rate_table;
+ 	int i;
  
- 	/* USB divider clock */
- 	usb_div_hw = clk_hw_get_parent_by_index(hw, 0);
- 	if (!usb_div_hw)
--		return -EINVAL;
-+		return 0;
++	/*
++	 * if the table is missing, just return the current rate
++	 * since we don't have the other available frequencies
++	 */
++	if (!rate_table)
++		return meson_clk_pll_recalc_rate(hw, *parent_rate);
++
+ 	for (i = 0; i < pll->rate_count; i++) {
+ 		if (rate <= rate_table[i].rate)
+ 			return rate_table[i].rate;
+@@ -109,6 +116,9 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
+ 	const struct pll_rate_table *rate_table = pll->rate_table;
+ 	int i;
  
- 	/* Main oscillator clock */
- 	osc_hw = clk_hw_get_parent_by_index(usb_div_hw, 0);
- 	if (!osc_hw)
--		return -EINVAL;
-+		return 0;
- 	o = clk_hw_get_rate(osc_hw);	/* must be in range 1..20 MHz */
- 
- 	/* Check if valid USB divider and USB PLL parameters exists */
-@@ -697,7 +697,7 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
- 		}
- 	}
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- #define LPC32XX_DEFINE_PLL_OPS(_name, _rc, _sr, _rr)			\
++	if (!rate_table)
++		return NULL;
++
+ 	for (i = 0; i < pll->rate_count; i++) {
+ 		if (rate == rate_table[i].rate)
+ 			return &rate_table[i];
 -- 
-2.7.4
+2.14.3
