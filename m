@@ -1,163 +1,66 @@
 Return-Path: <jbrunet@baylibre.com>
 Return-Path: <jbrunet@baylibre.com>
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: mux: add helper function for index/value translation
-Date: Thu, 18 Jan 2018 12:01:44 +0100
-Message-Id: <20180118110144.30619-3-jbrunet@baylibre.com>
-In-Reply-To: <20180118110144.30619-1-jbrunet@baylibre.com>
-References: <20180118110144.30619-1-jbrunet@baylibre.com>
+Subject: [PATCH v2 0/9] clk: meson: pll fixes
+Date: Fri, 19 Jan 2018 16:55:20 +0100
+Message-Id: <20180119155529.11532-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add helper functions for the translation between parent index and
-register value in the generic multiplexer function. The purpose of
-this change is avoid duplicating the code in other clock providers,
-using the same generic logic.
+This changeset is a collection of fixes and clean-up around the pll clock
+provider. This has been triggered by the discussion around the ethernet
+clock on the axg [0].
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-mux.c        | 75 +++++++++++++++++++++++++-------------------
- include/linux/clk-provider.h |  4 +++
- 2 files changed, 47 insertions(+), 32 deletions(-)
+On the axg the rate reported by the fixed_pll is off by 8Mhz, which leads
+the internal mux of the ethernet driver to pick an mpll2 instead of the
+fdiv4.
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 39cabe157163..ac4a042f8658 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -26,35 +26,24 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
--static u8 clk_mux_get_parent(struct clk_hw *hw)
-+int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			 unsigned int val)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
--	u32 val;
- 
--	/*
--	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
--	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
--	 * to 0x7 (index starts at one)
--	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
--	 * val = 0x4 really means "bit 2, index starts at bit 0"
--	 */
--	val = clk_readl(mux->reg) >> mux->shift;
--	val &= mux->mask;
--
--	if (mux->table) {
-+	if (table) {
- 		int i;
- 
- 		for (i = 0; i < num_parents; i++)
--			if (mux->table[i] == val)
-+			if (table[i] == val)
- 				return i;
- 		return -EINVAL;
- 	}
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-+	if (val && (flags & CLK_MUX_INDEX_BIT))
- 		val = ffs(val) - 1;
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-+	if (val && (flags & CLK_MUX_INDEX_ONE))
- 		val--;
- 
- 	if (val >= num_parents)
-@@ -62,36 +51,58 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 
- 	return val;
- }
-+EXPORT_SYMBOL_GPL(clk_mux_val_to_index);
- 
--static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
--	u32 val;
--	unsigned long flags = 0;
-+	unsigned int val = index;
- 
--	if (mux->table) {
--		index = mux->table[index];
-+	if (table) {
-+		val = table[index];
- 	} else {
--		if (mux->flags & CLK_MUX_INDEX_BIT)
--			index = 1 << index;
-+		if (flags & CLK_MUX_INDEX_BIT)
-+			val = 1 << index;
- 
--		if (mux->flags & CLK_MUX_INDEX_ONE)
--			index++;
-+		if (flags & CLK_MUX_INDEX_ONE)
-+			val++;
- 	}
- 
-+	return val;
-+}
-+EXPORT_SYMBOL_GPL(clk_mux_index_to_val);
-+
-+static u8 clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val;
-+
-+	val = clk_readl(mux->reg) >> mux->shift;
-+	val &= mux->mask;
-+
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-+}
-+
-+static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+	unsigned long flags = 0;
-+	u32 reg;
-+
- 	if (mux->lock)
- 		spin_lock_irqsave(mux->lock, flags);
- 	else
- 		__acquire(mux->lock);
- 
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
--		val = mux->mask << (mux->shift + 16);
-+		reg = mux->mask << (mux->shift + 16);
- 	} else {
--		val = clk_readl(mux->reg);
--		val &= ~(mux->mask << mux->shift);
-+		reg = clk_readl(mux->reg);
-+		reg &= ~(mux->mask << mux->shift);
- 	}
--	val |= index << mux->shift;
--	clk_writel(val, mux->reg);
-+	val = val << mux->shift;
-+	reg |= val;
-+	clk_writel(reg, mux->reg);
- 
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 38861e75b017..cf3bf8aabced 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -514,6 +514,10 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
-+int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			 unsigned int val);
-+unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index);
-+
- void clk_unregister_mux(struct clk *clk);
- void clk_hw_unregister_mux(struct clk_hw *hw);
- 
+With this series applied, the fixed_pll of the axg now reports
+1999998046 Hz, which is coherent with measurements (~2GHz)
+
+While debugging this, we uncovered quite a mess around the hdmi_pll
+of the gxbb and gxl family. This is also fixed by this series.
+
+Last, the parameters table provided to the read-only sys_plls have
+been removed, saving a bit of memory
+
+There is still work to be done on this clock provider. Someday,
+I hope to see the parameter tables go away completely. This pll
+is just a (quite complex) fractional divider, we sould be able to
+figure something out at runtime.
+
+Changes since v1: [1]
+* fix several typos in the comments
+* fix arm32 u64 math in patch 3 (Thanks a lot Martin!!)
+
+[0]: https://lkml.kernel.org/r/1516095424.2608.36.camel@baylibre.com
+[1]: https://lkml.kernel.org/r/20180118184532.6856-1-jbrunet@baylibre.com
+
+Jerome Brunet (9):
+  clk: meson: check pll rate param table before using it
+  clk: meson: remove useless pll rate params tables
+  clk: meson: remove unnecessary rounding in the pll clock
+  clk: meson: use the frac parameter width instead of a constant
+  clk: meson: add od3 to the pll driver
+  clk: meson: add the gxl hdmi pll
+  clk: meson: fix rate calculation of plls with a fractional part
+  clk: meson: gxbb: add the fractional part of the fixed_pll
+  clk: meson: axg: add the fractional part of the fixed_pll
+
+ drivers/clk/meson/axg.c     |  99 ++------------------------
+ drivers/clk/meson/clk-pll.c |  41 ++++++++---
+ drivers/clk/meson/clkc.h    |   2 +
+ drivers/clk/meson/gxbb.c    | 166 +++++++++++++++++++-------------------------
+ drivers/clk/meson/gxbb.h    |   3 +-
+ 5 files changed, 111 insertions(+), 200 deletions(-)
+
 -- 
 2.14.3
