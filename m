@@ -1,41 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 11 Jan 2018 15:22:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 09/44] dt-bindings: clock: New bindings for TI Davinci
- PSC
-Message-ID: <20180111212246.kynsbe2gzbx6fzsf@rob-hp-laptop>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-10-git-send-email-david@lechnology.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515377863-20358-10-git-send-email-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH 9/9] ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
+Date: Sat, 20 Jan 2018 07:17:35 +0800
+Message-Id: <20180119231735.61504-10-icenowy@aosc.io>
+In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
+References: <20180119231735.61504-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 07, 2018 at 08:17:08PM -0600, David Lechner wrote:
-> This adds a new binding for the Power Sleep Controller (PSC) for the
-> mach-davinci family of processors.
-> 
-> Note: Although TI Keystone has a very similar PSC, we are not using the
-> existing bindings. Keystone is using a legacy one-node-per-clock binding
-> (actually two nodes if you count the separate reset binding for the same
-> IP block). Also, some davinci LPSCs have quirks that aren't handled by
-> the keystone bindings, so we would be adding one compatible string per
-> clock with quirks instead of just a new compatible string for each
-> controller.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  .../devicetree/bindings/clock/ti/davinci/psc.txt   | 47 ++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+Lichee Pi Nano is a F1C100s board by Lichee Pi.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Add initial device tree for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 27 +++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+new file mode 100644
+index 000000000000..11c891716acc
+--- /dev/null
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR X11)
++/*
++ * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
++ */
++
++/dts-v1/;
++#include "suniv-f1c100s.dtsi"
++
++/ {
++	model = "Lichee Pi Nano";
++	compatible = "licheepi,licheepi-nano", "allwinner,suniv-f1c100s",
++		     "allwinner,suniv";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
+-- 
+2.14.2
