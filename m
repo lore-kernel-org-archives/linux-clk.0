@@ -1,76 +1,256 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 5 Jan 2018 13:04:04 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-Subject: Re: [PATCH v1 5/6] clk: mediatek: update missing clock data for
- MT7622 audsys
-Message-ID: <20180105190404.37c5gyjgoboibbrl@rob-hp-laptop>
-References: <cover.1515038387.git.ryder.lee@mediatek.com>
- <296e97ad8720d575918657e821bb2a01a2d31c49.1515038387.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <296e97ad8720d575918657e821bb2a01a2d31c49.1515038387.git.ryder.lee@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/9] clk: meson: remove useless pll rate params tables
+Date: Fri, 19 Jan 2018 16:55:22 +0100
+Message-Id: <20180119155529.11532-3-jbrunet@baylibre.com>
+In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
+References: <20180119155529.11532-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 04, 2018 at 03:44:21PM +0800, Ryder Lee wrote:
-> Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt7622-aud.c  | 3 ++-
->  include/dt-bindings/clock/mt7622-clk.h | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> index fad7d9f..96959ad 100644
-> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> @@ -106,6 +106,7 @@
->  	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
->  	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
->  	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
-> +	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
->  	/* AUDIO2 */
->  	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
->  	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
-> @@ -146,7 +147,7 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
->  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
->  
->  	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> -			       clk_data);
-> +				   clk_data);
+Read-only plls don't need param table to recalculate the rate.
+Providing them with a param table is just a waste of memory.
 
-Drop this unrelated change.
+Remove the useless tables from sys_pll on gxbb and axg.
 
->  
->  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->  	if (r)
-> diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
-> index 3e514ed..e9d77f0 100644
-> --- a/include/dt-bindings/clock/mt7622-clk.h
-> +++ b/include/dt-bindings/clock/mt7622-clk.h
-> @@ -235,7 +235,8 @@
->  #define CLK_AUDIO_MEM_ASRC3		43
->  #define CLK_AUDIO_MEM_ASRC4		44
->  #define CLK_AUDIO_MEM_ASRC5		45
-> -#define CLK_AUDIO_NR_CLK		46
-> +#define CLK_AUDIO_AFE_CONN		46
-> +#define CLK_AUDIO_NR_CLK		47
->  
->  /* SSUSBSYS */
->  
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c  | 94 ------------------------------------------------
+ drivers/clk/meson/gxbb.c | 94 ------------------------------------------------
+ 2 files changed, 188 deletions(-)
+
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 02f4401d7bc3..56806c6bd9d5 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -21,98 +21,6 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(24000000, 56, 1, 2),
+-	PLL_RATE(48000000, 64, 1, 2),
+-	PLL_RATE(72000000, 72, 1, 2),
+-	PLL_RATE(96000000, 64, 1, 2),
+-	PLL_RATE(120000000, 80, 1, 2),
+-	PLL_RATE(144000000, 96, 1, 2),
+-	PLL_RATE(168000000, 56, 1, 1),
+-	PLL_RATE(192000000, 64, 1, 1),
+-	PLL_RATE(216000000, 72, 1, 1),
+-	PLL_RATE(240000000, 80, 1, 1),
+-	PLL_RATE(264000000, 88, 1, 1),
+-	PLL_RATE(288000000, 96, 1, 1),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(408000000, 68, 1, 2),
+-	PLL_RATE(432000000, 72, 1, 2),
+-	PLL_RATE(456000000, 76, 1, 2),
+-	PLL_RATE(480000000, 80, 1, 2),
+-	PLL_RATE(504000000, 84, 1, 2),
+-	PLL_RATE(528000000, 88, 1, 2),
+-	PLL_RATE(552000000, 92, 1, 2),
+-	PLL_RATE(576000000, 96, 1, 2),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(840000000, 70, 1, 1),
+-	PLL_RATE(864000000, 72, 1, 1),
+-	PLL_RATE(888000000, 74, 1, 1),
+-	PLL_RATE(912000000, 76, 1, 1),
+-	PLL_RATE(936000000, 78, 1, 1),
+-	PLL_RATE(960000000, 80, 1, 1),
+-	PLL_RATE(984000000, 82, 1, 1),
+-	PLL_RATE(1008000000, 84, 1, 1),
+-	PLL_RATE(1032000000, 86, 1, 1),
+-	PLL_RATE(1056000000, 88, 1, 1),
+-	PLL_RATE(1080000000, 90, 1, 1),
+-	PLL_RATE(1104000000, 92, 1, 1),
+-	PLL_RATE(1128000000, 94, 1, 1),
+-	PLL_RATE(1152000000, 96, 1, 1),
+-	PLL_RATE(1176000000, 98, 1, 1),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
+-	PLL_RATE(1560000000, 65, 1, 0),
+-	PLL_RATE(1584000000, 66, 1, 0),
+-	PLL_RATE(1608000000, 67, 1, 0),
+-	PLL_RATE(1632000000, 68, 1, 0),
+-	PLL_RATE(1656000000, 68, 1, 0),
+-	PLL_RATE(1680000000, 68, 1, 0),
+-	PLL_RATE(1704000000, 68, 1, 0),
+-	PLL_RATE(1728000000, 69, 1, 0),
+-	PLL_RATE(1752000000, 69, 1, 0),
+-	PLL_RATE(1776000000, 69, 1, 0),
+-	PLL_RATE(1800000000, 69, 1, 0),
+-	PLL_RATE(1824000000, 70, 1, 0),
+-	PLL_RATE(1848000000, 70, 1, 0),
+-	PLL_RATE(1872000000, 70, 1, 0),
+-	PLL_RATE(1896000000, 70, 1, 0),
+-	PLL_RATE(1920000000, 71, 1, 0),
+-	PLL_RATE(1944000000, 71, 1, 0),
+-	PLL_RATE(1968000000, 71, 1, 0),
+-	PLL_RATE(1992000000, 71, 1, 0),
+-	PLL_RATE(2016000000, 72, 1, 0),
+-	PLL_RATE(2040000000, 72, 1, 0),
+-	PLL_RATE(2064000000, 72, 1, 0),
+-	PLL_RATE(2088000000, 72, 1, 0),
+-	PLL_RATE(2112000000, 73, 1, 0),
+-	{ /* sentinel */ },
+-};
+-
+ static struct meson_clk_pll axg_fixed_pll = {
+ 	.m = {
+ 		.reg_off = HHI_MPLL_CNTL,
+@@ -154,8 +62,6 @@ static struct meson_clk_pll axg_sys_pll = {
+ 		.shift   = 10,
+ 		.width   = 2,
+ 	},
+-	.rate_table = sys_pll_rate_table,
+-	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll",
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 472a3cfbfbc5..2d851bad13fa 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -29,98 +29,6 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(24000000, 56, 1, 2),
+-	PLL_RATE(48000000, 64, 1, 2),
+-	PLL_RATE(72000000, 72, 1, 2),
+-	PLL_RATE(96000000, 64, 1, 2),
+-	PLL_RATE(120000000, 80, 1, 2),
+-	PLL_RATE(144000000, 96, 1, 2),
+-	PLL_RATE(168000000, 56, 1, 1),
+-	PLL_RATE(192000000, 64, 1, 1),
+-	PLL_RATE(216000000, 72, 1, 1),
+-	PLL_RATE(240000000, 80, 1, 1),
+-	PLL_RATE(264000000, 88, 1, 1),
+-	PLL_RATE(288000000, 96, 1, 1),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(408000000, 68, 1, 2),
+-	PLL_RATE(432000000, 72, 1, 2),
+-	PLL_RATE(456000000, 76, 1, 2),
+-	PLL_RATE(480000000, 80, 1, 2),
+-	PLL_RATE(504000000, 84, 1, 2),
+-	PLL_RATE(528000000, 88, 1, 2),
+-	PLL_RATE(552000000, 92, 1, 2),
+-	PLL_RATE(576000000, 96, 1, 2),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(840000000, 70, 1, 1),
+-	PLL_RATE(864000000, 72, 1, 1),
+-	PLL_RATE(888000000, 74, 1, 1),
+-	PLL_RATE(912000000, 76, 1, 1),
+-	PLL_RATE(936000000, 78, 1, 1),
+-	PLL_RATE(960000000, 80, 1, 1),
+-	PLL_RATE(984000000, 82, 1, 1),
+-	PLL_RATE(1008000000, 84, 1, 1),
+-	PLL_RATE(1032000000, 86, 1, 1),
+-	PLL_RATE(1056000000, 88, 1, 1),
+-	PLL_RATE(1080000000, 90, 1, 1),
+-	PLL_RATE(1104000000, 92, 1, 1),
+-	PLL_RATE(1128000000, 94, 1, 1),
+-	PLL_RATE(1152000000, 96, 1, 1),
+-	PLL_RATE(1176000000, 98, 1, 1),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
+-	PLL_RATE(1560000000, 65, 1, 0),
+-	PLL_RATE(1584000000, 66, 1, 0),
+-	PLL_RATE(1608000000, 67, 1, 0),
+-	PLL_RATE(1632000000, 68, 1, 0),
+-	PLL_RATE(1656000000, 68, 1, 0),
+-	PLL_RATE(1680000000, 68, 1, 0),
+-	PLL_RATE(1704000000, 68, 1, 0),
+-	PLL_RATE(1728000000, 69, 1, 0),
+-	PLL_RATE(1752000000, 69, 1, 0),
+-	PLL_RATE(1776000000, 69, 1, 0),
+-	PLL_RATE(1800000000, 69, 1, 0),
+-	PLL_RATE(1824000000, 70, 1, 0),
+-	PLL_RATE(1848000000, 70, 1, 0),
+-	PLL_RATE(1872000000, 70, 1, 0),
+-	PLL_RATE(1896000000, 70, 1, 0),
+-	PLL_RATE(1920000000, 71, 1, 0),
+-	PLL_RATE(1944000000, 71, 1, 0),
+-	PLL_RATE(1968000000, 71, 1, 0),
+-	PLL_RATE(1992000000, 71, 1, 0),
+-	PLL_RATE(2016000000, 72, 1, 0),
+-	PLL_RATE(2040000000, 72, 1, 0),
+-	PLL_RATE(2064000000, 72, 1, 0),
+-	PLL_RATE(2088000000, 72, 1, 0),
+-	PLL_RATE(2112000000, 73, 1, 0),
+-	{ /* sentinel */ },
+-};
+-
+ static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
+ 	PLL_RATE(96000000, 32, 1, 3),
+ 	PLL_RATE(99000000, 33, 1, 3),
+@@ -356,8 +264,6 @@ static struct meson_clk_pll gxbb_sys_pll = {
+ 		.shift   = 10,
+ 		.width   = 2,
+ 	},
+-	.rate_table = sys_pll_rate_table,
+-	.rate_count = ARRAY_SIZE(sys_pll_rate_table),
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll",
+-- 
+2.14.3
