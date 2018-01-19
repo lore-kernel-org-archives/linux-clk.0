@@ -1,94 +1,57 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:41086 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754987AbeAHDtD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 7 Jan 2018 22:49:03 -0500
-Date: Mon, 8 Jan 2018 11:49:01 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner clock changes for 4.16, round 2
-Message-ID: <20180108034901.GA5577@wens.csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:57048 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755749AbeASPSb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jan 2018 10:18:31 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 19 Jan 2018 16:18:21 +0100
+Message-Id: <1516375101-29836-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a very big number in the
+allocation below.
 
---mP3DRpeJDSE+ciuQ
-Content-Type: text/plain; charset=big5
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hi Mike, Stephen,
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index ce62a47a6647a817..4379e4d602bc5428 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk/tegra.h>
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+@@ -743,7 +744,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	unsigned int i, count;
+ 	int err;
+ 
+-	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(np);
+ 	if (count == 0)
+ 		return -ENODEV;
+ 
+-- 
+2.7.4
 
-Here are a few more clock changes for 4.16. The DE2 clock changes have
-been around for awhile. The A83T clock fix was found by Jernej while
-working on HDMI output for the SoC. We'd like to get these in so patches
-don't pile up on the mailing lists.
-
-ChenYu
-
-The following changes since commit e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4:
-
-  clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL (201=
-7-12-08 10:08:32 +0100)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-for-4.16-2
-
-for you to fetch changes up to 7dbc7f5f4904cfddc199af171ea095490a434f15:
-
-  clk: sunxi-ng: a83t: Add M divider to TCON1 clock (2018-01-03 13:45:04 +0=
-800)
-
-----------------------------------------------------------------
-Allwinner clock changes for 4.16, part 2
-
-The hardware description for the DE2 clocks on the A64 and H5 SoCs is
-fixed, and support for these clocks on the H3 is added. Also, the
-description for the TCON1 clock on the A83T is fixed. All these are
-non-critical, as they have no users.
-
-----------------------------------------------------------------
-Icenowy Zheng (3):
-      dt-bindings: fix the binding of Allwinner DE2 CCU of A83T and H3
-      clk: sunxi-ng: add support for Allwinner H3 DE2 CCU
-      clk: sunxi-ng: fix the A64/H5 clock description of DE2 CCU
-
-Jernej =C5=A0krabec (1):
-      clk: sunxi-ng: a83t: Add M divider to TCON1 clock
-
- .../devicetree/bindings/clock/sun8i-de2.txt        |  5 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              |  4 +-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 53 ++++++++++++++++++=
-++--
- 3 files changed, 55 insertions(+), 7 deletions(-)
-
---mP3DRpeJDSE+ciuQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAlpS6iwACgkQOJpUIZwP
-JDBojA//bZRGfUJU1QfaRL2flgrpLDomLHH9/VsRziNv0ytaEez78OGRkGMJ6fZ7
-3W7OQgncSfcJs3G0U9GMizxa6u1y33riCoRg9/QIZNRf57JraRO3iEXDXGVwru2H
-NIYfuYNZ+K0bfe9eVFngUnScbAFrWr8+K3+kKJEgY6kUFfN9LbauNgLI8Gxubf28
-/MX18yPglORsdOThGK2rmdLc25WmEYeBZtBoKCb0PI2k5O55u32DAnftttddKTyU
-kDanGt/5YzoKEx1Q6DCXWiIQOftLUH/LXIqFFiNbzcJotgQt2cjq18SuuIhnRNyo
-khAxu8EMirgN7waCqvRfD9nhfXUzHU7l79B9Pz80lDLev0BYeIHPSiaNdMVJ6lgw
-Swt1vXXL3rHdVARrlQhPZZOGO0nbxpg5hdRKjuKmKXbOh6M4Pe+YGOoyFKS+oiW5
-AUBxgRC3WYzF65TZNRgkHxKgrURtafQUzWOTC95YS/N+bQ1nPe/QB36YWwKypy48
-vBiY9McuUsywV/uh3oVY1+JuxfTliCFt+dx5GmyrdRvtzz/Kj1Of6+o0Qe16zG+d
-8GjbZ+uA1bGrZWTlPvfUUVB43N3vtfctrifcAxz1jG3z/tlqRWzVEltqh68RV5Jq
-KSAoJUXCUTDxMpEp103SOXaYmk2PUCJRqzSS3U3GgRfK/q7cAmw=
-=PrjA
------END PGP SIGNATURE-----
-
---mP3DRpeJDSE+ciuQ--
