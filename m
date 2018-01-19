@@ -1,66 +1,51 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 11/34] clk: bcm: iproc: change iproc_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:50 +0000
-Message-Id: <1514835793-1104-12-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:48387 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932644AbeASXSj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jan 2018 18:18:39 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH 5/9] clocksource/drivers/sun4i: register as sched_clock on suniv
+Date: Sat, 20 Jan 2018 07:17:31 +0800
+Message-Id: <20180119231735.61504-6-icenowy@aosc.io>
+In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
+References: <20180119231735.61504-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+The suniv chip (newer F-series Allwinner SoCs) is based on ARM926EJ-S
+CPU, thus it has no architecture timer.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Register sun4i_timer as sched_clock on it.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/bcm/clk-iproc-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/sun4i_timer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index b5399b2..54e914c 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -439,7 +439,7 @@ static unsigned long iproc_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct iproc_pll *pll = clk->pll;
+diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
+index 88e09554ce7a..16dedf5ff0ca 100644
+--- a/drivers/clocksource/sun4i_timer.c
++++ b/drivers/clocksource/sun4i_timer.c
+@@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
+ 	 */
+ 	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
+ 	    of_machine_is_compatible("allwinner,sun5i-a13") ||
+-	    of_machine_is_compatible("allwinner,sun5i-a10s"))
++	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
++	    of_machine_is_compatible("allwinner,suniv"))
+ 		sched_clock_register(sun4i_timer_sched_read, 32,
+ 				     timer_of_rate(&to));
  
- 	if (rate == 0 || *parent_rate == 0 || !pll->vco_param)
--		return -EINVAL;
-+		return 0;
- 
- 	for (i = 0; i < pll->num_vco_entries; i++) {
- 		if (rate <= pll->vco_param[i].rate)
-@@ -541,7 +541,7 @@ static unsigned long iproc_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned int div;
- 
- 	if (rate == 0 || *parent_rate == 0)
--		return -EINVAL;
-+		return 0;
- 
- 	if (rate == *parent_rate)
- 		return *parent_rate;
 -- 
-2.7.4
+2.14.2
+
