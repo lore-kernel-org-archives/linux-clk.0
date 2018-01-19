@@ -1,57 +1,40 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <andriy.shevchenko@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v3 07/34] clk: axs10x: change i2s_pll_round_rate return logic
-Date: Mon,  1 Jan 2018 19:42:46 +0000
-Message-Id: <1514835793-1104-8-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] HACK: earlyprintk: Allow nocfg and keep together
+Date: Fri, 19 Jan 2018 19:35:17 +0200
+Message-Id: <20180119173517.22474-1-andriy.shevchenko@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
-
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/axs10x/i2s_pll_clock.c | 4 ++--
+ arch/x86/kernel/early_printk.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-index 061260c..20f7ebf 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -119,14 +119,14 @@ static unsigned long i2s_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	if (!pll_cfg) {
- 		dev_err(clk->dev, "invalid parent rate=%ld\n", *prate);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	for (i = 0; pll_cfg[i].rate != 0; i++)
- 		if (pll_cfg[i].rate == rate)
- 			return rate;
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- static int i2s_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+index 7e07427df3f4..9606e45da124 100644
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -204,7 +204,7 @@ static __init void early_serial_init(char *s)
+ 	 * Lastly, initialize the hardware
+ 	 */
+ 	if (*s) {
+-		if (strcmp(s, "nocfg") == 0)
++		if (strncmp(s, "nocfg", 5) == 0)
+ 			/* Sometimes, we want to leave the UART alone
+ 			 * and assume the BIOS has set it up correctly.
+ 			 * "nocfg" tells us this is the case, and we
+@@ -320,7 +320,7 @@ static __init void early_pci_serial_init(char *s)
+ 	 * Lastly, initialize the hardware
+ 	 */
+ 	if (*s) {
+-		if (strcmp(s, "nocfg") == 0)
++		if (strncmp(s, "nocfg", 5) == 0)
+ 			/* Sometimes, we want to leave the UART alone
+ 			 * and assume the BIOS has set it up correctly.
+ 			 * "nocfg" tells us this is the case, and we
 -- 
-2.7.4
+2.15.1
