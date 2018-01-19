@@ -1,77 +1,111 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 5/9] doc: dt-bindings: Add doc for the Ingenic TCU timers driver
-Date: Wed, 10 Jan 2018 23:48:34 +0100
-Message-Id: <20180110224838.16711-5-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH V3 00/10] clk: add imx7ulp clk support
+Date: Fri, 19 Jan 2018 21:11:00 +0800
+Message-ID: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ linux-imx@nxp.com, fabio.estevam@nxp.com, shawnguo@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation about how to properly use the Ingenic TCU
-(Timer/Counter Unit) timers driver from devicetree.
+This patch series intends to add imx7ulp clk support.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- .../devicetree/bindings/timer/ingenic,tcu.txt      | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
- v3: New patch in this series
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
 
-diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-new file mode 100644
-index 000000000000..dd76877efb8b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-@@ -0,0 +1,35 @@
-+Ingenic JZ47xx SoCs Timer/Counter Unit driver
-+---------------------------------------------
-+
-+Required properties:
-+
-+- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
-+  * ingenic,jz4740-tcu
-+  * ingenic,jz4770-tcu
-+  * ingenic,jz4780-tcu
-+- interrupt-parent : phandle of the TCU interrupt controller.
-+- interrupts : Specifies the interrupts the controller is connected to.
-+- clocks : List of phandle & clock specifiers for the TCU clocks.
-+- clock-names : List of name strings for the TCU clocks.
-+
-+Example:
-+
-+/ {
-+	mfd@10002000 {
-+		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-+		reg = <0x10002000 0x1000>;
-+
-+		tcu_timer: timer {
-+			compatible = "ingenic,jz4740-tcu";
-+			reg = <0x10002010 0xFF0>;
-+
-+			clocks = <&tcu 0>, <&tcu 1>, <&tcu 2>, <&tcu 3>,
-+					 <&tcu 4>, <&tcu 5>, <&tcu 6>, <&tcu 7>;
-+			clock-names = "timer0", "timer1", "timer2", "timer3",
-+						  "timer4", "timer5", "timer6", "timer7";
-+
-+			interrupt-parent = <&tcu>;
-+			interrupts = <0 1 2 3 4 5 6 7>;
-+		};
-+	};
-+};
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+
+Note: this series only adds A7 clock domain support as M4 clock
+domain will be handled by M4 seperately.
+
+Change Log:
+v2->v3:
+ * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
+   Others no changes.
+
+v1->v2:
+ * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+ * use clk_hw apis to register clocks
+ * use of_clk_add_hw_provider
+ * split the clocks register process into two parts: early part for possible
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
+
+Dong Aisheng (10):
+  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+  clk: imx: add pllv4 support
+  clk: imx: add pfdv2 support
+  clk: imx: add composite clk support
+  dt-bindings: clock: add imx7ulp clock binding doc
+  clk: imx: make mux parent strings const
+  clk: imx: implement new clk_hw based APIs
+  clk: imx: add imx7ulp clk driver
+  add imx7ulp support
+
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/imx7ulp-evk.dts                  |  87 ++++++++
+ arch/arm/boot/dts/imx7ulp.dtsi                     | 202 ++++++++++++++++++
+ arch/arm/configs/imx_v6_v7_defconfig               |  16 +-
+ arch/arm/mach-imx/Kconfig                          |   9 +
+ arch/arm/mach-imx/Makefile                         |   1 +
+ arch/arm/mach-imx/common.h                         |   1 +
+ arch/arm/mach-imx/cpu.c                            |   3 +
+ arch/arm/mach-imx/mach-imx7ulp.c                   |  37 ++++
+ arch/arm/mach-imx/mxc.h                            |   1 +
+ arch/arm/mach-imx/pm-imx7ulp.c                     |  32 +++
+ drivers/clk/clk-divider.c                          | 152 ++++++++++++++
+ drivers/clk/clk-fractional-divider.c               |  10 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-busy.c                         |   2 +-
+ drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+ drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+ drivers/clk/imx/clk-imx7ulp.c                      | 232 +++++++++++++++++++++
+ drivers/clk/imx/clk-pfdv2.c                        | 207 ++++++++++++++++++
+ drivers/clk/imx/clk-pllv4.c                        | 188 +++++++++++++++++
+ drivers/clk/imx/clk.c                              |  22 ++
+ drivers/clk/imx/clk.h                              |  92 +++++++-
+ include/dt-bindings/clock/imx7ulp-clock.h          | 108 ++++++++++
+ include/linux/clk-provider.h                       |  17 ++
+ 25 files changed, 1561 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+ create mode 100644 arch/arm/boot/dts/imx7ulp-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx7ulp.dtsi
+ create mode 100644 arch/arm/mach-imx/mach-imx7ulp.c
+ create mode 100644 arch/arm/mach-imx/pm-imx7ulp.c
+ create mode 100644 drivers/clk/imx/clk-composite.c
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+
 -- 
-2.11.0
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
