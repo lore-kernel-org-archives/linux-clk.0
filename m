@@ -1,185 +1,288 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 02 Jan 2018 17:32:27 +0100
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 10/15] MIPS: ingenic: Add machine info for supported
- boards
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Message-Id: <1514910747.3623.0@smtp.crapouillou.net>
-In-Reply-To: <CANc+2y7ePJ9PwXQp2EQS_CFj541iOkWLbZm7K3U0G7j0bx4RDg@mail.gmail.com>
-References: <20180102150848.11314-1-paul@crapouillou.net>
-        <20180102150848.11314-10-paul@crapouillou.net>
-        <CANc+2y7ePJ9PwXQp2EQS_CFj541iOkWLbZm7K3U0G7j0bx4RDg@mail.gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, <linux-imx@nxp.com>,
+	<fabio.estevam@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V3 04/10] clk: imx: add pfdv2 support
+Date: Fri, 19 Jan 2018 21:11:04 +0800
+Message-ID: <1516367470-24340-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi PrasannaKumar,
+The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
+Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
 
-Le mar. 2 janv. 2018 =E0 17:02, PrasannaKumar Muralidharan=20
-<prasannatsmkumar@gmail.com> a =E9crit :
-> Hi Paul,
->=20
-> On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net>=20
-> wrote:
->>  This makes sure that 'mips_machtype' will be initialized to the SoC
->>  version used on the board.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>   arch/mips/Kconfig         |  1 +
->>   arch/mips/jz4740/Makefile |  2 +-
->>   arch/mips/jz4740/boards.c | 12 ++++++++++++
->>   arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
->>   4 files changed, 43 insertions(+), 6 deletions(-)
->>   create mode 100644 arch/mips/jz4740/boards.c
->>=20
->>   v2: No change
->>   v3: No change
->>   v4: No change
->>   v5: Use SPDX license identifier
->>=20
->>  diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
->>  index 350a990fc719..83243e427e36 100644
->>  --- a/arch/mips/Kconfig
->>  +++ b/arch/mips/Kconfig
->>  @@ -376,6 +376,7 @@ config MACH_INGENIC
->>          select BUILTIN_DTB
->>          select USE_OF
->>          select LIBFDT
->>  +       select MIPS_MACHINE
->>=20
->>   config LANTIQ
->>          bool "Lantiq based platforms"
->>  diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
->>  index 88d6aa7d000b..fc2d3b3c4a80 100644
->>  --- a/arch/mips/jz4740/Makefile
->>  +++ b/arch/mips/jz4740/Makefile
->>  @@ -6,7 +6,7 @@
->>   # Object file lists.
->>=20
->>   obj-y +=3D prom.o time.o reset.o setup.o \
->>  -       platform.o timer.o
->>  +       platform.o timer.o boards.o
->>=20
->>   CFLAGS_setup.o =3D -I$(src)/../../../scripts/dtc/libfdt
->>=20
->>  diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
->>  new file mode 100644
->>  index 000000000000..13b0bddd8cb7
->>  --- /dev/null
->>  +++ b/arch/mips/jz4740/boards.c
->>  @@ -0,0 +1,12 @@
->>  +// SPDX-License-Identifier: GPL-2.0
->>  +/*
->>  + * Ingenic boards support
->>  + * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
->>  + */
->>  +
->>  +#include <asm/bootinfo.h>
->>  +#include <asm/mips_machine.h>
->>  +
->>  +MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben=20
->> Nanonote", NULL);
->>  +MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
->>  +                       "Imagination Technologies CI20", NULL);
->>  diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
->>  index 6d0152321819..afd84ee966e8 100644
->>  --- a/arch/mips/jz4740/setup.c
->>  +++ b/arch/mips/jz4740/setup.c
->>  @@ -22,6 +22,7 @@
->>   #include <linux/of_fdt.h>
->>=20
->>   #include <asm/bootinfo.h>
->>  +#include <asm/mips_machine.h>
->>   #include <asm/prom.h>
->>=20
->>   #include <asm/mach-jz4740/base.h>
->>  @@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
->>          add_memory_region(0, size, BOOT_MEM_RAM);
->>   }
->>=20
->>  +static unsigned long __init get_board_mach_type(const void *fdt)
->>  +{
->>  +       const struct mips_machine *mach;
->>  +
->>  +       for (mach =3D (struct mips_machine *)&__mips_machines_start;
->>  +                       mach < (struct mips_machine=20
->> *)&__mips_machines_end;
->>  +                       mach++) {
->>  +               if (!fdt_node_check_compatible(fdt, 0,=20
->> mach->mach_id))
->>  +                       return mach->mach_type;
->>  +       }
->>  +
->>  +       return MACH_INGENIC_JZ4740;
->>  +}
->>  +
->>   void __init plat_mem_setup(void)
->>   {
->>          int offset;
->>=20
->>  +       if (!early_init_dt_scan(__dtb_start))
->>  +               return;
->>  +
->>          jz4740_reset_init();
->>  -       __dt_setup_arch(__dtb_start);
->>=20
->>          offset =3D fdt_path_offset(__dtb_start, "/memory");
->>          if (offset < 0)
->>                  jz4740_detect_mem();
->>  +
->>  +       mips_machtype =3D get_board_mach_type(__dtb_start);
->>   }
->>=20
->>   void __init device_tree_init(void)
->>  @@ -75,13 +94,18 @@ void __init device_tree_init(void)
->>=20
->>   const char *get_system_type(void)
->>   {
->>  -       if (IS_ENABLED(CONFIG_MACH_JZ4780))
->>  -               return "JZ4780";
->>  -
->>  -       return "JZ4740";
->>  +       return mips_get_machine_name();
->>   }
->>=20
->>   void __init arch_init_irq(void)
->>   {
->>          irqchip_init();
->>   }
->>  +
->>  +static int __init jz4740_machine_setup(void)
->>  +{
->>  +       mips_machine_setup();
->>  +
->>  +       return 0;
->>  +}
->>  +arch_initcall(jz4740_machine_setup);
->>  --
->>  2.11.0
->>=20
->>=20
->=20
-> Why add another file in arch/mips/jz4740/? I think declaring a machine
-> and compatible string in dts would suffice. Please feel free to
-> correct me if I am wrong.
->=20
-> Regards,
-> PrasannaKumar
+NOTE pfdv2 can only be operated when clk is gated.
 
-The point of this commit is, first, to have a textual description of=20
-the board
-that can then be retrieved in dmesg; then, to properly initialize the
-mips_machtype early in the boot process. I think you are right and we=20
-could
-have both things just with "model" and "compatible" nodes in devicetree.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Regards,
--Paul
-=
+---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:
+ * change to readl_poll_timeout
+ * add pfd lock to protect share reg access between rate and enable/disable
+   operations and multiple pfd instances.
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile    |   3 +-
+ drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 212 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
+
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 2f00b03..9c04ae4 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+ 	clk-pllv4.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-pfdv2.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+new file mode 100644
+index 0000000..5421bdf
+--- /dev/null
++++ b/drivers/clk/imx/clk-pfdv2.c
+@@ -0,0 +1,207 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/**
++ * struct clk_pfdv2 - IMX PFD clock
++ * @clk_hw:	clock source
++ * @reg:	PFD register address
++ * @gate_bit:	Gate bit offset
++ * @vld_bit:	Valid bit offset
++ * @frac_off:	PLL Fractional Divider offset
++ */
++
++struct clk_pfdv2 {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		gate_bit;
++	u8		vld_bit;
++	u8		frac_off;
++};
++
++#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
++
++#define CLK_PFDV2_FRAC_MASK 0x3f
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static DEFINE_SPINLOCK(pfd_lock);
++
++static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
++{
++	u32 val;
++
++	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
++				  0, LOCK_TIMEOUT_US);
++}
++
++static int clk_pfdv2_enable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return clk_pfdv2_wait(pfd);
++}
++
++static void clk_pfdv2_disable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val |= pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++}
++
++static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	u64 tmp = parent_rate;
++	u8 frac;
++
++	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
++		& CLK_PFDV2_FRAC_MASK;
++
++	if (!frac) {
++		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
++			 clk_hw_get_name(hw));
++		return 0;
++	}
++
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	u64 tmp = *prate;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	tmp = *prate;
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static int clk_pfdv2_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++
++	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
++		return 0;
++
++	return 1;
++}
++
++static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u64 tmp = parent_rate;
++	u32 val;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
++	val |= frac << pfd->frac_off;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return 0;
++}
++
++static const struct clk_ops clk_pfdv2_ops = {
++	.enable		= clk_pfdv2_enable,
++	.disable	= clk_pfdv2_disable,
++	.recalc_rate	= clk_pfdv2_recalc_rate,
++	.round_rate	= clk_pfdv2_round_rate,
++	.set_rate	= clk_pfdv2_set_rate,
++	.is_enabled     = clk_pfdv2_is_enabled,
++};
++
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx)
++{
++	struct clk_init_data init;
++	struct clk_pfdv2 *pfd;
++	struct clk_hw *hw;
++	int ret;
++
++	WARN_ON(idx > 3);
++
++	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
++	if (!pfd)
++		return ERR_PTR(-ENOMEM);
++
++	pfd->reg = reg;
++	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
++	pfd->vld_bit = pfd->gate_bit - 1;
++	pfd->frac_off = idx * 8;
++
++	init.name = name;
++	init.ops = &clk_pfdv2_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	pfd->hw.init = &init;
++
++	hw = &pfd->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pfd);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 52f7c9d..ccd7181 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
+ 
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx);
++
+ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 				 void __iomem *reg, u8 shift, u8 width,
+ 				 void __iomem *busy_reg, u8 busy_shift);
+-- 
+2.7.4
