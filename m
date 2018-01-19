@@ -1,59 +1,52 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: [PATCH v3 22/34] clk: qcom: ipq4019: change clk_cpu_div_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:43:01 +0000
-Message-Id: <1514835793-1104-23-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:1582 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932305AbeASRoE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jan 2018 12:44:04 -0500
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
+Date: Fri, 19 Jan 2018 19:44:01 +0200
+Message-Id: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Since the commit
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+  0777591e715a ("clk: fractional-divider: switch to rational best approximation")
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>
-Cc: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+enables rational best approximation to all common based clocks, there is
+no need to repeat the selection in each of them.
+
+No functional changes intended.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 804231b..943acbc 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1268,7 +1268,7 @@ static unsigned long clk_cpu_div_round_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..2e65cf731b00 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -76,7 +76,6 @@ config COMMON_CLK_SI5351
+ 	tristate "Clock driver for SiLabs 5351A/B/C"
+ 	depends on I2C
+ 	select REGMAP_I2C
+-	select RATIONAL
+ 	---help---
+ 	  This driver supports Silicon Labs 5351A/B/C programmable clock
+ 	  generators.
+@@ -105,7 +104,6 @@ config COMMON_CLK_CDCE706
+ 	tristate "Clock driver for TI CDCE706 clock synthesizer"
+ 	depends on I2C
+ 	select REGMAP_I2C
+-	select RATIONAL
+ 	---help---
+ 	  This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
  
- 	f = qcom_find_freq(pll->freq_tbl, rate);
- 	if (!f)
--		return -EINVAL;
-+		return 0;
- 
- 	p_hw = clk_hw_get_parent_by_index(hw, f->src);
- 	*p_rate = clk_hw_get_rate(p_hw);
 -- 
-2.7.4
+2.15.1
+
