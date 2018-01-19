@@ -1,79 +1,60 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sn1nam02on0049.outbound.protection.outlook.com ([104.47.36.49]:30864
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755751AbeASPY6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jan 2018 10:24:58 -0500
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-doc@vger.kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 1/1] Documentation: clk: enable lock is not held for clk_is_enabled API
+Date: Fri, 19 Jan 2018 21:13:02 +0800
+Message-ID: <1516367582-24422-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:11:33 +0100
-Message-ID: <CAMuHMdU+n=VA4T-fOF4SjsxZtu1M1thxNAD8dHex=H_bz95jgQ@mail.gmail.com>
-Subject: Re: [RFC 22/37] watchdog: renesas_wdt: Add restart support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-CC Wolfram
+The core does not need to hold enable lock for clk_is_enabled API.
+Update the doc to reflect it.
 
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This commit extends the driver to add restart support by implementing
-> the restart callback to trigger the watchdog as quickly as possible.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
->  drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 831ef83..120ddac 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
->         return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
->  }
->
-> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-> +                       void *data)
-> +{
-> +       struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-> +
-> +       pm_runtime_get_sync(wdev->parent);
-> +
-> +       rwdt_write(priv, 0x00, RWTCSRB);
-> +       rwdt_write(priv, 0x00, RWTCSRA);
-> +       rwdt_write(priv, 0xffff, RWTCNT);
-> +
-> +       while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-> +               cpu_relax();
-> +
-> +       rwdt_write(priv, 0x80, RWTCSRA);
-> +       return 0;
-> +}
-> +
->  static const struct watchdog_info rwdt_ident = {
->         .options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
->         .identity = "Renesas WDT Watchdog",
-> @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
->         .stop = rwdt_stop,
->         .ping = rwdt_init_timeout,
->         .get_timeleft = rwdt_get_timeleft,
-> +       .restart = rwdt_restart,
->  };
->
->  static int rwdt_probe(struct platform_device *pdev)
-> --
-> 2.7.4
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ Documentation/clk.txt | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+index be909ed..f286ff5 100644
+--- a/Documentation/clk.txt
++++ b/Documentation/clk.txt
+@@ -268,9 +268,17 @@ The common clock framework uses two global locks, the prepare lock and the
+ enable lock.
+ 
+ The enable lock is a spinlock and is held across calls to the .enable,
+-.disable and .is_enabled operations. Those operations are thus not allowed to
+-sleep, and calls to the clk_enable(), clk_disable() and clk_is_enabled() API
+-functions are allowed in atomic context.
++.disable operations. Those operations are thus not allowed to sleep,
++and calls to the clk_enable(), clk_disable() API functions are allowed in
++atomic context.
++
++For clk_is_enabled() API, it is also designed to be allowed to be used in
++atomic context. However, it doesn't really make any sense to hold the enable
++lock in core, unless you want to do something else with the information of
++the enable state with that lock held. Otherwise, seeing if a clk is enabled is
++a one-shot read of the enabled state, which could just as easily change after
++the function returns because the lock is released. Thus driver onwer needs
++judge and take care of it in their driver if it needs lock.
+ 
+ The prepare lock is a mutex and is held across calls to all other operations.
+ All those operations are allowed to sleep, and calls to the corresponding API
+-- 
+2.7.4
+
