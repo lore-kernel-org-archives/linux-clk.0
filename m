@@ -1,51 +1,115 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 23 Jan 2018 19:10:43 +0100
-Message-ID: <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: Adam Ford <aford173@gmail.com>
-Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: add axg misc bit to the mpll driver
+Date: Fri, 19 Jan 2018 16:42:36 +0100
+Message-Id: <20180119154236.9797-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
-> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com> wrote:
->> On 01/23/2018 10:03 AM, David Lechner wrote:
->>>
->>> You can see if the clock is enabled by running:
->>>
->>>      cat /sys/kernel/debug/clk/clk_summary
->>>
->>
->> I just realized if you can't boot, you can't do this. :-/
->
-> I can boot with the latest set in your git repo, but the Ethernet
-> doesn't apparently fully operate.  I don't get errors, but I cannot
-> get a dhcp address.
->
-> I'll try to do a more exhaustive test later today to get an idea of
-> what works and what doesn't.  When I ran my basic tests, I just did a
-> feel-good boot test (and reboot test)
->
-> adam
+On axg, the rate of the mpll is stuck as if sdm value was 4 and could not
+change (expect for mpll2 strangely). Looking at the vendor kernel, it
+turns out a new magic bit from the undocumented HHI_PLL_TOP_MISC register
+is required.
 
-FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
-seems to at least fix the ethernet. In master branch it's done by
-pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
-getting several oopses and WARNs so there's some more work to do.
+Setting this bit solves the problem and the mpll rates are back to normal
 
-Thanks,
-Bartosz
+Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c      | 20 ++++++++++++++++++++
+ drivers/clk/meson/clk-mpll.c |  7 +++++++
+ drivers/clk/meson/clkc.h     |  1 +
+ 3 files changed, 28 insertions(+)
+
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 953e119635a2..2f2b3845c01d 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -292,6 +292,11 @@ static struct meson_clk_mpll axg_mpll0 = {
+ 		.shift   = 25,
+ 		.width	 = 1,
+ 	},
++	.misc = {
++		.reg_off = HHI_PLL_TOP_MISC,
++		.shift   = 0,
++		.width	 = 1,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+@@ -322,6 +327,11 @@ static struct meson_clk_mpll axg_mpll1 = {
+ 		.shift   = 14,
+ 		.width	 = 1,
+ 	},
++	.misc = {
++		.reg_off = HHI_PLL_TOP_MISC,
++		.shift   = 1,
++		.width	 = 1,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1",
+@@ -352,6 +362,11 @@ static struct meson_clk_mpll axg_mpll2 = {
+ 		.shift   = 14,
+ 		.width	 = 1,
+ 	},
++	.misc = {
++		.reg_off = HHI_PLL_TOP_MISC,
++		.shift   = 2,
++		.width	 = 1,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2",
+@@ -382,6 +397,11 @@ static struct meson_clk_mpll axg_mpll3 = {
+ 		.shift   = 0,
+ 		.width	 = 1,
+ 	},
++	.misc = {
++		.reg_off = HHI_PLL_TOP_MISC,
++		.shift   = 3,
++		.width	 = 1,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll3",
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 5144360e2c80..6d79d6daadc4 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -173,6 +173,13 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	reg = PARM_SET(p->width, p->shift, reg, n2);
+ 	writel(reg, mpll->base + p->reg_off);
+ 
++	p = &mpll->misc;
++	if (p->width != 0) {
++		reg = readl(mpll->base + p->reg_off);
++		reg = PARM_SET(p->width, p->shift, reg, 1);
++		writel(reg, mpll->base + p->reg_off);
++	}
++
+ 	if (mpll->lock)
+ 		spin_unlock_irqrestore(mpll->lock, flags);
+ 	else
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 4acb35bda669..07aaba26a857 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -121,6 +121,7 @@ struct meson_clk_mpll {
+ 	struct parm n2;
+ 	struct parm en;
+ 	struct parm ssen;
++	struct parm misc;
+ 	spinlock_t *lock;
+ };
+ 
+-- 
+2.14.3
