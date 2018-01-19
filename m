@@ -1,62 +1,43 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 28/37] clk: renesas: r8a7790: Add rwdt clock
-Date: Thu, 25 Jan 2018 18:03:02 +0000
-Message-Id: <1516903391-30467-29-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "A.s. Dong" <aisheng.dong@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Anson Huang
+	<anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>, dl-linux-imx
+	<linux-imx@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: RE: [PATCH V3 10/10] add imx7ulp support
+Date: Fri, 19 Jan 2018 13:19:21 +0000
+Message-ID: <AM3PR04MB3069917299D8F2F7AFEB8A180EF0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+ <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+Hi Stephen,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Dong Aisheng [mailto:aisheng.dong@nxp.com]
+> Sent: Friday, January 19, 2018 9:11 PM
+> To: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@codeaurora.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> Anson Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
+> linux-imx <linux-imx@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> A.s. Dong <aisheng.dong@nxp.com>
+> Subject: [PATCH V3 10/10] add imx7ulp support
+>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+>
 
-diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
-index 46bb55b..f936cb7 100644
---- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
-@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
-@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
--- 
-2.7.4
+I'm sorry that this one is for test and was sent out by accidently and shou=
+ld not belong
+to the clk series. So you can ignore this one. Others, patch 1~9, are fine.
+
+Regards
+Dong Aisheng
