@@ -1,42 +1,48 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
-References: <1514906296-8099-1-git-send-email-geert+renesas@glider.be> <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jan 2018 11:12:16 +0100
-Message-ID: <CAMuHMdU-h39Ty6gUfuVGw3Lnor793R4v_r4_NbQrNnRecw2FsA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: Stop enabling legacy DT clock support by default
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 8/9] clk: meson: gxbb: add the fractional part of the fixed_pll
+Date: Fri, 19 Jan 2018 16:55:28 +0100
+Message-Id: <20180119155529.11532-9-jbrunet@baylibre.com>
+In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
+References: <20180119155529.11532-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 11:35 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Jan 2, 2018 at 4:18 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> Since v4.15-rc1, the DTS files for all R-Car Gen2 SoCs have been
->> converted to the new CPG/MSSR bindings.  Hence it is now safe to no
->> longer enable legacy DT clock support by default.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> To be queued in clk-renesas-for-v4.16.
->
-> Applied and queued in clk-renesas-for-v4.16.
+The fixed_pll of gxbb and gxl also has a fractional parameter. This has
+not been a problem so far because the fractional part is actually set
+to 0 on these platforms, so the rate remains correct when it is ignored.
+Still, it is better represent the pll the way it is, so add the frac
+parameter now
 
-Upon second thought, I'll postpone this to v4.17.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index b773be1033f8..17f44ac751b3 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -202,6 +202,11 @@ static struct meson_clk_pll gxbb_fixed_pll = {
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.frac = {
++		.reg_off = HHI_MPLL_CNTL2,
++		.shift   = 0,
++		.width   = 12,
++	},
+ 	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "fixed_pll",
+-- 
+2.14.3
