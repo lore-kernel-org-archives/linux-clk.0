@@ -1,63 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45290 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753141AbeAaHmw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jan 2018 02:42:52 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 1/5] clk: mediatek: update missing clock data for MT7622 audsys
-Date: Wed, 31 Jan 2018 15:42:41 +0800
-Message-ID: <ec2dfe750291a996c54cc8aaeafafa333b992c4f.1515639336.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1515639336.git.ryder.lee@mediatek.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 19 Jan 2018 15:12:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/9] doc: dt-bindings: Add doc for the Ingenic TCU
+ timers driver
+Message-ID: <20180119211257.hl2g3awqg3lf7d5e@rob-hp-laptop>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
+ <20180110224838.16711-5-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180110224838.16711-5-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
+On Wed, Jan 10, 2018 at 11:48:34PM +0100, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) timers driver from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> 
+>  v3: New patch in this series
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
- include/dt-bindings/clock/mt7622-clk.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Similar comments in this one.
 
-diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index fad7d9f..13f752d 100644
---- a/drivers/clk/mediatek/clk-mt7622-aud.c
-+++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -106,6 +106,7 @@
- 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
- 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
- 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
-+	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
- 	/* AUDIO2 */
- 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
- 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
-diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
-index 3e514ed..e9d77f0 100644
---- a/include/dt-bindings/clock/mt7622-clk.h
-+++ b/include/dt-bindings/clock/mt7622-clk.h
-@@ -235,7 +235,8 @@
- #define CLK_AUDIO_MEM_ASRC3		43
- #define CLK_AUDIO_MEM_ASRC4		44
- #define CLK_AUDIO_MEM_ASRC5		45
--#define CLK_AUDIO_NR_CLK		46
-+#define CLK_AUDIO_AFE_CONN		46
-+#define CLK_AUDIO_NR_CLK		47
- 
- /* SSUSBSYS */
- 
--- 
-1.9.1
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..dd76877efb8b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,35 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+> +---------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+> +  * ingenic,jz4740-tcu
+> +  * ingenic,jz4770-tcu
+> +  * ingenic,jz4780-tcu
+> +- interrupt-parent : phandle of the TCU interrupt controller.
+> +- interrupts : Specifies the interrupts the controller is connected to.
+> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+> +- clock-names : List of name strings for the TCU clocks.
 
+Need to be explicit with how many clocks and their order.
+
+> +
+> +Example:
+> +
+> +/ {
+> +	mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +
+> +		tcu_timer: timer {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10002010 0xFF0>;
+> +
+> +			clocks = <&tcu 0>, <&tcu 1>, <&tcu 2>, <&tcu 3>,
+> +					 <&tcu 4>, <&tcu 5>, <&tcu 6>, <&tcu 7>;
+> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+> +						  "timer4", "timer5", "timer6", "timer7";
+> +
+> +			interrupt-parent = <&tcu>;
+> +			interrupts = <0 1 2 3 4 5 6 7>;
+> +		};
+> +	};
+> +};
+> -- 
+> 2.11.0
+> 
