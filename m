@@ -1,132 +1,244 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v3 04/14] mmc: mmci: Add support for setting pad type via pinctrl
-Date: Thu, 18 Jan 2018 15:34:20 +0100
-Message-ID: <1516286070-24927-5-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH V3 06/10] dt-bindings: clock: add imx7ulp clock binding doc
+Date: Fri, 19 Jan 2018 21:11:06 +0800
+Message-ID: <1516367470-24340-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+ ping.bai@nxp.com, Anson.Huang@nxp.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com, fabio.estevam@nxp.com,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-If variant hasn't the control bit to switch pads in opendrain mode,
-we can achieve the same result by asking to the pinmux driver to
-configure pins for us.
+Note IMX7ULP has two clock domains: M4 and A7. This binding doc
+is only for A7 clock domain.
 
-This patch make the mmci driver able to do this whenever needed.
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2: no changes
+---
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++++++++
+ include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++++++++++++
+ 2 files changed, 170 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
-v3: _ Exit from probe() if no DT pinctrl node are found.
-
-v2: _ Add pinctrl pin management when open drain bit is not available
-
-
- drivers/mmc/host/mmci.c | 41 +++++++++++++++++++++++++++++++++++++++--
- drivers/mmc/host/mmci.h |  5 +++++
- 2 files changed, 44 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index f0edfe7..9918a5f 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1465,8 +1465,19 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 				~MCI_ST_DATA2DIREN);
- 	}
- 
--	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN && variant->opendrain)
--		pwr |= variant->opendrain;
-+	if (variant->opendrain) {
-+		if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
-+			pwr |= variant->opendrain;
-+	} else {
-+		/*
-+		 * If the variant cannot configure the pads by its own, then we
-+		 * expect the pinctrl to be able to do that for us
-+		 */
-+		if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
-+			pinctrl_select_state(host->pinctrl, host->pins_opendrain);
-+		else
-+			pinctrl_select_state(host->pinctrl, host->pins_default);
-+	}
- 
- 	/*
- 	 * If clock = 0 and the variant requires the MMCIPOWER to be used for
-@@ -1610,6 +1621,32 @@ static int mmci_probe(struct amba_device *dev,
- 	host = mmc_priv(mmc);
- 	host->mmc = mmc;
- 
-+	/*
-+	 * Some variant (STM32) doesn't have opendrain bit, nevertheless
-+	 * pins can be set accordingly using pinctrl
-+	 */
-+	if (!variant->opendrain) {
-+		host->pinctrl = devm_pinctrl_get(&dev->dev);
-+		if (IS_ERR(host->pinctrl)) {
-+			dev_err(&dev->dev, "failed to get pinctrl");
-+			goto host_free;
-+		}
+diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+new file mode 100644
+index 0000000..76ea3c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+@@ -0,0 +1,62 @@
++* Clock bindings for Freescale i.MX7ULP
 +
-+		host->pins_default = pinctrl_lookup_state(host->pinctrl,
-+							  PINCTRL_STATE_DEFAULT);
-+		if (IS_ERR(host->pins_default)) {
-+			dev_err(mmc_dev(mmc), "Can't select default pins\n");
-+			goto host_free;
-+		}
++i.MX7ULP Clock functions are under joint control of the System
++Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
++modules, and Core Mode Controller (CMC)1 blocks
 +
-+		host->pins_opendrain = pinctrl_lookup_state(host->pinctrl,
-+							    MMCI_PINCTRL_STATE_OPENDRAIN);
-+		if (IS_ERR(host->pins_opendrain)) {
-+			dev_err(mmc_dev(mmc), "Can't select opendrain pins\n");
-+			goto host_free;
-+		}
-+	}
++The clocking scheme provides clear separation between M4 domain
++and A7 domain. Except for a few clock sources shared between two
++domains, such as the System Oscillator clock, the Slow IRC (SIRC),
++and and the Fast IRC clock (FIRCLK), clock sources and clock
++management are separated and contained within each domain.
 +
- 	host->hw_designer = amba_manf(dev);
- 	host->hw_revision = amba_rev(dev);
- 	dev_dbg(mmc_dev(mmc), "designer ID = 0x%02x\n", host->hw_designer);
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 83160a9..f91cdf7 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -192,6 +192,8 @@
- 
- #define NR_SG		128
- 
-+#define MMCI_PINCTRL_STATE_OPENDRAIN "opendrain"
++M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
++A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
 +
- struct clk;
- struct variant_data;
- struct dma_chan;
-@@ -227,6 +229,9 @@ struct mmci_host {
- 	bool			vqmmc_enabled;
- 	struct mmci_platform_data *plat;
- 	struct variant_data	*variant;
-+	struct pinctrl		*pinctrl;
-+	struct pinctrl_state	*pins_default;
-+	struct pinctrl_state	*pins_opendrain;
- 
- 	u8			hw_designer;
- 	u8			hw_revision:4;
++Note: this binding doc is only for A7 clock domain.
++
++Required properties:
++
++- compatible:	Should be "fsl,imx7ulp-clock".
++- reg : 	Should contain registers location and length for scg1,
++		pcc2 and pcc3.
++- reg-names:	Should contain the according reg names "scg1", "pcc2"
++		and "pcc3".
++- #clock-cells:	Should be <1>.
++- clocks:	Should contain the fixed input clocks.
++- clock-name:   Should contain the following clock names:"rsoc", "sosc",
++		"sirc", "firc", "upll", "mpll".
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.
++See include/dt-bindings/clock/imx7ulp-clock.h
++for the full list of i.MX7ULP clock IDs.
++
++Examples:
++
++#include <dt-bindings/clock/imx7ulp-clock.h>
++
++clks: scg1@403e0000 {
++	compatible = "fsl,imx7ulp-clock";
++	reg = <0x403e0000 0x10000>
++	      <0x403f0000 0x10000>
++	      <0x40b30000 0x10000>;
++	reg-names = "scg1", "pcc2", "pcc3";
++	clocks = <&rsoc>, <&sosc>, <&sirc>,
++		 <&firc>, <&upll>, <&mpll>;
++	clock-names = "rsoc", "sosc", "sirc",
++		      "firc", "upll", "mpll";
++	#clock-cells = <1>;
++};
++
++usdhc1: usdhc@40380000 {
++	compatible = "fsl,imx7ulp-usdhc";
++	reg = <0x40380000 0x10000>;
++	interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&clks IMX7ULP_CLK_NIC1_BUS_DIV>,
++		 <&clks IMX7ULP_CLK_NIC1_DIV>,
++		 <&clks IMX7ULP_CLK_USDHC1>;
++	clock-names ="ipg", "ahb", "per";
++	bus-width = <4>;
++	status = "disabled";
++};
+diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
+new file mode 100644
+index 0000000..2556106
+--- /dev/null
++++ b/include/dt-bindings/clock/imx7ulp-clock.h
+@@ -0,0 +1,108 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
++#define __DT_BINDINGS_CLOCK_IMX7ULP_H
++
++#define IMX7ULP_CLK_DUMMY		0
++#define IMX7ULP_CLK_ROSC		1
++#define IMX7ULP_CLK_SOSC		2
++#define IMX7ULP_CLK_FIRC		3
++
++/* SCG1 */
++#define IMX7ULP_CLK_SPLL_PRE_SEL	4
++#define IMX7ULP_CLK_SPLL_PRE_DIV	5
++#define IMX7ULP_CLK_SPLL		6
++#define IMX7ULP_CLK_SPLL_POST_DIV1	7
++#define IMX7ULP_CLK_SPLL_POST_DIV2	8
++#define IMX7ULP_CLK_SPLL_PFD0		9
++#define IMX7ULP_CLK_SPLL_PFD1		10
++#define IMX7ULP_CLK_SPLL_PFD2		11
++#define IMX7ULP_CLK_SPLL_PFD3		12
++#define IMX7ULP_CLK_SPLL_PFD_SEL	13
++#define IMX7ULP_CLK_SPLL_SEL		14
++#define IMX7ULP_CLK_APLL_PRE_SEL	15
++#define IMX7ULP_CLK_APLL_PRE_DIV	16
++#define IMX7ULP_CLK_APLL		17
++#define IMX7ULP_CLK_APLL_POST_DIV1	18
++#define IMX7ULP_CLK_APLL_POST_DIV2	19
++#define IMX7ULP_CLK_APLL_PFD0		20
++#define IMX7ULP_CLK_APLL_PFD1		21
++#define IMX7ULP_CLK_APLL_PFD2		22
++#define IMX7ULP_CLK_APLL_PFD3		23
++#define IMX7ULP_CLK_APLL_PFD_SEL	24
++#define IMX7ULP_CLK_APLL_SEL		25
++#define IMX7ULP_CLK_UPLL		26
++#define IMX7ULP_CLK_SYS_SEL		27
++#define IMX7ULP_CLK_CORE_DIV		28
++#define IMX7ULP_CLK_BUS_DIV		29
++#define IMX7ULP_CLK_PLAT_DIV		30
++#define IMX7ULP_CLK_DDR_SEL		31
++#define IMX7ULP_CLK_DDR_DIV		32
++#define IMX7ULP_CLK_NIC_SEL		33
++#define IMX7ULP_CLK_NIC0_DIV		34
++#define IMX7ULP_CLK_GPU_DIV		35
++#define IMX7ULP_CLK_NIC1_DIV		36
++#define IMX7ULP_CLK_NIC1_BUS_DIV	37
++#define IMX7ULP_CLK_NIC1_EXT_DIV	38
++
++/* PCG2 */
++#define IMX7ULP_CLK_DMA1		39
++#define IMX7ULP_CLK_RGPIO2P1		40
++#define IMX7ULP_CLK_FLEXBUS		41
++#define IMX7ULP_CLK_SEMA42_1		42
++#define IMX7ULP_CLK_DMA_MUX1		43
++#define IMX7ULP_CLK_SNVS		44
++#define IMX7ULP_CLK_CAAM		45
++#define IMX7ULP_CLK_LPTPM4		46
++#define IMX7ULP_CLK_LPTPM5		47
++#define IMX7ULP_CLK_LPIT1		48
++#define IMX7ULP_CLK_LPSPI2		49
++#define IMX7ULP_CLK_LPSPI3		50
++#define IMX7ULP_CLK_LPI2C4		51
++#define IMX7ULP_CLK_LPI2C5		52
++#define IMX7ULP_CLK_LPUART4		53
++#define IMX7ULP_CLK_LPUART5		54
++#define IMX7ULP_CLK_FLEXIO1		55
++#define IMX7ULP_CLK_USB0		56
++#define IMX7ULP_CLK_USB1		57
++#define IMX7ULP_CLK_USB_PHY		58
++#define IMX7ULP_CLK_USB_PL301		59
++#define IMX7ULP_CLK_USDHC0		60
++#define IMX7ULP_CLK_USDHC1		61
++#define IMX7ULP_CLK_WDG1		62
++#define IMX7ULP_CLK_WDG2		63
++
++/* PCG3 */
++#define IMX7ULP_CLK_LPTPM6		64
++#define IMX7ULP_CLK_LPTPM7		65
++#define IMX7ULP_CLK_LPI2C6		66
++#define IMX7ULP_CLK_LPI2C7		67
++#define IMX7ULP_CLK_LPUART6		68
++#define IMX7ULP_CLK_LPUART7		69
++#define IMX7ULP_CLK_VIU			70
++#define IMX7ULP_CLK_DSI			71
++#define IMX7ULP_CLK_LCDIF		72
++#define IMX7ULP_CLK_MMDC		73
++#define IMX7ULP_CLK_PCTLC		74
++#define IMX7ULP_CLK_PCTLD		75
++#define IMX7ULP_CLK_PCTLE		76
++#define IMX7ULP_CLK_PCTLF		77
++#define IMX7ULP_CLK_GPU3D		78
++#define IMX7ULP_CLK_GPU2D		79
++#define IMX7ULP_CLK_MIPI_PLL		80
++#define IMX7ULP_CLK_SIRC		81
++#define IMX7ULP_CLK_SOSC_BUS_CLK	82
++#define IMX7ULP_CLK_FIRC_BUS_CLK	83
++#define IMX7ULP_CLK_SPLL_BUS_CLK	84
++
++#define IMX7ULP_CLK_END			85
++
++#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
 -- 
-1.9.1
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
