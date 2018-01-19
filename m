@@ -1,50 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3727 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751202AbeAEI7J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jan 2018 03:59:09 -0500
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Kaihua Zhong <zhongkaihua@huawei.com>,
-        Leo Yan <leo.yan@linaro.org>, Ruyi Wang <wangruyi@huawei.com>,
-        Kai Zhao <zhaokai1@hisilicon.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-clk@vger.kernel.org>
-Subject: [PATCH -next v2] clk: hisilicon: Using devm_ioremap_resource() instead of devm_ioremap()
-Date: Fri, 5 Jan 2018 09:04:36 +0000
-Message-ID: <1515143076-179272-1-git-send-email-weiyongjun1@huawei.com>
-In-Reply-To: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 20/44] dt-bindings: clock: Add bindings for TI DA8XX
+ USB PHY clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-21-git-send-email-david@lechnology.com>
+ <33f0feba-adee-e365-54d5-16fe3d49302d@ti.com>
+ <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <458ac21d-a995-1c52-792e-563d81ba1e33@ti.com>
+Date: Fri, 19 Jan 2018 11:47:07 +0530
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1acdc3cf-f08b-3476-e656-5dc25103e86d@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Using devm_ioremap_resource() which can handle NULL res instead of
-devm_ioremap().
+On Friday 19 January 2018 12:30 AM, David Lechner wrote:
+> On 01/18/2018 06:10 AM, Sekhar Nori wrote:
+>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+>>> This adds a new binding for TI DA8XX USB PHY clocks. These clocks are
+>>> part
+>>> of a syscon register called CFGCHIP3.
+>>
+>> CFGCHIP2
+>>
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>
+>>> +Examples:
+>>> +
+>>> +    cfgchip: syscon@1417c {
+>>> +        compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
+>>> +        reg = <0x1417c 0x14>;
+>>> +
+>>> +        usb0_phy_clk: usb0-phy-clock {
+>>> +            compatible = "ti,da830-usb0-phy-clock";
+>>> +            #clock-cells = <0>;
+>>> +            clocks = <&usb_refclkin>, <&pll0_aux_clk>, <&psc1 1>;
+>>> +            clock-names = "usb_refclkin", "auxclk", "usb0_lpsc";
+>>> +            clock-output-names = "usb0_phy_clk";
+>>
+>> Probably call this "usb0_phy" to match with the input name used for
+>> usb1_phy_clk?
+> 
+> I was planning on just dropping clock-output-names altogether actually
+> since they don't really do anything useful.
+> 
+> Also, I was considering sending a series to change the con_id for the
+> PHY clocks.
+> 
+> My current revision of the device tree bindings is looking like this:
+> 
+>     usb_phy: usb-phy {
+>         compatible = "ti,da830-usb-phy";
+>         #phy-cells = <1>;
+>         clocks = <&usb_phy_clk 0>, <&usb_phy_clk 1>;
+>         clock-names = "usb20_phy", "usb11_phy";
+>         status = "disabled";
+>     };
+>     usb_phy_clk: usb-phy-clocks {
+>         compatible = "ti,da830-usb-phy-clocks";
+>         #clock-cells = <1>;
+>         clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
+>         clock-names = "fck", "usb_refclkin", "auxclk";
+>     };
+> 
+> The clock-names = "usb20_phy", "usb11_phy" comes from the existing con_ids
+> in the PHY driver's clk_get()s.
+> 
+> However, in device tree, we are usually referring to the USB devices as
+> usb0 and usb1 instead of usb20 and usb11, respectively. Figure 6-2 "USB
+> Clocking Diagram" in spruh82c.pdf (AM1808 TRM) calls these clocks "CLK48"
+> and "CLK48MHz from USB 2.0 PHY", so I was thinking of changing the con_ids
+> (and therefore also clock-names) to "usb0_clk48" and "usb1_clk48".
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: using devm_ioremap_resource instead of devm_ioremap
----
- drivers/clk/hisilicon/clk-hi3660-stub.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This is fine with me.
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660-stub.c b/drivers/clk/hisilicon/clk-hi3660-stub.c
-index 9b6c72b..e8dde4f 100644
---- a/drivers/clk/hisilicon/clk-hi3660-stub.c
-+++ b/drivers/clk/hisilicon/clk-hi3660-stub.c
-@@ -149,9 +149,9 @@ static int hi3660_stub_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(stub_clk_chan.mbox);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	freq_reg = devm_ioremap(dev, res->start, resource_size(res));
--	if (!freq_reg)
--		return -ENOMEM;
-+	freq_reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(freq_reg))
-+		return PTR_ERR(freq_reg);
- 
- 	freq_reg += HI3660_STUB_CLOCK_DATA;
-
+Thanks,
+Sekhar
