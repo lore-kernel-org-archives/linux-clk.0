@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:49543 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750784AbeASCHH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jan 2018 21:07:07 -0500
+Subject: Re: [PATCH 3/9] clk: meson: remove unnecessary rounding in the pll
+ clock
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+References: <20180118184532.6856-1-jbrunet@baylibre.com>
+ <20180118184532.6856-4-jbrunet@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
- <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
- <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
- <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
- <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
- <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
- <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
- <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
-Date: Tue, 23 Jan 2018 14:01:50 -0600
+        <linux-kernel@vger.kernel.org>, Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <31b18269-22f3-e536-9eb2-449a7e1fb863@amlogic.com>
+Date: Fri, 19 Jan 2018 10:06:50 +0800
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180118184532.6856-4-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
-> 2018-01-23 20:24 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 01/23/2018 12:34 PM, Bartosz Golaszewski wrote:
->>>
->>> 2018-01-23 19:26 GMT+01:00 David Lechner <david@lechnology.com>:
->>>>
->>>> On 01/23/2018 12:10 PM, Bartosz Golaszewski wrote:
->>>>>
->>>>>
->>>>> 2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
->>>>>>
->>>>>>
->>>>>> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com>
->>>>>> wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 01/23/2018 10:03 AM, David Lechner wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> You can see if the clock is enabled by running:
->>>>>>>>
->>>>>>>>         cat /sys/kernel/debug/clk/clk_summary
->>>>>>>>
->>>>>>>
->>>>>>> I just realized if you can't boot, you can't do this. :-/
->>>>>>
->>>>>>
->>>>>>
->>>>>> I can boot with the latest set in your git repo, but the Ethernet
->>>>>> doesn't apparently fully operate.  I don't get errors, but I cannot
->>>>>> get a dhcp address.
->>>>>>
->>>>>> I'll try to do a more exhaustive test later today to get an idea of
->>>>>> what works and what doesn't.  When I ran my basic tests, I just did a
->>>>>> feel-good boot test (and reboot test)
->>>>>>
->>>>>> adam
->>>>>
->>>>>
->>>>>
->>>>> FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
->>>>> seems to at least fix the ethernet. In master branch it's done by
->>>>> pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
->>>>> getting several oopses and WARNs so there's some more work to do.
->>>>>
->>>>
->>>> Hmm... I'm wondering if we need to also add #power-domain-cells to the
->>>> PSC clocks and power-domains properties to the consumers.
->>>>
->>>> For this specific case though, it seems strange to me that the drivers
->>>> to clk_get() and clk_get_rate() but never enable the clocks.
->>>>
->>>>
->>>> Also, are the oopses and WARNs the same as before?
->>>
->>>
->>> No, the ones before were all related to the ethernet failing, now I
->>> get several stack traces from drm. Posted them on pastebin[1].
->>>
->>
->> It looks like the LCDC driver is the same way. It does clk_get() but
->> not clk_prepare_enable().
->>
->>
+
+On 01/19/18 02:45, Jerome Brunet wrote:
+> The pll driver perform the rate calculation in Mhz, which adds an
+> unnecessary rounding down to the Mhz of the rate. Use 64bits long
+> integer to perform this calculation safely on meson8b and perform the
+> calculation in Hz instead
 > 
-> In the mdio case - the problem is that devm_clk_get() doesn't fail,
-> but somehow the clock doesn't end up in the list of the device's
-> clocks - which is why it's not enabled by pm_runtime_get_sync().
+> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/clk-pll.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 2614341fc4ad..fa4cec13d6e8 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -51,8 +51,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+>  {
+>  	struct meson_clk_pll *pll = to_meson_clk_pll(hw);
+>  	struct parm *p;
+> -	unsigned long parent_rate_mhz = parent_rate / 1000000;
+> -	unsigned long rate_mhz;
+> +	u64 rate;
+>  	u16 n, m, frac = 0, od, od2 = 0;
+>  	u32 reg;
+>  
+> @@ -74,17 +73,18 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+>  		od2 = PARM_GET(p->width, p->shift, reg);
+>  	}
+>  
+> +	rate = (u64)m * parent_rate;
+> +
+>  	p = &pll->frac;
+>  	if (p->width) {
+>  		reg = readl(pll->base + p->reg_off);
+>  		frac = PARM_GET(p->width, p->shift, reg);
+> -		rate_mhz = (parent_rate_mhz * m + \
+> -				(parent_rate_mhz * frac >> 12)) * 2 / n;
+> -		rate_mhz = rate_mhz >> od >> od2;
+> -	} else
+> -		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
+>  
+> -	return rate_mhz * 1000000;
+> +		rate += (u64)parent_rate * frac >> 12;
+> +		rate *= 2;
+> +	}
+> +
+> +	return (rate / n) >> od >> od2;
+>  }
+>  
+>  static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
 > 
 
+Hi Jerome:
+ This is exactly what I want to propose, thanks for pushing this!
 
-Right. This is because devm_clk_get() now finds the clock via device
-tree instead of a clkdev lookup entry. However, I think that the PM
-notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
-the clkdev lookup to match the con_id and does not use device tree.
-The same thing is happing in mdio, emac and lcdc.
+ With the whole series, the fixed_pll is more accurate, and the ethernet
+driver on axg is capable of choosing fclk_div2..
+
+Yixun
