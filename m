@@ -1,40 +1,110 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15624 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751173AbeAWJXQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jan 2018 04:23:16 -0500
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 0/4] MBIST work around (WAR) for Tegra210
-Date: Tue, 23 Jan 2018 11:22:45 +0200
-Message-ID: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from hermes.aosc.io ([199.195.250.187]:48350 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932527AbeASXSY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jan 2018 18:18:24 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH 3/9] irqchip/sun4i: add support for suniv interrupt controller
+Date: Sat, 20 Jan 2018 07:17:29 +0800
+Message-Id: <20180119231735.61504-4-icenowy@aosc.io>
+In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
+References: <20180119231735.61504-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series introduces the Memory Built-In Self Test (MBIST)
-work around (WAR) needed when power ungating certain domains. More
-details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-implement the WAR in the Tegra210 clock driver, because most accesses are
-to CAR registers and for the VENC domain, we need to make sure the CSI
-clock source is not changed during the WAR execution.
+The new F-series SoCs (suniv) from Allwinner use an stripped version of
+the interrupt controller in A10/A13.
 
-Peter De Schrijver (4):
-  clk: tegra: Add la clock for Tegra210
-  clk: tegra: add fence_delay for clock registers
-  clk: tegra: MBIST work around for Tegra210
-  soc/tegra: pmc: apply MBIST work around fo Tegra210
+Add support for it in irq-sun4i driver.
 
- drivers/clk/tegra/clk-tegra210.c         | 409 ++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h                  |   7 +
- drivers/soc/tegra/pmc.c                  |   5 +
- include/dt-bindings/clock/tegra210-car.h |   2 +-
- include/linux/clk/tegra.h                |   5 +
- 5 files changed, 425 insertions(+), 3 deletions(-)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/irqchip/irq-sun4i.c | 43 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 38 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+index e3e5b9132b75..64ae41379802 100644
+--- a/drivers/irqchip/irq-sun4i.c
++++ b/drivers/irqchip/irq-sun4i.c
+@@ -23,13 +23,26 @@
+ 
+ #include <asm/exception.h>
+ 
++enum sun4i_irq_type {
++	sun4i_ic,
++	suniv_ic
++};
++
++static enum sun4i_irq_type sun4i_irq_type;
++static int sun4i_irq_enable_reg_offset;
++static int sun4i_irq_mask_reg_offset;
++
+ #define SUN4I_IRQ_VECTOR_REG		0x00
+ #define SUN4I_IRQ_PROTECTION_REG	0x08
+ #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
+ #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
+ #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
+-#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
+-#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
++#define SUN4I_IRQ_ENABLE_REG_OFFSET	0x40
++#define SUN4I_IRQ_MASK_REG_OFFSET	0x50
++#define SUNIV_IRQ_ENABLE_REG_OFFSET	0x20
++#define SUNIV_IRQ_MASK_REG_OFFSET	0x30
++#define SUN4I_IRQ_ENABLE_REG(x)		(sun4i_irq_enable_reg_offset + 0x4 * x)
++#define SUN4I_IRQ_MASK_REG(x)		(sun4i_irq_mask_reg_offset + 0x4 * x)
+ 
+ static void __iomem *sun4i_irq_base;
+ static struct irq_domain *sun4i_irq_domain;
+@@ -115,8 +128,9 @@ static int __init sun4i_of_init(struct device_node *node,
+ 	writel(0xffffffff, sun4i_irq_base + SUN4I_IRQ_PENDING_REG(1));
+ 	writel(0xffffffff, sun4i_irq_base + SUN4I_IRQ_PENDING_REG(2));
+ 
+-	/* Enable protection mode */
+-	writel(0x01, sun4i_irq_base + SUN4I_IRQ_PROTECTION_REG);
++	/* Enable protection mode (not available in suniv) */
++	if (sun4i_irq_type == sun4i_ic)
++		writel(0x01, sun4i_irq_base + SUN4I_IRQ_PROTECTION_REG);
+ 
+ 	/* Configure the external interrupt source type */
+ 	writel(0x00, sun4i_irq_base + SUN4I_IRQ_NMI_CTRL_REG);
+@@ -130,7 +144,26 @@ static int __init sun4i_of_init(struct device_node *node,
+ 
+ 	return 0;
+ }
+-IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_of_init);
++
++static int __init sun4i_ic_of_init(struct device_node *node,
++				   struct device_node *parent)
++{
++	sun4i_irq_type = sun4i_ic;
++	sun4i_irq_enable_reg_offset = SUN4I_IRQ_ENABLE_REG_OFFSET;
++	sun4i_irq_mask_reg_offset = SUN4I_IRQ_MASK_REG_OFFSET;
++	sun4i_of_init(node, parent);
++}
++IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_ic_of_init);
++
++static int __init suniv_ic_of_init(struct device_node *node,
++				   struct device_node *parent)
++{
++	sun4i_irq_type = suniv_ic;
++	sun4i_irq_enable_reg_offset = SUNIV_IRQ_ENABLE_REG_OFFSET;
++	sun4i_irq_mask_reg_offset = SUNIV_IRQ_MASK_REG_OFFSET;
++	sun4i_of_init(node, parent);
++}
++IRQCHIP_DECLARE(allwinner_suniv_ic, "allwinner,suniv-ic", suniv_ic_of_init);
+ 
+ static void __exception_irq_entry sun4i_handle_irq(struct pt_regs *regs)
+ {
 -- 
-1.9.1
+2.14.2
 
