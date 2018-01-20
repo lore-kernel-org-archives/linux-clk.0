@@ -1,94 +1,126 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Jan 2018 18:16:11 +0100
-Message-ID: <CAPDyKFrccszR9Br6ixy43W_YkYWdDws=1XTPKyHt4iHi1wDG-w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 24/41] ARM: dm644x: add new clock init using common clock framework
+Date: Sat, 20 Jan 2018 11:14:03 -0600
+Message-Id: <1516468460-4908-25-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18 January 2018 at 15:34,  <patrice.chotard@st.com> wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> This series reworks patches submitted one year ago by Andrea Merello [1]
-> but without succeed to merged it.
->
-> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
-> PL18x SD host controller, for which the mmci driver exists.
-> This series adds support for these SoCs to the mmci driver.
->
-> As other variants, this one need some specific quirks, that this
-> series address.
->
-> This series has been tested on following boards :
->         _ stm32f429-eval
->         _ stm32f469-disco
->         _ stm32f746-eval
->         _ stm32f769-disco
->
-> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
-> will be sent later to avoid conflict with pending stm32f7 series [1] which
-> is not yet merged on kernel mainline.
->
-> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
-> [2] https://patchwork.kernel.org/patch/10104447/
->
-> v3: _ patch 3: use variant->opendrain instead of host->variant->opendrain
->     _ patch 4: exit from probe() if no pinctrl dt node are found
->     _ previous patch 15: removed as already applied in pinctrl tree
->
-> v2: _ add Revievied-by, Acked-by in some patches
->     _ replace bool by u32 for start_err and opendrain fields of struct variant_data
->     _ split previous patch 3 in two parts, first patch clean the open drain bit code
->       and second part add pinctrl pins management when no open drain bit is available.
->     _ replace "pl180" by "PL180" in patch "mmc: mmci: Add STM32 variant"
->
-> Andrea Merello (2):
->   ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
->   ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
->
-> Patrice Chotard (12):
->   mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
->   mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
->   mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
->   mmc: mmci: Add support for setting pad type via pinctrl
->   mmc: mmci: Add STM32 variant
->   ARM: dts: stm32: Add SDIO controller for stm32f746
->   ARM: dts: stm32: Add SDIO controller for stm32f429
->   ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
->   ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
->   ARM: configs: stm32: Enable MMC_ARMMMCI support
->   ARM: configs: stm32: Enable EXT3_FS support
->   clk: stm32: Add clk entry for SDMMC2 on stm32F769
->
->  arch/arm/boot/dts/stm32429i-eval.dts   |  19 +++++
->  arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
->  arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
->  arch/arm/boot/dts/stm32f469-disco.dts  |  19 +++++
->  arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
->  arch/arm/configs/stm32_defconfig       |   3 +
->  arch/arm/mach-stm32/Kconfig            |   3 +
->  drivers/clk/clk-stm32f4.c              |   3 +-
->  drivers/mmc/host/mmci.c                | 124 ++++++++++++++++++++++++++++-----
->  drivers/mmc/host/mmci.h                |   6 ++
->  10 files changed, 224 insertions(+), 17 deletions(-)
->
-> --
-> 1.9.1
->
+This adds the new board-specific clock init in mach-davinci/dm644x.c
+using the new common clock framework drivers.
 
-Thanks, applied patch1 to patch5 for next!
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Kind regards
-Uffe
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+
+v6 changes:
+- add blank lines between function calls
+
+ arch/arm/mach-davinci/dm644x.c | 38 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index b409801..5b5de85 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -8,28 +8,34 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
+-#include <linux/init.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
+-#include <linux/serial_8250.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dmaengine.h>
+-#include <linux/platform_device.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/irqs.h>
+-#include "psc.h"
+ #include <mach/mux.h>
+-#include <mach/time.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ /*
+  * Device specific clocks
+@@ -43,6 +49,7 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -326,6 +333,7 @@ static struct clk_lookup dm644x_clks[] = {
+ 	CLK("davinci-wdt", NULL, &timer2_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
++#endif
+ 
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+@@ -934,7 +942,21 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *pll2, *psc;
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_4K);
++	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_4K);
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
++
++	dm644x_pll_clk_init(pll1, pll2);
++
++	dm644x_psc_clk_init(psc);
++#else
+ 	davinci_clk_init(dm644x_clks);
++#endif
+ 	davinci_timer_init();
+ }
+ 
+-- 
+2.7.4
