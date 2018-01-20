@@ -1,189 +1,133 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 07/12] drm/sun4i: Add has_channel_0 TCON quirk
-Date: Wed, 10 Jan 2018 20:25:07 +0100
-Message-Id: <20180110192512.19684-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 05/41] clk: davinci: Add platform information for TI DM355 PLL
+Date: Sat, 20 Jan 2018 11:13:44 -0600
+Message-Id: <1516468460-4908-6-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some TCONs on newer SoCs doesn't support channel 0, since they are meant
-to be used only with TV or HDMI encoder.
+This adds platform-specific declarations for the PLL clocks on TI
+DM355 based systems.
 
-Prepare support for them with adding has_channel_0 quirk.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 41 +++++++++++++++++++++++++++-----------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 2 files changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index b78fed809992..0815c528d08e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
- 
- 	switch (channel) {
- 	case 0:
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE,
- 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
-@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 reg, val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
+v6 changes:
+- Added dm355_pll{1,2}_info with controller-specific information
+- Add empty lines between function calls
+
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-dm355.c | 66 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 68 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm355.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 13049d4..6720bd0 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+new file mode 100644
+index 0000000..ac93c52
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
 +
- 	tcon->dclk_min_div = 7;
- 	tcon->dclk_max_div = 7;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/types.h>
 +
- 	tcon->dclk_min_div = 6;
- 	tcon->dclk_max_div = 127;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 	}
- 	clk_prepare_enable(tcon->clk);
++#include "pll.h"
++
++static const struct davinci_pll_clk_info dm355_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_OSCIN | PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED |
++		 PLL_PREDIV_FIXED8 | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_pll_clk_info dm355_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++void __init dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(&dm355_pll1_info, "ref_clk", pll1);
++
++	for (info = dm355_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(info, pll1);
++
++	davinci_pll_auxclk_register("pll1_auxclk", pll1);
++
++	davinci_pll_sysclkbp_clk_register("pll1_sysclkbp", pll1);
++
++	davinci_pll_clk_register(&dm355_pll2_info, "oscin", pll2);
++
++	for (info = dm355_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(info, pll2);
++
++	davinci_pll_sysclkbp_clk_register("pll2_sysclkbp", pll2);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 7b08fe0..95333fe 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -11,5 +11,6 @@
  
--	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
--	if (IS_ERR(tcon->sclk0)) {
--		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
--		return PTR_ERR(tcon->sclk0);
-+	if (tcon->quirks->has_channel_0) {
-+		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
-+		if (IS_ERR(tcon->sclk0)) {
-+			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
-+			return PTR_ERR(tcon->sclk0);
-+		}
- 	}
+ void da830_pll_clk_init(void __iomem *pll);
+ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
++void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
  
- 	if (tcon->quirks->has_channel_1) {
-@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_dclk_create(dev, tcon);
--	if (ret) {
--		dev_err(dev, "Couldn't create our TCON dot clock\n");
--		goto err_free_clocks;
-+	if (tcon->quirks->has_channel_0) {
-+		ret = sun4i_dclk_create(dev, tcon);
-+		if (ret) {
-+			dev_err(dev, "Couldn't create our TCON dot clock\n");
-+			goto err_free_clocks;
-+		}
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
-@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	return 0;
- 
- err_free_dotclock:
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
- 	list_del(&tcon->list);
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
-@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
- }
- 
- static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun4i_a10_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun5i_a13_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.has_lvds_alt		= true,
- 	.needs_de_be_mux	= true,
-@@ -1119,26 +1133,29 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.needs_de_be_mux	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	/* Same display pipeline structure as A10 */
- 	.set_mux		= sun4i_a10_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
-+	.has_channel_0		= true,
- 	.has_lvds_alt		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
- };
- 
- /* sun4i_drv uses this list to check if a device node is a TCON */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index b761c7b823c5..78d55e7cd2b3 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -172,6 +172,7 @@
- struct sun4i_tcon;
- 
- struct sun4i_tcon_quirks {
-+	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
-2.15.1
+2.7.4
