@@ -1,244 +1,381 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH V3 06/10] dt-bindings: clock: add imx7ulp clock binding doc
-Date: Fri, 19 Jan 2018 21:11:06 +0800
-Message-ID: <1516367470-24340-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
- ping.bai@nxp.com, Anson.Huang@nxp.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com, fabio.estevam@nxp.com,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 18/41] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
+Date: Sat, 20 Jan 2018 11:13:57 -0600
+Message-Id: <1516468460-4908-19-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+This adds a new driver for the gate and multiplexer clocks in the
+CFGCHIPn syscon registers on TI DA8XX-type SoCs.
 
-Note IMX7ULP has two clock domains: M4 and A7. This binding doc
-is only for A7 clock domain.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2: no changes
----
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++++++++
- include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++++++++++++
- 2 files changed, 170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
-diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+v6 changes:
+- added DIV4.5 and ASYNC1 clocks
+- refactored code to be more generic
+- added functions for registering clocks from board files (no longer device
+  tree only)
+- use pr_fmt macro
+
+ drivers/clk/davinci/Makefile        |   2 +
+ drivers/clk/davinci/da8xx-cfgchip.c | 305 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h         |   5 +
+ 3 files changed, 312 insertions(+)
+ create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 6c388d4..11178b7 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
++obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
 new file mode 100644
-index 0000000..76ea3c7
+index 0000000..21dedb4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-@@ -0,0 +1,62 @@
-+* Clock bindings for Freescale i.MX7ULP
-+
-+i.MX7ULP Clock functions are under joint control of the System
-+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-+modules, and Core Mode Controller (CMC)1 blocks
-+
-+The clocking scheme provides clear separation between M4 domain
-+and A7 domain. Except for a few clock sources shared between two
-+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-+and and the Fast IRC clock (FIRCLK), clock sources and clock
-+management are separated and contained within each domain.
-+
-+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-+
-+Note: this binding doc is only for A7 clock domain.
-+
-+Required properties:
-+
-+- compatible:	Should be "fsl,imx7ulp-clock".
-+- reg : 	Should contain registers location and length for scg1,
-+		pcc2 and pcc3.
-+- reg-names:	Should contain the according reg names "scg1", "pcc2"
-+		and "pcc3".
-+- #clock-cells:	Should be <1>.
-+- clocks:	Should contain the fixed input clocks.
-+- clock-name:   Should contain the following clock names:"rsoc", "sosc",
-+		"sirc", "firc", "upll", "mpll".
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.
-+See include/dt-bindings/clock/imx7ulp-clock.h
-+for the full list of i.MX7ULP clock IDs.
-+
-+Examples:
-+
-+#include <dt-bindings/clock/imx7ulp-clock.h>
-+
-+clks: scg1@403e0000 {
-+	compatible = "fsl,imx7ulp-clock";
-+	reg = <0x403e0000 0x10000>
-+	      <0x403f0000 0x10000>
-+	      <0x40b30000 0x10000>;
-+	reg-names = "scg1", "pcc2", "pcc3";
-+	clocks = <&rsoc>, <&sosc>, <&sirc>,
-+		 <&firc>, <&upll>, <&mpll>;
-+	clock-names = "rsoc", "sosc", "sirc",
-+		      "firc", "upll", "mpll";
-+	#clock-cells = <1>;
-+};
-+
-+usdhc1: usdhc@40380000 {
-+	compatible = "fsl,imx7ulp-usdhc";
-+	reg = <0x40380000 0x10000>;
-+	interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&clks IMX7ULP_CLK_NIC1_BUS_DIV>,
-+		 <&clks IMX7ULP_CLK_NIC1_DIV>,
-+		 <&clks IMX7ULP_CLK_USDHC1>;
-+	clock-names ="ipg", "ahb", "per";
-+	bus-width = <4>;
-+	status = "disabled";
-+};
-diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
-new file mode 100644
-index 0000000..2556106
---- /dev/null
-+++ b/include/dt-bindings/clock/imx7ulp-clock.h
-@@ -0,0 +1,108 @@
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -0,0 +1,305 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
++ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
 + */
 +
-+#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
-+#define __DT_BINDINGS_CLOCK_IMX7ULP_H
++#define pr_fmt(fmt) "%s: " fmt "\n", __func__
 +
-+#define IMX7ULP_CLK_DUMMY		0
-+#define IMX7ULP_CLK_ROSC		1
-+#define IMX7ULP_CLK_SOSC		2
-+#define IMX7ULP_CLK_FIRC		3
++#include <linux/clk-provider.h>
++#include <linux/init.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+/* SCG1 */
-+#define IMX7ULP_CLK_SPLL_PRE_SEL	4
-+#define IMX7ULP_CLK_SPLL_PRE_DIV	5
-+#define IMX7ULP_CLK_SPLL		6
-+#define IMX7ULP_CLK_SPLL_POST_DIV1	7
-+#define IMX7ULP_CLK_SPLL_POST_DIV2	8
-+#define IMX7ULP_CLK_SPLL_PFD0		9
-+#define IMX7ULP_CLK_SPLL_PFD1		10
-+#define IMX7ULP_CLK_SPLL_PFD2		11
-+#define IMX7ULP_CLK_SPLL_PFD3		12
-+#define IMX7ULP_CLK_SPLL_PFD_SEL	13
-+#define IMX7ULP_CLK_SPLL_SEL		14
-+#define IMX7ULP_CLK_APLL_PRE_SEL	15
-+#define IMX7ULP_CLK_APLL_PRE_DIV	16
-+#define IMX7ULP_CLK_APLL		17
-+#define IMX7ULP_CLK_APLL_POST_DIV1	18
-+#define IMX7ULP_CLK_APLL_POST_DIV2	19
-+#define IMX7ULP_CLK_APLL_PFD0		20
-+#define IMX7ULP_CLK_APLL_PFD1		21
-+#define IMX7ULP_CLK_APLL_PFD2		22
-+#define IMX7ULP_CLK_APLL_PFD3		23
-+#define IMX7ULP_CLK_APLL_PFD_SEL	24
-+#define IMX7ULP_CLK_APLL_SEL		25
-+#define IMX7ULP_CLK_UPLL		26
-+#define IMX7ULP_CLK_SYS_SEL		27
-+#define IMX7ULP_CLK_CORE_DIV		28
-+#define IMX7ULP_CLK_BUS_DIV		29
-+#define IMX7ULP_CLK_PLAT_DIV		30
-+#define IMX7ULP_CLK_DDR_SEL		31
-+#define IMX7ULP_CLK_DDR_DIV		32
-+#define IMX7ULP_CLK_NIC_SEL		33
-+#define IMX7ULP_CLK_NIC0_DIV		34
-+#define IMX7ULP_CLK_GPU_DIV		35
-+#define IMX7ULP_CLK_NIC1_DIV		36
-+#define IMX7ULP_CLK_NIC1_BUS_DIV	37
-+#define IMX7ULP_CLK_NIC1_EXT_DIV	38
++#define DA8XX_GATE_CLOCK_IS_DIV4P5	BIT(1)
 +
-+/* PCG2 */
-+#define IMX7ULP_CLK_DMA1		39
-+#define IMX7ULP_CLK_RGPIO2P1		40
-+#define IMX7ULP_CLK_FLEXBUS		41
-+#define IMX7ULP_CLK_SEMA42_1		42
-+#define IMX7ULP_CLK_DMA_MUX1		43
-+#define IMX7ULP_CLK_SNVS		44
-+#define IMX7ULP_CLK_CAAM		45
-+#define IMX7ULP_CLK_LPTPM4		46
-+#define IMX7ULP_CLK_LPTPM5		47
-+#define IMX7ULP_CLK_LPIT1		48
-+#define IMX7ULP_CLK_LPSPI2		49
-+#define IMX7ULP_CLK_LPSPI3		50
-+#define IMX7ULP_CLK_LPI2C4		51
-+#define IMX7ULP_CLK_LPI2C5		52
-+#define IMX7ULP_CLK_LPUART4		53
-+#define IMX7ULP_CLK_LPUART5		54
-+#define IMX7ULP_CLK_FLEXIO1		55
-+#define IMX7ULP_CLK_USB0		56
-+#define IMX7ULP_CLK_USB1		57
-+#define IMX7ULP_CLK_USB_PHY		58
-+#define IMX7ULP_CLK_USB_PL301		59
-+#define IMX7ULP_CLK_USDHC0		60
-+#define IMX7ULP_CLK_USDHC1		61
-+#define IMX7ULP_CLK_WDG1		62
-+#define IMX7ULP_CLK_WDG2		63
++struct da8xx_cfgchip_gate_clk_info {
++	const char *name;
++	u32 cfgchip;
++	u32 bit;
++	u32 flags;
++};
 +
-+/* PCG3 */
-+#define IMX7ULP_CLK_LPTPM6		64
-+#define IMX7ULP_CLK_LPTPM7		65
-+#define IMX7ULP_CLK_LPI2C6		66
-+#define IMX7ULP_CLK_LPI2C7		67
-+#define IMX7ULP_CLK_LPUART6		68
-+#define IMX7ULP_CLK_LPUART7		69
-+#define IMX7ULP_CLK_VIU			70
-+#define IMX7ULP_CLK_DSI			71
-+#define IMX7ULP_CLK_LCDIF		72
-+#define IMX7ULP_CLK_MMDC		73
-+#define IMX7ULP_CLK_PCTLC		74
-+#define IMX7ULP_CLK_PCTLD		75
-+#define IMX7ULP_CLK_PCTLE		76
-+#define IMX7ULP_CLK_PCTLF		77
-+#define IMX7ULP_CLK_GPU3D		78
-+#define IMX7ULP_CLK_GPU2D		79
-+#define IMX7ULP_CLK_MIPI_PLL		80
-+#define IMX7ULP_CLK_SIRC		81
-+#define IMX7ULP_CLK_SOSC_BUS_CLK	82
-+#define IMX7ULP_CLK_FIRC_BUS_CLK	83
-+#define IMX7ULP_CLK_SPLL_BUS_CLK	84
++struct da8xx_cfgchip_gate_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
 +
-+#define IMX7ULP_CLK_END			85
++#define to_da8xx_cfgchip_gate_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
 +
-+#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
++static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
++}
++
++static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++
++	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
++}
++
++static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return !!(val & clk->mask);
++}
++
++static unsigned long da8xx_cfgchip_div4p5_recalc_rate(struct clk_hw *hw,
++						      unsigned long parent_rate)
++{
++	/* this clock divides by 4.5 */
++	return parent_rate * 2 / 9;
++}
++
++static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
++	.enable		= da8xx_cfgchip_gate_clk_enable,
++	.disable	= da8xx_cfgchip_gate_clk_disable,
++	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
++};
++
++static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
++	.enable		= da8xx_cfgchip_gate_clk_enable,
++	.disable	= da8xx_cfgchip_gate_clk_disable,
++	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
++	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
++};
++
++static struct clk * __init
++da8xx_cfgchip_gate_clk_register(const struct da8xx_cfgchip_gate_clk_info *info,
++				const char *parent_name,
++				struct regmap *regmap)
++{
++	struct da8xx_cfgchip_gate_clk *gate;
++	struct clk_init_data init;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = info->name;
++	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
++		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
++	else
++		init.ops = &da8xx_cfgchip_gate_clk_ops;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++	init.flags = 0;
++
++	gate->hw.init = &init;
++	gate->regmap = regmap;
++	gate->reg = info->cfgchip;
++	gate->mask = info->bit;
++
++	return clk_register(NULL, &gate->hw);
++}
++
++static const struct da8xx_cfgchip_gate_clk_info da8xx_tbclksync_info __initconst = {
++	.name = "ehrpwm_tbclk",
++	.cfgchip = CFGCHIP(1),
++	.bit = CFGCHIP1_TBCLKSYNC,
++};
++
++struct clk * __init da8xx_cfgchip_register_tbclk(struct regmap *regmap)
++{
++	return da8xx_cfgchip_gate_clk_register(&da8xx_tbclksync_info, "ehrpwm",
++					       regmap);
++}
++
++static const struct da8xx_cfgchip_gate_clk_info da8xx_div4p5ena_info __initconst = {
++	.name = "div4.5",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_DIV45PENA,
++	.flags = DA8XX_GATE_CLOCK_IS_DIV4P5,
++};
++
++struct clk * __init da8xx_cfgchip_register_div4p5(struct regmap *regmap)
++{
++	return da8xx_cfgchip_gate_clk_register(&da8xx_div4p5ena_info,
++					       "pll0_pllout", regmap);
++}
++
++#ifdef CONFIG_OF
++static void __init
++of_da8xx_cfgchip_gate_clk_init(struct device_node *np,
++			       const struct da8xx_cfgchip_gate_clk_info *info)
++{
++	const char *parent_name;
++	struct regmap *regmap;
++	struct clk *clk;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("no regmap for syscon parent of %s (%lu)", np->full_name,
++		       PTR_ERR(regmap));
++		return;
++	}
++
++	clk = da8xx_cfgchip_gate_clk_register(info, parent_name, regmap);
++	if (IS_ERR(clk)) {
++		pr_err("failed to register %s (%lu)", np->full_name,
++		       PTR_ERR(clk));
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++
++static void __init da8xx_tbclksync_init(struct device_node *np)
++{
++	of_da8xx_cfgchip_gate_clk_init(np, &da8xx_tbclksync_info);
++}
++CLK_OF_DECLARE(da8xx_tbclksync, "ti,da830-tbclksync", da8xx_tbclksync_init);
++
++static void __init da8xx_div4p5ena_init(struct device_node *np)
++{
++	of_da8xx_cfgchip_gate_clk_init(np, &da8xx_div4p5ena_info);
++}
++CLK_OF_DECLARE(da8xx_div4p5ena, "ti,da830-div4p5ena", da8xx_div4p5ena_init);
++#endif
++
++struct da8xx_cfgchip_mux_clk_info {
++	const char *name;
++	const char *parent0;
++	const char *parent1;
++	u32 cfgchip;
++	u32 bit;
++};
++
++struct da8xx_cfgchip_mux_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	u32 reg;
++	u32 mask;
++};
++
++#define to_da8xx_cfgchip_mux_clk(_hw) \
++	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
++
++static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val = index ? clk->mask : 0;
++
++	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
++}
++
++static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, clk->reg, &val);
++
++	return (val & clk->mask) ? 1 : 0;
++}
++
++static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
++	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
++	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
++};
++
++static struct clk * __init
++da8xx_cfgchip_mux_clk_register(const struct da8xx_cfgchip_mux_clk_info *info,
++			       struct regmap *regmap)
++{
++	const char * const parent_names[] = { info->parent0, info->parent1 };
++	struct da8xx_cfgchip_mux_clk *mux;
++	struct clk_init_data init;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = info->name;
++	init.ops = &da8xx_cfgchip_mux_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++	init.flags = 0;
++
++	mux->hw.init = &init;
++	mux->regmap = regmap;
++	mux->reg = info->cfgchip;
++	mux->mask = info->bit;
++
++	return clk_register(NULL, &mux->hw);
++}
++
++static const struct da8xx_cfgchip_mux_clk_info da850_async1_info __initconst = {
++	.name = "async1",
++	.parent0 = "pll0_sysclk3",
++	.parent1 = "div4.5",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_EMA_CLKSRC,
++};
++
++struct clk * __init da8xx_cfgchip_register_async1(struct regmap *cfgchip)
++{
++	return da8xx_cfgchip_mux_clk_register(&da850_async1_info, cfgchip);
++}
++
++static const struct da8xx_cfgchip_mux_clk_info da850_async3_info __initconst = {
++	.name = "async3",
++	.parent0 = "pll0_sysclk2",
++	.parent1 = "pll1_sysclk2",
++	.cfgchip = CFGCHIP(3),
++	.bit = CFGCHIP3_ASYNC3_CLKSRC,
++};
++
++struct clk * __init da8xx_cfgchip_register_async3(struct regmap *cfgchip)
++{
++	return da8xx_cfgchip_mux_clk_register(&da850_async3_info, cfgchip);
++}
++
++#ifdef CONFIG_OF
++static void __init
++of_da8xx_cfgchip_init_mux_clock(struct device_node *np,
++				const struct da8xx_cfgchip_mux_clk_info *info)
++{
++	struct regmap *regmap;
++	struct clk *clk;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("no regmap for syscon parent of %s (%ld)", np->full_name,
++		       PTR_ERR(regmap));
++		return;
++	}
++
++	clk = da8xx_cfgchip_mux_clk_register(info, regmap);
++	if (IS_ERR(clk)) {
++		pr_err("Failed to register %s (%ld)", np->full_name,
++		       PTR_ERR(clk));
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
++
++static void __init da850_async1_init(struct device_node *np)
++{
++	of_da8xx_cfgchip_init_mux_clock(np, &da850_async1_info);
++}
++CLK_OF_DECLARE(da850_async1, "ti,da850-async1-clksrc", da850_async1_init);
++
++static void __init da850_async3_init(struct device_node *np)
++{
++	of_da8xx_cfgchip_init_mux_clock(np, &da850_async3_info);
++}
++CLK_OF_DECLARE(da850_async3, "ti,da850-async3-clksrc", da850_async3_init);
++#endif
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 3810ea3..54ea3ff 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -23,4 +23,9 @@ void dm365_psc_clk_init(void __iomem *psc);
+ void dm644x_psc_clk_init(void __iomem *psc);
+ void dm646x_psc_clk_init(void __iomem *psc);
+ 
++struct clk *da8xx_cfgchip_register_tbclk(struct regmap *regmap);
++struct clk *da8xx_cfgchip_register_div4p5(struct regmap *regmap);
++struct clk *da8xx_cfgchip_register_async1(struct regmap *regmap);
++struct clk *da8xx_cfgchip_register_async3(struct regmap *regmap);
++
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
 2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
