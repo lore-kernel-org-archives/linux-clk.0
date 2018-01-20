@@ -1,127 +1,201 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 19/44] clk: davinci: New driver for TI DA8XX CFGCHIP
- clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-20-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c3c0f9cf-b93e-6d1e-1e44-7dcef1ea11cf@ti.com>
-Date: Wed, 17 Jan 2018 21:01:53 +0530
-MIME-Version: 1.0
-In-Reply-To: <1515377863-20358-20-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 21/41] ARM: da850: add new clock init using common clock framework
+Date: Sat, 20 Jan 2018 11:14:00 -0600
+Message-Id: <1516468460-4908-22-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:47 AM, David Lechner wrote:
-> This adds a new driver for the gate and multiplexer clocks in the
-> CFGCHIPn syscon registers on TI DA8XX-type SoCs.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  drivers/clk/davinci/Makefile        |   2 +
->  drivers/clk/davinci/da8xx-cfgchip.c | 203 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 205 insertions(+)
->  create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
-> 
-> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-> index 6c388d4..11178b7 100644
-> --- a/drivers/clk/davinci/Makefile
-> +++ b/drivers/clk/davinci/Makefile
-> @@ -1,6 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
->  ifeq ($(CONFIG_COMMON_CLK), y)
-> +obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
-> +
->  obj-y += pll.o
->  obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
->  obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> new file mode 100644
-> index 0000000..772e09a
-> --- /dev/null
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -0,0 +1,203 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
-> + *
-> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
+This adds the new board-specific clock init in mach-davinci/da850.c
+using the new common clock framework drivers.
 
-2018
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/da8xx-cfgchip.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#ifdef CONFIG_OF
+Also clean up the #includes since we are adding some here.
 
-Is this ifdef really needed, or included to save space for non-OF
-builds? I think it can be removed if not really needed.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-> +static void da8xx_cfgchip_gate_clk_init(struct device_node *np, u32 reg,
-> +					u32 mask)
-> +{
-> +	struct da8xx_cfgchip_gate_clk *clk;
-> +	struct clk_init_data init;
-> +	const char *name = np->name;
-> +	const char *parent_name;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	of_property_read_string(np, "clock-output-names", &name);
-> +	parent_name = of_clk_get_parent_name(np, 0);
-> +
-> +	regmap = syscon_node_to_regmap(of_get_parent(np));
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("%s: no regmap for syscon parent of %s (%ld)\n",
-> +		       __func__, np->full_name, PTR_ERR(regmap));
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+- add async1 and async2 clock domains
 
-please use pr_fmt for this driver too.
+ arch/arm/mach-davinci/da850.c | 79 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 69 insertions(+), 10 deletions(-)
 
-> +static void da8xx_cfgchip_mux_clk_init(struct device_node *np, u32 reg,
-> +				       u32 mask)
-> +{
-> +	struct da8xx_cfgchip_mux_clk *clk;
-> +	struct clk_init_data init;
-> +	const char *name = np->name;
-> +	const char *parent_names[2];
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	ret = of_property_match_string(np, "clock-names", "pll0_sysclk2");
-> +	parent_names[0] = of_clk_get_parent_name(np, ret);
-> +	if (!parent_names[0]) {
-> +		pr_err("%s: missing pll0_sysclk2 clock\n", __func__);
-> +		return;
-> +	}
-> +
-> +	ret = of_property_match_string(np, "clock-names", "pll1_sysclk2");
-> +	parent_names[1] = of_clk_get_parent_name(np, ret);
-> +	if (!parent_names[1]) {
-> +		pr_err("%s: missing pll1_sysclk2 clock\n", __func__);
-> +		return;
-> +	}
-
-The fact that you are looking specifically for pll0_sysclk2 and
-pll1_sysclk2 makes it really specific to async3 and the same function
-cannot be used for something like EMIFA clock source. Can this part of
-the function be factored out so rest of the function can still be reused
-for another clock?
-
-Thanks,
-Sekhar
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 5c86d77..0fdf647 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -11,37 +11,44 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
++#include <linux/cpufreq.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/platform_device.h>
+-#include <linux/cpufreq.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
+-#include <mach/da8xx.h>
+ #include <mach/cpufreq.h>
++#include <mach/cputype.h>
++#include <mach/da8xx.h>
++#include <mach/irqs.h>
+ #include <mach/pm.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ #define DA850_PLL1_BASE		0x01e1a000
+ #define DA850_TIMER64P2_BASE	0x01f0c000
+ #define DA850_TIMER64P3_BASE	0x01f0d000
+ 
+ #define DA850_REF_FREQ		24000000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate);
+ static int da850_round_armrate(struct clk *clk, unsigned long rate);
+ static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
+@@ -581,6 +588,7 @@ static struct clk_lookup da850_clks[] = {
+ 	CLK("ecap.2",		"fck",		&ecap2_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1168,6 +1176,7 @@ int da850_register_cpufreq(char *async_clk)
+ 	return platform_device_register(&da850_cpufreq_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	int ret = 0, diff;
+@@ -1230,12 +1239,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
+ 
+ 	return 0;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #else
+ int __init da850_register_cpufreq(char *async_clk)
+ {
+ 	return 0;
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return -EINVAL;
+@@ -1250,6 +1261,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return clk->rate;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #endif
+ 
+ /* VPIF resource, platform data */
+@@ -1381,6 +1393,52 @@ void __init da850_init(void)
+ 
+ void __init da850_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0, *pll1, *psc0, *psc1;
++	struct regmap *cfgchip;
++	struct clk *clk;
++	struct clk_hw *parent;
++
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
++	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
++	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
++
++	cfgchip = da8xx_register_cfgchip();
++	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
++		return;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
++
++	da850_pll_clk_init(pll0, pll1);
++
++	da8xx_cfgchip_register_div4p5(cfgchip);
++
++	da8xx_cfgchip_register_async1(cfgchip);
++
++	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
++	clk_register_clkdev(clk, "timer0", NULL);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++
++	clk = da8xx_cfgchip_register_async3(cfgchip);
++
++	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
++	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
++	if (parent)
++		clk_set_parent(clk, parent->clk);
++	else
++		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
++
++	da850_psc_clk_init(psc0, psc1);
++
++	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
++	clk_register_clkdev(clk, "rmii", NULL);
++
++	clk = da8xx_cfgchip_register_tbclk(cfgchip);
++	clk_register_clkdev(clk, "tbclk", "ehrpwm.0");
++	clk_register_clkdev(clk, "tbclk", "ehrpwm.1");
++#else
+ 	struct regmap *cfgchip;
+ 
+ 	cfgchip = da8xx_register_cfgchip();
+@@ -1392,5 +1450,6 @@ void __init da850_init_time(void)
+ 	regmap_write_bits(cfgchip, CFGCHIP(3), CFGCHIP3_PLL1_MASTER_LOCK, 0);
+ 
+ 	davinci_clk_init(da850_clks);
++#endif
+ 	davinci_timer_init();
+ }
+-- 
+2.7.4
