@@ -1,201 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37871 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751842AbeADHIb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 02:08:31 -0500
-Received: by mail-pl0-f68.google.com with SMTP id s3so581494plp.4
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2018 23:08:31 -0800 (PST)
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-To: arm@kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [RECEND PATCH V7 12/12] arm64: dts: add clocks for SC9860
-Date: Thu,  4 Jan 2018 15:08:04 +0800
-Message-Id: <1515049684-23481-2-git-send-email-zhang.chunyan@linaro.org>
-In-Reply-To: <1515049684-23481-1-git-send-email-zhang.chunyan@linaro.org>
-References: <20171207125715.16160-1-chunyan.zhang@spreadtrum.com>
- <1515049684-23481-1-git-send-email-zhang.chunyan@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marc.zyngier@arm.com>
+Date: Sat, 20 Jan 2018 13:06:49 +0000
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
+ <jason@lakedaemon.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee
+ Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
+Message-ID: <20180120130649.7f326f75@why.wild-wind.fr.eu.org>
+In-Reply-To: <1515687945.2170.1@smtp.crapouillou.net>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+	<20180110224838.16711-1-paul@crapouillou.net>
+	<20180110224838.16711-6-paul@crapouillou.net>
+	<58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
+	<1515687945.2170.1@smtp.crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+On Thu, 11 Jan 2018 17:25:45 +0100
+Paul Cercueil <paul@crapouillou.net> wrote:
 
-Some clocks on SC9860 are in the same address area with syscon devices,
-those are what have a property of 'sprd,syscon' which would refer to
-syscon devices, others would have a reg property indicated their address
-ranges.
+> Hi Marc,
+> 
+> >>  +static int __init ingenic_tcu_intc_of_init(struct device_node 
+> >> *node,
+> >>  +	struct device_node *parent)
+> >>  +{
+> >>  +	struct irq_domain *domain;
+> >>  +	struct irq_chip_generic *gc;
+> >>  +	struct irq_chip_type *ct;
+> >>  +	int err, i, num_parent_irqs;
+> >>  +	unsigned int parent_irqs[3];  
+> > 
+> > 3 parent interrupts? Really? How do you pick one? Also, given the 
+> > useage
+> > model below, "int" is the wrong type. Probably should be u32.  
+> 
+> See below.
+> 
+> >>  +	struct regmap *map;
+> >>  +
+> >>  +	num_parent_irqs = of_property_count_elems_of_size(
+> >>  +			node, "interrupts", 4);  
+> > 
+> > Nit: on a single line, as here is nothing that hurts my eyes more than
+> > reading something like(
+> > this). Also, 4 is better expressed as sizeof(u32).  
+> 
+> That will make checkpatch.pl unhappy :(
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- arch/arm64/boot/dts/sprd/sc9860.dtsi | 115 +++++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/sprd/whale2.dtsi |  18 +++++-
- 2 files changed, 131 insertions(+), 2 deletions(-)
+And I don't care about checkpatch. I maintain the irqchip stuff, while
+checkpatch doesn't. Hence, I win.
 
-diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-index 7b7d8ce..bf03da4 100644
---- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-@@ -7,6 +7,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sprd,sc9860-clk.h>
- #include "whale2.dtsi"
- 
- / {
-@@ -183,6 +184,120 @@
- 	};
- 
- 	soc {
-+		pmu_gate: pmu-gate {
-+			compatible = "sprd,sc9860-pmu-gate";
-+			sprd,syscon = <&pmu_regs>; /* 0x402b0000 */
-+			clocks = <&ext_26m>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pll: pll {
-+			compatible = "sprd,sc9860-pll";
-+			sprd,syscon = <&ana_regs>; /* 0x40400000 */
-+			clocks = <&pmu_gate 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		ap_clk: clock-controller@20000000 {
-+			compatible = "sprd,sc9860-ap-clk";
-+			reg = <0 0x20000000 0 0x400>;
-+			clocks = <&ext_26m>, <&pll 0>,
-+				 <&pmu_gate 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		aon_prediv: aon-prediv {
-+			compatible = "sprd,sc9860-aon-prediv";
-+			reg = <0 0x402d0000 0 0x400>;
-+			clocks = <&ext_26m>, <&pll 0>,
-+				 <&pmu_gate 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		apahb_gate: apahb-gate {
-+			compatible = "sprd,sc9860-apahb-gate";
-+			sprd,syscon = <&ap_ahb_regs>; /* 0x20210000 */
-+			clocks = <&aon_prediv 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		aon_gate: aon-gate {
-+			compatible = "sprd,sc9860-aon-gate";
-+			sprd,syscon = <&aon_regs>; /* 0x402e0000 */
-+			clocks = <&aon_prediv 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		aonsecure_clk: clock-controller@40880000 {
-+			compatible = "sprd,sc9860-aonsecure-clk";
-+			reg = <0 0x40880000 0 0x400>;
-+			clocks = <&ext_26m>, <&pll 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		agcp_gate: agcp-gate {
-+			compatible = "sprd,sc9860-agcp-gate";
-+			sprd,syscon = <&agcp_regs>; /* 0x415e0000 */
-+			clocks = <&aon_prediv 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		gpu_clk: clock-controller@60200000 {
-+			compatible = "sprd,sc9860-gpu-clk";
-+			reg = <0 0x60200000 0 0x400>;
-+			clocks = <&pll 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vsp_clk: clock-controller@61000000 {
-+			compatible = "sprd,sc9860-vsp-clk";
-+			reg = <0 0x61000000 0 0x400>;
-+			clocks = <&ext_26m>, <&pll 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vsp_gate: vsp-gate {
-+			compatible = "sprd,sc9860-vsp-gate";
-+			sprd,syscon = <&vsp_regs>; /* 0x61100000 */
-+			clocks = <&vsp_clk 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		cam_clk: clock-controller@62000000 {
-+			compatible = "sprd,sc9860-cam-clk";
-+			reg = <0 0x62000000 0 0x4000>;
-+			clocks = <&ext_26m>, <&pll 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		cam_gate: cam-gate {
-+			compatible = "sprd,sc9860-cam-gate";
-+			sprd,syscon = <&cam_regs>; /* 0x62100000 */
-+			clocks = <&cam_clk 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		disp_clk: clock-controller@63000000 {
-+			compatible = "sprd,sc9860-disp-clk";
-+			reg = <0 0x63000000 0 0x400>;
-+			clocks = <&ext_26m>, <&pll 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		disp_gate: disp-gate {
-+			compatible = "sprd,sc9860-disp-gate";
-+			sprd,syscon = <&disp_regs>; /* 0x63100000 */
-+			clocks = <&disp_clk 0>;
-+			#clock-cells = <1>;
-+		};
-+
-+		apapb_gate: apapb-gate {
-+			compatible = "sprd,sc9860-apapb-gate";
-+			sprd,syscon = <&ap_apb_regs>; /* 0x70b00000 */
-+			clocks = <&ap_clk 0>;
-+			#clock-cells = <1>;
-+		};
-+
- 		funnel@10001000 { /* SoC Funnel */
- 			compatible = "arm,coresight-funnel", "arm,primecell";
- 			reg = <0 0x10001000 0 0x1000>;
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 6ea3a75..328009c 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -106,10 +106,24 @@
- 		};
- 	};
- 
--	ext_26m: ext-26m {
-+	ext_32k: ext_32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "ext-32k";
-+	};
-+
-+	ext_26m: ext_26m {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <26000000>;
--		clock-output-names = "ext_26m";
-+		clock-output-names = "ext-26m";
-+	};
-+
-+	ext_rco_100m: ext_rco_100m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "ext-rco-100m";
- 	};
- };
+> 
+> >>  +	if (num_parent_irqs < 0 || num_parent_irqs > 
+> >> ARRAY_SIZE(parent_irqs))
+> >>  +		return -EINVAL;
+> >>  +
+> >>  +	map = syscon_node_to_regmap(node->parent);
+> >>  +	if (IS_ERR(map))
+> >>  +		return PTR_ERR(map);
+> >>  +
+> >>  +	domain = irq_domain_add_linear(node, 32, &irq_generic_chip_ops, 
+> >> NULL);
+> >>  +	if (!domain)
+> >>  +		return -ENOMEM;
+> >>  +
+> >>  +	err = irq_alloc_domain_generic_chips(domain, 32, 1, "TCU",
+> >>  +			handle_level_irq, 0, IRQ_NOPROBE | IRQ_LEVEL, 0);
+> >>  +	if (err)
+> >>  +		goto out_domain_remove;
+> >>  +
+> >>  +	gc = irq_get_domain_generic_chip(domain, 0);
+> >>  +	ct = gc->chip_types;
+> >>  +
+> >>  +	gc->wake_enabled = IRQ_MSK(32);
+> >>  +	gc->private = map;
+> >>  +
+> >>  +	ct->regs.disable = TCU_REG_TMSR;
+> >>  +	ct->regs.enable = TCU_REG_TMCR;
+> >>  +	ct->regs.ack = TCU_REG_TFCR;
+> >>  +	ct->chip.irq_unmask = ingenic_tcu_gc_unmask_enable_reg;
+> >>  +	ct->chip.irq_mask = ingenic_tcu_gc_mask_disable_reg;
+> >>  +	ct->chip.irq_mask_ack = ingenic_tcu_gc_mask_disable_reg_and_ack;
+> >>  +	ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
+> >>  +
+> >>  +	/* Mask all IRQs by default */
+> >>  +	regmap_write(map, TCU_REG_TMSR, IRQ_MSK(32));
+> >>  +
+> >>  +	for (i = 0; i < num_parent_irqs; i++) {
+> >>  +		parent_irqs[i] = irq_of_parse_and_map(node, i);
+> >>  +		if (!parent_irqs[i]) {
+> >>  +			err = -EINVAL;
+> >>  +			goto out_unmap_irqs;
+> >>  +		}
+> >>  +
+> >>  +		irq_set_chained_handler_and_data(parent_irqs[i],
+> >>  +				ingenic_tcu_intc_cascade, domain);
+> >>  +	}  
+> > 
+> > I don't get the multiple parent irq at all. How are the source 
+> > interrupt routed to the various cascades?  
+> 
+> On JZ4740, channels 0 and 1 have their own interrupt, and channels
+> 2-7 share one interrupt line.
+> On JZ4770 and JZ4780, the OST (OS timer) channel has its own
+> interrupt, channel 5 has its own interrupt, and channels 0-4 and 6-7
+> share one interrupt line.
+
+What a mess. I suppose you get a shared status register to find out
+which channel has fired?
+
+> To keep things simple, we register the same interrupt handler for the 
+> three parent interrupts.
+
+Please add a comment to that effect, documenting the above HW blunder.
+
+Thanks,
+
+	M.
 -- 
-2.7.4
-
+Without deviation from the norm, progress is not possible.
