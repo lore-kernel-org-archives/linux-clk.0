@@ -1,217 +1,128 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v3 01/14] mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
-Date: Thu, 18 Jan 2018 15:34:17 +0100
-Message-ID: <1516286070-24927-2-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 16/41] clk: davinci: Add platform information for TI DM646x PSC
+Date: Sat, 20 Jan 2018 11:13:55 -0600
+Message-Id: <1516468460-4908-17-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+This adds platform-specific declarations for the PSC clocks on TI
+DM646x based systems.
 
-Two mask registers are used in order to select which events have to
-actually generate an interrupt on each IRQ line.
-
-It seems that in the single-IRQ case it's assumed that the IRQs lines
-are simply OR-ed, while the two mask registers are still present. The
-driver still programs the two mask registers separately.
-
-However the STM32 variant has only one IRQ, and also has only one mask
-register.
-
-This patch prepares for STM32 variant support by making the driver using
-only one mask register.
-
-This patch also optimize the MMCIMASK1 mask usage by caching it into
-host->mask1_reg which avoid to read it into mmci_irq().
-
-Tested only on STM32 variant. RFT for variants other than STM32
-
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-v3: _ none
 
-v2: _ Add Reviewed-by
+v6 changes:
+- change how clkdev lookups are declared
 
- drivers/mmc/host/mmci.c | 28 ++++++++++++++++++++++++----
- drivers/mmc/host/mmci.h |  1 +
- 2 files changed, 25 insertions(+), 4 deletions(-)
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/psc-dm646x.c | 62 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h      |  1 +
+ 3 files changed, 64 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm646x.c
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 97da0fc..3125dc0 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -82,6 +82,7 @@
-  * @qcom_fifo: enables qcom specific fifo pio read logic.
-  * @qcom_dml: enables qcom specific dma glue for dma transfers.
-  * @reversed_irq_handling: handle data irq before cmd irq.
-+ * @mmcimask1: true if variant have a MMCIMASK1 register.
-  */
- struct variant_data {
- 	unsigned int		clkreg;
-@@ -111,6 +112,7 @@ struct variant_data {
- 	bool			qcom_fifo;
- 	bool			qcom_dml;
- 	bool			reversed_irq_handling;
-+	bool			mmcimask1;
- };
- 
- static struct variant_data variant_arm = {
-@@ -120,6 +122,7 @@ struct variant_data {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.reversed_irq_handling	= true,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_arm_extended_fifo = {
-@@ -128,6 +131,7 @@ struct variant_data {
- 	.datalength_bits	= 16,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_arm_extended_fifo_hwfc = {
-@@ -137,6 +141,7 @@ struct variant_data {
- 	.datalength_bits	= 16,
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_u300 = {
-@@ -152,6 +157,7 @@ struct variant_data {
- 	.signal_direction	= true,
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_nomadik = {
-@@ -168,6 +174,7 @@ struct variant_data {
- 	.signal_direction	= true,
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_ux500 = {
-@@ -190,6 +197,7 @@ struct variant_data {
- 	.busy_detect_flag	= MCI_ST_CARDBUSY,
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_ux500v2 = {
-@@ -214,6 +222,7 @@ struct variant_data {
- 	.busy_detect_flag	= MCI_ST_CARDBUSY,
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
-+	.mmcimask1		= true,
- };
- 
- static struct variant_data variant_qcom = {
-@@ -232,6 +241,7 @@ struct variant_data {
- 	.explicit_mclk_control	= true,
- 	.qcom_fifo		= true,
- 	.qcom_dml		= true,
-+	.mmcimask1		= true,
- };
- 
- /* Busy detection for the ST Micro variant */
-@@ -396,6 +406,7 @@ static void mmci_set_clkreg(struct mmci_host *host, unsigned int desired)
- static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
- {
- 	void __iomem *base = host->base;
-+	struct variant_data *variant = host->variant;
- 
- 	if (host->singleirq) {
- 		unsigned int mask0 = readl(base + MMCIMASK0);
-@@ -406,7 +417,10 @@ static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
- 		writel(mask0, base + MMCIMASK0);
- 	}
- 
--	writel(mask, base + MMCIMASK1);
-+	if (variant->mmcimask1)
-+		writel(mask, base + MMCIMASK1);
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index a20e379..6c388d4 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -15,4 +15,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
++obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= psc-dm646x.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
+new file mode 100644
+index 0000000..bdb9db7
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm646x.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM646x
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
 +
-+	host->mask1_reg = mask;
- }
- 
- static void mmci_stop_data(struct mmci_host *host)
-@@ -1286,7 +1300,7 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
- 		status = readl(host->base + MMCISTATUS);
- 
- 		if (host->singleirq) {
--			if (status & readl(host->base + MMCIMASK1))
-+			if (status & host->mask1_reg)
- 				mmci_pio_irq(irq, dev_id);
- 
- 			status &= ~MCI_IRQ1MASK;
-@@ -1729,7 +1743,10 @@ static int mmci_probe(struct amba_device *dev,
- 	spin_lock_init(&host->lock);
- 
- 	writel(0, host->base + MMCIMASK0);
--	writel(0, host->base + MMCIMASK1);
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
 +
-+	if (variant->mmcimask1)
-+		writel(0, host->base + MMCIMASK1);
++#include "psc.h"
 +
- 	writel(0xfff, host->base + MMCICLEAR);
- 
- 	/*
-@@ -1809,6 +1826,7 @@ static int mmci_remove(struct amba_device *dev)
- 
- 	if (mmc) {
- 		struct mmci_host *host = mmc_priv(mmc);
-+		struct variant_data *variant = host->variant;
- 
- 		/*
- 		 * Undo pm_runtime_put() in probe.  We use the _sync
-@@ -1819,7 +1837,9 @@ static int mmci_remove(struct amba_device *dev)
- 		mmc_remove_host(mmc);
- 
- 		writel(0, host->base + MMCIMASK0);
--		writel(0, host->base + MMCIMASK1);
++LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
++LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
++				"fck",		"davinci_mdio.0");
++LPSC_CLKDEV1(aemif_clkdev,	"aemif",	NULL);
++LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
++LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
++LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,	NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,	NULL,		"serial8250.2");
++LPSC_CLKDEV1(i2c_clkdev,	NULL,		"i2c_davinci.1");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,	"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,	"timer0",	 NULL);
 +
-+		if (variant->mmcimask1)
-+			writel(0, host->base + MMCIMASK1);
++static const struct davinci_psc_clk_info dm646x_psc_info[] __initconst = {
++	LPSC(0,  0, arm,      pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	/* REVISIT how to disable? */
++	LPSC(1,  0, dsp,      pll1_sysclk1, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(4,  0, edma_cc,  pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(5,  0, edma_tc0, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(6,  0, edma_tc1, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(7,  0, edma_tc2, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(8,  0, edma_tc3, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(10, 0, ide,      pll1_sysclk4, ide_clkdev,    0),
++	LPSC(14, 0, emac,     pll1_sysclk3, emac_clkdev,   0),
++	LPSC(16, 0, vpif0,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(17, 0, vpif1,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(21, 0, aemif,    pll1_sysclk3, aemif_clkdev,  LPSC_ALWAYS_ENABLED),
++	LPSC(22, 0, mcasp0,   pll1_sysclk3, mcasp0_clkdev, 0),
++	LPSC(23, 0, mcasp1,   pll1_sysclk3, mcasp1_clkdev, 0),
++	LPSC(26, 0, uart0,    aux_clkin,    uart0_clkdev,  0),
++	LPSC(27, 0, uart1,    aux_clkin,    uart1_clkdev,  0),
++	LPSC(28, 0, uart2,    aux_clkin,    uart2_clkdev,  0),
++	/* REVIST: disabling hangs system */
++	LPSC(29, 0, pwm0,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
++	/* REVIST: disabling hangs system */
++	LPSC(30, 0, pwm1,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, i2c,      pll1_sysclk3, i2c_clkdev,    0),
++	LPSC(33, 0, gpio,     pll1_sysclk3, gpio_clkdev,   0),
++	LPSC(34, 0, timer0,   pll1_sysclk3, timer0_clkdev, 0),
++	LPSC(35, 0, timer1,   pll1_sysclk3, NULL,          0),
++	{ }
++};
++
++void __init dm646x_psc_clk_init(void __iomem *psc)
++{
++	davinci_psc_register_clocks(dm646x_psc_info, psc);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 6d2896d..3810ea3 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -21,5 +21,6 @@ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
+ void dm355_psc_clk_init(void __iomem *psc);
+ void dm365_psc_clk_init(void __iomem *psc);
+ void dm644x_psc_clk_init(void __iomem *psc);
++void dm646x_psc_clk_init(void __iomem *psc);
  
- 		writel(0, host->base + MMCICOMMAND);
- 		writel(0, host->base + MMCIDATACTRL);
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 4a8bef1..83160a9 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -223,6 +223,7 @@ struct mmci_host {
- 	u32			clk_reg;
- 	u32			datactrl_reg;
- 	u32			busy_status;
-+	u32			mask1_reg;
- 	bool			vqmmc_enabled;
- 	struct mmci_platform_data *plat;
- 	struct variant_data	*variant;
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
-1.9.1
+2.7.4
