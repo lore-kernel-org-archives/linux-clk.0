@@ -1,44 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56423 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754351AbeAKJjD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 04:39:03 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: linux-sunxi@googlegroups.com, linus.walleij@linaro.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 0/7] Initial Allwinner H6 support
-Date: Thu, 11 Jan 2018 17:38:39 +0800
-Message-ID: <6025395.Uh4Z0ipbrK@ice-x220i>
-In-Reply-To: <CACRpkdY3xY-7-YTCS=QmRQ3hmXiJZ_2M=ZhJRTTMx7XNfXRRSw@mail.gmail.com>
-References: <20180106041813.46256-1-icenowy@aosc.io> <CACRpkdY3xY-7-YTCS=QmRQ3hmXiJZ_2M=ZhJRTTMx7XNfXRRSw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 39/41] ARM: davinci: add device tree support to timer
+Date: Sat, 20 Jan 2018 11:14:18 -0600
+Message-Id: <1516468460-4908-40-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018年1月11日星期四 CST 下午5:36:39，Linus Walleij 写道：
-> On Sat, Jan 6, 2018 at 5:18 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> > This patchset adds initial support for the Allwinner H6 SoC.
-> 
-> Can I apply the pin control patches without the clock patches?
+This adds device tree support to the davinci timer so that when clocks
+are moved to device tree, the timer will still work.
 
-I think it's OK.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Note: on H6 now the pin controller do not depend on
-the CCU at all -- it only needs two oscillators now.
+v6 changes:
+- none
 
-> 
-> Also waiting for Maxime and/or Chen-Yu to provide some review
-> before merging this.
-> 
-> Yours,
-> Linus Walleij
+ arch/arm/mach-davinci/Kconfig |  1 +
+ arch/arm/mach-davinci/time.c  | 17 ++++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index ba9912b..da8a039 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
+ 	default y
+ 	depends on ARCH_DAVINCI_DA850
+ 	select PINCTRL
++	select TIMER_OF
+ 	help
+ 	  Say y here to include support for TI DaVinci DA850 based using
+ 	  Flattened Device Tree. More information at Documentation/devicetree
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index bd0c80e..44470e9 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -333,9 +333,9 @@ static struct clock_event_device clockevent_davinci = {
+ };
+ 
+ 
+-void __init davinci_timer_init(void)
++static int __init of_davinci_timer_init(struct device_node *node)
+ {
+-	struct clk *timer_clk;
++	struct clk *timer_clk = NULL;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 	unsigned int clockevent_id;
+ 	unsigned int clocksource_id;
+@@ -371,7 +371,10 @@ void __init davinci_timer_init(void)
+ 		}
+ 	}
+ 
+-	timer_clk = clk_get(NULL, "timer0");
++	if (node)
++		timer_clk = of_clk_get(node, 0);
++	if (IS_ERR_OR_NULL(timer_clk))
++		timer_clk = clk_get(NULL, "timer0");
+ 	BUG_ON(IS_ERR(timer_clk));
+ 	clk_prepare_enable(timer_clk);
+ 
+@@ -399,4 +402,12 @@ void __init davinci_timer_init(void)
+ 
+ 	for (i=0; i< ARRAY_SIZE(timers); i++)
+ 		timer32_config(&timers[i]);
++
++	return 0;
++}
++TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
++
++void __init davinci_timer_init(void)
++{
++	of_davinci_timer_init(NULL);
+ }
+-- 
+2.7.4
