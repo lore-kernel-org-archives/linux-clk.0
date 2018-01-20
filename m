@@ -1,208 +1,400 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14105 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751138AbeAYKTN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 05:19:13 -0500
-Subject: Re: [PATCH v3 3/4] clk: tegra: MBIST work around for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-4-git-send-email-pdeschrijver@nvidia.com>
- <637b3bb4-1ac0-5612-ec2e-5740e611b11a@nvidia.com>
- <20180125090255.GK7031@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a161a11c-1794-ebc4-3ff0-7624c23cabdb@nvidia.com>
-Date: Thu, 25 Jan 2018 10:19:08 +0000
-MIME-Version: 1.0
-In-Reply-To: <20180125090255.GK7031@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 19/41] clk: davinci: New driver for TI DA8XX USB PHY clocks
+Date: Sat, 20 Jan 2018 11:13:58 -0600
+Message-Id: <1516468460-4908-20-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds a new driver for the USB PHY clocks in the CFGCHIP2 syscon
+register on TI DA8XX-type SoCs.
 
-On 25/01/18 09:02, Peter De Schrijver wrote:
-> On Wed, Jan 24, 2018 at 09:59:56PM +0000, Jon Hunter wrote:
+The USB0 (USB 2.0) PHY clock is an interesting case because it calls
+clk_enable() in a reentrant way. The USB 2.0 PSC only has to be enabled
+temporarily while we are locking the PLL, which takes place during the
+clk_enable() callback.
 
-...
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
->>> +void tegra210_clk_handle_mbist_war(unsigned int id)
->>> +{
->>> +	int err;
->>> +	struct tegra210_domain_mbist_war *mbist_war;
->>> +
->>> +	if (id >= ARRAY_SIZE(tegra210_pg_mbist_war)) {
->>> +		WARN(1, "unknown domain id in MBIST WAR handler\n");
->>> +		return;
->>> +	}
->>> +
->>> +	mbist_war = &tegra210_pg_mbist_war[id];
->>> +	if (!mbist_war->handle_lvl2_ovr)
->>> +		return;
->>> +
->>> +	err = mbist_war->handle_lvl2_ovr(mbist_war);
->>
->> Why not move the clk_bulk_prepare_enable/disable_unprepare and
->> mutex_lock/unlock functions into this function around the call to
->> ->handle_lvl2_ovr to save the duplication of that code in each of the
->> war functions?
->>
-> 
-> This could be done yes.
-> 
->>> +	WARN(err < 0, "error handling MBIST WAR for domain: %d\n", id);
->>> +}
->>
->> I think that the above function should return an error and we should let
->> the power-domain power-on fail.
->>
-> 
-> This would only be useful if the user (tegra_powergate_power_up) would do
-> rollback. I don't think that's done correctly today.
+v6 changes:
+- rename clocks to usb{0,1}_clk48
+- rename USB 2.0 PSC clock to "fck"
+- simplify {s,g}et_parent implementations
+- use pr_fmt macro
 
-It does and so I think that we should return an error.
+ drivers/clk/davinci/Makefile            |   1 +
+ drivers/clk/davinci/da8xx-usb-phy-clk.c | 312 ++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h             |   6 +
+ 3 files changed, 319 insertions(+)
+ create mode 100644 drivers/clk/davinci/da8xx-usb-phy-clk.c
 
->>> +
->>> +
->>>  void tegra210_put_utmipll_in_iddq(void)
->>>  {
->>>  	u32 reg;
->>> @@ -3163,6 +3500,40 @@ static int tegra210_reset_deassert(unsigned long id)
->>>  	return 0;
->>>  }
->>>  
->>> +static void tegra210_mbist_clk_init(void)
->>> +{
->>> +	int i, j;
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(tegra210_pg_mbist_war); i++) {
->>> +		int num_clks = tegra210_pg_mbist_war[i].num_clks;
->>> +		struct clk_bulk_data *clk_data;
->>> +
->>> +		if (!num_clks)
->>> +			continue;
->>> +
->>> +		clk_data = kmalloc_array(num_clks, sizeof(*clk_data),
->>> +					 GFP_KERNEL);
->>> +		if (WARN(!clk_data,
->>> +			"no space for MBIST WAR clk array for %d\n", i)) {
->>> +			tegra210_pg_mbist_war[i].handle_lvl2_ovr = NULL;
->>> +			continue;
->>> +		}
->>
->> Printing error messages on memory allocation failures are not needed and
->> have been removed from various drivers. So lets no add any error
->> messages or warnings here.
->>
->> Also I think that we should just return an error here and not bother
->> continuing as there is no point.
-
-So maybe here just ...
-
-		if (WARN_ON(!clk_data))
-			return -ENOMEM;
-
->>> +
->>> +		tegra210_pg_mbist_war[i].clks = clk_data;
->>
->> I think that you should only populate this when all the clocks have been
->> initialised correctly. You could then use this to check the clocks have
->> been setup correctly when executing the war.
->>
-> 
-> For some domains no extra clocks are needed (ie the clocks enabled by the
-> power domain driver are enough). So an extra flag would be needed then.
-
-Yes but you have num_clks to detect if a domain has extra clocks. So you
-can use both of these to detect if the clocks are setup correctly. Right?
-
->>> +		for (j = 0; j < num_clks; j++) {
->>> +			int clk_id = tegra210_pg_mbist_war[i].clk_init_data[j];
->>> +			struct clk *clk = clks[clk_id];
->>> +
->>> +			if (IS_ERR(clk)) {
->>> +				clk_data[j].clk = NULL;
->>> +				WARN(1, "clk_id: %d\n", clk_id);
->>
->> I think that we should return an error here.
->>
-> 
-> I don't think letting clock init fail because of this, is a good idea. Too
-> many things rely on working clocks.
-
-It should never fail and if it does something is badly broken.
-
-Maybe what we could do ...
-
-			if (WARN_ON(IS_ERR(clk))) {
-				tegra210_pg_mbist_war[i].clks = NULL;
-				break;
-			}
-
-			clk_data[j].clk = clk;
-
-Then we can check in tegra210_clk_handle_mbist_war() ...
-
-	if (mbist_war->num_clks && !mbist_war.clks)
-		return -ENODEV;
-
-Does that work?
-
->>> +			} else {
->>> +				clk_data[j].clk = clk;
->>> +			}
->>> +		}
->>> +	}
->>> +}
->>> +
->>>  /**
->>>   * tegra210_clock_init - Tegra210-specific clock initialization
->>>   * @np: struct device_node * of the DT node for the SoC CAR IP block
->>> @@ -3197,6 +3568,24 @@ static void __init tegra210_clock_init(struct device_node *np)
->>>  		return;
->>>  	}
->>>  
->>> +	ape_base = ioremap(TEGRA210_APE_BASE, 256*1024);
->>> +	if (!ape_base) {
->>> +		pr_err("ioremap tegra210 APE failed\n");
->>> +		return;
->>> +	}
->>> +
->>> +	dispa_base = ioremap(TEGRA210_DISPA_BASE, 256*1024);
->>> +	if (!dispa_base) {
->>> +		pr_err("ioremap tegra210 DISPA failed\n");
->>> +		return;
->>> +	}
->>> +
->>> +	vic_base = ioremap(TEGRA210_VIC_BASE, 256*1024);
->>> +	if (!vic_base) {
->>> +		pr_err("ioremap tegra210 VIC failed\n");
->>> +		return;
->>> +	}
->>> +
->>>  	clks = tegra_clk_init(clk_base, TEGRA210_CLK_CLK_MAX,
->>>  			      TEGRA210_CAR_BANK_COUNT);
->>>  	if (!clks)
->>> @@ -3233,6 +3622,8 @@ static void __init tegra210_clock_init(struct device_node *np)
->>>  	tegra_add_of_provider(np);
->>>  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->>>  
->>> +	tegra210_mbist_clk_init();
->>> +
->>
->> Maybe add a print here if the mbist init fails and return. I understand
->> it may not be a critical failure but it should never fail.
->>
-> 
-> You mean have the entire clock init fail and undo all the clock registrations?
-> That seems overkill to me. Returning early would only prevent some sleep states
-> from working because tegra_cpu_car_ops will not be initialized then. So I would
-> do a warning then.
-
-I don't think it is necessary to undo it. Ok, don't worry about
-returning an error here, the warnings should be sufficient.
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 11178b7..4c772a7 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -2,6 +2,7 @@
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-usb-phy-clk.o
+ 
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+diff --git a/drivers/clk/davinci/da8xx-usb-phy-clk.c b/drivers/clk/davinci/da8xx-usb-phy-clk.c
+new file mode 100644
+index 0000000..8dba40c
+--- /dev/null
++++ b/drivers/clk/davinci/da8xx-usb-phy-clk.c
+@@ -0,0 +1,312 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * da8xx-usb-phy-clk - TI DaVinci DA8xx USB PHY clocks driver
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ *
++ * This driver exposes the USB PHY clocks on DA8xx/AM18xx/OMAP-L13x SoCs.
++ * The clocks consist of two muxes and a PLL. The USB 2.0 PHY mux and PLL are
++ * combined into a single clock in Linux. The USB 1.0 PHY clock just consists
++ * of a mux. These clocks are controlled through CFGCHIP2, which is accessed
++ * as a syscon regmap since it is shared with other devices.
++ */
++
++#define pr_fmt(fmt) "%s: " fmt "\n", __func__
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++/* --- USB 2.0 PHY clock --- */
++
++struct da8xx_usb0_clk48 {
++	struct clk_hw hw;
++	struct clk *fck;
++	struct regmap *regmap;
++};
++
++#define to_da8xx_usb0_clk48(_hw) \
++	container_of((_hw), struct da8xx_usb0_clk48, hw)
++
++static int da8xx_usb0_clk48_prepare(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++
++	/* The USB 2.0 PSC clock is only needed temporarily during the USB 2.0
++	 * PHY clock enable, but since clk_prepare() can't be called in an
++	 * atomic context (i.e. in clk_enable()), we have to prepare it here.
++	 */
++	return clk_prepare(clk->fck);
++}
++
++static void da8xx_usb0_clk48_unprepare(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++
++	clk_unprepare(clk->fck);
++}
++
++static int da8xx_usb0_clk48_enable(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++	unsigned int mask, val;
++	int ret;
++
++	/* Locking the USB 2.O PLL requires that the USB 2.O PSC is enabled
++	 * temporaily. It can be turned back off once the PLL is locked.
++	 */
++	clk_enable(clk->fck);
++
++	/* Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
++	 * PHY may use the USB 2.0 PLL clock without USB 2.0 OTG being used.
++	 */
++	mask = CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN | CFGCHIP2_PHY_PLLON;
++	val = CFGCHIP2_PHY_PLLON;
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++	ret = regmap_read_poll_timeout(clk->regmap, CFGCHIP(2), val,
++				       val & CFGCHIP2_PHYCLKGD, 0, 500000);
++
++	clk_disable(clk->fck);
++
++	return ret;
++}
++
++static void da8xx_usb0_clk48_disable(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++	unsigned int val;
++
++	val = CFGCHIP2_PHYPWRDN;
++	regmap_write_bits(clk->regmap, CFGCHIP(2), val, val);
++}
++
++static int da8xx_usb0_clk48_is_enabled(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	return !!(val & CFGCHIP2_PHYCLKGD);
++}
++
++static unsigned long da8xx_usb0_clk48_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++	unsigned int mask, val;
++
++	/* The parent clock rate must be one of the following */
++	mask = CFGCHIP2_REFFREQ_MASK;
++	switch (parent_rate) {
++	case 12000000:
++		val = CFGCHIP2_REFFREQ_12MHZ;
++		break;
++	case 13000000:
++		val = CFGCHIP2_REFFREQ_13MHZ;
++		break;
++	case 19200000:
++		val = CFGCHIP2_REFFREQ_19_2MHZ;
++		break;
++	case 20000000:
++		val = CFGCHIP2_REFFREQ_20MHZ;
++		break;
++	case 24000000:
++		val = CFGCHIP2_REFFREQ_24MHZ;
++		break;
++	case 26000000:
++		val = CFGCHIP2_REFFREQ_26MHZ;
++		break;
++	case 38400000:
++		val = CFGCHIP2_REFFREQ_38_4MHZ;
++		break;
++	case 40000000:
++		val = CFGCHIP2_REFFREQ_40MHZ;
++		break;
++	case 48000000:
++		val = CFGCHIP2_REFFREQ_48MHZ;
++		break;
++	default:
++		return 0;
++	}
++
++	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
++
++	/* USB 2.0 PLL always supplies 48MHz */
++	return 48000000;
++}
++
++static long da8xx_usb0_clk48_round_rate(struct clk_hw *hw, unsigned long rate,
++					unsigned long *parent_rate)
++{
++	return 48000000;
++}
++
++static int da8xx_usb0_clk48_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++
++	return regmap_write_bits(clk->regmap, CFGCHIP(2),
++				 CFGCHIP2_USB2PHYCLKMUX,
++				 index ? CFGCHIP2_USB2PHYCLKMUX : 0);
++}
++
++static u8 da8xx_usb0_clk48_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_usb0_clk48 *clk = to_da8xx_usb0_clk48(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	return (val & CFGCHIP2_USB2PHYCLKMUX) ? 1 : 0;
++}
++
++static const struct clk_ops da8xx_usb0_clk48_ops = {
++	.prepare	= da8xx_usb0_clk48_prepare,
++	.unprepare	= da8xx_usb0_clk48_unprepare,
++	.enable		= da8xx_usb0_clk48_enable,
++	.disable	= da8xx_usb0_clk48_disable,
++	.is_enabled	= da8xx_usb0_clk48_is_enabled,
++	.recalc_rate	= da8xx_usb0_clk48_recalc_rate,
++	.round_rate	= da8xx_usb0_clk48_round_rate,
++	.set_parent	= da8xx_usb0_clk48_set_parent,
++	.get_parent	= da8xx_usb0_clk48_get_parent,
++};
++
++/**
++ * da8xx_cfgchip_register_usb0_clk48 - Register a new USB 2.0 PHY clock
++ * @regmap: The CFGCHIP regmap
++ * @fck_clk: The USB 2.0 PSC clock
++ */
++struct clk *da8xx_cfgchip_register_usb0_clk48(struct regmap *regmap,
++					      struct clk *fck_clk)
++{
++	const char * const parent_names[] = { "usb_refclkin", "pll0_auxclk" };
++	struct da8xx_usb0_clk48 *clk;
++	struct clk_init_data init;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = "usb0_clk48";
++	init.ops = &da8xx_usb0_clk48_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++
++	clk->hw.init = &init;
++	clk->fck = fck_clk;
++	clk->regmap = regmap;
++
++	return clk_register(NULL, &clk->hw);
++}
++
++/* --- USB 1.1 PHY clock --- */
++
++struct da8xx_usb1_phy_clk {
++	struct clk_hw hw;
++	struct regmap *regmap;
++};
++
++#define to_da8xx_usb1_phy_clk(_hw) \
++	container_of((_hw), struct da8xx_usb1_phy_clk, hw)
++
++static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
++
++	return regmap_write_bits(clk->regmap, CFGCHIP(2),
++				 CFGCHIP2_USB1PHYCLKMUX,
++				 index ? CFGCHIP2_USB1PHYCLKMUX : 0);
++}
++
++static u8 da8xx_usb1_phy_clk_get_parent(struct clk_hw *hw)
++{
++	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
++	unsigned int val;
++
++	regmap_read(clk->regmap, CFGCHIP(2), &val);
++
++	return (val & CFGCHIP2_USB1PHYCLKMUX) ? 1 : 0;
++}
++
++static const struct clk_ops da8xx_usb1_phy_clk_ops = {
++	.set_parent	= da8xx_usb1_phy_clk_set_parent,
++	.get_parent	= da8xx_usb1_phy_clk_get_parent,
++};
++
++/**
++ * da8xx_cfgchip_register_usb1_clk48 - Register a new USB 1.1 PHY clock
++ * @regmap: The CFGCHIP regmap
++ */
++struct clk *da8xx_cfgchip_register_usb1_clk48(struct regmap *regmap)
++{
++	const char * const parent_names[] = { "usb0_clk48", "usb_refclkin" };
++	struct da8xx_usb1_phy_clk *clk;
++	struct clk_init_data init;
++
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = "usb1_clk48";
++	init.ops = &da8xx_usb1_phy_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = 2;
++
++	clk->hw.init = &init;
++	clk->regmap = regmap;
++
++	return clk_register(NULL, &clk->hw);
++}
++
++#ifdef CONFIG_OF
++static void of_da8xx_usb_phy_clk_init(struct device_node *np)
++{
++	struct clk_onecell_data *clk_data;
++	struct regmap *regmap;
++	struct clk *fck_clk, *clk;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_err("No regmap for syscon parent (%ld)", PTR_ERR(regmap));
++		return;
++	}
++
++	fck_clk = of_clk_get_by_name(np, "fck");
++	if (IS_ERR(fck_clk)) {
++		pr_err("Missing fck clock (%ld)", PTR_ERR(fck_clk));
++		return;
++	}
++
++	clk_data = clk_alloc_onecell_data(2);
++	if (!clk_data) {
++		clk_put(fck_clk);
++		return;
++	}
++
++	clk = da8xx_cfgchip_register_usb0_clk48(regmap, fck_clk);
++	if (IS_ERR(clk)) {
++		pr_warn("Failed to register usb0_clk48 (%ld)", PTR_ERR(clk));
++		clk_put(fck_clk);
++	} else {
++		clk_data->clks[0] = clk;
++	}
++
++	clk = da8xx_cfgchip_register_usb1_clk48(regmap);
++	if (IS_ERR(clk))
++		pr_warn("Failed to register usb1_clk48 (%ld)", PTR_ERR(clk));
++	else
++		clk_data->clks[1] = clk;
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
++}
++
++CLK_OF_DECLARE(da8xx_usb_phy_clk, "ti,da830-usb-phy-clocks",
++	       of_da8xx_usb_phy_clk_init);
++#endif
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 54ea3ff..04b48b3 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -9,6 +9,9 @@
+ 
+ #include <linux/types.h>
+ 
++struct clk;
++struct regmap;
++
+ void da830_pll_clk_init(void __iomem *pll);
+ void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
+ void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+@@ -27,5 +30,8 @@ struct clk *da8xx_cfgchip_register_tbclk(struct regmap *regmap);
+ struct clk *da8xx_cfgchip_register_div4p5(struct regmap *regmap);
+ struct clk *da8xx_cfgchip_register_async1(struct regmap *regmap);
+ struct clk *da8xx_cfgchip_register_async3(struct regmap *regmap);
++struct clk *da8xx_cfgchip_register_usb0_clk48(struct regmap *regmap,
++					      struct clk *usb0_psc_clk);
++struct clk *da8xx_cfgchip_register_usb1_clk48(struct regmap *regmap);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
 -- 
-nvpublic
+2.7.4
