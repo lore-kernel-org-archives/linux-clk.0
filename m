@@ -1,286 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 26 Jan 2018 15:56:49 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Amit Nischal <anischal@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v2] clk: qcom: Add Global Clock controller (GCC) driver
- for SDM845
-Message-ID: <20180126235649.GF28313@codeaurora.org>
-References: <1516610736-17088-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1516610736-17088-1-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <76DC4CD7-4A07-40C7-80A8-1C2D177E8109@aosc.io>
+References: <20180119231735.61504-1-icenowy@aosc.io> <20180119231735.61504-3-icenowy@aosc.io>
+ <CAGRGNgUjvvzseAtUuiy5xCaZrLw2Jq4+A_dPXR9r_Xs-yYL1cw@mail.gmail.com> <76DC4CD7-4A07-40C7-80A8-1C2D177E8109@aosc.io>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Sat, 20 Jan 2018 14:22:06 +1100
+Message-ID: <CAGRGNgUj47nyf2dkgdk1bT2kO1p5oP8nk5LQ4EpCya2dfK=uMg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [RFC PATCH 2/9] ARM: sunxi: add Allwinner ARMv5 SoCs
+To: icenowy@aosc.io
+Cc: "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/22, Amit Nischal wrote:
-> Add support for the global clock controller found on SDM845
-> based devices. This should allow most non-multimedia device
-> drivers to probe and control their clocks.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Hi Icenowy,
 
-Is Taniya the author? Should be a From: line then.
+On Sat, Jan 20, 2018 at 2:10 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+> =E4=BA=8E 2018=E5=B9=B41=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+11:06:40, Julian Calaby <julian.calaby@gmail.com> =E5=86=99=E5=88=B0:
+>>Hi Icenowy,
+>>
+>>On Sat, Jan 20, 2018 at 10:17 AM, Icenowy Zheng <icenowy@aosc.io>
+>>wrote:
+>>> Add option for Allwinner ARMv5 SoCs and a SoC suniv (which is a die
+>>used
+>>> for many new F-series products, including F1C100A, F1C100s, F1C200s,
+>>> F1C500, F1C600).
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  arch/arm/mach-sunxi/Kconfig    | 13 +++++++++++++
+>>>  arch/arm/mach-sunxi/Makefile   |  1 +
+>>>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
+>>>  3 files changed, 36 insertions(+)
+>>>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
+>>>
+>>> diff --git a/arch/arm/mach-sunxi/Kconfig
+>>b/arch/arm/mach-sunxi/Kconfig
+>>> index 65509a35935f..78ac9ce70641 100644
+>>> --- a/arch/arm/mach-sunxi/Kconfig
+>>> +++ b/arch/arm/mach-sunxi/Kconfig
+>>> @@ -59,3 +59,16 @@ config MACH_SUN9I
+>>>         select ARM_GIC
+>>>
+>>>  endif
+>>> +
+>>> +menuconfig ARCH_SUNXI_V5
+>>> +       bool "Allwinner SoCs"
+>>
+>>That name seems a little too generic. Maybe "Allwinner ARMv5 SoCs"?
+>
+> This is already required by armv5.
+>
+> Allwinner currently has only ARMv5,7,8 SoCs. ARMv8 is under
+> arm64 architecture, and ARMv5 and v7 cannot be selected at the same time.
 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
-> 
-> This patch is dependent on below changes:
-> 1. https://patchwork.kernel.org/patch/10139991/
-> 2. https://patchwork.kernel.org/patch/10139987/
-> 3. https://patchwork.kernel.org/patch/10144621/
+I'm going to try to back my way out of this hole by saying that they
+should be more descriptive anyway (and it'll give clueless kconfiggers
+a hint as to why they're not seeing their SoC listed)
 
-Ok. Next time you can send them all again in a series to make it
-easier for me.
+However you're right, if both cannot be visible at the same time, then
+it really doesn't matter if they both have the same name.
 
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index fbf4532..91e4557 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -226,3 +226,12 @@ config SPMI_PMIC_CLKDIV
->  	  Technologies, Inc. SPMI PMIC. It configures the frequency of
->  	  clkdiv outputs of the PMIC. These clocks are typically wired
->  	  through alternate functions on GPIO pins.
-> +
-> +config SDM_GCC_845
-> +	tristate "SDM845 Global Clock Controller"
-> +	depends on COMMON_CLK_QCOM
-> +	help
-> +	  Support for the global clock controller on Qualcomm Technologies, Inc
-> +	  sdm845 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  i2c, USB, UFS, SD/eMMC, PCIe, etc.
+Sorry for the noise,
 
-Put this in sorted order in the Kconfig? Or at least try to.  I
-should go back and sort the rest later.
+--=20
+Julian Calaby
 
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 230332c..1aa23b3 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
->  obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
->  obj-$(CONFIG_MSM_GCC_8994) += gcc-msm8994.o
->  obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
-> +obj-$(CONFIG_SDM_GCC_845)  += gcc-sdm845.o
-
-This should be sorted too.
-
->  obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
->  obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
->  obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> new file mode 100644
-> index 0000000..fe62d87
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -0,0 +1,3633 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "gdsc.h"
-> +#include "reset.h"
-> +
-> +#define GCC_MMSS_MISC				0x09FFC
-
-Please drop the onetime defines.
-
-> +#define GCC_GPU_MISC				0x71028
-> +
-> +#define CXO_FREQUENCY				19200000
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> +
-> +static struct freq_tbl cxo_safe_src_f = {
-
-const?
-
-> +	.freq = CXO_FREQUENCY,
-> +	.src = 0,
-> +	.pre_div = 1,
-> +	.m = 0,
-> +	.n = 0,
-> +};
-
-All those = 0 are useless. But CXO may not always be 19.2 MHz so
-that's a non-starter. Try and figure out how to get rid of this?
-
-> +
-> +enum {
-> +	P_BI_TCXO,
-> +	P_AUD_REF_CLK,
-> +	P_CORE_BI_PLL_TEST_SE,
-> +	P_GPLL0_OUT_EVEN,
-> +	P_GPLL0_OUT_MAIN,
-> +	P_GPLL4_OUT_MAIN,
-> +	P_SLEEP_CLK,
-> +};
-> +
-> +static const struct parent_map gcc_parent_map_0[] = {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_GPLL0_OUT_MAIN, 1 },
-> +	{ P_GPLL0_OUT_EVEN, 6 },
-> +	{ P_CORE_BI_PLL_TEST_SE, 7 },
-[...]
-> +
-> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
-> +	F(400000, P_BI_TCXO, 12, 1, 4),
-> +	F(9600000, P_BI_TCXO, 2, 0, 0),
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
-> +	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> +	F(201500000, P_GPLL4_OUT_MAIN, 4, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
-> +	.cmd_rcgr = 0x1400c,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_parent_map_10,
-> +	.freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
-> +	.safe_src_freq_tbl = &cxo_safe_src_f,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gcc_sdcc2_apps_clk_src",
-> +		.parent_names = gcc_parent_names_10,
-> +		.num_parents = 5,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +		.ops = &clk_rcg2_shared_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_gcc_sdcc4_apps_clk_src[] = {
-> +	F(400000, P_BI_TCXO, 12, 1, 4),
-> +	F(9600000, P_BI_TCXO, 2, 0, 0),
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
-> +	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
-> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
-> +	.cmd_rcgr = 0x1600c,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_parent_map_0,
-> +	.freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
-> +	.safe_src_freq_tbl = &cxo_safe_src_f,
-
-Honestly, why do we need this other structure? Can't we point to
-the entry in the frequency table for this clk and use that? Or
-know that these are an RCG, and 99% of the time the "safe
-frequency" is going to be source 0 and div 1?
-
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gcc_sdcc4_apps_clk_src",
-> +		.parent_names = gcc_parent_names_0,
-> +		.num_parents = 4,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +		.ops = &clk_rcg2_shared_ops,
-[...]
-> +
-> +static const struct regmap_config gcc_sdm845_regmap_config = {
-> +	.reg_bits	= 32,
-> +	.reg_stride	= 4,
-> +	.val_bits	= 32,
-> +	.max_register	= 0x182090,
-> +	.fast_io	= true,
-> +};
-> +
-> +static const struct qcom_cc_desc gcc_sdm845_desc = {
-> +	.config = &gcc_sdm845_regmap_config,
-> +	.clks = gcc_sdm845_clocks,
-> +	.num_clks = ARRAY_SIZE(gcc_sdm845_clocks),
-> +	.resets = gcc_sdm845_resets,
-> +	.num_resets = ARRAY_SIZE(gcc_sdm845_resets),
-> +	.gdscs = gcc_sdm845_gdscs,
-> +	.num_gdscs = ARRAY_SIZE(gcc_sdm845_gdscs),
-> +};
-> +
-> +static const struct of_device_id gcc_sdm845_match_table[] = {
-> +	{ .compatible = "qcom,gcc-sdm845" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
-> +
-> +static int gcc_sdm845_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *regmap;
-> +	int i, ret = 0;
-
-Don't assign things and then reassign them without testing it
-first.
-
-> +
-> +	regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
-> +		ret = devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
-
-Drop this error message.
-
-> +		return ret;
-> +	}
-> +
-> +	/* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
-> +	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
-> +	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
-
-Can bootloaders do this? Or this can be a branch clk that we
-expose in the tree as the "gpll0" source entry for the multimedia
-clock controls? Do we ever turn these back on?
-
-> +
-> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
-
-Drop.
-
-> +
-> +	return ret;
-> +}
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
