@@ -1,49 +1,72 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 32/34] clk: ARC: change hsdk_pll_round_rate () return logic
-Date: Mon,  1 Jan 2018 19:34:58 +0000
-Message-Id: <1514835300-381-18-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:53827 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbeATDLE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jan 2018 22:11:04 -0500
+Date: Sat, 20 Jan 2018 11:10:42 +0800
+In-Reply-To: <CAGRGNgUjvvzseAtUuiy5xCaZrLw2Jq4+A_dPXR9r_Xs-yYL1cw@mail.gmail.com>
+References: <20180119231735.61504-1-icenowy@aosc.io> <20180119231735.61504-3-icenowy@aosc.io> <CAGRGNgUjvvzseAtUuiy5xCaZrLw2Jq4+A_dPXR9r_Xs-yYL1cw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [RFC PATCH 2/9] ARM: sunxi: add Allwinner ARMv5 SoCs
+To: linux-arm-kernel@lists.infradead.org,
+        Julian Calaby <julian.calaby@gmail.com>
+CC: devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <76DC4CD7-4A07-40C7-80A8-1C2D177E8109@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-hsdk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+于 2018年1月20日 GMT+08:00 上午11:06:40, Julian Calaby <julian.calaby@gmail.com> 写到:
+>Hi Icenowy,
+>
+>On Sat, Jan 20, 2018 at 10:17 AM, Icenowy Zheng <icenowy@aosc.io>
+>wrote:
+>> Add option for Allwinner ARMv5 SoCs and a SoC suniv (which is a die
+>used
+>> for many new F-series products, including F1C100A, F1C100s, F1C200s,
+>> F1C500, F1C600).
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  arch/arm/mach-sunxi/Kconfig    | 13 +++++++++++++
+>>  arch/arm/mach-sunxi/Makefile   |  1 +
+>>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
+>>  3 files changed, 36 insertions(+)
+>>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
+>>
+>> diff --git a/arch/arm/mach-sunxi/Kconfig
+>b/arch/arm/mach-sunxi/Kconfig
+>> index 65509a35935f..78ac9ce70641 100644
+>> --- a/arch/arm/mach-sunxi/Kconfig
+>> +++ b/arch/arm/mach-sunxi/Kconfig
+>> @@ -59,3 +59,16 @@ config MACH_SUN9I
+>>         select ARM_GIC
+>>
+>>  endif
+>> +
+>> +menuconfig ARCH_SUNXI_V5
+>> +       bool "Allwinner SoCs"
+>
+>That name seems a little too generic. Maybe "Allwinner ARMv5 SoCs"?
 
-diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
-index 62c8e18..7bff5e3 100644
---- a/drivers/clk/clk-hsdk-pll.c
-+++ b/drivers/clk/clk-hsdk-pll.c
-@@ -201,7 +201,7 @@ static unsigned long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	const struct hsdk_pll_cfg *pll_cfg = clk->pll_devdata->pll_cfg;
- 
- 	if (pll_cfg[0].rate == 0)
--		return -EINVAL;
-+		return 0;
- 
- 	best_rate = pll_cfg[0].rate;
- 
--- 
-2.7.4
+This is already required by armv5.
+
+Allwinner currently has only ARMv5,7,8 SoCs. ARMv8 is under
+arm64 architecture, and ARMv5 and v7 cannot be selected at the same time.
+
+>
+>Thanks,
