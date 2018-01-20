@@ -1,87 +1,140 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180102150848.11314-8-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-8-paul@crapouillou.net>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Tue, 2 Jan 2018 21:28:31 +0530
-Message-ID: <CANc+2y7owub-Nr++MYsoGTDTHxiqeqSFsMEL7b_oWLx-OtosRQ@mail.gmail.com>
-Subject: Re: [PATCH v5 08/15] MIPS: ingenic: Use common cmdline handling code
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Burton <paul.burton@imgtec.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 13/41] clk: davinci: Add platform information for TI DM355 PSC
+Date: Sat, 20 Jan 2018 11:13:52 -0600
+Message-Id: <1516468460-4908-14-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+This adds platform-specific declarations for the PSC clocks on TI
+DM355 based systems.
 
-On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net> wrote:
-> From: Paul Burton <paul.burton@imgtec.com>
->
-> jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
-> arcs_cmdline, up to argc (in fw_arg0). The common code in
-> fw_init_cmdline will do the exact same thing when run on a system where
-> fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
-> use it). Remove the custom implementation & use the generic code.
->
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> ---
->  arch/mips/jz4740/prom.c | 24 ++----------------------
->  1 file changed, 2 insertions(+), 22 deletions(-)
->
->  v2: No change
->  v3: No change
->  v4: No change
->  v5: No change
->
-> diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
-> index 47e857194ce6..a62dd8e6ecf9 100644
-> --- a/arch/mips/jz4740/prom.c
-> +++ b/arch/mips/jz4740/prom.c
-> @@ -20,33 +20,13 @@
->  #include <linux/serial_reg.h>
->
->  #include <asm/bootinfo.h>
-> +#include <asm/fw/fw.h>
->  #include <asm/mach-jz4740/base.h>
->
-> -static __init void jz4740_init_cmdline(int argc, char *argv[])
-> -{
-> -       unsigned int count = COMMAND_LINE_SIZE - 1;
-> -       int i;
-> -       char *dst = &(arcs_cmdline[0]);
-> -       char *src;
-> -
-> -       for (i = 1; i < argc && count; ++i) {
-> -               src = argv[i];
-> -               while (*src && count) {
-> -                       *dst++ = *src++;
-> -                       --count;
-> -               }
-> -               *dst++ = ' ';
-> -       }
-> -       if (i > 1)
-> -               --dst;
-> -
-> -       *dst = 0;
-> -}
-> -
->  void __init prom_init(void)
->  {
-> -       jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
->         mips_machtype = MACH_INGENIC_JZ4740;
-> +       fw_init_cmdline();
->  }
->
->  void __init prom_free_prom_memory(void)
-> --
-> 2.11.0
->
->
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Looks good to me.
-Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+v6 changes:
+- change how clkdev lookups are declared
+
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm355.c | 74 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/davinci.h     |  1 +
+ 3 files changed, 76 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm355.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index aef0390..e0da5c3 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -12,4 +12,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
+new file mode 100644
+index 0000000..1074be4
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -0,0 +1,74 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
++LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"dm6441-mmc.1");
++LPSC_CLKDEV1(mcbsp1_clkdev,		NULL,		"davinci-mcbsp.1");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"dm6441-mmc.0");
++LPSC_CLKDEV1(mcbsp0_clkdev,		NULL,		"davinci-mcbsp.0");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,		NULL,		"serial8250.2");
++LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
++
++static const struct davinci_psc_clk_info dm355_psc_info[] __initconst = {
++	LPSC(0,  0, vpss_master, pll1_sysclk4, vpss_master_clkdev, 0),
++	LPSC(1,  0, vpss_slave,  pll1_sysclk4, vpss_slave_clkdev,  0),
++	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
++	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
++	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
++	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
++	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
++	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
++	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
++	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
++	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
++	LPSC(21, 0, uart2,       pll1_sysclk2, uart2_clkdev,       0),
++	LPSC(22, 0, spi0,        pll1_sysclk2, spi0_clkdev,        0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk2, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      0),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,
++	     LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll1_sysclk1, NULL,
++	     LPSC_ALWAYS_ENABLED),
++	LPSC(40, 0, mjcp,        pll1_sysclk1, NULL,               0),
++	LPSC(41, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	{ }
++};
++
++void __init dm355_psc_clk_init(void __iomem *psc)
++{
++	davinci_psc_register_clocks(dm355_psc_info, psc);
++}
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 3d8bdfa..dc09177 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -18,5 +18,6 @@ void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
+ 
+ void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
+ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
++void dm355_psc_clk_init(void __iomem *psc);
+ 
+ #endif /* __LINUX_CLK_DAVINCI_H__ */
+-- 
+2.7.4
