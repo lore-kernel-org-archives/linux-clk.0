@@ -1,105 +1,135 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 06/34] clk: at91: change clk_pll_get_best_div_mul() return logic
-Date: Mon,  1 Jan 2018 19:42:45 +0000
-Message-Id: <1514835793-1104-7-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v6 20/41] ARM: da830: add new clock init using common clock framework
+Date: Sat, 20 Jan 2018 11:13:59 -0600
+Message-Id: <1516468460-4908-21-git-send-email-david@lechnology.com>
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+This adds the new board-specific clock init in mach-davinci/da830.c
+using the new common clock framework drivers.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/at91/clk-pll.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 630203e..1c90ae7 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -157,14 +157,14 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 							pll->characteristics;
- 	unsigned long bestremainder = ULONG_MAX;
- 	unsigned long maxdiv, mindiv, tmpdiv;
--	long bestrate = -ERANGE;
-+	unsigned long bestrate = 0;
- 	unsigned long bestdiv;
- 	unsigned long bestmul;
- 	int i = 0;
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+
+ arch/arm/mach-davinci/da830.c | 49 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 39de5a6..0b6d0f3 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -8,23 +8,29 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+ #include <linux/platform_data/gpio-davinci.h>
  
- 	/* Check if parent_rate is a valid input rate */
- 	if (parent_rate < characteristics->input.min)
--		return -ERANGE;
-+		return 0;
+ #include <asm/mach/map.h>
  
- 	/*
- 	 * Calculate minimum divider based on the minimum multiplier, the
-@@ -179,7 +179,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	if (parent_rate > characteristics->input.max) {
- 		tmpdiv = DIV_ROUND_UP(parent_rate, characteristics->input.max);
- 		if (tmpdiv > PLL_DIV_MAX)
--			return -ERANGE;
-+			return 0;
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
++#include <mach/irqs.h>
++#include <mach/time.h>
  
- 		if (tmpdiv > mindiv)
- 			mindiv = tmpdiv;
-@@ -234,8 +234,8 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 			break;
- 	}
+-#include "clock.h"
+ #include "mux.h"
  
--	/* We haven't found any multiplier/divider pair => return -ERANGE */
--	if (bestrate < 0)
-+	/* We haven't found any multiplier/divider pair => return 0 */
-+	if (bestrate == 0)
- 		return bestrate;
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ /* Offsets of the 8 compare registers on the da830 */
+ #define DA830_CMP12_0		0x60
+ #define DA830_CMP12_1		0x64
+@@ -37,6 +43,7 @@
  
- 	/* Check if bestrate is a valid output rate  */
-@@ -246,7 +246,7 @@ static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
- 	}
+ #define DA830_REF_FREQ		24000000
  
- 	if (i >= characteristics->num_output)
--		return -ERANGE;
-+		return 0;
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll0_data = {
+ 	.num		= 1,
+ 	.phys_base	= DA8XX_PLL0_BASE,
+@@ -432,6 +439,7 @@ static struct clk_lookup da830_clks[] = {
+ 	CLK(NULL,		"rmii",		&rmii_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
  
- 	if (div)
- 		*div = bestdiv;
-@@ -271,15 +271,15 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
+ /*
+  * Device specific mux setup
+@@ -1223,7 +1231,36 @@ void __init da830_init(void)
+ 
+ void __init da830_init_time(void)
  {
- 	struct clk_pll *pll = to_clk_pll(hw);
--	long ret;
-+	unsigned long ret;
- 	u32 div;
- 	u32 mul;
- 	u32 index;
- 
- 	ret = clk_pll_get_best_div_mul(pll, rate, parent_rate,
- 				       &div, &mul, &index);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ERANGE;
- 
- 	pll->range = index;
- 	pll->div = div;
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0, *psc0, *psc1;
++	struct clk *clk;
++
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
++	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
++
++	da8xx_register_cfgchip();
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
++
++	da830_pll_clk_init(pll0);
++
++	da830_psc_clk_init(psc0, psc1);
++
++	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
++
++	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, "timer0", NULL);
++
++	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++
++	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
++	clk_register_clkdev(clk, "rmii", NULL);
++#else
+ 	da8xx_register_cfgchip();
+ 	davinci_clk_init(da830_clks);
++#endif
+ 	davinci_timer_init();
+ }
 -- 
 2.7.4
