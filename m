@@ -1,74 +1,63 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 18 Jan 2018 11:53:23 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
-	wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 01/12] clk: sunxi-ng: Mask nkmp factors when setting
- register
-Message-ID: <20180118105323.fk65vo42eyc6dbzz@flea.lan>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
- <20180117201421.25954-2-jernej.skrabec@siol.net>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sun, 21 Jan 2018 12:03:19 +0100
+From: Rask Ingemann Lambertsen <rask@formelder.dk>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [RFC PATCH 8/9] ARM: dts: suniv: add initial DTSI file for suniv
+ and F1C100s
+Message-ID: <20180121110319.GD3421@localhost>
+References: <20180119231735.61504-1-icenowy@aosc.io>
+ <20180119231735.61504-9-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6q4btm2bzec5t5fe"
-In-Reply-To: <20180117201421.25954-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180119231735.61504-9-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sat, Jan 20, 2018 at 07:17:34AM +0800, Icenowy Zheng wrote:
+> As we have the support for suniv pin controller and CCU now, add a
+> initial DTSI for it.
+> 
+> F1C100s is one product with the suniv die, which has a 32MiB co-packaged
+> DDR1 DRAM chip. As there's nothing special for it, add a dummy DTSI file
+> for it.
+[...]
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index d0381e9caf21..b877e0bf1823 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -972,6 +972,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+>  dtb-$(CONFIG_MACH_SUN9I) += \
+>  	sun9i-a80-optimus.dtb \
+>  	sun9i-a80-cubieboard4.dtb
+> +dtb-$(CONFIG_MACH_SUNIV) += \
+> +	suniv-f1c100s-licheepi-nano.dtb
+>  dtb-$(CONFIG_ARCH_TANGO) += \
+>  	tango4-vantage-1172.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
 
---6q4btm2bzec5t5fe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The hunk above should go with your patch
+"[RFC PATCH 9/9] ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
+instead.
 
-On Wed, Jan 17, 2018 at 09:14:10PM +0100, Jernej Skrabec wrote:
-> Currently, if one of the factors isn't present, bit 0 gets always set to
-> 1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
-> K is not specified, it's offset, width and shift is 0. Driver assumes
-> that lowest value possible is 1, otherwise we would get division by 0.
-> That situation causes that bit 0 is always set, which may change wanted
-> clock rate.
->=20
-> Fix that by masking every factor according to it's specified width.
-> Factors with width set to 0 won't have any influence to final register
-> value.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+-- 
+Rask Ingemann Lambertsen
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---6q4btm2bzec5t5fe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpgfKIACgkQ0rTAlCFN
-r3SYvQ//UmbXMWHqepUl1Du0cP1776UEhGRH+prCCnAn4zBccM113wgozjTlbgI1
-dlzdYZXV0EtWq2NA+wERaE4zi9owZismhBSUwIQtwcrorfyviSgsijCt9PtRGkio
-doxYa/izgqhtz/Aj9NM7ekN/aKbzkjKveH/+KpTFkvI388cIwrumIbdyBL3lLq4J
-t9djyJYWxeASezywALXjdR1kyhUnbUCGoTWa3IsftSGhMORKByEVNrkOsMfnNoOz
-oyEhpMhNDrPCViUtodvj1GxEAlw7jvOAfqi0MdqbjAXa2XezaJgguxNKWbv/VJwI
-wYHvMVN9lBMB+mO9BQL9BbVKoV+yh0CBtYBKJbBlKjitYp5TvYIfDfwB3gh3P7uv
-ffAJg3hVe1z4YJFwhQ0VsCm8QvnZJpE/5PBQkhZP4n+uUfgkVjj99ssH3VlF2qf0
-zkbilkHjh/EafoZ2xyCp0pL1PzOi3f8GtaM3IFdo+AVqrTKfB+mORZUsFMRn/9NS
-Xy+cQ3hSSRDtVDV7ryXihAkAQniQa8GxclUfsxaztqAvAdtnAFl2q4H8amI5x+QZ
-Xns+ybiAp42/io40xLoi8uNKrsslCEuHR8ZxxpeTpxpdONqUTYPCPjkaFqpCNd+a
-SnWA05Y9WfupockFvcPkvrmcnUzuUgwSTZ3ZdyKdNrEsXcz2St0=
-=NRHy
------END PGP SIGNATURE-----
-
---6q4btm2bzec5t5fe--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
