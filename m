@@ -1,89 +1,42 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH v2 00/15] Add MMCI support for STM32F SoCs family
-Date: Tue, 16 Jan 2018 13:30:44 +0100
-Message-ID: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	yang.zheng@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/7] clk: rockchip: remove HCLK_VIO from rk3328 dt header
+Date: Mon, 22 Jan 2018 15:15:25 +0100
+Message-Id: <20180122141530.12398-3-heiko@sntech.de>
+In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
+References: <20180122141530.12398-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+This clock is not hclk_vio but hclk_vio_niu, the clock for the interconnect
+output. The clock got fixed and the id was never used in this incorrect form,
+so remove it.
 
-This series reworks patches submitted one year ago by Andrea Merello [1] 
-but without succeed to merged it.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ include/dt-bindings/clock/rk3328-cru.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell 
-PL18x SD host controller, for which the mmci driver exists. 
-This series adds support for these SoCs to the mmci driver.
-
-As other variants, this one need some specific quirks, that this 
-series address. 
-
-This series has been tested on following boards :
-	_ stm32f429-eval
-	_ stm32f469-disco
-	_ stm32f746-eval
-	_ stm32f769-disco
-
-DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
-will be sent later to avoid conflict with pending stm32f7 series [1] which
-is not yet merged on kernel mainline.
-
-[1] https://www.spinics.net/lists/linux-mmc/msg41616.html
-[2] https://patchwork.kernel.org/patch/10104447/
-
-v2: _ add Revievied-by, Acked-by in some patches
-    _ replace bool by u32 for start_err and opendrain fields of struct variant_data
-    _ split previous patch 3 in two parts, first patch clean the open drain bit code
-      and second part add pinctrl pins management when no open drain bit is available.
-    _ replace "pl180" by "PL180" in patch "mmc: mmci: Add STM32 variant"
-
-Andrea Merello (2):
-  ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
-  ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
-
-Patrice Chotard (13):
-  mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
-  mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
-  mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
-  mmc: mmci: Add support for setting pad type via pinctrl
-  mmc: mmci: Add STM32 variant
-  ARM: dts: stm32: Add SDIO controller for stm32f746
-  ARM: dts: stm32: Add SDIO controller for stm32f429
-  ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
-  ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-  ARM: configs: stm32: Enable MMC_ARMMMCI support
-  ARM: configs: stm32: Enable EXT3_FS support
-  clk: stm32: Add clk entry for SDMMC2 on stm32F769
-  gpio: stmpe: i2c transfer are forbiden in atomic context
-
- arch/arm/boot/dts/stm32429i-eval.dts   |  19 +++++
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
- arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
- arch/arm/boot/dts/stm32f469-disco.dts  |  19 +++++
- arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
- arch/arm/configs/stm32_defconfig       |   3 +
- arch/arm/mach-stm32/Kconfig            |   3 +
- drivers/clk/clk-stm32f4.c              |   3 +-
- drivers/gpio/gpio-stmpe.c              |  20 +++---
- drivers/mmc/host/mmci.c                | 124 +++++++++++++++++++++++++++++----
- drivers/mmc/host/mmci.h                |   6 ++
- 11 files changed, 236 insertions(+), 25 deletions(-)
-
+diff --git a/include/dt-bindings/clock/rk3328-cru.h b/include/dt-bindings/clock/rk3328-cru.h
+index d2b26a4b43eb..a82a0109faff 100644
+--- a/include/dt-bindings/clock/rk3328-cru.h
++++ b/include/dt-bindings/clock/rk3328-cru.h
+@@ -193,7 +193,6 @@
+ #define HCLK_VPU_PRE		324
+ #define HCLK_VIO_PRE		325
+ #define HCLK_VPU		326
+-#define HCLK_VIO		327
+ #define HCLK_BUS_PRE		328
+ #define HCLK_PERI_PRE		329
+ #define HCLK_H264		330
 -- 
-1.9.1
+2.14.2
