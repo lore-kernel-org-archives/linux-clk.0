@@ -1,184 +1,78 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] clk: meson: use hhi syscon if available
-Date: Wed, 31 Jan 2018 19:09:45 +0100
-Message-Id: <20180131180945.18025-20-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MesQTvkVtPLOGr2G7-KSR=k35y24SsO4s8rDbCv=2-G7A@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <38b081e9-fe00-cf18-2d72-5ad1937c3800@lechnology.com>
+Date: Mon, 22 Jan 2018 11:11:01 -0600
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=MesQTvkVtPLOGr2G7-KSR=k35y24SsO4s8rDbCv=2-G7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On gxbb and axg, try to get the hhi regmap from the parent DT node, which
-should be the HHI system controller once the necessary changes have been
-made in amlogic's DTs
+On 01/22/2018 07:29 AM, Bartosz Golaszewski wrote:
+> 2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 19 patches create new clock drivers
+>> using the common clock framework. There are basically 3 groups of clocks -
+>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+>> unique init data, which is the reason for so many patches.
+>>
+>> Then, starting with "ARM: da830: add new clock init using common clock",
+>> we get the mach code ready for the switch by adding the code needed for
+>> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
+>> legacy clocks so that we can switch easily between the old and the new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final three patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> v6 changes (also see individual patches for details):
+>> - All of the device tree bindings are changed
+>> - All of the clock drivers are changed significantly
+>> - Fixed issues brought up during review of v5
+>> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
+>>    series and submitted separately
+>>
+>> v5 changes:
+>> - Basically, this is an entirely new series
+>> - Patches are broken up into bite-sized pieces
+>> - Converted PSC clock driver to use regmap
+>> - Restored "force" flag for certain DA850 clocks
+>> - Added device tree bindings
+>> - Moved more of the clock init to drivers/clk
+>> - Fixed frequency scaling (maybe*)
+>>
+>> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
+>>    what they need to do to make this work, but I haven't figured out how to
+>>    test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
+>>    sent separately after this series has landed.)
+>>
+> 
+> This driver doesn't have DT support - I suppose it would be useful to
+> add it and also add the corresponding DT node to da850.dtsi. If you're
+> ok with it, I can start working on it. I also have a patch for the i2c
+> cpufreq issue and it would be nice to test it with it.
+> 
 
-Until then, if getting regmap through the system controller fails, the
-clock controller will fall back to the old way, requesting memory region
-directly and then registering the regmap itself.
+Why not just use cpufreq-dt for the DT case? It seems to be working.
 
-This should allow a smooth transition to syscon
+I have preliminary patches on GitHub [1][2].
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig |  2 ++
- drivers/clk/meson/axg.c   | 43 ++++++++++++++++++++++++++++++-------------
- drivers/clk/meson/gxbb.c  | 39 ++++++++++++++++++++++++++++-----------
- 3 files changed, 60 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 936afddae406..d5cbec522aec 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -22,6 +22,7 @@ config COMMON_CLK_GXBB
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
- 	select COMMON_CLK_REGMAP_MESON
-+	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-@@ -31,6 +32,7 @@ config COMMON_CLK_AXG
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
- 	select COMMON_CLK_REGMAP_MESON
-+	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic A113D devices, aka axg.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index ae1dd35246f5..8c455f8c1d91 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -14,6 +14,7 @@
- #include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
-@@ -850,25 +851,41 @@ static int axg_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
--	void __iomem *clk_base;
-+	void __iomem *clk_base = NULL;
- 	struct regmap *map;
- 	int ret, i;
- 
--	/*  Generic clocks and PLLs */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
-+	/* Get the hhi system controller node if available */
-+	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(map)) {
-+		dev_err(dev,
-+			"failed to get HHI regmap - Trying obsolete regs\n");
-+
-+		/*
-+		 * FIXME: HHI registers should be accessed through
-+		 * the appropriate system controller. This is required because
-+		 * there is more than just clocks in this register space
-+		 *
-+		 * This fallback method is only provided temporarily until
-+		 * all the platform DTs are properly using the syscon node
-+		 */
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!res)
-+			return -EINVAL;
-+
-+
-+		clk_base = devm_ioremap(dev, res->start, resource_size(res));
-+		if (!clk_base) {
-+			dev_err(dev, "Unable to map clk base\n");
-+			return -ENXIO;
-+		}
- 
--	clk_base = devm_ioremap(dev, res->start, resource_size(res));
--	if (!clk_base) {
--		dev_err(dev, "Unable to map clk base\n");
--		return -ENXIO;
-+		map = devm_regmap_init_mmio(dev, clk_base,
-+					    &clkc_regmap_config);
-+		if (IS_ERR(map))
-+			return PTR_ERR(map);
- 	}
- 
--	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
--
- 	/* Populate regmap for the regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
- 		axg_clk_regmaps[i]->map = map;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 92403ab2daf5..f9acd4015a1c 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -22,6 +22,7 @@
- #include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
-@@ -2042,19 +2043,35 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	if (!clkc_data)
- 		return -EINVAL;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
-+	/* Get the hhi system controller node if available */
-+	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(map)) {
-+		dev_err(dev,
-+			"failed to get HHI regmap - Trying obsolete regs\n");
- 
--	clk_base = devm_ioremap(dev, res->start, resource_size(res));
--	if (!clk_base) {
--		pr_err("%s: Unable to map clk base\n", __func__);
--		return -ENXIO;
--	}
-+		/*
-+		 * FIXME: HHI registers should be accessed through
-+		 * the appropriate system controller. This is required because
-+		 * there is more than just clocks in this register space
-+		 *
-+		 * This fallback method is only provided temporarily until
-+		 * all the platform DTs are properly using the syscon node
-+		 */
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!res)
-+			return -EINVAL;
-+
-+		clk_base = devm_ioremap(dev, res->start, resource_size(res));
-+		if (!clk_base) {
-+			dev_err(dev, "Unable to map clk base\n");
-+			return -ENXIO;
-+		}
- 
--	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
-+		map = devm_regmap_init_mmio(dev, clk_base,
-+					    &clkc_regmap_config);
-+		if (IS_ERR(map))
-+			return PTR_ERR(map);
-+	}
- 
- 	/* Populate regmap for the common regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
--- 
-2.14.3
+[1]: https://github.com/dlech/ev3dev-kernel/commit/e38897148a949b736ab135983887f9c81375f108
+[2]: https://github.com/dlech/ev3dev-kernel/commit/bab85f9e45450a36a7ea6f4407f89a75edb63761
