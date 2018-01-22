@@ -1,78 +1,46 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 17/44] dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks
-Date: Sun,  7 Jan 2018 20:17:16 -0600
-Message-Id: <1515377863-20358-18-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1516618880.7870.1.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: axg: fix the od shift of the sys_pll
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman
+	 <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 22 Jan 2018 12:01:20 +0100
+In-Reply-To: <20180119020926.246887-1-yixun.lan@amlogic.com>
+References: <20180119020926.246887-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the gate clocks present in the CFGCHIP syscon
-registers in TI DA8XX SoCs. There are actually other gate clocks in this
-block that could be added in the future, but TBCLK is currently the only
-one being used.
+On Fri, 2018-01-19 at 10:09 +0800, Yixun Lan wrote:
+> According to datasheet, the od shift of sys_pll is 16,
+> fix the typo which introduced at previous commit.
+> 
+> Fixes: 78b4af312f91 ('clk: meson-axg: add clock controller drivers')
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  drivers/clk/meson/axg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 7988dc8506b0..04a231eaf648 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -64,7 +64,7 @@ static struct meson_clk_pll axg_sys_pll = {
+>  	},
+>  	.od = {
+>  		.reg_off = HHI_SYS_PLL_CNTL,
+> -		.shift   = 10,
+> +		.shift   = 16,
+>  		.width   = 2,
+>  	},
+>  	.lock = &meson_clk_lock,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- .../clock/ti/davinci/da8xx-cfgchip-gate.txt        | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
+Looks good. Thx
+I'll take it when the rc1 is released
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
-new file mode 100644
-index 0000000..55821b0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip-gate.txt
-@@ -0,0 +1,38 @@
-+Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP gate clocks
-+
-+TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
-+registers call CFGCHIPn. Some of these registers function as clock
-+gates. This document describes the bindings for those clocks.
-+
-+Required properties:
-+- compatible: shall be "ti,da830-tbclk".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+
-+Optional properties:
-+- clock-output-names: from common clock binding.
-+
-+Parent:
-+This node must be a child of a "ti,da830-cfgchip" node.
-+
-+Assignment:
-+The assigned-clocks and assigned-clock-parents from the common clock bindings
-+can be used to indicate which parent clock should be used.
-+
-+Examples:
-+
-+	cfgchip: syscon@1417c {
-+		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
-+		reg = <0x1417c 0x14>;
-+
-+		ehrpwm_tbclk: tbclk {
-+			compatible = "ti,da830-tbclk";
-+			#clock-cells = <0>;
-+			clocks = <&psc1 17>;
-+			clock-output-names = "ehrpwm_tbclk";
-+		};
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
--- 
-2.7.4
+Jerome
