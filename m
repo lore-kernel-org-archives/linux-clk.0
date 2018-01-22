@@ -1,82 +1,107 @@
-Return-Path: <paul@crapouillou.net>
-Date: Thu, 11 Jan 2018 17:16:41 +0100
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3 8/9] clocksource: Add a new timer-ingenic driver
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier
-	<marc.zyngier@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones
-	<lee.jones@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Message-Id: <1515687401.2170.0@smtp.crapouillou.net>
-In-Reply-To: 
- <CAL_Jsq+StZS1+qTd9CG1X2_3ay5onMgEmYG9MRUVWs-4K4-EZA@mail.gmail.com>
-References: <20180101143344.2099-1-paul@crapouillou.net>
-	<20180110224838.16711-1-paul@crapouillou.net>
-	<20180110224838.16711-8-paul@crapouillou.net>
-	<CAL_Jsq+StZS1+qTd9CG1X2_3ay5onMgEmYG9MRUVWs-4K4-EZA@mail.gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 22 Jan 2018 09:05:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/41] dt-bindings: clock: New bindings for TI Davinci
+ PSC
+Message-ID: <20180122150503.ciavehj5dd22535n@rob-hp-laptop>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-10-git-send-email-david@lechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516468460-4908-10-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+On Sat, Jan 20, 2018 at 11:13:48AM -0600, David Lechner wrote:
+> This adds a new binding for the Power Sleep Controller (PSC) for the
+> mach-davinci family of processors.
+> 
+> Note: Although TI Keystone has a very similar PSC, we are not using the
+> existing bindings. Keystone is using a legacy one-node-per-clock binding
+> (actually two nodes if you count the separate reset binding for the same
+> IP block). Also, some davinci LPSCs have quirks that aren't handled by
+> the keystone bindings, so we would be adding one compatible string per
+> clock with quirks instead of just a new compatible string for each
+> controller.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+> 
+> v6 changes:
+> - added clocks and clock-names properties
+> - expanded examples
+> 
+>  .../devicetree/bindings/clock/ti/davinci/psc.txt   | 66 ++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+> new file mode 100644
+> index 0000000..0c2d2bd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+> @@ -0,0 +1,66 @@
+> +Binding for TI DaVinci Power Sleep Controller (PSC)
+> +
+> +The PSC provides power management, clock gating and reset functionality. It is
+> +primarily used for clocking.
+> +
+> +Required properties:
+> +- compatible: shall be one of:
+> +	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
+> +	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
+> +- reg: physical base address and size of the controller's register area
+> +- #clock-cells: from common clock binding; shall be set to 1
+> +- clocks: phandles to clocks corresponding to the clock-names property
+> +- clock-names: list of parent clock names - depends on compatible value
+> +	- for "ti,da850-psc0", shall be "pll0_sysclk1", "pll0_sysclk2",
+> +	  "pll0_sysclk4", "pll0_sysclk6", "async1"
+> +	- for "ti,da850-psc1", shall be "pll0_sysclk2", "pll0_sysclk4", "async3"
+> +
+> +Optional properties:
+> +- #reset-cells: from reset binding; shall be set to 1 - only applicable when
+> +  at least one local domain provides a local reset.
+> +
+> +Consumers:
+> +
+> +	Clock and reset consumers shall use the local power domain module ID
+> +	(LPSC) as the index corresponding to the clock cell. Refer to the
+> +	device-specific	datasheet to find these numbers. NB: Most local domains
+> +	only provide a clock and not a reset.
+> +
+> +Examples:
+> +
+> +	psc0: clock-controller@10000 {
+> +		compatible = "ti,da850-psc0";
+> +		reg = <0x10000 0x1000>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +		clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+> +			 <&pll0_sysclk 4>, <&pll0_sysclk 6>, <&async1_clk>;
+> +		clock_names = "pll0_sysclk1", "pll0_sysclk2",
 
-Le jeu. 11 janv. 2018 =E0 15:53, Rob Herring <robh+dt@kernel.org> a=20
-=E9crit :
-> On Wed, Jan 10, 2018 at 4:48 PM, Paul Cercueil <paul@crapouillou.net>=20
-> wrote:
->>  This driver will use the TCU (Timer Counter Unit) present on the=20
->> Ingenic
->>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>   drivers/clocksource/Kconfig         |   8 ++
->>   drivers/clocksource/Makefile        |   1 +
->>   drivers/clocksource/timer-ingenic.c | 258=20
->> ++++++++++++++++++++++++++++++++++++
->>   3 files changed, 267 insertions(+)
->>   create mode 100644 drivers/clocksource/timer-ingenic.c
->>=20
->>   v2: Use SPDX identifier for the license
->>   v3: - Move documentation to its own patch
->>       - Search the devicetree for PWM clients, and use all the TCU
->>             channels that won't be used for PWM
->=20
-> [...]
->=20
->>  +static int __init ingenic_tcu_init(struct device_node *np)
->>  +{
->>  +       unsigned long available_channels =3D GENMASK(NUM_CHANNELS -=20
->> 1, 0);
->>  +       struct device_node *node;
->>  +       struct ingenic_tcu *tcu;
->>  +       unsigned int i, channel;
->>  +       int err;
->>  +       u32 val;
->>  +
->>  +       for_each_node_with_property(node, "pwms") {
->>  +               err =3D of_property_read_u32_index(node, "pwms", 1,=20
->> &val);
->=20
-> This is the right idea, but a bit fragile. Perhaps its good enough for
-> your platform, but it would fail if you have another PWM provider like
-> the gpio-pwm binding or the cell size is not 1 (BTW, I thought the PWM
-> binding defined 3 cells typically).
+Should be clock-names
 
-Index 1 is always the channel number of the PWM, it works fine with=20
-3-cells
-PWM bindings, that's what I tested it with.
+> +			      "pll0_sysclk4", "pll0_sysclk6", "async1";
+> +	};
+> +	psc1: clock-controller@227000 {
+> +		compatible = "ti,da850-psc1";
+> +		reg = <0x227000 0x1000>;
+> +		#clock-cells = <1>;
+> +		clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>, <&async3_clk>;
+> +		clock_names = "pll0_sysclk2", "pll0_sysclk4", "async3";
 
-Ok, would it be enough to check that "the PWM clients we detect are=20
-connected
-to the PWM driver whose parent is also our parent" (since both drivers=20
-are in
-the same syscon/simple-mfd node)?
+ditto
 
-Thanks,
--Paul
-=
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
