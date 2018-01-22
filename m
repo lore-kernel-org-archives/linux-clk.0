@@ -1,178 +1,73 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Adam Ford <aford173@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
- <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
- <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
- <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
- <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
- <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
- <40501635-6f5b-20c9-f8bc-d17e26b58426@lechnology.com>
- <CAHCN7xL=h_g6HK2ey82r_w5qRbXg9+68Og+84YUYuePsjYd-Vg@mail.gmail.com>
- <f20267f2-be4c-e031-1c5f-76490164c60d@lechnology.com>
- <CAHCN7x+G5pxOeD7TahqiQUePEu1Z4Hyinkjq_bcSM+Hz36xoSg@mail.gmail.com>
- <a79184c5-3e28-bbac-0783-992615d49fae@lechnology.com>
- <CAHCN7x+EtQs6NHAYbVga7vU1U+qQLqOxdf+1MW6HewaT+ZF_Xg@mail.gmail.com>
- <5832fd62-16aa-e167-7e52-2ce493e33cdc@lechnology.com>
- <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c1e27013-cbad-3b09-0e0d-f68d75162c1f@lechnology.com>
-Date: Thu, 11 Jan 2018 15:46:19 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:51787 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751122AbeAVN1D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jan 2018 08:27:03 -0500
+Date: Mon, 22 Jan 2018 14:26:51 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi-ng: remove select on obsolete SUNXI_CCU_X
+ kconfig name
+Message-ID: <20180122132651.fuhkwwa43ewrzqzq@flea.lan>
+References: <20180119141906.7339-1-clabbe.montjoie@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKV+Rwep3WiY2aS49iLu+oiZmjtUN2QK+E=hVkqdSPwhw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r7ekjhkf6lbz3u4x"
+In-Reply-To: <20180119141906.7339-1-clabbe.montjoie@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/11/2018 03:34 PM, Adam Ford wrote:
-> On Thu, Jan 11, 2018 at 3:04 PM, David Lechner <david@lechnology.com> wrote:
->> On 01/11/2018 02:58 PM, Adam Ford wrote:
->>>
->>> On Thu, Jan 11, 2018 at 2:04 PM, David Lechner <david@lechnology.com>
->>> wrote:
->>>>
->>>> On 01/11/2018 12:50 PM, Adam Ford wrote:
->>>>>
->>>>>
->>>>> On Thu, Jan 11, 2018 at 12:29 PM, David Lechner <david@lechnology.com>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> If removing the "clk_ignore_unused" option causes the board to not
->>>>>> boot,
->>>>>> then we still have problems that need to be fixed, so please also test
->>>>>> without this option.
->>>>>
->>>>>
->>>>>
->>>>> Without this option, it still does not boot.  Without device tree it
->>>>> hangs after:
->>>>>
->>>>> [snip]
->>>>>
->>>>> NET: Registered protocol family 17
->>>>> Loading compiled-in X.509 certificates
->>>>> console [netcon0] enabled
->>>>> netconsole: network logging started
->>>>> davinci_emac davinci_emac.1: using random MAC addr: 5e:38:1a:1f:4f:77
->>>>> mmc0: host does not support reading read-only switch, assuming
->>>>> write-enable
->>>>> hctosys: unable to open rtc device (rtc0)
->>>>> mmc0: new high speed SDHC card at address b368
->>>>>
->>>>>
->>>>> With device tree it hangs after:
->>>>>
->>>>> [snip]
->>>>> mmc0: host does not support reading read-only switch, assuming
->>>>> write-enable
->>>>> mmc0: new high speed SDHC card at address b368
->>>>> mmcblk0: mmc0:b368 00000 3.75 GiB
->>>>>     mmcblk0: p1 p2
->>>>> pca953x 0-0020: 0-0020 supply vcc not found, using dummy regulator
->>>>> pca953x 0-0020: failed reading register
->>>>> pca953x: probe of 0-0020 failed with error -121
->>>>> console [netcon0] enabled
->>>>> netconsole: network logging started
->>>>> davinci_emac 1e20000.ethernet: incompatible machine/device type for
->>>>> reading mac address
->>>>> hctosys: unable to open rtc device (rtc0)
->>>>>
->>>>>
->>>>
->>>> Please try this change:
->>>>
->>>> diff --git a/drivers/clk/davinci/psc-da850.c
->>>> b/drivers/clk/davinci/psc-da850.c
->>>> index 3fd6b49..a526cc2 100644
->>>> --- a/drivers/clk/davinci/psc-da850.c
->>>> +++ b/drivers/clk/davinci/psc-da850.c
->>>> @@ -17,7 +17,7 @@ static const struct davinci_psc_clk_info
->>>> da850_psc0_info[]
->>>> __initconst = {
->>>>           LPSC(0, 0, tpcc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>>           LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>>           LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>>> -       LPSC(3, 0, aemif, pll0_sysclk3, 0),
->>>> +       LPSC(3, 0, aemif, pll0_sysclk3, LPSC_ALWAYS_ENABLED),
->>>>           LPSC(4, 0, spi0, pll0_sysclk2, 0),
->>>>           LPSC(5, 0, mmcsd0, pll0_sysclk2, 0),
->>>>           LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->>>>
->>>>
->>>>
->>>> If that does not work, try adding LPSC_ALWAYS_ENABLED to all of the
->>>> clocks
->>>> in this file and then eliminate them one by one until you find which one
->>>> is
->>>> preventing boot.
->>>>
->>> Unfortunately, that didn't work.  I switch all the entries in both
->>> tables that had a 0 to LPSC_ALWAYS_ENABLED, but no luck booting.
->>>
->>>> If it still does not boot, there is a similar DIVCLK_ALWAYS_ENABLED flag
->>>> in
->>>> drivers/clk/davinci/pll-da850.c that you can repeat the exercise with.
->>>> Add
->>>> DIVCLK_ALWAYS_ENABLED to all of the clocks there and then eliminate it
->>>> one
->>>> by one until you find the clock that is causing the problem.
->>>
->>>
->>> Still no good news.  I switched all the entries with a 0 to
->>> DIVCLK_ALWAYS_ENABLED and it still didn't finish booting.
->>>
->>> I wonder if Sekhar Nori might have some suggestions.  I didn't look at
->>> the code or try to understand it.  I just changed the settings.
->>>>
->>>>
->>
->> Even if a clock had another flag besides zero, you will need to add
->> LPSC_ALWAYS_ENABLED by or-ing it with the other flag.
->>
-> 
-> [snip]
-> 
-> 
-> Thanks for clarifying.  I was able to make it work with the following patch:
-> 
-> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-> index 3b4583d..a76b8682 100644
-> --- a/drivers/clk/davinci/psc-da850.c
-> +++ b/drivers/clk/davinci/psc-da850.c
-> @@ -25,7 +25,7 @@ static const struct davinci_psc_clk_info
-> da850_psc0_info[] __initconst = {
->          LPSC(9, 0, uart0, pll0_sysclk2, 0),
->          LPSC(13, 0, pruss, pll0_sysclk2, 0),
->          LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
-> -       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
-> +       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET |
-> LPSC_ALWAYS_ENABLED),
->          { }
->   };
-> 
-> 
-> If you have an updated patch series with those two fixes, I add my
-> name to the tested-by list.
-> 
-> 
->>
->>
-> [snip]
->>
 
-Great! Thanks again for testing.
+--r7ekjhkf6lbz3u4x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sekhar, have you had a chance to look at the rest of the patches in the
-series?
+On Fri, Jan 19, 2018 at 03:19:06PM +0100, Corentin Labbe wrote:
+> The following symbols:
+> SUNXI_CCU_DIV
+> SUNXI_CCU_MULT
+> SUNXI_CCU_NK
+> SUNXI_CCU_NKM
+> SUNXI_CCU_NM
+> SUNXI_CCU_MP
+> SUNXI_CCU_PHASE
+> were removed with the commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock=
+ types to a library")
+> So selecting them is useless.
+>=20
+> Fixes: c84f5683f6e9 ("clk: sunxi-ng: Add sun4i/sun7i CCU driver")
+> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-I'll wait a bit before I send a v6 to see if any other comments come.
+Queued for 4.17, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--r7ekjhkf6lbz3u4x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpl5poACgkQ0rTAlCFN
+r3ROEg/+KPitLFM0RqlST8mND1Ed01aMe6LYtwhMfIkOGyqzaqPKqrHWjSfRiivo
+5iXacrcDB9SeOeIngLFvV+3xkecIGhNlpGqPWbvqYdhMFNNJC3HAdUYVuIJXHFgR
+ndSYDaoQ99t6yoZejG41VnS3KGYv7Iw7/35M352Ys2grB9SPM3Qoe3ZDiB/cZIA+
+HNcm6gpHhZ7brPKypfnN+ex+6WsgX2JAfr6gaRRG8yM/hh5kNNvPVELfPxs3gvon
+7P8KYZns8wxTenBvw6raZvJOF81Qu1y17+hjyzb7UEUgmlgmLTJY4yZ/LWfgWskp
+HmOGknDKe1hWZp5y33T35iHkS9p3AmNtWpIrJf3YtdwlTFKg8NBWuWQlGzO6vUZn
+iJr1LYYNsvyOOlYW4hmIJedgHMtUr/bY0dy1NzBYlqPBf+RL0CvLpuNnv3cmmGr1
+vC68mx4OxjlHgy5DcrstZhm8SK0fG14U2FMy7HFLCqHg6KPkGo/+yd2yPptNjkyX
+LSNb5hIZQvRdt4Zp1FrJDxAy97lFAEBz6THnYoGp+p5Gg0yheUzXiASFBZ2YI8Tp
+cMqt8yY+lTjAUoIPkh18BOAro5h6TgoRIbktV41iad6SFi9Kp1gqoEfBrUkGM0TB
+NLaTYDQmXLMWutPxr+GFMDzLJlXSSR5NqBLEn5DJdjb1A2xGejo=
+=cMF4
+-----END PGP SIGNATURE-----
+
+--r7ekjhkf6lbz3u4x--
