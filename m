@@ -1,78 +1,41 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/19] clk: meson: use dev pointer where possible
-Date: Wed, 31 Jan 2018 19:09:27 +0100
-Message-Id: <20180131180945.18025-2-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	yang.zheng@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 7/7] clk: rockchip: document hdmi_phy external input for rk3328
+Date: Mon, 22 Jan 2018 15:15:30 +0100
+Message-Id: <20180122141530.12398-8-heiko@sntech.de>
+In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
+References: <20180122141530.12398-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The 'dev' pointer is directly available in gxbb and axg clock
-controller, so consistently use it instead of going the through the
-'pdev' pointer once in while
+The hdmi-phy block inside the soc also loops its pll output back
+into the clock controller, so document that already used input clock.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/meson/axg.c  | 8 ++++----
- drivers/clk/meson/gxbb.c | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index b5dacfde64bb..0db0fc0762e2 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -804,7 +804,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	void __iomem *clk_base;
- 	int ret, clkid, i;
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+index e71c675ba5da..904ae682ea90 100644
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+@@ -32,6 +32,7 @@ clock-output-names:
+  - "clkin_i2s" - external I2S clock - optional,
+  - "gmac_clkin" - external GMAC clock - optional
+  - "phy_50m_out" - output clock of the pll in the mac phy
++ - "hdmi_phy" - output clock of the hdmi phy pll - optional
  
--	clkc_data = of_device_get_match_data(&pdev->dev);
-+	clkc_data = of_device_get_match_data(dev);
- 	if (!clkc_data)
- 		return -EINVAL;
- 
-@@ -812,9 +812,9 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
--	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	clk_base = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!clk_base) {
--		dev_err(&pdev->dev, "Unable to map clk base\n");
-+		dev_err(dev, "Unable to map clk base\n");
- 		return -ENXIO;
- 	}
- 
-@@ -849,7 +849,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		ret = devm_clk_hw_register(dev,
- 					clkc_data->hw_onecell_data->hws[clkid]);
- 		if (ret) {
--			dev_err(&pdev->dev, "Clock registration failed\n");
-+			dev_err(dev, "Clock registration failed\n");
- 			return ret;
- 		}
- 	}
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a5f25cc1944c..423abcb8ef88 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1950,7 +1950,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	int ret, clkid, i;
- 	struct device *dev = &pdev->dev;
- 
--	clkc_data = of_device_get_match_data(&pdev->dev);
-+	clkc_data = of_device_get_match_data(dev);
- 	if (!clkc_data)
- 		return -EINVAL;
+ Example: Clock controller node:
  
 -- 
-2.14.3
+2.14.2
