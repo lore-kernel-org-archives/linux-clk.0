@@ -1,135 +1,42 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 20/41] ARM: da830: add new clock init using common clock framework
-Date: Sat, 20 Jan 2018 11:13:59 -0600
-Message-Id: <1516468460-4908-21-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+	yang.zheng@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 3/7] clk: rockchip: export sclk_hdmi_sfc on rk3328
+Date: Mon, 22 Jan 2018 15:15:26 +0100
+Message-Id: <20180122141530.12398-4-heiko@sntech.de>
+In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
+References: <20180122141530.12398-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/da830.c
-using the new common clock framework drivers.
+This clock is one of the dw-hdmi supplying clocks and thus
+needs to be exported.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also clean up the #includes since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
+ drivers/clk/rockchip/clk-rk3328.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v6 changes:
-- add blank lines between function calls
-- include da8xx_register_cfgchip()
-
- arch/arm/mach-davinci/da830.c | 49 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 39de5a6..0b6d0f3 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -8,23 +8,29 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
- #include <linux/platform_data/gpio-davinci.h>
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 17816aec206a..b7a28f2814e2 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -588,7 +588,7 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 	COMPOSITE(ACLK_VOP_PRE, "aclk_vop_pre", mux_4plls_p, 0,
+ 			RK3328_CLKSEL_CON(39), 6, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK3328_CLKGATE_CON(5), 5, GFLAGS),
+-	GATE(0, "clk_hdmi_sfc", "xin24m", 0,
++	GATE(SCLK_HDMI_SFC, "sclk_hdmi_sfc", "xin24m", 0,
+ 			RK3328_CLKGATE_CON(5), 4, GFLAGS),
  
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
-+#include <mach/irqs.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
-+
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -37,6 +43,7 @@
- 
- #define DA830_REF_FREQ		24000000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll0_data = {
- 	.num		= 1,
- 	.phys_base	= DA8XX_PLL0_BASE,
-@@ -432,6 +439,7 @@ static struct clk_lookup da830_clks[] = {
- 	CLK(NULL,		"rmii",		&rmii_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1223,7 +1231,36 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll0, *psc0, *psc1;
-+	struct clk *clk;
-+
-+	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-+	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
-+
-+	da8xx_register_cfgchip();
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
-+
-+	da830_pll_clk_init(pll0);
-+
-+	da830_psc_clk_init(psc0, psc1);
-+
-+	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+
-+	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, "timer0", NULL);
-+
-+	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+
-+	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-+	clk_register_clkdev(clk, "rmii", NULL);
-+#else
- 	da8xx_register_cfgchip();
- 	davinci_clk_init(da830_clks);
-+#endif
- 	davinci_timer_init();
- }
+ 	COMPOSITE_NODIV(0, "clk_cif_src", mux_2plls_p, 0,
 -- 
-2.7.4
+2.14.2
