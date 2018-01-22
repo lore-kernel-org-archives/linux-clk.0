@@ -1,49 +1,38 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-27-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-27-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:33:11 +0100
-Message-ID: <CAMuHMdV1v2+WnnJWkBSm=WgfCAp3xtpNuJynHQ-2t7ydMzpGJg@mail.gmail.com>
-Subject: Re: [RFC 26/37] clk: renesas: r8a7743: Add rwdt clock
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-rockchip@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	yang.zheng@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 0/7] clk: rockchip: rk3328 fixes in preparation of graphics support
+Date: Mon, 22 Jan 2018 15:15:23 +0100
+Message-Id: <20180122141530.12398-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
-> the watchdog registers at any time, declare the clock as critical.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Fix some clock issues on rk3328 to make way for the upcoming graphics
+support on rk3328.
 
-With the critical clock handling removed (that can be done by the driver,
-if really needed)
+Heiko Stuebner (6):
+  clk: rockchip: fix hclk_vio_niu on rk3328
+  clk: rockchip: remove HCLK_VIO from rk3328 dt header
+  clk: rockchip: export sclk_hdmi_sfc on rk3328
+  clk: rockchip: protect all remaining rk3328 interconnect clocks
+  clk: rockchip: remove ignore_unused flag from rk3328 vio_h2p clocks
+  clk: rockchip: document hdmi_phy external input for rk3328
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Zheng Yang (1):
+  clk: rockchip: add flags for rk3328 dclk_lcdc
 
-Gr{oetje,eeting}s,
+ .../bindings/clock/rockchip,rk3328-cru.txt         |  1 +
+ drivers/clk/rockchip/clk-rk3328.c                  | 67 ++++++++++++++--------
+ include/dt-bindings/clock/rk3328-cru.h             |  1 -
+ 3 files changed, 44 insertions(+), 25 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.14.2
