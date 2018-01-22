@@ -1,53 +1,37 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>,
-	Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v3 15/34] clk: vc5: change vc5_dbl_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:54 +0000
-Message-Id: <1514835793-1104-16-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35453 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeAVIze (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jan 2018 03:55:34 -0500
+Received: by mail-it0-f68.google.com with SMTP id e1so8937898ita.0
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2018 00:55:34 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1516375101-29836-2-git-send-email-geert+renesas@glider.be>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-2-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 22 Jan 2018 09:55:33 +0100
+Message-ID: <CACRpkdZMSU1GUbEaJs0H2upGLmWYtp188awMESGfn+fVVTODrQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sunxi: Use of_clk_get_parent_count() instead
+ of open coding
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio@vger.kernel.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Fri, Jan 19, 2018 at 4:18 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
----
- drivers/clk/clk-versaclock5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 9432122..733b402 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -294,7 +294,7 @@ static unsigned long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
- 		return rate;
- 	else
--		return -EINVAL;
-+		return 0;
- }
- 
- static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.7.4
+Yours,
+Linus Walleij
