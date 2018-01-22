@@ -1,41 +1,88 @@
-Return-Path: <weiyongjun1@huawei.com>
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa
-	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] clk: samsung: exynos-audss: Remove redundant dev_err call in exynos_audss_clk_probe()
-Date: Wed, 17 Jan 2018 11:26:18 +0000
-Message-ID: <1516188378-144847-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+Date: Mon, 22 Jan 2018 11:30:15 -0600
 MIME-Version: 1.0
+In-Reply-To: <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+On 01/22/2018 05:14 AM, Bartosz Golaszewski wrote:
+> 2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 19 patches create new clock drivers
+>> using the common clock framework. There are basically 3 groups of clocks -
+>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+>> unique init data, which is the reason for so many patches.
+>>
+>> Then, starting with "ARM: da830: add new clock init using common clock",
+>> we get the mach code ready for the switch by adding the code needed for
+>> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
+>> legacy clocks so that we can switch easily between the old and the new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final three patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> v6 changes (also see individual patches for details):
+>> - All of the device tree bindings are changed
+>> - All of the clock drivers are changed significantly
+>> - Fixed issues brought up during review of v5
+>> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
+>>    series and submitted separately
+>>
+>> v5 changes:
+>> - Basically, this is an entirely new series
+>> - Patches are broken up into bite-sized pieces
+>> - Converted PSC clock driver to use regmap
+>> - Restored "force" flag for certain DA850 clocks
+>> - Added device tree bindings
+>> - Moved more of the clock init to drivers/clk
+>> - Fixed frequency scaling (maybe*)
+>>
+>> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
+>>    what they need to do to make this work, but I haven't figured out how to
+>>    test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
+>>    sent separately after this series has landed.)
+>>
+>> Dependencies:
+>>
+>> This series applies on top of linux-davinci/master plus the following patches:
+>> - [1] "clk: fix reentrancy of clk_enable() on UP systems" (in clk-next)
+>> - [2] "clk: add helper functions for managing clk_onecell_data"
+>> - [3] "clk: divider: read-only divider can propagate rate change"
+>> - [4],[5],[6],[7],[8],[9] series "ARM: davinci: common clock prep work"
+>>
+> 
+> Hi David,
+> 
+> I'm getting a splat[1] when trying to mount the rootfs over nfs on a da850-lcdk.
+> 
+> I'll try to figure out what's happening.
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
+> [1] https://pastebin.com/D94z8SAe
+> 
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 5bfc92e..b4b057c 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -143,10 +143,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg_base)) {
--		dev_err(dev, "failed to map audss registers\n");
-+	if (IS_ERR(reg_base))
- 		return PTR_ERR(reg_base);
--	}
- 
- 	epll = ERR_PTR(-ENODEV);
- 
+Could it have something to do with the "rmii" clock? I don't think I added that
+in the device tree.
