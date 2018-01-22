@@ -1,68 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:46330 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeADNlc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 08:41:32 -0500
-Date: Thu, 4 Jan 2018 14:41:30 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 09/11] clk: sunxi-ng: add support for Allwinner A64
- DE2 CCU
-Message-ID: <20180104134130.dfh2qbhcvo67zu36@flea.lan>
-References: <20171222122243.25735-1-icenowy@aosc.io>
- <20171222122243.25735-10-icenowy@aosc.io>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vey4lzzuwtjmi6al"
-In-Reply-To: <20171222122243.25735-10-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20180117183244.28303-2-l.stach@pengutronix.de>
+References: <20180117183244.28303-1-l.stach@pengutronix.de> <20180117183244.28303-2-l.stach@pengutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 22 Jan 2018 12:51:23 +0100
+Message-ID: <CAK8P3a0WGrmDp_CbQjDVc_dGNyBN4A4h5HJqUeFygO3RFHuCxw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] arm64: add basic DTS for i.MX8MQ
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, DTML <devicetree@vger.kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>, patchwork-lst@pengutronix.de,
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Jan 17, 2018 at 7:32 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> This adds the basic DTS for the i.MX8MQ.
+> For now only the following peripherals are supported:
+> - IOMUXC (pin controller)
+> - CCM (clock controller)
+> - GPIO
+> - UART
+> - uSDHC (SD/eMMC controller)
+> - FEC (ethernet controller)
+> - i2c
+>
+> This is enough to get a very basic board support up and running.
+>
+> One known limitation is that the driver for the GPC interrupt
+> controller is still missing, rendering the CPU sleep states unusable
+> as there is nothing waking them up anymore. This will be fixed in
+> due course.
+>
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 
---vey4lzzuwtjmi6al
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I wonder if there is anything preventing us from putting it all into linux-4.16.
+This is low-risk (nothing would break), and the other three arch/arm64 patches
+are trivial, so if someone can do a review quickly, I'd be willing to pick the
+arm-soc portion up.
 
-On Fri, Dec 22, 2017 at 08:22:41PM +0800, Icenowy Zheng wrote:
-> Allwinner A64's DE2 needs to claim a section of SRAM (SRAM C) to work.
->=20
-> Add support for it.
+I suppose we need the clk and pintrl drivers to also get merged at the
+same time to make it usable, and we also want the bindings for pinctrl
+and clk to be properly reviewed before adding the nodes to the DT
+so it depends a, bit on the other maintainers.
 
-That's highly suspicious that the clocks need an SRAM to operate
-properly.
+To me it looks like the drivers are just "yet another i.MX variant" for them,
+it should make little difference that this one is 64-bit.
 
-Can you elaborate?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---vey4lzzuwtjmi6al
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpOLwkACgkQ0rTAlCFN
-r3QVuA/7BKDQF9s38/X7rq2BLnI01Qon26NAH53tdQ6EX8wjDyse2gVWcoOt3yph
-cslsPHh4o1OoZzd9Xp4+Jr3niRs27D02o+KNUpIb5VtIJcrUz//Bp36E5qLLqF8S
-AD9wlwzsGO8ZcrMKonlmKvzhW807q6FaxpST2AHqOCdXe4iuoXILmhyXrrPntxQW
-HXtMJ3/zJCTQjkcJrwA00Apz2xPgr5CRPDa99OVxLmFtfd+pZPKCRWoAnLYTB2rb
-uyVHCldIDq6/OZYkuFwUS0yrDgev0LrERyL+lDLkkriElj9bnpMP3gLJhTLkEtbQ
-newFdehxcwPBg88fUweKKyedM1OJKz4m96ATZRi6pf2Yuck3866qFqvItb6mFLzJ
-jGlYOugqnH0FVlGrFL4C40nNwPhJ7ba8lFEGYvi8muxRrQIFGoi03mBJvJoFcdOq
-u5DA41bV2v+Ckna2WH4DNQLG35JPXDQTyxJAN9toxwSxYwmQLQo+757Rt9fda+YD
-liP9CgdqA8GPCtOe4IsUaRGW8d/juyLAKEwzERhSy4KLwB/vS/a5xeV1Pdq7kLSl
-asu1juk3fbH4cPZRdmipkVMWI1m7f+0M+nCQjFfOkxf5coF3xQxNU622YGVFmngW
-a6rBB0CvC5lJSx69qpoxDLhmddxkk7xNYECoWYS93MidvA8NCj4=
-=XbsJ
------END PGP SIGNATURE-----
-
---vey4lzzuwtjmi6al--
+     Arnd
