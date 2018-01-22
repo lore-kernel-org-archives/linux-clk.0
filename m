@@ -1,37 +1,69 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH] clk: divider: fix clk_round_rate() when
- CLK_DIVIDER_READ_ONLY && CLK_RATE_SET_PARENT
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org
-References: <1515262769-22665-1-git-send-email-david@lechnology.com>
- <20180110220333.GF28313@codeaurora.org>
-From: David Lechner <david@lechnology.com>
-Message-ID: <ff6bc8b7-a7b4-1218-6b1f-8bb8aa3cf479@lechnology.com>
-Date: Thu, 11 Jan 2018 17:10:11 -0600
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <20180110220333.GF28313@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 22 Jan 2018 14:29:17 +0100
+Message-ID: <CAMRc=MesQTvkVtPLOGr2G7-KSR=k35y24SsO4s8rDbCv=2-G7A@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/10/2018 04:03 PM, Stephen Boyd wrote:
-> On 01/06, David Lechner wrote:
->> clk_round_rate() 'answers the question "if I were to pass @rate to
->> clk_set_rate(), what clock rate would I end up with?" without changing
->> the hardware'.
->>
->> Currently, clk_divider_round_rate() returns the "current value" when
->> divider->flags & CLK_DIVIDER_READ_ONLY. But, if CLK_SET_RATE_PARENT is
->> set, then clk_set_rate() is supposed to propagate the rate change to the
->> parent clock. So, we need to do check for CLK_SET_RATE_PARENT and if it
->> is set, ask the parent clock what rate it can provide given the current
->> divider value.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
-> 
-> Jerome sent a patch the day before that probably addresses the
-> same thing. See the message-id of 20180105170959.17266-2-jbrunet@baylibre.com
-> for more info.
-> 
+2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
+> This series converts mach-davinci to use the common clock framework.
+>
+> The series works like this, the first 19 patches create new clock drivers
+> using the common clock framework. There are basically 3 groups of clocks -
+> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+> unique init data, which is the reason for so many patches.
+>
+> Then, starting with "ARM: da830: add new clock init using common clock",
+> we get the mach code ready for the switch by adding the code needed for
+> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
+> legacy clocks so that we can switch easily between the old and the new.
+>
+> "ARM: davinci: switch to common clock framework" actually flips the switch
+> to start using the new clock drivers. Then the next 8 patches remove all
+> of the old clock code.
+>
+> The final three patches add device tree clock support to the one SoC that
+> supports it.
+>
+> v6 changes (also see individual patches for details):
+> - All of the device tree bindings are changed
+> - All of the clock drivers are changed significantly
+> - Fixed issues brought up during review of v5
+> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
+>   series and submitted separately
+>
+> v5 changes:
+> - Basically, this is an entirely new series
+> - Patches are broken up into bite-sized pieces
+> - Converted PSC clock driver to use regmap
+> - Restored "force" flag for certain DA850 clocks
+> - Added device tree bindings
+> - Moved more of the clock init to drivers/clk
+> - Fixed frequency scaling (maybe*)
+>
+> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
+>   what they need to do to make this work, but I haven't figured out how to
+>   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
+>   sent separately after this series has landed.)
+>
 
-Indeed, thank you. We can drop this patch.
+This driver doesn't have DT support - I suppose it would be useful to
+add it and also add the corresponding DT node to da850.dtsi. If you're
+ok with it, I can start working on it. I also have a patch for the i2c
+cpufreq issue and it would be nice to test it with it.
+
+Thanks,
+Bartosz
