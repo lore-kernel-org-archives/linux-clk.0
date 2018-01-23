@@ -1,47 +1,76 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 0/6] Tegra210 DFLL implementation
-Date: Wed, 24 Jan 2018 14:45:31 +0200
-Message-ID: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+ <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com> <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 23 Jan 2018 19:34:36 +0100
+Message-ID: <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This series introduces support for the DFLL as a CPU clock source
-on Tegra210. As Jetson TX2 uses a PWM controlled regulator IC which
-is driven directly by the DFLLs PWM output, we also introduce support
-for PWM regulators next to I2C controlled regulators. The DFLL output
-frequency is directly controlled by the regulator voltage. The registers
-for controlling the PWM are part of the DFLL IP block, so there's no
-separate linux regulator object involved because the regulator IC only
-supplies the rail powering the DFLL and the CPUs. It doesn't have any
-other controls.
+2018-01-23 19:26 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/23/2018 12:10 PM, Bartosz Golaszewski wrote:
+>>
+>> 2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
+>>>
+>>> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com>
+>>> wrote:
+>>>>
+>>>> On 01/23/2018 10:03 AM, David Lechner wrote:
+>>>>>
+>>>>>
+>>>>> You can see if the clock is enabled by running:
+>>>>>
+>>>>>       cat /sys/kernel/debug/clk/clk_summary
+>>>>>
+>>>>
+>>>> I just realized if you can't boot, you can't do this. :-/
+>>>
+>>>
+>>> I can boot with the latest set in your git repo, but the Ethernet
+>>> doesn't apparently fully operate.  I don't get errors, but I cannot
+>>> get a dhcp address.
+>>>
+>>> I'll try to do a more exhaustive test later today to get an idea of
+>>> what works and what doesn't.  When I ran my basic tests, I just did a
+>>> feel-good boot test (and reboot test)
+>>>
+>>> adam
+>>
+>>
+>> FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
+>> seems to at least fix the ethernet. In master branch it's done by
+>> pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
+>> getting several oopses and WARNs so there's some more work to do.
+>>
+>
+> Hmm... I'm wondering if we need to also add #power-domain-cells to the
+> PSC clocks and power-domains properties to the consumers.
+>
+> For this specific case though, it seems strange to me that the drivers
+> to clk_get() and clk_get_rate() but never enable the clocks.
+>
+>
+> Also, are the oopses and WARNs the same as before?
 
-Changes since v1:
-* improved commit messages
-* some style cleanups
+No, the ones before were all related to the ethernet failing, now I
+get several stack traces from drm. Posted them on pastebin[1].
 
-Peter De Schrijver (6):
-  clk: tegra: dfll registration for multiple SoCs
-  clk: tegra: DT align parameter for CVB calculation
-  clk: tegra: add CVB tables for Tegra210 CPU DFLL
-  clk: tegra: dfll: support PWM regulator control
-  clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
-  cpufreq: tegra124-cpufreq: extend to support Tegra210
+Thanks,
+Bartosz
 
- drivers/clk/tegra/Kconfig                  |   5 +
- drivers/clk/tegra/Makefile                 |   2 +-
- drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
- drivers/clk/tegra/clk-dfll.h               |   7 +
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
- drivers/clk/tegra/cvb.c                    |  18 +-
- drivers/clk/tegra/cvb.h                    |   6 +-
- drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
- 8 files changed, 920 insertions(+), 104 deletions(-)
-
--- 
-1.9.1
+[1] https://pastebin.com/H3yZ5xHv
