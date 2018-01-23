@@ -1,103 +1,60 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:56754 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeABPJH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:09:07 -0500
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Burton <paul.burton@imgtec.com>
-Subject: [PATCH v5 07/15] MIPS: Setup boot_command_line before plat_mem_setup
-Date: Tue,  2 Jan 2018 16:08:40 +0100
-Message-Id: <20180102150848.11314-7-paul@crapouillou.net>
-In-Reply-To: <20180102150848.11314-1-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12161 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751156AbeAWJXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jan 2018 04:23:18 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo Tegra210
+Date: Tue, 23 Jan 2018 11:22:49 +0200
+Message-ID: <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Burton <paul.burton@imgtec.com>
+Apply the memory built-in self test work around when ungating certain
+Tegra210 power domains.
 
-Platforms using DT will typically call __dt_setup_arch from
-plat_mem_setup. This in turn calls early_init_dt_scan. When
-CONFIG_CMDLINE is set, this leads to its value being copied into
-boot_command_line by early_init_dt_scan_chosen. If this happens before
-the code setting up boot_command_line in arch_mem_init runs, that code
-will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
-boot_command_line again, duplicating it. For some command line
-parameters (eg. earlycon) this can be a problem. Set up
-boot_command_line before early_init_dt_scan_chosen gets called such that
-it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
-duplicated.
-
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/soc/tegra/pmc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- v2: New patch in this series
- v3: No change
- v4: No change
- v5: No change
-
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 702c678de116..85bc601e9a0d 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -826,25 +826,6 @@ static void __init arch_mem_init(char **cmdline_p)
- 	struct memblock_region *reg;
- 	extern void plat_mem_setup(void);
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index ce62a47..c4eff4b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -153,6 +153,7 @@ struct tegra_pmc_soc {
  
--	/* call board setup routine */
--	plat_mem_setup();
--
--	/*
--	 * Make sure all kernel memory is in the maps.  The "UP" and
--	 * "DOWN" are opposite for initdata since if it crosses over
--	 * into another memory section you don't want that to be
--	 * freed when the initdata is freed.
--	 */
--	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
--			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
--			 BOOT_MEM_RAM);
--	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
--			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
--			 BOOT_MEM_INIT_RAM);
--
--	pr_info("Determined physical RAM map:\n");
--	print_memory_map();
--
- #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
- 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
- #else
-@@ -872,6 +853,26 @@ static void __init arch_mem_init(char **cmdline_p)
- 	}
- #endif
- #endif
-+
-+	/* call board setup routine */
-+	plat_mem_setup();
-+
-+	/*
-+	 * Make sure all kernel memory is in the maps.  The "UP" and
-+	 * "DOWN" are opposite for initdata since if it crosses over
-+	 * into another memory section you don't want that to be
-+	 * freed when the initdata is freed.
-+	 */
-+	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
-+			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
-+			 BOOT_MEM_RAM);
-+	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
-+			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
-+			 BOOT_MEM_INIT_RAM);
-+
-+	pr_info("Determined physical RAM map:\n");
-+	print_memory_map();
-+
- 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ 	bool has_tsense_reset;
+ 	bool has_gpu_clamps;
++	bool needs_mbist_war;
  
- 	*cmdline_p = command_line;
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
+@@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	usleep_range(10, 20);
+ 
++	if (pg->pmc->soc->needs_mbist_war)
++		tegra210_clk_handle_mbist_war(pg->id);
++
+ 	if (disable_clocks)
+ 		tegra_powergate_disable_clocks(pg);
+ 
+@@ -1815,6 +1819,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+ 	.cpu_powergates = tegra210_cpu_powergates,
+ 	.has_tsense_reset = true,
+ 	.has_gpu_clamps = true,
++	.needs_mbist_war = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
+ 	.regs = &tegra20_pmc_regs,
 -- 
-2.11.0
+1.9.1
 
