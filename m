@@ -1,79 +1,106 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/9] clk: meson: remove unnecessary rounding in the pll clock
-Date: Fri, 19 Jan 2018 16:55:23 +0100
-Message-Id: <20180119155529.11532-4-jbrunet@baylibre.com>
-In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
-References: <20180119155529.11532-1-jbrunet@baylibre.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 23 Jan 2018 20:21:02 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com,
+	linux-imx@nxp.com, fabio.estevam@nxp.com
+Subject: Re: [PATCH V3 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Message-ID: <20180123122102.GA16865@b29396-OptiPlex-7040>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+ <1516367470-24340-2-git-send-email-aisheng.dong@nxp.com>
+ <1516705426.7870.45.camel@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516705426.7870.45.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The pll driver performs the rate calculation in Mhz, which adds an
-unnecessary rounding down to the Mhz of the rate. Use 64bits long
-integers to perform this calculation safely on meson8b and perform the
-calculation in Hz instead
+On Tue, Jan 23, 2018 at 12:03:46PM +0100, Jerome Brunet wrote:
+> On Fri, 2018-01-19 at 21:11 +0800, Dong Aisheng wrote:
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index f711be6..68ccd36 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -360,6 +360,7 @@ struct clk_div_table {
+> >   * @shift:     shift to the divider bit field
+> >   * @width:     width of the divider bit field
+> >   * @table:     array of value/divider pairs, last entry should have div = 0
+> > + * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
+> >   * @lock:      register lock
+> >   *
+> >   * Clock with an adjustable divider affecting its output frequency.  Implements
+> > @@ -388,6 +389,12 @@ struct clk_div_table {
+> >   * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+> >   *     except when the value read from the register is zero, the divisor is
+> >   *     2^width of the field.
+> > + * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
+> 
+> Unless I missed something in your patch, this comment says that, like
+> CLK_DIVIDER_MAX_AT_ZERO, CLK_DIVIDER_ZERO_GATE behave as a CLK_DIVIDER_ONE_BASED
+> clock
+> 
+> However, I don't see anything special done in _get_val() around
+> CLK_DIVIDER_ZERO_GATE which means that calling _get_val() with div=2 would give
+> val=1. This is more like a regular divider (when CLK_DIVIDER_ONE_BASED is not
+> set)
+> 
+> Also, when looking for the best divider, CCF could find that the best div is 1.
+> On a non-CLK_DIVIDER_ONE_BASED, this would translate to value 0 and
+> (accidentally) gate the clock .
+> 
+> all the occurrences of CLK_DIVIDER_ZERO_GATE I have seen in patch 9 are combined
+> with CLK_DIVIDER_ONE_BASED, which is probably why this potential issue has gone
+> unnoticed.
+> 
 
-Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-pll.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+Yes, this feature only works with CLK_DIVIDER_ONE_BASED in current design.
+Probably we should state more clearly in the code comments?
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 2614341fc4ad..087dfc532ba8 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -34,6 +34,7 @@
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-@@ -51,8 +52,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct meson_clk_pll *pll = to_meson_clk_pll(hw);
- 	struct parm *p;
--	unsigned long parent_rate_mhz = parent_rate / 1000000;
--	unsigned long rate_mhz;
-+	u64 rate;
- 	u16 n, m, frac = 0, od, od2 = 0;
- 	u32 reg;
- 
-@@ -74,17 +74,18 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 		od2 = PARM_GET(p->width, p->shift, reg);
- 	}
- 
-+	rate = (u64)parent_rate * m;
-+
- 	p = &pll->frac;
- 	if (p->width) {
- 		reg = readl(pll->base + p->reg_off);
- 		frac = PARM_GET(p->width, p->shift, reg);
--		rate_mhz = (parent_rate_mhz * m + \
--				(parent_rate_mhz * frac >> 12)) * 2 / n;
--		rate_mhz = rate_mhz >> od >> od2;
--	} else
--		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
- 
--	return rate_mhz * 1000000;
-+		rate += mul_u64_u32_shr(parent_rate, frac, 12);
-+		rate *= 2;
-+	}
-+
-+	return div_u64(rate, n) >> od >> od2;
- }
- 
- static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.14.3
+> I think CLK_DIVIDER_ZERO_GATE should just means that value 0 gate the clock, and
+> just that. It should not imply what the rest of values mean.
+> 
+
+It did not imply what the reset of values mean. User needs to specify the
+correct divider types. For current case, it should be CLK_DIVIDER_ONE_BASED
+only.
+e.g.
+000b - Clock disabled
+001b - Divide by 1
+010b - Divide by 2
+
+If anymore divider type want to use it, then we need extend the support
+accordingly.
+
+Theoretically any type of divider gets a 0 val (register value) is invalid for
+ZERO_GATE feature. We should avoid it.
+
+> In a more general way, I'd love to see a feature such as CLK_DIVIDER_ZERO_GATE
+> added to the divider but I'm bit concerned of all the quirks we are slowly
+> adding to the generic divider. It seems we are all trying re-use the algorithm
+> of clk_divider_bestdiv() with different 'val-to-div' transfer function. Not too
+> sure what the best solution could be though.
+> 
+
+IMHO CLK_DIVIDER_ZERO_GATE only indicates the 0 val means clk gate.
+It does not assume divider types. That looks like a generic way and is exactly
+what this patch intends to do. Does it make sense?
+
+Regards
+Dong Aisheng
+
+> > + *     when the value read from the register is zero, it means the divisor
+> > + *     is gated. For this case, the cached_val will be used to store the
+> > + *     intermediate div for the normal rate operation, like set_rate/get_rate/
+> > + *     recalc_rate. When the divider is ungated, the driver will actually
+> > + *     program the hardware to have the requested divider value.
+> >   */
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
