@@ -1,103 +1,114 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:05:58 +0100
-Message-ID: <CAMuHMdWiVu9hs3PvXypJyeG0iDQkDvyPzHkTfq4NyPVdaYZKew@mail.gmail.com>
-Subject: Re: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
- trigger for Gen2
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com> <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 23 Jan 2018 15:54:55 +0100
+Message-ID: <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
-
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch allows for platform specific quirks as some of the SoC need
-> further customization for the watchdog to work properly, like for R-Car
-> Gen2 and for RZ/G.
+2018-01-22 18:30 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/22/2018 05:14 AM, Bartosz Golaszewski wrote:
+>>
+>> 2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>
+>>> This series converts mach-davinci to use the common clock framework.
+>>>
+>>> The series works like this, the first 19 patches create new clock drivers
+>>> using the common clock framework. There are basically 3 groups of clocks
+>>> -
+>>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
+>>> have
+>>> unique init data, which is the reason for so many patches.
+>>>
+>>> Then, starting with "ARM: da830: add new clock init using common clock",
+>>> we get the mach code ready for the switch by adding the code needed for
+>>> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
+>>> legacy clocks so that we can switch easily between the old and the new.
+>>>
+>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>> switch
+>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>> of the old clock code.
+>>>
+>>> The final three patches add device tree clock support to the one SoC that
+>>> supports it.
+>>>
+>>> v6 changes (also see individual patches for details):
+>>> - All of the device tree bindings are changed
+>>> - All of the clock drivers are changed significantly
+>>> - Fixed issues brought up during review of v5
+>>> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from
+>>> this
+>>>    series and submitted separately
+>>>
+>>> v5 changes:
+>>> - Basically, this is an entirely new series
+>>> - Patches are broken up into bite-sized pieces
+>>> - Converted PSC clock driver to use regmap
+>>> - Restored "force" flag for certain DA850 clocks
+>>> - Added device tree bindings
+>>> - Moved more of the clock init to drivers/clk
+>>> - Fixed frequency scaling (maybe*)
+>>>
+>>> * I have frequency scaling using cpufreq-dt, so I know the clocks are
+>>> doing
+>>>    what they need to do to make this work, but I haven't figured out how
+>>> to
+>>>    test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will
+>>> be
+>>>    sent separately after this series has landed.)
+>>>
+>>> Dependencies:
+>>>
+>>> This series applies on top of linux-davinci/master plus the following
+>>> patches:
+>>> - [1] "clk: fix reentrancy of clk_enable() on UP systems" (in clk-next)
+>>> - [2] "clk: add helper functions for managing clk_onecell_data"
+>>> - [3] "clk: divider: read-only divider can propagate rate change"
+>>> - [4],[5],[6],[7],[8],[9] series "ARM: davinci: common clock prep work"
+>>>
+>>
+>> Hi David,
+>>
+>> I'm getting a splat[1] when trying to mount the rootfs over nfs on a
+>> da850-lcdk.
+>>
+>> I'll try to figure out what's happening.
+>>
+>> Best regards,
+>> Bartosz Golaszewski
+>>
+>> [1] https://pastebin.com/D94z8SAe
+>>
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/soc/renesas/rcar-rst.c
-> +++ b/drivers/soc/renesas/rcar-rst.c
-> @@ -13,8 +13,18 @@
->  #include <linux/of_address.h>
->  #include <linux/soc/renesas/rcar-rst.h>
+> Could it have something to do with the "rmii" clock? I don't think I added
+> that
+> in the device tree.
 >
-> +#define WDTRSTCR_RESET         0xA55A0002
-> +#define WDTRSTCR               0x0054
-> +
-> +static int gen2_configuration(void __iomem *base)
 
-rcar_rst_enable_wdt_reset()?
+I'm looking at it now. There are problems with emac & mdio both in
+legacy and in DT mode.
 
-> +{
-> +       iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
-> +       return 0;
-> +}
-> +
->  struct rst_config {
-> -       unsigned int modemr;    /* Mode Monitoring Register Offset */
-> +       unsigned int modemr;            /* Mode Monitoring Register Offset */
-> +       int (*configure)(void *base);   /* Platform specific configuration */
->  };
->
->  static const struct rst_config rcar_rst_gen1 __initconst = {
-> @@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
->
->  static const struct rst_config rcar_rst_gen2 __initconst = {
->         .modemr = 0x60,
-> +       .configure = gen2_configuration,
+The davinci_mdio driver seems to not get an actual functional clock
+(phy is reported as down). I'm seeing that in old legacy code,
+mdio_clk has emac_clk as parent, while after your changes they share
+pll0_sysclk4 as parent, although I'm not sure if that has anything to
+do with it.
 
-BTW, does it hurt to do this on R-Car Gen3, too?
+I'll see about the rmii clock too.
 
-Instead of a function pointer, you could also just have a feature bit.
-
->  };
->
->  static const struct rst_config rcar_rst_gen3 __initconst = {
-> @@ -79,6 +90,14 @@ static int __init rcar_rst_init(void)
->         rcar_rst_base = base;
->         cfg = match->data;
->         saved_mode = ioread32(base + cfg->modemr);
-> +       if (cfg->configure) {
-> +               error = cfg->configure(base);
-> +               if (error) {
-> +                       pr_warn("%pOF: Cannot run SoC specific configuration\n",
-> +                               np);
-> +                       goto out_put;
-> +               }
-> +       }
->
->         pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Bartosz
