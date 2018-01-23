@@ -1,85 +1,96 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 42/44] ARM: davinci: add device tree support to timer
-Date: Sun,  7 Jan 2018 20:25:05 -0600
-Message-Id: <1515378307-23718-3-git-send-email-david@lechnology.com>
-In-Reply-To: <1515378307-23718-1-git-send-email-david@lechnology.com>
-References: <1515378307-23718-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH 1/1] clk: add more __must_check for bulk APIs
+Date: Tue, 23 Jan 2018 20:24:45 +0800
+Message-ID: <1516710285-23683-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, aisheng.dong@codeaurora.org,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds device tree support to the davinci timer so that when clocks
-are moved to device tree, the timer will still work.
+we need it even when !CONFIG_HAVE_CLK because it allows
+us to catch missing checking return values in the non-clk
+compile configurations too. More test coverage.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm/mach-davinci/Kconfig |  1 +
- arch/arm/mach-davinci/time.c  | 17 ++++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ include/linux/clk.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index ba9912b..da8a039 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
- 	default y
- 	depends on ARCH_DAVINCI_DA850
- 	select PINCTRL
-+	select TIMER_OF
- 	help
- 	  Say y here to include support for TI DaVinci DA850 based using
- 	  Flattened Device Tree. More information at Documentation/devicetree
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index bd0c80e..44470e9 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -333,9 +333,9 @@ static struct clock_event_device clockevent_davinci = {
- };
- 
- 
--void __init davinci_timer_init(void)
-+static int __init of_davinci_timer_init(struct device_node *node)
- {
--	struct clk *timer_clk;
-+	struct clk *timer_clk = NULL;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 	unsigned int clockevent_id;
- 	unsigned int clocksource_id;
-@@ -371,7 +371,10 @@ void __init davinci_timer_init(void)
- 		}
- 	}
- 
--	timer_clk = clk_get(NULL, "timer0");
-+	if (node)
-+		timer_clk = of_clk_get(node, 0);
-+	if (IS_ERR_OR_NULL(timer_clk))
-+		timer_clk = clk_get(NULL, "timer0");
- 	BUG_ON(IS_ERR(timer_clk));
- 	clk_prepare_enable(timer_clk);
- 
-@@ -399,4 +402,12 @@ void __init davinci_timer_init(void)
- 
- 	for (i=0; i< ARRAY_SIZE(timers); i++)
- 		timer32_config(&timers[i]);
-+
-+	return 0;
-+}
-+TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
-+
-+void __init davinci_timer_init(void)
-+{
-+	of_davinci_timer_init(NULL);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4c4ef9f..0dbd088 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -209,7 +209,7 @@ static inline int clk_prepare(struct clk *clk)
+ 	return 0;
  }
+ 
+-static inline int clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
++static inline int __must_check clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
+ {
+ 	might_sleep();
+ 	return 0;
+@@ -603,8 +603,8 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
+-static inline int clk_bulk_get(struct device *dev, int num_clks,
+-			       struct clk_bulk_data *clks)
++static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
++					    struct clk_bulk_data *clks)
+ {
+ 	return 0;
+ }
+@@ -614,8 +614,8 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
+-static inline int devm_clk_bulk_get(struct device *dev, int num_clks,
+-				    struct clk_bulk_data *clks)
++static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
++						 struct clk_bulk_data *clks)
+ {
+ 	return 0;
+ }
+@@ -645,7 +645,7 @@ static inline int clk_enable(struct clk *clk)
+ 	return 0;
+ }
+ 
+-static inline int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
++static inline int __must_check clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
+ {
+ 	return 0;
+ }
+@@ -719,8 +719,8 @@ static inline void clk_disable_unprepare(struct clk *clk)
+ 	clk_unprepare(clk);
+ }
+ 
+-static inline int clk_bulk_prepare_enable(int num_clks,
+-					  struct clk_bulk_data *clks)
++static inline int __must_check clk_bulk_prepare_enable(int num_clks,
++					struct clk_bulk_data *clks)
+ {
+ 	int ret;
+ 
 -- 
 2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
