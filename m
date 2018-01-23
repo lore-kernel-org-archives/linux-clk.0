@@ -1,137 +1,61 @@
-Return-Path: <paul@crapouillou.net>
-Date: Wed, 03 Jan 2018 22:50:04 +0100
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/6] irqchip: Add the ingenic-tcu-intc driver
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier
-	<marc.zyngier@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones
-	<lee.jones@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Message-Id: <1515016205.1642.1@smtp.crapouillou.net>
-In-Reply-To: <20180103205817.4hnoyyomtwmhri76@rob-hp-laptop>
-References: <20171229125942.27305-2-paul@crapouillou.net>
-	<20180101143344.2099-1-paul@crapouillou.net>
-	<20180101143344.2099-3-paul@crapouillou.net>
-	<20180103205817.4hnoyyomtwmhri76@rob-hp-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from vern.gendns.com ([206.190.152.46]:35821 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752336AbeAWUFb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Jan 2018 15:05:31 -0500
+Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+From: David Lechner <david@lechnology.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+ <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
+ <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+ <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+ <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
+ <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
+ <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
+ <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
+ <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
+Message-ID: <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
+Date: Tue, 23 Jan 2018 14:05:22 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+In-Reply-To: <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 01/23/2018 02:01 PM, David Lechner wrote:
+> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
+>>
+>> In the mdio case - the problem is that devm_clk_get() doesn't fail,
+>> but somehow the clock doesn't end up in the list of the device's
+>> clocks - which is why it's not enabled by pm_runtime_get_sync().
+>>
+> 
+> 
+> Right. This is because devm_clk_get() now finds the clock via device
+> tree instead of a clkdev lookup entry. However, I think that the PM
+> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
+> the clkdev lookup to match the con_id and does not use device tree.
+> The same thing is happing in mdio, emac and lcdc.
+> 
 
-
-Le mer. 3 janv. 2018 =E0 21:58, Rob Herring <robh@kernel.org> a =E9crit :
-> On Mon, Jan 01, 2018 at 03:33:41PM +0100, Paul Cercueil wrote:
->>  This simple driver handles the IRQ chip of the TCU
->>  (Timer Counter Unit) of the JZ47xx Ingenic SoCs.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>   .../bindings/interrupt-controller/ingenic,tcu.txt  |  32 +++++
->>   drivers/irqchip/Kconfig                            |   6 +
->>   drivers/irqchip/Makefile                           |   1 +
->>   drivers/irqchip/irq-ingenic-tcu.c                  | 151=20
->> +++++++++++++++++++++
->>   4 files changed, 190 insertions(+)
->>   create mode 100644=20
->> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->>   create mode 100644 drivers/irqchip/irq-ingenic-tcu.c
->>=20
->>   v2: Use SPDX identifier for the license
->>       Make KConfig option select CONFIG_IRQ_DOMAIN since we depend=20
->> on it
->>=20
->>  diff --git=20
->> a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt=
-=20
->> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->>  new file mode 100644
->>  index 000000000000..a3e6318f8461
->>  --- /dev/null
->>  +++=20
->> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->>  @@ -0,0 +1,32 @@
->>  +Ingenic SoCs Timer/Counter Unit Interrupt Controller
->>  +
->>  +Required properties:
->>  +
->>  +- compatible : should be "ingenic,<socname>-tcu-intc". Valid=20
->> strings are:
->>  +  * ingenic,jz4740-tcu-intc
->>  +  * ingenic,jz4770-tcu-intc
->>  +  * ingenic,jz4780-tcu-intc
->>  +- interrupt-controller : Identifies the node as an interrupt=20
->> controller
->>  +- #interrupt-cells : Specifies the number of cells needed to=20
->> encode an
->>  +  interrupt source. The value shall be 1.
->>  +- interrupt-parent : phandle of the interrupt controller.
->>  +- interrupts : Specifies the interrupt the controller is connected=20
->> to.
->>  +
->>  +Example:
->>  +
->>  +/ {
->>  +	regmap {
->=20
-> regmap is a Linuxism.
-
-Should I just call it "mfd" then? (or better, "mfd@10002000")
-
-
->>  +		compatible =3D "simple-mfd", "syscon";
->=20
-> Need a specific compatible string here. Neither of these are valid by
-> themselves.
-
-So a compatible string not used by any driver? Something like=20
-"ingenic,tcu"?
-Would I need to document it too? (it's just a simple-mfd after all)
-
-
->>  +		reg =3D <0x10002000 0x1000>;
->>  +
->>  +		tcu: interrupt-controller {
->=20
-> The TCU is only an interrupt controller?
-
-The TCU is a multi-function silicon. It has 8 channels, each one with=20
-its own
-interrupt line, demultiplexed from 2-3 parent IRQs (depending on the=20
-SoC).
-The TCU IRQ driver handles this.
-
-Each channel has a clock, that can be reparented, reclocked, and gated.
-That's the job for the TCU clocks driver.
-
-Being hardware timers, they can be used for accounting and timekeeping=20
-within
-Linux, that's the job for the clocksource driver.
-
-The TCU block also feeds the clocks to the watchdog and the OST (a=20
-separate
-timer block, not handled here).
-
-Each channel can be configured as PWM. A future patchset will convert=20
-the PWM
-driver for Ingenic SoCs to use the TCU clocks and regmap provided by=20
-these
-new drivers.
-
-If your remark was only reffering to the name of the node handle, I can=20
-rename
-it to "tcu_intc", there's no problem.
-
->>  +			compatible =3D "ingenic,jz4740-tcu-intc";
->=20
-> Is there a register range associated with this block? If so, add a reg
-> property even if regmap doesn't need it.
-
-Sure.
-
-Thanks for the review!
-
--Paul
-=
+Minor correction: It looks like emac doesn't do this because it doesn't
+have a con_id of "fck". But, the same clock is shared by emac and mdio, so
+since mdio enables the clock, emac doesn't notice or care that it did
+not enable the clock itself.
