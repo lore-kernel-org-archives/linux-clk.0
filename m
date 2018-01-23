@@ -1,68 +1,64 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Adam Ford <aford173@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+ <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
+ <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+ <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
+Date: Tue, 23 Jan 2018 12:26:33 -0600
 MIME-Version: 1.0
-In-Reply-To: <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com> <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 17 Jan 2018 10:34:46 +0100
-Message-ID: <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/15] mmc: mmci: Add support for setting pad type via pinctrl
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-[...]
+On 01/23/2018 12:10 PM, Bartosz Golaszewski wrote:
+> 2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
+>> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com> wrote:
+>>> On 01/23/2018 10:03 AM, David Lechner wrote:
+>>>>
+>>>> You can see if the clock is enabled by running:
+>>>>
+>>>>       cat /sys/kernel/debug/clk/clk_summary
+>>>>
+>>>
+>>> I just realized if you can't boot, you can't do this. :-/
+>>
+>> I can boot with the latest set in your git repo, but the Ethernet
+>> doesn't apparently fully operate.  I don't get errors, but I cannot
+>> get a dhcp address.
+>>
+>> I'll try to do a more exhaustive test later today to get an idea of
+>> what works and what doesn't.  When I ran my basic tests, I just did a
+>> feel-good boot test (and reboot test)
+>>
+>> adam
+> 
+> FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
+> seems to at least fix the ethernet. In master branch it's done by
+> pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
+> getting several oopses and WARNs so there's some more work to do.
+> 
 
->         /*
-> @@ -1616,6 +1625,32 @@ static int mmci_probe(struct amba_device *dev,
->         host = mmc_priv(mmc);
->         host->mmc = mmc;
->
-> +       /*
-> +        * Some variant (STM32) doesn't have opendrain bit, nevertheless
-> +        * pins can be set accordingly using pinctrl
-> +        */
-> +       if (!variant->opendrain) {
-> +               host->pinctrl = devm_pinctrl_get(&dev->dev);
-> +               if (IS_ERR(host->pinctrl)) {
-> +                       dev_err(&dev->dev, "failed to get pinctrl");
-> +                       goto host_free;
-> +               }
-> +
-> +               host->pins_default = pinctrl_lookup_state(host->pinctrl,
-> +                                                         PINCTRL_STATE_DEFAULT);
-> +               if (IS_ERR(host->pins_default)) {
-> +                       dev_warn(mmc_dev(mmc), "Can't select default pins\n");
-> +                       host->pins_default = NULL;
+Hmm... I'm wondering if we need to also add #power-domain-cells to the
+PSC clocks and power-domains properties to the consumers.
 
-This is wrong, I think you should bail out and return the error code instead.
+For this specific case though, it seems strange to me that the drivers
+to clk_get() and clk_get_rate() but never enable the clocks.
 
-Moreover, calling pinctrl_select_state() from ->set_ios by using a
-NULL state, will likely trigger a NULL pointer deference bug in the
-pinctrl layer.
 
-> +               }
-> +
-> +               host->pins_opendrain = pinctrl_lookup_state(host->pinctrl,
-> +                                                           MMCI_PINCTRL_STATE_OPENDRAIN);
-> +               if (IS_ERR(host->pins_opendrain)) {
-> +                       dev_warn(mmc_dev(mmc), "Can't select opendrain pins\n");
-> +                       host->pins_opendrain = NULL;
-
-Ditto.
-
-> +               }
-> +       }
-> +
-
-[...]
-
-Kind regards
-Uffe
+Also, are the oopses and WARNs the same as before?
