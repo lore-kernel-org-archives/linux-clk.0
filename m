@@ -1,143 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37831 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753757AbeAKKPD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jan 2018 05:15:03 -0500
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 23 Jan 2018 09:52:24 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] mfd: syscon: Add ingenic-tcu.h header
+Message-ID: <20180123095224.oxso26lfzl3x56up@dell>
+References: <20180101143344.2099-1-paul@crapouillou.net>
+ <20180110224838.16711-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
-References: <20180106042326.46519-1-icenowy@aosc.io> <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 11 Jan 2018 18:14:40 +0800
-Message-ID: <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 11, 2018 at 6:08 PM, Andre Przywara <andre.przywara@arm.com> wrote:
-> Hi,
->
-> On 06/01/18 04:23, Icenowy Zheng wrote:
->> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->> have no bus gate clocks.
->>
->> Add support for this kind of pin controllers.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>  2 files changed, 21 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> index 4b6cb25bc796..68cd505679d9 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->>       unsigned int hosc_div, losc_div;
->>       struct clk *hosc, *losc;
->>       u8 div, src;
->> -     int i, ret;
->> +     int i, ret, clk_count;
->> +
->> +     if (pctl->desc->without_bus_gate)
->> +             clk_count = 2;
->> +     else
->> +             clk_count = 3;
->>
->>       /* Deal with old DTs that didn't have the oscillators */
->>       if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
->> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>                       goto gpiochip_error;
->>       }
->>
->> -     clk = devm_clk_get(&pdev->dev, NULL);
->> -     if (IS_ERR(clk)) {
->> -             ret = PTR_ERR(clk);
->> -             goto gpiochip_error;
->> -     }
->> +     if (!desc->without_bus_gate) {
->
-> Do we really need explicit support for that case?
-> Can't we have something that works automatically?
->
-> if (node has clock-names property)              (A)
->         use clocks as enumerated and named there
+On Wed, 10 Jan 2018, Paul Cercueil wrote:
 
-You still need to know if the hardware has a bus gate or not.
-If it's missing, and it's disabled, you end up with unusable
-hardware.
+> This header contains macros for the registers that are present in the
+> regmap shared by all the drivers related to the TCU (Timer Counter Unit)
+> of the Ingenic JZ47xx SoCs.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  include/linux/mfd/syscon/ingenic-tcu.h | 54 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 include/linux/mfd/syscon/ingenic-tcu.h
 
-Unless you are fully trusting the device tree to be correct.
-IMHO that makes for hard to find bugs during SoC bringup.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-ChenYu
-
-> else if (node has one clock reference)          (B)
->         use this as gate clock, no debounce support
-> else if (node has no clock property at all)     (C)
->         no gate clock needed, no debounce support
->
-> On top of that we should add the clock-names property to all DTs, even
-> for those with only a "apb" clock. Shouldn't hurt existing kernels.
-> Possibly even add debounce support for those on the way, if applicable.
->
-> So we would just support case (B) and (C) for legacy reasons.
->
-> Does that make sense?
->
-> Cheers,
-> Andre.
->
->> +             clk = devm_clk_get(&pdev->dev, NULL);
->> +             if (IS_ERR(clk)) {
->> +                     ret = PTR_ERR(clk);
->> +                     goto gpiochip_error;
->> +             }
->>
->> -     ret = clk_prepare_enable(clk);
->> -     if (ret)
->> -             goto gpiochip_error;
->> +             ret = clk_prepare_enable(clk);
->> +             if (ret)
->> +                     goto gpiochip_error;
->> +     } else {
->> +             clk = NULL;
->> +     }
->>
->>       pctl->irq = devm_kcalloc(&pdev->dev,
->>                                pctl->desc->irq_banks,
->> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>       return 0;
->>
->>  clk_error:
->> -     clk_disable_unprepare(clk);
->> +     if (clk)
->> +             clk_disable_unprepare(clk);
->>  gpiochip_error:
->>       gpiochip_remove(pctl->chip);
->>       return ret;
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> index 11b128f54ed2..ccb6230f0bb5 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>       unsigned                        irq_bank_base;
->>       bool                            irq_read_needs_mux;
->>       bool                            disable_strict_mode;
->> +     bool                            without_bus_gate;
->>  };
->>
->>  struct sunxi_pinctrl_function {
->>
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
