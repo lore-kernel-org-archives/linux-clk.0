@@ -1,78 +1,60 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
- trigger for Gen2
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
- Magnus Damm <magnus.damm@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das@bp.renesas.com>,
- Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
-Date: Fri, 26 Jan 2018 11:30:38 +0300
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+From: David Lechner <david@lechnology.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree <devicetree@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
+ <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
+ <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+ <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+ <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
+ <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
+ <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
+ <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
+ <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
+ <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
+Message-ID: <fc54ab26-72be-1377-2ccb-72d34360c5eb@lechnology.com>
+Date: Tue, 23 Jan 2018 14:23:10 -0600
 MIME-Version: 1.0
-In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello!
-
-On 1/25/2018 9:02 PM, Fabrizio Castro wrote:
-
-> This patch allows for platform specific quirks as some of the SoC need
-> further customization for the watchdog to work properly, like for R-Car
-> Gen2 and for RZ/G.
+On 01/23/2018 02:05 PM, David Lechner wrote:
+> On 01/23/2018 02:01 PM, David Lechner wrote:
+>> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
+>>>
+>>> In the mdio case - the problem is that devm_clk_get() doesn't fail,
+>>> but somehow the clock doesn't end up in the list of the device's
+>>> clocks - which is why it's not enabled by pm_runtime_get_sync().
+>>>
+>>
+>>
+>> Right. This is because devm_clk_get() now finds the clock via device
+>> tree instead of a clkdev lookup entry. However, I think that the PM
+>> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
+>> the clkdev lookup to match the con_id and does not use device tree.
+>> The same thing is happing in mdio, emac and lcdc.
+>>
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
->   drivers/soc/renesas/rcar-rst.c | 21 ++++++++++++++++++++-
->   1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-> index f7a0d54..5f52aea 100644
-> --- a/drivers/soc/renesas/rcar-rst.c
-> +++ b/drivers/soc/renesas/rcar-rst.c
-> @@ -13,8 +13,18 @@
->   #include <linux/of_address.h>
->   #include <linux/soc/renesas/rcar-rst.h>
->   
-> +#define WDTRSTCR_RESET		0xA55A0002
-> +#define WDTRSTCR		0x0054
-> +
-> +static int gen2_configuration(void __iomem *base)
-> +{
-> +	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
-> +	return 0;
-> +}
-> +
->   struct rst_config {
-> -	unsigned int modemr;	/* Mode Monitoring Register Offset */
-> +	unsigned int modemr;		/* Mode Monitoring Register Offset */
-> +	int (*configure)(void *base);	/* Platform specific configuration */
->   };
->   
->   static const struct rst_config rcar_rst_gen1 __initconst = {
-> @@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
->   
->   static const struct rst_config rcar_rst_gen2 __initconst = {
->   	.modemr = 0x60,
-> +	.configure = gen2_configuration,
+> Minor correction: It looks like emac doesn't do this because it doesn't
+> have a con_id of "fck". But, the same clock is shared by emac and mdio, so
+> since mdio enables the clock, emac doesn't notice or care that it did
+> not enable the clock itself.
 
-    Why not call the method gen2_configure() then?
-
-[...]
-
-MBR, Sergei
+How about using pm_clk_add_clk() in these drivers to explicitly use the
+clocks for power management instead of relying on pm_clk_add_notifier()
+to do this implicitly?
