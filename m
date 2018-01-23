@@ -1,96 +1,51 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH 1/1] clk: add more __must_check for bulk APIs
-Date: Tue, 23 Jan 2018 20:24:45 +0800
-Message-ID: <1516710285-23683-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, aisheng.dong@codeaurora.org,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 23 Jan 2018 19:10:43 +0100
+Message-ID: <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: Adam Ford <aford173@gmail.com>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-we need it even when !CONFIG_HAVE_CLK because it allows
-us to catch missing checking return values in the non-clk
-compile configurations too. More test coverage.
+2018-01-23 18:03 GMT+01:00 Adam Ford <aford173@gmail.com>:
+> On Tue, Jan 23, 2018 at 10:06 AM, David Lechner <david@lechnology.com> wrote:
+>> On 01/23/2018 10:03 AM, David Lechner wrote:
+>>>
+>>> You can see if the clock is enabled by running:
+>>>
+>>>      cat /sys/kernel/debug/clk/clk_summary
+>>>
+>>
+>> I just realized if you can't boot, you can't do this. :-/
+>
+> I can boot with the latest set in your git repo, but the Ethernet
+> doesn't apparently fully operate.  I don't get errors, but I cannot
+> get a dhcp address.
+>
+> I'll try to do a more exhaustive test later today to get an idea of
+> what works and what doesn't.  When I ran my basic tests, I just did a
+> feel-good boot test (and reboot test)
+>
+> adam
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- include/linux/clk.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+FYI: manually calling clk_prepare_enable() in the davinci_mdio driver
+seems to at least fix the ethernet. In master branch it's done by
+pm_runtime_get_sync() (in davinci_mdio_reset()). However I'm still
+getting several oopses and WARNs so there's some more work to do.
 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4c4ef9f..0dbd088 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -209,7 +209,7 @@ static inline int clk_prepare(struct clk *clk)
- 	return 0;
- }
- 
--static inline int clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
-+static inline int __must_check clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
- {
- 	might_sleep();
- 	return 0;
-@@ -603,8 +603,8 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
--static inline int clk_bulk_get(struct device *dev, int num_clks,
--			       struct clk_bulk_data *clks)
-+static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
-+					    struct clk_bulk_data *clks)
- {
- 	return 0;
- }
-@@ -614,8 +614,8 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
--static inline int devm_clk_bulk_get(struct device *dev, int num_clks,
--				    struct clk_bulk_data *clks)
-+static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-+						 struct clk_bulk_data *clks)
- {
- 	return 0;
- }
-@@ -645,7 +645,7 @@ static inline int clk_enable(struct clk *clk)
- 	return 0;
- }
- 
--static inline int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
-+static inline int __must_check clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
- {
- 	return 0;
- }
-@@ -719,8 +719,8 @@ static inline void clk_disable_unprepare(struct clk *clk)
- 	clk_unprepare(clk);
- }
- 
--static inline int clk_bulk_prepare_enable(int num_clks,
--					  struct clk_bulk_data *clks)
-+static inline int __must_check clk_bulk_prepare_enable(int num_clks,
-+					struct clk_bulk_data *clks)
- {
- 	int ret;
- 
--- 
-2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Bartosz
