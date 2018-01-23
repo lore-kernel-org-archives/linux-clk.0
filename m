@@ -1,67 +1,168 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 4 Jan 2018 14:13:32 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arch@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 4/5] clk: sunxi: Use CLK_IS_CRITICAL flag for critical
- clks
-Message-ID: <20180104131332.rhzyuigd2gfivq7k@flea.lan>
-References: <20180103013516.18844-1-sboyd@codeaurora.org>
- <20180103013516.18844-5-sboyd@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="etinat53jc4ove2b"
-In-Reply-To: <20180103013516.18844-5-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 23 Jan 2018 18:04:55 +0100
+Message-ID: <CAMRc=Mfwo-2FUu-zsL0xOLBR8pFcT-vF36HeoUCBVM4jiH1Edg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+2018-01-23 17:03 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/23/2018 08:54 AM, Bartosz Golaszewski wrote:
+>>
+>> 2018-01-22 18:30 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>
+>>> On 01/22/2018 05:14 AM, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> 2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>>
+>>>>>
+>>>>> This series converts mach-davinci to use the common clock framework.
+>>>>>
+>>>>> The series works like this, the first 19 patches create new clock
+>>>>> drivers
+>>>>> using the common clock framework. There are basically 3 groups of
+>>>>> clocks
+>>>>> -
+>>>>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
+>>>>> have
+>>>>> unique init data, which is the reason for so many patches.
+>>>>>
+>>>>> Then, starting with "ARM: da830: add new clock init using common
+>>>>> clock",
+>>>>> we get the mach code ready for the switch by adding the code needed for
+>>>>> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
+>>>>> legacy clocks so that we can switch easily between the old and the new.
+>>>>>
+>>>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>>>> switch
+>>>>> to start using the new clock drivers. Then the next 8 patches remove
+>>>>> all
+>>>>> of the old clock code.
+>>>>>
+>>>>> The final three patches add device tree clock support to the one SoC
+>>>>> that
+>>>>> supports it.
+>>>>>
+>>>>> v6 changes (also see individual patches for details):
+>>>>> - All of the device tree bindings are changed
+>>>>> - All of the clock drivers are changed significantly
+>>>>> - Fixed issues brought up during review of v5
+>>>>> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from
+>>>>> this
+>>>>>     series and submitted separately
+>>>>>
+>>>>> v5 changes:
+>>>>> - Basically, this is an entirely new series
+>>>>> - Patches are broken up into bite-sized pieces
+>>>>> - Converted PSC clock driver to use regmap
+>>>>> - Restored "force" flag for certain DA850 clocks
+>>>>> - Added device tree bindings
+>>>>> - Moved more of the clock init to drivers/clk
+>>>>> - Fixed frequency scaling (maybe*)
+>>>>>
+>>>>> * I have frequency scaling using cpufreq-dt, so I know the clocks are
+>>>>> doing
+>>>>>     what they need to do to make this work, but I haven't figured out
+>>>>> how
+>>>>> to
+>>>>>     test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work
+>>>>> will
+>>>>> be
+>>>>>     sent separately after this series has landed.)
+>>>>>
+>>>>> Dependencies:
+>>>>>
+>>>>> This series applies on top of linux-davinci/master plus the following
+>>>>> patches:
+>>>>> - [1] "clk: fix reentrancy of clk_enable() on UP systems" (in clk-next)
+>>>>> - [2] "clk: add helper functions for managing clk_onecell_data"
+>>>>> - [3] "clk: divider: read-only divider can propagate rate change"
+>>>>> - [4],[5],[6],[7],[8],[9] series "ARM: davinci: common clock prep work"
+>>>>>
+>>>>
+>>>> Hi David,
+>>>>
+>>>> I'm getting a splat[1] when trying to mount the rootfs over nfs on a
+>>>> da850-lcdk.
+>>>>
+>>>> I'll try to figure out what's happening.
+>>>>
+>>>> Best regards,
+>>>> Bartosz Golaszewski
+>>>>
+>>>> [1] https://pastebin.com/D94z8SAe
+>>>>
+>>>
+>>> Could it have something to do with the "rmii" clock? I don't think I
+>>> added
+>>> that
+>>> in the device tree.
+>>>
+>>
+>> I'm looking at it now. There are problems with emac & mdio both in
+>> legacy and in DT mode.
+>
+>
+> Adam, is networking working for you on the DA850 EVM?
+>
+>>
+>> The davinci_mdio driver seems to not get an actual functional clock
+>> (phy is reported as down). I'm seeing that in old legacy code,
+>> mdio_clk has emac_clk as parent, while after your changes they share
+>> pll0_sysclk4 as parent, although I'm not sure if that has anything to
+>> do with it.
+>
+>
+> The two clocks prior to these changes was a hack to work around a
+> limitation of the old lock code (because of the way it used a linked list
+> each clock could only be used once) so, yes, that should not have anything
+> to do with it.
+>
 
---etinat53jc4ove2b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And it was I who did the change in commit ef37427ac567 ("ARM: davinci:
+da850: don't add emac clock to lookup table twice") :) Already forgot
+that.
 
-On Tue, Jan 02, 2018 at 05:35:15PM -0800, Stephen Boyd wrote:
-> We'd like to privatize __clk_get(), but the sunxi clk driver is
-> calling this function to keep a reference held on the clk and
-> call clk_prepare_enable() on it. We support this design in the
-> clk core now with the CLK_IS_CRITICAL flag, so let's just use
-> that instead.
->=20
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> I see that there is no clk_prepare_enable() in the mdio driver or the emac
+> driver. I suppose it expects pm_runtime to take care of this maybe?
+>
+> You can see if the clock is enabled by running:
+>
+>     cat /sys/kernel/debug/clk/clk_summary
+>
+>>
+>> I'll see about the rmii clock too.
+>
+> FWIW, the rmii clock is in the clock init for non-DT da850.
+>
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+2018-01-23 17:06 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/23/2018 10:03 AM, David Lechner wrote:
+>>
+>> You can see if the clock is enabled by running:
+>>
+>>      cat /sys/kernel/debug/clk/clk_summary
+>>
+>
+> I just realized if you can't boot, you can't do this. :-/
 
-Thanks!
-Maxime
+I can always boot from SD or just printk it.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---etinat53jc4ove2b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpOKHwACgkQ0rTAlCFN
-r3QDCA//SmCXHtbuMQfMJWmbDbKCx+5LEax6Fq4LsTRHOF4DO7ako/6erlnbZHtX
-PEFXesLyaegqn5eJKX4cNn7bM0+ar1LP4m27q+lCbkk8QdAWJnCSMqPUmy+ab/Xa
-Ao7HwCrnrPEi51oVzJOvIGBVVaH4gYk6XcufmSWmCk1bynPi/Pl4x09fO5LXNbto
-uQlaE+P3gYXb2UD4XM+HZVyCXROQrw3YF02m2O1vIBYf6fWXVQVki9e27qHxCTP0
-JDmUZ/eGX1zSeGgNSot3iClnBT0+Rz6QSw3+pSkCYR0B7XI91xJ91Ev2RqyQWB1F
-SkSGIquu4WET1JYacjqDIyhSqxfytpglLzWyUCkeNWEFMtL6gh1BEiNekVaonrem
-murJxA6TlFRE8txpY/CEBufkmQ/jH2mCkrBH7WVVHnejBPtrnESSZSI42JLjofEy
-B6ypUFgjXKpk7b05eN1c5LVAWScb/FzpvwEGxGfHSIrm1KfHtAv93jd6Fnp47wA8
-BeckKghEJiHjwEne+7BXusT3mDkCtmtrxXHA+Fe6TZEgbu51Paq4f3Uuipx4sAtK
-YD/+7P2llXHCsY3Q3372j9NrG7MnzeWLJ9A+ahBmBHO95q3fZQg4SY5gZQmW5azL
-Nc0paUf7Y/NBxgt3gku3hi47TRT5fU9pFBoIfk+htgUR0CbLo5I=
-=BvUP
------END PGP SIGNATURE-----
-
---etinat53jc4ove2b--
+Thanks,
+Bartosz
