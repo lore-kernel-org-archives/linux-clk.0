@@ -1,144 +1,157 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
-Date: Sat, 20 Jan 2018 11:13:56 -0600
-Message-Id: <1516468460-4908-18-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [RFC PATCH 2/2] video: simplefb: switch to use clk_bulk API to
+ simplify clock operations
+Date: Tue, 23 Jan 2018 20:50:41 +0800
+Message-ID: <1516711841-25234-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1516711841-25234-1-git-send-email-aisheng.dong@nxp.com>
+References: <1516711841-25234-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
+ hdegoede@redhat.com, aisheng.dong@codeaurora.org, b.zolnierkie@samsung.com,
+ sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ yamada.masahiro@socionext.com, linux-imx@nxp.com,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the clocks present in the CFGCHIP syscon
-registers in TI DA8XX SoCs.
+Switching to use clk_bulk API to simplify clock operations.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
+ drivers/video/fbdev/simplefb.c | 70 ++++++++----------------------------------
+ 1 file changed, 13 insertions(+), 57 deletions(-)
 
-v6 changes:
-- combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
-  "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
-  "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
-  file containing all CFGCHIP clocks bindings
-- added compatible = "ti,da830-div4p5ena"
-- added compatible = "ti,da850-async1-clksrc"
-- renamed other compatible strings
-- changed and added some clk-names strings
-- USB PHY clocks are combined into a single node with #clock-cells = <1>
-
- .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-new file mode 100644
-index 0000000..1e03dce
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-@@ -0,0 +1,93 @@
-+Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP clocks
+diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+index a3c44ec..3ce2e5b 100644
+--- a/drivers/video/fbdev/simplefb.c
++++ b/drivers/video/fbdev/simplefb.c
+@@ -181,8 +181,7 @@ struct simplefb_par {
+ 	u32 palette[PSEUDO_PALETTE_SIZE];
+ #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
+ 	bool clks_enabled;
+-	unsigned int clk_count;
+-	struct clk **clks;
++	struct clk_bulk *clk_bulk;
+ #endif
+ #if defined CONFIG_OF && defined CONFIG_REGULATOR
+ 	bool regulators_enabled;
+@@ -214,37 +213,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ 			       struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct clk *clock;
+-	int i;
+ 
+ 	if (dev_get_platdata(&pdev->dev) || !np)
+ 		return 0;
+ 
+-	par->clk_count = of_clk_get_parent_count(np);
+-	if (!par->clk_count)
+-		return 0;
+-
+-	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
+-	if (!par->clks)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < par->clk_count; i++) {
+-		clock = of_clk_get(np, i);
+-		if (IS_ERR(clock)) {
+-			if (PTR_ERR(clock) == -EPROBE_DEFER) {
+-				while (--i >= 0) {
+-					if (par->clks[i])
+-						clk_put(par->clks[i]);
+-				}
+-				kfree(par->clks);
+-				return -EPROBE_DEFER;
+-			}
+-			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
+-				__func__, i, PTR_ERR(clock));
+-			continue;
+-		}
+-		par->clks[i] = clock;
+-	}
++	par->clk_bulk = of_clk_bulk_get_all(np);
++	if (IS_ERR(par->clk_bulk) && PTR_ERR(par->clk_bulk) == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
+ 
+ 	return 0;
+ }
+@@ -252,45 +227,26 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ static void simplefb_clocks_enable(struct simplefb_par *par,
+ 				   struct platform_device *pdev)
+ {
+-	int i, ret;
++	int ret;
 +
-+TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
-+registers call CFGCHIPn. Some of these registers function as clock
-+gates. This document describes the bindings for those clocks.
-+
-+All of the clock nodes described below must be child nodes of a CFGCHIP node
-+(compatible = "ti,da830-cfgchip").
-+
-+USB PHY clocks
-+--------------
-+Required properties:
-+- compatible: shall be "ti,da830-usb-phy-clocks".
-+- #clock-cells: from common clock binding; shall be set to 1.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "fck", "usb_refclkin", "auxclk"
-+
-+This node provides two clocks. The clock at index 0 is the USB 2.0 PHY 48MHz
-+clock and the clock at index 1 is the USB 1.1 PHY 48MHz clock.
-+
-+eHRPWM Time Base Clock (TBCLK)
-+------------------------------
-+Required properties:
-+- compatible: shall be "ti,da830-tbclksync".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "fck"
-+
-+PLL DIV4.5 divider
-+------------------
-+Required properties:
-+- compatible: shall be "ti,da830-div4p5ena".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "pll0_pllout"
-+
-+EMIFA clock source (ASYNC1)
-+---------------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async1-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk3", "div4.5"
-+
-+ASYNC3 clock source
-+-------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async3-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk2", "pll1_sysclk2"
-+
-+Examples:
-+
-+	cfgchip: syscon@1417c {
-+		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
-+		reg = <0x1417c 0x14>;
-+
-+		usb_phy_clk: usb-phy-clocks {
-+			compatible = "ti,da830-usb-phy-clocks";
-+			#clock-cells = <1>;
-+			clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
-+			clock-names = "fck", "usb_refclkin", "auxclk";
-+		};
-+		ehrpwm_tbclk: ehrpwm_tbclk {
-+			compatible = "ti,da830-tbclksync";
-+			#clock-cells = <0>;
-+			clocks = <&psc1 17>;
-+			clock-names = "fck";
-+		};
-+		div4p5_clk: div4.5 {
-+			compatible = "ti,da830-div4p5ena";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_pllout>;
-+			clock-names = "pll0_pllout";
-+		};
-+		async1_clk: async1 {
-+			compatible = "ti,da850-async1-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
-+			clock-names = "pll0_sysclk3", "div4.5";
-+		};
-+		async3_clk: async3 {
-+			compatible = "ti,da850-async3-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
-+			clock-names = "pll0_sysclk2", "pll1_sysclk2";
-+		};
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
++	ret = clk_bulk_enable_all(par->clk_bulk);
++	if (ret)
++		dev_warn(&pdev->dev, "failed to enable clocks\n");
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			ret = clk_prepare_enable(par->clks[i]);
+-			if (ret) {
+-				dev_err(&pdev->dev,
+-					"%s: failed to enable clock %d: %d\n",
+-					__func__, i, ret);
+-				clk_put(par->clks[i]);
+-				par->clks[i] = NULL;
+-			}
+-		}
+-	}
+ 	par->clks_enabled = true;
+ }
+ 
+ static void simplefb_clocks_destroy(struct simplefb_par *par)
+ {
+-	int i;
+-
+-	if (!par->clks)
+-		return;
++	if (par->clks_enabled)
++		clk_bulk_disable_all(par->clk_bulk);
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			if (par->clks_enabled)
+-				clk_disable_unprepare(par->clks[i]);
+-			clk_put(par->clks[i]);
+-		}
+-	}
+-
+-	kfree(par->clks);
++	of_clk_bulk_put_all(par->clk_bulk);
+ }
+ #else
+ static int simplefb_clocks_get(struct simplefb_par *par,
+ 	struct platform_device *pdev) { return 0; }
+-static void simplefb_clocks_enable(struct simplefb_par *par,
+-	struct platform_device *pdev) { }
++static int simplefb_clocks_enable(struct simplefb_par *par) { }
+ static void simplefb_clocks_destroy(struct simplefb_par *par) { }
+ #endif
+ 
 -- 
 2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
