@@ -1,59 +1,37 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1517240807.7000.1303.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Date: Mon, 29 Jan 2018 17:46:47 +0200
-In-Reply-To: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
-References: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1516713040.7870.47.camel@baylibre.com>
+Subject: Re: [PATCH V3 01/10] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE
+ clk support
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+ sboyd@codeaurora.org, mturquette@baylibre.com,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, shawnguo@kernel.org,
+ Anson.Huang@nxp.com, ping.bai@nxp.com,  linux-imx@nxp.com,
+ fabio.estevam@nxp.com
+Date: Tue, 23 Jan 2018 14:10:40 +0100
+In-Reply-To: <20180123122102.GA16865@b29396-OptiPlex-7040>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com>
+	 <1516367470-24340-2-git-send-email-aisheng.dong@nxp.com>
+	 <1516705426.7870.45.camel@baylibre.com>
+	 <20180123122102.GA16865@b29396-OptiPlex-7040>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-19 at 19:44 +0200, Andy Shevchenko wrote:
-> Since the commit
+On Tue, 2018-01-23 at 20:21 +0800, Dong Aisheng wrote:
+> > In a more general way, I'd love to see a feature such as CLK_DIVIDER_ZERO_GATE
+> > added to the divider but I'm bit concerned of all the quirks we are slowly
+> > adding to the generic divider. It seems we are all trying re-use the algorithm
+> > of clk_divider_bestdiv() with different 'val-to-div' transfer function. Not too
+> > sure what the best solution could be though.
+> > 
 > 
->   0777591e715a ("clk: fractional-divider: switch to rational best
-> approximation")
-> 
-> enables rational best approximation to all common based clocks, there
-> is
-> no need to repeat the selection in each of them.
-> 
-> No functional changes intended.
+> IMHO CLK_DIVIDER_ZERO_GATE only indicates the 0 val means clk gate.
+> It does not assume divider types. That looks like a generic way and is exactly
+> what this patch intends to do. Does it make sense?
 
-Any comment on this?
-
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/clk/Kconfig | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 98ce9fc6e6c0..2e65cf731b00 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -76,7 +76,6 @@ config COMMON_CLK_SI5351
->  	tristate "Clock driver for SiLabs 5351A/B/C"
->  	depends on I2C
->  	select REGMAP_I2C
-> -	select RATIONAL
->  	---help---
->  	  This driver supports Silicon Labs 5351A/B/C programmable
-> clock
->  	  generators.
-> @@ -105,7 +104,6 @@ config COMMON_CLK_CDCE706
->  	tristate "Clock driver for TI CDCE706 clock synthesizer"
->  	depends on I2C
->  	select REGMAP_I2C
-> -	select RATIONAL
->  	---help---
->  	  This driver supports TI CDCE706 programmable 3-PLL clock
-> synthesizer.
->  
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+It makes sense. That last comment was not about your patch specifically but
+about the growing entropy in clk-divider.c in general.
