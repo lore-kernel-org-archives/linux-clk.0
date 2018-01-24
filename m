@@ -1,114 +1,74 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1624 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932906AbeAXWnu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jan 2018 17:43:50 -0500
+Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+Date: Wed, 24 Jan 2018 22:43:45 +0000
 MIME-Version: 1.0
-In-Reply-To: <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com> <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 23 Jan 2018 15:54:55 +0100
-Message-ID: <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-22 18:30 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 01/22/2018 05:14 AM, Bartosz Golaszewski wrote:
->>
->> 2018-01-20 18:13 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>> The series works like this, the first 19 patches create new clock drivers
->>> using the common clock framework. There are basically 3 groups of clocks
->>> -
->>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
->>> have
->>> unique init data, which is the reason for so many patches.
->>>
->>> Then, starting with "ARM: da830: add new clock init using common clock",
->>> we get the mach code ready for the switch by adding the code needed for
->>> the new clock drivers and adding #ifndef CONFIG_COMMON_CLK around the
->>> legacy clocks so that we can switch easily between the old and the new.
->>>
->>> "ARM: davinci: switch to common clock framework" actually flips the
->>> switch
->>> to start using the new clock drivers. Then the next 8 patches remove all
->>> of the old clock code.
->>>
->>> The final three patches add device tree clock support to the one SoC that
->>> supports it.
->>>
->>> v6 changes (also see individual patches for details):
->>> - All of the device tree bindings are changed
->>> - All of the clock drivers are changed significantly
->>> - Fixed issues brought up during review of v5
->>> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from
->>> this
->>>    series and submitted separately
->>>
->>> v5 changes:
->>> - Basically, this is an entirely new series
->>> - Patches are broken up into bite-sized pieces
->>> - Converted PSC clock driver to use regmap
->>> - Restored "force" flag for certain DA850 clocks
->>> - Added device tree bindings
->>> - Moved more of the clock init to drivers/clk
->>> - Fixed frequency scaling (maybe*)
->>>
->>> * I have frequency scaling using cpufreq-dt, so I know the clocks are
->>> doing
->>>    what they need to do to make this work, but I haven't figured out how
->>> to
->>>    test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will
->>> be
->>>    sent separately after this series has landed.)
->>>
->>> Dependencies:
->>>
->>> This series applies on top of linux-davinci/master plus the following
->>> patches:
->>> - [1] "clk: fix reentrancy of clk_enable() on UP systems" (in clk-next)
->>> - [2] "clk: add helper functions for managing clk_onecell_data"
->>> - [3] "clk: divider: read-only divider can propagate rate change"
->>> - [4],[5],[6],[7],[8],[9] series "ARM: davinci: common clock prep work"
->>>
->>
->> Hi David,
->>
->> I'm getting a splat[1] when trying to mount the rootfs over nfs on a
->> da850-lcdk.
->>
->> I'll try to figure out what's happening.
->>
->> Best regards,
->> Bartosz Golaszewski
->>
->> [1] https://pastebin.com/D94z8SAe
->>
->
-> Could it have something to do with the "rmii" clock? I don't think I added
-> that
-> in the device tree.
->
 
-I'm looking at it now. There are problems with emac & mdio both in
-legacy and in DT mode.
+On 23/01/18 09:22, Peter De Schrijver wrote:
+> Apply the memory built-in self test work around when ungating certain
+> Tegra210 power domains.
 
-The davinci_mdio driver seems to not get an actual functional clock
-(phy is reported as down). I'm seeing that in old legacy code,
-mdio_clk has emac_clk as parent, while after your changes they share
-pll0_sysclk4 as parent, although I'm not sure if that has anything to
-do with it.
+Nit-pick .. typo in $subject.
 
-I'll see about the rmii clock too.
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index ce62a47..c4eff4b 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
+>  
+>  	bool has_tsense_reset;
+>  	bool has_gpu_clamps;
+> +	bool needs_mbist_war;
+>  
+>  	const struct tegra_io_pad_soc *io_pads;
+>  	unsigned int num_io_pads;
+> @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+>  
+>  	usleep_range(10, 20);
+>  
+> +	if (pg->pmc->soc->needs_mbist_war)
+> +		tegra210_clk_handle_mbist_war(pg->id);
+> +
 
-Thanks,
-Bartosz
+Be good if we could return an error from the above function.
+
+>  	if (disable_clocks)
+>  		tegra_powergate_disable_clocks(pg);
+>  
+> @@ -1815,6 +1819,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+>  	.cpu_powergates = tegra210_cpu_powergates,
+>  	.has_tsense_reset = true,
+>  	.has_gpu_clamps = true,
+> +	.needs_mbist_war = true,
+>  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+>  	.io_pads = tegra210_io_pads,
+>  	.regs = &tegra20_pmc_regs,
+> 
+
+Otherwise looks good to me.
+
+Cheers
+Jon
+
+-- 
+nvpublic
