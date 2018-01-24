@@ -1,58 +1,96 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Joachim Eastwood <manabian@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 20/34] clk: nxp: change lpc18xx_pll0_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:59 +0000
-Message-Id: <1514835793-1104-21-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2484 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932192AbeAXKDh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jan 2018 05:03:37 -0500
+Subject: Re: [PATCH v3 1/4] clk: tegra: Add la clock for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-2-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <31118e4b-80bd-1db2-0a82-9359b99deccf@nvidia.com>
+Date: Wed, 24 Jan 2018 10:03:31 +0000
+MIME-Version: 1.0
+In-Reply-To: <1516699369-3513-2-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+On 23/01/18 09:22, Peter De Schrijver wrote:
+> This clock is needed by the memory built-in self test work around.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c         | 14 ++++++++++++++
+>  include/dt-bindings/clock/tegra210-car.h |  2 +-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 9e62608..f790c2d 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -41,6 +41,7 @@
+>  #define CLK_SOURCE_CSITE 0x1d4
+>  #define CLK_SOURCE_EMC 0x19c
+>  #define CLK_SOURCE_SOR1 0x410
+> +#define CLK_SOURCE_LA 0x1f8
+>  
+>  #define PLLC_BASE 0x80
+>  #define PLLC_OUT 0x84
+> @@ -2654,6 +2655,13 @@ static int tegra210_init_pllu(void)
+>  			      sor1_parents_idx, 0, &sor1_lock),
+>  };
+>  
+> +static const char * const la_parents[] = {
+> +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
+> +};
+> +
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Joachim Eastwood <manabian@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I was comparing this with downstream and it appears that the parents are
+listed as "pll_p", "pll_c", "pll_m", "clk_m". Can you double check the
+above is correct?
 
-diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-index e08bad9..396d4f7 100644
---- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-@@ -381,13 +381,13 @@ static unsigned long lpc18xx_pll0_round_rate(struct clk_hw *hw,
- 
- 	if (*prate < rate) {
- 		pr_warn("%s: pll dividers not supported\n", __func__);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	m = DIV_ROUND_UP_ULL(*prate, rate * 2);
- 	if (m <= 0 && m > LPC18XX_PLL0_MSEL_MAX) {
- 		pr_warn("%s: unable to support rate %lu\n", __func__, rate);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	return 2 * *prate * m;
+Otherwise ...
+
+> +static struct tegra_clk_periph tegra210_la =
+> +	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, 0);
+> +
+>  static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>  					    void __iomem *pmc_base)
+>  {
+> @@ -2700,6 +2708,12 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>  					     periph_clk_enb_refcnt);
+>  	clks[TEGRA210_CLK_DSIB] = clk;
+>  
+> +	/* la */
+> +	clk = tegra_clk_register_periph("la", la_parents,
+> +			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
+> +			CLK_SOURCE_LA, 0);
+> +	clks[TEGRA210_CLK_LA] = clk;
+> +
+>  	/* emc mux */
+>  	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+>  			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> index 6422314..6b77e72 100644
+> --- a/include/dt-bindings/clock/tegra210-car.h
+> +++ b/include/dt-bindings/clock/tegra210-car.h
+> @@ -95,7 +95,7 @@
+>  #define TEGRA210_CLK_CSITE 73
+>  /* 74 */
+>  /* 75 */
+> -/* 76 */
+> +#define TEGRA210_CLK_LA 76
+>  /* 77 */
+>  #define TEGRA210_CLK_SOC_THERM 78
+>  #define TEGRA210_CLK_DTV 79
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
