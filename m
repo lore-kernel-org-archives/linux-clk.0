@@ -1,58 +1,71 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v3 19/34] clk: mxs: change clk_frac_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:58 +0000
-Message-Id: <1514835793-1104-20-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support Tegra210
+Date: Wed, 24 Jan 2018 14:45:38 +0200
+Message-ID: <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+support in this driver. Also allow for the case where the CPU voltage is
+controlled directly by the DFLL rather than by a separate regulator object.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/mxs/clk-frac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
-index f57281f..9debf86 100644
---- a/drivers/clk/mxs/clk-frac.c
-+++ b/drivers/clk/mxs/clk-frac.c
-@@ -59,7 +59,7 @@ static unsigned long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
- 	u64 tmp, tmp_rate, result;
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+index 4353025..d631dc4 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+ {
+ 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+ 	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
++	if (priv->vdd_cpu_reg)
++		regulator_sync_voltage(priv->vdd_cpu_reg);
+ 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+ }
  
- 	if (rate > parent_rate)
--		return -EINVAL;
-+		return 0;
+@@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
- 	tmp = rate;
- 	tmp <<= frac->width;
-@@ -67,7 +67,7 @@ static unsigned long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
- 	div = tmp;
+ 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret = PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
++	if (IS_ERR(priv->vdd_cpu_reg))
++		priv->vdd_cpu_reg = NULL;
  
- 	if (!div)
--		return -EINVAL;
-+		return 0;
+ 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+@@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ 	clk_put(priv->cpu_clk);
+ out_put_vdd_cpu_reg:
+ 	regulator_put(priv->vdd_cpu_reg);
+-out_put_np:
+ 	of_node_put(np);
  
- 	tmp_rate = (u64)parent_rate * div;
- 	result = tmp_rate >> frac->width;
+ 	return ret;
+@@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
+ 	int ret;
+ 	struct platform_device *pdev;
+ 
+-	if (!of_machine_is_compatible("nvidia,tegra124"))
++	if (!(of_machine_is_compatible("nvidia,tegra124")
++		|| of_machine_is_compatible("nvidia,tegra210")))
+ 		return -ENODEV;
+ 
+ 	/*
 -- 
-2.7.4
+1.9.1
