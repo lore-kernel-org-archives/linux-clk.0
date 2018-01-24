@@ -1,35 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 17:46:58 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v7 2/5] clk: aspeed: Register core clocks
-Message-ID: <20180103014658.GQ7997@codeaurora.org>
-References: <20171222024522.10362-1-joel@jms.id.au>
- <20171222024522.10362-3-joel@jms.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171222024522.10362-3-joel@jms.id.au>
+Return-Path: <shawn.guo@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>,
+	linux-clk@vger.kernel.org,
+	project-aspen-dev@linaro.org,
+	Younian Wang <wangyounian@hisilicon.com>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH 2/5] clk: hi3798cv200: correct IR clock parent
+Date: Wed, 24 Jan 2018 19:48:24 +0800
+Message-Id: <1516794507-5607-3-git-send-email-shawn.guo@linaro.org>
+In-Reply-To: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
+References: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Joel Stanley wrote:
-> This registers the core clocks; those which are required to calculate
-> the rate of the timer peripheral so the system can load a clocksource
-> driver.
-> 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
+From: Younian Wang <wangyounian@hisilicon.com>
 
-Applied to clk-next
+The IR clock is sourced from '24m' rather than '100m'.  Correct it.
 
+Signed-off-by: Younian Wang <wangyounian@hisilicon.com>
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/clk/hisilicon/crg-hi3798cv200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
+index c586c79f4623..d7d1ba0153ec 100644
+--- a/drivers/clk/hisilicon/crg-hi3798cv200.c
++++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
+@@ -244,7 +244,7 @@ static void hi3798cv200_clk_unregister(struct platform_device *pdev)
+ #define HI3798CV200_SYSCTRL_NR_CLKS 16
+ 
+ static const struct hisi_gate_clock hi3798cv200_sysctrl_gate_clks[] = {
+-	{ HISTB_IR_CLK, "clk_ir", "100m",
++	{ HISTB_IR_CLK, "clk_ir", "24m",
+ 		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
+ 	{ HISTB_TIMER01_CLK, "clk_timer01", "24m",
+ 		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
