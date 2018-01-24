@@ -1,251 +1,119 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 18/19] clk: meson: remove obsolete cpu_clk
-Date: Wed, 31 Jan 2018 19:09:44 +0100
-Message-Id: <20180131180945.18025-19-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 1/6] clk: tegra: dfll registration for multiple SoCs
+Date: Wed, 24 Jan 2018 14:45:33 +0200
+Message-ID: <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-meson8b cpu_clk has been replaced by a set of divider and mux clocks.
-meson_cpu_clk is no longer used and can be removed
+In a future patch, support for the DFLL in Tegra210 will be introduced.
+This requires support for more than 1 set of CVB and CPU max frequency
+tables.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/meson/Makefile  |   2 +-
- drivers/clk/meson/clk-cpu.c | 178 --------------------------------------------
- drivers/clk/meson/clkc.h    |  11 ---
- 3 files changed, 1 insertion(+), 190 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-cpu.c
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 465086118d62..ffee82e60b7a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Meson specific clk
- #
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 269d359..440eb8d 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -21,6 +21,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <soc/tegra/fuse.h>
  
--obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
-deleted file mode 100644
-index f8b2b7efd016..000000000000
---- a/drivers/clk/meson/clk-cpu.c
-+++ /dev/null
-@@ -1,178 +0,0 @@
--/*
-- * Copyright (c) 2015 Endless Mobile, Inc.
-- * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-- */
--
--/*
-- * CPU clock path:
-- *
-- *                           +-[/N]-----|3|
-- *             MUX2  +--[/3]-+----------|2| MUX1
-- * [sys_pll]---|1|   |--[/2]------------|1|-|1|
-- *             | |---+------------------|0| | |----- [a5_clk]
-- *          +--|0|                          | |
-- * [xtal]---+-------------------------------|0|
-- *
-- *
-- *
-- */
--
--#include <linux/delay.h>
--#include <linux/err.h>
--#include <linux/io.h>
--#include <linux/module.h>
--#include <linux/of_address.h>
--#include <linux/slab.h>
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
--
--#define MESON_CPU_CLK_CNTL1		0x00
--#define MESON_CPU_CLK_CNTL		0x40
--
--#define MESON_CPU_CLK_MUX1		BIT(7)
--#define MESON_CPU_CLK_MUX2		BIT(0)
--
--#define MESON_N_WIDTH			9
--#define MESON_N_SHIFT			20
--#define MESON_SEL_WIDTH			2
--#define MESON_SEL_SHIFT			2
--
--#include "clkc.h"
--
--#define to_meson_clk_cpu_hw(_hw) container_of(_hw, struct meson_clk_cpu, hw)
--#define to_meson_clk_cpu_nb(_nb) container_of(_nb, struct meson_clk_cpu, clk_nb)
--
--static long meson_clk_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *prate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--
--	return divider_round_rate(hw, rate, prate, clk_cpu->div_table,
--				  MESON_N_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
--}
--
--static int meson_clk_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
--				  unsigned long parent_rate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--	unsigned int div, sel, N = 0;
--	u32 reg;
--
--	div = DIV_ROUND_UP(parent_rate, rate);
--
--	if (div <= 3) {
--		sel = div - 1;
--	} else {
--		sel = 3;
--		N = div / 2;
--	}
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--	reg = PARM_SET(MESON_N_WIDTH, MESON_N_SHIFT, reg, N);
--	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--	reg = PARM_SET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg, sel);
--	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--
--	return 0;
--}
--
--static unsigned long meson_clk_cpu_recalc_rate(struct clk_hw *hw,
--					       unsigned long parent_rate)
--{
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
--	unsigned int N, sel;
--	unsigned int div = 1;
--	u32 reg;
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
--	N = PARM_GET(MESON_N_WIDTH, MESON_N_SHIFT, reg);
--
--	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
--	sel = PARM_GET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg);
--
--	if (sel < 3)
--		div = sel + 1;
--	else
--		div = 2 * N;
--
--	return parent_rate / div;
--}
--
--/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
--static int meson_clk_cpu_pre_rate_change(struct meson_clk_cpu *clk_cpu,
--					 struct clk_notifier_data *ndata)
--{
--	u32 cpu_clk_cntl;
--
--	/* switch MUX1 to xtal */
--	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	cpu_clk_cntl &= ~MESON_CPU_CLK_MUX1;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	udelay(100);
--
--	/* switch MUX2 to sys-pll */
--	cpu_clk_cntl |= MESON_CPU_CLK_MUX2;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--
--	return 0;
--}
--
--/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
--static int meson_clk_cpu_post_rate_change(struct meson_clk_cpu *clk_cpu,
--					  struct clk_notifier_data *ndata)
--{
--	u32 cpu_clk_cntl;
--
--	/* switch MUX1 to divisors' output */
--	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	cpu_clk_cntl |= MESON_CPU_CLK_MUX1;
--	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
--				+ MESON_CPU_CLK_CNTL);
--	udelay(100);
--
--	return 0;
--}
--
--/*
-- * This clock notifier is called when the frequency of the of the parent
-- * PLL clock is to be changed. We use the xtal input as temporary parent
-- * while the PLL frequency is stabilized.
-- */
--int meson_clk_cpu_notifier_cb(struct notifier_block *nb,
--				     unsigned long event, void *data)
--{
--	struct clk_notifier_data *ndata = data;
--	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_nb(nb);
--	int ret = 0;
--
--	if (event == PRE_RATE_CHANGE)
--		ret = meson_clk_cpu_pre_rate_change(clk_cpu, ndata);
--	else if (event == POST_RATE_CHANGE)
--		ret = meson_clk_cpu_post_rate_change(clk_cpu, ndata);
--
--	return notifier_from_errno(ret);
--}
--
--const struct clk_ops meson_clk_cpu_ops = {
--	.recalc_rate	= meson_clk_cpu_recalc_rate,
--	.round_rate	= meson_clk_cpu_round_rate,
--	.set_rate	= meson_clk_cpu_set_rate,
--};
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index cc1a964cd4d7..8d8fe608cff4 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -101,17 +101,6 @@ struct meson_clk_pll_data {
+@@ -28,8 +29,15 @@
+ #include "clk-dfll.h"
+ #include "cvb.h"
  
- #define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
++struct dfll_fcpu_data {
++	const unsigned long *cpu_max_freq_table;
++	unsigned int cpu_max_freq_table_size;
++	const struct cvb_table *cpu_cvb_tables;
++	unsigned int cpu_cvb_tables_size;
++};
++
+ /* Maximum CPU frequency, indexed by CPU speedo id */
+-static const unsigned long cpu_max_freq_table[] = {
++static const unsigned long tegra124_cpu_max_freq_table[] = {
+ 	[0] = 2014500000UL,
+ 	[1] = 2320500000UL,
+ 	[2] = 2116500000UL,
+@@ -82,16 +90,36 @@
+ 	},
+ };
  
--struct meson_clk_cpu {
--	struct clk_hw hw;
--	void __iomem *base;
--	u16 reg_off;
--	struct notifier_block clk_nb;
--	const struct clk_div_table *div_table;
++static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
++	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
++	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
++	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
++	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
++};
++
++static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
++	{
++		.compatible = "nvidia,tegra124-dfll",
++		.data = &tegra124_dfll_fcpu_data,
++	},
++	{ },
++};
++
+ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ {
+ 	int process_id, speedo_id, speedo_value, err;
+ 	struct tegra_dfll_soc_data *soc;
++	const struct of_device_id *of_id;
++	const struct dfll_fcpu_data *fcpu_data;
++
++	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
++	fcpu_data = of_id->data;
+ 
+ 	process_id = tegra_sku_info.cpu_process_id;
+ 	speedo_id = tegra_sku_info.cpu_speedo_id;
+ 	speedo_value = tegra_sku_info.cpu_speedo_value;
+ 
+-	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
++	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+ 		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+ 			speedo_id);
+ 		return -ENODEV;
+@@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	soc->max_freq = cpu_max_freq_table[speedo_id];
++	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+ 
+-	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+-					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
++	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
++					   fcpu_data->cpu_cvb_tables_size,
+ 					   process_id, speedo_id, speedo_value,
+ 					   soc->max_freq);
+ 	if (IS_ERR(soc->cvb)) {
+@@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+-	{ .compatible = "nvidia,tegra124-dfll", },
+-	{ },
 -};
 -
--int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
--		void *data);
--
- struct meson_clk_mpll_data {
- 	struct parm sdm;
- 	struct parm sdm_en;
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+ 			   tegra_dfll_runtime_resume, NULL)
 -- 
-2.14.3
+1.9.1
