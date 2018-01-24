@@ -1,45 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:42665 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeABREe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 12:04:34 -0500
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <20180102150848.11314-15-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-15-paul@crapouillou.net>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 2 Jan 2018 18:04:12 +0100
-Message-ID: <CA+7wUsw0+dsvmY3wCq=VcfRsovhPPLEJjyEwV5pYUWLcC3i2dA@mail.gmail.com>
-Subject: Re: [PATCH v5 15/15] MIPS: ingenic: Initial GCW Zero support
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+In-Reply-To: <fc54ab26-72be-1377-2ccb-72d34360c5eb@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
+ <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com> <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
+ <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com> <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
+ <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
+ <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
+ <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com> <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
+ <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com> <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
+ <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com> <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
+ <fc54ab26-72be-1377-2ccb-72d34360c5eb@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 24 Jan 2018 09:03:45 +0100
+Message-ID: <CAMRc=Me1_i8qQE4GHeLiU2itHnp71Gt03UM6NhL=hA8Y6Pb0MA@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v6_00=2F41=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 4:08 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-> The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
-> handheld game console, successfully kickstarted in ~2012, running Linux.
+2018-01-23 21:23 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/23/2018 02:05 PM, David Lechner wrote:
+>>
+>> On 01/23/2018 02:01 PM, David Lechner wrote:
+>>>
+>>> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> In the mdio case - the problem is that devm_clk_get() doesn't fail,
+>>>> but somehow the clock doesn't end up in the list of the device's
+>>>> clocks - which is why it's not enabled by pm_runtime_get_sync().
+>>>>
+>>>
+>>>
+>>> Right. This is because devm_clk_get() now finds the clock via device
+>>> tree instead of a clkdev lookup entry. However, I think that the PM
+>>> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
+>>> the clkdev lookup to match the con_id and does not use device tree.
+>>> The same thing is happing in mdio, emac and lcdc.
+>>>
+>>
+>> Minor correction: It looks like emac doesn't do this because it doesn't
+>> have a con_id of "fck". But, the same clock is shared by emac and mdio, so
+>> since mdio enables the clock, emac doesn't notice or care that it did
+>> not enable the clock itself.
 >
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  arch/mips/boot/dts/ingenic/Makefile |  1 +
->  arch/mips/boot/dts/ingenic/gcw0.dts | 61 +++++++++++++++++++++++++++++++++++++
->  arch/mips/configs/gcw0_defconfig    | 27 ++++++++++++++++
->  arch/mips/jz4740/Kconfig            |  4 +++
->  arch/mips/jz4740/boards.c           |  1 +
->  5 files changed, 94 insertions(+)
->  create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
->  create mode 100644 arch/mips/configs/gcw0_defconfig
 >
->  v2: No change
->  v3: No change
->  v4: No change
->  v5: Use SPDX license identifier
->      Drop custom CROSS_COMPILE from defconfig
+> How about using pm_clk_add_clk() in these drivers to explicitly use the
+> clocks for power management instead of relying on pm_clk_add_notifier()
+> to do this implicitly?
 
-Thanks for removing CROSS_COMPILE.
+Yes, this sounds good.
 
-Acked-by: Mathieu Malaterre <malat@debian.org>
+Bartosz
