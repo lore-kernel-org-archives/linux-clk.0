@@ -1,51 +1,48 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v2 27/34] clk: ti: composite: change clk_pll_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:53 +0000
-Message-Id: <1514835300-381-13-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 0/6] Tegra210 DFLL implementation
+Date: Wed, 24 Jan 2018 14:45:32 +0200
+Message-ID: <1516797938-32044-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+This series introduces support for the DFLL as a CPU clock source
+on Tegra210. As Jetson TX2 uses a PWM controlled regulator IC which
+is driven directly by the DFLLs PWM output, we also introduce support
+for PWM regulators next to I2C controlled regulators. The DFLL output
+frequency is directly controlled by the regulator voltage. The registers
+for controlling the PWM are part of the DFLL IP block, so there's no
+separate linux regulator object involved because the regulator IC only
+supplies the rail powering the DFLL and the CPUs. It doesn't have any
+other controls.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+Changes since v1:
+* improved commit messages
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/ti/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Peter De Schrijver (6):
+  clk: tegra: dfll registration for multiple SoCs
+  clk: tegra: DT align parameter for CVB calculation
+  clk: tegra: add CVB tables for Tegra210 CPU DFLL
+  clk: tegra: dfll: support PWM regulator control
+  clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
+  cpufreq: tegra124-cpufreq: extend to support Tegra210
 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 2477cf1..0e82b61 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -38,7 +38,7 @@ static unsigned long ti_composite_round_rate(struct clk_hw *hw,
- 					     unsigned long rate,
- 					     unsigned long *prate)
- {
--	return -EINVAL;
-+	return 0;
- }
- 
- static int ti_composite_set_rate(struct clk_hw *hw, unsigned long rate,
+ drivers/clk/tegra/Kconfig                  |   5 +
+ drivers/clk/tegra/Makefile                 |   2 +-
+ drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
+ drivers/clk/tegra/clk-dfll.h               |   7 +
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
+ drivers/clk/tegra/cvb.c                    |  17 +-
+ drivers/clk/tegra/cvb.h                    |   6 +-
+ drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
+ 8 files changed, 919 insertions(+), 104 deletions(-)
+
 -- 
-2.7.4
+1.9.1
