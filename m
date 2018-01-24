@@ -1,230 +1,63 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Rob Herring <robh@kernel.org>
-Cc: maxime.ripard@free-electrons.com, airlied@linux.ie, mark.rutland@arm.com, wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com, sboyd@codeaurora.org, Jose.Abreu@synopsys.com, narmstrong@baylibre.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 06/12] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-Date: Mon, 29 Jan 2018 21:29:44 +0100
-Message-ID: <1869367.EWsYPP3RfL@jernej-laptop>
-In-Reply-To: <20180129180526.v2vokx75zg2diem3@rob-hp-laptop>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net> <20180117201421.25954-7-jernej.skrabec@siol.net> <20180129180526.v2vokx75zg2diem3@rob-hp-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7789 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933166AbeAXLX4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jan 2018 06:23:56 -0500
+Date: Wed, 24 Jan 2018 13:23:50 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 1/4] clk: tegra: Add la clock for Tegra210
+Message-ID: <20180124112350.GG7031@tbergstrom-lnx.Nvidia.com>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-2-git-send-email-pdeschrijver@nvidia.com>
+ <31118e4b-80bd-1db2-0a82-9359b99deccf@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <31118e4b-80bd-1db2-0a82-9359b99deccf@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Dne ponedeljek, 29. januar 2018 ob 19:05:26 CET je Rob Herring napisal(a):
-> On Wed, Jan 17, 2018 at 09:14:15PM +0100, Jernej Skrabec wrote:
-> > This commit adds all necessary compatibles and descriptions needed to
-> > implement A83T HDMI pipeline.
+On Wed, Jan 24, 2018 at 10:03:31AM +0000, Jon Hunter wrote:
+> 
+> On 23/01/18 09:22, Peter De Schrijver wrote:
+> > This clock is needed by the memory built-in self test work around.
 > > 
-> > Mixer is already properly described, so only compatible is added.
-> > 
-> > However, A83T TV TCON, which is connected to HDMI, doesn't have channel 0,
-> > contrary to all TCONs currently described. Because of that, TCON
-> > documentation is extended.
-> > 
-> > A83T features Synopsys DW HDMI controller with a custom PHY which looks
-> > like Synopsys Gen2 PHY with few additions. Since there is no
-> > documentation, needed properties were found out through experimentation
-> > and reading BSP code.
-> > 
-> > At the end, example is added for newer SoCs, which feature DE2 and DW
-> > HDMI.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > > ---
+> >  drivers/clk/tegra/clk-tegra210.c         | 14 ++++++++++++++
+> >  include/dt-bindings/clock/tegra210-car.h |  2 +-
+> >  2 files changed, 15 insertions(+), 1 deletion(-)
 > > 
-> >  .../bindings/display/sunxi/sun4i-drm.txt           | 197
-> >  ++++++++++++++++++++- 1 file changed, 190 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> > cd626ee1147a..4fb380f3e53d 100644
-> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > 
-> > @@ -64,6 +64,52 @@ Required properties:
-> >      first port should be the input endpoint. The second should be the
-> >      output, usually to an HDMI connector.
-> > 
-> > +DWC HDMI TX Encoder
-> > +-------------------
-> > +
-> > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-> > +with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
-> > +
-> > +These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-> > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-> > +following device-specific properties.
-> > +
-> > +Required properties:
-> > +
-> > +  - compatible: value must be one of:
-> > +    * "allwinner,sun8i-a83t-dw-hdmi"
-> > +  - reg: base address and size of memory-mapped region
-> > +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-> > +  - interrupts: HDMI interrupt number
-> > +  - clocks: phandles to the clocks feeding the HDMI encoder
-> > +    * iahb: the HDMI bus clock
-> > +    * isfr: the HDMI register clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandle to the reset controller
-> > +  - reset-names: must be "ctrl"
-> > +  - phys: phandle to the DWC HDMI PHY
-> > +  - phy-names: must be "phy"
-> > +
-> > +  - ports: A ports node with endpoint definitions as defined in
-> > +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> > +    first port should be the input endpoint. The second should be the
-> > +    output, usually to an HDMI connector.
-> > +
-> > +DWC HDMI PHY
-> > +------------
-> > +
-> > +Required properties:
-> > +  - compatible: value must be one of:
-> > +    * allwinner,sun8i-a83t-hdmi-phy
-> > +  - reg: base address and size of memory-mapped region
-> > +  - clocks: phandles to the clocks feeding the HDMI PHY
-> > +    * bus: the HDMI PHY interface clock
-> > +    * mod: the HDMI PHY module clock
-> > +    * tmds: TMDS clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandle to the reset controller driving the PHY
-> > +  - reset-names: must be "phy"
-> > +
-> > 
-> >  TV Encoder
-> >  ----------
-> > 
-> > @@ -94,24 +140,23 @@ Required properties:
-> >     * allwinner,sun7i-a20-tcon
-> >     * allwinner,sun8i-a33-tcon
-> >     * allwinner,sun8i-a83t-tcon-lcd
-> > 
-> > +   * allwinner,sun8i-a83t-tcon-tv
-> > 
-> >     * allwinner,sun8i-v3s-tcon
-> >   
-> >   - reg: base address and size of memory-mapped region
-> >   - interrupts: interrupt associated to this IP
-> > 
-> > - - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> > 
-> > + - clocks: phandles to the clocks feeding the TCON. One is needed:
-> >     - 'ahb': the interface clocks
-> > 
-> > -   - 'tcon-ch0': The clock driving the TCON channel 0
-> 
-> Well, it didn't look right before saying 3 are needed, but listing 2.
-> However, you can't just change this as it affects all the other SoCs.
-> This should probably be a separate patch.
-
-I had a feeling that all items which are not common to all compatibles should 
-be listed below and explained when they are needed. At least currently it's 
-done this way.
-
-> 
-> >   - resets: phandles to the reset controllers driving the encoder
-> >   
-> >     - "lcd": the reset line for the TCON channel 0
-> >   
-> >   - clock-names: the clock names mentioned above
-> >   - reset-names: the reset names mentioned above
-> > 
-> > - - clock-output-names: Name of the pixel clock created
-> 
-> Why is this removed?
-> 
-> >  - ports: A ports node with endpoint definitions as defined in
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 9e62608..f790c2d 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -41,6 +41,7 @@
+> >  #define CLK_SOURCE_CSITE 0x1d4
+> >  #define CLK_SOURCE_EMC 0x19c
+> >  #define CLK_SOURCE_SOR1 0x410
+> > +#define CLK_SOURCE_LA 0x1f8
 > >  
-> >    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> >    first port should be the input endpoint, the second one the output
-> > 
-> > -  The output may have multiple endpoints. The TCON has two channels,
-> > +  The output may have multiple endpoints. TCON can have two channels,
-> 
-> Perhaps you should say "can have 1 or 2 channels".
-
-Ok.
-
-> 
-> >    usually with the first channel being used for the panels interfaces
-> >    (RGB, LVDS, etc.), and the second being used for the outputs that
-> >    require another controller (TV Encoder, HDMI, etc.). The endpoints
-> > 
-> > @@ -119,11 +164,16 @@ Required properties:
-> >    channel the endpoint is associated to. If that property is not
-> >    present, the endpoint number will be used as the channel number.
-> > 
-> > +When TCON supports channel 0 (all TCONs except TV TCON on A83T), two
-> > +more clocks are needed:
-> > +   - 'tcon-ch0': The clock driving the TCON channel 0
-> 
-> Looks like one clock to me.
-> 
-> > +   - clock-output-names: Name of the pixel clock created
-> 
-> It's better to not move this, but just add what compatibles it does or
-> doesn't apply to.
-> 
-> > +
-> > 
-> >  On SoCs other than the A33 and V3s, there is one more clock required:
-> >     - 'tcon-ch1': The clock driving the TCON channel 1
-> > 
-> > -On SoCs that support LVDS (all SoCs but the A13, H3, H5 and V3s), you
-> > -need one more reset line:
-> > +When TCON support LVDS (all TCONs except TV TCON on A83T and those found
-> > 
-> > +in A13, H3, H5 and V3s SoCs), you need one more reset line:
-> >     - 'lvds': The reset line driving the LVDS logic
-> >  
-> >  And on the A23, A31, A31s and A33, you need one more clock line:
-> > @@ -226,6 +276,7 @@ supported.
-> > 
-> >  Required properties:
-> >    - compatible: value must be one of:
-> >      * allwinner,sun8i-a83t-de2-mixer-0
-> > 
-> > +    * allwinner,sun8i-a83t-de2-mixer-1
-> > 
-> >      * allwinner,sun8i-v3s-de2-mixer
-> >    
-> >    - reg: base address and size of the memory-mapped region.
-> >    - clocks: phandles to the clocks feeding the mixer
-> > 
-> > @@ -261,7 +312,7 @@ Required properties:
-> >    - allwinner,pipelines: list of phandle to the display engine
-> >    
-> >      frontends (DE 1.0) or mixers (DE 2.0) available.
-> > 
-> > -Example:
-> > 
-> > +Example 1:
-> >  panel: panel {
-> >  
-> >  	compatible = "olimex,lcd-olinuxino-43-ts";
-> > 
-> > @@ -460,3 +511,135 @@ display-engine {
-> > 
-> >  	compatible = "allwinner,sun5i-a13-display-engine";
-> >  	allwinner,pipelines = <&fe0>;
-> >  
+> >  #define PLLC_BASE 0x80
+> >  #define PLLC_OUT 0x84
+> > @@ -2654,6 +2655,13 @@ static int tegra210_init_pllu(void)
+> >  			      sor1_parents_idx, 0, &sor1_lock),
 > >  };
-> > 
+> >  
+> > +static const char * const la_parents[] = {
+> > +	"pll_p", "pll_c2", "pll_c", "pll_c3", "pll_re_out1", "pll_a1", "clk_m", "pll_c4_out0"
+> > +};
 > > +
 > 
-> > +Example 2:
-> Is this really different enough to need an example? Examples don't
-> need to enumerate all possible options. They are often wrong because
-> they don't compile on their own and that creates a maintenance burden.
+> I was comparing this with downstream and it appears that the parents are
+> listed as "pll_p", "pll_c", "pll_m", "clk_m". Can you double check the
+> above is correct?
+> 
 
-This example is for second generation of display engine so pipeline is 
-different. Only TCON and connector examples are same, but 4 others are new, so 
-I thought it would be nice to show an example for it. But I can remove it in 
-next version if it is not needed.
+For all I can see the parents as listed in dowstream are incorrect. Likely
+only pll_p is used in practice, so noone has noticed this. pll_m for example
+can only be used by emc since T210, so it cannot be part of the parent list
+of la.
 
-Best regards,
-Jernej
+Peter.
