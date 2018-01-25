@@ -1,35 +1,189 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Adam Ford <aford173@gmail.com>, Sekhar Nori <nsekhar@ti.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-2-git-send-email-david@lechnology.com>
- <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
- <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
- <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
- <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
-Date: Wed, 10 Jan 2018 20:50:25 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1972 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbeAYNEu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 08:04:50 -0500
+Subject: Re: [PATCH v3 3/4] clk: tegra: MBIST work around for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-4-git-send-email-pdeschrijver@nvidia.com>
+ <637b3bb4-1ac0-5612-ec2e-5740e611b11a@nvidia.com>
+ <20180125090255.GK7031@tbergstrom-lnx.Nvidia.com>
+ <a161a11c-1794-ebc4-3ff0-7624c23cabdb@nvidia.com>
+ <20180125124157.GN7031@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <85e1e0ca-fe3d-8605-9914-1dd3434105ce@nvidia.com>
+Date: Thu, 25 Jan 2018 13:04:45 +0000
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180125124157.GN7031@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/10/2018 04:24 PM, Adam Ford wrote:
+
+On 25/01/18 12:41, Peter De Schrijver wrote:
+> On Thu, Jan 25, 2018 at 10:19:08AM +0000, Jon Hunter wrote:
+>>
+>> On 25/01/18 09:02, Peter De Schrijver wrote:
+>>> On Wed, Jan 24, 2018 at 09:59:56PM +0000, Jon Hunter wrote:
+>>
+>> ...
+>>
+>>>>> +void tegra210_clk_handle_mbist_war(unsigned int id)
+>>>>> +{
+>>>>> +	int err;
+>>>>> +	struct tegra210_domain_mbist_war *mbist_war;
+>>>>> +
+>>>>> +	if (id >= ARRAY_SIZE(tegra210_pg_mbist_war)) {
+>>>>> +		WARN(1, "unknown domain id in MBIST WAR handler\n");
+>>>>> +		return;
+>>>>> +	}
+>>>>> +
+>>>>> +	mbist_war = &tegra210_pg_mbist_war[id];
+>>>>> +	if (!mbist_war->handle_lvl2_ovr)
+>>>>> +		return;
+>>>>> +
+>>>>> +	err = mbist_war->handle_lvl2_ovr(mbist_war);
+>>>>
+>>>> Why not move the clk_bulk_prepare_enable/disable_unprepare and
+>>>> mutex_lock/unlock functions into this function around the call to
+>>>> ->handle_lvl2_ovr to save the duplication of that code in each of the
+>>>> war functions?
+>>>>
+>>>
+>>> This could be done yes.
+>>>
+>>>>> +	WARN(err < 0, "error handling MBIST WAR for domain: %d\n", id);
+>>>>> +}
+>>>>
+>>>> I think that the above function should return an error and we should let
+>>>> the power-domain power-on fail.
+>>>>
+>>>
+>>> This would only be useful if the user (tegra_powergate_power_up) would do
+>>> rollback. I don't think that's done correctly today.
+>>
+>> It does and so I think that we should return an error.
+>>
 > 
-> I am available tomorrow to build and test patches against the
-> da850-evm.  I just need to know which version(s) to test.
+> Ok.
+> 
+>>>>> +
+>>>>> +
+>>>>>  void tegra210_put_utmipll_in_iddq(void)
+>>>>>  {
+>>>>>  	u32 reg;
+>>>>> @@ -3163,6 +3500,40 @@ static int tegra210_reset_deassert(unsigned long id)
+>>>>>  	return 0;
+>>>>>  }
+>>>>>  
+>>>>> +static void tegra210_mbist_clk_init(void)
+>>>>> +{
+>>>>> +	int i, j;
+>>>>> +
+>>>>> +	for (i = 0; i < ARRAY_SIZE(tegra210_pg_mbist_war); i++) {
+>>>>> +		int num_clks = tegra210_pg_mbist_war[i].num_clks;
+>>>>> +		struct clk_bulk_data *clk_data;
+>>>>> +
+>>>>> +		if (!num_clks)
+>>>>> +			continue;
+>>>>> +
+>>>>> +		clk_data = kmalloc_array(num_clks, sizeof(*clk_data),
+>>>>> +					 GFP_KERNEL);
+>>>>> +		if (WARN(!clk_data,
+>>>>> +			"no space for MBIST WAR clk array for %d\n", i)) {
+>>>>> +			tegra210_pg_mbist_war[i].handle_lvl2_ovr = NULL;
+>>>>> +			continue;
+>>>>> +		}
+>>>>
+>>>> Printing error messages on memory allocation failures are not needed and
+>>>> have been removed from various drivers. So lets no add any error
+>>>> messages or warnings here.
+>>>>
+>>>> Also I think that we should just return an error here and not bother
+>>>> continuing as there is no point.
+>>
+>> So maybe here just ...
+>>
+>> 		if (WARN_ON(!clk_data))
+>> 			return -ENOMEM;
+>>
+> 
+> Given that we do WARN_ON() here..
+> 
+>>>>> +
+>>>>> +		tegra210_pg_mbist_war[i].clks = clk_data;
+>>>>
+>>>> I think that you should only populate this when all the clocks have been
+>>>> initialised correctly. You could then use this to check the clocks have
+>>>> been setup correctly when executing the war.
+>>>>
+>>>
+>>> For some domains no extra clocks are needed (ie the clocks enabled by the
+>>> power domain driver are enough). So an extra flag would be needed then.
+>>
+>> Yes but you have num_clks to detect if a domain has extra clocks. So you
+>> can use both of these to detect if the clocks are setup correctly. Right?
+>>
+>>>>> +		for (j = 0; j < num_clks; j++) {
+>>>>> +			int clk_id = tegra210_pg_mbist_war[i].clk_init_data[j];
+>>>>> +			struct clk *clk = clks[clk_id];
+>>>>> +
+>>>>> +			if (IS_ERR(clk)) {
+>>>>> +				clk_data[j].clk = NULL;
+>>>>> +				WARN(1, "clk_id: %d\n", clk_id);
+>>>>
+>>>> I think that we should return an error here.
+>>>>
+>>>
+>>> I don't think letting clock init fail because of this, is a good idea. Too
+>>> many things rely on working clocks.
+>>
+>> It should never fail and if it does something is badly broken.
+>>
+>> Maybe what we could do ...
+>>
+>> 			if (WARN_ON(IS_ERR(clk))) {
+> 
+> and here..
+> 
+>> 				tegra210_pg_mbist_war[i].clks = NULL;
+>> 				break;
+>> 			}
+>>
+>> 			clk_data[j].clk = clk;
+>>
+> 
+> ..
+> 
+>>>>>  	if (!clks)
+>>>>> @@ -3233,6 +3622,8 @@ static void __init tegra210_clock_init(struct device_node *np)
+>>>>>  	tegra_add_of_provider(np);
+>>>>>  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+>>>>>  
+>>>>> +	tegra210_mbist_clk_init();
+>>>>> +
+>>>>
+>>>> Maybe add a print here if the mbist init fails and return. I understand
+>>>> it may not be a critical failure but it should never fail.
+>>>>
+>>>
+>>> You mean have the entire clock init fail and undo all the clock registrations?
+>>> That seems overkill to me. Returning early would only prevent some sleep states
+>>> from working because tegra_cpu_car_ops will not be initialized then. So I would
+>>> do a warning then.
+>>
+>> I don't think it is necessary to undo it. Ok, don't worry about
+>> returning an error here, the warnings should be sufficient.
+>>
+> 
+> I don't think there's much value in yet another warning here.
 
-Great. As per the cover letter:
+Yes indeed.
 
-You can find a working branch with everything included in the "common-clk-v5"
-branch of https://github.com/dlech/ev3dev-kernel.git.
+Cheers
+Jon
+
+-- 
+nvpublic
