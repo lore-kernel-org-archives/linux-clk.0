@@ -11,8 +11,7 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Guenter Roeck <linux@roeck-us.net>,
 	devicetree@vger.kernel.org,
 	linux-watchdog@vger.kernel.org,
@@ -23,45 +22,35 @@ Cc: Guenter Roeck <linux@roeck-us.net>,
 	Biju Das <biju.das@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 20/25] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:53 +0000
-Message-Id: <1517343778-27902-21-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [RFC 07/37] ARM: dts: r8a7793: Adjust SMP routine size
+Date: Thu, 25 Jan 2018 18:02:41 +0000
+Message-Id: <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7745 SoC dtsi.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v1->v3:
-* no change
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6bc1cf4..5d1b8f2 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -321,6 +321,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index aa7d779..ca684d0 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -392,7 +392,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x64>;
+ 			};
  		};
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7745-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7745-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
 -- 
 2.7.4
