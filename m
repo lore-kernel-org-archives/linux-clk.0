@@ -1,126 +1,81 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59302 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933688AbeAKLs3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jan 2018 06:48:29 -0500
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180106042326.46519-1-icenowy@aosc.io>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
-Date: Thu, 11 Jan 2018 11:48:40 +0000
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13290 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751590AbeAYNHq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 08:07:46 -0500
+Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+ <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+ <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
+ <fe422430-cb85-c28d-404b-98e7b87c15e0@nvidia.com>
+ <20180125122613.GM7031@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <99c6d055-5b4a-ecb1-4edd-ed3c4a6eefea@nvidia.com>
+Date: Thu, 25 Jan 2018 13:07:41 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180125122613.GM7031@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-another take to avoid this patch at all, I just remembered this from an
-IRC discussion before:
-
-On 06/01/18 04:23, Icenowy Zheng wrote:
-> The Allwinner H6 pin controllers (both the main one and the CPUs one)
-> have no bus gate clocks.
-
-I don't think this is true. The pin controller *needs* an APB clock,
-it's just not gate-able or not exposed or documented.
-The "system bus tree" on page 90 in the manual shows that the "GPIO"
-block is located on the APB1 bus.
-So can't we just reference this apb clock directly? That would be much
-cleaner, "more" correct and require less changes: "The best patch is no
-patch":
-
-	clocks = <&ccu APB1>, <&osc24M>, <&osc32k>;
-	/* or whatever this APB clock is actually called. */
-	clock-names = "apb", "hosc", "losc";
-
-Cheers,
-Andre.
-
+On 25/01/18 12:26, Peter De Schrijver wrote:
+> On Thu, Jan 25, 2018 at 10:57:36AM +0000, Jon Hunter wrote:
+>>
+>> On 25/01/18 10:06, Peter De Schrijver wrote:
+>>> On Wed, Jan 24, 2018 at 10:43:45PM +0000, Jon Hunter wrote:
+>>>>
+>>>> On 23/01/18 09:22, Peter De Schrijver wrote:
+>>>>> Apply the memory built-in self test work around when ungating certain
+>>>>> Tegra210 power domains.
+>>>>
+>>>> Nit-pick .. typo in $subject.
+>>>>
+>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>> ---
+>>>>>  drivers/soc/tegra/pmc.c | 5 +++++
+>>>>>  1 file changed, 5 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>>> index ce62a47..c4eff4b 100644
+>>>>> --- a/drivers/soc/tegra/pmc.c
+>>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>>> @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
+>>>>>  
+>>>>>  	bool has_tsense_reset;
+>>>>>  	bool has_gpu_clamps;
+>>>>> +	bool needs_mbist_war;
+>>>>>  
+>>>>>  	const struct tegra_io_pad_soc *io_pads;
+>>>>>  	unsigned int num_io_pads;
+>>>>> @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+>>>>>  
+>>>>>  	usleep_range(10, 20);
+>>>>>  
+>>>>> +	if (pg->pmc->soc->needs_mbist_war)
+>>>>> +		tegra210_clk_handle_mbist_war(pg->id);
+>>>>> +
+>>>>
+>>>> Be good if we could return an error from the above function.
+>>>>
+>>>
+>>> We need to also undo whatever we did before then. 
+>>
+>> I think it is fine if on error you 'goto disable_clks'.
 > 
-> Add support for this kind of pin controllers.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->  2 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 4b6cb25bc796..68cd505679d9 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->  	unsigned int hosc_div, losc_div;
->  	struct clk *hosc, *losc;
->  	u8 div, src;
-> -	int i, ret;
-> +	int i, ret, clk_count;
-> +
-> +	if (pctl->desc->without_bus_gate)
-> +		clk_count = 2;
-> +	else
-> +		clk_count = 3;
->  
->  	/* Deal with old DTs that didn't have the oscillators */
->  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
-> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  			goto gpiochip_error;
->  	}
->  
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(clk)) {
-> -		ret = PTR_ERR(clk);
-> -		goto gpiochip_error;
-> -	}
-> +	if (!desc->without_bus_gate) {
-> +		clk = devm_clk_get(&pdev->dev, NULL);
-> +		if (IS_ERR(clk)) {
-> +			ret = PTR_ERR(clk);
-> +			goto gpiochip_error;
-> +		}
->  
-> -	ret = clk_prepare_enable(clk);
-> -	if (ret)
-> -		goto gpiochip_error;
-> +		ret = clk_prepare_enable(clk);
-> +		if (ret)
-> +			goto gpiochip_error;
-> +	} else {
-> +		clk = NULL;
-> +	}
->  
->  	pctl->irq = devm_kcalloc(&pdev->dev,
->  				 pctl->desc->irq_banks,
-> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  	return 0;
->  
->  clk_error:
-> -	clk_disable_unprepare(clk);
-> +	if (clk)
-> +		clk_disable_unprepare(clk);
->  gpiochip_error:
->  	gpiochip_remove(pctl->chip);
->  	return ret;
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> index 11b128f54ed2..ccb6230f0bb5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->  	unsigned			irq_bank_base;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
-> +	bool				without_bus_gate;
->  };
->  
->  struct sunxi_pinctrl_function {
-> 
+> Shouldn't we do this for tegra_powergate_reset_deassert() failure as well then?
+> Also in case of tegra_powergate_enable_clocks() failure we should probably jump
+> to powergate_off because tegra_powergate_enable_clocks() will disable the
+> already enabled clocks on failure.
+
+Yes that looks like a bug in the existing code and we should fix that.
+Good catch.
+
+Jon
+
+-- 
+nvpublic
