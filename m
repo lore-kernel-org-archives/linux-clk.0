@@ -1,59 +1,62 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: [PATCH v2 22/34] clk: qcom: ipq4019: change clk_cpu_div_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:48 +0000
-Message-Id: <1514835300-381-8-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 32/37] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+Date: Thu, 25 Jan 2018 18:03:06 +0000
+Message-Id: <1516903391-30467-33-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+This patch adds watchdog support to the r8a7745 SoC dtsi.
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
-
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>
-Cc: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 804231b..943acbc 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1268,7 +1268,7 @@ static unsigned long clk_cpu_div_round_rate(struct clk_hw *hw,
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 9009056..bf24c2e4 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -322,6 +322,16 @@
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
  
- 	f = qcom_find_freq(pll->freq_tbl, rate);
- 	if (!f)
--		return -EINVAL;
-+		return 0;
- 
- 	p_hw = clk_hw_get_parent_by_index(hw, f->src);
- 	*p_rate = clk_hw_get_rate(p_hw);
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7745-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7745-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
 -- 
 2.7.4
