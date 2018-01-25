@@ -1,26 +1,56 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUURgzHV_jsU0o9DGuyCjhd8j7iU_Fs86GY2pEEx+Xh9g@mail.gmail.com>
-References: <1516106529-19703-1-git-send-email-fabio.estevam@nxp.com> <CAMuHMdUURgzHV_jsU0o9DGuyCjhd8j7iU_Fs86GY2pEEx+Xh9g@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 16 Jan 2018 12:51:52 -0200
-Message-ID: <CAOMZO5CeHtivG_7iF+=g=tX7BzepiVrBctMPfbEHfCs8D4Dd1g@mail.gmail.com>
-Subject: Re: [PATCH] clk: Print the clock name in the warnings
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 02/37] ARM: dts: r8a7743: Adjust SMP routine size
+Date: Thu, 25 Jan 2018 18:02:36 +0000
+Message-Id: <1516903391-30467-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-On Tue, Jan 16, 2018 at 11:19 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> This means we still have to look into the sources, to find out which
-> condition triggered. So what about improving the warning messages,
-> cfr. e.g. below?
-
-Thanks for your suggestion. I did it like this in v2.
-
-Thanks
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 47b62f6..d5834b6 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -973,7 +973,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x64>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
