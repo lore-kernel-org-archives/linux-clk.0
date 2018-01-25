@@ -1,94 +1,62 @@
-Return-Path: <fabio.estevam@nxp.com>
-From: Fabio Estevam <fabio.estevam@nxp.com>
-To: <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <geert@linux-m68k.org>, <festevam@gmail.com>,
-	<linux-clk@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH v2] clk: Print the clock name and warning cause
-Date: Tue, 16 Jan 2018 10:50:34 -0200
-Message-ID: <1516107034-6600-1-git-send-email-fabio.estevam@nxp.com>
-Return-Path: fabio.estevam@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 35/37] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
+Date: Thu, 25 Jan 2018 18:03:09 +0000
+Message-Id: <1516903391-30467-36-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When getting the clock related warnings, it is useful to know what
-is the clock name that is causing the problem and the cause of the
-problem.
+This commit adds watchdog support to the r8a7794 dtsi.
 
-Add the clock name and the the warning cause to the log, so that the
-output becomes clearer like this:
-
-[    2.383969] ------------[ cut here ]------------
-[    2.388720] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:814 clk_core_disable+0xd4/0xf8
-[    2.396658] uart4_ipg_gate already disabled
-
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-Changes since v1:
-- Also add the warning cause (Geert)
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- drivers/clk/clk.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9..c95dc09 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -548,7 +548,8 @@ static void clk_core_rate_unprotect(struct clk_core *core)
- 	if (!core)
- 		return;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 9309887..5f9e6d3 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -251,6 +251,16 @@
+ 			reg = <0 0xe6160000 0 0x0100>;
+ 		};
  
--	if (WARN_ON(core->protect_count == 0))
-+	if (WARN(core->protect_count == 0,
-+	    "%s already unprotected\n", core->name))
- 		return;
- 
- 	if (--core->protect_count > 0)
-@@ -681,16 +682,18 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (!core)
- 		return;
- 
--	if (WARN_ON(core->prepare_count == 0))
-+	if (WARN(core->prepare_count == 0,
-+	    "%s already unprepared\n", core->name))
- 		return;
- 
--	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
-+	if (WARN(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL,
-+	    "Unpreparing critical %s\n", core->name))
- 		return;
- 
- 	if (--core->prepare_count > 0)
- 		return;
- 
--	WARN_ON(core->enable_count > 0);
-+	WARN(core->enable_count > 0, "Unpreparing enabled %s\n", core->name);
- 
- 	trace_clk_unprepare(core);
- 
-@@ -808,10 +811,11 @@ static void clk_core_disable(struct clk_core *core)
- 	if (!core)
- 		return;
- 
--	if (WARN_ON(core->enable_count == 0))
-+	if (WARN(core->enable_count == 0, "%s already disabled\n", core->name))
- 		return;
- 
--	if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
-+	if (WARN(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL,
-+	    "Disabling critical %s\n", core->name))
- 		return;
- 
- 	if (--core->enable_count > 0)
-@@ -866,7 +870,8 @@ static int clk_core_enable(struct clk_core *core)
- 	if (!core)
- 		return 0;
- 
--	if (WARN_ON(core->prepare_count == 0))
-+	if (WARN(core->prepare_count == 0,
-+	    "Enabling unprepared %s\n", core->name))
- 		return -ESHUTDOWN;
- 
- 	if (core->enable_count == 0) {
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7794-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7794-sysc";
+ 			reg = <0 0xe6180000 0 0x0200>;
 -- 
 2.7.4
