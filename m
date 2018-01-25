@@ -1,53 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:45598 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751034AbeABSKt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 13:10:49 -0500
-Date: Tue, 2 Jan 2018 10:10:46 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [clk:clk-next 20/21] drivers/clk/sprd/div.c:42:9: error: too few
- arguments to function 'divider_recalc_rate'
-Message-ID: <20180102181046.GE7997@codeaurora.org>
-References: <201712290803.E0awnApy%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <201712290803.E0awnApy%fengguang.wu@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 36/37] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+Date: Thu, 25 Jan 2018 18:03:10 +0000
+Message-Id: <1516903391-30467-37-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/29, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> head:   e717a189b1bc52a60f8c1177f277e4b6c2f0ae53
-> commit: 4508d70e6a5e9ad186dd4110e59f33d20483eb31 [20/21] Merge branch 'clk-divider-container' into clk-next
-> config: arm64-defconfig (attached as .config)
-> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 4508d70e6a5e9ad186dd4110e59f33d20483eb31
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm64 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    drivers/clk/sprd/div.c: In function 'sprd_div_helper_recalc_rate':
-> >> drivers/clk/sprd/div.c:42:9: error: too few arguments to function 'divider_recalc_rate'
->      return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
->             ^~~~~~~~~~~~~~~~~~~
->    In file included from drivers/clk/sprd/div.c:8:0:
->    include/linux/clk-provider.h:413:15: note: declared here
->     unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
->                   ^~~~~~~~~~~~~~~~~~~
-> >> drivers/clk/sprd/div.c:43:1: warning: control reaches end of non-void function [-Wreturn-type]
->     }
->     ^
-> 
+This patch enables the watchdog from within the iwg20m SoM dtsi.
 
-Thanks. Fixed up.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 1d3e950..d364685 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -91,6 +91,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
