@@ -1,109 +1,79 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/9] clk: meson: add the gxl hdmi pll
-Date: Fri, 19 Jan 2018 16:55:26 +0100
-Message-Id: <20180119155529.11532-7-jbrunet@baylibre.com>
-In-Reply-To: <20180119155529.11532-1-jbrunet@baylibre.com>
-References: <20180119155529.11532-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11271 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751315AbeAYKGb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 05:06:31 -0500
+Date: Thu, 25 Jan 2018 12:06:25 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+Message-ID: <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+ <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The hdmi pll used in the gxl family is actually different from the gxbb
-one. The register layout is completely different, which explain why the
-hdmi pll rate has always been rubbish on the gxl family.
+On Wed, Jan 24, 2018 at 10:43:45PM +0000, Jon Hunter wrote:
+> 
+> On 23/01/18 09:22, Peter De Schrijver wrote:
+> > Apply the memory built-in self test work around when ungating certain
+> > Tegra210 power domains.
+> 
+> Nit-pick .. typo in $subject.
+> 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/soc/tegra/pmc.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> > index ce62a47..c4eff4b 100644
+> > --- a/drivers/soc/tegra/pmc.c
+> > +++ b/drivers/soc/tegra/pmc.c
+> > @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
+> >  
+> >  	bool has_tsense_reset;
+> >  	bool has_gpu_clamps;
+> > +	bool needs_mbist_war;
+> >  
+> >  	const struct tegra_io_pad_soc *io_pads;
+> >  	unsigned int num_io_pads;
+> > @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+> >  
+> >  	usleep_range(10, 20);
+> >  
+> > +	if (pg->pmc->soc->needs_mbist_war)
+> > +		tegra210_clk_handle_mbist_war(pg->id);
+> > +
+> 
+> Be good if we could return an error from the above function.
+> 
 
-Adding the correct register field is the first part of the fix to get a
-correct rate out the hdmi pll
+We need to also undo whatever we did before then. 
 
-Fixes: 0d48fc558d01 ("clk: meson-gxbb: Add GXL/GXM GP0 Variant")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index cf083a1906d1..f74ed52e2673 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -253,6 +253,52 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
- 	},
- };
- 
-+static struct meson_clk_pll gxl_hdmi_pll = {
-+	.m = {
-+		.reg_off = HHI_HDMI_PLL_CNTL,
-+		.shift   = 0,
-+		.width   = 9,
-+	},
-+	.n = {
-+		.reg_off = HHI_HDMI_PLL_CNTL,
-+		.shift   = 9,
-+		.width   = 5,
-+	},
-+	.frac = {
-+		/*
-+		 * On gxl, there is a register shift due to HHI_HDMI_PLL_CNTL1
-+		 * which does not exist on gxbb, so we compute the register
-+		 * offset based on the PLL base to get it right
-+		 */
-+		.reg_off = HHI_HDMI_PLL_CNTL + 4,
-+		.shift   = 0,
-+		.width   = 12,
-+	},
-+	.od = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 21,
-+		.width   = 2,
-+	},
-+	.od2 = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 23,
-+		.width   = 2,
-+	},
-+	.od3 = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 19,
-+		.width   = 2,
-+	},
-+	.lock = &meson_clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll",
-+		.ops = &meson_clk_pll_ro_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
- static struct meson_clk_pll gxbb_sys_pll = {
- 	.m = {
- 		.reg_off = HHI_SYS_PLL_CNTL,
-@@ -1520,7 +1566,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 	.hws = {
- 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
--		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
-+		[CLKID_HDMI_PLL]	    = &gxl_hdmi_pll.hw,
- 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
- 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
- 		[CLKID_FCLK_DIV3]	    = &gxbb_fclk_div3.hw,
-@@ -1675,7 +1721,7 @@ static struct meson_clk_pll *const gxbb_clk_plls[] = {
- 
- static struct meson_clk_pll *const gxl_clk_plls[] = {
- 	&gxbb_fixed_pll,
--	&gxbb_hdmi_pll,
-+	&gxl_hdmi_pll,
- 	&gxbb_sys_pll,
- 	&gxl_gp0_pll,
- };
--- 
-2.14.3
+> >  	if (disable_clocks)
+> >  		tegra_powergate_disable_clocks(pg);
+> >  
+> > @@ -1815,6 +1819,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+> >  	.cpu_powergates = tegra210_cpu_powergates,
+> >  	.has_tsense_reset = true,
+> >  	.has_gpu_clamps = true,
+> > +	.needs_mbist_war = true,
+> >  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+> >  	.io_pads = tegra210_io_pads,
+> >  	.regs = &tegra20_pmc_regs,
+> > 
+> 
+> Otherwise looks good to me.
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
