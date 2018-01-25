@@ -1,60 +1,150 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v2 31/34] clk: at91: change round_rate() return logic
-Date: Mon,  1 Jan 2018 19:34:57 +0000
-Message-Id: <1514835300-381-17-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:60255 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751312AbeAYOOP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 09:14:15 -0500
+Date: Thu, 25 Jan 2018 15:14:07 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] sh: clk: Relax clk rate match test
+Message-ID: <20180125141407.GH17416@w540>
+References: <1516879493-24637-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVZpAB+Xu4trs0Eaiygk1WD7DPzKr3ehF-kugB5Fbps2g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdVZpAB+Xu4trs0Eaiygk1WD7DPzKr3ehF-kugB5Fbps2g@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Hi Geert,
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+On Thu, Jan 25, 2018 at 02:53:41PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> CC linux-clk (yes I know this is about the legacy SH clock framework, but
+> the public API is/should be the same)
+>
+> On Thu, Jan 25, 2018 at 12:24 PM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > When asking for a clk rate to be set, the sh core clock matches only
+> > exact rate values against the calculated frequency table entries. If the
+> > rate does not match exactly the test fails, and the whole frequency
+> > table is walked, resulting in selection of the last entry, corresponding to
+> > the lowest available clock rate.
+>
+> IIUIC, the code does not select the last entry, but returns an error code,
+> which is propagated all the way up?
+>
+> > Ie. when asking for a 10MHz clock rate on div6 clocks (ie. "video_clk" line),
+> > the calculated clock frequency 10088572 Hz gets ignored, and the clock is
+> > actually set to 5201920 Hz, which is the last available entry of the frequencies
+> > table.
+>
+> Perhaps 5201920 is just the default (or old value)?
+>
+> > Relax the clock frequency match test, allowing selection of clock rates
+> > immediately slower than the required one.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > ---
+> > Hello renesas lists,
+> >
+> > I'm now working on handling frame rate for the ov7720 image sensor to have that
+> > driver accepted as part of v4l2. The sensor is installed on on Migo-R board.
+> > In order to properly calculate pixel clock and the framerate I noticed the
+> > clock signal fed to the sensor from the SH7722 chip was always the lowest
+> > available one.
+> >
+> > This patch fixes the issues and allows me to properly select which clock
+> > frequency supply to the sensor, which according to datasheet does not support
+> > input clock frequencies slower than 10MHz (but works anyhow).
+> >
+> > As all patches for SH architecture I wonder where they should be picked up from,
+> > as SH seems not maintained at the moment.
+> >
+> > Thanks
+> >    j
+> >
+> > ---
+> >  drivers/sh/clk/core.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
+> > index 92863e3..d2cb94c 100644
+> > --- a/drivers/sh/clk/core.c
+> > +++ b/drivers/sh/clk/core.c
+> > @@ -198,9 +198,12 @@ int clk_rate_table_find(struct clk *clk,
+> >  {
+> >         struct cpufreq_frequency_table *pos;
+> >
+> > -       cpufreq_for_each_valid_entry(pos, freq_table)
+> > -               if (pos->frequency == rate)
+> > -                       return pos - freq_table;
+> > +       cpufreq_for_each_valid_entry(pos, freq_table) {
+> > +               if (pos->frequency > rate)
+> > +                       continue;
+>
+> This assumes all frequency tables are sorted.
+>
+> Shouldn't you pick the closest frequency?
+>
+> However, that's what clk_rate_table_round() does, which is called from
+> sh_clk_div_round_rate(), and thus already used as .round_rate:
+>
+>     static struct sh_clk_ops sh_clk_div_enable_clk_ops = {
+>             .recalc         = sh_clk_div_recalc,
+>             .set_rate       = sh_clk_div_set_rate,
+>             .round_rate     = sh_clk_div_round_rate,
+>             .enable         = sh_clk_div_enable,
+>             .disable        = sh_clk_div_disable,
+>     };
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/at91/clk-audio-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Does this implies clock rates should be set using clk_round_rate() and
+not clk_set_rate() if I understand this right?
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index 56227cb..48231e3 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -278,7 +278,7 @@ static unsigned long clk_audio_pll_pad_round_rate(struct clk_hw *hw,
- 						  unsigned long *parent_rate)
- {
- 	struct clk_hw *pclk = clk_hw_get_parent(hw);
--	long best_rate = -EINVAL;
-+	unsigned long best_rate = 0;
- 	unsigned long best_parent_rate;
- 	unsigned long tmp_qd;
- 	u32 div;
-@@ -330,7 +330,7 @@ static unsigned long clk_audio_pll_pmc_round_rate(struct clk_hw *hw,
- 						  unsigned long *parent_rate)
- {
- 	struct clk_hw *pclk = clk_hw_get_parent(hw);
--	long best_rate = -EINVAL;
-+	unsigned long best_rate = 0;
- 	unsigned long best_parent_rate = 0;
- 	u32 tmp_qd = 0, div;
- 	long tmp_rate;
--- 
-2.7.4
+>
+> (clk_rate_table_find() is called from sh_clk_div_set_rate())
+>
+> Or are you supposed to ask for the exact clock rate? Where does the 10 MHz
+> come from?
+>
+
+>From board initialization code, in order to provide a valid input
+clock to OV7720 sensor.
+
+The 10MHz seems like a workaround put in place to remove some
+image quality issues, according to the comment:
+https://elixir.free-electrons.com/linux/v4.15-rc9/source/arch/sh/boards/mach-migor/setup.c#L311
+
+Thanks
+   j
+
+> > +
+> > +               return pos - freq_table;
+> > +       }
+> >
+> >         return -ENOENT;
+> >  }
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
