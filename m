@@ -1,153 +1,126 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-2-git-send-email-david@lechnology.com>
- <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
- <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
- <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <6ecfacde-64e4-0e9e-a44f-a3f28b3109dd@lechnology.com>
-Date: Wed, 10 Jan 2018 20:54:12 -0600
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1516879493-24637-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1516879493-24637-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Jan 2018 14:53:41 +0100
+Message-ID: <CAMuHMdVZpAB+Xu4trs0Eaiygk1WD7DPzKr3ehF-kugB5Fbps2g@mail.gmail.com>
+Subject: Re: [PATCH] sh: clk: Relax clk rate match test
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/10/2018 12:52 PM, Sekhar Nori wrote:
-> On Wednesday 10 January 2018 08:31 AM, David Lechner wrote:
->> On 01/09/2018 06:35 AM, Sekhar Nori wrote:
->>> On Monday 08 January 2018 09:59 PM, David Lechner wrote:
->>>> On 01/08/2018 08:00 AM, Sekhar Nori wrote:
->>>>> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
-> 
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..99bf5da
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>>>> @@ -0,0 +1,47 @@
->>>>>> +Binding for TI DaVinci PLL Controllers
->>>>>> +
->>>>>> +The PLL provides clocks to most of the components on the SoC. In
->>>>>> addition
->>>>>> +to the PLL itself, this controller also contains bypasses, gates,
->>>>>> dividers,
->>>>>> +an multiplexers for various clock signals.
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible: shall be one of:
->>>>>> +    - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
->>>>>> +    - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
->>>>>
->>>>> These PLLs are same IP so they should use the same compatible. You can
->>>>> initialize both PLLs for DA850 based on the same compatible.
->>>>>
->>>>
->>>> But they are not exactly the same. For example, PLL0 has 7 PLLDIV clocks
->>>> while
->>>> PLL1 only has 3. PLL0 has PREDIV while PLL1 does not. PLL0 has certain
->>>> SYSCLKs
->>>> that are fixed-ratio but PLL1 does not have any of these. There are even
->>>> more
->>>> differences, but these are the ones we are actually using.
->>>
->>> We need each element of the PLLC to be modeled individually as a clock
->>> node.
->>
->> I gave this a good think while I have been working on this series
->> and I came to the conclusion that we really don't need to do this.
->> These components are all internal to the PLL IP block, so the
->> compatible string is enough to tell us what we have. They only
->> thing we need really in the device tree bindings are the connections
->> that are external to the IP block.
->>
->>
->>> That is, PLL should only model the multiplier, the dividers
->>> including post and prediv should be modeled as divider clocks (hopefully
->>> being able to use the clk-divider.c library). The sysclks can be
->>> fixed-factor-clock type clocks.
->>>
->>> Without this flexible mechanism, we cannot (at least later) model things
->>> like DIV4.5 clock which is the only clock which derives from the output
->>> of PLL multiplier before the post divider is applied.
->>>
->>> Since with DT there are are no retakes, we need to get this right the
->>> first time and modifying later will not be an option.
->>>
->>
->> So, the full device tree binding would look something like this:
->>
->> +
->> +    pll0: clock-controller@11000 {
->> +        compatible = "ti,da850-pll0";
->> +        reg = <0x11000 0x1000>;
->> +        clocks = <&ref_clk>, <&pll1_sysclk 3>, <&pll1_obsclk>;
->> +        clock-names = "oscin", pll1_sysclk3", "pll1_osbclk";
->> +        oscin-square-wave;
->> +
->> +        pll0_sysclk: sysclk {
->> +            #clock-cells = <1>;
->> +        };
->> +
->> +        pll0_auxclk: auxclk {
->> +            #clock-cells = <0>;
->> +        };
->> +
->> +        pll0_div45: div4.5 {
->> +            #clock-cells = <0>;
->> +        };
->> +
->> +        pll0_obsclk: obsclk {
->> +            #clock-cells = <0>;
->> +            assigned-clocks = <&pll0_sysclk 1>;
->> +            assigned-clock-names = "ocsrc";
->> +        };
->> +    };
-> 
-> Well, I guess this will work as well. And I am probably biased towards
-> the style I mentioned because AM335x and other TI OMAP processors
-> follow that.
-> 
-> To make it easy to review that we have all bases covered, can you model
-> the all PLLC0 and PLLC1 (input and output) clocks for the next version?
+Hi Jacopo,
 
-Sure thing.
+CC linux-clk (yes I know this is about the legacy SH clock framework, but
+the public API is/should be the same)
 
-> 
->>
->> There are three clocks coming into the IP block and there are 11 clocks
->> going out (sysclk is 7 clocks). And you can specify the board-specific
->> configuration, like having the "oscin-square-wave" flag when a square wave
->> is used instead of a crystal oscillator and you can assign the multiplexer
-> 
-> Ideally the OSCIN vs CLKIN selection should be another clock mux whose
-> output is one of the input clocks to PLL controller. But I can see the
-> difficulty in handling that as the mux itself is controlled by the PLL
-> controller.
-> 
->> input that will be used by obsclk. (And, this binding is totally compatible
->> with the binding I have already proposed - although, I see now it would
->> be better to go ahead and add the clocks-names property.)
-> 
-> Also, please add the oscin-square-wave to the binding definition too.
-> 
-> For the benefit of others reviewing and not familiar with the hardware,
-> the users guide for DA850 is here:
-> http://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
-> 
-> and the PLL block diagram is on page 143 (Figure 8-1).
-> 
-> Thanks,
-> Sekhar
-> 
+On Thu, Jan 25, 2018 at 12:24 PM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> When asking for a clk rate to be set, the sh core clock matches only
+> exact rate values against the calculated frequency table entries. If the
+> rate does not match exactly the test fails, and the whole frequency
+> table is walked, resulting in selection of the last entry, corresponding to
+> the lowest available clock rate.
+
+IIUIC, the code does not select the last entry, but returns an error code,
+which is propagated all the way up?
+
+> Ie. when asking for a 10MHz clock rate on div6 clocks (ie. "video_clk" line),
+> the calculated clock frequency 10088572 Hz gets ignored, and the clock is
+> actually set to 5201920 Hz, which is the last available entry of the frequencies
+> table.
+
+Perhaps 5201920 is just the default (or old value)?
+
+> Relax the clock frequency match test, allowing selection of clock rates
+> immediately slower than the required one.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> ---
+> Hello renesas lists,
+>
+> I'm now working on handling frame rate for the ov7720 image sensor to have that
+> driver accepted as part of v4l2. The sensor is installed on on Migo-R board.
+> In order to properly calculate pixel clock and the framerate I noticed the
+> clock signal fed to the sensor from the SH7722 chip was always the lowest
+> available one.
+>
+> This patch fixes the issues and allows me to properly select which clock
+> frequency supply to the sensor, which according to datasheet does not support
+> input clock frequencies slower than 10MHz (but works anyhow).
+>
+> As all patches for SH architecture I wonder where they should be picked up from,
+> as SH seems not maintained at the moment.
+>
+> Thanks
+>    j
+>
+> ---
+>  drivers/sh/clk/core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
+> index 92863e3..d2cb94c 100644
+> --- a/drivers/sh/clk/core.c
+> +++ b/drivers/sh/clk/core.c
+> @@ -198,9 +198,12 @@ int clk_rate_table_find(struct clk *clk,
+>  {
+>         struct cpufreq_frequency_table *pos;
+>
+> -       cpufreq_for_each_valid_entry(pos, freq_table)
+> -               if (pos->frequency == rate)
+> -                       return pos - freq_table;
+> +       cpufreq_for_each_valid_entry(pos, freq_table) {
+> +               if (pos->frequency > rate)
+> +                       continue;
+
+This assumes all frequency tables are sorted.
+
+Shouldn't you pick the closest frequency?
+
+However, that's what clk_rate_table_round() does, which is called from
+sh_clk_div_round_rate(), and thus already used as .round_rate:
+
+    static struct sh_clk_ops sh_clk_div_enable_clk_ops = {
+            .recalc         = sh_clk_div_recalc,
+            .set_rate       = sh_clk_div_set_rate,
+            .round_rate     = sh_clk_div_round_rate,
+            .enable         = sh_clk_div_enable,
+            .disable        = sh_clk_div_disable,
+    };
+
+(clk_rate_table_find() is called from sh_clk_div_set_rate())
+
+Or are you supposed to ask for the exact clock rate? Where does the 10 MHz
+come from?
+
+> +
+> +               return pos - freq_table;
+> +       }
+>
+>         return -ENOENT;
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
