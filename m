@@ -1,73 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:40858 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933305AbeAXNKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jan 2018 08:10:53 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
-Date: Wed, 24 Jan 2018 21:10:34 +0800
-Message-ID: <14593819.uISRktVE4V@ice-x220i>
-In-Reply-To: <20180122121435.bpayxk4uzfqbhqse@flea.lan>
-References: <20180119231735.61504-1-icenowy@aosc.io> <20180122121435.bpayxk4uzfqbhqse@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 06/37] ARM: dts: r8a7792: Adjust SMP routine size
+Date: Thu, 25 Jan 2018 18:02:40 +0000
+Message-Id: <1516903391-30467-7-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
-> On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 SoC.
-> > 
-> > The same die is packaged differently, come with different co-packaged
-> > DRAM or shipped with different SDK; and then made many model names: F23,
-> > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs all
-> > share a common feature set and are packaged similarly (eLQFP128 for SoCs
-> > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > functionality hidden on the QFN88 models (except DRAM interface not
-> > exported), it's not clever to differentiate them. So I will use suniv as
-> > common name of all these SoCs.
-> 
-> Where is that suniv prefix coming from?
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK and 
-"arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> And you need to have a SoC in all your compatibles. This isn't about
-> being clever or not, this is just a matter of being able to accurately
-> read in a crystal ball. Or maybe it's just the same, in which case,
-> I'd really like to have a course :)
-
-Okay. I will choose to use f1c100s in my next patchset, as it's where
-it's developed. (Although I mainly refered F1C600 BSP and document)
-
-> 
-> You should really answer two questions here:
->   - Are you able to predict whether you'll find an SoC part of that
->     family in the future that derives a bit and will need a compatible
->     of its own?
->   - Are you able to predict which quirks we'll need along the way to
->     support all the SoCs you've listed there?
-> 
-> If you can't answer yes to both these questions, with a 100%
-> certainty, then you'll need a SoC name in the compatible.
-> 
-> Which doesn't prevent you from sharing as much as possible the DT like
-> we did between the A10s and the A13 for example.
-
-So the suniv-f1c100s.dtsi will still be kept empty and all peripherals known 
-should go through suniv.dtsi.
-
-> 
-> Maxime
-
-
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 268987f..7f9213c 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -341,7 +341,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x64>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
