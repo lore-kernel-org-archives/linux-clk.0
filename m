@@ -1,129 +1,261 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 16/44] clk: davinci: Add platform information for TI DM646x PSC
-Date: Sun,  7 Jan 2018 20:17:15 -0600
-Message-Id: <1515377863-20358-17-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
+References: <1516367470-24340-1-git-send-email-aisheng.dong@nxp.com> <1516367470-24340-11-git-send-email-aisheng.dong@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 25 Jan 2018 11:22:03 -0200
+Message-ID: <CAOMZO5D-qfdeMHuRWfZk9+tLoSNP6GLbMG4_t2V0bM-xJJDZ8Q@mail.gmail.com>
+Subject: Re: [PATCH V3 10/10] add imx7ulp support
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Ping Bai <ping.bai@nxp.com>,
+	Yongcai Huang <Anson.Huang@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com,
+	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PSC clocks on TI
-DaVinci 646x based systems.
+On Fri, Jan 19, 2018 at 11:11 AM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/davinci/Makefile     |  1 +
- drivers/clk/davinci/psc-dm646x.c | 68 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h      |  1 +
- 3 files changed, 70 insertions(+)
- create mode 100644 drivers/clk/davinci/psc-dm646x.c
+Please always add a commit log.
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index a20e379..6c388d4 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -15,4 +15,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
- obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= psc-dm646x.o
- endif
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-new file mode 100644
-index 0000000..cbc3976
---- /dev/null
-+++ b/drivers/clk/davinci/psc-dm646x.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PSC clock descriptions for TI DaVinci DM646x
-+ *
-+ * Copyright (C) 2017 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "psc.h"
-+
-+static const struct davinci_psc_clk_info dm646x_psc_info[] __initconst = {
-+	LPSC(0, 0, arm, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	/* REVISIT how to disable? */
-+	LPSC(1, 0, dsp, pll1_sysclk1, LPSC_ALWAYS_ENABLED),
-+	LPSC(4, 0, edma_cc, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	LPSC(5, 0, edma_tc0, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	LPSC(6, 0, edma_tc1, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	LPSC(7, 0, edma_tc2, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	LPSC(8, 0, edma_tc3, pll1_sysclk2, LPSC_ALWAYS_ENABLED),
-+	LPSC(10, 0, ide, pll1_sysclk4, 0),
-+	LPSC(14, 0, emac, pll1_sysclk3, 0),
-+	LPSC(16, 0, vpif0, ref_clk, LPSC_ALWAYS_ENABLED),
-+	LPSC(17, 0, vpif1, ref_clk, LPSC_ALWAYS_ENABLED),
-+	LPSC(21, 0, aemif, pll1_sysclk3, LPSC_ALWAYS_ENABLED),
-+	LPSC(22, 0, mcasp0, pll1_sysclk3, 0),
-+	LPSC(23, 0, mcasp1, pll1_sysclk3, 0),
-+	LPSC(26, 0, uart0, aux_clkin, 0),
-+	LPSC(27, 0, uart1, aux_clkin, 0),
-+	LPSC(28, 0, uart2, aux_clkin, 0),
-+	/* REVIST: disabling hangs system */
-+	LPSC(29, 0, pwm0, pll1_sysclk3, LPSC_ALWAYS_ENABLED),
-+	/* REVIST: disabling hangs system */
-+	LPSC(30, 0, pwm1, pll1_sysclk3, LPSC_ALWAYS_ENABLED),
-+	LPSC(31, 0, i2c, pll1_sysclk3, 0),
-+	LPSC(33, 0, gpio, pll1_sysclk3, 0),
-+	LPSC(34, 0, timer0, pll1_sysclk3, 0),
-+	LPSC(35, 0, timer1, pll1_sysclk3, 0),
-+	{ }
-+};
-+
-+void __init dm646x_psc_clk_init(void __iomem *psc)
-+{
-+	struct clk_onecell_data *clk_data;
-+
-+	clk_data = davinci_psc_register_clocks(psc, dm646x_psc_info, 41);
-+	if (!clk_data)
-+		return;
-+
-+	clk_register_clkdev(clk_data->clks[0], "arm", NULL);
-+	clk_register_clkdev(clk_data->clks[10], NULL, "palm_bk3710");
-+	clk_register_clkdev(clk_data->clks[14], NULL, "davinci_emac.1");
-+	clk_register_clkdev(clk_data->clks[14], "fck", "davinci_mdio.0");
-+	clk_register_clkdev(clk_data->clks[21], "aemif", NULL);
-+	clk_register_clkdev(clk_data->clks[22], NULL, "davinci-mcasp.0");
-+	clk_register_clkdev(clk_data->clks[23], NULL, "davinci-mcasp.1");
-+	clk_register_clkdev(clk_data->clks[26], NULL, "serial8250.0");
-+	clk_register_clkdev(clk_data->clks[27], NULL, "serial8250.1");
-+	clk_register_clkdev(clk_data->clks[28], NULL, "serial8250.2");
-+	clk_register_clkdev(clk_data->clks[31], NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk_data->clks[33], "gpio", NULL);
-+	clk_register_clkdev(clk_data->clks[34], "timer0", NULL);
-+
-+	clk_free_onecell_data(clk_data);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 6d2896d..3810ea3 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -21,5 +21,6 @@ void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
- void dm355_psc_clk_init(void __iomem *psc);
- void dm365_psc_clk_init(void __iomem *psc);
- void dm644x_psc_clk_init(void __iomem *psc);
-+void dm646x_psc_clk_init(void __iomem *psc);
- 
- #endif /* __LINUX_CLK_DAVINCI_H__ */
--- 
-2.7.4
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+> ---
+>  arch/arm/boot/dts/Makefile           |   2 +
+>  arch/arm/boot/dts/imx7ulp-evk.dts    |  87 +++++++++++++++
+>  arch/arm/boot/dts/imx7ulp.dtsi       | 202 +++++++++++++++++++++++++++++++++++
+>  arch/arm/configs/imx_v6_v7_defconfig |  16 ++-
+>  arch/arm/mach-imx/Kconfig            |   9 ++
+>  arch/arm/mach-imx/Makefile           |   1 +
+>  arch/arm/mach-imx/common.h           |   1 +
+>  arch/arm/mach-imx/cpu.c              |   3 +
+>  arch/arm/mach-imx/mach-imx7ulp.c     |  37 +++++++
+>  arch/arm/mach-imx/mxc.h              |   1 +
+>  arch/arm/mach-imx/pm-imx7ulp.c       |  32 ++++++
+>  11 files changed, 381 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/imx7ulp-evk.dts
+>  create mode 100644 arch/arm/boot/dts/imx7ulp.dtsi
+>  create mode 100644 arch/arm/mach-imx/mach-imx7ulp.c
+>  create mode 100644 arch/arm/mach-imx/pm-imx7ulp.c
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index d0381e9..3257e71 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -519,6 +519,8 @@ dtb-$(CONFIG_SOC_IMX7D) += \
+>         imx7d-sdb-sht11.dtb \
+>         imx7s-colibri-eval-v3.dtb \
+>         imx7s-warp.dtb
+> +dtb-$(CONFIG_SOC_IMX7ULP) += \
+> +       imx7ulp-evk.dtb
+>  dtb-$(CONFIG_SOC_LS1021A) += \
+>         ls1021a-qds.dtb \
+>         ls1021a-twr.dtb
+> diff --git a/arch/arm/boot/dts/imx7ulp-evk.dts b/arch/arm/boot/dts/imx7ulp-evk.dts
+> new file mode 100644
+> index 0000000..cc4e6ef
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx7ulp-evk.dts
+> @@ -0,0 +1,87 @@
+> +/*
+> + * Copyright 2017 NXP
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+
+Please use SPDX identifier.
+
+
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx7ulp.dtsi"
+> +
+> +/ {
+> +       model = "NXP i.MX7ULP EVK";
+> +       compatible = "fsl,imx7ulp-evk", "fsl,imx7ulp", "Generic DT based system";
+
+Please remove the '"Generic DT based system" entry.
+
+
+> +
+> +       chosen {
+> +               bootargs = "console=ttyLP0,115200 earlycon=lpuart32,0x402D0010,115200";
+> +               stdout-path = &lpuart4;
+
+Better remove bootargs.
+
+
+> +       };
+> +
+> +       memory {
+
+memory@60000000 , otherwise building with W=1 will give you warning.
+
+Please make sure that you don't get dtc warnings with W=1.
+
+> +               device_type = "memory";
+> +               reg = <0x60000000 0x40000000>;
+> +       };
+> +};
+> +
+> +&lpuart4 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_lpuart4>;
+> +       status = "okay";
+> +};
+> +
+> +&usdhc0 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <>;
+> +       pinctrl-0 = <&pinctrl_usdhc0_cmd_data>, <&pinctrl_usdhc0_clk>;
+> +//                 <&pinctrl_usdhc0_cd>, <&pinctrl_usdhc0_rst>;
+
+Just remove the line instead of commenting it.
+
+> diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
+> new file mode 100644
+> index 0000000..05410ba
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx7ulp.dtsi
+> @@ -0,0 +1,202 @@
+> +/*
+> + * Copyright NXP
+
+No year information?
+
+
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+
+
+Please use SPDX identifier instead.
+
+> diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+> index 0d44949..3ce8ff6 100644
+> --- a/arch/arm/configs/imx_v6_v7_defconfig
+> +++ b/arch/arm/configs/imx_v6_v7_defconfig
+> @@ -41,6 +41,7 @@ CONFIG_SOC_IMX6SL=y
+>  CONFIG_SOC_IMX6SX=y
+>  CONFIG_SOC_IMX6UL=y
+>  CONFIG_SOC_IMX7D=y
+> +CONFIG_SOC_IMX7ULP=y
+
+This should be part of a separate patch.
+
+
+>  CONFIG_SOC_VF610=y
+>  CONFIG_PCI=y
+>  CONFIG_PCI_MSI=y
+> @@ -48,9 +49,7 @@ CONFIG_PCI_IMX6=y
+>  CONFIG_SMP=y
+>  CONFIG_ARM_PSCI=y
+>  CONFIG_PREEMPT_VOLUNTARY=y
+> -CONFIG_AEABI=y
+>  CONFIG_HIGHMEM=y
+> -CONFIG_CMA=y
+>  CONFIG_FORCE_MAX_ZONEORDER=14
+>  CONFIG_CMDLINE="noinitrd console=ttymxc0,115200"
+>  CONFIG_KEXEC=y
+> @@ -81,7 +80,6 @@ CONFIG_CAN_FLEXCAN=y
+>  CONFIG_BT=y
+>  CONFIG_BT_HCIUART=y
+>  CONFIG_BT_HCIUART_H4=y
+> -CONFIG_BT_HCIUART_LL=y
+>  CONFIG_CFG80211=y
+>  CONFIG_CFG80211_WEXT=y
+>  CONFIG_MAC80211=y
+> @@ -90,7 +88,6 @@ CONFIG_RFKILL_INPUT=y
+>  CONFIG_DEVTMPFS=y
+>  CONFIG_DEVTMPFS_MOUNT=y
+>  # CONFIG_STANDALONE is not set
+> -CONFIG_DMA_CMA=y
+>  CONFIG_CMA_SIZE_MBYTES=64
+>  CONFIG_IMX_WEIM=y
+>  CONFIG_CONNECTOR=y
+> @@ -167,9 +164,9 @@ CONFIG_MOUSE_PS2_ELANTECH=y
+>  CONFIG_INPUT_TOUCHSCREEN=y
+>  CONFIG_TOUCHSCREEN_ADS7846=y
+>  CONFIG_TOUCHSCREEN_EGALAX=y
+> +CONFIG_TOUCHSCREEN_MAX11801=y
+>  CONFIG_TOUCHSCREEN_IMX6UL_TSC=y
+>  CONFIG_TOUCHSCREEN_EDT_FT5X06=y
+> -CONFIG_TOUCHSCREEN_MAX11801=y
+>  CONFIG_TOUCHSCREEN_MC13783=y
+>  CONFIG_TOUCHSCREEN_TSC2004=y
+>  CONFIG_TOUCHSCREEN_TSC2007=y
+> @@ -178,7 +175,6 @@ CONFIG_TOUCHSCREEN_SX8654=y
+>  CONFIG_TOUCHSCREEN_COLIBRI_VF50=y
+>  CONFIG_INPUT_MISC=y
+>  CONFIG_INPUT_MMA8450=y
+> -CONFIG_HID_MULTITOUCH=y
+>  CONFIG_SERIO_SERPORT=m
+>  # CONFIG_LEGACY_PTYS is not set
+>  CONFIG_SERIAL_IMX=y
+> @@ -228,13 +224,13 @@ CONFIG_REGULATOR_GPIO=y
+>  CONFIG_REGULATOR_MC13783=y
+>  CONFIG_REGULATOR_MC13892=y
+>  CONFIG_REGULATOR_PFUZE100=y
+> +CONFIG_RC_CORE=y
+> +CONFIG_RC_DEVICES=y
+> +CONFIG_IR_GPIO_CIR=y
+>  CONFIG_MEDIA_SUPPORT=y
+>  CONFIG_MEDIA_CAMERA_SUPPORT=y
+> -CONFIG_RC_CORE=y
+>  CONFIG_MEDIA_CONTROLLER=y
+>  CONFIG_VIDEO_V4L2_SUBDEV_API=y
+> -CONFIG_RC_DEVICES=y
+> -CONFIG_IR_GPIO_CIR=y
+>  CONFIG_MEDIA_USB_SUPPORT=y
+>  CONFIG_USB_VIDEO_CLASS=m
+>  CONFIG_V4L_PLATFORM_DRIVERS=y
+> @@ -245,7 +241,6 @@ CONFIG_VIDEO_CODA=m
+>  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+>  CONFIG_VIDEO_ADV7180=m
+>  CONFIG_VIDEO_OV5640=m
+> -CONFIG_SOC_CAMERA_OV2640=y
+>  CONFIG_IMX_IPUV3_CORE=y
+>  CONFIG_DRM=y
+>  CONFIG_DRM_PANEL_SIMPLE=y
+> @@ -283,6 +278,7 @@ CONFIG_SND_SOC_CS42XX8_I2C=y
+>  CONFIG_SND_SOC_TLV320AIC3X=y
+>  CONFIG_SND_SOC_WM8960=y
+>  CONFIG_SND_SIMPLE_CARD=y
+> +CONFIG_HID_MULTITOUCH=y
+
+Don't do the defconfig cleanup in the same patch.
+
+>  CONFIG_USB=y
+>  CONFIG_USB_EHCI_HCD=y
+>  CONFIG_USB_EHCI_MXC=y
+> diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+> index 782699e..54002c3 100644
+> --- a/arch/arm/mach-imx/Kconfig
+> +++ b/arch/arm/mach-imx/Kconfig
+> @@ -554,6 +554,15 @@ comment "Cortex-A/Cortex-M asymmetric multiprocessing platforms"
+>
+>  if ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
+>
+> +config SOC_IMX7ULP
+> +       bool "i.MX7ULP support"
+> +       select ARM_GIC
+> +       select CLKSRC_IMX_TPM
+> +       select HAVE_ARM_ARCH_TIMER
+> +       select PINCTRL_IMX7ULP
+> +       help
+> +         This enables support for Freescale i.MX7 Ultra Low Power processor.
+> +
+>  config SOC_VF610
+>         bool "Vybrid Family VF610 support"
+>         select ARM_GIC if ARCH_MULTI_V7
+> diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
+> index 8ff7105..69c2517 100644
+> --- a/arch/arm/mach-imx/Makefile
+> +++ b/arch/arm/mach-imx/Makefile
+
+arch/arm/mach-imx changes can also go in a different patch.
