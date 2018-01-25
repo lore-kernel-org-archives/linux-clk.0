@@ -1,117 +1,82 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 43/44] ARM: da8xx-dt: switch to device tree clocks
-Date: Sun,  7 Jan 2018 20:25:06 -0600
-Message-Id: <1515378307-23718-4-git-send-email-david@lechnology.com>
-In-Reply-To: <1515378307-23718-1-git-send-email-david@lechnology.com>
-References: <1515378307-23718-1-git-send-email-david@lechnology.com>
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 09/37] soc: renesas: rcar-rst: Add generic compatible strings
+Date: Thu, 25 Jan 2018 18:02:43 +0000
+Message-Id: <1516903391-30467-10-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes all of the clock init code from da8xx-dt.c. This includes
-all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+This commit introduces generic compatible strings to use as fallback,
+so that devices compatible with the generic implementation may avoid
+changing the driver.
 
-Note: You need to have clocks defined in your device tree or your system
-won't boot after this patch.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/mach-davinci/da8xx-dt.c | 61 +---------------------------------------
- 1 file changed, 1 insertion(+), 60 deletions(-)
+ drivers/soc/renesas/rcar-rst.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index ab199f4..d5c6cdb 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -19,69 +19,11 @@
- #include "cp_intc.h"
- #include <mach/da8xx.h>
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 3316b02..f7a0d54 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -25,8 +25,16 @@ static const struct rst_config rcar_rst_gen2 __initconst = {
+ 	.modemr = 0x60,
+ };
  
--static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
--	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
--	{}
--};
--
--static struct aemif_platform_data aemif_data = {
--	.dev_lookup = da850_aemif_auxdata_lookup,
--};
--
--static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
--	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
--	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
--		       NULL),
--	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
--	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
--	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
--	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
--	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
--	{}
--};
--
- #ifdef CONFIG_ARCH_DAVINCI_DA850
++static const struct rst_config rcar_rst_gen3 __initconst = {
++	.modemr = 0x60,
++};
++
+ static const struct of_device_id rcar_rst_matches[] __initconst = {
+-	/* RZ/G is handled like R-Car Gen2 */
++	/* generic compatible strings */
++	{ .compatible = "renesas,rcar-gen1-rst", .data = &rcar_rst_gen1 },
++	{ .compatible = "renesas,rcar-gen2-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,rcar-gen3-rst", .data = &rcar_rst_gen3 },
++	/* RZ/G */
+ 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
+ 	/* R-Car Gen1 */
+@@ -38,11 +46,11 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
+-	/* R-Car Gen3 is handled like R-Car Gen2 */
+-	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
++	/* R-Car Gen3 */
++	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
+ 	{ /* sentinel */ }
+ };
  
- static void __init da850_init_machine(void)
- {
--	/* All existing boards use 100MHz SATA refclkpn */
--	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
--
--	int ret;
--
--	ret = da8xx_register_usb20_phy_clk(false);
--	if (ret)
--		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
--			__func__, ret);
--	ret = da8xx_register_usb11_phy_clk(false);
--	if (ret)
--		pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
--			__func__, ret);
--
--	ret = da850_register_sata_refclk(sata_refclkpn);
--	if (ret)
--		pr_warn("%s: registering SATA REFCLK failed: %d",
--			__func__, ret);
--
--	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
-+	of_platform_default_populate(NULL, NULL, NULL);
- 	davinci_pm_init();
- 	pdata_quirks_init();
- }
-@@ -96,7 +38,6 @@ static const char *const da850_boards_compat[] __initconst = {
- 
- DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
- 	.map_io		= da850_init,
--	.init_time	= da850_init_time,
- 	.init_machine	= da850_init_machine,
- 	.dt_compat	= da850_boards_compat,
- 	.init_late	= davinci_init_late,
 -- 
 2.7.4
