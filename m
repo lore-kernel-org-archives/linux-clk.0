@@ -1,51 +1,55 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH 11/14] ARM: configs: stm32: Enable MMC_ARMMMCI support
-Date: Fri, 12 Jan 2018 13:16:05 +0100
-Message-ID: <1515759368-16946-12-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 13/37] ARM: dts: r8a7745: Use fallback rst compatible string
+Date: Thu, 25 Jan 2018 18:02:47 +0000
+Message-Id: <1516903391-30467-14-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Add the generic fallback compatible string for the rst node.
 
-Enable MMC_ARMMCI support to add SDIO support for
-STM32F4 and STM32F7 SoCs family
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/configs/stm32_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
-index 21b2bf7..8b64a9e 100644
---- a/arch/arm/configs/stm32_defconfig
-+++ b/arch/arm/configs/stm32_defconfig
-@@ -56,6 +56,8 @@ CONFIG_MFD_STMPE=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- # CONFIG_USB_SUPPORT is not set
-+CONFIG_MMC=y
-+CONFIG_MMC_ARMMMCI=y
- CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 32e8784..9009056 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -317,7 +317,8 @@
+ 		};
+ 
+ 		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7745-rst";
++			compatible = "renesas,r8a7745-rst",
++				     "renesas,rcar-gen2-rst";
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
+ 
 -- 
-1.9.1
+2.7.4
