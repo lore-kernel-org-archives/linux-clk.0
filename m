@@ -1,179 +1,54 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
 	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 04/12] drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-Date: Wed, 10 Jan 2018 20:25:04 +0100
-Message-Id: <20180110192512.19684-5-jernej.skrabec@siol.net>
-In-Reply-To: <20180110192512.19684-1-jernej.skrabec@siol.net>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 25/37] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN2
+Date: Thu, 25 Jan 2018 18:02:59 +0000
+Message-Id: <1516903391-30467-26-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Parts of PHY code could be useful also for custom PHYs. For example,
-Allwinner A83T has custom PHY which is probably Synopsys gen2 PHY
-with few additional memory mapped registers, so most of the Synopsys PHY
-related code could be reused.
+R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+its driver by default.
 
-Functions exported here are actually not specific to Synopsys PHYs but
-to DWC HDMI controller PHY interface. This means that even if the PHY is
-completely custom, i.e. not designed by Synopsys, exported functions can
-be useful.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 44 +++++++++++++++++++++----------
- include/drm/bridge/dw_hdmi.h              | 11 ++++++++
- 2 files changed, 41 insertions(+), 14 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 7ca14d7325b5..7d80f4b56683 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1037,19 +1037,21 @@ static void dw_hdmi_phy_enable_svsret(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SVSRET_MASK);
- }
- 
--static void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
-+void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable)
- {
- 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
- 			 HDMI_PHY_CONF0_GEN2_PDDQ_OFFSET,
- 			 HDMI_PHY_CONF0_GEN2_PDDQ_MASK);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_pddq);
- 
--static void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
-+void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable)
- {
- 	hdmi_mask_writeb(hdmi, enable, HDMI_PHY_CONF0,
- 			 HDMI_PHY_CONF0_GEN2_TXPWRON_OFFSET,
- 			 HDMI_PHY_CONF0_GEN2_TXPWRON_MASK);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_gen2_txpwron);
- 
- static void dw_hdmi_phy_sel_data_en_pol(struct dw_hdmi *hdmi, u8 enable)
- {
-@@ -1065,6 +1067,22 @@ static void dw_hdmi_phy_sel_interface_control(struct dw_hdmi *hdmi, u8 enable)
- 			 HDMI_PHY_CONF0_SELDIPIF_MASK);
- }
- 
-+void dw_hdmi_phy_reset(struct dw_hdmi *hdmi)
-+{
-+	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
-+	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
-+	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
-+}
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_reset);
-+
-+void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address)
-+{
-+	hdmi_phy_test_clear(hdmi, 1);
-+	hdmi_writeb(hdmi, address, HDMI_PHY_I2CM_SLAVE_ADDR);
-+	hdmi_phy_test_clear(hdmi, 0);
-+}
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_set_addr);
-+
- static void dw_hdmi_phy_power_off(struct dw_hdmi *hdmi)
- {
- 	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
-@@ -1203,16 +1221,11 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 	if (phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
- 
--	/* PHY reset. The reset signal is active high on Gen2 PHYs. */
--	hdmi_writeb(hdmi, HDMI_MC_PHYRSTZ_PHYRSTZ, HDMI_MC_PHYRSTZ);
--	hdmi_writeb(hdmi, 0, HDMI_MC_PHYRSTZ);
-+	dw_hdmi_phy_reset(hdmi);
- 
- 	hdmi_writeb(hdmi, HDMI_MC_HEACPHY_RST_ASSERT, HDMI_MC_HEACPHY_RST);
- 
--	hdmi_phy_test_clear(hdmi, 1);
--	hdmi_writeb(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2,
--		    HDMI_PHY_I2CM_SLAVE_ADDR);
--	hdmi_phy_test_clear(hdmi, 0);
-+	dw_hdmi_phy_i2c_set_addr(hdmi, HDMI_PHY_I2CM_SLAVE_ADDR_PHY_GEN2);
- 
- 	/* Write to the PHY as configured by the platform */
- 	if (pdata->configure_phy)
-@@ -1251,15 +1264,16 @@ static void dw_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
- 	dw_hdmi_phy_power_off(hdmi);
- }
- 
--static enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
--						      void *data)
-+enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+					       void *data)
- {
- 	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
- 		connector_status_connected : connector_status_disconnected;
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_read_hpd);
- 
--static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
--				   bool force, bool disabled, bool rxsense)
-+void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-+			    bool force, bool disabled, bool rxsense)
- {
- 	u8 old_mask = hdmi->phy_mask;
- 
-@@ -1271,8 +1285,9 @@ static void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
- 	if (old_mask != hdmi->phy_mask)
- 		hdmi_writeb(hdmi, hdmi->phy_mask, HDMI_PHY_MASK0);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_update_hpd);
- 
--static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
-+void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
- {
- 	/*
- 	 * Configure the PHY RX SENSE and HPD interrupts polarities and clear
-@@ -1291,6 +1306,7 @@ static void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data)
- 	hdmi_writeb(hdmi, ~(HDMI_IH_PHY_STAT0_HPD | HDMI_IH_PHY_STAT0_RX_SENSE),
- 		    HDMI_IH_MUTE_PHY_STAT0);
- }
-+EXPORT_SYMBOL_GPL(dw_hdmi_phy_setup_hpd);
- 
- static const struct dw_hdmi_phy_ops dw_hdmi_synopsys_phy_ops = {
- 	.init = dw_hdmi_phy_init,
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 182f83283e24..4a35e5065f6f 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -157,7 +157,18 @@ void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
- void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
- 
- /* PHY configuration */
-+void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address);
- void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- 			   unsigned char addr);
- 
-+enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
-+					       void *data);
-+void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
-+			    bool force, bool disabled, bool rxsense);
-+void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
-+
-+void dw_hdmi_phy_gen2_pddq(struct dw_hdmi *hdmi, u8 enable);
-+void dw_hdmi_phy_gen2_txpwron(struct dw_hdmi *hdmi, u8 enable);
-+void dw_hdmi_phy_reset(struct dw_hdmi *hdmi);
-+
- #endif /* __IMX_HDMI_H__ */
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 578434c..f25bd1c 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_RCAR_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_DA9063_WATCHDOG=y
++CONFIG_RENESAS_WDT_GEN2=y
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_DA9063=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
 -- 
-2.15.1
+2.7.4
