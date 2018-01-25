@@ -1,119 +1,62 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 1/6] clk: tegra: dfll registration for multiple SoCs
-Date: Wed, 24 Jan 2018 14:45:33 +0200
-Message-ID: <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 33/37] ARM: dts: r8a7790: Add watchdog support to SoC dtsi
+Date: Thu, 25 Jan 2018 18:03:07 +0000
+Message-Id: <1516903391-30467-34-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In a future patch, support for the DFLL in Tegra210 will be introduced.
-This requires support for more than 1 set of CVB and CPU max frequency
-tables.
+This commit adds watchdog support to the r8a7790 dtsi.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d359..440eb8d 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -21,6 +21,7 @@
- #include <linux/err.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <soc/tegra/fuse.h>
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 88ab60a..d10ae89 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -341,6 +341,16 @@
+ 			reg = <0 0xe6160000 0 0x0100>;
+ 		};
  
-@@ -28,8 +29,15 @@
- #include "clk-dfll.h"
- #include "cvb.h"
- 
-+struct dfll_fcpu_data {
-+	const unsigned long *cpu_max_freq_table;
-+	unsigned int cpu_max_freq_table_size;
-+	const struct cvb_table *cpu_cvb_tables;
-+	unsigned int cpu_cvb_tables_size;
-+};
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7790-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
 +
- /* Maximum CPU frequency, indexed by CPU speedo id */
--static const unsigned long cpu_max_freq_table[] = {
-+static const unsigned long tegra124_cpu_max_freq_table[] = {
- 	[0] = 2014500000UL,
- 	[1] = 2320500000UL,
- 	[2] = 2116500000UL,
-@@ -82,16 +90,36 @@
- 	},
- };
- 
-+static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
-+	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
-+	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-+	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
-+	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
-+};
-+
-+static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-+	{
-+		.compatible = "nvidia,tegra124-dfll",
-+		.data = &tegra124_dfll_fcpu_data,
-+	},
-+	{ },
-+};
-+
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- {
- 	int process_id, speedo_id, speedo_value, err;
- 	struct tegra_dfll_soc_data *soc;
-+	const struct of_device_id *of_id;
-+	const struct dfll_fcpu_data *fcpu_data;
-+
-+	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-+	fcpu_data = of_id->data;
- 
- 	process_id = tegra_sku_info.cpu_process_id;
- 	speedo_id = tegra_sku_info.cpu_speedo_id;
- 	speedo_value = tegra_sku_info.cpu_speedo_value;
- 
--	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-+	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
- 		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
- 			speedo_id);
- 		return -ENODEV;
-@@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	soc->max_freq = cpu_max_freq_table[speedo_id];
-+	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
- 
--	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
--					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-+	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-+					   fcpu_data->cpu_cvb_tables_size,
- 					   process_id, speedo_id, speedo_value,
- 					   soc->max_freq);
- 	if (IS_ERR(soc->cvb)) {
-@@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
--	{ .compatible = "nvidia,tegra124-dfll", },
--	{ },
--};
--
- static const struct dev_pm_ops tegra124_dfll_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
- 			   tegra_dfll_runtime_resume, NULL)
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7790-sysc";
+ 			reg = <0 0xe6180000 0 0x0200>;
 -- 
-1.9.1
+2.7.4
