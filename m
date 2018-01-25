@@ -1,104 +1,91 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 07/19] clk: meson: remove superseded aoclk_gate_regmap
-Date: Wed, 31 Jan 2018 19:09:33 +0100
-Message-Id: <20180131180945.18025-8-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 23/37] ARM: shmobile: rcar-gen2: Export shmobile_set_wdt_clock_status function
+Date: Thu, 25 Jan 2018 18:02:57 +0000
+Message-Id: <1516903391-30467-24-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-aoclk_gate_regmap has been replaced by meson's clk_regmap.
-It is no longer necessary so, remove it
+This patch exposes a function to set the value of variable
+"shmobile_wdt_clock_status" so that the watchdog driver may communicate
+critical information to the SMP bring up assembly routine.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clk/meson/gxbb-aoclk-regmap.c | 46 -----------------------------------
- drivers/clk/meson/gxbb-aoclk.h        | 10 --------
- 2 files changed, 56 deletions(-)
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+ arch/arm/mach-shmobile/common.h       |  1 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 16 +++++++++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/gxbb-aoclk-regmap.c b/drivers/clk/meson/gxbb-aoclk-regmap.c
-deleted file mode 100644
-index 2515fbfa0467..000000000000
---- a/drivers/clk/meson/gxbb-aoclk-regmap.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--/*
-- * Copyright (c) 2017 BayLibre, SAS.
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/bitfield.h>
--#include <linux/regmap.h>
--#include "gxbb-aoclk.h"
--
--static int aoclk_gate_regmap_enable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	return regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--				  BIT(gate->bit_idx), BIT(gate->bit_idx));
--}
--
--static void aoclk_gate_regmap_disable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--			   BIT(gate->bit_idx), 0);
--}
--
--static int aoclk_gate_regmap_is_enabled(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--	unsigned int val;
--	int ret;
--
--	ret = regmap_read(gate->regmap, AO_RTI_GEN_CNTL_REG0, &val);
--	if (ret)
--		return ret;
--
--	return (val & BIT(gate->bit_idx)) != 0;
--}
--
--const struct clk_ops meson_aoclk_gate_regmap_ops = {
--	.enable = aoclk_gate_regmap_enable,
--	.disable = aoclk_gate_regmap_disable,
--	.is_enabled = aoclk_gate_regmap_is_enabled,
--};
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index 127d58954cca..0be78383f257 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -17,16 +17,6 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index a8fa4f7..e4ffca8 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -5,6 +5,7 @@
+ extern void shmobile_init_cntvoff(void);
+ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
++extern unsigned long shmobile_wdt_clock_status;
+ extern unsigned long shmobile_boot_fn;
+ extern unsigned long shmobile_boot_size;
+ extern void shmobile_smp_boot(void);
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index e5f215c..cfdc3cd 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -50,6 +50,16 @@ static inline u32 phys_to_sbar(phys_addr_t addr)
+ #define SYSCIER 0x0c
+ #define SYSCIMR 0x10
  
--struct aoclk_gate_regmap {
--	struct clk_hw hw;
--	unsigned bit_idx;
--	struct regmap *regmap;
--	spinlock_t *lock;
--};
--
--#define to_aoclk_gate_regmap(_hw) \
--	container_of(_hw, struct aoclk_gate_regmap, hw)
--
- extern const struct clk_ops meson_aoclk_gate_regmap_ops;
++static void __iomem *shmobile_boot_vector_start;
++static unsigned long clock_status;
++
++void shmobile_set_wdt_clock_status(unsigned long value)
++{
++	memcpy_toio(shmobile_boot_vector_start + clock_status,
++		    &value, sizeof(value));
++}
++EXPORT_SYMBOL(shmobile_set_wdt_clock_status);
++
+ #if defined(CONFIG_SMP)
  
- struct aoclk_cec_32k {
+ static void __init rcar_gen2_sysc_init(u32 syscier)
+@@ -120,8 +130,12 @@ void __init rcar_gen2_pm_init(void)
+ 	if (!p)
+ 		return;
+ 
++	shmobile_boot_vector_start = p;
++	clock_status = (&shmobile_wdt_clock_status -
++				(unsigned long *)shmobile_boot_vector) *
++				sizeof(shmobile_wdt_clock_status);
++
+ 	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
+-	iounmap(p);
+ 
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
 -- 
-2.14.3
+2.7.4
