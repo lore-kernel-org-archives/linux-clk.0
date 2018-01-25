@@ -1,119 +1,90 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 27/44] ARM: dm644x: add new clock init using common clock framework
-Date: Sun,  7 Jan 2018 20:17:26 -0600
-Message-Id: <1515377863-20358-28-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
+Date: Thu, 25 Jan 2018 18:02:44 +0000
+Message-Id: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specfic clock init in mach-davinci/dm644x.c using
-the new common clock framework drivers.
+This patch allows for platform specific quirks as some of the SoC need
+further customization for the watchdog to work properly, like for R-Car
+Gen2 and for RZ/G.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also clean up the #includes since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/mach-davinci/dm644x.c | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+ drivers/soc/renesas/rcar-rst.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index b409801..bc2e243 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -8,28 +8,34 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
--#include <linux/init.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/serial_8250.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dmaengine.h>
--#include <linux/platform_device.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index f7a0d54..5f52aea 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -13,8 +13,18 @@
+ #include <linux/of_address.h>
+ #include <linux/soc/renesas/rcar-rst.h>
  
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/irqs.h>
--#include "psc.h"
- #include <mach/mux.h>
--#include <mach/time.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
++#define WDTRSTCR_RESET		0xA55A0002
++#define WDTRSTCR		0x0054
 +
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- /*
-  * Device specific clocks
-@@ -43,6 +49,7 @@
- #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -326,6 +333,7 @@ static struct clk_lookup dm644x_clks[] = {
- 	CLK("davinci-wdt", NULL, &timer2_clk),
- 	CLK(NULL, NULL, NULL),
++static int gen2_configuration(void __iomem *base)
++{
++	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
++	return 0;
++}
++
+ struct rst_config {
+-	unsigned int modemr;	/* Mode Monitoring Register Offset */
++	unsigned int modemr;		/* Mode Monitoring Register Offset */
++	int (*configure)(void *base);	/* Platform specific configuration */
  };
-+#endif
  
- static struct emac_platform_data dm644x_emac_pdata = {
- 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
-@@ -934,7 +942,19 @@ void __init dm644x_init(void)
+ static const struct rst_config rcar_rst_gen1 __initconst = {
+@@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
  
- void __init dm644x_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *pll2, *psc;
-+
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_4K);
-+	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_4K);
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
-+	dm644x_pll_clk_init(pll1, pll2);
-+	dm644x_psc_clk_init(psc);
-+#else
- 	davinci_clk_init(dm644x_clks);
-+#endif
- 	davinci_timer_init();
- }
+ static const struct rst_config rcar_rst_gen2 __initconst = {
+ 	.modemr = 0x60,
++	.configure = gen2_configuration,
+ };
+ 
+ static const struct rst_config rcar_rst_gen3 __initconst = {
+@@ -79,6 +90,14 @@ static int __init rcar_rst_init(void)
+ 	rcar_rst_base = base;
+ 	cfg = match->data;
+ 	saved_mode = ioread32(base + cfg->modemr);
++	if (cfg->configure) {
++		error = cfg->configure(base);
++		if (error) {
++			pr_warn("%pOF: Cannot run SoC specific configuration\n",
++				np);
++			goto out_put;
++		}
++	}
+ 
+ 	pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
  
 -- 
 2.7.4
