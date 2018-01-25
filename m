@@ -1,85 +1,54 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v2 05/15] mmc: mmci: Add STM32 variant
-Date: Tue, 16 Jan 2018 13:30:49 +0100
-Message-ID: <1516105859-3525-6-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3333 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751188AbeAYOAY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 09:00:24 -0500
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+Date: Thu, 25 Jan 2018 16:00:09 +0200
+Message-ID: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+This patch series introduces the Memory Built-In Self Test (MBIST)
+work around (WAR) needed when power ungating certain domains. More
+details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+implement the WAR in the Tegra210 clock driver, because most accesses are
+to CAR registers and for the VENC domain, we need to make sure the CSI
+clock source is not changed during the WAR execution.
 
-STM32F4 and STM32F7 MCUs has a SDIO controller that looks like
-an ARM PL810.
-This patch adds the STM32 variant so that mmci driver supports it.
+Changes in v4:
+* moved locking and clock control to tegra210_clk_handle_mbist_war()
+* propagate errors during WAR execution to user
+* rework error handling tegra210_mbist_clk_init() slightly
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
+Changes in v3:
+* fix compile problem on non-Tegra210 platforms
+* fix clock handling bug in tegra210_generic_mbist_war()
+* addressed minor comments
 
-v2: _ Replace "pl180" by "PL180" in commit message
+Changes in v2:
+* Use readl for fence_delay() rather than readl_relaxed
+* clarify MBIST and WAR acronyms
 
- drivers/mmc/host/mmci.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Peter De Schrijver (4):
+  clk: tegra: Add la clock for Tegra210
+  clk: tegra: add fence_delay for clock registers
+  clk: tegra: MBIST work around for Tegra210
+  soc/tegra: pmc: MBIST work around for Tegra210
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 2a7aea7..560b2fd 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -244,6 +244,23 @@ struct variant_data {
- 	.opendrain		= MCI_OD,
- };
- 
-+static struct variant_data variant_stm32 = {
-+	.fifosize		= 32 * 4,
-+	.fifohalfsize		= 8 * 4,
-+	.clkreg			= MCI_CLK_ENABLE,
-+	.clkreg_enable		= MCI_ST_UX500_HWFCEN,
-+	.clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
-+	.clkreg_neg_edge_enable	= MCI_ST_UX500_NEG_EDGE,
-+	.datalength_bits	= 24,
-+	.datactrl_mask_sdio	= MCI_DPSM_ST_SDIOEN,
-+	.st_sdio		= true,
-+	.st_clkdiv		= true,
-+	.pwrreg_powerup		= MCI_PWR_ON,
-+	.f_max			= 48000000,
-+	.pwrreg_clkgate		= true,
-+	.pwrreg_nopower		= true,
-+};
-+
- static struct variant_data variant_qcom = {
- 	.fifosize		= 16 * 4,
- 	.fifohalfsize		= 8 * 4,
-@@ -2025,6 +2042,11 @@ static int mmci_runtime_resume(struct device *dev)
- 		.mask   = 0xf0ffffff,
- 		.data	= &variant_ux500v2,
- 	},
-+	{
-+		.id     = 0x00880180,
-+		.mask   = 0x00ffffff,
-+		.data	= &variant_stm32,
-+	},
- 	/* Qualcomm variants */
- 	{
- 		.id     = 0x00051180,
+ drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h                  |   7 +
+ drivers/soc/tegra/pmc.c                  |   7 +
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ include/linux/clk/tegra.h                |   6 +
+ 5 files changed, 376 insertions(+), 3 deletions(-)
+
 -- 
 1.9.1
+
