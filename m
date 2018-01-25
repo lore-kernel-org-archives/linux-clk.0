@@ -1,71 +1,79 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] clk: meson: remove unnecessary rounding in the pll clock
-Date: Thu, 18 Jan 2018 19:45:26 +0100
-Message-Id: <20180118184532.6856-4-jbrunet@baylibre.com>
-In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
-References: <20180118184532.6856-1-jbrunet@baylibre.com>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 22/37] watchdog: renesas_wdt: Add restart support
+Date: Thu, 25 Jan 2018 18:02:56 +0000
+Message-Id: <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The pll driver perform the rate calculation in Mhz, which adds an
-unnecessary rounding down to the Mhz of the rate. Use 64bits long
-integer to perform this calculation safely on meson8b and perform the
-calculation in Hz instead
+This commit extends the driver to add restart support by implementing
+the restart callback to trigger the watchdog as quickly as possible.
 
-Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clk/meson/clk-pll.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 2614341fc4ad..fa4cec13d6e8 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -51,8 +51,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct meson_clk_pll *pll = to_meson_clk_pll(hw);
- 	struct parm *p;
--	unsigned long parent_rate_mhz = parent_rate / 1000000;
--	unsigned long rate_mhz;
-+	u64 rate;
- 	u16 n, m, frac = 0, od, od2 = 0;
- 	u32 reg;
- 
-@@ -74,17 +73,18 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 		od2 = PARM_GET(p->width, p->shift, reg);
- 	}
- 
-+	rate = (u64)m * parent_rate;
-+
- 	p = &pll->frac;
- 	if (p->width) {
- 		reg = readl(pll->base + p->reg_off);
- 		frac = PARM_GET(p->width, p->shift, reg);
--		rate_mhz = (parent_rate_mhz * m + \
--				(parent_rate_mhz * frac >> 12)) * 2 / n;
--		rate_mhz = rate_mhz >> od >> od2;
--	} else
--		rate_mhz = (parent_rate_mhz * m / n) >> od >> od2;
- 
--	return rate_mhz * 1000000;
-+		rate += (u64)parent_rate * frac >> 12;
-+		rate *= 2;
-+	}
-+
-+	return (rate / n) >> od >> od2;
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83..120ddac 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
  }
  
- static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
++			void *data)
++{
++	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++
++	pm_runtime_get_sync(wdev->parent);
++
++	rwdt_write(priv, 0x00, RWTCSRB);
++	rwdt_write(priv, 0x00, RWTCSRA);
++	rwdt_write(priv, 0xffff, RWTCNT);
++
++	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
++		cpu_relax();
++
++	rwdt_write(priv, 0x80, RWTCSRA);
++	return 0;
++}
++
+ static const struct watchdog_info rwdt_ident = {
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ 	.identity = "Renesas WDT Watchdog",
+@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
+ 	.stop = rwdt_stop,
+ 	.ping = rwdt_init_timeout,
+ 	.get_timeleft = rwdt_get_timeleft,
++	.restart = rwdt_restart,
+ };
+ 
+ static int rwdt_probe(struct platform_device *pdev)
 -- 
-2.14.3
+2.7.4
