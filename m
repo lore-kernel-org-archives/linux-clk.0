@@ -1,47 +1,69 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "michal.simek@xilinx.com"
-	<michal.simek@xilinx.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
-Date: Thu, 11 Jan 2018 20:29:12 +0000
-Message-ID: <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
- <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
-In-Reply-To: <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15045 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeAYK5l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 05:57:41 -0500
+Subject: Re: [PATCH v3 4/4] soc/tegra: pmc: apply MBIST work around fo
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516699369-3513-5-git-send-email-pdeschrijver@nvidia.com>
+ <cf919367-4521-25b1-1f80-16e2b660045e@nvidia.com>
+ <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <fe422430-cb85-c28d-404b-98e7b87c15e0@nvidia.com>
+Date: Thu, 25 Jan 2018 10:57:36 +0000
 MIME-Version: 1.0
+In-Reply-To: <20180125100625.GL7031@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQpUaGVyZSBhcmUgMyB0aGluZ3M6DQoNCjE+IElQSSBtYWlsYm94IHRyYW5z
-cG9ydCAtIHNlcmllcyBpcyBhbHJlYWR5IHBvc3RlZA0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVs
-Lm9yZy9wYXRjaC8xMDE0NTc5NS8NCjI+IEVFTUkgLSBQb3N0ZWQgYnkgbWUgYmVsb3cNCmh0dHBz
-Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTAxNTA2NjUvDQozPiBFRU1JIFVzZXJzDQpD
-dXJyZW50bHkgcG9zdGVkIGFzIFJGQyBhcyB0aGV5IGFyZSBkZXBlbmRlbnQgb24gIzIuDQoNCiMy
-IGRvZXNu4oCZdCB1c2UgbWFpbGJveCBzbyBpdCBpcyBhIHBvc3RlZCBhcyBhIHNlcGFyYXRlIHNl
-cmllcy4gDQoNClRoYW5rcywNCkpvbGx5IFNoYWgNCg0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
-YWdlLS0tLS0NCj4gRnJvbTogU3VkZWVwIEhvbGxhIFttYWlsdG86c3VkZWVwLmhvbGxhQGFybS5j
-b21dDQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDExLCAyMDE4IDI6NTUgQU0NCj4gVG86IEpv
-bGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPjsgbWljaGFsLnNpbWVrQHhpbGlueC5jb207IGxp
-bnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBtdHVycXVldHRlQGJheWxpYnJlLmNv
-bTsgc2JveWRAY29kZWF1cm9yYS5vcmc7IFN1ZGVlcCBIb2xsYQ0KPiA8c3VkZWVwLmhvbGxhQGFy
-bS5jb20+OyBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IGxpbnV4LQ0KPiBrZXJuZWxA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4g
-U3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMC8yXSBkcml2ZXJzOiBjbGs6IEFkZCBaeW5xTVAgY2xv
-Y2sgZHJpdmVyIHN1cHBvcnQNCj4gDQo+IA0KPiANCj4gT24gMDgvMDEvMTggMjI6MTYsIEpvbGx5
-IFNoYWggd3JvdGU6DQo+ID4gQWRkIGNsb2NrIGRyaXZlciBmb3IgWnlucU1QDQo+ID4NCj4gDQo+
-IENhbiB5b3UgcG9zdCB0aGUgY29tcGxldGUgc2VyaWVzIGluIG9uZSBzZXQgZm9yIGVhc3kgb2Yg
-cmV2aWV3LiBJdCdzIGN1cnJlbnRseQ0KPiBicm9rZW4gaW50byAqNiAtIDgqIGRpZmZlcmVudCBz
-ZXRzIGJ5IGRpZmZlcmVudCBhdXRob3JzIGFuZCBpdCdzIGV4dHJlbWVseSBoYXJkIHRvDQo+IGdl
-dCB0aGUgZnVsbCB2aWV3IG9mIGhvdyB0aGVzZSBwaWVjZXMgYXJlIGNvbm5lY3RlZCBhbmQgZXh0
-cmVtZWx5IG1pc2xlYWRpbmcuDQo+IENhbiBzb21lb25lIHBvc3QgdGhlbSBjb2xsZWN0aXZlbHkg
-YXMgeW91IHdvdWxkIGFscmVhZHkgaGF2ZSBpdCBpZiB5b3UgYXJlDQo+IGRvaW5nIHNvbWUgdGVz
-dGluZyBidWlsZGluZyBvbiBlYWNoIHBhdGNoIHNldC4NCj4gDQo+IElJVUMgbWFpbGJveCBpcyB1
-c2VkIGZvciBhbGwgdGhlIGNvbW11bmljYXRpb24sIHJpZ2h0ID8NCj4gSWYgc28sIHRvIHN0YXJ0
-IHdpdGgganVzdCBoYXZlIDIgc2VyaWVzIG9uZSBmb3IgbWFpbGJveC90cmFuc3BvcnQgYW5kIGFu
-b3RoZXIgZm9yDQo+IHRoZSB3aG9sZSBwcm90b2NvbChlZW1pPykgYW5kIHVzZXJzIG9mIGl0Lg0K
-PiANCj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQo=
+
+On 25/01/18 10:06, Peter De Schrijver wrote:
+> On Wed, Jan 24, 2018 at 10:43:45PM +0000, Jon Hunter wrote:
+>>
+>> On 23/01/18 09:22, Peter De Schrijver wrote:
+>>> Apply the memory built-in self test work around when ungating certain
+>>> Tegra210 power domains.
+>>
+>> Nit-pick .. typo in $subject.
+>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>>  drivers/soc/tegra/pmc.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index ce62a47..c4eff4b 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -153,6 +153,7 @@ struct tegra_pmc_soc {
+>>>  
+>>>  	bool has_tsense_reset;
+>>>  	bool has_gpu_clamps;
+>>> +	bool needs_mbist_war;
+>>>  
+>>>  	const struct tegra_io_pad_soc *io_pads;
+>>>  	unsigned int num_io_pads;
+>>> @@ -431,6 +432,9 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+>>>  
+>>>  	usleep_range(10, 20);
+>>>  
+>>> +	if (pg->pmc->soc->needs_mbist_war)
+>>> +		tegra210_clk_handle_mbist_war(pg->id);
+>>> +
+>>
+>> Be good if we could return an error from the above function.
+>>
+> 
+> We need to also undo whatever we did before then. 
+
+I think it is fine if on error you 'goto disable_clks'.
+
+Cheers
+Jon
+
+-- 
+nvpublic
