@@ -1,39 +1,29 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 21/44] clk: davinci: New driver for TI DA8XX USB PHY
- clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-22-git-send-email-david@lechnology.com>
- <493e4809-6b77-7772-70c7-ad0fa04e9033@ti.com>
- <8821ac95-ee3f-b53b-9a8a-598b69d1b35e@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <486d664f-1d55-0abd-27e2-cc9d7de112fa@ti.com>
-Date: Fri, 19 Jan 2018 10:34:38 +0530
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 25 Jan 2018 14:01:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>, linux-clk@vger.kernel.org,
+	project-aspen-dev@linaro.org
+Subject: Re: [PATCH 0/5] Small updates on hi3798cv200 clock driver
+Message-ID: <20180125220138.GZ28313@codeaurora.org>
+References: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <8821ac95-ee3f-b53b-9a8a-598b69d1b35e@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 19 January 2018 12:19 AM, David Lechner wrote:
->>
+On 01/24, Shawn Guo wrote:
+> Hi Stephen,
 > 
-> or to avoid defining a new macro?
+> This series makes a few small updates on hisilicon hi3798cv200 clock
+> driver.  I will stage them on a branch if reviewing goes well, and then
+> send you a pull reqeust at some point of 4.17 development cycle.
 > 
-> 
->>     regmap_write_bits(clk->regmap, CFGCHIP(2),
->>               CFGCHIP2_USB1PHYCLKMUX,
->>               index ? CFGCHIP2_USB1PHYCLKMUX : 0); 
+> Sounds good to you?
 
-Looks good as well!
+Ok. Sounds good to me.
 
-Regards,
-Sekhar
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
