@@ -1,62 +1,110 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [PATCH 10/14] ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
-Date: Fri, 12 Jan 2018 13:16:04 +0100
-Message-ID: <1515759368-16946-11-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 25 Jan 2018 16:35:20 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9
+ SoC
+Message-ID: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+References: <20180119231735.61504-1-icenowy@aosc.io>
+ <20180122121435.bpayxk4uzfqbhqse@flea.lan>
+ <14593819.uISRktVE4V@ice-x220i>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rwdinujenvvsyeha"
+In-Reply-To: <14593819.uISRktVE4V@ice-x220i>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
 
-As both STM32F4 and STM32F7 SoCs embeds an AMBA PL180 mmci IP,
-we need to enable AMBA support in mach-stm32.
+--rwdinujenvvsyeha
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
- arch/arm/mach-stm32/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Hi,
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 0d1889b..f53a8db 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -13,16 +13,19 @@ config ARCH_STM32
- config MACH_STM32F429
- 	bool "STMicrolectronics STM32F429"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F469
- 	bool "STMicrolectronics STM32F469"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32F746
- 	bool "STMicrolectronics STM32F746"
- 	depends on ARCH_STM32
-+	select ARM_AMBA
- 	default y
- 
- config MACH_STM32H743
--- 
-1.9.1
+On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
+> =E5=9C=A8 2018=E5=B9=B41=E6=9C=8822=E6=97=A5=E6=98=9F=E6=9C=9F=E4=B8=80 C=
+ST =E4=B8=8B=E5=8D=888:14:35=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
+> > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 S=
+oC.
+> > >=20
+> > > The same die is packaged differently, come with different co-packaged
+> > > DRAM or shipped with different SDK; and then made many model names: F=
+23,
+> > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs a=
+ll
+> > > share a common feature set and are packaged similarly (eLQFP128 for S=
+oCs
+> > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
+> > > functionality hidden on the QFN88 models (except DRAM interface not
+> > > exported), it's not clever to differentiate them. So I will use suniv=
+ as
+> > > common name of all these SoCs.
+> >=20
+> > Where is that suniv prefix coming from?
+>=20
+> The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK =
+and=20
+> "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+
+Do you have a link to that BSP?
+
+> > You should really answer two questions here:
+> >   - Are you able to predict whether you'll find an SoC part of that
+> >     family in the future that derives a bit and will need a compatible
+> >     of its own?
+> >   - Are you able to predict which quirks we'll need along the way to
+> >     support all the SoCs you've listed there?
+> >=20
+> > If you can't answer yes to both these questions, with a 100%
+> > certainty, then you'll need a SoC name in the compatible.
+> >=20
+> > Which doesn't prevent you from sharing as much as possible the DT like
+> > we did between the A10s and the A13 for example.
+>=20
+> So the suniv-f1c100s.dtsi will still be kept empty and all peripherals kn=
+own=20
+> should go through suniv.dtsi.
+
+Sorry if I wasn't really clear. You can totally keep the current DT
+structure if that makes sense (and judging by what you're saying, it
+does.), but the compatibles should have the SoC name in it.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rwdinujenvvsyeha
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpp+TcACgkQ0rTAlCFN
+r3QHxw//YmXyxVNuYtAPjBx08jzNik0jFayt0j1hWPc1AG8pCj0k4uty6Lk+h3lh
+TKhn8gExV8c1nL+D7gWXFk8XZ4PQHGjd0HCYQEQ+USZ4eZ9wOLhDY3OXLm8ofeAg
+4h3WAlOPOBMzr/M2N5lrwBFG/dAA57fKNdfu8UOnOcvexDiJm6fQNq4OFhvKQRrS
+UiCYhFmPo9ixQH0GQSkq3u2Uj+xwaR9J0xY2YqpSbMPLurFqyIZPI0RrOrHbrQMl
+SrK/ivrtzw80aswJGRslEGkedAXfaI33t4cpTLg0nLUyTwRXHA2xEXOQD1QRJc84
+vbPmHMx+rabz7gpOCip2PySJUgiyuByfoRp/a9Wc44si6il45uCiKni5v2q8klF3
+BBZojuMYF5LgUB61fJHLxuyJfnivHEH2pYHKwXh0NuVU4+vJznJF4SrSRASlA9lo
+ag2vebJTH7wNitKRue6VaexcWP9BUSi9Cv7EpBwQiEDiOCTCXhtAMu6KPNYpPYo+
+ci377QGj396pFb/7FIm63zGepRymM+muv4WrdxL0xdEvCr1CDcBjz9hmwcT5Ifz1
+/BRrDtgvYRDmlKTj0X+It+nZ/0R7JpHrat6iXtZEEu4GzkSviWYiB6NIXq2MJd3O
+kNCknMYtsktl5xL2gwmAGV1ibj88lQgVMYIdtF4SZLa+jdQsHzw=
+=GfbL
+-----END PGP SIGNATURE-----
+
+--rwdinujenvvsyeha--
