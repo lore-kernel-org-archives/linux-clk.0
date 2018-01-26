@@ -1,76 +1,103 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 33/34] clk: lpc32xx: change round_rate() return logic
-Date: Mon,  1 Jan 2018 19:43:12 +0000
-Message-Id: <1514835793-1104-34-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:05:58 +0100
+Message-ID: <CAMuHMdWiVu9hs3PvXypJyeG0iDQkDvyPzHkTfq4NyPVdaYZKew@mail.gmail.com>
+Subject: Re: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
+ trigger for Gen2
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+Hi Fabrizio,
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch allows for platform specific quirks as some of the SoC need
+> further customization for the watchdog to work properly, like for R-Car
+> Gen2 and for RZ/G.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/nxp/clk-lpc32xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 76c17f4..0e0d258 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -664,17 +664,17 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
- 	 * USB divider, USB PLL N and M parameters.
- 	 */
- 	if (rate != 48000000)
--		return -EINVAL;
-+		return 0;
- 
- 	/* USB divider clock */
- 	usb_div_hw = clk_hw_get_parent_by_index(hw, 0);
- 	if (!usb_div_hw)
--		return -EINVAL;
-+		return 0;
- 
- 	/* Main oscillator clock */
- 	osc_hw = clk_hw_get_parent_by_index(usb_div_hw, 0);
- 	if (!osc_hw)
--		return -EINVAL;
-+		return 0;
- 	o = clk_hw_get_rate(osc_hw);	/* must be in range 1..20 MHz */
- 
- 	/* Check if valid USB divider and USB PLL parameters exists */
-@@ -697,7 +697,7 @@ static unsigned long clk_usb_pll_round_rate(struct clk_hw *hw,
- 		}
- 	}
- 
--	return -EINVAL;
-+	return 0;
- }
- 
- #define LPC32XX_DEFINE_PLL_OPS(_name, _rc, _sr, _rr)			\
--- 
-2.7.4
+> --- a/drivers/soc/renesas/rcar-rst.c
+> +++ b/drivers/soc/renesas/rcar-rst.c
+> @@ -13,8 +13,18 @@
+>  #include <linux/of_address.h>
+>  #include <linux/soc/renesas/rcar-rst.h>
+>
+> +#define WDTRSTCR_RESET         0xA55A0002
+> +#define WDTRSTCR               0x0054
+> +
+> +static int gen2_configuration(void __iomem *base)
+
+rcar_rst_enable_wdt_reset()?
+
+> +{
+> +       iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
+> +       return 0;
+> +}
+> +
+>  struct rst_config {
+> -       unsigned int modemr;    /* Mode Monitoring Register Offset */
+> +       unsigned int modemr;            /* Mode Monitoring Register Offset */
+> +       int (*configure)(void *base);   /* Platform specific configuration */
+>  };
+>
+>  static const struct rst_config rcar_rst_gen1 __initconst = {
+> @@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
+>
+>  static const struct rst_config rcar_rst_gen2 __initconst = {
+>         .modemr = 0x60,
+> +       .configure = gen2_configuration,
+
+BTW, does it hurt to do this on R-Car Gen3, too?
+
+Instead of a function pointer, you could also just have a feature bit.
+
+>  };
+>
+>  static const struct rst_config rcar_rst_gen3 __initconst = {
+> @@ -79,6 +90,14 @@ static int __init rcar_rst_init(void)
+>         rcar_rst_base = base;
+>         cfg = match->data;
+>         saved_mode = ioread32(base + cfg->modemr);
+> +       if (cfg->configure) {
+> +               error = cfg->configure(base);
+> +               if (error) {
+> +                       pr_warn("%pOF: Cannot run SoC specific configuration\n",
+> +                               np);
+> +                       goto out_put;
+> +               }
+> +       }
+>
+>         pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
