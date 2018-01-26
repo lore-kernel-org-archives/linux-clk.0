@@ -1,49 +1,50 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v3 13/34] clk: si514: change si514_round_rate() return logic
-Date: Mon,  1 Jan 2018 19:42:52 +0000
-Message-Id: <1514835793-1104-14-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:53:50 +0100
+Message-ID: <CAMuHMdWxCHWioKKjXUrKh_s8MT67SnDFWaeZoPJ7XJu+ibOi+Q@mail.gmail.com>
+Subject: Re: [RFC 07/37] ARM: dts: r8a7793: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the round_rate() logic here to return zero instead of a
-negative number on error.
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-In conjunction with higher-level changes associated with acting on the
-return value of clk_ops->round_rate() it is then possible to have
-clk_ops->round_rate() return values from 1 Hz to ULONG_MAX Hz instead of
-the current limitation of 1 Hz to LONG_MAX Hz.
+I would make it a bit larger, though. "0x64" is the strict minimum =>
+0x80? 0x100?
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-si514.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 8d940d0..042ae39 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -220,7 +220,7 @@ static unsigned long si514_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	err = si514_calc_muldiv(&settings, rate);
- 	if (err)
--		return err;
-+		return 0;
- 
- 	return si514_calc_rate(&settings);
- }
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
