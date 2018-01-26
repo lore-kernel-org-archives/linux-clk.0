@@ -1,113 +1,45 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 27/41] ARM: da8xx: add new sata_refclk init using common clock framework
-Date: Sat, 20 Jan 2018 11:14:06 -0600
-Message-Id: <1516468460-4908-28-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-33-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-33-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:28:34 +0100
+Message-ID: <CAMuHMdX592Z366ptHmd9Gv9rgXkbdbcS66XCzz4N6Q_XcY7Q-g@mail.gmail.com>
+Subject: Re: [RFC 32/37] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds watchdog support to the r8a7745 SoC dtsi.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also, the #includes are sorted since we are adding some here.
+Gr{oetje,eeting}s,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+                        Geert
 
-v6 changes:
-- none (can you believe it?)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 44cda0a..1a06b09 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,26 +10,31 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
-+#include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
-+#include <linux/dmaengine.h>
- #include <linux/init.h>
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
--#include <linux/ahci_platform.h>
--#include <linux/clk.h>
- #include <linux/reboot.h>
--#include <linux/dmaengine.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
-+
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1041,6 +1046,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1062,6 +1068,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
