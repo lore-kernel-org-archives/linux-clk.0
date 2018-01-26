@@ -1,109 +1,286 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] clk: meson: add gxl hdmi pll
-Date: Thu, 18 Jan 2018 19:45:29 +0100
-Message-Id: <20180118184532.6856-7-jbrunet@baylibre.com>
-In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
-References: <20180118184532.6856-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 26 Jan 2018 15:56:49 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Amit Nischal <anischal@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v2] clk: qcom: Add Global Clock controller (GCC) driver
+ for SDM845
+Message-ID: <20180126235649.GF28313@codeaurora.org>
+References: <1516610736-17088-1-git-send-email-anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516610736-17088-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The hdmi pll used in the gxl family is actually different from the gxbb.
-The register layout is completely different, which explain why the hdmi
-pll rate has always been rubbish on the gxl.
+On 01/22, Amit Nischal wrote:
+> Add support for the global clock controller found on SDM845
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-Adding the correct register field is the first part of the fix to get a
-correct rate out the hdmi pll
+Is Taniya the author? Should be a From: line then.
 
-Fixes: 0d48fc558d01 ("clk: meson-gxbb: Add GXL/GXM GP0 Variant")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+> 
+> This patch is dependent on below changes:
+> 1. https://patchwork.kernel.org/patch/10139991/
+> 2. https://patchwork.kernel.org/patch/10139987/
+> 3. https://patchwork.kernel.org/patch/10144621/
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index cf083a1906d1..08b3e1cdba5b 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -253,6 +253,52 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
- 	},
- };
- 
-+static struct meson_clk_pll gxl_hdmi_pll = {
-+	.m = {
-+		.reg_off = HHI_HDMI_PLL_CNTL,
-+		.shift   = 0,
-+		.width   = 9,
-+	},
-+	.n = {
-+		.reg_off = HHI_HDMI_PLL_CNTL,
-+		.shift   = 9,
-+		.width   = 5,
-+	},
-+	.frac = {
-+		/*
-+		 * On gxl, there a register shift due to HHI_HDMI_PLL_CNTL1
-+		 * which does not exist on gxbb, so we compute the register
-+		 * offset based on the PLL base to get it right
-+		 */
-+		.reg_off = HHI_HDMI_PLL_CNTL + 4,
-+		.shift   = 0,
-+		.width   = 12,
-+	},
-+	.od = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 21,
-+		.width   = 2,
-+	},
-+	.od2 = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 23,
-+		.width   = 2,
-+	},
-+	.od3 = {
-+		.reg_off = HHI_HDMI_PLL_CNTL + 8,
-+		.shift   = 19,
-+		.width   = 2,
-+	},
-+	.lock = &meson_clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll",
-+		.ops = &meson_clk_pll_ro_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
- static struct meson_clk_pll gxbb_sys_pll = {
- 	.m = {
- 		.reg_off = HHI_SYS_PLL_CNTL,
-@@ -1520,7 +1566,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 	.hws = {
- 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
--		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
-+		[CLKID_HDMI_PLL]	    = &gxl_hdmi_pll.hw,
- 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
- 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
- 		[CLKID_FCLK_DIV3]	    = &gxbb_fclk_div3.hw,
-@@ -1675,7 +1721,7 @@ static struct meson_clk_pll *const gxbb_clk_plls[] = {
- 
- static struct meson_clk_pll *const gxl_clk_plls[] = {
- 	&gxbb_fixed_pll,
--	&gxbb_hdmi_pll,
-+	&gxl_hdmi_pll,
- 	&gxbb_sys_pll,
- 	&gxl_gp0_pll,
- };
+Ok. Next time you can send them all again in a series to make it
+easier for me.
+
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fbf4532..91e4557 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -226,3 +226,12 @@ config SPMI_PMIC_CLKDIV
+>  	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+>  	  clkdiv outputs of the PMIC. These clocks are typically wired
+>  	  through alternate functions on GPIO pins.
+> +
+> +config SDM_GCC_845
+> +	tristate "SDM845 Global Clock Controller"
+> +	depends on COMMON_CLK_QCOM
+> +	help
+> +	  Support for the global clock controller on Qualcomm Technologies, Inc
+> +	  sdm845 devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  i2c, USB, UFS, SD/eMMC, PCIe, etc.
+
+Put this in sorted order in the Kconfig? Or at least try to.  I
+should go back and sort the rest later.
+
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 230332c..1aa23b3 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
+>  obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
+>  obj-$(CONFIG_MSM_GCC_8994) += gcc-msm8994.o
+>  obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
+> +obj-$(CONFIG_SDM_GCC_845)  += gcc-sdm845.o
+
+This should be sorted too.
+
+>  obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+>  obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+>  obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> new file mode 100644
+> index 0000000..fe62d87
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -0,0 +1,3633 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> +
+> +#include "common.h"
+> +#include "clk-regmap.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-branch.h"
+> +#include "clk-alpha-pll.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
+> +
+> +#define GCC_MMSS_MISC				0x09FFC
+
+Please drop the onetime defines.
+
+> +#define GCC_GPU_MISC				0x71028
+> +
+> +#define CXO_FREQUENCY				19200000
+> +
+> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+> +
+> +static struct freq_tbl cxo_safe_src_f = {
+
+const?
+
+> +	.freq = CXO_FREQUENCY,
+> +	.src = 0,
+> +	.pre_div = 1,
+> +	.m = 0,
+> +	.n = 0,
+> +};
+
+All those = 0 are useless. But CXO may not always be 19.2 MHz so
+that's a non-starter. Try and figure out how to get rid of this?
+
+> +
+> +enum {
+> +	P_BI_TCXO,
+> +	P_AUD_REF_CLK,
+> +	P_CORE_BI_PLL_TEST_SE,
+> +	P_GPLL0_OUT_EVEN,
+> +	P_GPLL0_OUT_MAIN,
+> +	P_GPLL4_OUT_MAIN,
+> +	P_SLEEP_CLK,
+> +};
+> +
+> +static const struct parent_map gcc_parent_map_0[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_GPLL0_OUT_MAIN, 1 },
+> +	{ P_GPLL0_OUT_EVEN, 6 },
+> +	{ P_CORE_BI_PLL_TEST_SE, 7 },
+[...]
+> +
+> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+> +	F(400000, P_BI_TCXO, 12, 1, 4),
+> +	F(9600000, P_BI_TCXO, 2, 0, 0),
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+> +	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+> +	F(201500000, P_GPLL4_OUT_MAIN, 4, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+> +	.cmd_rcgr = 0x1400c,
+> +	.mnd_width = 8,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_parent_map_10,
+> +	.freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
+> +	.safe_src_freq_tbl = &cxo_safe_src_f,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "gcc_sdcc2_apps_clk_src",
+> +		.parent_names = gcc_parent_names_10,
+> +		.num_parents = 5,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_gcc_sdcc4_apps_clk_src[] = {
+> +	F(400000, P_BI_TCXO, 12, 1, 4),
+> +	F(9600000, P_BI_TCXO, 2, 0, 0),
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
+> +	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
+> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+> +	.cmd_rcgr = 0x1600c,
+> +	.mnd_width = 8,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_parent_map_0,
+> +	.freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
+> +	.safe_src_freq_tbl = &cxo_safe_src_f,
+
+Honestly, why do we need this other structure? Can't we point to
+the entry in the frequency table for this clk and use that? Or
+know that these are an RCG, and 99% of the time the "safe
+frequency" is going to be source 0 and div 1?
+
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "gcc_sdcc4_apps_clk_src",
+> +		.parent_names = gcc_parent_names_0,
+> +		.num_parents = 4,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+[...]
+> +
+> +static const struct regmap_config gcc_sdm845_regmap_config = {
+> +	.reg_bits	= 32,
+> +	.reg_stride	= 4,
+> +	.val_bits	= 32,
+> +	.max_register	= 0x182090,
+> +	.fast_io	= true,
+> +};
+> +
+> +static const struct qcom_cc_desc gcc_sdm845_desc = {
+> +	.config = &gcc_sdm845_regmap_config,
+> +	.clks = gcc_sdm845_clocks,
+> +	.num_clks = ARRAY_SIZE(gcc_sdm845_clocks),
+> +	.resets = gcc_sdm845_resets,
+> +	.num_resets = ARRAY_SIZE(gcc_sdm845_resets),
+> +	.gdscs = gcc_sdm845_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(gcc_sdm845_gdscs),
+> +};
+> +
+> +static const struct of_device_id gcc_sdm845_match_table[] = {
+> +	{ .compatible = "qcom,gcc-sdm845" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+> +
+> +static int gcc_sdm845_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap;
+> +	int i, ret = 0;
+
+Don't assign things and then reassign them without testing it
+first.
+
+> +
+> +	regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
+> +		ret = devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
+
+Drop this error message.
+
+> +		return ret;
+> +	}
+> +
+> +	/* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
+> +	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
+> +	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
+
+Can bootloaders do this? Or this can be a branch clk that we
+expose in the tree as the "gpll0" source entry for the multimedia
+clock controls? Do we ever turn these back on?
+
+> +
+> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
+
+Drop.
+
+> +
+> +	return ret;
+> +}
+> +
+
 -- 
-2.14.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
