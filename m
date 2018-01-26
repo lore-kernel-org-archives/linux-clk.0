@@ -1,160 +1,221 @@
-Return-Path: <benh@kernel.crashing.org>
-Message-ID: <1514872241.2743.138.camel@kernel.crashing.org>
-Subject: Re: [PATCH v7 5/5] clk: aspeed: Add reset controller
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>,
-        Michael
-	Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Andrew Jeffery <andrew@aj.id.au>,
-        Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-        Ryan Chen
- <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 02 Jan 2018 16:50:41 +1100
-In-Reply-To: <20171222024522.10362-6-joel@jms.id.au>
-References: <20171222024522.10362-1-joel@jms.id.au>
-	 <20171222024522.10362-6-joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Harsha Priya <harshapriya.n@intel.com>
+Cc: Subhransu S. Prusty <subhransu.s.prusty@intel.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, ALSA ML <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, mturquette@baylibre.com, sboyd@codeaurora.org, Patches Audio <patches.audio@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Vinod Koul <vinod.koul@intel.com>, linux-clk@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: kbl: Enable mclk and ssp sclk early" to the asoc tree
+In-Reply-To: <1512978390-8848-4-git-send-email-sriramx.periyasamy@intel.com>
+Message-Id: <E1ef3Vx-0002EU-7D@debutante>
+Date: Fri, 26 Jan 2018 12:53:53 +0000
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-12-22 at 13:15 +1030, Joel Stanley wrote:
-> There are some resets that are not associated with gates. These are
-> represented by a reset controller.
-> 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+The patch
 
+   ASoC: Intel: kbl: Enable mclk and ssp sclk early
 
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+has been applied to the asoc tree at
 
-> ---
-> v7:
->   - Rebase on dt-bindings patch
-> v5:
->   - Add Andrew's Reviewed-by
-> v3:
->   - Add named initalisers for the reset defines
->   - Add define for ADC
-> ---
->  drivers/clk/clk-aspeed.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 81 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index dbd3c7774831..6fb344730cea 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -8,6 +8,7 @@
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  
-> @@ -267,6 +268,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
->  	.is_enabled = aspeed_clk_is_enabled,
->  };
->  
-> +/**
-> + * struct aspeed_reset - Aspeed reset controller
-> + * @map: regmap to access the containing system controller
-> + * @rcdev: reset controller device
-> + */
-> +struct aspeed_reset {
-> +	struct regmap			*map;
-> +	struct reset_controller_dev	rcdev;
-> +};
-> +
-> +#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
-> +
-> +static const u8 aspeed_resets[] = {
-> +	[ASPEED_RESET_XDMA]	= 25,
-> +	[ASPEED_RESET_MCTP]	= 24,
-> +	[ASPEED_RESET_ADC]	= 23,
-> +	[ASPEED_RESET_JTAG_MASTER] = 22,
-> +	[ASPEED_RESET_MIC]	= 18,
-> +	[ASPEED_RESET_PWM]	=  9,
-> +	[ASPEED_RESET_PCIVGA]	=  8,
-> +	[ASPEED_RESET_I2C]	=  2,
-> +	[ASPEED_RESET_AHB]	=  1,
-> +};
-> +
-> +static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> +	u32 rst = BIT(aspeed_resets[id]);
-> +
-> +	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-> +}
-> +
-> +static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> +	u32 rst = BIT(aspeed_resets[id]);
-> +
-> +	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-> +}
-> +
-> +static int aspeed_reset_status(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> +	u32 val, rst = BIT(aspeed_resets[id]);
-> +	int ret;
-> +
-> +	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return !!(val & rst);
-> +}
-> +
-> +static const struct reset_control_ops aspeed_reset_ops = {
-> +	.assert = aspeed_reset_assert,
-> +	.deassert = aspeed_reset_deassert,
-> +	.status = aspeed_reset_status,
-> +};
-> +
->  static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
->  		const char *name, const char *parent_name, unsigned long flags,
->  		struct regmap *map, u8 clock_idx, u8 reset_idx,
-> @@ -308,10 +371,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->  {
->  	const struct aspeed_clk_soc_data *soc_data;
->  	struct device *dev = &pdev->dev;
-> +	struct aspeed_reset *ar;
->  	struct regmap *map;
->  	struct clk_hw *hw;
->  	u32 val, rate;
-> -	int i;
-> +	int i, ret;
->  
->  	map = syscon_node_to_regmap(dev->of_node);
->  	if (IS_ERR(map)) {
-> @@ -319,6 +383,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->  		return PTR_ERR(map);
->  	}
->  
-> +	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
-> +	if (!ar)
-> +		return -ENOMEM;
-> +
-> +	ar->map = map;
-> +	ar->rcdev.owner = THIS_MODULE;
-> +	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
-> +	ar->rcdev.ops = &aspeed_reset_ops;
-> +	ar->rcdev.of_node = dev->of_node;
-> +
-> +	ret = devm_reset_controller_register(dev, &ar->rcdev);
-> +	if (ret) {
-> +		dev_err(dev, "could not register reset controller\n");
-> +		return ret;
-> +	}
-> +
->  	/* SoC generations share common layouts but have different divisors */
->  	soc_data = of_device_get_match_data(dev);
->  	if (!soc_data) {
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From f7f61e08fe5840ca43baa49355b40d3aede1ac97 Mon Sep 17 00:00:00 2001
+From: Harsha Priya <harshapriya.n@intel.com>
+Date: Thu, 4 Jan 2018 16:55:16 +0530
+Subject: [PATCH] ASoC: Intel: kbl: Enable mclk and ssp sclk early
+
+rt5663 needs mclk/sclk early to synchronize its internal clocks. Enable
+these clocks early.
+
+Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/boards/Kconfig               |  1 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c | 95 +++++++++++++++++++++++++++-
+ 2 files changed, 95 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
+index d4e103615f51..fefb1ee9fec6 100644
+--- a/sound/soc/intel/boards/Kconfig
++++ b/sound/soc/intel/boards/Kconfig
+@@ -235,6 +235,7 @@ config SND_SOC_INTEL_KBL_RT5663_MAX98927_MACH
+ 	select SND_SOC_MAX98927
+ 	select SND_SOC_DMIC
+ 	select SND_SOC_HDAC_HDMI
++	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
+ 	help
+ 	  This adds support for ASoC Onboard Codec I2S machine driver. This will
+ 	  create an alsa sound card for RT5663 + MAX98927.
+diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+index bf7014ca486f..f5df6bca3156 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+@@ -28,6 +28,9 @@
+ #include "../../codecs/rt5663.h"
+ #include "../../codecs/hdac_hdmi.h"
+ #include "../skylake/skl.h"
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
+ 
+ #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
+ #define KBL_MAXIM_CODEC_DAI "max98927-aif1"
+@@ -48,6 +51,8 @@ struct kbl_hdmi_pcm {
+ struct kbl_rt5663_private {
+ 	struct snd_soc_jack kabylake_headset;
+ 	struct list_head hdmi_pcm_list;
++	struct clk *mclk;
++	struct clk *sclk;
+ };
+ 
+ enum {
+@@ -69,6 +74,61 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
+ 	SOC_DAPM_PIN_SWITCH("Right Spk"),
+ };
+ 
++static int platform_clock_control(struct snd_soc_dapm_widget *w,
++			struct snd_kcontrol *k, int  event)
++{
++	struct snd_soc_dapm_context *dapm = w->dapm;
++	struct snd_soc_card *card = dapm->card;
++	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
++	int ret = 0;
++
++	/*
++	 * MCLK/SCLK need to be ON early for a successful synchronization of
++	 * codec internal clock. And the clocks are turned off during
++	 * POST_PMD after the stream is stopped.
++	 */
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		/* Enable MCLK */
++		ret = clk_set_rate(priv->mclk, 24000000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
++				ret);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->mclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
++			return ret;
++		}
++
++		/* Enable SCLK */
++		ret = clk_set_rate(priv->sclk, 3072000);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
++				ret);
++			clk_disable_unprepare(priv->mclk);
++			return ret;
++		}
++
++		ret = clk_prepare_enable(priv->sclk);
++		if (ret < 0) {
++			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
++			clk_disable_unprepare(priv->mclk);
++		}
++		break;
++	case SND_SOC_DAPM_POST_PMD:
++		clk_disable_unprepare(priv->mclk);
++		clk_disable_unprepare(priv->sclk);
++		break;
++	default:
++		return 0;
++	}
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
+ 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+@@ -78,11 +138,14 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+ 	SND_SOC_DAPM_SPK("HDMI1", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI2", NULL),
+ 	SND_SOC_DAPM_SPK("HDMI3", NULL),
+-
++	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
++			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
++			SND_SOC_DAPM_POST_PMD),
+ };
+ 
+ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	/* HP jack connectors - unknown if we have jack detection */
++	{ "Headphone Jack", NULL, "Platform Clock" },
+ 	{ "Headphone Jack", NULL, "HPOL" },
+ 	{ "Headphone Jack", NULL, "HPOR" },
+ 
+@@ -91,6 +154,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
+ 	{ "Right Spk", NULL, "Right BE_OUT" },
+ 
+ 	/* other jacks */
++	{ "Headset Mic", NULL, "Platform Clock" },
+ 	{ "IN1P", NULL, "Headset Mic" },
+ 	{ "IN1N", NULL, "Headset Mic" },
+ 	{ "DMic", NULL, "SoC DMIC" },
+@@ -901,6 +965,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ {
+ 	struct kbl_rt5663_private *ctx;
+ 	struct skl_machine_pdata *pdata;
++	int ret;
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
+ 	if (!ctx)
+@@ -919,6 +984,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ 		dmic_constraints = pdata->dmic_num == 2 ?
+ 			&constraints_dmic_2ch : &constraints_dmic_channels;
+ 
++	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
++	if (IS_ERR(ctx->mclk)) {
++		ret = PTR_ERR(ctx->mclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_sclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
++	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
++	if (IS_ERR(ctx->sclk)) {
++		ret = PTR_ERR(ctx->sclk);
++		if (ret == -ENOENT) {
++			dev_info(&pdev->dev,
++				"Failed to get ssp1_sclk, defer probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
++								ret);
++		return ret;
++	}
++
+ 	return devm_snd_soc_register_card(&pdev->dev, kabylake_audio_card);
+ }
+ 
+-- 
+2.15.1
