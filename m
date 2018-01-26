@@ -1,189 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1972 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeAYNEu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jan 2018 08:04:50 -0500
-Subject: Re: [PATCH v3 3/4] clk: tegra: MBIST work around for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <1516699369-3513-1-git-send-email-pdeschrijver@nvidia.com>
- <1516699369-3513-4-git-send-email-pdeschrijver@nvidia.com>
- <637b3bb4-1ac0-5612-ec2e-5740e611b11a@nvidia.com>
- <20180125090255.GK7031@tbergstrom-lnx.Nvidia.com>
- <a161a11c-1794-ebc4-3ff0-7624c23cabdb@nvidia.com>
- <20180125124157.GN7031@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <85e1e0ca-fe3d-8605-9914-1dd3434105ce@nvidia.com>
-Date: Thu, 25 Jan 2018 13:04:45 +0000
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180125124157.GN7031@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:52:55 +0100
+Message-ID: <CAMuHMdWDSa-PFw9ZUrAL9ztUePG5xw7bTkJDcjkgrHb=EU-QEA@mail.gmail.com>
+Subject: Re: [RFC 03/37] ARM: dts: r8a7745: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-On 25/01/18 12:41, Peter De Schrijver wrote:
-> On Thu, Jan 25, 2018 at 10:19:08AM +0000, Jon Hunter wrote:
->>
->> On 25/01/18 09:02, Peter De Schrijver wrote:
->>> On Wed, Jan 24, 2018 at 09:59:56PM +0000, Jon Hunter wrote:
->>
->> ...
->>
->>>>> +void tegra210_clk_handle_mbist_war(unsigned int id)
->>>>> +{
->>>>> +	int err;
->>>>> +	struct tegra210_domain_mbist_war *mbist_war;
->>>>> +
->>>>> +	if (id >= ARRAY_SIZE(tegra210_pg_mbist_war)) {
->>>>> +		WARN(1, "unknown domain id in MBIST WAR handler\n");
->>>>> +		return;
->>>>> +	}
->>>>> +
->>>>> +	mbist_war = &tegra210_pg_mbist_war[id];
->>>>> +	if (!mbist_war->handle_lvl2_ovr)
->>>>> +		return;
->>>>> +
->>>>> +	err = mbist_war->handle_lvl2_ovr(mbist_war);
->>>>
->>>> Why not move the clk_bulk_prepare_enable/disable_unprepare and
->>>> mutex_lock/unlock functions into this function around the call to
->>>> ->handle_lvl2_ovr to save the duplication of that code in each of the
->>>> war functions?
->>>>
->>>
->>> This could be done yes.
->>>
->>>>> +	WARN(err < 0, "error handling MBIST WAR for domain: %d\n", id);
->>>>> +}
->>>>
->>>> I think that the above function should return an error and we should let
->>>> the power-domain power-on fail.
->>>>
->>>
->>> This would only be useful if the user (tegra_powergate_power_up) would do
->>> rollback. I don't think that's done correctly today.
->>
->> It does and so I think that we should return an error.
->>
-> 
-> Ok.
-> 
->>>>> +
->>>>> +
->>>>>  void tegra210_put_utmipll_in_iddq(void)
->>>>>  {
->>>>>  	u32 reg;
->>>>> @@ -3163,6 +3500,40 @@ static int tegra210_reset_deassert(unsigned long id)
->>>>>  	return 0;
->>>>>  }
->>>>>  
->>>>> +static void tegra210_mbist_clk_init(void)
->>>>> +{
->>>>> +	int i, j;
->>>>> +
->>>>> +	for (i = 0; i < ARRAY_SIZE(tegra210_pg_mbist_war); i++) {
->>>>> +		int num_clks = tegra210_pg_mbist_war[i].num_clks;
->>>>> +		struct clk_bulk_data *clk_data;
->>>>> +
->>>>> +		if (!num_clks)
->>>>> +			continue;
->>>>> +
->>>>> +		clk_data = kmalloc_array(num_clks, sizeof(*clk_data),
->>>>> +					 GFP_KERNEL);
->>>>> +		if (WARN(!clk_data,
->>>>> +			"no space for MBIST WAR clk array for %d\n", i)) {
->>>>> +			tegra210_pg_mbist_war[i].handle_lvl2_ovr = NULL;
->>>>> +			continue;
->>>>> +		}
->>>>
->>>> Printing error messages on memory allocation failures are not needed and
->>>> have been removed from various drivers. So lets no add any error
->>>> messages or warnings here.
->>>>
->>>> Also I think that we should just return an error here and not bother
->>>> continuing as there is no point.
->>
->> So maybe here just ...
->>
->> 		if (WARN_ON(!clk_data))
->> 			return -ENOMEM;
->>
-> 
-> Given that we do WARN_ON() here..
-> 
->>>>> +
->>>>> +		tegra210_pg_mbist_war[i].clks = clk_data;
->>>>
->>>> I think that you should only populate this when all the clocks have been
->>>> initialised correctly. You could then use this to check the clocks have
->>>> been setup correctly when executing the war.
->>>>
->>>
->>> For some domains no extra clocks are needed (ie the clocks enabled by the
->>> power domain driver are enough). So an extra flag would be needed then.
->>
->> Yes but you have num_clks to detect if a domain has extra clocks. So you
->> can use both of these to detect if the clocks are setup correctly. Right?
->>
->>>>> +		for (j = 0; j < num_clks; j++) {
->>>>> +			int clk_id = tegra210_pg_mbist_war[i].clk_init_data[j];
->>>>> +			struct clk *clk = clks[clk_id];
->>>>> +
->>>>> +			if (IS_ERR(clk)) {
->>>>> +				clk_data[j].clk = NULL;
->>>>> +				WARN(1, "clk_id: %d\n", clk_id);
->>>>
->>>> I think that we should return an error here.
->>>>
->>>
->>> I don't think letting clock init fail because of this, is a good idea. Too
->>> many things rely on working clocks.
->>
->> It should never fail and if it does something is badly broken.
->>
->> Maybe what we could do ...
->>
->> 			if (WARN_ON(IS_ERR(clk))) {
-> 
-> and here..
-> 
->> 				tegra210_pg_mbist_war[i].clks = NULL;
->> 				break;
->> 			}
->>
->> 			clk_data[j].clk = clk;
->>
-> 
-> ..
-> 
->>>>>  	if (!clks)
->>>>> @@ -3233,6 +3622,8 @@ static void __init tegra210_clock_init(struct device_node *np)
->>>>>  	tegra_add_of_provider(np);
->>>>>  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->>>>>  
->>>>> +	tegra210_mbist_clk_init();
->>>>> +
->>>>
->>>> Maybe add a print here if the mbist init fails and return. I understand
->>>> it may not be a critical failure but it should never fail.
->>>>
->>>
->>> You mean have the entire clock init fail and undo all the clock registrations?
->>> That seems overkill to me. Returning early would only prevent some sleep states
->>> from working because tegra_cpu_car_ops will not be initialized then. So I would
->>> do a warning then.
->>
->> I don't think it is necessary to undo it. Ok, don't worry about
->> returning an error here, the warnings should be sufficient.
->>
-> 
-> I don't think there's much value in yet another warning here.
+I would make it a bit larger, though. "0x64" is the strict minimum =>
+0x80? 0x100?
 
-Yes indeed.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cheers
-Jon
+Gr{oetje,eeting}s,
 
--- 
-nvpublic
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
