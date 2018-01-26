@@ -1,93 +1,67 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 09/44] dt-bindings: clock: New bindings for TI Davinci PSC
-Date: Sun,  7 Jan 2018 20:17:08 -0600
-Message-Id: <1515377863-20358-10-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-30-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-30-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:25:32 +0100
+Message-ID: <CAMuHMdUeK7U5dixHOWSDKYN8O51GP5oi61CbA5jOJ+QuWC3B3A@mail.gmail.com>
+Subject: Re: [RFC 29/37] clk: renesas: r8a7791/r8a7793: Add rwdt clock
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the Power Sleep Controller (PSC) for the
-mach-davinci family of processors.
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Note: Although TI Keystone has a very similar PSC, we are not using the
-existing bindings. Keystone is using a legacy one-node-per-clock binding
-(actually two nodes if you count the separate reset binding for the same
-IP block). Also, some davinci LPSCs have quirks that aren't handled by
-the keystone bindings, so we would be adding one compatible string per
-clock with quirks instead of just a new compatible string for each
-controller.
+With the critical clock handling removed (that can be done by the driver,
+if really needed)
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- .../devicetree/bindings/clock/ti/davinci/psc.txt   | 47 ++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-new file mode 100644
-index 0000000..83a9da5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-@@ -0,0 +1,47 @@
-+Binding for TI DaVinci Power Sleep Controller (PSC)
-+
-+The PSC provides power management, clock gating and reset functionality. It is
-+primarily used for clocking.
-+
-+Required properties:
-+- compatible: shall be one of:
-+	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
-+	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
-+- reg: physical base address and size of the controller's register area.
-+- #clock-cells: from common clock binding; shall be set to 1.
-+- #reset-cells: from reset binding; shall be set to 1.
-+
-+Consumers:
-+
-+	Clock and reset consumers shall use the local power domain module ID
-+	(LPSC) as the index corresponding to the clock cell. Refer to the
-+	device-specific	datasheet to find these numbers. NB: Most local domains
-+	only provide a clock and not a reset.
-+
-+Examples:
-+
-+	psc0: clock-controller@10000 {
-+		compatible = "ti,da850-psc0";
-+		reg = <0x10000 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	/* consumer */
-+	dsp: dsp@11800000 {
-+		compatible = "ti,da850-dsp";
-+		reg = <0x11800000 0x40000>,
-+		      <0x11e00000 0x8000>,
-+		      <0x11f00000 0x8000>,
-+		      <0x01c14044 0x4>,
-+		      <0x01c14174 0x8>;
-+		reg-names = "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig";
-+		interrupt-parent = <&intc>;
-+		interrupts = <28>;
-+		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+- Documentation/devicetree/bindings/reset/reset.txt
--- 
-2.7.4
+> --- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+> @@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+>         DEF_MOD("cmt1",                  329,   R8A7791_CLK_R),
+>         DEF_MOD("usbhs-dmac0",           330,   R8A7791_CLK_HP),
+>         DEF_MOD("usbhs-dmac1",           331,   R8A7791_CLK_HP),
+> +       DEF_MOD("rwdt",                  402,   R8A7791_CLK_R),
+>         DEF_MOD("irqc",                  407,   R8A7791_CLK_CP),
+>         DEF_MOD("intc-sys",              408,   R8A7791_CLK_ZS),
+>         DEF_MOD("audio-dmac1",           501,   R8A7791_CLK_HP),
+> @@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+>  };
+>
+>  static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
+> +       MOD_CLK_ID(402),        /* RWDT */
+>         MOD_CLK_ID(408),        /* INTC-SYS (GIC) */
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
