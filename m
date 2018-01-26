@@ -1,64 +1,50 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 11 Jan 2018 13:18:39 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
-	wens@csie.org, architt@codeaurora.org, a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 08/12] drm/sun4i: Add support for A83T second TCON
-Message-ID: <20180111121839.z2barh5shgfrfs3x@flea.lan>
-References: <20180110192512.19684-1-jernej.skrabec@siol.net>
- <20180110192512.19684-9-jernej.skrabec@siol.net>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yqyk7qmeenbq4if2"
-In-Reply-To: <20180110192512.19684-9-jernej.skrabec@siol.net>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdWVvMJR5NHMFn6zx39jw2XdP5nteU3actUcen0dmoT-LQ@mail.gmail.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1516903391-30467-2-git-send-email-fabrizio.castro@bp.renesas.com> <CAMuHMdWVvMJR5NHMFn6zx39jw2XdP5nteU3actUcen0dmoT-LQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:49:51 +0100
+Message-ID: <CAMuHMdVkCscs1TN-se43TkZaCaKNdG2GLenApc7yRUkhD=pg2Q@mail.gmail.com>
+Subject: Re: [RFC 01/37] ARM: shmobile: Add watchdog support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Jan 26, 2018 at 10:46 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+>> SMP bringup, CPU hot plug, and suspend to RAM work as normal.
+>
+> shmobile_boot_vector is not only used for R-Car Gen2 and RZ/G1 SoCs, but
+> also for EMMA Mobile, SH/R-Mobile, and R-Car H1.  Hence this breaks SMP
+> for the latter (and their build if ARCH_RENESAS=n, due to missing
+> shmobile_wdt_clock_status).
 
---yqyk7qmeenbq4if2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry, please ignore my comment about build failures.
 
-On Wed, Jan 10, 2018 at 08:25:08PM +0100, Jernej Skrabec wrote:
-> This TCON is connected to HDMI encoder.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Gr{oetje,eeting}s,
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+                        Geert
 
-Thanks!
-Maxime
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---yqyk7qmeenbq4if2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXVh4ACgkQ0rTAlCFN
-r3QWjg/9ERz2Z9SgOodVXhoBLT/K/URDsT4+bjBTzc5OvkXQSWK+QB4P2KhEGWsg
-8uDy38AdMEghM3g63yOttC11glw0RBUCfTxPN4Ccu9n1hi4CkTaHqfFM/ZyurRri
-NIa2+mwhIaiOlPHAozjrldH/ous7rLgcwDLoSE8DTuKw9kfm0dmVLB/mxTYk+2fK
-vgQfbKeZRKIKfpPS43f/YEzUqm0/w8HuV5UnWPy42vfPUlwJIv38/Z/TdoVAoDSz
-DKu47MX/DwqLKBvKbadbuSuUY/v5xeoBKQh1ToFbfA9eT5ws89Kz8WMerp5vnRMy
-5ojJlQb1t1OnMlIUUlbhENjlJM7SKBtYGE3kZ8O6ezBSsiJR8/HPtnbrgHuGOpf3
-4YwOg30iIOb5xhvwCFqQGTQ64d1Kw12U3dpJLpdnSyHoBN2nU1FXv9CWMls8faf4
-5tkP+0DxIDymyst8vgPutQBKEwj+8u49q7PvZKk0+0ityKdhgAVtTqrUrZyEacQ1
-FD8NJkyqTCGweHBY6zhHGepuZjehLmFzHDUJ6v6cah/dc9HaRxRWF0sKVCXHNmS6
-YqT66rKAHpGX52uDVseLKlqkxUyctYxSU5h/4hm+7AKzc02M0ZOTleQ9dG18TUX0
-gvbM5Cyw8VVpqKYPA0kPrh1rRcQsoM4B4bIYoODdo/mRlkcgfj4=
-=k3vJ
------END PGP SIGNATURE-----
-
---yqyk7qmeenbq4if2--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
