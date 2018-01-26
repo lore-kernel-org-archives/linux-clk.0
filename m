@@ -1,128 +1,67 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 03/19] clk: meson: only one loop index is necessary in probe
-Date: Wed, 31 Jan 2018 19:09:29 +0100
-Message-Id: <20180131180945.18025-4-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-29-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-29-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:25:15 +0100
+Message-ID: <CAMuHMdVxgyo3FWWxHnXyoHHueq4pibUYLAd=nZJDpG2++e-8Yg@mail.gmail.com>
+Subject: Re: [RFC 28/37] clk: renesas: r8a7790: Add rwdt clock
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-We don't need several loop index variables in the probe function
-This is far from being critical but since we are doing a vast
-rework of meson clock controllers, now is the time to lower the
-entropy a bit
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c     |  8 ++++----
- drivers/clk/meson/gxbb.c    | 13 ++++++-------
- drivers/clk/meson/meson8b.c |  8 ++++----
- 3 files changed, 14 insertions(+), 15 deletions(-)
+With the critical clock handling removed (that can be done by the driver,
+if really needed)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 2f2b3845c01d..81565b025b70 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -802,7 +802,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	const struct clkc_data *clkc_data;
- 	struct resource *res;
- 	void __iomem *clk_base;
--	int ret, clkid, i;
-+	int ret, i;
- 
- 	clkc_data = of_device_get_match_data(dev);
- 	if (!clkc_data)
-@@ -841,13 +841,13 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		clkc_data->clk_dividers[i]->reg = clk_base +
- 			(u64)clkc_data->clk_dividers[i]->reg;
- 
--	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
-+	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
- 		/* array might be sparse */
--		if (!clkc_data->hw_onecell_data->hws[clkid])
-+		if (!clkc_data->hw_onecell_data->hws[i])
- 			continue;
- 
- 		ret = devm_clk_hw_register(dev,
--					clkc_data->hw_onecell_data->hws[clkid]);
-+					   clkc_data->hw_onecell_data->hws[i]);
- 		if (ret) {
- 			dev_err(dev, "Clock registration failed\n");
- 			return ret;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 17f44ac751b3..e6adab49c0ba 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1947,7 +1947,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	const struct clkc_data *clkc_data;
- 	void __iomem *clk_base;
--	int ret, clkid, i;
-+	int ret, i;
- 	struct device *dev = &pdev->dev;
- 
- 	clkc_data = of_device_get_match_data(dev);
-@@ -1988,16 +1988,15 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
- 		clkc_data->clk_audio_dividers[i]->base = clk_base;
- 
--	/*
--	 * register all clks
--	 */
--	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
-+
-+	/* Register all clks */
-+	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
- 		/* array might be sparse */
--		if (!clkc_data->hw_onecell_data->hws[clkid])
-+		if (!clkc_data->hw_onecell_data->hws[i])
- 			continue;
- 
- 		ret = devm_clk_hw_register(dev,
--					clkc_data->hw_onecell_data->hws[clkid]);
-+					   clkc_data->hw_onecell_data->hws[i]);
- 		if (ret)
- 			goto iounmap;
- 	}
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index abac079ff77f..ffadad27375e 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -806,7 +806,7 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
- 
- static int meson8b_clkc_probe(struct platform_device *pdev)
- {
--	int ret, clkid, i;
-+	int ret, i;
- 	struct clk_hw *parent_hw;
- 	struct clk *parent_clk;
- 	struct device *dev = &pdev->dev;
-@@ -844,13 +844,13 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 	 * register all clks
- 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
- 	 */
--	for (clkid = CLKID_XTAL; clkid < CLK_NR_CLKS; clkid++) {
-+	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
- 		/* array might be sparse */
--		if (!meson8b_hw_onecell_data.hws[clkid])
-+		if (!meson8b_hw_onecell_data.hws[i])
- 			continue;
- 
- 		/* FIXME convert to devm_clk_register */
--		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[clkid]);
-+		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
- 		if (ret)
- 			return ret;
- 	}
--- 
-2.14.3
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+> @@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+>         DEF_MOD("cmt1",                  329,   R8A7790_CLK_R),
+>         DEF_MOD("usbhs-dmac0",           330,   R8A7790_CLK_HP),
+>         DEF_MOD("usbhs-dmac1",           331,   R8A7790_CLK_HP),
+> +       DEF_MOD("rwdt",                  402,   R8A7790_CLK_R),
+>         DEF_MOD("irqc",                  407,   R8A7790_CLK_CP),
+>         DEF_MOD("intc-sys",              408,   R8A7790_CLK_ZS),
+>         DEF_MOD("audio-dmac1",           501,   R8A7790_CLK_HP),
+> @@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+>  };
+>
+>  static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
+> +       MOD_CLK_ID(402),        /* RWDT */
+>         MOD_CLK_ID(408),        /* INTC-SYS (GIC) */
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
