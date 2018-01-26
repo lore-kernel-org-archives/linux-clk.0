@@ -1,218 +1,85 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 05 Jan 2018 10:50:40 +0800
-In-Reply-To: <1645801.yZU0HLsLbk@jernej-laptop>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-7-jernej.skrabec@siol.net> <20180103202154.eeajt3234w3adqjq@rob-hp-laptop> <1645801.yZU0HLsLbk@jernej-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH 06/11] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-To: linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        Rob Herring <robh@kernel.org>
-CC: mark.rutland@arm.com, Jose.Abreu@synopsys.com,
-        architt@codeaurora.org, narmstrong@baylibre.com, airlied@linux.ie,
-        mturquette@baylibre.com, linux-sunxi@googlegroups.com,
-        sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, a.hajda@samsung.com,
-        wens@csie.org, Laurent.pinchart@ideasonboard.com,
-        maxime.ripard@free-electrons.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:40073 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751256AbeAZU5o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jan 2018 15:57:44 -0500
 From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <A6B18BA1-5B45-4C8D-9C72-082098C92BA8@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
+Date: Sat, 27 Jan 2018 04:57:33 +0800
+Message-ID: <3527360.oZpfb5Pa1p@ice-x220i>
+In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+References: <20180119231735.61504-1-icenowy@aosc.io> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+在 2018年1月25日星期四 CST 下午11:35:20，Maxime Ripard 写道：
+> Hi,
+> 
+> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
+> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
+> > 
+> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
+> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9
+> > > > SoC.
+> > > > 
+> > > > The same die is packaged differently, come with different co-packaged
+> > > > DRAM or shipped with different SDK; and then made many model names:
+> > > > F23,
+> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs
+> > > > all
+> > > > share a common feature set and are packaged similarly (eLQFP128 for
+> > > > SoCs
+> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
+> > > > functionality hidden on the QFN88 models (except DRAM interface not
+> > > > exported), it's not clever to differentiate them. So I will use suniv
+> > > > as
+> > > > common name of all these SoCs.
+> > > 
+> > > Where is that suniv prefix coming from?
+> > 
+> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK
+> > and "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+> 
+> Do you have a link to that BSP?
+
+https://pan.baidu.com/s/1rar5YtI
+
+There's Melis (F1C100s) and Linux (F1C600) BSP.
+
+> 
+> > > You should really answer two questions here:
+> > >   - Are you able to predict whether you'll find an SoC part of that
+> > >   
+> > >     family in the future that derives a bit and will need a compatible
+> > >     of its own?
+> > >   
+> > >   - Are you able to predict which quirks we'll need along the way to
+> > >   
+> > >     support all the SoCs you've listed there?
+> > > 
+> > > If you can't answer yes to both these questions, with a 100%
+> > > certainty, then you'll need a SoC name in the compatible.
+> > > 
+> > > Which doesn't prevent you from sharing as much as possible the DT like
+> > > we did between the A10s and the A13 for example.
+> > 
+> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals
+> > known should go through suniv.dtsi.
+> 
+> Sorry if I wasn't really clear. You can totally keep the current DT
+> structure if that makes sense (and judging by what you're saying, it
+> does.), but the compatibles should have the SoC name in it.
+> 
+> Maxime
 
 
-于 2018年1月4日 GMT+08:00 上午5:32:26, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Hi Rob,
->
->Dne sreda, 03. januar 2018 ob 21:21:54 CET je Rob Herring napisal(a):
->> On Sat, Dec 30, 2017 at 10:01:58PM +0100, Jernej Skrabec wrote:
->> > This commit adds all necessary compatibles and descriptions needed
->to
->> > implement A83T HDMI pipeline.
->> > 
->> > Mixer is already properly described, so only compatible is added.
->> > 
->> > However, A83T TCON1, which is connected to HDMI, doesn't have
->channel 0,
->> > contrary to all TCONs currently described. Because of that, TCON
->> > documentation is extended.
->> > 
->> > A83T features Synopsys DW HDMI controller with a custom PHY which
->looks
->> > like Synopsys Gen2 PHY with few additions. Since there is no
->> > documentation, needed properties were found out through
->experimentation
->> > and reading BSP code.
->> > 
->> > At the end, example is added for newer SoCs, which features DE2 and
->DW
->> > HDMI.
->> > 
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> > ---
->> > 
->> >  .../bindings/display/sunxi/sun4i-drm.txt           | 188
->> >  ++++++++++++++++++++- 1 file changed, 181 insertions(+), 7
->deletions(-)
->> > 
->> > diff --git
->a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->index
->> > 9f073af4c711..3eca258096a5 100644
->> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > 
->> > @@ -64,6 +64,40 @@ Required properties:
->> >      first port should be the input endpoint. The second should be
->the
->> >      output, usually to an HDMI connector.
->> > 
->> > +DWC HDMI TX Encoder
->> > +-----------------------------
->> > +
->> > +The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX
->controller IP
->> > +with Allwinner's own PHY IP. It supports audio and video outputs
->and CEC.
->> > +
->> > +These DT bindings follow the Synopsys DWC HDMI TX bindings defined
->in
->> > +Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with
->the
->> > +following device-specific properties.
->> > +
->> > +Required properties:
->> > +
->> > +  - compatible: value must be one of:
->> > +    * "allwinner,sun8i-a83t-dw-hdmi"
->> > +  - reg: two pairs of base address and size of memory-mapped
->region,
->> > first
->> > +    for controller and second for PHY
->> > +    registers.
->> 
->> Seems like the phy should be a separate node and use the phy binding.
->> You can use the phy binding even if you don't use the kernel phy
->> framework...
->
->Unfortunately, it's not so straighforward. Phy is actually accessed
->through 
->I2C implemented in HDMI controller. Second memory region in this case
->has 
->small influence on phy. However, it has big influence on controller.
-
-To be honest you used inaccurate word. Use "glue" directly
-here may be more accurate.
-
->For 
->example, magic number has to be written in one register in second
->memory 
->region in order to unlock read access to any register from first memory
->region 
->(controller). However, they shouldn't be merged to one region, because
->first 
->memory region requires byte access while second memory region can be
->accessed 
->per byte or word.
->
->To complicate things more, later I want to add support for another SoC
->which 
->has same glue layer (unlocking read access, etc.) and uses memory
->mapped phy 
->registers in second memory region.
->
->I think current binding is the least complicated way to represent this.
->
->> 
->> > +  - reg-io-width: See dw_hdmi.txt. Shall be 1.
->> > +  - interrupts: HDMI interrupt number
->> > +  - clocks: phandles to the clocks feeding the HDMI encoder
->> > +    * iahb: the HDMI bus clock
->> > +    * isfr: the HDMI register clock
->> > +    * tmds: the HDMI tmds clock
->> > +  - clock-names: the clock names mentioned above
->> > +  - resets: phandles to the reset controllers driving the encoder
->> > +    * ctrl: the reset line for the controller
->> > +    * phy: the reset line for the PHY
->> > +  - reset-names: the reset names mentioned above
->> > +
->> > +  - ports: A ports node with endpoint definitions as defined in
->> > +    Documentation/devicetree/bindings/media/video-interfaces.txt.
->The
->> > +    first port should be the input endpoint. The second should be
->the
->> > +    output, usually to an HDMI connector.
->> > +
->> > 
->> >  TV Encoder
->> >  ----------
->> > 
->> > @@ -94,18 +128,17 @@ Required properties:
->> >     * allwinner,sun7i-a20-tcon
->> >     * allwinner,sun8i-a33-tcon
->> >     * allwinner,sun8i-a83t-tcon-lcd
->> > 
->> > +   * allwinner,sun8i-a83t-tcon-tv
->> > 
->> >     * allwinner,sun8i-v3s-tcon
->> >   
->> >   - reg: base address and size of memory-mapped region
->> >   - interrupts: interrupt associated to this IP
->> > 
->> > - - clocks: phandles to the clocks feeding the TCON. Three are
->needed:
->> > 
->> > + - clocks: phandles to the clocks feeding the TCON. One is needed:
->> >     - 'ahb': the interface clocks
->> > 
->> > -   - 'tcon-ch0': The clock driving the TCON channel 0
->> > 
->> >   - resets: phandles to the reset controllers driving the encoder
->> >   
->> >     - "lcd": the reset line for the TCON channel 0
->> >   
->> >   - clock-names: the clock names mentioned above
->> >   - reset-names: the reset names mentioned above
->> > 
->> > - - clock-output-names: Name of the pixel clock created
->> > 
->> >  - ports: A ports node with endpoint definitions as defined in
->> >  
->> >    Documentation/devicetree/bindings/media/video-interfaces.txt.
->The
->> > 
->> > @@ -119,11 +152,31 @@ Required properties:
->> >    channel the endpoint is associated to. If that property is not
->> >    present, the endpoint number will be used as the channel number.
->> > 
->> > -On SoCs other than the A33 and V3s, there is one more clock
->required:
->> > +Following compatibles:
->> > + * allwinner,sun4i-a10-tcon
->> > + * allwinner,sun5i-a13-tcon
->> > + * allwinner,sun6i-a31-tcon
->> > + * allwinner,sun6i-a31s-tcon
->> > + * allwinner,sun7i-a20-tcon
->> > + * allwinner,sun8i-a33-tcon
->> > + * allwinner,sun8i-a83t-tcon-lcd
->> > + * allwinner,sun8i-v3s-tcon
->> > +have additional required properties:
->> > + - 'tcon-ch0': The clock driving the TCON channel 0
->> 
->> tcon-ch0 is a clock name, not a property.
->
->right.
->
->Best regards,
->Jernej
->
->
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
