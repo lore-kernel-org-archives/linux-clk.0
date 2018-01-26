@@ -1,113 +1,71 @@
-Return-Path: <paul@crapouillou.net>
-Date: Thu, 11 Jan 2018 17:25:45 +0100
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
-	<jason@lakedaemon.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones
-	<lee.jones@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Message-Id: <1515687945.2170.1@smtp.crapouillou.net>
-In-Reply-To: <58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
-References: <20180101143344.2099-1-paul@crapouillou.net>
-	<20180110224838.16711-1-paul@crapouillou.net>
-	<20180110224838.16711-6-paul@crapouillou.net>
-	<58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC: Guenter Roeck <linux@roeck-us.net>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
+	<linux-watchdog@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
+	<ramesh.shanmugasundaram@bp.renesas.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>, Russell King
+	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>
+Subject: RE: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
+ trigger for Gen2
+Date: Fri, 26 Jan 2018 16:59:05 +0000
+Message-ID: <TY1PR06MB0895CA9B4668F49991FD607FC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+ <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
+In-Reply-To: <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Hi Marc,
-
->>  +static int __init ingenic_tcu_intc_of_init(struct device_node 
->> *node,
->>  +	struct device_node *parent)
->>  +{
->>  +	struct irq_domain *domain;
->>  +	struct irq_chip_generic *gc;
->>  +	struct irq_chip_type *ct;
->>  +	int err, i, num_parent_irqs;
->>  +	unsigned int parent_irqs[3];
-> 
-> 3 parent interrupts? Really? How do you pick one? Also, given the 
-> useage
-> model below, "int" is the wrong type. Probably should be u32.
-
-See below.
-
->>  +	struct regmap *map;
->>  +
->>  +	num_parent_irqs = of_property_count_elems_of_size(
->>  +			node, "interrupts", 4);
-> 
-> Nit: on a single line, as here is nothing that hurts my eyes more than
-> reading something like(
-> this). Also, 4 is better expressed as sizeof(u32).
-
-That will make checkpatch.pl unhappy :(
-
->>  +	if (num_parent_irqs < 0 || num_parent_irqs > 
->> ARRAY_SIZE(parent_irqs))
->>  +		return -EINVAL;
->>  +
->>  +	map = syscon_node_to_regmap(node->parent);
->>  +	if (IS_ERR(map))
->>  +		return PTR_ERR(map);
->>  +
->>  +	domain = irq_domain_add_linear(node, 32, &irq_generic_chip_ops, 
->> NULL);
->>  +	if (!domain)
->>  +		return -ENOMEM;
->>  +
->>  +	err = irq_alloc_domain_generic_chips(domain, 32, 1, "TCU",
->>  +			handle_level_irq, 0, IRQ_NOPROBE | IRQ_LEVEL, 0);
->>  +	if (err)
->>  +		goto out_domain_remove;
->>  +
->>  +	gc = irq_get_domain_generic_chip(domain, 0);
->>  +	ct = gc->chip_types;
->>  +
->>  +	gc->wake_enabled = IRQ_MSK(32);
->>  +	gc->private = map;
->>  +
->>  +	ct->regs.disable = TCU_REG_TMSR;
->>  +	ct->regs.enable = TCU_REG_TMCR;
->>  +	ct->regs.ack = TCU_REG_TFCR;
->>  +	ct->chip.irq_unmask = ingenic_tcu_gc_unmask_enable_reg;
->>  +	ct->chip.irq_mask = ingenic_tcu_gc_mask_disable_reg;
->>  +	ct->chip.irq_mask_ack = ingenic_tcu_gc_mask_disable_reg_and_ack;
->>  +	ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
->>  +
->>  +	/* Mask all IRQs by default */
->>  +	regmap_write(map, TCU_REG_TMSR, IRQ_MSK(32));
->>  +
->>  +	for (i = 0; i < num_parent_irqs; i++) {
->>  +		parent_irqs[i] = irq_of_parse_and_map(node, i);
->>  +		if (!parent_irqs[i]) {
->>  +			err = -EINVAL;
->>  +			goto out_unmap_irqs;
->>  +		}
->>  +
->>  +		irq_set_chained_handler_and_data(parent_irqs[i],
->>  +				ingenic_tcu_intc_cascade, domain);
->>  +	}
-> 
-> I don't get the multiple parent irq at all. How are the source 
-> interrupt
-> routed to the various cascades?
-
-On JZ4740, channels 0 and 1 have their own interrupt, and channels 2-7 
-share
-one interrupt line.
-On JZ4770 and JZ4780, the OST (OS timer) channel has its own interrupt,
-channel 5 has its own interrupt, and channels 0-4 and 6-7 share one
-interrupt line.
-
-To keep things simple, we register the same interrupt handler for the 
-three
-parent interrupts.
-
--Paul
+SGVsbG8gU2VyZ2VpLA0KDQp0aGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suDQoNCj4gU3ViamVj
+dDogUmU6IFtSRkMgMTAvMzddIHNvYzogcmVuZXNhczogcmNhci1yc3Q6IEVuYWJsZSB3YXRjaGRv
+ZyBhcyByZXNldCB0cmlnZ2VyIGZvciBHZW4yDQo+DQo+IEhlbGxvIQ0KPg0KPiBPbiAxLzI1LzIw
+MTggOTowMiBQTSwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPg0KPiA+IFRoaXMgcGF0Y2ggYWxs
+b3dzIGZvciBwbGF0Zm9ybSBzcGVjaWZpYyBxdWlya3MgYXMgc29tZSBvZiB0aGUgU29DIG5lZWQN
+Cj4gPiBmdXJ0aGVyIGN1c3RvbWl6YXRpb24gZm9yIHRoZSB3YXRjaGRvZyB0byB3b3JrIHByb3Bl
+cmx5LCBsaWtlIGZvciBSLUNhcg0KPiA+IEdlbjIgYW5kIGZvciBSWi9HLg0KPiA+DQo+ID4gU2ln
+bmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5j
+b20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5z
+aGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9z
+b2MvcmVuZXNhcy9yY2FyLXJzdC5jIHwgMjEgKysrKysrKysrKysrKysrKysrKystDQo+ID4gICAx
+IGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3JlbmVzYXMvcmNhci1yc3QuYyBiL2RyaXZlcnMvc29j
+L3JlbmVzYXMvcmNhci1yc3QuYw0KPiA+IGluZGV4IGY3YTBkNTQuLjVmNTJhZWEgMTAwNjQ0DQo+
+ID4gLS0tIGEvZHJpdmVycy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gKysrIGIvZHJpdmVy
+cy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gQEAgLTEzLDggKzEzLDE4IEBADQo+ID4gICAj
+aW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+ICAgI2luY2x1ZGUgPGxpbnV4L3NvYy9y
+ZW5lc2FzL3JjYXItcnN0Lmg+DQo+ID4NCj4gPiArI2RlZmluZSBXRFRSU1RDUl9SRVNFVDB4QTU1
+QTAwMDINCj4gPiArI2RlZmluZSBXRFRSU1RDUjB4MDA1NA0KPiA+ICsNCj4gPiArc3RhdGljIGlu
+dCBnZW4yX2NvbmZpZ3VyYXRpb24odm9pZCBfX2lvbWVtICpiYXNlKQ0KPiA+ICt7DQo+ID4gK2lv
+d3JpdGUzMihXRFRSU1RDUl9SRVNFVCwgYmFzZSArIFdEVFJTVENSKTsNCj4gPiArcmV0dXJuIDA7
+DQo+ID4gK30NCj4gPiArDQo+ID4gICBzdHJ1Y3QgcnN0X2NvbmZpZyB7DQo+ID4gLXVuc2lnbmVk
+IGludCBtb2RlbXI7LyogTW9kZSBNb25pdG9yaW5nIFJlZ2lzdGVyIE9mZnNldCAqLw0KPiA+ICt1
+bnNpZ25lZCBpbnQgbW9kZW1yOy8qIE1vZGUgTW9uaXRvcmluZyBSZWdpc3RlciBPZmZzZXQgKi8N
+Cj4gPiAraW50ICgqY29uZmlndXJlKSh2b2lkICpiYXNlKTsvKiBQbGF0Zm9ybSBzcGVjaWZpYyBj
+b25maWd1cmF0aW9uICovDQo+ID4gICB9Ow0KPiA+DQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0
+IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2luaXRjb25zdCA9IHsNCj4gPiBAQCAtMjMsNiAr
+MzMsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2lu
+aXRjb25zdCA9IHsNCj4gPg0KPiA+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCByc3RfY29uZmlnIHJj
+YXJfcnN0X2dlbjIgX19pbml0Y29uc3QgPSB7DQo+ID4gICAubW9kZW1yID0gMHg2MCwNCj4gPiAr
+LmNvbmZpZ3VyZSA9IGdlbjJfY29uZmlndXJhdGlvbiwNCj4NCj4gICAgIFdoeSBub3QgY2FsbCB0
+aGUgbWV0aG9kIGdlbjJfY29uZmlndXJlKCkgdGhlbj8NCg0KWWVhaCwgdGhlIG5hbWUgZ2VuMl9j
+b25maWd1cmF0aW9uIGlzbid0IGdyZWF0IQ0KQXMgeW91IG1heSBoYXZlIG5vdGljZWQgYWxyZWFk
+eSwgR2VlcnQgc3VnZ2VzdGVkIHJjYXJfcnN0X2VuYWJsZV93ZHRfcmVzZXQuDQpJIGFtIGRlZmlu
+aXRlbHkgZ29pbmcgdG8gY2hhbmdlIGl0IChpZiBJIGFtIGtlZXBpbmcgdGhlIGZ1bmN0aW9uIHBv
+aW50ZXIgYXQgYWxsISksIGV4cGVjdCB0byBzZWUgYW5vdGhlciB2ZXJzaW9uIG9mIHRoaXMgcGF0
+Y2ggaW4gdGhlIG5leHQgZmV3IGRheXMgdG8gYWRkcmVzcyB0aGlzLg0KDQpUaGFua3MsDQpGYWIN
+Cg0KPg0KPiBbLi4uXQ0KPg0KPiBNQlIsIFNlcmdlaQ0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmlj
+cyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBC
+dWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxl
+cyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
