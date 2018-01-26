@@ -1,196 +1,61 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Rob Herring <robh@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
- Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-2-git-send-email-david@lechnology.com>
- <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
- <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
- <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <7064a0d6-0969-81a0-00af-84cca339b813@lechnology.com>
-Date: Tue, 30 Jan 2018 12:46:28 -0600
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-12-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-12-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:06:53 +0100
+Message-ID: <CAMuHMdUGq-k55RoGLvtG_fbG_aXtENovjKzpkHF5WD0nTon+zA@mail.gmail.com>
+Subject: Re: [RFC 11/37] soc: renesas: rcar-rst: Document generic compatible strings
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/30/2018 08:50 AM, Rob Herring wrote:
-> On Mon, Jan 29, 2018 at 3:14 PM, David Lechner <david@lechnology.com> wrote:
->> On 01/29/2018 01:53 PM, Rob Herring wrote:
->>>
->>> On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
->>>>
->>>> This adds a new binding for the PLL IP blocks in the mach-davinci
->>>> family of processors. Currently, only da850 has device tree support
->>>> but these bindings can also work for other SoCs in this family just
->>>> by adding new compatible strings.
->>>>
->>>> Note: Although these PLL controllers are very similar to the TI Keystone
->>>> SoCs, we are not re-using those bindings. The Keystone bindings use a
->>>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
->>>> have a slightly different PLL register layout and a number of quirks
->>>> that can't be handled by the existing bindings, so the keystone bindings
->>>> could not be used as-is anyway.
->>>>
->>>> Signed-off-by: David Lechner <david@lechnology.com>
->>>> ---
->>>>
->>>> v6 changes:
->>>> - Added clock-names property
->>>> - Added ti,clkmode-square-wave property
->>>> - Added pllout child node
->>>> - Added obsclk child node
->>>> - Expanded examples
->>>>
->>>>    .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96
->>>> ++++++++++++++++++++++
->>>>    1 file changed, 96 insertions(+)
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> new file mode 100644
->>>> index 0000000..36998e1
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
->>>> @@ -0,0 +1,96 @@
->>>> +Binding for TI DaVinci PLL Controllers
->>>> +
->>>> +The PLL provides clocks to most of the components on the SoC. In
->>>> addition
->>>> +to the PLL itself, this controller also contains bypasses, gates,
->>>> dividers,
->>>> +an multiplexers for various clock signals.
->>>> +
->>>> +Required properties:
->>>> +- compatible: shall be one of:
->>>> +       - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
->>>> +       - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
->>>> +- reg: physical base address and size of the controller's register area.
->>>> +- clocks: phandles corresponding to the clock names
->>>> +- clock-names: names of the clock sources - depends on compatible string
->>>> +       - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
->>>> +       - for "ti,da850-pll1", shall be "clksrc"
->>>> +
->>>> +Optional properties:
->>>> +- ti,clkmode-square-wave: Indicates that the the board is supplying a
->>>> square
->>>> +       wave input on the OSCIN pin instead of using a crystal
->>>> oscillator.
->>>> +       This property is only valid when compatible = "ti,da850-pll0".
->>>> +
->>>> +
->>>> +Optional child nodes:
->>>> +
->>>> +pllout
->>>> +       Describes the main PLL clock output (before POSTDIV). The node
->>>> name must
->>>> +       be "pllout".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>> +
->>>> +sysclk
->>>> +       Describes the PLLDIVn divider clocks that provide the SYSCLKn
->>>> clock
->>>> +       domains. The node name must be "sysclk". Consumers of this node
->>>> should
->>>> +       use "n" in "SYSCLKn" as the index parameter for the clock cell.
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 1
->>>> +
->>>> +auxclk
->>>> +       Describes the AUXCLK output of the PLL. The node name must be
->>>> "auxclk".
->>>> +       This child node is only valid when compatible = "ti,da850-pll0".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>> +
->>>> +obsclk
->>>> +       Describes the OBSCLK output of the PLL. The node name must be
->>>> "obsclk".
->>>> +
->>>> +       Required properties:
->>>> +       - #clock-cells: shall be 0
->>>
->>>
->>> So why have all these child nodes vs. just defining a single number
->>> space of clock ids?
->>>
->>> Rob
->>>
->>
->> I think that it makes the bindings more self-documenting. Not all PLLs have
->> all of possible types of output clocks, so the presence or absence of a
->> child node indicates if a PLL actually has that output or not.
-> 
-> Doesn't the compatible string do that?
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> From now on, devices compatible with the generic compatible strings
+> documented by this commit don't need to modify the corresponding driver
+> anymore.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Sure.
+Thanks for your patch!
 
-> 
->> It is also complicated by the fact that one of the child nodes (sysclk)
->> is  already an array of clocks.
->>
->> To do what you are suggesting might look something like this...
->>
->> ---
->>
->> Required properties:
->> - compatible: shall be one of:
->>          - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
->>          - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
->> - reg: physical base address and size of the controller's register area.
->> - clocks: phandles corresponding to the clock names
->> - clock-names: names of the clock sources - depends on compatible string
->>          - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
->>          - for "ti,da850-pll1", shall be "clksrc"
->> - #clock-cells: shall be set to <2>.
->>
->> Consumers:
->>
->> The clock cell values for consumers work as follows...
->>
->> The first index is one of the constants defined in ti-davinci-pll.h
->>
->> The second index is 0 unless the first index is TI_DAVINCI_SYSCLK. In the
->> case
->> of TI_DAVINCI_SYSCLK the second index the SYSCLK domain ID (n in SYSCLKn).
->>
->> For compatible = "ti,da850-pll0":
->>          - <&pll0 TI_DAVINCI_PLLOUT 0> is the PLLOUT clock
->>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
->> where n is 1 to 7
->>          - <&pll0 TI_DAVINCI_AUXCLK 0> is the AUXCLK clock domain
->>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
->>          - all other index combinations are invalid
->>
->> For compatible = "ti,da850-pll1":
->>          - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
->> where n is 1 to 3
->>          - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
->>          - all other index combinations are invalid
-> 
-> You don't really need 2 cells here. I guess if you want to keep the
-> child nodes, that is fine.
+>From commit 362922a1a5345d17 ("reset: Add renesas,rst DT bindings")
 
-OK, I can see how it could work with one cell.
+    As the features provided by the hardware module differ a lot across the
+    various SoC families and members, only SoC-specific compatible values
+    are defined.
 
-Since this is already implemented and working, I'm inclined to leave it
-as-is if it is "good enough". But, I am fine going either way if there
-are other opinions on the matter.
+In fact the only commonalities are the presence of the MODEMR register
+(the mode bits differ), and the Watchdog Timer Reset Control Register.
+All other registers and bits depend on the SoC's CPU core configuration.
+
+Hence that's why I did not add generic compatible values.
+So unless you really need them (from this series, it looks like you
+don't?), I wouldn't add them.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
