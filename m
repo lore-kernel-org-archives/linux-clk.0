@@ -1,80 +1,193 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Subject: [PATCH v2 34/34] clk: change handling of round_rate() such that only zero is an error
-Date: Mon,  1 Jan 2018 19:35:00 +0000
-Message-Id: <1514835300-381-20-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835300-381-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc: Subhransu S. Prusty <subhransu.s.prusty@intel.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, ALSA ML <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, mturquette@baylibre.com, sboyd@codeaurora.org, Patches Audio <patches.audio@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Vinod Koul <vinod.koul@intel.com>, linux-clk@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: Skylake: Add extended I2S config blob support in Clock driver" to the asoc tree
+In-Reply-To: <1512978390-8848-3-git-send-email-sriramx.periyasamy@intel.com>
+Message-Id: <E1ef3W8-0002Fi-Cx@debutante>
+Date: Fri, 26 Jan 2018 12:54:04 +0000
 List-ID: <linux-clk.vger.kernel.org>
 
-Change the handling of clk_ops->round_rate() return values such that only
-zero is treated as an error. All implementations of clk_ops->round_rate()
-will have previously been updated to match this change.
+The patch
 
-Using zero as the determinant for an error means its possible to pass an
-unsigned long as req->rate to a clk_ops->round_rate() function and return a
-rounded clock which is as high as the original req->rate. This allows us on
-32 bit systems to return rounded rates of (2^32)-1 Hz or ULONG_MAX Hz -
-whereas without this change and the associated clk_ops->round_rate() change
-the maximum value that can be returned via clk_ops->round_rate() is
-LONG_MAX Hz - after which a higher-frequency clock looks like a negative
-error code - due to sign extension.
+   ASoC: Intel: Skylake: Add extended I2S config blob support in Clock driver
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9afbc5ec76526d412de1c5c368524aae36eb608d Mon Sep 17 00:00:00 2001
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Date: Thu, 4 Jan 2018 16:55:15 +0530
+Subject: [PATCH] ASoC: Intel: Skylake: Add extended I2S config blob support in
+ Clock driver
+
+Extended I2S config blob supports multiple mclk dividers in NHLT blob.
+This patch detects whether the I2S blob is legacy or extended based on the
+signature value and chooses the mclk source and divider accordingly.
+
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/clk.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ sound/soc/intel/skylake/skl-i2s.h  | 31 ++++++++++++++++++++++++++++
+ sound/soc/intel/skylake/skl-nhlt.c | 41 +++++++++++++++++++++++++++-----------
+ 2 files changed, 60 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8a1860a..6af2ece 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -909,7 +909,6 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 				      struct clk_rate_request *req)
+diff --git a/sound/soc/intel/skylake/skl-i2s.h b/sound/soc/intel/skylake/skl-i2s.h
+index dcf819bc688f..ad0a1bbca13c 100644
+--- a/sound/soc/intel/skylake/skl-i2s.h
++++ b/sound/soc/intel/skylake/skl-i2s.h
+@@ -27,6 +27,12 @@
+ #define SKL_SHIFT(x)			(ffs(x) - 1)
+ #define SKL_MCLK_DIV_RATIO_MASK		GENMASK(11, 0)
+ 
++#define is_legacy_blob(x) (x.signature != 0xEE)
++#define ext_to_legacy_blob(i2s_config_blob_ext) \
++	((struct skl_i2s_config_blob_legacy *) i2s_config_blob_ext)
++
++#define get_clk_src(mclk, mask) \
++		((mclk.mdivctrl & mask) >> SKL_SHIFT(mask))
+ struct skl_i2s_config {
+ 	u32 ssc0;
+ 	u32 ssc1;
+@@ -45,6 +51,24 @@ struct skl_i2s_config_mclk {
+ 	u32 mdivr;
+ };
+ 
++struct skl_i2s_config_mclk_ext {
++	u32 mdivctrl;
++	u32 mdivr_count;
++	u32 mdivr[0];
++} __packed;
++
++struct skl_i2s_config_blob_signature {
++	u32 minor_ver : 8;
++	u32 major_ver : 8;
++	u32 resvdz : 8;
++	u32 signature : 8;
++} __packed;
++
++struct skl_i2s_config_blob_header {
++	struct skl_i2s_config_blob_signature sig;
++	u32 size;
++};
++
+ /**
+  * struct skl_i2s_config_blob_legacy - Structure defines I2S Gateway
+  * configuration legacy blob
+@@ -61,4 +85,11 @@ struct skl_i2s_config_blob_legacy {
+ 	struct skl_i2s_config_mclk mclk;
+ };
+ 
++struct skl_i2s_config_blob_ext {
++	u32 gtw_attr;
++	struct skl_i2s_config_blob_header hdr;
++	u32 tdm_ts_group[SKL_I2S_MAX_TIME_SLOTS];
++	struct skl_i2s_config i2s_cfg;
++	struct skl_i2s_config_mclk_ext mclk;
++} __packed;
+ #endif /* __SOUND_SOC_SKL_I2S_H */
+diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
+index 3b1d2b828c1b..b9b140275be0 100644
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+@@ -28,6 +28,7 @@ static guid_t osc_guid =
+ 	GUID_INIT(0xA69F886E, 0x6CEB, 0x4594,
+ 		  0xA4, 0x1F, 0x7B, 0x5D, 0xCE, 0x24, 0xC5, 0x53);
+ 
++
+ struct nhlt_acpi_table *skl_nhlt_init(struct device *dev)
  {
- 	struct clk_core *parent;
--	long rate;
+ 	acpi_handle handle;
+@@ -287,6 +288,7 @@ void skl_nhlt_remove_sysfs(struct skl *skl)
+ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ 				struct nhlt_fmt *fmt, u8 id)
+ {
++	struct skl_i2s_config_blob_ext *i2s_config_ext;
+ 	struct skl_i2s_config_blob_legacy *i2s_config;
+ 	struct skl_clk_parent_src *parent;
+ 	struct skl_ssp_clk *sclk, *sclkfs;
+@@ -347,12 +349,18 @@ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
  
- 	lockdep_assert_held(&prepare_lock);
+ 		/* Fill rate and parent for sclk/sclkfs */
+ 		if (!present) {
+-			/* MCLK Divider Source Select */
+-			i2s_config = (struct skl_i2s_config_blob_legacy *)
++			i2s_config_ext = (struct skl_i2s_config_blob_ext *)
+ 						fmt->fmt_config[0].config.caps;
+-			clk_src = ((i2s_config->mclk.mdivctrl)
+-					& SKL_MNDSS_DIV_CLK_SRC_MASK) >>
+-					SKL_SHIFT(SKL_MNDSS_DIV_CLK_SRC_MASK);
++
++			/* MCLK Divider Source Select */
++			if (is_legacy_blob(i2s_config_ext->hdr.sig)) {
++				i2s_config = ext_to_legacy_blob(i2s_config_ext);
++				clk_src = get_clk_src(i2s_config->mclk,
++						SKL_MNDSS_DIV_CLK_SRC_MASK);
++			} else {
++				clk_src = get_clk_src(i2s_config_ext->mclk,
++						SKL_MNDSS_DIV_CLK_SRC_MASK);
++			}
  
-@@ -928,12 +927,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 	if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
- 	} else if (core->ops->round_rate) {
--		rate = core->ops->round_rate(core->hw, req->rate,
-+		req->rate = core->ops->round_rate(core->hw, req->rate,
- 					     &req->best_parent_rate);
--		if (rate < 0)
--			return rate;
+ 			parent = skl_get_parent_clk(clk_src);
+ 
+@@ -378,6 +386,7 @@ static void skl_get_ssp_clks(struct skl *skl, struct skl_ssp_clk *ssp_clks,
+ static void skl_get_mclk(struct skl *skl, struct skl_ssp_clk *mclk,
+ 				struct nhlt_fmt *fmt, u8 id)
+ {
++	struct skl_i2s_config_blob_ext *i2s_config_ext;
+ 	struct skl_i2s_config_blob_legacy *i2s_config;
+ 	struct nhlt_specific_cfg *fmt_cfg;
+ 	struct skl_clk_parent_src *parent;
+@@ -385,13 +394,21 @@ static void skl_get_mclk(struct skl *skl, struct skl_ssp_clk *mclk,
+ 	u8 clk_src;
+ 
+ 	fmt_cfg = &fmt->fmt_config[0].config;
+-	i2s_config = (struct skl_i2s_config_blob_legacy *)fmt_cfg->caps;
 -
--		req->rate = rate;
- 	} else if (core->flags & CLK_SET_RATE_PARENT) {
- 		return clk_core_round_rate_nolock(parent, req);
- 	} else {
-@@ -1454,12 +1449,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 		new_rate = req.rate;
- 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
- 	} else if (core->ops->round_rate) {
--		ret = core->ops->round_rate(core->hw, rate,
--					    &best_parent_rate);
--		if (ret < 0)
--			return NULL;
+-	/* MCLK Divider Source Select */
+-	clk_src = ((i2s_config->mclk.mdivctrl) & SKL_MCLK_DIV_CLK_SRC_MASK) >>
+-					SKL_SHIFT(SKL_MCLK_DIV_CLK_SRC_MASK);
 -
--		new_rate = ret;
-+		new_rate = core->ops->round_rate(core->hw, rate,
-+						 &best_parent_rate);
- 		if (new_rate < min_rate || new_rate > max_rate)
- 			return NULL;
- 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+-	clkdiv = i2s_config->mclk.mdivr & SKL_MCLK_DIV_RATIO_MASK;
++	i2s_config_ext = (struct skl_i2s_config_blob_ext *)fmt_cfg->caps;
++
++	/* MCLK Divider Source Select and divider */
++	if (is_legacy_blob(i2s_config_ext->hdr.sig)) {
++		i2s_config = ext_to_legacy_blob(i2s_config_ext);
++		clk_src = get_clk_src(i2s_config->mclk,
++				SKL_MCLK_DIV_CLK_SRC_MASK);
++		clkdiv = i2s_config->mclk.mdivr &
++				SKL_MCLK_DIV_RATIO_MASK;
++	} else {
++		clk_src = get_clk_src(i2s_config_ext->mclk,
++				SKL_MCLK_DIV_CLK_SRC_MASK);
++		clkdiv = i2s_config_ext->mclk.mdivr[0] &
++				SKL_MCLK_DIV_RATIO_MASK;
++	}
+ 
+ 	/* bypass divider */
+ 	div_ratio = 1;
 -- 
-2.7.4
+2.15.1
