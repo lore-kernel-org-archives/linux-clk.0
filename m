@@ -1,64 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:43620 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeABPZj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 10:25:39 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Paul Walmsley <paul@pwsan.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: OMAP: clock: Fix debugfs_create_*() usage
-Date: Tue,  2 Jan 2018 16:25:35 +0100
-Message-Id: <1514906735-8977-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1516903391-30467-35-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-35-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:30:31 +0100
+Message-ID: <CAMuHMdWLGthxoePFg2fLyuKq1UkgorvMe+BqHPaBjzv8c=w6Pw@mail.gmail.com>
+Subject: Re: [RFC 34/37] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-When exposing data access through debugfs, the correct
-debugfs_create_*() functions must be used, depending on data type.
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This commit adds watchdog support to the r8a7791 dtsi.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Remove all casts from data pointers passed to debugfs_create_*()
-functions, as such casts prevent the compiler from flagging bugs.
+If inserted before gpio@e6050000:
 
-Correct all wrong usage:
-  - clk.rate is unsigned long, not u32,
-  - clk.flags is u8, not u32, which exposed the successive
-    clk.rate_offset and clk.src_offset fields.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- arch/arm/mach-omap1/clock.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
-index 43e3e188f5213418..fa512413a4717221 100644
---- a/arch/arm/mach-omap1/clock.c
-+++ b/arch/arm/mach-omap1/clock.c
-@@ -1011,17 +1011,17 @@ static int clk_debugfs_register_one(struct clk *c)
- 		return -ENOMEM;
- 	c->dent = d;
- 
--	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, (u8 *)&c->usecount);
-+	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
--	d = debugfs_create_u32("rate", S_IRUGO, c->dent, (u32 *)&c->rate);
-+	d = debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
--	d = debugfs_create_x32("flags", S_IRUGO, c->dent, (u32 *)&c->flags);
-+	d = debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
- 	if (!d) {
- 		err = -ENOMEM;
- 		goto err_out;
--- 
-2.7.4
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
