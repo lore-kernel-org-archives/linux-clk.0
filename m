@@ -1,102 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47092 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbeAFE0Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jan 2018 23:26:24 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/7] pinctrl: sunxi: add support for pin controllers without bus gate
-Date: Sat,  6 Jan 2018 12:23:20 +0800
-Message-Id: <20180106042326.46519-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v11 0/6] Add support for Qualcomm A53 CPU clock
+To: jassisinghbrar@gmail.com
+Cc: sboyd@codeaurora.org, bjorn.andersson@linaro.org,
+ mturquette@baylibre.com, robh@kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <0c933015-158f-e4fc-a37c-195f7cbc8fad@linaro.org>
+Date: Fri, 26 Jan 2018 16:30:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <20171205154701.27730-1-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H6 pin controllers (both the main one and the CPUs one)
-have no bus gate clocks.
+On 12/05/2017 05:46 PM, Georgi Djakov wrote:
+> This patchset adds support for the A53 CPU clock on MSM8916 platforms
+> and allows scaling of the CPU frequency on msm8916 based platforms.
+> 
+> Changes since v10 (https://lkml.org/lkml/2017/12/1/577)
+> * Addressed Bjorn's comments on APCS clock driver.
+> * Picked Acks from Rob and Bjorn.
+> 
+[..]
+> 
+> Georgi Djakov (6):
+>   mailbox: qcom: Convert APCS IPC driver to use regmap
+>   mailbox: qcom: Create APCS child device for clock controller
+>   clk: qcom: Add A53 PLL support
+>   clk: qcom: Add regmap mux-div clocks support
+>   dt-bindings: mailbox: qcom: Document the APCS clock binding
+>   clk: qcom: Add APCS clock controller support
+> 
 
-Add support for this kind of pin controllers.
+Hi Jassi,
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
- 2 files changed, 21 insertions(+), 10 deletions(-)
+Do you want me to re-send the pending mailbox patches?
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 4b6cb25bc796..68cd505679d9 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
- 	unsigned int hosc_div, losc_div;
- 	struct clk *hosc, *losc;
- 	u8 div, src;
--	int i, ret;
-+	int i, ret, clk_count;
-+
-+	if (pctl->desc->without_bus_gate)
-+		clk_count = 2;
-+	else
-+		clk_count = 3;
- 
- 	/* Deal with old DTs that didn't have the oscillators */
- 	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
-@@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
- 			goto gpiochip_error;
- 	}
- 
--	clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
--		goto gpiochip_error;
--	}
-+	if (!desc->without_bus_gate) {
-+		clk = devm_clk_get(&pdev->dev, NULL);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto gpiochip_error;
-+		}
- 
--	ret = clk_prepare_enable(clk);
--	if (ret)
--		goto gpiochip_error;
-+		ret = clk_prepare_enable(clk);
-+		if (ret)
-+			goto gpiochip_error;
-+	} else {
-+		clk = NULL;
-+	}
- 
- 	pctl->irq = devm_kcalloc(&pdev->dev,
- 				 pctl->desc->irq_banks,
-@@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
- 	return 0;
- 
- clk_error:
--	clk_disable_unprepare(clk);
-+	if (clk)
-+		clk_disable_unprepare(clk);
- gpiochip_error:
- 	gpiochip_remove(pctl->chip);
- 	return ret;
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 11b128f54ed2..ccb6230f0bb5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
- 	unsigned			irq_bank_base;
- 	bool				irq_read_needs_mux;
- 	bool				disable_strict_mode;
-+	bool				without_bus_gate;
- };
- 
- struct sunxi_pinctrl_function {
--- 
-2.14.2
-
+Thanks,
+Georgi
