@@ -1,221 +1,92 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Harsha Priya <harshapriya.n@intel.com>
-Cc: Subhransu S. Prusty <subhransu.s.prusty@intel.com>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, ALSA ML <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, Sriram Periyasamy <sriramx.periyasamy@intel.com>, mturquette@baylibre.com, sboyd@codeaurora.org, Patches Audio <patches.audio@intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Vinod Koul <vinod.koul@intel.com>, linux-clk@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: kbl: Enable mclk and ssp sclk early" to the asoc tree
-In-Reply-To: <1512978390-8848-4-git-send-email-sriramx.periyasamy@intel.com>
-Message-Id: <E1ef3Vx-0002EU-7D@debutante>
-Date: Fri, 26 Jan 2018 12:53:53 +0000
+Return-Path: <groeck7@gmail.com>
+Return-Path: <groeck7@gmail.com>
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 26 Jan 2018 09:14:18 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC 22/37] watchdog: renesas_wdt: Add restart support
+Message-ID: <20180126171418.GA16194@roeck-us.net>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+On Thu, Jan 25, 2018 at 06:02:56PM +0000, Fabrizio Castro wrote:
+> This commit extends the driver to add restart support by implementing
+> the restart callback to trigger the watchdog as quickly as possible.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+>  drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 831ef83..120ddac 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+>  	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+>  }
+>  
+> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
+> +			void *data)
+> +{
+> +	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+> +
+> +	pm_runtime_get_sync(wdev->parent);
+> +
+> +	rwdt_write(priv, 0x00, RWTCSRB);
+> +	rwdt_write(priv, 0x00, RWTCSRA);
+> +	rwdt_write(priv, 0xffff, RWTCNT);
+> +
+> +	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+> +		cpu_relax();
 
-   ASoC: Intel: kbl: Enable mclk and ssp sclk early
+Can this get stuck forever or should there be a timeout ?
 
-has been applied to the asoc tree at
+Guenter
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f7f61e08fe5840ca43baa49355b40d3aede1ac97 Mon Sep 17 00:00:00 2001
-From: Harsha Priya <harshapriya.n@intel.com>
-Date: Thu, 4 Jan 2018 16:55:16 +0530
-Subject: [PATCH] ASoC: Intel: kbl: Enable mclk and ssp sclk early
-
-rt5663 needs mclk/sclk early to synchronize its internal clocks. Enable
-these clocks early.
-
-Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/Kconfig               |  1 +
- sound/soc/intel/boards/kbl_rt5663_max98927.c | 95 +++++++++++++++++++++++++++-
- 2 files changed, 95 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index d4e103615f51..fefb1ee9fec6 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -235,6 +235,7 @@ config SND_SOC_INTEL_KBL_RT5663_MAX98927_MACH
- 	select SND_SOC_MAX98927
- 	select SND_SOC_DMIC
- 	select SND_SOC_HDAC_HDMI
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
- 	help
- 	  This adds support for ASoC Onboard Codec I2S machine driver. This will
- 	  create an alsa sound card for RT5663 + MAX98927.
-diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
-index bf7014ca486f..f5df6bca3156 100644
---- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
-@@ -28,6 +28,9 @@
- #include "../../codecs/rt5663.h"
- #include "../../codecs/hdac_hdmi.h"
- #include "../skylake/skl.h"
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- 
- #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
- #define KBL_MAXIM_CODEC_DAI "max98927-aif1"
-@@ -48,6 +51,8 @@ struct kbl_hdmi_pcm {
- struct kbl_rt5663_private {
- 	struct snd_soc_jack kabylake_headset;
- 	struct list_head hdmi_pcm_list;
-+	struct clk *mclk;
-+	struct clk *sclk;
- };
- 
- enum {
-@@ -69,6 +74,61 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Right Spk"),
- };
- 
-+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-+			struct snd_kcontrol *k, int  event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
-+	int ret = 0;
-+
-+	/*
-+	 * MCLK/SCLK need to be ON early for a successful synchronization of
-+	 * codec internal clock. And the clocks are turned off during
-+	 * POST_PMD after the stream is stopped.
-+	 */
-+	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		/* Enable MCLK */
-+		ret = clk_set_rate(priv->mclk, 24000000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->mclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Enable SCLK */
-+		ret = clk_set_rate(priv->sclk, 3072000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
-+				ret);
-+			clk_disable_unprepare(priv->mclk);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->sclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-+			clk_disable_unprepare(priv->mclk);
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		clk_disable_unprepare(priv->mclk);
-+		clk_disable_unprepare(priv->sclk);
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-@@ -78,11 +138,14 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_SPK("HDMI1", NULL),
- 	SND_SOC_DAPM_SPK("HDMI2", NULL),
- 	SND_SOC_DAPM_SPK("HDMI3", NULL),
--
-+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-+			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
-+			SND_SOC_DAPM_POST_PMD),
- };
- 
- static const struct snd_soc_dapm_route kabylake_map[] = {
- 	/* HP jack connectors - unknown if we have jack detection */
-+	{ "Headphone Jack", NULL, "Platform Clock" },
- 	{ "Headphone Jack", NULL, "HPOL" },
- 	{ "Headphone Jack", NULL, "HPOR" },
- 
-@@ -91,6 +154,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
- 	{ "Right Spk", NULL, "Right BE_OUT" },
- 
- 	/* other jacks */
-+	{ "Headset Mic", NULL, "Platform Clock" },
- 	{ "IN1P", NULL, "Headset Mic" },
- 	{ "IN1N", NULL, "Headset Mic" },
- 	{ "DMic", NULL, "SoC DMIC" },
-@@ -901,6 +965,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- {
- 	struct kbl_rt5663_private *ctx;
- 	struct skl_machine_pdata *pdata;
-+	int ret;
- 
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
-@@ -919,6 +984,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- 		dmic_constraints = pdata->dmic_num == 2 ?
- 			&constraints_dmic_2ch : &constraints_dmic_channels;
- 
-+	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
-+	if (IS_ERR(ctx->mclk)) {
-+		ret = PTR_ERR(ctx->mclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
-+	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
-+	if (IS_ERR(ctx->sclk)) {
-+		ret = PTR_ERR(ctx->sclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_card(&pdev->dev, kabylake_audio_card);
- }
- 
--- 
-2.15.1
+> +
+> +	rwdt_write(priv, 0x80, RWTCSRA);
+> +	return 0;
+> +}
+> +
+>  static const struct watchdog_info rwdt_ident = {
+>  	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+>  	.identity = "Renesas WDT Watchdog",
+> @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
+>  	.stop = rwdt_stop,
+>  	.ping = rwdt_init_timeout,
+>  	.get_timeleft = rwdt_get_timeleft,
+> +	.restart = rwdt_restart,
+>  };
+>  
+>  static int rwdt_probe(struct platform_device *pdev)
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
