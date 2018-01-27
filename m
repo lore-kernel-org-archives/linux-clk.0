@@ -1,45 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 17:47:03 -0800
+Date: Fri, 26 Jan 2018 16:49:17 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v7 4/5] clk: aspeed: Register gated clocks
-Message-ID: <20180103014703.GS7997@codeaurora.org>
-References: <20171222024522.10362-1-joel@jms.id.au>
- <20171222024522.10362-5-joel@jms.id.au>
+	Shawn Guo <shawnguo@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] clk: Properly update prepare/enable count on orphan
+ clock reparent
+Message-ID: <20180127004917.GI28313@codeaurora.org>
+References: <CGME20180126091902eucas1p2b3ad9978e3ab09bd7a2bd9123c9eecaa@eucas1p2.samsung.com>
+ <20180126091845.11902-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20171222024522.10362-5-joel@jms.id.au>
+In-Reply-To: <20180126091845.11902-1-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Joel Stanley wrote:
-> The majority of the clocks in the system are gates paired with a reset
-> controller that holds the IP in reset.
-> 
-> This borrows from clk_hw_register_gate, but registers two 'gates', one
-> to control the clock enable register and the other to control the reset
-> IP. This allows us to enforce the ordering:
-> 
->  1. Place IP in reset
->  2. Enable clock
->  3. Delay
->  4. Release reset
-> 
-> There are some gates that do not have an associated reset; these are
-> handled by using -1 as the index for the reset.
-> 
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
+On 01/26, Marek Szyprowski wrote:
+> If orphaned clock has been already prepared/enabled (for example if it or
+> one of its children has CLK_IS_CRITICAL flag), then the prepare/enable
+> counters of the newly assigned parent are not updated correctly. This
+> might later cause warnings during changing clock parents.
 
-Applied to clk-next
+This doesn't feel right. Perhaps we should delay enabling a clk
+if it's CRITICAL until we adopt an orphaned clk. Good news is we
+have orphan status tracking now so this should be pretty simple.
+Otherwise migrating the count up is complicated and requires us
+to call the prepare/enable ops on a critical clk and then keep
+doing that each time it gets re-parented. Do you have this case,
+where some clk is marked as CRITICAL, and then we need to migrate
+that enable/prepare count to the parent?
+
+Hopefully it isn't the worser case, where the clk is handed out
+to some consumer but it's still orphaned at that point, and then
+we have little control over the migration of state to the parent.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
