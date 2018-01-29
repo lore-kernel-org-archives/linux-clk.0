@@ -1,104 +1,139 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] clk: meson: fix pll with fractional part calculation
-Date: Thu, 18 Jan 2018 19:45:30 +0100
-Message-Id: <20180118184532.6856-8-jbrunet@baylibre.com>
-In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
-References: <20180118184532.6856-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53972 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeA2LzH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 06:55:07 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] sh: clk: Relax clk rate match test
+Date: Mon, 29 Jan 2018 13:55:20 +0200
+Message-ID: <1598767.1mUcEZddqr@avalon>
+In-Reply-To: <20180126162454.GA11798@w540>
+References: <1516879493-24637-1-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdWi=s=9oAA5YdPrZA=RjnPfh2YBiPOGQXu1ksj2srxZfA@mail.gmail.com> <20180126162454.GA11798@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The rate of the parent should not be multiplied by 2 when there is a
-fractional part to the pll. This is making the rate calculation of
-gxl_hdmi_pll wrong (and others as well). This multiplication is specific
-to the hdmi_pll of gxbb and is most likely due to a multiplier sitting
-in front of this particular pll.
+Hi Jacopo,
 
-Add fixed factor clock in front on the gxbb pll and remove this constant
-from the calculation
+On Friday, 26 January 2018 18:24:54 EET jacopo mondi wrote:
+> On Thu, Jan 25, 2018 at 03:39:32PM +0100, Geert Uytterhoeven wrote:
+> > Hi Jacopo,
+> 
+> [snip]
+> 
+> >>>> ---
+> >>>> 
+> >>>>  drivers/sh/clk/core.c | 9 ++++++---
+> >>>>  1 file changed, 6 insertions(+), 3 deletions(-)
+> >>>> 
+> >>>> diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
+> >>>> index 92863e3..d2cb94c 100644
+> >>>> --- a/drivers/sh/clk/core.c
+> >>>> +++ b/drivers/sh/clk/core.c
+> >>>> @@ -198,9 +198,12 @@ int clk_rate_table_find(struct clk *clk,
+> >>>>  {
+> >>>>         struct cpufreq_frequency_table *pos;
+> >>>> 
+> >>>> -       cpufreq_for_each_valid_entry(pos, freq_table)
+> >>>> -               if (pos->frequency == rate)
+> >>>> -                       return pos - freq_table;
+> >>>> +       cpufreq_for_each_valid_entry(pos, freq_table) {
+> >>>> +               if (pos->frequency > rate)
+> >>>> +                       continue;
+> >>> 
+> >>> This assumes all frequency tables are sorted.
+> >>> 
+> >>> Shouldn't you pick the closest frequency?
+> >>> 
+> >>> However, that's what clk_rate_table_round() does, which is called from
+> >>> 
+> >>> sh_clk_div_round_rate(), and thus already used as .round_rate:
+> >>> 
+> >>>     static struct sh_clk_ops sh_clk_div_enable_clk_ops = {
+> >>>             .recalc         = sh_clk_div_recalc,
+> >>>             .set_rate       = sh_clk_div_set_rate,
+> >>>             .round_rate     = sh_clk_div_round_rate,
+> >>>             .enable         = sh_clk_div_enable,
+> >>>             .disable        = sh_clk_div_disable,
+> >>>     
+> >>>     };
+> >> 
+> >> Does this implies clock rates should be set using clk_round_rate() and
+> >> not clk_set_rate() if I understand this right?
+> > 
+> > Not necessarily...
+> > 
+> > Note that both cpg_div6_clock_round_rate() and cpg_div6_clock_set_rate()
+> > in the CCF implementation for DIV6 clocks use rounding.
+> 
+> Yeah but it doesn't seem to me that CCF implementation for DIV6 clocks does
+> have to walk static tables like the old sh clock driver does. They
+> perform rounding, but on the clock dividers given a requested rate
+> and the respective parent clock, if I'm not wrong.
 
-Fixes: 4a47295144dd ("clk: meson: fractional pll support")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-pll.c |  1 -
- drivers/clk/meson/gxbb.c    | 14 +++++++++++++-
- drivers/clk/meson/gxbb.h    |  3 ++-
- 3 files changed, 15 insertions(+), 3 deletions(-)
+While clk_set_rate() doesn't explicitly document that the rate will be 
+rounded, the clk_round_rate() documentation does:
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 3f560b2cd83b..8845f65aeb07 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -87,7 +87,6 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 		frac = PARM_GET(p->width, p->shift, reg);
- 
- 		rate += (u64)parent_rate * frac >>  p->width;
--		rate *= 2;
- 	}
- 
- 	return (rate / n) >> od >> od2 >> od3;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 08b3e1cdba5b..9a92e64b428c 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -212,6 +212,17 @@ static struct meson_clk_pll gxbb_fixed_pll = {
- 	},
- };
- 
-+static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
-+	.mult = 2,
-+	.div = 1,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_pre_mult",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "xtal" },
-+		.num_parents = 1,
-+	},
-+};
-+
- static struct meson_clk_pll gxbb_hdmi_pll = {
- 	.m = {
- 		.reg_off = HHI_HDMI_PLL_CNTL,
-@@ -247,7 +258,7 @@ static struct meson_clk_pll gxbb_hdmi_pll = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
- 		.ops = &meson_clk_pll_ro_ops,
--		.parent_names = (const char *[]){ "xtal" },
-+		.parent_names = (const char *[]){ "hdmi_pll_pre_mult" },
- 		.num_parents = 1,
- 		.flags = CLK_GET_RATE_NOCACHE,
- 	},
-@@ -1558,6 +1569,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
- 		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
- 		[CLKID_VAPB]		    = &gxbb_vapb.hw,
-+		[CLKID_HDMI_PLL_PRE_MULT]   = &gxbb_hdmi_pll_pre_mult.hw,
- 		[NR_CLKS]		    = NULL,
- 	},
- 	.num = NR_CLKS,
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index aee6fbba2004..42573b28a137 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -194,8 +194,9 @@
- #define CLKID_VPU_1_DIV		  130
- #define CLKID_VAPB_0_DIV	  134
- #define CLKID_VAPB_1_DIV	  137
-+#define CLKID_HDMI_PLL_PRE_MULT	  141
- 
--#define NR_CLKS			  141
-+#define NR_CLKS			  142
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
+/**
+ * clk_round_rate - adjust a rate to the exact rate a clock can provide
+ * @clk: clock source
+ * @rate: desired clock rate in Hz
+ *
+ * This answers the question "if I were to pass @rate to clk_set_rate(),
+ * what clock rate would I end up with?" without changing the hardware
+ * in any way.  In other words:
+ *
+ *   rate = clk_round_rate(clk, r);
+ *
+ * and:
+ *
+ *   clk_set_rate(clk, r);
+ *   rate = clk_get_rate(clk);
+ *
+ * are equivalent except the former does not modify the clock hardware
+ * in any way.
+ *
+ * Returns rounded clock rate in Hz, or negative errno.
+ */
+
+So I think the SH implementation of clk_set_rate() should round rates.
+
+(And feel free to send a patch for the clk_set_rate() documentation in 
+include/linux/clk.h to state explicitly that the rate will be rounded).
+
+> Anyway, in this case a much simpler:
+> clk_set_rate(video_clk, clk_round_rate(video_clk, 10000000));
+> does the job for Migo-R.
+> 
+> I will include this in next CEU iterations, since I already have a
+> small comment from you to fix there ;)
+
+That should not be needed, but if the above code is in a board file, I can 
+live with that until drivers/sh/clk/ gets fixed.
+
+> >>> (clk_rate_table_find() is called from sh_clk_div_set_rate())
+> >>> 
+> >>> Or are you supposed to ask for the exact clock rate? Where does the 10
+> >>> MHz come from?
+> >> 
+> >> From board initialization code, in order to provide a valid input
+> >> clock to OV7720 sensor.
+
 -- 
-2.14.3
+Regards,
+
+Laurent Pinchart
+
