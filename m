@@ -1,245 +1,52 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 29 Jan 2018 11:31:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 14/19] clk: meson: migrate the audio divider clock to clk_regmap
-Date: Wed, 31 Jan 2018 19:09:40 +0100
-Message-Id: <20180131180945.18025-15-jbrunet@baylibre.com>
-In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
+	Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Subject: Re: [PATCH 4/4] clk: imx: add clock driver for i.MX8MQ CCM
+Message-ID: <20180129173115.hy6dmnj2m2mdyznp@rob-hp-laptop>
+References: <20180117182950.26460-1-l.stach@pengutronix.de>
+ <20180117182950.26460-4-l.stach@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180117182950.26460-4-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework meson audio divider driver to use clk_regmap and move gxbb
-clock using meson_clk_audio_divider to clk_regmap.
+On Wed, Jan 17, 2018 at 07:29:50PM +0100, Lucas Stach wrote:
+> Add driver for the Clock Control Module found on i.MX8MQ.
+> 
+> This is largely based on the downstream driver from Anson Huang and
+> Bai Ping at NXP, with only some small adaptions to mainline from me.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile                 |   1 +
+>  drivers/clk/imx/clk-imx8mq.c             | 861 +++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h                    |  43 ++
+>  include/dt-bindings/clock/imx8mq-clock.h | 632 +++++++++++++++++++++++
+>  4 files changed, 1537 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-imx8mq.c
+>  create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-audio-divider.c | 63 +++++++++++------------------------
- drivers/clk/meson/clkc.h              |  5 +--
- drivers/clk/meson/gxbb.c              | 30 +++++------------
- 3 files changed, 30 insertions(+), 68 deletions(-)
+> diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+> new file mode 100644
+> index 000000000000..9932b52452cb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/imx8mq-clock.h
+> @@ -0,0 +1,632 @@
+> +/*
+> + * Copyright 2016 Freescale Semiconductor, Inc.
+> + * Copyright 2017 NXP
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
 
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index 6c07db06642d..f7ab5b1db342 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -28,8 +28,11 @@
- #include <linux/clk-provider.h>
- #include "clkc.h"
- 
--#define to_meson_clk_audio_divider(_hw) container_of(_hw, \
--				struct meson_clk_audio_divider, hw)
-+static inline struct meson_clk_audio_div_data *
-+meson_clk_audio_div_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_audio_div_data *)clk->data;
-+}
- 
- static int _div_round(unsigned long parent_rate, unsigned long rate,
- 		      unsigned long flags)
-@@ -45,15 +48,9 @@ static int _get_val(unsigned long parent_rate, unsigned long rate)
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
- }
- 
--static int _valid_divider(struct clk_hw *hw, int divider)
-+static int _valid_divider(unsigned int width, int divider)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	int max_divider;
--	u8 width;
--
--	width = adiv->div.width;
--	max_divider = 1 << width;
-+	int max_divider = 1 << width;
- 
- 	return clamp(divider, 1, max_divider);
- }
-@@ -61,14 +58,11 @@ static int _valid_divider(struct clk_hw *hw, int divider)
- static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
- 					       unsigned long parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	struct parm *p;
--	unsigned long reg, divider;
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
-+	unsigned long divider;
- 
--	p = &adiv->div;
--	reg = readl(adiv->base + p->reg_off);
--	divider = PARM_GET(p->width, p->shift, reg) + 1;
-+	divider = meson_parm_read(clk->map, &adiv->div);
- 
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
- }
-@@ -77,14 +71,14 @@ static long audio_divider_round_rate(struct clk_hw *hw,
- 				     unsigned long rate,
- 				     unsigned long *parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
- 	unsigned long max_prate;
- 	int divider;
- 
- 	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
- 		divider = _div_round(*parent_rate, rate, adiv->flags);
--		divider = _valid_divider(hw, divider);
-+		divider = _valid_divider(adiv->div.width, divider);
- 		return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
- 	}
- 
-@@ -93,7 +87,7 @@ static long audio_divider_round_rate(struct clk_hw *hw,
- 
- 	/* Get the corresponding rounded down divider */
- 	divider = max_prate / rate;
--	divider = _valid_divider(hw, divider);
-+	divider = _valid_divider(adiv->div.width, divider);
- 
- 	/* Get actual rate of the parent */
- 	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-@@ -106,28 +100,11 @@ static int audio_divider_set_rate(struct clk_hw *hw,
- 				  unsigned long rate,
- 				  unsigned long parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	struct parm *p;
--	unsigned long reg, flags = 0;
--	int val;
--
--	val = _get_val(parent_rate, rate);
--
--	if (adiv->lock)
--		spin_lock_irqsave(adiv->lock, flags);
--	else
--		__acquire(adiv->lock);
--
--	p = &adiv->div;
--	reg = readl(adiv->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, val);
--	writel(reg, adiv->base + p->reg_off);
--
--	if (adiv->lock)
--		spin_unlock_irqrestore(adiv->lock, flags);
--	else
--		__release(adiv->lock);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
-+	int val = _get_val(parent_rate, rate);
-+
-+	meson_parm_write(clk->map, &adiv->div, val);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 08a1ebfc65dc..a4a526cbca4c 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -142,12 +142,9 @@ struct meson_clk_mpll_data {
- 	spinlock_t *lock;
- };
- 
--struct meson_clk_audio_divider {
--	struct clk_hw hw;
--	void __iomem *base;
-+struct meson_clk_audio_div_data {
- 	struct parm div;
- 	u8 flags;
--	spinlock_t *lock;
- };
- 
- #define MESON_GATE(_name, _reg, _bit)					\
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d2724a7ce9e7..196557f11608 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -826,14 +826,15 @@ static struct clk_regmap gxbb_cts_amclk_sel = {
- 	},
- };
- 
--static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
--	.div = {
--		.reg_off = HHI_AUD_CLK_CNTL,
--		.shift   = 0,
--		.width   = 8,
-+static struct clk_regmap gxbb_cts_amclk_div = {
-+	.data = &(struct meson_clk_audio_div_data){
-+		.div = {
-+			.reg_off = HHI_AUD_CLK_CNTL,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	},
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk_div",
- 		.ops = &meson_clk_audio_divider_ops,
-@@ -1777,10 +1778,6 @@ static struct meson_clk_pll *const gxl_clk_plls[] = {
- 	&gxl_gp0_pll,
- };
- 
--static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
--	&gxbb_cts_amclk_div,
--};
--
- static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_clk81,
- 	&gxbb_ddr,
-@@ -1912,29 +1909,24 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_mpll0,
- 	&gxbb_mpll1,
- 	&gxbb_mpll2,
-+	&gxbb_cts_amclk_div,
- };
- 
- struct clkc_data {
- 	struct meson_clk_pll *const *clk_plls;
- 	unsigned int clk_plls_count;
--	struct meson_clk_audio_divider *const *clk_audio_dividers;
--	unsigned int clk_audio_dividers_count;
- 	struct clk_hw_onecell_data *hw_onecell_data;
- };
- 
- static const struct clkc_data gxbb_clkc_data = {
- 	.clk_plls = gxbb_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
--	.clk_audio_dividers = gxbb_audio_dividers,
--	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxbb_hw_onecell_data,
- };
- 
- static const struct clkc_data gxl_clkc_data = {
- 	.clk_plls = gxl_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
--	.clk_audio_dividers = gxbb_audio_dividers,
--	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxl_hw_onecell_data,
- };
- 
-@@ -1981,10 +1973,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
- 
--	/* Populate base address for the audio dividers */
--	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
--		clkc_data->clk_audio_dividers[i]->base = clk_base;
--
- 	/* Populate regmap for the common regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
- 		gx_clk_regmaps[i]->map = map;
--- 
-2.14.3
+Use SPDX tag.
