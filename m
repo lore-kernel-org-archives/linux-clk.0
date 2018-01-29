@@ -1,72 +1,46 @@
-Return-Path: <patrice.chotard@st.com>
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Russell King <linux@armlinux.org.uk>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "Linux Kernel
- Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: Re: [PATCH v2 04/15] mmc: mmci: Add support for setting pad type via
- pinctrl
-Date: Thu, 18 Jan 2018 13:35:05 +0000
-Message-ID: <0c73774b-f06e-2db8-ef50-3bf590b57cff@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
- <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
- <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 29 Jan 2018 13:59:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
+ CFGCHIP clocks
+Message-ID: <20180129195921.q7wqqawgwsbqgf7t@rob-hp-laptop>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-18-git-send-email-david@lechnology.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516468460-4908-18-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVWxmDQoNCk9uIDAxLzE3LzIwMTggMTA6MzQgQU0sIFVsZiBIYW5zc29uIHdyb3RlOg0KPiBb
-Li4uXQ0KPiANCj4+ICAgICAgICAgIC8qDQo+PiBAQCAtMTYxNiw2ICsxNjI1LDMyIEBAIHN0YXRp
-YyBpbnQgbW1jaV9wcm9iZShzdHJ1Y3QgYW1iYV9kZXZpY2UgKmRldiwNCj4+ICAgICAgICAgIGhv
-c3QgPSBtbWNfcHJpdihtbWMpOw0KPj4gICAgICAgICAgaG9zdC0+bW1jID0gbW1jOw0KPj4NCj4+
-ICsgICAgICAgLyoNCj4+ICsgICAgICAgICogU29tZSB2YXJpYW50IChTVE0zMikgZG9lc24ndCBo
-YXZlIG9wZW5kcmFpbiBiaXQsIG5ldmVydGhlbGVzcw0KPj4gKyAgICAgICAgKiBwaW5zIGNhbiBi
-ZSBzZXQgYWNjb3JkaW5nbHkgdXNpbmcgcGluY3RybA0KPj4gKyAgICAgICAgKi8NCj4+ICsgICAg
-ICAgaWYgKCF2YXJpYW50LT5vcGVuZHJhaW4pIHsNCj4+ICsgICAgICAgICAgICAgICBob3N0LT5w
-aW5jdHJsID0gZGV2bV9waW5jdHJsX2dldCgmZGV2LT5kZXYpOw0KPj4gKyAgICAgICAgICAgICAg
-IGlmIChJU19FUlIoaG9zdC0+cGluY3RybCkpIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-IGRldl9lcnIoJmRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCBwaW5jdHJsIik7DQo+PiArICAgICAg
-ICAgICAgICAgICAgICAgICBnb3RvIGhvc3RfZnJlZTsNCj4+ICsgICAgICAgICAgICAgICB9DQo+
-PiArDQo+PiArICAgICAgICAgICAgICAgaG9zdC0+cGluc19kZWZhdWx0ID0gcGluY3RybF9sb29r
-dXBfc3RhdGUoaG9zdC0+cGluY3RybCwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQSU5DVFJMX1NUQVRFX0RFRkFVTFQpOw0KPj4g
-KyAgICAgICAgICAgICAgIGlmIChJU19FUlIoaG9zdC0+cGluc19kZWZhdWx0KSkgew0KPj4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgZGV2X3dhcm4obW1jX2RldihtbWMpLCAiQ2FuJ3Qgc2VsZWN0
-IGRlZmF1bHQgcGluc1xuIik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBob3N0LT5waW5z
-X2RlZmF1bHQgPSBOVUxMOw0KPiANCj4gVGhpcyBpcyB3cm9uZywgSSB0aGluayB5b3Ugc2hvdWxk
-IGJhaWwgb3V0IGFuZCByZXR1cm4gdGhlIGVycm9yIGNvZGUgaW5zdGVhZC4NCg0KT2sNCg0KPiAN
-Cj4gTW9yZW92ZXIsIGNhbGxpbmcgcGluY3RybF9zZWxlY3Rfc3RhdGUoKSBmcm9tIC0+c2V0X2lv
-cyBieSB1c2luZyBhDQo+IE5VTEwgc3RhdGUsIHdpbGwgbGlrZWx5IHRyaWdnZXIgYSBOVUxMIHBv
-aW50ZXIgZGVmZXJlbmNlIGJ1ZyBpbiB0aGUNCj4gcGluY3RybCBsYXllci4NCg0KUmVnYXJkaW5n
-IHBpbmN0cmxfc2VsZWN0X3N0YXRlKCkgY2FsbCB3aXRoIGEgTlVMTCBzdGF0ZSwgdGhpcyBjYXNl
-IGlzIA0KbWFuYWdlZCBpbnNpZGUgcGluY3RybF9zdGF0ZSgpLCBidXQgb2ssIGl0IHdpbGwgYmUg
-bW9yZSBlbGVnYW50IHRvIGV4aXQgDQpkaXJlY3RseSBpbiBjYXNlIG9mIG5vIERUIHBpbnMgZGVm
-aW5pdGlvbiBmb3VuZC4NCg0KPiANCj4+ICsgICAgICAgICAgICAgICB9DQo+PiArDQo+PiArICAg
-ICAgICAgICAgICAgaG9zdC0+cGluc19vcGVuZHJhaW4gPSBwaW5jdHJsX2xvb2t1cF9zdGF0ZSho
-b3N0LT5waW5jdHJsLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgTU1DSV9QSU5DVFJMX1NUQVRFX09QRU5EUkFJTik7DQo+PiAr
-ICAgICAgICAgICAgICAgaWYgKElTX0VSUihob3N0LT5waW5zX29wZW5kcmFpbikpIHsNCj4+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIGRldl93YXJuKG1tY19kZXYobW1jKSwgIkNhbid0IHNlbGVj
-dCBvcGVuZHJhaW4gcGluc1xuIik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBob3N0LT5w
-aW5zX29wZW5kcmFpbiA9IE5VTEw7DQo+IA0KPiBEaXR0by4NCg0Kb2sNCg0KVGhhbmtzDQoNClBh
-dHJpY2UNCj4gDQo+PiArICAgICAgICAgICAgICAgfQ0KPj4gKyAgICAgICB9DQo+PiArDQo+IA0K
-PiBbLi4uXQ0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCj4g
+On Sat, Jan 20, 2018 at 11:13:56AM -0600, David Lechner wrote:
+> This adds a new binding for the clocks present in the CFGCHIP syscon
+> registers in TI DA8XX SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+> 
+> v6 changes:
+> - combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
+>   "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
+>   "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
+>   file containing all CFGCHIP clocks bindings
+> - added compatible = "ti,da830-div4p5ena"
+> - added compatible = "ti,da850-async1-clksrc"
+> - renamed other compatible strings
+> - changed and added some clk-names strings
+> - USB PHY clocks are combined into a single node with #clock-cells = <1>
+> 
+>  .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+
+Reviewed-by: Rob Herring <robh@kernel.org>
