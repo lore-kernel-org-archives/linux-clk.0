@@ -1,127 +1,160 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 00/25] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-Date: Tue, 30 Jan 2018 20:22:33 +0000
-Message-Id: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751593AbeA2SCI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 13:02:08 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 0/6] clk: renesas: r8a779[56]: Add Z and Z2 clock support
+Date: Mon, 29 Jan 2018 19:01:48 +0100
+Message-Id: <20180129180154.29626-1-horms+renesas@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+Hi,
 
-while trying to add watchdog support to RZ/G1M and RZ/G1E I discovered
-that it couldn't work out of the box. R-Car Gen2 and RZ/G1 are very
-similar from a design perspective, and therefore the same problem is
-observable on R-Car Gen2 too.
+this patch-set adds Z and Z2 clock support.
 
-To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
-to ICRAM1 and we program the [S]BAR registers so that when we turn ON
-the non-boot CPUs they are redirected to the reset vector installed by
-Linux in ICRAM1, and eventually they continue the execution to RAM,
-where the SMP bring-up code will take care of the rest.
-The content of the [S]BAR registers survives a watchdog triggered reset,
-and as such after the watchdog fires the boot core will try and execute
-the SMP bring-up code instead of jumping to the bootrom code.
+These are dependencies for supporting CPUFreq. The remainder of that
+work is being posted separately and can be found at:
 
-This series is a proposal for a fix to the aforementioned problem.
-The main strategy for the solution is to let the reset vector decide
-if it needs to jump to shmobile_boot_fn or to the bootrom code.
-In a watchdog triggered reset scenario, since the [S]BAR registers keep
-their values, the boot CPU will jump into the newly designed reset
-vector, the assembly routine will eventually test WOVF (a bit in register
-RWTCSRA that indicates if the watchdog counter has overflown, the value
-of this bit gets retained in this scenario), and jump to the bootrom code
-which will in turn load up the bootloader, etc.
-When bringing up SMP or using CPU hotplug, the reset vector will jump
-to shmobile_boot_fn instead.
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v5
 
-v3 takes into account all the feedbacks recieved, and implements a
-different logic in the reset vector in order to get rid of
-shmobile_wdt_clock_status.
+Based on v4.15-rc1
 
-This work was rebased on top of tag renesas-devel-20180122-v4.15-rc9
-from the below repository:
-git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
+Changes since v4:
+* Correct off-by one error in usage of __ffs
 
-What do you guys think about this?
+Changes since v3:
+* Rebase
+* Divide parent clock by 2 to give correct rate (again)                         * Take care not to overflow multiplication on 32 but platforms
+* Use __ffs as FIELD_{GET,PREP} don't not work with non-constant masks
+* Use correct mask in cpg_z_clk_recalc_rate()
 
-Any volunteer for testing this work?
+Changes since v2:
+* Rebase
+* Address review of v2 as noted in patch changelogs
 
-Comments welcome!
+Takeshi Kihara (6):
+  clk: renesas: rcar-gen3: Add Z clock divider support
+  clk: renesas: rcar-gen3: Add Z2 clock divider support
+  clk: renesas: r8a7795: Add Z clock
+  clk: renesas: r8a7795: Add Z2 clock
+  clk: renesas: r8a7796: Add Z clock
+  clk: renesas: r8a7796: Add Z2 clock
 
-Best Regards,
+ drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c |   2 +
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 143 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
+ 4 files changed, 149 insertions(+)
 
-Fabrizio Castro (25):
-  ARM: shmobile: Add watchdog support
-  ARM: dts: r8a7743: Adjust SMP routine size
-  ARM: dts: r8a7745: Adjust SMP routine size
-  ARM: dts: r8a7790: Adjust SMP routine size
-  ARM: dts: r8a7791: Adjust SMP routine size
-  ARM: dts: r8a7792: Adjust SMP routine size
-  ARM: dts: r8a7793: Adjust SMP routine size
-  ARM: dts: r8a7794: Adjust SMP routine size
-  soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
-  dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-  watchdog: renesas_wdt: Add R-Car Gen2 support
-  ARM: shmobile: rcar-gen2: Add watchdog support
-  ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-  clk: renesas: r8a7743: Add rwdt clock
-  clk: renesas: r8a7745: Add rwdt clock
-  clk: renesas: r8a7790: Add rwdt clock
-  clk: renesas: r8a7791/r8a7793: Add rwdt clock
-  clk: renesas: r8a7794: Add rwdt clock
-  ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-  ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-  ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+Results of testing this on an H3 ES2.0 / Salvator-XS are as below.
+Testing has shown equivalent results on an M3W ES1.0 / Salvator-X.
+Testing has also shown equivalent results on an H3 ES1.0 / Salvator-X
+with the following restrictions due to lack of physical access:
+1. No little CPUs are brought up and thus scaling the frequency of
+   those CPUs was not tested
+2. No Suspend-to-RAM
 
- .../devicetree/bindings/watchdog/renesas-wdt.txt   | 18 +++++--
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++-
- arch/arm/configs/shmobile_defconfig                |  1 +
- arch/arm/mach-shmobile/common.h                    |  6 +++
- arch/arm/mach-shmobile/headsmp.S                   | 55 +++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c              | 13 +++--
- drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
- drivers/soc/renesas/rcar-rst.c                     | 35 ++++++++++---
- drivers/watchdog/renesas_wdt.c                     | 61 ++++++++++++++++++++--
- 22 files changed, 248 insertions(+), 26 deletions(-)
+The results for H3 ES2.0 / Salvator-XS:
+
+On Boot
+-------
+
+Z clock is half of pll0 and corresponds to CPU frequency.
+Z2 clock is half pll2. This is as expected.
+
+# cd /sys/devices/system/cpu/
+# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
+       .pll2                              0            0  2396160000          0 0  
+          z2                              0            0  1198080000          0 0  
+       .pll0                              0            0  2995200000          0 0  
+          z                               0            0  1497600000          0 0  
+# grep . cpu*/cpufreq/*cur*
+cpu0/cpufreq/cpuinfo_cur_freq:1497600
+cpu0/cpufreq/scaling_cur_freq:1497600
+cpu1/cpufreq/cpuinfo_cur_freq:1497600
+cpu1/cpufreq/scaling_cur_freq:1497600
+cpu2/cpufreq/cpuinfo_cur_freq:1497600
+cpu2/cpufreq/scaling_cur_freq:1497600
+cpu3/cpufreq/cpuinfo_cur_freq:1497600
+cpu3/cpufreq/scaling_cur_freq:1497600
+cpu4/cpufreq/cpuinfo_cur_freq:1198080
+cpu4/cpufreq/scaling_cur_freq:1198080
+cpu5/cpufreq/cpuinfo_cur_freq:1198080
+cpu5/cpufreq/scaling_cur_freq:1198080
+cpu6/cpufreq/cpuinfo_cur_freq:1198080
+cpu6/cpufreq/scaling_cur_freq:1198080
+cpu7/cpufreq/cpuinfo_cur_freq:1198080
+cpu7/cpufreq/scaling_cur_freq:1198080
+
+BIG CPU Freq scaled to 500000 and little CPU Freq scaled to 800000
+------------------------------------------------------------------
+
+Z and Z2 clocks corresponds to new CPU frequencies.
+PLL0 and PLL2 are unchanged.
+This is the expected result.
+
+# echo 500000 > cpu0/cpufreq/scaling_max_freq
+# echo 800000 > cpu4/cpufreq/scaling_max_freq
+# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
+       .pll2                              0            0  2396160000          0 0  
+          z2                              0            0   786240000          0 0  
+       .pll0                              0            0  2995200000          0 0  
+          z                               0            0   468000000          0 0  
+# grep . cpu*/cpufreq/*cur*
+cpu0/cpufreq/cpuinfo_cur_freq:468000
+cpu0/cpufreq/scaling_cur_freq:468000
+cpu1/cpufreq/cpuinfo_cur_freq:468000
+cpu1/cpufreq/scaling_cur_freq:468000
+cpu2/cpufreq/cpuinfo_cur_freq:468000
+cpu2/cpufreq/scaling_cur_freq:468000
+cpu3/cpufreq/cpuinfo_cur_freq:468000
+cpu3/cpufreq/scaling_cur_freq:468000
+cpu4/cpufreq/cpuinfo_cur_freq:786240
+cpu4/cpufreq/scaling_cur_freq:786240
+cpu5/cpufreq/cpuinfo_cur_freq:786240
+cpu5/cpufreq/scaling_cur_freq:786240
+cpu6/cpufreq/cpuinfo_cur_freq:786240
+cpu6/cpufreq/scaling_cur_freq:786240
+cpu7/cpufreq/cpuinfo_cur_freq:786240
+cpu7/cpufreq/scaling_cur_freq:786240
+
+
+After Resume from Suspend-to-RAM
+--------------------------------
+
+Clocks and CPU freqiencies are restored to their values before
+suspend. This is the expected result.
+
+# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
+       .pll2                              0            0  2396160000          0 0  
+          z2                              0            0   786240000          0 0  
+       .pll0                              0            0  2995200000          0 0  
+          z                               0            0   468000000          0 0  
+# grep . cpu*/cpufreq/*cur*
+cpu0/cpufreq/cpuinfo_cur_freq:468000
+cpu0/cpufreq/scaling_cur_freq:500000
+cpu1/cpufreq/cpuinfo_cur_freq:468000
+cpu1/cpufreq/scaling_cur_freq:500000
+cpu2/cpufreq/cpuinfo_cur_freq:468000
+cpu2/cpufreq/scaling_cur_freq:500000
+cpu3/cpufreq/cpuinfo_cur_freq:468000
+cpu3/cpufreq/scaling_cur_freq:500000
+cpu4/cpufreq/cpuinfo_cur_freq:786240
+cpu4/cpufreq/scaling_cur_freq:800000
+cpu5/cpufreq/cpuinfo_cur_freq:786240
+cpu5/cpufreq/scaling_cur_freq:800000
+cpu6/cpufreq/cpuinfo_cur_freq:786240
+cpu6/cpufreq/scaling_cur_freq:800000
+cpu7/cpufreq/cpuinfo_cur_freq:786240
+cpu7/cpufreq/scaling_cur_freq:800000
+
+
 
 -- 
-2.7.4
+2.11.0
+
