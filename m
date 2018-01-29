@@ -1,35 +1,43 @@
-Return-Path: <weiyongjun1@huawei.com>
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Joel Stanley <joel@jms.id.au>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-clk@vger.kernel.org>
-Subject: [PATCH -next] clk: aspeed: Fix return value check in aspeed_cc_init()
-Date: Fri, 5 Jan 2018 01:41:01 +0000
-Message-ID: <1515116461-156320-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751593AbeA2SCL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 13:02:11 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 4/6] clk: renesas: r8a7795: Add Z2 clock
+Date: Mon, 29 Jan 2018 19:01:52 +0100
+Message-Id: <20180129180154.29626-5-horms+renesas@verge.net.au>
+In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In case of error, the function of_iomap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Fixes: a2e230c7b2ea ("clk: Add clock driver for ASPEED BMC SoCs")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+This patch adds Z2 clock for r8a7795 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 6fb3447..f9b9688 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -609,7 +609,7 @@ static void __init aspeed_cc_init(struct device_node *np)
- 	int i;
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 995a4c4fb01e..775b0ceaa337 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
  
- 	scu_base = of_iomap(np, 0);
--	if (IS_ERR(scu_base))
-+	if (!scu_base)
- 		return;
- 
- 	aspeed_clk_data = kzalloc(sizeof(*aspeed_clk_data) +
+ 	/* Core Clock Outputs */
+ 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
++	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+-- 
+2.11.0
+
