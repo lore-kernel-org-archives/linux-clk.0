@@ -1,104 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:46377 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753897AbeAGQ1b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Jan 2018 11:27:31 -0500
-Received: by mail-wm0-f66.google.com with SMTP id r78so10207989wme.5
-        for <linux-clk@vger.kernel.org>; Sun, 07 Jan 2018 08:27:30 -0800 (PST)
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 29 Jan 2018 13:53:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+Message-ID: <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-2-git-send-email-david@lechnology.com>
 MIME-Version: 1.0
-In-Reply-To: <20180106050910.48070-1-icenowy@aosc.io>
-References: <20180106050910.48070-1-icenowy@aosc.io>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Sun, 7 Jan 2018 17:26:49 +0100
-Message-ID: <CAOFm3uHVsXTMPmrx2G-5vR6oiYk5Fq0qQXfGpT3NrUJwumRweQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] arm64: allwinner: h6: add the basical Allwinner H6
- DTSI file
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1516468460-4908-2-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 6, 2018 at 6:09 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
-> memory map fully reworked and some high-speed peripherals (PCIe, USB
-> 3.0) introduced.
->
-> This commit adds the basical DTSI file of it, including the clock
-> support and UART support.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
+> This adds a new binding for the PLL IP blocks in the mach-davinci
+> family of processors. Currently, only da850 has device tree support
+> but these bindings can also work for other SoCs in this family just
+> by adding new compatible strings.
+> 
+> Note: Although these PLL controllers are very similar to the TI Keystone
+> SoCs, we are not re-using those bindings. The Keystone bindings use a
+> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+> have a slightly different PLL register layout and a number of quirks
+> that can't be handled by the existing bindings, so the keystone bindings
+> could not be used as-is anyway.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 214 +++++++++++++++++++++++++++
->  1 file changed, 214 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> 
+> v6 changes:
+> - Added clock-names property
+> - Added ti,clkmode-square-wave property
+> - Added pllout child node
+> - Added obsclk child node
+> - Expanded examples
+> 
+>  .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96 ++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
 > new file mode 100644
-> index 000000000000..482f5cb64d07
+> index 0000000..36998e1
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -0,0 +1,214 @@
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> @@ -0,0 +1,96 @@
+> +Binding for TI DaVinci PLL Controllers
+> +
+> +The PLL provides clocks to most of the components on the SoC. In addition
+> +to the PLL itself, this controller also contains bypasses, gates, dividers,
+> +an multiplexers for various clock signals.
+> +
+> +Required properties:
+> +- compatible: shall be one of:
+> +	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+> +	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+> +- reg: physical base address and size of the controller's register area.
+> +- clocks: phandles corresponding to the clock names
+> +- clock-names: names of the clock sources - depends on compatible string
+> +	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+> +	- for "ti,da850-pll1", shall be "clksrc"
+> +
+> +Optional properties:
+> +- ti,clkmode-square-wave: Indicates that the the board is supplying a square
+> +	wave input on the OSCIN pin instead of using a crystal oscillator.
+> +	This property is only valid when compatible = "ti,da850-pll0".
+> +
+> +
+> +Optional child nodes:
+> +
+> +pllout
+> +	Describes the main PLL clock output (before POSTDIV). The node name must
+> +	be "pllout".
+> +
+> +	Required properties:
+> +	- #clock-cells: shall be 0
+> +
+> +sysclk
+> +	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
+> +	domains. The node name must be "sysclk". Consumers of this node should
+> +	use "n" in "SYSCLKn" as the index parameter for the clock cell.
+> +
+> +	Required properties:
+> +	- #clock-cells: shall be 1
+> +
+> +auxclk
+> +	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
+> +	This child node is only valid when compatible = "ti,da850-pll0".
+> +
+> +	Required properties:
+> +	- #clock-cells: shall be 0
+> +
+> +obsclk
+> +	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
+> +
+> +	Required properties:
+> +	- #clock-cells: shall be 0
 
-Icenowy,
-This is a very long legalese indeed!
-Do you mind using the new concise SPDX tags instead here and in the
-rest of your patch?
-See Thomas doc [1]
-Thanks!
+So why have all these child nodes vs. just defining a single number 
+space of clock ids?
 
-[1] https://lkml.org/lkml/2017/12/28/323
--- 
-Cordially
-Philippe Ombredanne
+Rob
