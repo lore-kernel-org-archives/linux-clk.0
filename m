@@ -1,73 +1,43 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: horia.geanta@nxp.com,
-	aymen.sghaier@nxp.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: fabio.estevam@nxp.com,
-	peng.fan@nxp.com,
-	davem@davemloft.net,
-	lukas.auer@aisec.fraunhofer.de,
-	rui.silva@linaro.org,
-	ryan.harkin@linaro.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Subject: [PATCH v3 4/5] clk: imx7d: add CAAM clock
-Date: Wed, 31 Jan 2018 02:00:39 +0000
-Message-Id: <1517364040-27607-5-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1517364040-27607-1-git-send-email-pure.logic@nexus-software.ie>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751642AbeA2SCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 13:02:13 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 6/6] clk: renesas: r8a7796: Add Z2 clock
+Date: Mon, 29 Jan 2018 19:01:54 +0100
+Message-Id: <20180129180154.29626-7-horms+renesas@verge.net.au>
+In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rui Miguel Silva <rui.silva@linaro.org>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Add CAAM clock so that we could use the Cryptographic Acceleration and
-Assurance Module (CAAM) hardware block.
+This patch adds Z2 clock for R8A7796 SoC.
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/imx/clk-imx7d.c             | 1 +
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211..52ab096 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
-+	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index e2f99ae..2bc5618 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -452,5 +452,6 @@
- #define IMX7D_OCOTP_CLK			439
- #define IMX7D_NAND_RAWNAND_CLK		440
- #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
--#define IMX7D_CLK_END			442
-+#define IMX7D_CAAM_CLK			442
-+#define IMX7D_CLK_END			443
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 82b444ac66c6..83a68e51e4ec 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -75,6 +75,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 
+ 	/* Core Clock Outputs */
+ 	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
++	DEF_BASE("z2",          R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
+ 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 -- 
-2.7.4
+2.11.0
+
