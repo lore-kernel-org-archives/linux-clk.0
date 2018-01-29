@@ -1,62 +1,43 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 21/44] clk: davinci: New driver for TI DA8XX USB PHY
- clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-22-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <493e4809-6b77-7772-70c7-ad0fa04e9033@ti.com>
-Date: Thu, 18 Jan 2018 18:35:39 +0530
-MIME-Version: 1.0
-In-Reply-To: <1515377863-20358-22-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751631AbeA2SCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jan 2018 13:02:12 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 5/6] clk: renesas: r8a7796: Add Z clock
+Date: Mon, 29 Jan 2018 19:01:53 +0100
+Message-Id: <20180129180154.29626-6-horms+renesas@verge.net.au>
+In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 08 January 2018 07:47 AM, David Lechner wrote:
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-> +static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
-> +	unsigned int mask, val;
-> +
-> +	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
-> +	mask = CFGCHIP2_USB1PHYCLKMUX;
-> +	switch (index) {
-> +	case DA8XX_USB1_PHY_CLK_PARENT_USB_REFCLKIN:
-> +		val = CFGCHIP2_USB1PHYCLKMUX;
-> +		break;
-> +	case DA8XX_USB1_PHY_CLK_PARENT_USB0_PHY_PLL:
-> +		val = 0;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	regmap_write_bits(clk->regmap, CFGCHIP(2), mask, val);
+This patch adds Z clock for R8A7796 SoC.
 
-This function can be simplified quite a bit if you use a shift.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-#define CFGCHIP2_USB1PHYCLKMUX_SHIFT	12
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index b3767472088a..82b444ac66c6 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -74,6 +74,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+ 
+ 	/* Core Clock Outputs */
++	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+ 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+-- 
+2.11.0
 
-static int da8xx_usb1_phy_clk_set_parent(struct clk_hw *hw, u8 index)
-{
-	struct da8xx_usb1_phy_clk *clk = to_da8xx_usb1_phy_clk(hw);
-
-	regmap_write_bits(clk->regmap, CFGCHIP(2),
-			  CFGCHIP2_USB1PHYCLKMUX,
-			  index << CFGCHIP2_USB1PHYCLKMUX_SHIFT);
-}
-
-Same thing for da8xx_usb0_phy_clk_set_parent() as well.
-
-Thanks,
-Sekhar
