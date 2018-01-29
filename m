@@ -1,54 +1,63 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 25/37] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN2
-Date: Thu, 25 Jan 2018 18:02:59 +0000
-Message-Id: <1516903391-30467-26-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1517217778.3153.1.camel@baylibre.com>
+Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	 <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King
+ <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Quentin
+ Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman
+ <khilman@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Date: Mon, 29 Jan 2018 10:22:58 +0100
+In-Reply-To: <20171222021520.GO7997@codeaurora.org>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	 <151373031022.33554.13905466641279532222@resonance>
+	 <20171222021520.GO7997@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default.
+On Thu, 2017-12-21 at 18:15 -0800, Stephen Boyd wrote:
+> On 12/19, Michael Turquette wrote:
+> > Quoting Jerome Brunet (2017-12-01 13:51:50)
+> > > This Patchset is related the RFC [0] and the discussion around
+> > > CLK_SET_RATE_GATE available here [1]
+> > > 
+> > > This patchset introduce clock protection to the CCF core. This can then
+> > > be used for:
+> > > 
+> > > * Provide a way for a consumer to claim exclusivity over the rate control
+> > >   of a provider. Some clock consumers require that a clock rate must not
+> > >   deviate from its selected frequency. There can be several reasons for
+> > >   this, not least of which is that some hardware may not be able to
+> > >   handle or recover from a glitch caused by changing the clock rate while
+> > >   the hardware is in operation. For such HW, The ability to get exclusive
+> > >   control of a clock's rate, and release that exclusivity, could be seen
+> > >   as a fundamental clock rate control primitive. The exclusivity is not
+> > >   preemptible, so when claimed more than once, is rate is effectively
+> > >   locked.
+> > > 
+> > > * Provide a similar functionality to providers themselves, fixing
+> > >   CLK_SET_RATE_GATE flag (enforce clock gating along the tree). While
+> > >   there might still be a few platforms relying the broken implementation,
+> > >   tests done has shown this change to be pretty safe.
+> > 
+> > Applied to clk-protect-rate, with the exception that I did not apply
+> > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
+> > qcom clk code.
+> > 
+> > Stephen, do you plan to fix up the qcom clock code so that the
+> > SET_RATE_GATE improvement can go in?
+> > 
+> 
+> I started working on it a while back. Let's see if I can finish
+> it off this weekend.
+> 
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi Stephen,
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 578434c..f25bd1c 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
- CONFIG_RCAR_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9063_WATCHDOG=y
-+CONFIG_RENESAS_WDT_GEN2=y
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_DA9063=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
--- 
-2.7.4
+Have you been able find something to fix the qcom code regarding this issue ?
+
+Cheers
+Jerome
