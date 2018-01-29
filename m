@@ -1,36 +1,102 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 29/44] ARM: da8xx: add new USB PHY clock init using
- common clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-30-git-send-email-david@lechnology.com>
- <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c31d26b6-fb79-4581-039f-b977d737da2d@lechnology.com>
-Date: Thu, 18 Jan 2018 12:43:59 -0600
-MIME-Version: 1.0
-In-Reply-To: <83dfab9a-be30-6313-d756-50fa018e757e@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <sriramx.periyasamy@intel.com>
+From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+To: ALSA ML <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Patches Audio <patches.audio@intel.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+	Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Subject: [alsa-devel] [PATCH v8 2/3] ASoC: Intel: Skylake: Make DSP replies more human readable
+Date: Mon, 29 Jan 2018 21:45:59 +0530
+Message-Id: <1517242560-22157-3-git-send-email-sriramx.periyasamy@intel.com>
+In-Reply-To: <1517242560-22157-1-git-send-email-sriramx.periyasamy@intel.com>
+References: <1517242560-22157-1-git-send-email-sriramx.periyasamy@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/18/2018 09:14 AM, Sekhar Nori wrote:
-> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->> +int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
->> +{
->> +	struct regmap *cfgchip;
->> +	struct clk *usb0_psc_clk, *clk;
->> +	struct clk_hw *parent;
->> +
->> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-> 
-> Am I right in understanding that this API is only called for non-DT
-> boot? If yes, do we really need the lookup by compatible?
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-This code is used in DT boot until [PATCH v5 43/44] "ARM: da8xx-dt:
-switch to device tree clocks". So, yes it is needed temporarily to
-prevent breaking USB.
+Add more meaning to the IPC replies for easy debugging. Replace the switch
+case with a lookup table to lookup for the IPC replies and print in human
+readable form.
+
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+---
+ sound/soc/intel/skylake/skl-sst-ipc.c | 44 ++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
+index 5234fafb758a..8708755a8f9a 100644
+--- a/sound/soc/intel/skylake/skl-sst-ipc.c
++++ b/sound/soc/intel/skylake/skl-sst-ipc.c
+@@ -392,18 +392,43 @@ int skl_ipc_process_notification(struct sst_generic_ipc *ipc,
+ 	return 0;
+ }
+ 
+-static int skl_ipc_set_reply_error_code(u32 reply)
++struct skl_ipc_err_map {
++	const char *msg;
++	enum skl_ipc_glb_reply reply;
++	int err;
++};
++
++static struct skl_ipc_err_map skl_err_map[] = {
++	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
++	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
++};
++
++static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+ {
+-	switch (reply) {
+-	case IPC_GLB_REPLY_OUT_OF_MEMORY:
+-		return -ENOMEM;
++	int i;
+ 
+-	case IPC_GLB_REPLY_BUSY:
+-		return -EBUSY;
++	for (i = 0; i < ARRAY_SIZE(skl_err_map); i++) {
++		if (skl_err_map[i].reply == reply)
++			break;
++	}
+ 
+-	default:
++	if (i == ARRAY_SIZE(skl_err_map)) {
++		dev_err(ipc->dev, "ipc FW reply: %d FW Error Code: %u\n",
++				reply,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
+ 		return -EINVAL;
+ 	}
++
++	if (skl_err_map[i].err < 0)
++		dev_err(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++	else
++		dev_info(ipc->dev, "ipc FW reply: %s FW Error Code: %u\n",
++				skl_err_map[i].msg,
++				ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++
++	return skl_err_map[i].err;
+ }
+ 
+ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+@@ -441,10 +466,7 @@ void skl_ipc_process_reply(struct sst_generic_ipc *ipc,
+ 
+ 		}
+ 	} else {
+-		msg->errno = skl_ipc_set_reply_error_code(reply);
+-		dev_err(ipc->dev, "ipc FW reply: reply=%d\n", reply);
+-		dev_err(ipc->dev, "FW Error Code: %u\n",
+-			ipc->dsp->fw_ops.get_fw_errcode(ipc->dsp));
++		msg->errno = skl_ipc_set_reply_error_code(ipc, reply);
+ 		switch (IPC_GLB_NOTIFY_MSG_TYPE(header.primary)) {
+ 		case IPC_GLB_LOAD_MULTIPLE_MODS:
+ 		case IPC_GLB_LOAD_LIBRARY:
+-- 
+2.7.4
