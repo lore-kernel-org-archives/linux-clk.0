@@ -1,132 +1,59 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180102192320.GJ7997@codeaurora.org>
-References: <1514906853-9364-1-git-send-email-geert+renesas@glider.be> <20180102192320.GJ7997@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Jan 2018 22:35:48 +0100
-Message-ID: <CAMuHMdWHppy3hKia2Lyj957a01JrfwW4_q2n=YVP=1MLHRDD1A@mail.gmail.com>
-Subject: Re: [PATCH] clk: Fix debugfs_create_*() usage
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1517240807.7000.1303.camel@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Date: Mon, 29 Jan 2018 17:46:47 +0200
+In-Reply-To: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
+References: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Fri, 2018-01-19 at 19:44 +0200, Andy Shevchenko wrote:
+> Since the commit
+> 
+>   0777591e715a ("clk: fractional-divider: switch to rational best
+> approximation")
+> 
+> enables rational best approximation to all common based clocks, there
+> is
+> no need to repeat the selection in each of them.
+> 
+> No functional changes intended.
 
-On Tue, Jan 2, 2018 at 8:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/02, Geert Uytterhoeven wrote:
->> When exposing data access through debugfs, the correct
->> debugfs_create_*() functions must be used, depending on data type.
->>
->> Remove all casts from data pointers passed to debugfs_create_*()
->> functions, as such casts prevent the compiler from flagging bugs.
->>
->> clk_core.rate, .accuracy, and .flags are "unsigned long", hence casting
->> to "u32 *" exposed the wrong halves on big-endian 64-bit systems.
->>
->> Fix .rate and .accuracy, by using debugfs_create_ulong() instead.
->>
->> Fix .flags by changing the field to "unsigned int", as a change to
->> debugfs_create_x64() on 64-bit systems would change the user-visible
->> formatting in debugfs.
->> Note that __clk_get_flags() and clk_hw_get_flags() are left unchanged
->> and still return "unsigned long", to avoid having to change all their
->> users.  Likewise, of_clk_detect_critical() still takes "unsigned long",
->> but the comment is updated as it is never passed a real pointer to
->> clk_core.flags.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> Looks like none of the 64-bit architectures support common clock yet?
->
-> arm64 does.
+Any comment on this?
 
-Sorry, I meant "64-bit big endian".
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/clk/Kconfig | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 98ce9fc6e6c0..2e65cf731b00 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -76,7 +76,6 @@ config COMMON_CLK_SI5351
+>  	tristate "Clock driver for SiLabs 5351A/B/C"
+>  	depends on I2C
+>  	select REGMAP_I2C
+> -	select RATIONAL
+>  	---help---
+>  	  This driver supports Silicon Labs 5351A/B/C programmable
+> clock
+>  	  generators.
+> @@ -105,7 +104,6 @@ config COMMON_CLK_CDCE706
+>  	tristate "Clock driver for TI CDCE706 clock synthesizer"
+>  	depends on I2C
+>  	select REGMAP_I2C
+> -	select RATIONAL
+>  	---help---
+>  	  This driver supports TI CDCE706 programmable 3-PLL clock
+> synthesizer.
+>  
 
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -58,7 +58,7 @@ struct clk_core {
->>       unsigned long           new_rate;
->>       struct clk_core         *new_parent;
->>       struct clk_core         *new_child;
->> -     unsigned long           flags;
->> +     unsigned int            flags;
->
-> This doesn't look good.
-
-Why not?
-It's not like flags is used with bitops, which would  mandate unsigned long.
-And you can't start using bits 32-63 without changing flags to u64, else
-the extra bits are not available on 32-bit platforms.
-
->> @@ -2600,43 +2600,43 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
->>
->>       core->dentry = d;
->>
->> -     d = debugfs_create_u32("clk_rate", S_IRUGO, core->dentry,
->> -                     (u32 *)&core->rate);
->> +     d = debugfs_create_ulong("clk_rate", S_IRUGO, core->dentry,
->> +                              &core->rate);
->
-> As you're changing these lines, can you also change S_IRUGO to
-> the octal values. That's the preferred style now.
-
-Yes, I can. That would be a separate patch, though.
-
->>       d = debugfs_create_x32("clk_flags", S_IRUGO, core->dentry,
->> -                     (u32 *)&core->flags);
->> +                            &core->flags);
->
-> Maybe we need a new debugfs API like debugfs_create_ulong_hex()
-> or something that prints out an unsigned long as a hex value?
-
-That's possible.  I already have that locally (for another user which uses
-u32 or u64 depending on platform).
-My main worry was the change from 0xXXXXXXXX to 0xXXXXXXXXXXXXXXXX
-on 64-bit platforms, which you don't seem to see as a blocker, as
-debugfs isn't ABI?
-
-> Probably we should change it to pretty print the values and what
-> they correspond to, with words, because that's the least
-> confusing thing to do with regards to endianness. So the
-
-Endianness doesn't matter when printing u32. The hex values of
-the flags are the same on big and little endian.
-
-> clk_flags file would have something like
->
->         CLK_SET_RATE_PARENT
->         CLK_SET_RATE_GATE
->
-> if those flags are set.
-
-But some flags are internal to platform-specific drivers, right?
-
-> We don't care about ABI here either. This is debugfs.
-
-OK.
-
->> @@ -3927,7 +3927,7 @@ static int parent_ready(struct device_node *np)
->>   * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
->>   * @np: Device node pointer associated with clock provider
->>   * @index: clock index
->> - * @flags: pointer to clk_core->flags
->> + * @flags: pointer to core clock flags
->
-> Please split this off into another patch.
-
-OK.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
