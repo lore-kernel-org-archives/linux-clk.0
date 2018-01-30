@@ -1,66 +1,86 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 16/25] clk: renesas: r8a7790: Add rwdt clock
-Date: Tue, 30 Jan 2018 20:22:49 +0000
-Message-Id: <1517343778-27902-17-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        Philippe CORNU
+	<philippe.cornu@st.com>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com"
+	<gabriel.fernandez.st@gmail.com>
+Subject: Re: [PATCH 2/2] clk: stm32: Add DSI clock for STM32F469 Board
+Date: Tue, 30 Jan 2018 15:22:16 +0000
+Message-ID: <df882957-9d04-cda8-abd4-0b731ffa62d3@st.com>
+References: <1516286980-8603-1-git-send-email-gabriel.fernandez@st.com>
+ <1516286980-8603-3-git-send-email-gabriel.fernandez@st.com>
+ <20180129185624.zesocq2siiikwnog@rob-hp-laptop>
+In-Reply-To: <20180129185624.zesocq2siiikwnog@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* no change
-
- drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
-index 46bb55b..f936cb7 100644
---- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
-@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
-@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
--- 
-2.7.4
+SGkgUm9iLA0KDQpUaGFua3MgZm9yIHJldmlld2luZy4NCg0KDQpPbiAwMS8yOS8yMDE4IDA3OjU2
+IFBNLCBSb2IgSGVycmluZyB3cm90ZToNCj4gT24gVGh1LCBKYW4gMTgsIDIwMTggYXQgMDM6NDk6
+NDBQTSArMDEwMCwgZ2FicmllbC5mZXJuYW5kZXpAc3QuY29tIHdyb3RlOg0KPj4gRnJvbTogR2Fi
+cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+DQo+PiBUaGlzIHBh
+dGNoIGFkZHMgRFNJIGNsb2NrIGZvciBTVE0zMkY0NjkgYm9hcmQNCj4+DQo+PiBTaWduZWQtb2Zm
+LWJ5OiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4gLS0t
+DQo+PiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgICAgICAgICAgICAgICAgIHwgMTEgKysr
+KysrKysrKy0NCj4+ICAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zdG0zMmZ4LWNsb2NrLmgg
+fCAgMyArKy0NCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0
+aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIv
+ZHJpdmVycy9jbGsvY2xrLXN0bTMyZjQuYw0KPj4gaW5kZXggZGE0NGY4ZC4uM2MyODc5OCAxMDA2
+NDQNCj4+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4+ICsrKyBiL2RyaXZlcnMv
+Y2xrL2Nsay1zdG0zMmY0LmMNCj4+IEBAIC01MjEsNyArNTIxLDcgQEAgc3RydWN0IHN0bTMyZjRf
+cGxsX2RhdGEgew0KPj4gICB9Ow0KPj4gICANCj4+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCBzdG0z
+MmY0X3BsbF9kYXRhIHN0bTMyZjQ2OV9wbGxbTUFYX1BMTF9ESVZdID0gew0KPj4gLQl7IFBMTCwJ
+ICAgNTAsIHsgInBsbCIsCSAgICAgInBsbC1xIiwgICAgTlVMTAkgICAgfSB9LA0KPj4gKwl7IFBM
+TCwJICAgNTAsIHsgInBsbCIsCSAgICAgInBsbC1xIiwgICAgInBsbC1yIiAgICB9IH0sDQo+PiAg
+IAl7IFBMTF9JMlMsIDUwLCB7ICJwbGxpMnMtcCIsICJwbGxpMnMtcSIsICJwbGxpMnMtciIgfSB9
+LA0KPj4gICAJeyBQTExfU0FJLCA1MCwgeyAicGxsc2FpLXAiLCAicGxsc2FpLXEiLCAicGxsc2Fp
+LXIiIH0gfSwNCj4+ICAgfTsNCj4+IEBAIC0xMDQ3LDYgKzEwNDcsOCBAQCBzdGF0aWMgc3RydWN0
+IGNsa19odyAqc3RtMzJfcmVnaXN0ZXJfY2NsayhzdHJ1Y3QgZGV2aWNlICpkZXYsIGNvbnN0IGNo
+YXIgKm5hbWUsDQo+PiAgIAkibm8tY2xvY2siLCAibHNlIiwgImxzaSIsICJoc2UtcnRjIg0KPj4g
+ICB9Ow0KPj4gICANCj4+ICtzdGF0aWMgY29uc3QgY2hhciAqZHNpX3BhcmVudFsyXSA9IHsgTlVM
+TCwgInBsbC1yIiB9Ow0KPj4gKw0KPj4gICBzdGF0aWMgY29uc3QgY2hhciAqbGNkX3BhcmVudFsx
+XSA9IHsgInBsbHNhaS1yLWRpdiIgfTsNCj4+ICAgDQo+PiAgIHN0YXRpYyBjb25zdCBjaGFyICpp
+MnNfcGFyZW50c1syXSA9IHsgInBsbGkycy1yIiwgTlVMTCB9Ow0KPj4gQEAgLTExNTYsNiArMTE1
+OCwxMiBAQCBzdHJ1Y3Qgc3RtMzJmNF9jbGtfZGF0YSB7DQo+PiAgIAkJTk9fR0FURSwgMCwNCj4+
+ICAgCQkwDQo+PiAgIAl9LA0KPj4gKwl7DQo+PiArCQlDTEtfRjQ2OV9EU0ksICJkc2kiLCBkc2lf
+cGFyZW50LCBBUlJBWV9TSVpFKGRzaV9wYXJlbnQpLA0KPj4gKwkJU1RNMzJGNF9SQ0NfRENLQ0ZH
+UiwgMjksIDEsDQo+PiArCQlTVE0zMkY0X1JDQ19BUEIyRU5SLCAyNywNCj4+ICsJCUNMS19TRVRf
+UkFURV9QQVJFTlQgfCBDTEtfU0VUX1JBVEVfTk9fUkVQQVJFTlQNCj4+ICsJfSwNCj4+ICAgfTsN
+Cj4+ICAgDQo+PiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3RtMzJfYXV4X2NsayBzdG0zMmY3NDZf
+YXV4X2Nsa1tdID0gew0KPj4gQEAgLTE0NTAsNiArMTQ1OCw3IEBAIHN0YXRpYyB2b2lkIF9faW5p
+dCBzdG0zMmY0X3JjY19pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApDQo+PiAgIAlzdG0zMmY0
+X2dhdGVfbWFwID0gZGF0YS0+Z2F0ZXNfbWFwOw0KPj4gICANCj4+ICAgCWhzZV9jbGsgPSBvZl9j
+bGtfZ2V0X3BhcmVudF9uYW1lKG5wLCAwKTsNCj4+ICsJZHNpX3BhcmVudFswXSA9IGhzZV9jbGs7
+DQo+PiAgIA0KPj4gICAJaTJzX2luX2NsayA9IG9mX2Nsa19nZXRfcGFyZW50X25hbWUobnAsIDEp
+Ow0KPj4gICANCj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N0bTMy
+ZngtY2xvY2suaCBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJmeC1jbG9jay5oDQo+
+PiBpbmRleCA0ZDUyM2IwLi41OGQ4YjUxIDEwMDY0NA0KPj4gLS0tIGEvaW5jbHVkZS9kdC1iaW5k
+aW5ncy9jbG9jay9zdG0zMmZ4LWNsb2NrLmgNCj4+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3Mv
+Y2xvY2svc3RtMzJmeC1jbG9jay5oDQo+PiBAQCAtMzUsOCArMzUsOSBAQA0KPj4gICAjZGVmaW5l
+IENMS19TQUlRX1BESVYJCTEzDQo+PiAgICNkZWZpbmUgQ0xLX0hTSQkJCTE0DQo+PiAgICNkZWZp
+bmUgQ0xLX1NZU0NMSwkJMTUNCj4+ICsjZGVmaW5lIENMS19GNDY5X0RTSQkJMTYNCj4+ICAgDQo+
+PiAtI2RlZmluZSBFTkRfUFJJTUFSWV9DTEsJCTE2DQo+PiArI2RlZmluZSBFTkRfUFJJTUFSWV9D
+TEsJCTE3DQo+PiAgIA0KPj4gICAjZGVmaW5lIENMS19IRE1JX0NFQwkJMTYNCj4+ICAgI2RlZmlu
+ZSBDTEtfU1BESUYJCTE3DQo+IFRoaXMgbG9va3Mgc3VzcGljaW91cy4gV2hhdCdzIHRoZSByZWxh
+dGlvbnNoaXAgb2YgdGhlc2UgY2xvY2tzPw0KSSBoYXZlIGp1c3QgYWRkZWQgQ0xLX0Y0NjlfRFNJ
+IGluIHRoZSBiaW5kaW5nLCBhbmQgc2hpZnRlZCB0aGUgZW5kIG9mIA0KcHJpbWFyeSBjbG9jayBm
+b3IgRjQgY2xvY2tzLg0KDQonQ0xLX0Y0NjlfRFNJJyBiaW5kaW5nIGlzIG9ubHkgdXNlZCBmb3Ig
+U1RNMzJGNDY5IGFuZCBub3QgZm9yIFNUTTMyRjc0NiANCih0aGF0IHdoeSBDTEtfSERNSV9DRUMg
+Y2FuIHVzZSB0aGUgaW5kZXggMTYpDQoNCg0KQlINCg0KR2FicmllbC4NCj4NCj4gUm9iDQo=
