@@ -1,69 +1,101 @@
-Return-Path: <patrice.chotard@st.com>
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "Linux
- ARM" <linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Andrea Merello
-	<andrea.merello@gmail.com>
-Subject: Re: [PATCH 04/14] mmc: mmci: Add STM32 variant
-Date: Mon, 15 Jan 2018 17:17:54 +0000
-Message-ID: <ce14077b-2b8b-f8a7-2107-78b1d9dcab27@st.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
- <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
- <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com>
-In-Reply-To: <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 12/25] ARM: shmobile: rcar-gen2: Add watchdog support
+Date: Tue, 30 Jan 2018 20:22:45 +0000
+Message-Id: <1517343778-27902-13-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgTGludXMNCg0KT24gMDEvMTUvMjAxOCAwMjoxMyBBTSwgTGludXMgV2FsbGVpaiB3cm90ZToN
-Cj4gT24gRnJpLCBKYW4gMTIsIDIwMTggYXQgMToxNSBQTSwgIDxwYXRyaWNlLmNob3RhcmRAc3Qu
-Y29tPiB3cm90ZToNCj4gDQo+PiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFy
-ZEBzdC5jb20+DQo+Pg0KPj4gU1RNMzJGNCBhbmQgU1RNMzJGNyBNQ1VzIGhhcyBhIFNESU8gY29u
-dHJvbGxlciB0aGF0IGxvb2tzIGxpa2UNCj4+IGFuIEFSTSBwbDgxMC4NCj4gDQo+IFBMMTgwIHlv
-dSBtZWFuLiBVbGYgY2FuIGZpeCB3aGlsZSBhcHBseWluZy4NCg0KSSBuZWVkIHRvIHNlbmQgYSB2
-MiwgaSB3aWxsIGZpeCBpdC4NCg0KPiANCj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgU1RNMzIgdmFy
-aWFudCBzbyB0aGF0IG1tY2kgZHJpdmVyIHN1cHBvcnRzIGl0Lg0KPj4NCj4+IFNpZ25lZC1vZmYt
-Ynk6IEFuZHJlYSBNZXJlbGxvIDxhbmRyZWEubWVyZWxsb0BnbWFpbC5jb20+DQo+PiBTaWduZWQt
-b2ZmLWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiAo
-Li4uKQ0KPj4gK3N0YXRpYyBzdHJ1Y3QgdmFyaWFudF9kYXRhIHZhcmlhbnRfc3RtMzIgPSB7DQo+
-PiArICAgICAgIC5maWZvc2l6ZSAgICAgICAgICAgICAgID0gMzIgKiA0LA0KPj4gKyAgICAgICAu
-Zmlmb2hhbGZzaXplICAgICAgICAgICA9IDggKiA0LA0KPj4gKyAgICAgICAuY2xrcmVnICAgICAg
-ICAgICAgICAgICA9IE1DSV9DTEtfRU5BQkxFLA0KPj4gKyAgICAgICAuY2xrcmVnX2VuYWJsZSAg
-ICAgICAgICA9IE1DSV9TVF9VWDUwMF9IV0ZDRU4sDQo+IA0KPiBJZiB0aGUgYXNpYyBkZXNpZ25l
-ZCBkZXJpdmVkIHRoaXMgZnJvbSB1eDUwMCBJIGd1ZXNzIGl0IGlzIHByb3Blci4NCj4gDQo+PiAr
-ICAgICAgIC5jbGtyZWdfOGJpdF9idXNfZW5hYmxlID0gTUNJX1NUXzhCSVRfQlVTLA0KPj4gKyAg
-ICAgICAuY2xrcmVnX25lZ19lZGdlX2VuYWJsZSA9IE1DSV9TVF9VWDUwMF9ORUdfRURHRSwNCj4+
-ICsgICAgICAgLmRhdGFsZW5ndGhfYml0cyAgICAgICAgPSAyNCwNCj4+ICsgICAgICAgLmRhdGFj
-dHJsX21hc2tfc2RpbyAgICAgPSBNQ0lfRFBTTV9TVF9TRElPRU4sDQo+PiArICAgICAgIC5zdF9z
-ZGlvICAgICAgICAgICAgICAgID0gdHJ1ZSwNCj4gDQo+IERpZCB5b3UgdGVzdCBTRElPPyBJIHRo
-aW5rIHdlIGxhY2sgZmVhdHVyZXMgZm9yIHRoYXQuDQoNCm5vLCB0aGUgYm9hcmQgYWNjZXB0IG9u
-bHkgbWljcm8gU0QgY2FyZCwgc28gb25seSBNTUMgbW9kZSBjYW4gYmUgdGVzdGVkLg0KDQo+IA0K
-Pj4gKyAgICAgICB7DQo+PiArICAgICAgICAgICAgICAgLmlkICAgICA9IDB4MDA4ODAxODAsDQo+
-PiArICAgICAgICAgICAgICAgLm1hc2sgICA9IDB4MDBmZmZmZmYsDQo+PiArICAgICAgICAgICAg
-ICAgLmRhdGEgICA9ICZ2YXJpYW50X3N0bTMyLA0KPj4gKyAgICAgICB9LA0KPiANCj4gU2luY2Ug
-dXg1MDAgd2FzIDQ4MDE4MCBJIHdvbmRlciB3aGF0IHZhcmlhbnRzIDUsNiw3IGFyZS4uLg0KDQpX
-aGF0IGlzIHRoZSBydWxlIHRvIGRlZmluZSB0aGUgaWQgPyBmb3IgU1QgTWljcm8gdmFyaWFudHMg
-d2UgZ290IHRoZSANCmxpc3QgYmVsb3cgOg0KCS5pZCAgICAgPSAweDAwMTgwMTgwLCAgdTMwMA0K
-CS5pZCAgICAgPSAweDEwMTgwMTgwLCAgbm9tYWRpaw0KCS5pZCAgICAgPSAweDAwMjgwMTgwLCAg
-bm9tYWRpaw0KCS5pZCAgICAgPSAweDAwNDgwMTgwLCAgdXg1MDANCgkuaWQgICAgID0gMHgxMDQ4
-MDE4MCwgIHV4NTAwdjINCgkuaWQgICAgID0gMHgwMDg4MDE4MCwgIHZhcmlhbnRfc3RtMzINCg0K
-SSBzaW1wbHkgdXBkYXRlIHRoZSBzaXh0aCBkaWdpdCBmb3Igc3RtMzIgdmFyaWFudC4NCg0KDQpQ
-YXRyaWNlDQoNCj4gDQo+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlq
-QGxpbmFyby5vcmc+DQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KPiA=
+This patch adds watchdog support by installing shmobile_boot_vector_gen2
+to ICRAM1 when enough memory is available, in which case we also keep a
+copy of MPIDR to complete the reset vector logic.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v2->v3:
+* purge shmobile_wdt_clock status and save mpidr of boot cpu
+
+v1->v2:
+* make the reset vector backward compatible
+
+ arch/arm/mach-shmobile/platsmp-apmu.c |  1 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 4422b61..ba732ef 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -191,6 +191,7 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ {
+ 	/* install boot code shared by all CPUs */
+ 	shmobile_boot_fn = __pa_symbol(shmobile_smp_boot);
++	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
+ 
+ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index e5f215c..bfad202 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -17,6 +17,7 @@
+ #include <linux/smp.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
+ #include <asm/io.h>
++#include <asm/cputype.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
+ 
+@@ -37,7 +38,6 @@
+ #define CA7RESCNT_CODE	0x5a5a0000
+ #define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
+ 
+-
+ /* On-chip RAM */
+ #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
+ 
+@@ -119,8 +119,15 @@ void __init rcar_gen2_pm_init(void)
+ 	p = ioremap(res.start, resource_size(&res));
+ 	if (!p)
+ 		return;
+-
+-	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	/* install the reset vector, use the largest version if we have enough
++	 * memory available */
++	if (resource_size(&res) >= shmobile_boot_size_gen2) {
++		shmobile_boot_cpu_gen2 = read_cpuid_mpidr();
++		memcpy_toio(p, shmobile_boot_vector_gen2,
++			    shmobile_boot_size_gen2);
++	} else {
++		memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	}
+ 	iounmap(p);
+ 
+ 	/* setup reset vectors */
+-- 
+2.7.4
