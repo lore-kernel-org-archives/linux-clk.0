@@ -1,51 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:48387 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932644AbeASXSj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jan 2018 18:18:39 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 5/9] clocksource/drivers/sun4i: register as sched_clock on suniv
-Date: Sat, 20 Jan 2018 07:17:31 +0800
-Message-Id: <20180119231735.61504-6-icenowy@aosc.io>
-In-Reply-To: <20180119231735.61504-1-icenowy@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 03/25] ARM: dts: r8a7745: Adjust SMP routine size
+Date: Tue, 30 Jan 2018 20:22:36 +0000
+Message-Id: <1517343778-27902-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The suniv chip (newer F-series Allwinner SoCs) is based on ARM926EJ-S
-CPU, thus it has no architecture timer.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-Register sun4i_timer as sched_clock on it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clocksource/sun4i_timer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v1->v3:
+* increased size to 0x100
 
-diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-index 88e09554ce7a..16dedf5ff0ca 100644
---- a/drivers/clocksource/sun4i_timer.c
-+++ b/drivers/clocksource/sun4i_timer.c
-@@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
- 	 */
- 	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
- 	    of_machine_is_compatible("allwinner,sun5i-a13") ||
--	    of_machine_is_compatible("allwinner,sun5i-a10s"))
-+	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
-+	    of_machine_is_compatible("allwinner,suniv"))
- 		sched_clock_register(sun4i_timer_sched_read, 32,
- 				     timer_of_rate(&to));
+ arch/arm/boot/dts/r8a7745.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index ddc3da2..6bc1cf4 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -755,7 +755,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
  
 -- 
-2.14.2
-
+2.7.4
