@@ -1,60 +1,58 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Benjamin
- GAIGNARD" <benjamin.gaignard@st.com>
-Subject: Re: [PATCH] clk: stm32: add configuration flags for each of the stm32
- drivers
-Date: Wed, 17 Jan 2018 06:28:19 +0000
-Message-ID: <1b963488-7663-3853-62b0-1ab8475ac282@st.com>
-References: <20180115142151.22225-1-benjamin.gaignard@st.com>
-In-Reply-To: <20180115142151.22225-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 13/25] ARM: shmobile: defconfig: Enable CONFIG_RENESAS_WDT
+Date: Tue, 30 Jan 2018 20:22:46 +0000
+Message-Id: <1517343778-27902-14-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgQmVuamFtaW4sDQoNCkp1c3QgcmVtb3ZlIHRoZSBleHRyYSBibGFuY2sgbGluZS4NCg0KT3Ro
-ZXJ3aXNlIHlvdSBjYW4gYWRkbXkNCg0KQWNrZWQtYnk6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJy
-aWVsLmZlcm5hbmRlekBzdC5jb20+DQoNCkJlc3QgcmVnYXJkcw0KR2FicmllbA0KDQpPbiAwMS8x
-NS8yMDE4IDAzOjIxIFBNLCBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToNCj4gQWRkIHR3byBjb25m
-aWd1cmF0aW9uIGZsYWdzIHRvIGJlIGFibGUgdG8gbm90IGNvbXBpbGUgYWxsIHRoZSB0aW1lDQo+
-IHN0bTMyZiBhbmQgc3RtMzJoNyBkcml2ZXJzIHdoZW4gQVJDSF9TVE0zMiBpcyBzZXQuDQo+IFRo
-YXQgaGVscCB0byBzYXZlIHNvbWUgc3BhY2Ugb24gdGhvc2Ugc21hbGwgcGxhdGZvcm1zLg0KPg0K
-PiBTaWduZWQtb2ZmLWJ5OiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAc3Qu
-Y29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL2Nsay9LY29uZmlnICB8IDE1ICsrKysrKysrKysrKysr
-Kw0KPiAgIGRyaXZlcnMvY2xrL01ha2VmaWxlIHwgIDQgKystLQ0KPiAgIDIgZmlsZXMgY2hhbmdl
-ZCwgMTcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvY2xrL0tjb25maWcgYi9kcml2ZXJzL2Nsay9LY29uZmlnDQo+IGluZGV4IDFjNGUxYWE2
-NzY3ZS4uYzg3NmViODI4ZmM0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9LY29uZmlnDQo+
-ICsrKyBiL2RyaXZlcnMvY2xrL0tjb25maWcNCj4gQEAgLTIyNiw2ICsyMjYsMjEgQEAgY29uZmln
-IENPTU1PTl9DTEtfVkM1DQo+ICAgCSAgVGhpcyBkcml2ZXIgc3VwcG9ydHMgdGhlIElEVCBWZXJz
-YUNsb2NrIDUgYW5kIFZlcnNhQ2xvY2sgNg0KPiAgIAkgIHByb2dyYW1tYWJsZSBjbG9jayBnZW5l
-cmF0b3JzLg0KPiAgIA0KPiArY29uZmlnIENPTU1PTl9DTEtfU1RNMzJGDQo+ICsJYm9vbCAiQ2xv
-Y2sgZHJpdmVyIGZvciBzdG0zMmY0IGFuZCBzdG0zMmY3IFNvQyBmYW1pbGllcyINCj4gKwlkZXBl
-bmRzIG9uIE1BQ0hfU1RNMzJGNDI5IHx8IE1BQ0hfU1RNMzJGNDY5IHx8IE1BQ0hfU1RNMzJGNzQ2
-DQo+ICsJaGVscA0KPiArCS0tLWhlbHAtLS0NCj4gKwkgIFN1cHBvcnQgZm9yIHN0bTMyZjQgYW5k
-IHN0bTMyZjcgU29DIGZhbWlsaWVzIGNsb2Nrcw0KPiArDQo+ICtjb25maWcgQ09NTU9OX0NMS19T
-VE0zMkg3DQo+ICsJYm9vbCAiQ2xvY2sgZHJpdmVyIGZvciBzdG0zMmg3IFNvQyBmYW1pbHkiDQo+
-ICsJZGVwZW5kcyBvbiBNQUNIX1NUTTMySDc0Mw0KPiArCWhlbHANCj4gKwktLS1oZWxwLS0tDQo+
-ICsJICBTdXBwb3J0IGZvciBzdG0zMmg3IFNvQyBmYW1pbHkgY2xvY2tzDQo+ICsNCj4gKw0KUmVt
-b3ZlZXh0cmFibGFua2xpbmUNCj4gICBzb3VyY2UgImRyaXZlcnMvY2xrL2JjbS9LY29uZmlnIg0K
-PiAgIHNvdXJjZSAiZHJpdmVycy9jbGsvaGlzaWxpY29uL0tjb25maWciDQo+ICAgc291cmNlICJk
-cml2ZXJzL2Nsay9pbWd0ZWMvS2NvbmZpZyINCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL01h
-a2VmaWxlIGIvZHJpdmVycy9jbGsvTWFrZWZpbGUNCj4gaW5kZXggZjdmNzYxYjAyYmVkLi40YThl
-MDYzYTcxNTkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL01ha2VmaWxlDQo+ICsrKyBiL2Ry
-aXZlcnMvY2xrL01ha2VmaWxlDQo+IEBAIC00NCw4ICs0NCw4IEBAIG9iai0kKENPTkZJR19DT01N
-T05fQ0xLX1NDUEkpICAgICAgICAgICArPSBjbGstc2NwaS5vDQo+ICAgb2JqLSQoQ09ORklHX0NP
-TU1PTl9DTEtfU0k1MzUxKQkJKz0gY2xrLXNpNTM1MS5vDQo+ICAgb2JqLSQoQ09ORklHX0NPTU1P
-Tl9DTEtfU0k1MTQpCQkrPSBjbGstc2k1MTQubw0KPiAgIG9iai0kKENPTkZJR19DT01NT05fQ0xL
-X1NJNTcwKQkJKz0gY2xrLXNpNTcwLm8NCj4gLW9iai0kKENPTkZJR19BUkNIX1NUTTMyKQkJKz0g
-Y2xrLXN0bTMyZjQubw0KPiAtb2JqLSQoQ09ORklHX0FSQ0hfU1RNMzIpCQkrPSBjbGstc3RtMzJo
-Ny5vDQo+ICtvYmotJChDT05GSUdfQ09NTU9OX0NMS19TVE0zMkYpCQkrPSBjbGstc3RtMzJmNC5v
-DQo+ICtvYmotJChDT05GSUdfQ09NTU9OX0NMS19TVE0zMkg3KQkrPSBjbGstc3RtMzJoNy5vDQo+
-ICAgb2JqLSQoQ09ORklHX0FSQ0hfVEFOR08pCQkrPSBjbGstdGFuZ280Lm8NCj4gICBvYmotJChD
-T05GSUdfQ0xLX1RXTDYwNDApCQkrPSBjbGstdHdsNjA0MC5vDQo+ICAgb2JqLSQoQ09ORklHX0FS
-Q0hfVTMwMCkJCQkrPSBjbGstdTMwMC5vDQo=
+R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+its driver by default.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* CONFIG_RENESAS_WDT_GEN2 -> CONFIG_RENESAS_WDT
+
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 578434c..d5cdad8 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_RCAR_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_DA9063_WATCHDOG=y
++CONFIG_RENESAS_WDT=y
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_DA9063=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+-- 
+2.7.4
