@@ -1,45 +1,29 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH 0/2] drivers: clk: Add ZynqMP clock driver support
-To: Jolly Shah <JOLLYS@xilinx.com>,
- "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
- <6004ad81-96f1-34d9-a037-2c355720dc08@arm.com>
- <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <bb8d1c16-f10e-5e5e-8a7b-54851e5d9de7@arm.com>
-Date: Fri, 12 Jan 2018 11:47:08 +0000
-MIME-Version: 1.0
-In-Reply-To: <DM2PR0201MB0767E1E08918BED4CB06DB20B8160@DM2PR0201MB0767.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1517339575.3153.11.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: add axg misc bit to the mpll driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	 <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Date: Tue, 30 Jan 2018 20:12:55 +0100
+In-Reply-To: <20180119154236.9797-1-jbrunet@baylibre.com>
+References: <20180119154236.9797-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 11/01/18 20:29, Jolly Shah wrote:
-> Hi Sudeep,
+On Fri, 2018-01-19 at 16:42 +0100, Jerome Brunet wrote:
+> On axg, the rate of the mpll is stuck as if sdm value was 4 and could not
+> change (expect for mpll2 strangely). Looking at the vendor kernel, it
+> turns out a new magic bit from the undocumented HHI_PLL_TOP_MISC register
+> is required.
 > 
-> There are 3 things:
+> Setting this bit solves the problem and the mpll rates are back to normal
 > 
-> 1> IPI mailbox transport - series is already posted
-> https://patchwork.kernel.org/patch/10145795/
-> 2> EEMI - Posted by me below
-> https://patchwork.kernel.org/patch/10150665/
-> 3> EEMI Users
-> Currently posted as RFC as they are dependent on #2.
-> OK, can #2 and #3 can be put together until initial review ?
+> Fixes: 78b4af312f91 ("clk: meson-axg: add clock controller drivers")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-> #2 doesn’t use mailbox so it is a posted as a separate series. 
-
-OK, does it use smc ? If so, the point is treat it as smc mailbox
-so that smc is just a transport and EEMI can be still used with other
-transport technically.
-
--- 
-Regards,
-Sudeep
+Applied to clk-meson next/drivers
