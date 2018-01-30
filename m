@@ -1,81 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33104 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750934AbeABLrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 06:47:20 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>, <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 00/12] mediatek: rework audio subsystem driver
-Date: Tue, 2 Jan 2018 19:47:09 +0800
-Message-ID: <cover.1514881870.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 10/25] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+Date: Tue, 30 Jan 2018 20:22:43 +0000
+Message-Id: <1517343778-27902-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+This commit documents the compatibility with R-Car Gen2 and RZ/G
+devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+Also, this patch expands the list of SoC-specific compatible strings to
+include RZ/G and R-Car Gen2 devices.
 
-This patch series mainly adds a common driver [5][6] for the top block of
-the MediaTek audio subsystem, which includes clock part and audio components.
-This is a minimal driver that manages shared resources like shared registers,
-and expose a regmap to its sub-nodes. It was tested on the bananapi-r2 and
-the MT2701 EVB.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* made description less generic and added compatible strings for r8a779[0-4]
 
-Also, this driver can be reused by other subsystems (e.g. MMSYS, ETHSYS) in
-future patch.
+ .../devicetree/bindings/watchdog/renesas-wdt.txt       | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-Patch[1]-[4]: rework for audio enable/disable sequences and update some part of
-			  code to make them more generic.
-Patch[7]~[12]: modify both drivers, audio and clock to adapt the new subsystem.
-
-Ryder Lee (12):
-  ASoC: mediatek: fix error handling in mt2701_afe_pcm_dev_probe()
-  ASoC: mediatek: rework clock functions for MT2701
-  ASoC: mediatek: cleanup audio driver for MT2701
-  ASoC: mediatek: update clock related properties of MT2701 AFE
-  mfd: mtk-audsys: add MediaTek audio subsystem driver
-  mfd: add DT bindings for MedaiTek audio subsystem
-  ASoC: mediatek: modify MT2701 AFE driver to adapt subsystem wrapper
-  ASoC: mediatek: modify documentation to adapt subsystem wrapper
-  clk: mediatek: move part of mtk_clk_register_gates() to the new
-    function
-  clk: mediatek: switch to use dev_get_regmap() for MT7622 audsys
-  clk: mediatek: add audsys support for MT2701
-  dt-bindings: clock: mediatek: update audsys bindings to adapt the
-    wrapper
-
- .../bindings/arm/mediatek/mediatek,audsys.txt      |  19 +-
- .../devicetree/bindings/mfd/mtk-audsys.txt         | 109 +++++
- .../devicetree/bindings/sound/mt2701-afe-pcm.txt   | 257 +++++-----
- drivers/clk/mediatek/Kconfig                       |   6 +
- drivers/clk/mediatek/Makefile                      |   1 +
- drivers/clk/mediatek/clk-mt2701-aud.c              | 180 +++++++
- drivers/clk/mediatek/clk-mt7622-aud.c              |  11 +-
- drivers/clk/mediatek/clk-mtk.c                     |  26 +-
- drivers/clk/mediatek/clk-mtk.h                     |   4 +
- drivers/mfd/Kconfig                                |   9 +
- drivers/mfd/Makefile                               |   2 +
- drivers/mfd/mtk-audsys.c                           | 138 ++++++
- include/dt-bindings/clock/mt7622-clk.h             |   3 +-
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c  | 526 +++++++--------------
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h  |  15 +-
- sound/soc/mediatek/mt2701/mt2701-afe-common.h      |  84 +---
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c         | 212 +++------
- sound/soc/mediatek/mt2701/mt2701-reg.h             |  42 +-
- 18 files changed, 860 insertions(+), 784 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/mtk-audsys.txt
- create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
- create mode 100644 drivers/mfd/mtk-audsys.c
-
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index bf6d1ca..a983a74 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -1,17 +1,25 @@
+ Renesas Watchdog Timer (WDT) Controller
+ 
+ Required properties:
+-- compatible : Should be "renesas,<soctype>-wdt", and
+-	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
++ - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
++		fallback compatible string when compatible with the generic
++		version.
+ 	       Examples with soctypes are:
++		 - "renesas,r8a7743-wdt" (RZ/G1M)
++		 - "renesas,r8a7745-wdt" (RZ/G1E)
++	         - "renesas,r8a7790-wdt" (R-Car H2)
++	         - "renesas,r8a7791-wdt" (R-Car M2-W)
++	         - "renesas,r8a7792-wdt" (R-Car V2H)
++	         - "renesas,r8a7793-wdt" (R-Car M2-N)
++	         - "renesas,r8a7794-wdt" (R-Car E2)
+ 	         - "renesas,r8a7795-wdt" (R-Car H3)
+ 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
+ 	         - "renesas,r8a77995-wdt" (R-Car D3)
+ 	         - "renesas,r7s72100-wdt" (RZ/A1)
++		The generic compatible string must be:
++		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
++		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
+ 
+-  When compatible with the generic version, nodes must list the SoC-specific
+-  version corresponding to the platform first, followed by the generic
+-  version.
+ 
+ - reg : Should contain WDT registers location and length
+ - clocks : the clock feeding the watchdog timer.
 -- 
-1.9.1
-
+2.7.4
