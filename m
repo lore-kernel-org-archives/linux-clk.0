@@ -1,66 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28096 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751493AbeADHoJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jan 2018 02:44:09 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>, <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1 0/6] add "simple-mfd" support for MediaTek audio subsystem
-Date: Thu, 4 Jan 2018 15:44:02 +0800
-Message-ID: <cover.1515038387.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 15/25] clk: renesas: r8a7745: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:48 +0000
+Message-Id: <1517343778-27902-16-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-The reason for this series is that MediaTek audio hardware block expose more than
-a single functionality, but register those in different kernel subsystems.
-Same issue could also be found in MMSYS: https://lkml.org/lkml/2017/11/14/669
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* no change
 
-Hence use "simple-mfd" to handle this kind of situation, that will make sure all
-children are registered - and we don't need to write an MFD driver specially.
-It was tested on the bananapi-r2 and the MT2701/MT7622 EVB.
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1]~[3]: modify the current audio driver accordingly.
-[5][6]: add clock driver for MT2701 and add missing data for MT7622.
-
-changes since v1:
- - To avoid writing an MFD driver, we add "simple-mfd" in the audsys binding.
- - Move three top clocks to audio driver [1] as we remove mfd/mtk-audsys.c in v1.
-
-Ryder Lee (6):
-  ASoC: mediatek: add some core clocks for MT2701 AFE
-  ASoC: mediatek: modify MT2701 AFE driver to adapt mfd device
-  ASoC: mediatek: update MT2701 AFE documentation to adapt mfd device
-  dt-bindings: clock: mediatek: add "simple-mfd" in audsys documentation
-  clk: mediatek: update missing clock data for MT7622 audsys
-  clk: mediatek: add audsys support for MT2701
-
- .../bindings/arm/mediatek/mediatek,audsys.txt      |  21 ++-
- .../devicetree/bindings/sound/mt2701-afe-pcm.txt   | 171 +++++++++++---------
- drivers/clk/mediatek/Kconfig                       |   6 +
- drivers/clk/mediatek/Makefile                      |   1 +
- drivers/clk/mediatek/clk-mt2701-aud.c              | 174 +++++++++++++++++++++
- drivers/clk/mediatek/clk-mt7622-aud.c              |   3 +-
- include/dt-bindings/clock/mt7622-clk.h             |   3 +-
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c  |  30 +++-
- sound/soc/mediatek/mt2701/mt2701-afe-common.h      |   3 +
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c         |  45 +++---
- sound/soc/mediatek/mt2701/mt2701-reg.h             |   1 -
- 11 files changed, 345 insertions(+), 113 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
-
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 2859504..87f5a36 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7745_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7745_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7745_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7745_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7745_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7745_CLK_ZS),
+ 	DEF_MOD("audio-dmac0",		 502,	R8A7745_CLK_HP),
+@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
 -- 
-1.9.1
-
+2.7.4
