@@ -1,30 +1,66 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
-References: <1515078402-22135-1-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 4 Jan 2018 11:00:58 -0200
-Message-ID: <CAOMZO5DLXhScM71qHaeMoB5dW_0MeexjHaERxYoam0LBhiTD5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx: imx7d: add the snvs clock
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-imx@nxp.com,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Stefan Agner <stefan@agner.ch>, Rob Herring <robh+dt@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 16/25] clk: renesas: r8a7790: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:49 +0000
+Message-Id: <1517343778-27902-17-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 1:06 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> According to the i.MX7D Reference Manual,
-> SNVS block has a clock gate, accessing SNVS block
-> would need this clock gate to be enabled, add it
-> into clock tree so that SNVS module driver can
-> operate this clock gate.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* no change
+
+ drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+index 46bb55b..f936cb7 100644
+--- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
+@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
+-- 
+2.7.4
