@@ -1,75 +1,67 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 22 Jan 2018 09:26:17 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
-Message-ID: <20180122092617.36ggqqike4gwwgrd@dell>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
- <20180110224838.16711-6-paul@crapouillou.net>
- <58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
- <1515687945.2170.1@smtp.crapouillou.net>
- <20180120130649.7f326f75@why.wild-wind.fr.eu.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180120130649.7f326f75@why.wild-wind.fr.eu.org>
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 23/25] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
+Date: Tue, 30 Jan 2018 20:22:56 +0000
+Message-Id: <1517343778-27902-24-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 20 Jan 2018, Marc Zyngier wrote:
+This commit adds watchdog support to the r8a7794 dtsi.
 
-> On Thu, 11 Jan 2018 17:25:45 +0100
-> Paul Cercueil <paul@crapouillou.net> wrote:
-> 
-> > Hi Marc,
-> > 
-> > >>  +static int __init ingenic_tcu_intc_of_init(struct device_node 
-> > >> *node,
-> > >>  +	struct device_node *parent)
-> > >>  +{
-> > >>  +	struct irq_domain *domain;
-> > >>  +	struct irq_chip_generic *gc;
-> > >>  +	struct irq_chip_type *ct;
-> > >>  +	int err, i, num_parent_irqs;
-> > >>  +	unsigned int parent_irqs[3];  
-> > > 
-> > > 3 parent interrupts? Really? How do you pick one? Also, given the 
-> > > useage
-> > > model below, "int" is the wrong type. Probably should be u32.  
-> > 
-> > See below.
-> > 
-> > >>  +	struct regmap *map;
-> > >>  +
-> > >>  +	num_parent_irqs = of_property_count_elems_of_size(
-> > >>  +			node, "interrupts", 4);  
-> > > 
-> > > Nit: on a single line, as here is nothing that hurts my eyes more than
-> > > reading something like(
-> > > this). Also, 4 is better expressed as sizeof(u32).  
-> > 
-> > That will make checkpatch.pl unhappy :(
-> 
-> And I don't care about checkpatch. I maintain the irqchip stuff, while
-> checkpatch doesn't. Hence, I win.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v1->v3:
+* rwdt moved before gpio@e6050000
 
-	num_parent_irqs =
-		of_property_count_elems_of_size(node, "interrupts", 4);  
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Everybody wins!
-
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index e47c5f4..1c9b149 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -119,6 +119,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7794-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7794",
+ 				     "renesas,rcar-gen2-gpio";
 -- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
