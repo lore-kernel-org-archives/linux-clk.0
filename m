@@ -1,100 +1,60 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 9 Jan 2018 17:47:16 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@codeaurora.org, adriana.reus@nxp.com,
-	stefan@agner.ch, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH V3 2/2] ARM: dts: imx7s: add snvs rtc clock
-Message-ID: <20180109094716.GH26312@b29396-OptiPlex-7040>
-References: <1515489651-13488-1-git-send-email-Anson.Huang@nxp.com>
- <1515489651-13488-2-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515489651-13488-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 05/25] ARM: dts: r8a7791: Adjust SMP routine size
+Date: Tue, 30 Jan 2018 20:22:38 +0000
+Message-Id: <1517343778-27902-6-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 05:20:51PM +0800, Anson Huang wrote:
-> Add i.MX7 SNVS RTC clock.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since v2:
-> 	improve the binding doc statement about clocks.
->  Documentation/devicetree/bindings/crypto/fsl-sec4.txt | 15 +++++++++++++++
->  arch/arm/boot/dts/imx7s.dtsi                          |  2 ++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> index 76aec8a..7329f29 100644
-> --- a/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> +++ b/Documentation/devicetree/bindings/crypto/fsl-sec4.txt
-> @@ -415,12 +415,25 @@ Secure Non-Volatile Storage (SNVS) Low Power (LP) RTC Node
->  	value type: <u32>
->  	Definition: LP register offset. default it is 0x34.
->  
-> +   - clocks
-> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
-> +      Value type: <prop_encoded-array>
-> +      Definition:  a clock specifier describing the clock required for
-> +          enabling and disabling SNVS LP RTC.
-> +
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-This clock seem optional.
-Should we indicate it here explicitly?
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* increased size to 0x100
 
-BTW, i thought we probably could update poweroff and key as well at
-the same time since device tree changes can go separately.
-Does it make sense?
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-Dong Aisheng
-
-> +   - clock-names
-> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
-> +      Value type: <string>
-> +      Definition: clock name string should be "snvs-rtc".
-> +
->  EXAMPLE
->  	sec_mon_rtc_lp@1 {
->  		compatible = "fsl,sec-v4.0-mon-rtc-lp";
->  		interrupts = <93 2>;
->  		regmap = <&snvs>;
->  		offset = <0x34>;
-> +		clocks = <&clks IMX7D_SNVS_CLK>;
-> +		clock-names = "snvs-rtc";
->  	};
->  
->  =====================================================================
-> @@ -543,6 +556,8 @@ FULL EXAMPLE
->  			regmap = <&sec_mon>;
->  			offset = <0x34>;
->  			interrupts = <93 2>;
-> +			clocks = <&clks IMX7D_SNVS_CLK>;
-> +			clock-names = "snvs-rtc";
->  		};
->  
->  		snvs-pwrkey@020cc000 {
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index 9aa2bb9..02baf42 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -551,6 +551,8 @@
->  					offset = <0x34>;
->  					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
->  						     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-> +					clocks = <&clks IMX7D_SNVS_CLK>;
-> +					clock-names = "snvs-rtc";
->  				};
->  
->  				snvs_poweroff: snvs-poweroff {
-> -- 
-> 1.9.1
-> 
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index dc65935..d2a4546 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -407,7 +407,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
