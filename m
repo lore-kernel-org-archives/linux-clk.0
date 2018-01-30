@@ -1,61 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from vern.gendns.com ([206.190.152.46]:35821 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752336AbeAWUFb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jan 2018 15:05:31 -0500
-Subject: =?UTF-8?Q?Re:_[PATCH_v6_00/41]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-From: David Lechner <david@lechnology.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <CAMRc=MexJTMiD=URw1bv-qfGaTntZRXgfsSb_beYGkvO+LrpgQ@mail.gmail.com>
- <d819e18f-7d74-d8c4-8056-bfc545f4d4e9@lechnology.com>
- <CAMRc=McVNJqsO4+j=XkyNWuKqF-S-hQAw9XxHx6GC47UudgMYw@mail.gmail.com>
- <e5f4af7d-971c-5694-2da5-0cba9083ee5c@lechnology.com>
- <615bc302-e129-1501-63be-fa701f5ecaad@lechnology.com>
- <CAHCN7xLW=RjHHBjvDto=DRrNfNsQrsaGb0zmsRrwdc+7Wbhaxg@mail.gmail.com>
- <CAMRc=MdyGx3PFiryYybB2fCGx=AP=e7kkdd-DUL29pT+St9u1g@mail.gmail.com>
- <5f836454-5de7-c51d-d262-2c2dbc26e438@lechnology.com>
- <CAMRc=Mcw8wWNo7Q3KnHNv81UGuHxEqmOs0he7MKxmaxDjwao+A@mail.gmail.com>
- <aaeb7d73-bd3b-9c85-88c5-c60da6ca3733@lechnology.com>
- <CAMRc=Me8HefZJYTkprqL2vpq_nLym4r6p-du7hoKwVk8kSCR8w@mail.gmail.com>
- <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
-Message-ID: <f28601f6-d6f1-9a55-f3cf-62543412bd36@lechnology.com>
-Date: Tue, 23 Jan 2018 14:05:22 -0600
-MIME-Version: 1.0
-In-Reply-To: <cafb3712-08eb-18f7-b3b6-debba2298b49@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 14/25] clk: renesas: r8a7743: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:47 +0000
+Message-Id: <1517343778-27902-15-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/23/2018 02:01 PM, David Lechner wrote:
-> On 01/23/2018 01:53 PM, Bartosz Golaszewski wrote:
->>
->> In the mdio case - the problem is that devm_clk_get() doesn't fail,
->> but somehow the clock doesn't end up in the list of the device's
->> clocks - which is why it's not enabled by pm_runtime_get_sync().
->>
-> 
-> 
-> Right. This is because devm_clk_get() now finds the clock via device
-> tree instead of a clkdev lookup entry. However, I think that the PM
-> notifier registered in arch/arm/mach-davinci/pm_domain.c only uses
-> the clkdev lookup to match the con_id and does not use device tree.
-> The same thing is happing in mdio, emac and lcdc.
-> 
+Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Minor correction: It looks like emac doesn't do this because it doesn't
-have a con_id of "fck". But, the same clock is shared by emac and mdio, so
-since mdio enables the clock, emac doesn't notice or care that it did
-not enable the clock itself.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v1->v3:
+* no change
+
+ drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+index 6dc0b30..d3c8b1e 100644
+--- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+@@ -117,6 +117,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7743_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7743_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7743_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7743_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7743_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7743_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7743_CLK_HP),
+@@ -195,6 +196,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
+-- 
+2.7.4
