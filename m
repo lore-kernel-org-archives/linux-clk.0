@@ -1,95 +1,147 @@
-Return-Path: <shawn.guo@linaro.org>
-Return-Path: <shawn.guo@linaro.org>
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jianguo Sun <sunjianguo1@huawei.com>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	project-aspen-dev@linaro.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH 5/5] clk: hi3798cv200: add COMBPHY0 clock support
-Date: Wed, 24 Jan 2018 19:48:27 +0800
-Message-Id: <1516794507-5607-6-git-send-email-shawn.guo@linaro.org>
-In-Reply-To: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
-References: <1516794507-5607-1-git-send-email-shawn.guo@linaro.org>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2 support
+Date: Tue, 30 Jan 2018 20:22:44 +0000
+Message-Id: <1517343778-27902-12-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jianguo Sun <sunjianguo1@huawei.com>
+On R-Car Gen2 and RZ/G1 the rwdt clock needs to be always ON, therefore
+when suspending to RAM we need to explicitly disable the counting by
+clearing TME from RWTCSRA.
+Also, on some systems RWDT is the only piece of HW that allows the SoC
+to be restarted, therefore this patch implements the restart callback.
 
-The clock COMBPHY1 has already been supported by hi3798cv200 driver,
-but COMBPHY0 is missing.  It adds COMBPHY0 clock support.
-
-Since the mux table is being shared by COMBPHY0 and COMBPHY1, it renames
-comphy1_mux_p and comphy1_mux_table a bit to drop instance number '1'
-from there.
-
-Signed-off-by: Jianguo Sun <sunjianguo1@huawei.com>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/clk/hisilicon/crg-hi3798cv200.c | 15 +++++++++++----
- include/dt-bindings/clock/histb-clock.h |  1 +
- 2 files changed, 12 insertions(+), 4 deletions(-)
+Wolfram, was the restart callback implementation missing for a reason?
+Is its implementation going to break any Gen3 platform?
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index 451830e08375..d6e3971bac9e 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -49,6 +49,7 @@
- #define HI3798CV200_FIXED_60M			83
- #define HI3798CV200_FIXED_166P5M		84
- #define HI3798CV200_SDIO0_MUX			85
-+#define HI3798CV200_COMBPHY0_MUX		86
+v1->v3:
+* unified Gen2 and Gen3 drivers.
+
+ drivers/watchdog/renesas_wdt.c | 61 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 56 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83..eedb016 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+ }
  
- #define HI3798CV200_CRG_NR_CLKS			128
++static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
++			void *data)
++{
++	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++
++	pm_runtime_get_sync(wdev->parent);
++
++	rwdt_write(priv, 0x00, RWTCSRB);
++	rwdt_write(priv, 0x00, RWTCSRA);
++	rwdt_write(priv, 0xffff, RWTCNT);
++
++	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
++		cpu_relax();
++
++	rwdt_write(priv, 0x80, RWTCSRA);
++	return 0;
++}
++
+ static const struct watchdog_info rwdt_ident = {
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ 	.identity = "Renesas WDT Watchdog",
+@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
+ 	.stop = rwdt_stop,
+ 	.ping = rwdt_init_timeout,
+ 	.get_timeleft = rwdt_get_timeleft,
++	.restart = rwdt_restart,
+ };
  
-@@ -74,9 +75,9 @@
- 		"100m", "50m", "25m", "200m", "150m" };
- static u32 mmc_mux_table[] = {0, 1, 2, 3, 6};
+ static int rwdt_probe(struct platform_device *pdev)
+@@ -203,13 +222,42 @@ static int rwdt_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
--static const char *const comphy1_mux_p[] = {
-+static const char *const comphy_mux_p[] = {
- 		"100m", "25m"};
--static u32 comphy1_mux_table[] = {2, 3};
-+static u32 comphy_mux_table[] = {2, 3};
- 
- static const char *const sdio_mux_p[] = {
- 		"100m", "50m", "150m", "166p5m" };
-@@ -85,9 +86,12 @@
- static struct hisi_mux_clock hi3798cv200_mux_clks[] = {
- 	{ HI3798CV200_MMC_MUX, "mmc_mux", mmc_mux_p, ARRAY_SIZE(mmc_mux_p),
- 		CLK_SET_RATE_PARENT, 0xa0, 8, 3, 0, mmc_mux_table, },
-+	{ HI3798CV200_COMBPHY0_MUX, "combphy0_mux",
-+		comphy_mux_p, ARRAY_SIZE(comphy_mux_p),
-+		CLK_SET_RATE_PARENT, 0x188, 2, 2, 0, comphy_mux_table, },
- 	{ HI3798CV200_COMBPHY1_MUX, "combphy1_mux",
--		comphy1_mux_p, ARRAY_SIZE(comphy1_mux_p),
--		CLK_SET_RATE_PARENT, 0x188, 10, 2, 0, comphy1_mux_table, },
-+		comphy_mux_p, ARRAY_SIZE(comphy_mux_p),
-+		CLK_SET_RATE_PARENT, 0x188, 10, 2, 0, comphy_mux_table, },
- 	{ HI3798CV200_SDIO0_MUX, "sdio0_mux", sdio_mux_p,
- 		ARRAY_SIZE(sdio_mux_p), CLK_SET_RATE_PARENT,
- 		0x9c, 8, 2, 0, sdio_mux_table, },
-@@ -147,6 +151,9 @@
- 		CLK_SET_RATE_PARENT, 0xcc, 4, 0, },
- 	{ HISTB_ETH1_MACIF_CLK, "clk_macif1", "clk_bus_m1",
- 		CLK_SET_RATE_PARENT, 0xcc, 25, 0, },
-+	/* COMBPHY0 */
-+	{ HISTB_COMBPHY0_CLK, "clk_combphy0", "combphy0_mux",
-+		CLK_SET_RATE_PARENT, 0x188, 0, 0, },
- 	/* COMBPHY1 */
- 	{ HISTB_COMBPHY1_CLK, "clk_combphy1", "combphy1_mux",
- 		CLK_SET_RATE_PARENT, 0x188, 8, 0, },
-diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
-index eba850ff0017..fab30b3f78b2 100644
---- a/include/dt-bindings/clock/histb-clock.h
-+++ b/include/dt-bindings/clock/histb-clock.h
-@@ -61,6 +61,7 @@
- #define HISTB_USB2_OTG_UTMI_CLK		39
- #define HISTB_USB2_PHY1_REF_CLK		40
- #define HISTB_USB2_PHY2_REF_CLK		41
-+#define HISTB_COMBPHY0_CLK		42
- 
- /* clocks provided by mcu CRG */
- #define HISTB_MCE_CLK			1
+-/*
+- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+- * to work there, one also needs a RESET (RST) driver which does not exist yet
+- * due to HW issues. This needs to be solved before adding compatibles here.
+- */
++#ifdef CONFIG_PM
++static int rwdt_suspend(struct device *dev)
++{
++	struct platform_device *pdev;
++	struct rwdt_priv *priv;
++
++	pdev = to_platform_device(dev);
++	priv = platform_get_drvdata(pdev);
++	if (watchdog_active(&priv->wdev)) {
++		rwdt_write(priv, priv->cks, RWTCSRA);
++	}
++	return 0;
++}
++
++static int rwdt_resume(struct device *dev)
++{
++	struct platform_device *pdev;
++	struct rwdt_priv *priv;
++
++	pdev = to_platform_device(dev);
++	priv = platform_get_drvdata(pdev);
++	if (watchdog_active(&priv->wdev)) {
++		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
++	}
++	return 0;
++}
++
++static const struct dev_pm_ops rwdt_pm = {
++	.suspend = rwdt_suspend,
++	.resume = rwdt_resume,
++};
++#endif
++
+ static const struct of_device_id rwdt_ids[] = {
+ 	{ .compatible = "renesas,rcar-gen3-wdt", },
++	{ .compatible = "renesas,rcar-gen2-wdt", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rwdt_ids);
+@@ -218,6 +266,9 @@ static struct platform_driver rwdt_driver = {
+ 	.driver = {
+ 		.name = "renesas_wdt",
+ 		.of_match_table = rwdt_ids,
++#ifdef CONFIG_PM
++		.pm = &rwdt_pm,
++#endif
+ 	},
+ 	.probe = rwdt_probe,
+ 	.remove = rwdt_remove,
 -- 
-1.9.1
+2.7.4
