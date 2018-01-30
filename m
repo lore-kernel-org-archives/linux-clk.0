@@ -1,71 +1,62 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support Tegra210
-Date: Wed, 24 Jan 2018 14:45:38 +0200
-Message-ID: <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 24/25] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+Date: Tue, 30 Jan 2018 20:22:57 +0000
+Message-Id: <1517343778-27902-25-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-support in this driver. Also allow for the case where the CPU voltage is
-controlled directly by the DFLL rather than by a separate regulator object.
+This patch enables the watchdog from within the iwg20m SoM dtsi.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+v1->v3:
+* no change
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4353025..d631dc4 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
- {
- 	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
- 	clk_disable_unprepare(priv->dfll_clk);
--	regulator_sync_voltage(priv->vdd_cpu_reg);
-+	if (priv->vdd_cpu_reg)
-+		regulator_sync_voltage(priv->vdd_cpu_reg);
- 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
- }
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 1d3e950..d364685 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -91,6 +91,11 @@
+ 	};
+ };
  
-@@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
--	if (IS_ERR(priv->vdd_cpu_reg)) {
--		ret = PTR_ERR(priv->vdd_cpu_reg);
--		goto out_put_np;
--	}
-+	if (IS_ERR(priv->vdd_cpu_reg))
-+		priv->vdd_cpu_reg = NULL;
- 
- 	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
- 	if (IS_ERR(priv->cpu_clk)) {
-@@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	clk_put(priv->cpu_clk);
- out_put_vdd_cpu_reg:
- 	regulator_put(priv->vdd_cpu_reg);
--out_put_np:
- 	of_node_put(np);
- 
- 	return ret;
-@@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
- 	int ret;
- 	struct platform_device *pdev;
- 
--	if (!of_machine_is_compatible("nvidia,tegra124"))
-+	if (!(of_machine_is_compatible("nvidia,tegra124")
-+		|| of_machine_is_compatible("nvidia,tegra210")))
- 		return -ENODEV;
- 
- 	/*
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
-1.9.1
+2.7.4
