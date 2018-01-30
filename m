@@ -1,154 +1,182 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Archit Taneja <architt@codeaurora.org>, a.hajda@samsung.com, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jose.Abreu@synopsys.com, Neil Armstrong <narmstrong@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 01/11] clk: sunxi-ng: Don't set k if width is 0 for nkmp plls
-Date: Thu, 04 Jan 2018 20:28:16 +0100
-Message-ID: <3625461.aU9oqMdpo3@jernej-laptop>
-In-Reply-To: <CAGb2v67B23yUdACijKxosfFG_os5WndiBKX02DGA4PFUkxDx9g@mail.gmail.com>
-References: <20171230210203.24115-1-jernej.skrabec@siol.net> <20171230210203.24115-2-jernej.skrabec@siol.net> <CAGb2v67B23yUdACijKxosfFG_os5WndiBKX02DGA4PFUkxDx9g@mail.gmail.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-2-git-send-email-david@lechnology.com> <20180129195315.bjanym7pmeh7bhaa@rob-hp-laptop>
+ <ffec7cac-22cd-f19b-8c1b-ce3223606d20@lechnology.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 30 Jan 2018 08:50:17 -0600
+Message-ID: <CAL_JsqK+c-C9VJnEOr0Em3Y-dtvE+CSbsc6m-0JoWJSZxKeR_g@mail.gmail.com>
+Subject: Re: [PATCH v6 01/41] dt-bindings: clock: Add new bindings for TI
+ Davinci PLL clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, Adam Ford <aford173@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Mon, Jan 29, 2018 at 3:14 PM, David Lechner <david@lechnology.com> wrote:
+> On 01/29/2018 01:53 PM, Rob Herring wrote:
+>>
+>> On Sat, Jan 20, 2018 at 11:13:40AM -0600, David Lechner wrote:
+>>>
+>>> This adds a new binding for the PLL IP blocks in the mach-davinci
+>>> family of processors. Currently, only da850 has device tree support
+>>> but these bindings can also work for other SoCs in this family just
+>>> by adding new compatible strings.
+>>>
+>>> Note: Although these PLL controllers are very similar to the TI Keystone
+>>> SoCs, we are not re-using those bindings. The Keystone bindings use a
+>>> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
+>>> have a slightly different PLL register layout and a number of quirks
+>>> that can't be handled by the existing bindings, so the keystone bindings
+>>> could not be used as-is anyway.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>>
+>>> v6 changes:
+>>> - Added clock-names property
+>>> - Added ti,clkmode-square-wave property
+>>> - Added pllout child node
+>>> - Added obsclk child node
+>>> - Expanded examples
+>>>
+>>>   .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96
+>>> ++++++++++++++++++++++
+>>>   1 file changed, 96 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> new file mode 100644
+>>> index 0000000..36998e1
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+>>> @@ -0,0 +1,96 @@
+>>> +Binding for TI DaVinci PLL Controllers
+>>> +
+>>> +The PLL provides clocks to most of the components on the SoC. In
+>>> addition
+>>> +to the PLL itself, this controller also contains bypasses, gates,
+>>> dividers,
+>>> +an multiplexers for various clock signals.
+>>> +
+>>> +Required properties:
+>>> +- compatible: shall be one of:
+>>> +       - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>>> +       - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+>>> +- reg: physical base address and size of the controller's register area.
+>>> +- clocks: phandles corresponding to the clock names
+>>> +- clock-names: names of the clock sources - depends on compatible string
+>>> +       - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>>> +       - for "ti,da850-pll1", shall be "clksrc"
+>>> +
+>>> +Optional properties:
+>>> +- ti,clkmode-square-wave: Indicates that the the board is supplying a
+>>> square
+>>> +       wave input on the OSCIN pin instead of using a crystal
+>>> oscillator.
+>>> +       This property is only valid when compatible = "ti,da850-pll0".
+>>> +
+>>> +
+>>> +Optional child nodes:
+>>> +
+>>> +pllout
+>>> +       Describes the main PLL clock output (before POSTDIV). The node
+>>> name must
+>>> +       be "pllout".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>> +
+>>> +sysclk
+>>> +       Describes the PLLDIVn divider clocks that provide the SYSCLKn
+>>> clock
+>>> +       domains. The node name must be "sysclk". Consumers of this node
+>>> should
+>>> +       use "n" in "SYSCLKn" as the index parameter for the clock cell.
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 1
+>>> +
+>>> +auxclk
+>>> +       Describes the AUXCLK output of the PLL. The node name must be
+>>> "auxclk".
+>>> +       This child node is only valid when compatible = "ti,da850-pll0".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>> +
+>>> +obsclk
+>>> +       Describes the OBSCLK output of the PLL. The node name must be
+>>> "obsclk".
+>>> +
+>>> +       Required properties:
+>>> +       - #clock-cells: shall be 0
+>>
+>>
+>> So why have all these child nodes vs. just defining a single number
+>> space of clock ids?
+>>
+>> Rob
+>>
+>
+> I think that it makes the bindings more self-documenting. Not all PLLs have
+> all of possible types of output clocks, so the presence or absence of a
+> child node indicates if a PLL actually has that output or not.
 
-Dne =C4=8Detrtek, 04. januar 2018 ob 15:45:18 CET je Chen-Yu Tsai napisal(a=
-):
-> On Sun, Dec 31, 2017 at 5:01 AM, Jernej Skrabec <jernej.skrabec@siol.net>=
-=20
-wrote:
-> > For example, A83T have nmp plls which are modelled as nkmp plls. Since k
-> > is not specified, it has offset 0, shift 0 and lowest value 1. This
-> > means that LSB bit is always set to 1, which may change clock rate.
-> >=20
-> > Fix that by applying k factor only if k width is greater than 0.
-> >=20
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> >=20
-> >  drivers/clk/sunxi-ng/ccu_nkmp.c | 21 +++++++++++++--------
-> >  1 file changed, 13 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c
-> > b/drivers/clk/sunxi-ng/ccu_nkmp.c index e58c95787f94..709f528af2b3 1006=
-44
-> > --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> > @@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_=
-hw
-> > *hw,>=20
-> >                                         unsigned long parent_rate)
-> > =20
-> >  {
-> > =20
-> >         struct ccu_nkmp *nkmp =3D hw_to_ccu_nkmp(hw);
-> >=20
-> > -       unsigned long n, m, k, p;
-> > +       unsigned long n, m, k =3D 1, p;
-> >=20
-> >         u32 reg;
-> >        =20
-> >         reg =3D readl(nkmp->common.base + nkmp->common.reg);
-> >=20
-> > @@ -92,11 +92,13 @@ static unsigned long ccu_nkmp_recalc_rate(struct
-> > clk_hw *hw,>=20
-> >         if (!n)
-> >        =20
-> >                 n++;
-> >=20
-> > -       k =3D reg >> nkmp->k.shift;
-> > -       k &=3D (1 << nkmp->k.width) - 1;
-> > -       k +=3D nkmp->k.offset;
-> > -       if (!k)
-> > -               k++;
-> > +       if (nkmp->k.width) {
-> > +               k =3D reg >> nkmp->k.shift;
-> > +               k &=3D (1 << nkmp->k.width) - 1;
-> > +               k +=3D nkmp->k.offset;
-> > +               if (!k)
-> > +                       k++;
-> > +       }
->=20
-> The conditional shouldn't be necessary. With nkmp->k.width =3D 0,
-> you'd simply get k & 0, which is 0, which then gets bumped up to 1,
-> unless k.offset > 1, which would be a bug.
->=20
-> >         m =3D reg >> nkmp->m.shift;
-> >         m &=3D (1 << nkmp->m.width) - 1;
-> >=20
-> > @@ -153,12 +155,15 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw,
-> > unsigned long rate,>=20
-> >         reg =3D readl(nkmp->common.base + nkmp->common.reg);
-> >         reg &=3D ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.sh=
-ift);
-> >=20
-> > -       reg &=3D ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.sh=
-ift);
-> > +       if (nkmp->k.width)
-> > +               reg &=3D ~GENMASK(nkmp->k.width + nkmp->k.shift - 1,
-> > +                               nkmp->k.shift);
-> >=20
-> >         reg &=3D ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.sh=
-ift);
-> >         reg &=3D ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.sh=
-ift);
-> >        =20
-> >         reg |=3D (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
-> >=20
-> > -       reg |=3D (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
-> > +       if (nkmp->k.width)
-> > +               reg |=3D (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
->=20
-> I think a better way would be
->=20
->         reg |=3D ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) &
->                GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
->=20
-> And do this for all the factors, not just k. This pattern is what
-> regmap_update_bits does, which seems much safer. I wonder what
-> GENMASK() with a negative value would do though...
+Doesn't the compatible string do that?
 
-You're right, GENMASK(-1, 0) equals 0 (calculated by hand, not tested). Thi=
-s=20
-seems much more elegant solution.=20
+> It is also complicated by the fact that one of the child nodes (sysclk)
+> is  already an array of clocks.
+>
+> To do what you are suggesting might look something like this...
+>
+> ---
+>
+> Required properties:
+> - compatible: shall be one of:
+>         - "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+>         - "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+> - reg: physical base address and size of the controller's register area.
+> - clocks: phandles corresponding to the clock names
+> - clock-names: names of the clock sources - depends on compatible string
+>         - for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+>         - for "ti,da850-pll1", shall be "clksrc"
+> - #clock-cells: shall be set to <2>.
+>
+> Consumers:
+>
+> The clock cell values for consumers work as follows...
+>
+> The first index is one of the constants defined in ti-davinci-pll.h
+>
+> The second index is 0 unless the first index is TI_DAVINCI_SYSCLK. In the
+> case
+> of TI_DAVINCI_SYSCLK the second index the SYSCLK domain ID (n in SYSCLKn).
+>
+> For compatible = "ti,da850-pll0":
+>         - <&pll0 TI_DAVINCI_PLLOUT 0> is the PLLOUT clock
+>         - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+> where n is 1 to 7
+>         - <&pll0 TI_DAVINCI_AUXCLK 0> is the AUXCLK clock domain
+>         - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>         - all other index combinations are invalid
+>
+> For compatible = "ti,da850-pll1":
+>         - <&pll0 TI_DAVINCI_SYSCLK n> is one of the SYSCLKn clock domains
+> where n is 1 to 3
+>         - <&pll0 TI_DAVINCI_OBSCLK 0> is the OBSCLK clock domain
+>         - all other index combinations are invalid
 
-Semi-related question: All nmp PLLs have much wider N range than real nkmp=
-=20
-PLLs. This causes integer overflow when using nkmp formula from datasheet.=
-=20
-Usually, N is 1-256 for nmp PLLs, which means that for very high N factors,=
- it=20
-overflows. This also causes issue that M factor is never higher than 1.
+You don't really need 2 cells here. I guess if you want to keep the
+child nodes, that is fine.
 
-I was wondering, if patch would be acceptable which would change this formu=
-la:
-
-RATE =3D (24MHz * N * K) / (M * P)
-
-to this:
-
-RATE ((24MHz / M) * N * K) / P
-
-I checked all M factors and are all in 1-4 or 1-2 range, which means it=20
-wouldn't have any impact for real nkmp PLLs when parent is 24 MHz clock whi=
-ch=20
-is probably always.
-
-What do you think?
-
-I discovered that when I tried to set A83T PLL_VIDEO to 346.5 MHz which is=
-=20
-possible only when above formula is changed.
-
-Best regards,
-Jernej
-
->=20
-> ChenYu
->=20
-> >         reg |=3D (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
-> >         reg |=3D ilog2(_nkmp.p) << nkmp->p.shift;
-> >=20
-> > --
-> > 2.15.1
+Rob
