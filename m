@@ -1,49 +1,85 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1515466276-5541-2-git-send-email-Anson.Huang@nxp.com>
-References: <1515466276-5541-1-git-send-email-Anson.Huang@nxp.com> <1515466276-5541-2-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 9 Jan 2018 07:26:43 -0200
-Message-ID: <CAOMZO5DKsgydHaoKrrRngMck_9aQqFja9SParvDiD6V79ryuHg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx7s: add snvs rtc clock
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Horia Geanta Neag <horia.geanta@nxp.com>, aymen.sghaier@nxp.com,
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, adriana.reus@nxp.com,
-	Stefan Agner <stefan@agner.ch>, Dong Aisheng <dongas86@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+Date: Wed, 31 Jan 2018 18:24:15 +0000
+Message-Id: <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Anson,
+This commit documents the compatibility with R-Car Gen2 and RZ/G
+devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+Also, this patch expands the list of SoC-specific compatible strings to
+include RZ/G and R-Car Gen2 devices.
 
-On Tue, Jan 9, 2018 at 12:51 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3->4:
+* Reinstated lost "renesas,rza-wdt" compatible string
 
-> +   - clocks
-> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
-> +      Value type: <prop_encoded-array>
-> +      Definition:  A list of phandle and clock specifier pairs describing
-> +          the clocks required for enabling and disabling SNVS LP RTC.
+ .../devicetree/bindings/watchdog/renesas-wdt.txt      | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-
-It is a single clock that is used here, so it would be better to
-describe the text as:
-
-      Definition:  A clock specifier describing the clock required for
-enabling and disabling SNVS LP RTC
-
-> +   - clock-names
-> +      Usage: required if SNVS LP RTC requires explicit enablement of clocks
-> +      Value type: <string>
-> +      Definition: A list of clock name strings in the same order as the
-> +          clocks property.
-
-and here you must describe that the name should be "snvs-rtc":
-
-      Definition: Clock name string should be "snvs-rtc".
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index bf6d1ca..4815128 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -1,17 +1,26 @@
+ Renesas Watchdog Timer (WDT) Controller
+ 
+ Required properties:
+-- compatible : Should be "renesas,<soctype>-wdt", and
+-	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
++ - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
++		fallback compatible string when compatible with the generic
++		version.
+ 	       Examples with soctypes are:
++		 - "renesas,r8a7743-wdt" (RZ/G1M)
++		 - "renesas,r8a7745-wdt" (RZ/G1E)
++	         - "renesas,r8a7790-wdt" (R-Car H2)
++	         - "renesas,r8a7791-wdt" (R-Car M2-W)
++	         - "renesas,r8a7792-wdt" (R-Car V2H)
++	         - "renesas,r8a7793-wdt" (R-Car M2-N)
++	         - "renesas,r8a7794-wdt" (R-Car E2)
+ 	         - "renesas,r8a7795-wdt" (R-Car H3)
+ 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
+ 	         - "renesas,r8a77995-wdt" (R-Car D3)
+ 	         - "renesas,r7s72100-wdt" (RZ/A1)
++		The generic compatible string must be:
++		 - "renesas,rza-wdt" for RZ/A
++		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
++		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
+ 
+-  When compatible with the generic version, nodes must list the SoC-specific
+-  version corresponding to the platform first, followed by the generic
+-  version.
+ 
+ - reg : Should contain WDT registers location and length
+ - clocks : the clock feeding the watchdog timer.
+-- 
+2.7.4
