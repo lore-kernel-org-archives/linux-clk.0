@@ -1,78 +1,64 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 4/9] doc: dt-bindings: Add doc for the Ingenic TCU clocks driver
-Date: Wed, 10 Jan 2018 23:48:33 +0100
-Message-Id: <20180110224838.16711-4-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 0/4] Misc patches to support clocks for SDM845
+Date: Wed, 31 Jan 2018 16:24:31 +0530
+Message-Id: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation about how to properly use the Ingenic TCU
-(Timer/Counter Unit) clocks driver from devicetree.
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- .../bindings/clock/ingenic,tcu-clocks.txt          | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
 
- v3: New patch in this series
+Amit Nischal (3):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add support for controlling Fabia PLL
 
-diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-new file mode 100644
-index 000000000000..90bb30e07b86
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-@@ -0,0 +1,36 @@
-+Ingenic SoC TCU binding
-+
-+The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
-+channels, each one having its own clock, that can be started and stopped,
-+reparented, and reclocked.
-+
-+Required properties:
-+- compatible : One of:
-+  * ingenic,jz4740-tcu-clocks,
-+  * ingenic,jz4770-tcu-clocks,
-+  * ingenic,jz4780-tcu-clocks.
-+- clocks : List of phandle & clock specifiers for clocks external to the TCU.
-+  The "pclk", "rtc" and "ext" clocks should be provided.
-+- clock-names : List of name strings for the external clocks.
-+- #clock-cells: Should be 1.
-+  Clock consumers specify this argument to identify a clock. The valid values
-+  may be found in <dt-bindings/clock/ingenic,tcu.h>.
-+
-+Example:
-+
-+/ {
-+	mfd@10002000 {
-+		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-+		reg = <0x10002000 0x1000>;
-+
-+		tcu_clk: clocks {
-+			compatible = "ingenic,jz4740-tcu-clocks";
-+			reg = <0x10002010 0xFF0>;
-+
-+			clocks = <&ext>, <&rtc>, <&pclk>;
-+			clock-names = "ext", "rtc", "pclk";
-+
-+			#clock-cells = <1>;
-+		};
-+	};
-+};
--- 
-2.11.0
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  322 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   16 +
+ drivers/clk/qcom/clk-rcg.h                         |    8 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  154 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3619 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
+ 9 files changed, 4365 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
