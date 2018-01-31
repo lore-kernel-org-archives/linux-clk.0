@@ -1,67 +1,111 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH 2/5] clk: lpc32xx: read-only divider can propagate rate
- change
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org
-References: <20180105170959.17266-1-jbrunet@baylibre.com>
- <20180105170959.17266-3-jbrunet@baylibre.com>
- <5a256cde-8e59-4921-f6e2-fecd3d1c3377@mleia.com>
- <1515181225.5048.52.camel@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, Sylvain Lemieux <slemieux.tyco@gmail.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com>
-Date: Sat, 6 Jan 2018 16:04:24 +0200
-MIME-Version: 1.0
-In-Reply-To: <1515181225.5048.52.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/19] clk: meson: use regmap in clock controllers
+Date: Wed, 31 Jan 2018 19:09:26 +0100
+Message-Id: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+This changeset is a rework of meson's clock controllers to use regmap
+instead of directly using io memory. It based clk-meson next/drivers
+and depends on few core clock patches, mainly to export generic clocks
+helpers: [0],[1]. The line count is pretty high but the changes are
+actually fairly simple and repetitive.
 
-On 01/05/2018 09:40 PM, Jerome Brunet wrote:
-> On Fri, 2018-01-05 at 20:12 +0200, Vladimir Zapolskiy wrote:
->> Hi Jerome,
->>
->> On 01/05/2018 07:09 PM, Jerome Brunet wrote:
->>> When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
->>> register shall be left un-touched, but it does not mean the clock
->>> should stop rate propagation if CLK_SET_RATE_PARENT is set
->>>
->>
->> okay, the statement sounds correct, but there is no such clocks on LPC32xx,
->> thus I hardly can confirm that adding dead/inapplicable code is a fix.
->>
->>> This properly handled in qcom clk-regmap-divider but it was not in the
->>> lpc32xx divider
->>>
->>> Fixes: f7c82a60ba26 ("clk: lpc32xx: add common clock framework driver")
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>
->> I would suggest to drop two LPC32xx clock driver changes from the series.
-> 
-> Hi Vladimir,
-> 
-> This is fine by me. Whether LPC32xx supports CLK_DIVIDER_READ_ONLY is up to you,
-> but you should be consistent about it.
-> 
-> I added the fix to LPC32xx because it looks like the generic divider (a lot) and
+This work has been triggered by the fact that the HHI register space on
+gxbb and axg provides more than just clocks. The display driver already
+uses a syscon for HHI on gxbb. This is why gxbb did not use
+devm_ioremap_resource() to map the registers, since it would have
+reserved the memory region, preventing another driver from re-mapping
+it. The cleaner solution is, of course, to use syscon to handle. The
+purpose of this changeset is to allow it. Even if meson8b does not need
+this ATM, there is real reason to leave it behind. It is actually easier
+to migrate it as well, so all meson clock drivers may support regmap
+only.
 
-right, the relevant divider operations were copied, however the difference
-is important, unfortunately there is no simple option to get rid of regmap,
-because System Control Block registers are shared with a number of other
-device drivers.
+The rework starts with a few easy clean-ups. The real deal starts with
+patch 5, which adds meson's clk_regmap. This will be used as common
+structure to implement all the controller clocks. Having this replaces
+the gxbb AO controller specific regmap gate. This structure will also be
+re-used in upcoming controllers, such as the axg's AO and audio
+controllers.  Each clock type is then migrated, one at a time, to this
+new structure.
 
-> appears to support CLK_DIVIDER_READ_ONLY. If it does not, could you please kill
-> the related code ?
+While at it, the meson clock drivers have been cleaned-up a bit,
+removing the gate embedded in the mpll driver, simplifying the pll
+driver and removing the legacy cpu_clk of meson8b The new code around
+the cpu clk of the meson8b is just re-implementation, using simple
+elements, of the old cpu_clk. What was failing before is still expected
+to fail now. Apparently this clock will need a bit more love to enable
+dvfs on meson8b. BTW, thanks a lot to Martin for trying this rework as
+early as he did !!
 
-The driver supports CLK_DIVIDER_READ_ONLY clocks, and it should not be
-changed, but all such clocks don't have children with CLK_SET_RATE_PARENT
-property, which invalidates your fix for LPC32xx. Please let me know,
-if I missed something.
+With this series applied, the clock controllers of the gxbb, gxl and axg
+SoC will try get regmap from their parent DT node. If this fails, they
+will fallback to mapping the register themselves. This fallback will be
+kept until platform DTs have changed so clock controllers is a child of
+the HHI system controller.
 
---
-With best wishes,
-Vladimir
+Based on this changeset, more patches are coming. For those interested,
+the WIP is available here [2]
+
+[0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
+[2]: https://github.com/jeromebrunet/linux/tree/v4.16/meson/clk-regmap
+
+Jerome Brunet (19):
+  clk: meson: use dev pointer where possible
+  clk: meson: use devm_of_clk_add_hw_provider
+  clk: meson: only one loop index is necessary in probe
+  clk: meson: remove obsolete comments
+  clk: meson: add regmap clocks
+  clk: meson: switch gxbb ao_clk to clk_regmap
+  clk: meson: remove superseded aoclk_gate_regmap
+  clk: meson: add regmap to the clock controllers
+  clk: meson: migrate gates to clk_regmap
+  clk: meson: migrate dividers to clk_regmap
+  clk: meson: migrate muxes to clk_regmap
+  clk: meson: add regmap helpers for parm
+  clk: meson: migrate mplls clocks to clk_regmap
+  clk: meson: migrate the audio divider clock to clk_regmap
+  clk: meson: migrate plls clocks to clk_regmap
+  clk: meson: split divider and gate part of mpll
+  clk: meson: rework meson8b cpu clock
+  clk: meson: remove obsolete cpu_clk
+  clk: meson: use hhi syscon if available
+
+ drivers/clk/meson/Kconfig             |    9 +
+ drivers/clk/meson/Makefile            |    5 +-
+ drivers/clk/meson/axg.c               |  722 +++++++++--------
+ drivers/clk/meson/axg.h               |    6 +-
+ drivers/clk/meson/clk-audio-divider.c |   63 +-
+ drivers/clk/meson/clk-cpu.c           |  178 -----
+ drivers/clk/meson/clk-mpll.c          |  132 +---
+ drivers/clk/meson/clk-pll.c           |  243 +++---
+ drivers/clk/meson/clk-regmap.c        |  166 ++++
+ drivers/clk/meson/clk-regmap.h        |  111 +++
+ drivers/clk/meson/clkc.h              |   93 +--
+ drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
+ drivers/clk/meson/gxbb-aoclk.c        |   20 +-
+ drivers/clk/meson/gxbb-aoclk.h        |   11 -
+ drivers/clk/meson/gxbb.c              | 1399 ++++++++++++++++++---------------
+ drivers/clk/meson/gxbb.h              |    5 +-
+ drivers/clk/meson/meson8b.c           |  612 ++++++++------
+ drivers/clk/meson/meson8b.h           |   11 +-
+ 18 files changed, 2016 insertions(+), 1816 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-cpu.c
+ create mode 100644 drivers/clk/meson/clk-regmap.c
+ create mode 100644 drivers/clk/meson/clk-regmap.h
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+
+-- 
+2.14.3
