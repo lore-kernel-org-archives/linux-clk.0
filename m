@@ -1,100 +1,47 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v4 5/7] clk: Introduce davinci clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-arm-kernel@lists.infradead.org
-Cc: Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1514763588-31560-1-git-send-email-david@lechnology.com>
- <1514763588-31560-6-git-send-email-david@lechnology.com>
- <42102b7d-4e3c-d5fc-b0db-48a1203757ba@lechnology.com>
- <521d77e1-1375-7ef0-4ef5-d8a3401d1b73@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <a7f6a07e-1a37-b6be-6d99-bd2ae9bc4681@lechnology.com>
-Date: Thu, 4 Jan 2018 11:46:01 -0600
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <521d77e1-1375-7ef0-4ef5-d8a3401d1b73@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1517343778-27902-8-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-8-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 09:43:49 +0100
+Message-ID: <CAMuHMdVY5XMN01diHN4h_yF+u9KJs8oQ8U89FMOVEg0E22ivyw@mail.gmail.com>
+Subject: Re: [RFC v3 07/25] ARM: dts: r8a7793: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 1/4/18 6:28 AM, Sekhar Nori wrote:
-> On Wednesday 03 January 2018 03:01 AM, David Lechner wrote:
->> Forgot to cc linux-clk, so doing that now...
->>
->>
->> On 12/31/2017 05:39 PM, David Lechner wrote:
->>> This introduces new drivers for arch/arm/mach-davinci. The code is based
->>> on the clock drivers from there and adapted to use the common clock
->>> framework.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->>>    drivers/clk/Makefile                      |   1 +
->>>    drivers/clk/davinci/Makefile              |   3 +
->>>    drivers/clk/davinci/da8xx-cfgchip-clk.c   | 380
->>> ++++++++++++++++++++++++++++++
->>>    drivers/clk/davinci/pll.c                 | 333
->>> ++++++++++++++++++++++++++
->>>    drivers/clk/davinci/psc.c                 | 217 +++++++++++++++++
->>>    include/linux/clk/davinci.h               |  46 ++++
->>>    include/linux/platform_data/davinci_clk.h |  25 ++
->>>    7 files changed, 1005 insertions(+)
-> 
-> This is a pretty huge patch and I think each of cfgchip, pll and PSC
-> clocks deserve a patch of their own.
+Gr{oetje,eeting}s,
 
-Will do.
+                        Geert
 
-> 
-> On the PLL patch, please describe how the PLL implementation on DaVinci
-> is different from Keystone, so no reuse is really possible. Similarly
-> for the PSC patch (no non-DT support in keystone etc).
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-OK.
-
-> 
->>> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
->>> new file mode 100644
->>> index 0000000..8ae85ee
->>> --- /dev/null
->>> +++ b/drivers/clk/davinci/psc.c
->>> @@ -0,0 +1,217 @@
-> 
->>> +static void psc_config(struct davinci_psc_clk *psc,
->>> +               enum davinci_psc_state next_state)
->>> +{
->>> +    u32 epcpr, ptcmd, pdstat, pdctl, mdstat, mdctl, ptstat;
->>> +
->>> +    mdctl = readl(psc->base + MDCTL + 4 * psc->lpsc);
->>> +    mdctl &= ~MDSTAT_STATE_MASK;
->>> +    mdctl |= next_state;
->>> +    /* TODO: old davinci clocks for da850 set MDCTL_FORCE bit for
->>> sata and
->>> +     * dsp here. Is this really needed?
->>> +     */
->>> +    writel(mdctl, psc->base + MDCTL + 4 * psc->lpsc);
->>> +
->>> +    pdstat = readl(psc->base + PDSTAT + 4 * psc->pd);
->>> +    if ((pdstat & PDSTAT_STATE_MASK) == 0) {
->>> +        pdctl = readl(psc->base + PDSTAT + 4 * psc->pd);
->>> +        pdctl |= PDCTL_NEXT;
->>> +        writel(pdctl, psc->base + PDSTAT + 4 * psc->pd);
->>> +
->>> +        ptcmd = BIT(psc->pd);
->>> +        writel(ptcmd, psc->base + PTCMD);
->>> +
->>> +        do {
->>> +            epcpr = __raw_readl(psc->base + EPCPR);
->>> +        } while (!(epcpr & BIT(psc->pd)));
->>> +
->>> +        pdctl = __raw_readl(psc->base + PDCTL + 4 * psc->pd);
->>> +        pdctl |= PDCTL_EPCGOOD;
->>> +        __raw_writel(pdctl, psc->base + PDCTL + 4 * psc->pd);
-> 
-> Can we shift to regmap here too? Then the polling loops like above can
-> be converted to regmap_read_poll_timeout() too like you have done elsewhere.
-> 
-
-I'll give it a try.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
