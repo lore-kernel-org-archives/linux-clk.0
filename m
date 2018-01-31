@@ -1,92 +1,137 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford
-	<aford173@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <8d09dba6-9b1d-e06e-8730-256b8a4320db@ti.com>
- <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <bb1f446e-5900-7e73-c1b7-955662a9541b@ti.com>
-Date: Wed, 17 Jan 2018 17:27:17 +0530
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <b6baa17e-1239-c209-9eca-52e5da73e921@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517343778-27902-12-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180130220504.GA16709@roeck-us.net> <TY1PR06MB0895ECB2936323F9D281C1EFC0FB0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <CAMuHMdViQgCjVFbs0kkBObAAoFTzvz8yPFUHPWHrtYzkbnYm_g@mail.gmail.com> <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 16:37:27 +0100
+Message-ID: <CAMuHMdXPntakrTvdOs4p5xvzJOS7ujmyztSuGEyMDnen5QZOxg@mail.gmail.com>
+Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2 support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 16 January 2018 10:51 PM, David Lechner wrote:
-> On 01/16/2018 08:00 AM, Sekhar Nori wrote:
->> On Monday 08 January 2018 07:47 AM, David Lechner wrote:
->>> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->>> +{
->>> +    struct clk_onecell_data *clk_data;
->>> +
->>> +    clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
->>> +    if (!clk_data)
->>> +        return;
->>> +
->>> +    clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
->>> +    clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
->>> +    clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->>> +    clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->>> +    clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->>> +    clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->>> +    clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
->>> +
->>> +    clk_free_onecell_data(clk_data);
->>> +
->>> +    clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
->>> +    if (!clk_data)
->>> +        return;
->>> +
->>> +    clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
+Hi G=C3=BCnter,
+
+On Wed, Jan 31, 2018 at 3:48 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 01/31/2018 04:13 AM, Geert Uytterhoeven wrote:
+>> On Wed, Jan 31, 2018 at 11:47 AM, Fabrizio Castro
+>> <fabrizio.castro@bp.renesas.com> wrote:
+>>>> Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2
+>>>> support
+>>>> On Tue, Jan 30, 2018 at 08:22:44PM +0000, Fabrizio Castro wrote:
+>>>>>
+>>>>> On R-Car Gen2 and RZ/G1 the rwdt clock needs to be always ON, therefo=
+re
+>>>>> when suspending to RAM we need to explicitly disable the counting by
+>>>>> clearing TME from RWTCSRA.
+>>>>> Also, on some systems RWDT is the only piece of HW that allows the So=
+C
+>>>>> to be restarted, therefore this patch implements the restart callback=
+.
+>>>>>
+>>>>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>>>>> Signed-off-by: Ramesh Shanmugasundaram
+>>>>> <ramesh.shanmugasundaram@bp.renesas.com>
+>>>>> ---
+>>>>> Wolfram, was the restart callback implementation missing for a reason=
+?
+>>>>> Is its implementation going to break any Gen3 platform?
+>>>>
+>>>> The changes clearly are way more than claimed in the subject. Adding
+>>>> restart handler and PM support may be prerequisites for Gen2, but the
+>>>> changes apply to Gen3 as well. What happened to "one patch per logical
+>>>> change" ?
+>>>
+>>> The PM implementation should be ok for Gen3 too, without this patch
+>>> series the kernel
+>>> would disable the rwdt clock when suspending to RAM, this would "pause"
+>>> the counting.
+>>> This patch series declares the rwdt clock as critical for Gen2 and RZ/G=
+1,
+>>> which means we
+>>> need to explicitly disable the counting to keep the same behaviour in
+>>> place.
 >>
->> Is this con_id really needed now? Searching for "usb20_psc_clk" in your
->> tree results in only this one hit.
-> 
-> Yes, this is left over from previous attempts.
-> 
+>> Note that if the kernel crashes after rwdt_suspend(), the watchdog won't
+>> restart the system. But that's an issue common to many watchdog driver,
+>> right?
 >>
->>> +    clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->>> +    clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
+> If so, that would be buggy.
+
+All watchdog drivers implementing a system suspend handler stop the watchdo=
+g
+before suspending the system. I guess if they wouldn't do that, the watchdo=
+g
+would restart the system while asleep?
+
+Exceptions are:
+  - atlas7_wdt, sirfsoc_wdt: these seem to rely on another driver stopping
+    the watchdog clock, so it behaves the same as all above,
+  - diag288_wdt: this returns -EBUSY when trying to suspend the system
+    while the watchdog is enabled, to put the burden of disabling the
+    watchdog on the user,
+  - ux500_wdt: this seems to use a hardware feature to automatically
+    disable the watchdog during suspend.
+
+So only the last one seems to protect against kernel crashes after the
+watchdog's suspend method is called...
+
+Note that two drivers (iTCO_wdt and wdat_wdt) implements suspend_noirq
+instead of suspend, which decreases the window of running without a watchdo=
+g
+a bit.
+
+>>> With respect to the restart callback implementation, that may well have
+>>> consequences on
+>>> Gen3, hopefully Wolfram will give us a feedback on this.
+>>> In particular I would like to know if we should be installing the resta=
+rt
+>>> callback only when
+>>> we use "renesas,rcar-gen2-wdt" as compatible string, or it's ok to make
+>>> it available for
+>>> Gen3 as well.
 >>
->> I guess multiple dev_id matches like these are another hurdle in moving
->> them to davinci_psc_clk_info[] table? If its too cumbersome to keep
->> multiple entries in the table, they can be handled as an exception at
->> the end of processing the table? Still they are not the norm so I hope
->> the normal case will still benefit.
-> 
-> Right, as I mentioned in the reply to the previous patch, instead of
-> assigning a con_id and dev_id to each clock, we would need to assign
-> an array with a list of clocks. I think that would work better than
-> trying to handle the extras as an exception since there, on average,
-> about 5 per SoC.
+>> IIRC, the reason we don't have the restart callback on R-Car Gen3 is the
+>> arm64 maintainers insisting on using PSCI, and vetoing other means,
+>> to restart the system.
+>
+> You could just give it lower priority than PSCI.
+>
+>> Which leaves us with a few boards where we have to use the watchdog, and
+>> wait until the timeout triggers...
+>
+> Which means the veto is counter-productive and thus meaningless.
 
-Okay, are you going to try this to see how it looks? It looks like
-samsung (clk-s3c2410.c) and tegra (clk-tegra20.c) use such tables
-(although both use separate tables mapping just the gate number to
-con_id/dev_id).
+I do welcome that point of view ;-)
 
-Others like u8540_clk.c and clk-mmp2.c have multiple calls in code to
-clk_register_clkdev() like you have, but they keep them right after the
-gate clock registration which makes it easy to see the mapping.
+Gr{oetje,eeting}s,
 
-clk-imx35.c has multiple clk_register_clkdev() calls, but uses an enum
-for the gates so its easy to see the mapping. This approach looks fine
-to me as well.
+                        Geert
 
-So looks like there is a whole gamut of ways people have approached
-this. But I do think we need to change the scheme you have currently
-since it is difficult to review and audit (believe me on this one :))
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Thanks,
-Sekhar
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
