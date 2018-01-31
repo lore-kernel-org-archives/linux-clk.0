@@ -1,66 +1,236 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [1/5] clk: divider: read-only divider can propagate rate change
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
- Sylvain Lemieux <slemieux.tyco@gmail.com>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-References: <20180105170959.17266-2-jbrunet@baylibre.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <999439aa-276a-575d-d6dc-6e9d1bdf5b15@lechnology.com>
-Date: Thu, 11 Jan 2018 16:55:31 -0600
-MIME-Version: 1.0
-In-Reply-To: <20180105170959.17266-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 08/19] clk: meson: add regmap to the clock controllers
+Date: Wed, 31 Jan 2018 19:09:34 +0100
+Message-Id: <20180131180945.18025-9-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05/2018 11:09 AM, Jerome Brunet wrote:
-> When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
-> register shall be left un-touched, but it does not mean the clock
-> should stop rate propagation if CLK_SET_RATE_PARENT is set
-> 
-> This is properly handled in qcom clk-regmap-divider but it was not in
-> the generic divider
-> 
-> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/clk/clk-divider.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index b49942b9fe50..a851d3e04c7f 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -348,6 +348,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->   				unsigned long *prate)
->   {
->   	struct clk_divider *divider = to_clk_divider(hw);
-> +	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
+This change register a regmap in meson8b, gxbb and axg controllers.
+The clock are still accessing their registers directly through iomem.
+Once all clocks handled by these controllers have been move to regmap,
+the regmap register will be removed and replaced with a syscon request.
 
-Very minor suggestion: This could be moved inside the if block since it is only used there.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig   |  2 ++
+ drivers/clk/meson/axg.c     | 15 ++++++++++++++-
+ drivers/clk/meson/gxbb.c    | 33 +++++++++++++++++++++++----------
+ drivers/clk/meson/meson8b.c | 14 +++++++++++++-
+ 4 files changed, 52 insertions(+), 12 deletions(-)
 
->   	int bestdiv;
->   
->   	/* if read only, just return current value */
-> @@ -356,6 +357,15 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->   		bestdiv &= div_mask(divider->width);
->   		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
->   			divider->width);
-> +
-> +		/* Even a read-only clock can propagate a rate change */
-> +		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-> +			if (!hw_parent)
-> +				return -EINVAL;
-> +
-> +			*prate = clk_hw_round_rate(hw_parent, rate * bestdiv);
-> +		}
-> +
->   		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
->   	}
->   
-> 
-
-Tested-by: David Lechner <david@lechnology.com>
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 33d148e19066..9735335b17a9 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -11,6 +11,7 @@ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
++	select REGMAP
+ 	help
+ 	  Support for the clock controller on AmLogic S802 (Meson8),
+ 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+@@ -29,6 +30,7 @@ config COMMON_CLK_AXG
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
++	select REGMAP
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index f84927e76f88..669d0ed84ebc 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -11,10 +11,11 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/init.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+-#include <linux/init.h>
++#include <linux/regmap.h>
+ 
+ #include "clkc.h"
+ #include "axg.h"
+@@ -791,12 +792,19 @@ static const struct of_device_id clkc_match_table[] = {
+ 	{}
+ };
+ 
++static const struct regmap_config clkc_regmap_config = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++};
++
+ static int axg_clkc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	const struct clkc_data *clkc_data;
+ 	struct resource *res;
+ 	void __iomem *clk_base;
++	struct regmap *map;
+ 	int ret, i;
+ 
+ 	clkc_data = of_device_get_match_data(dev);
+@@ -807,12 +815,17 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
++
+ 	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!clk_base) {
+ 		dev_err(dev, "Unable to map clk base\n");
+ 		return -ENXIO;
+ 	}
+ 
++	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
++	if (IS_ERR(map))
++		return PTR_ERR(map);
++
+ 	/* Populate base address for PLLs */
+ 	for (i = 0; i < clkc_data->clk_plls_count; i++)
+ 		clkc_data->clk_plls[i]->base = clk_base;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 6609024eee00..e3faf0a0fdb7 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -19,10 +19,11 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/init.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+-#include <linux/init.h>
++#include <linux/regmap.h>
+ 
+ #include "clkc.h"
+ #include "gxbb.h"
+@@ -1937,10 +1938,18 @@ static const struct of_device_id clkc_match_table[] = {
+ 	{},
+ };
+ 
++static const struct regmap_config clkc_regmap_config = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++};
++
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+ {
+ 	const struct clkc_data *clkc_data;
++	struct resource *res;
+ 	void __iomem *clk_base;
++	struct regmap *map;
+ 	int ret, i;
+ 	struct device *dev = &pdev->dev;
+ 
+@@ -1948,13 +1957,20 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	if (!clkc_data)
+ 		return -EINVAL;
+ 
+-	/*  Generic clocks and PLLs */
+-	clk_base = of_iomap(dev->of_node, 0);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -EINVAL;
++
++	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!clk_base) {
+ 		pr_err("%s: Unable to map clk base\n", __func__);
+ 		return -ENXIO;
+ 	}
+ 
++	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
++	if (IS_ERR(map))
++		return PTR_ERR(map);
++
+ 	/* Populate base address for PLLs */
+ 	for (i = 0; i < clkc_data->clk_plls_count; i++)
+ 		clkc_data->clk_plls[i]->base = clk_base;
+@@ -1991,17 +2007,14 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 
+ 		ret = devm_clk_hw_register(dev,
+ 					   clkc_data->hw_onecell_data->hws[i]);
+-		if (ret)
+-			goto iounmap;
++		if (ret) {
++			dev_err(dev, "Clock registration failed\n");
++			return ret;
++		}
+ 	}
+ 
+-
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+ 					   clkc_data->hw_onecell_data);
+-
+-iounmap:
+-	iounmap(clk_base);
+-	return ret;
+ }
+ 
+ static struct platform_driver gxbb_driver = {
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index db017c29a84c..0981e970de3d 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -23,11 +23,12 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/init.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+-#include <linux/init.h>
++#include <linux/regmap.h>
+ 
+ #include "clkc.h"
+ #include "meson8b.h"
+@@ -804,16 +805,27 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
+ 	.deassert = meson8b_clk_reset_deassert,
+ };
+ 
++static const struct regmap_config clkc_regmap_config = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++};
++
+ static int meson8b_clkc_probe(struct platform_device *pdev)
+ {
+ 	int ret, i;
+ 	struct clk_hw *parent_hw;
+ 	struct clk *parent_clk;
+ 	struct device *dev = &pdev->dev;
++	struct regmap *map;
+ 
+ 	if (!clk_base)
+ 		return -ENXIO;
+ 
++	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
++	if (IS_ERR(map))
++		return PTR_ERR(map);
++
+ 	/* Populate base address for PLLs */
+ 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
+ 		meson8b_clk_plls[i]->base = clk_base;
+-- 
+2.14.3
