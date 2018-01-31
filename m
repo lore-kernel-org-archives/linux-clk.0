@@ -1,67 +1,27 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Phil Elwell <phil@raspberrypi.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 08/34] clk: bcm2835: change bcm2835_pll_rate_from_divisors to return unsigned long
-Date: Mon,  1 Jan 2018 19:42:47 +0000
-Message-Id: <1514835793-1104-9-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-clk <linux-clk@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Renesas R8A77980 CPG/MSSR clock support
+Message-ID: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Date: Wed, 31 Jan 2018 23:23:23 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-bcm2835_pll_rate_from_divisors() returns a value directly as the return
-value to round_rate(). clk_ops->round_rate() has been changed to an
-unsigned long so for the sake of completeness and neatness this patch
-updates the helper function to return the same data-type.
+Hello!
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Phil Elwell <phil@raspberrypi.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/bcm/clk-bcm2835.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index c215dc9..fb2b012 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -541,8 +541,9 @@ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
- 	*fdiv = div & ((1 << A2W_PLL_FRAC_BITS) - 1);
- }
- 
--static long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
--					   u32 ndiv, u32 fdiv, u32 pdiv)
-+static unsigned long bcm2835_pll_rate_from_divisors(unsigned long parent_rate,
-+						    u32 ndiv, u32 fdiv,
-+						    u32 pdiv)
- {
- 	u64 rate;
- 
--- 
-2.7.4
+[1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
+[2/2] clk: renesas: cpg-mssr: add R8A77980 support
+
+MBR, Sergei
