@@ -1,101 +1,67 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v5 05/44] clk: davinci: Add platform information for TI DM355 PLL
-Date: Sun,  7 Jan 2018 20:17:04 -0600
-Message-Id: <1515377863-20358-6-git-send-email-david@lechnology.com>
-In-Reply-To: <1515377863-20358-1-git-send-email-david@lechnology.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 23/26] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
+Date: Wed, 31 Jan 2018 18:24:27 +0000
+Message-Id: <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DaVinci 355 based systems.
+This commit adds watchdog support to the r8a7791 dtsi.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/pll-dm355.c | 40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/davinci.h     |  1 +
- 3 files changed, 42 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm355.c
+v3->4:
+* no change
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 13049d4..6720bd0 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-new file mode 100644
-index 0000000..972fd2b
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM355
-+ *
-+ * Copyright (C) 2017 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+static const struct davinci_pll_divclk_info dm355_pll1_divclk_info[] __initconst = {
-+	DIVCLK(1, pll1_sysclk1, pll1, DIVCLK_FIXED_DIV),
-+	DIVCLK(2, pll1_sysclk2, pll1, DIVCLK_FIXED_DIV),
-+	DIVCLK(3, pll1_sysclk3, pll1, 0),
-+	DIVCLK(4, pll1_sysclk4, pll1, 0),
-+	{ }
-+};
-+
-+static const struct davinci_pll_divclk_info dm355_pll2_divclk_info[] __initconst = {
-+	DIVCLK(1, pll2_sysclk1, pll2, DIVCLK_FIXED_DIV),
-+	{ }
-+};
-+
-+void __init dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
-+{
-+	const struct davinci_pll_divclk_info *info;
-+
-+	davinci_pll_clk_register("pll1", "ref_clk", pll1);
-+	for (info = dm355_pll1_divclk_info; info->name; info++)
-+		davinci_pll_divclk_register(info, pll1);
-+	davinci_pll_aux_clk_register("pll1_aux_clk", "ref_clk", pll1);
-+	davinci_pll_bpdiv_clk_register("pll1_sysclkbp", "ref_clk", pll1);
-+
-+	davinci_pll_clk_register("pll2", "ref_clk", pll2);
-+	for (info = dm355_pll2_divclk_info; info->name; info++)
-+		davinci_pll_divclk_register(info, pll2);
-+	davinci_pll_bpdiv_clk_register("pll2_sysclkbp", "ref_clk", pll2);
-+}
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 7b08fe0..95333fe 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -11,5 +11,6 @@
+ arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index d2a4546..80e20ecd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -142,6 +142,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- void da830_pll_clk_init(void __iomem *pll);
- void da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1);
-+void dm355_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
- 
- #endif /* __LINUX_CLK_DAVINCI_H__ */
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7791-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7791",
+ 				     "renesas,rcar-gen2-gpio";
 -- 
 2.7.4
