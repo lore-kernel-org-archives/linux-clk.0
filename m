@@ -1,410 +1,356 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 2 Jan 2018 11:13:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] clk: ingenic: Add JZ47xx TCU clocks driver
-Message-ID: <20180102191356.GI7997@codeaurora.org>
-References: <20171229125942.27305-2-paul@crapouillou.net>
- <20180101143344.2099-1-paul@crapouillou.net>
- <20180101143344.2099-4-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180101143344.2099-4-paul@crapouillou.net>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 05/19] clk: meson: add regmap clocks
+Date: Wed, 31 Jan 2018 19:09:31 +0100
+Message-Id: <20180131180945.18025-6-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/01, Paul Cercueil wrote:
-> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-> new file mode 100644
-> index 000000000000..36afe3f02f91
-> --- /dev/null
-> +++ b/drivers/clk/ingenic/tcu.c
-> @@ -0,0 +1,336 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Ingenic JZ47xx SoC TCU clocks driver
-> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/mfd/syscon/ingenic-tcu.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/regmap.h>
-> +#include <linux/spinlock.h>
+Meson clock controllers needs to move the classical iomem registers to
+regmap. This is triggered because the HHI controllers found on the GXBB
+and GXL host more than just clocks. To properly handle this, we would
+like to migrate HHI to syscon. Also GXBB AO clock controller already use
+regmap, AXG AO and Audio clock controllers will as well.
 
-Used?
+The purpose of this change is to provide a common structure to these
+meson controllers (and possibly others) for regmap based clocks.
 
-> +
-> +#include <dt-bindings/clock/ingenic,tcu.h>
-> +
-> +enum ingenic_version {
-> +	ID_JZ4740,
-> +	ID_JZ4770,
-> +	ID_JZ4780,
-> +};
-> +
-> +struct ingenic_tcu {
-> +	struct device_node *np;
+This change provides the basic gate, mux and divider, based on the
+helpers provided by the related generic clocks
 
-Is this used?
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig      |   4 +
+ drivers/clk/meson/Makefile     |   1 +
+ drivers/clk/meson/clk-regmap.c | 166 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/clk-regmap.h | 111 +++++++++++++++++++++++++++
+ 4 files changed, 282 insertions(+)
+ create mode 100644 drivers/clk/meson/clk-regmap.c
+ create mode 100644 drivers/clk/meson/clk-regmap.h
 
-> +	struct regmap *map;
-> +
-> +	struct clk_onecell_data clocks;
-> +};
-> +
-> +struct ingenic_tcu_clk_info {
-> +	struct clk_init_data init_data;
-> +	u8 gate_bit;
-> +	u8 tcsr_reg;
-> +};
-> +
-> +struct ingenic_tcu_clk {
-> +	struct clk_hw hw;
-> +
-> +	struct ingenic_tcu *tcu;
-> +	const struct ingenic_tcu_clk_info *info;
-> +
-> +	unsigned int idx;
-> +};
-> +
-> +#define to_tcu_clk(_hw) container_of(_hw, struct ingenic_tcu_clk, hw)
-> +
-> +static int ingenic_tcu_enable(struct clk_hw *hw)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +
-> +	regmap_write(tcu->map, REG_TSCR, BIT(info->gate_bit));
-> +	return 0;
-> +}
-> +
-> +static void ingenic_tcu_disable(struct clk_hw *hw)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +
-> +	regmap_write(tcu->map, REG_TSSR, BIT(info->gate_bit));
-> +}
-> +
-> +static int ingenic_tcu_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	unsigned int value;
-> +
-> +	regmap_read(tcu->map, REG_TSR, &value);
-> +
-> +	return !(value & BIT(info->gate_bit));
-> +}
-> +
-> +static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	unsigned int val = 0;
-> +	int ret;
-> +
-> +	ret = regmap_read(tcu->map, info->tcsr_reg, &val);
-> +	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
-> +
-> +	return (u8) ffs(val & TCSR_PARENT_CLOCK_MASK) - 1;
-
-Is the cast necessary?
-
-> +}
-> +
-> +static int ingenic_tcu_set_parent(struct clk_hw *hw, u8 idx)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	int ret;
-> +
-> +	/*
-> +	 * Our clock provider has the CLK_SET_PARENT_GATE flag set, so we know
-> +	 * that the clk is in unprepared state. To be able to access TCSR
-> +	 * we must ungate the clock supply and we gate it again when done.
-> +	 */
-> +
-> +	regmap_write(tcu->map, REG_TSCR, BIT(info->gate_bit));
-> +
-> +	ret = regmap_update_bits(tcu->map, info->tcsr_reg,
-> +			TCSR_PARENT_CLOCK_MASK, BIT(idx));
-> +	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
-> +
-> +	regmap_write(tcu->map, REG_TSSR, BIT(info->gate_bit));
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long ingenic_tcu_recalc_rate(struct clk_hw *hw,
-> +		unsigned long parent_rate)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	unsigned int prescale;
-> +	int ret;
-> +
-> +	ret = regmap_read(tcu->map, info->tcsr_reg, &prescale);
-> +	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
-> +
-> +	prescale = (prescale & TCSR_PRESCALE_MASK) >> TCSR_PRESCALE_LSB;
-> +
-> +	return parent_rate >> (prescale * 2);
-> +}
-> +
-> +static long ingenic_tcu_round_rate(struct clk_hw *hw, unsigned long req_rate,
-> +		unsigned long *parent_rate)
-> +{
-> +	long rate = (long) *parent_rate;
-
-Is there a reason why rate is signed here?
-
-> +	unsigned int shift;
-> +
-> +	if (req_rate > rate)
-> +		return -EINVAL;
-> +
-> +	for (shift = 0; shift < 10; shift += 2)
-> +		if ((rate >> shift) <= req_rate)
-> +			return rate >> shift;
-> +
-> +	return rate >> 10;
-
-Can it be?
-
-	for (shift = 0; shift < 10; shift += 2)
-		if ((rate >> shift) <= req_rate)
-			break;
-
-	return rate >> shift;
-
-> +}
-> +
-> +static int ingenic_tcu_set_rate(struct clk_hw *hw, unsigned long req_rate,
-> +		unsigned long parent_rate)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-> +	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-> +	struct ingenic_tcu *tcu = tcu_clk->tcu;
-> +	u8 prescale = (ffs(parent_rate / req_rate) / 2) << TCSR_PRESCALE_LSB;
-> +	int ret;
-> +
-> +	/*
-> +	 * Our clock provider has the CLK_SET_RATE_GATE flag set, so we know
-> +	 * that the clk is in unprepared state. To be able to access TCSR
-> +	 * we must ungate the clock supply and we gate it again when done.
-> +	 */
-> +
-> +	regmap_write(tcu->map, REG_TSCR, BIT(info->gate_bit));
-> +
-> +	ret = regmap_update_bits(tcu->map, info->tcsr_reg,
-> +				TCSR_PRESCALE_MASK, prescale);
-> +	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
-> +
-> +	regmap_write(tcu->map, REG_TSSR, BIT(info->gate_bit));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops ingenic_tcu_clk_ops = {
-> +	.get_parent	= ingenic_tcu_get_parent,
-> +	.set_parent	= ingenic_tcu_set_parent,
-> +
-> +	.recalc_rate	= ingenic_tcu_recalc_rate,
-> +	.round_rate	= ingenic_tcu_round_rate,
-> +	.set_rate	= ingenic_tcu_set_rate,
-> +
-> +	.enable		= ingenic_tcu_enable,
-> +	.disable	= ingenic_tcu_disable,
-> +	.is_enabled	= ingenic_tcu_is_enabled,
-> +};
-> +
-> +static const char * const ingenic_tcu_timer_parents[] = {
-> +	"pclk",
-> +	"rtc",
-> +	"ext",
-> +};
-> +
-> +static const struct ingenic_tcu_clk_info ingenic_tcu_clk_info[] = {
-> +#define DEF_TIMER(_name, _gate_bit, _tcsr)				\
-> +	{								\
-> +		.init_data = {						\
-> +			.name = _name,					\
-> +			.parent_names = ingenic_tcu_timer_parents,	\
-> +			.num_parents = ARRAY_SIZE(ingenic_tcu_timer_parents),\
-> +			.ops = &ingenic_tcu_clk_ops,			\
-> +			.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE,\
-> +		},							\
-> +		.gate_bit = _gate_bit,					\
-> +		.tcsr_reg = _tcsr,					\
-> +	}
-> +	[JZ4740_CLK_TIMER0] = DEF_TIMER("timer0", 0, REG_TCSRc(0)),
-> +	[JZ4740_CLK_TIMER1] = DEF_TIMER("timer1", 1, REG_TCSRc(1)),
-> +	[JZ4740_CLK_TIMER2] = DEF_TIMER("timer2", 2, REG_TCSRc(2)),
-> +	[JZ4740_CLK_TIMER3] = DEF_TIMER("timer3", 3, REG_TCSRc(3)),
-> +	[JZ4740_CLK_TIMER4] = DEF_TIMER("timer4", 4, REG_TCSRc(4)),
-> +	[JZ4740_CLK_TIMER5] = DEF_TIMER("timer5", 5, REG_TCSRc(5)),
-> +	[JZ4740_CLK_TIMER6] = DEF_TIMER("timer6", 6, REG_TCSRc(6)),
-> +	[JZ4740_CLK_TIMER7] = DEF_TIMER("timer7", 7, REG_TCSRc(7)),
-> +	[JZ4740_CLK_WDT]    = DEF_TIMER("wdt",   16, REG_WDT_TCSR),
-> +	[JZ4770_CLK_OST]    = DEF_TIMER("ost",   15, REG_OST_TCSR),
-> +#undef DEF_TIMER
-> +};
-> +
-> +static int ingenic_tcu_register_clock(struct ingenic_tcu *tcu, unsigned int idx,
-> +		const struct ingenic_tcu_clk_info *info)
-> +{
-> +	struct ingenic_tcu_clk *tcu_clk;
-> +	struct clk *clk;
-> +	int err;
-> +
-> +	tcu_clk = kzalloc(sizeof(*tcu_clk), GFP_KERNEL);
-> +	if (!tcu_clk)
-> +		return -ENOMEM;
-> +
-> +	tcu_clk->hw.init = &info->init_data;
-> +	tcu_clk->idx = idx;
-> +	tcu_clk->info = info;
-> +	tcu_clk->tcu = tcu;
-> +
-> +	/* Set EXT as the default parent clock */
-> +	ingenic_tcu_set_parent(&tcu_clk->hw, 2);
-> +
-> +	ingenic_tcu_disable(&tcu_clk->hw);
-> +
-> +	clk = clk_register(NULL, &tcu_clk->hw);
-
-clk_hw_register?
-
-> +	if (IS_ERR(clk)) {
-> +		err = PTR_ERR(clk);
-> +		goto err_free_tcu_clk;
-> +	}
-> +
-> +	err = clk_register_clkdev(clk, info->init_data.name, NULL);
-
-There's a clk_hw_register_clkdev() too.
-
-> +	if (err)
-> +		goto err_clk_unregister;
-> +
-> +	tcu->clocks.clks[idx] = clk;
-> +	return 0;
-> +
-> +err_clk_unregister:
-> +	clk_unregister(clk);
-> +err_free_tcu_clk:
-> +	kfree(tcu_clk);
-> +	return err;
-> +}
-> +
-> +static void __init ingenic_tcu_init(struct device_node *np,
-> +		enum ingenic_version id)
-> +{
-> +	struct ingenic_tcu *tcu;
-> +	size_t i, nb_clks;
-> +	int ret = -ENOMEM;
-> +
-> +	if (id >= ID_JZ4770)
-> +		nb_clks = (JZ4770_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
-> +	else
-> +		nb_clks = (JZ4740_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
-> +
-> +	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
-> +	if (!tcu) {
-> +		pr_err("%s: cannot allocate memory\n", __func__);
-
-We don't need allocation error messages. Please run checkpatch.
-
-> +		return;
-> +	}
-> +
-> +	tcu->map = syscon_node_to_regmap(np->parent);
-> +	if (IS_ERR(tcu->map)) {
-> +		pr_err("%s: failed to map TCU registers\n", __func__);
-> +		goto err_free_tcu;
-> +	}
-> +
-> +	tcu->clocks.clk_num = nb_clks;
-> +	tcu->clocks.clks = kcalloc(nb_clks, sizeof(struct clk *), GFP_KERNEL);
-> +	if (!tcu->clocks.clks) {
-> +		pr_err("%s: cannot allocate memory\n", __func__);
-
-We don't need allocation error messages. Please run checkpatch.
-
-> +		goto err_free_tcu;
-> +	}
-> +
-> +	for (i = 0; i < nb_clks; i++) {
-> +		ret = ingenic_tcu_register_clock(tcu, i,
-> +				&ingenic_tcu_clk_info[JZ4740_CLK_TIMER0 + i]);
-> +		if (ret) {
-> +			pr_err("%s: cannot register clocks\n", __func__);
-> +			goto err_unregister;
-> +		}
-> +	}
-> +
-> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &tcu->clocks);
-
-Can you add a clk_hw provider instead of a clk provider?
-
-> +	if (ret) {
-> +		pr_err("%s: cannot add OF clock provider\n", __func__);
-> +		goto err_unregister;
-> +	}
-> +
-> +	return;
-> +
-> +err_unregister:
-> +	for (i = 0; i < tcu->clocks.clk_num; i++)
-> +		if (tcu->clocks.clks[i])
-> +			clk_unregister(tcu->clocks.clks[i]);
-> +	kfree(tcu->clocks.clks);
-> +err_free_tcu:
-> +	kfree(tcu);
-> +}
-> +
-
-Can you add a comment here describing why we have to use
-CLK_OF_DECLARE instead of platform drivers?
-
-> +static void __init jz4740_tcu_init(struct device_node *np)
-> +{
-> +	ingenic_tcu_init(np, ID_JZ4740);
-> +}
-> +CLK_OF_DECLARE(ingenic_tcu, "ingenic,jz4740-tcu-clocks", jz4740_tcu_init);
-> +
-> +static void __init jz4770_tcu_init(struct device_node *np)
-> +{
-> +	ingenic_tcu_init(np, ID_JZ4770);
-> +}
-> +CLK_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu-clocks", jz4770_tcu_init);
-> +
-> +static void __init jz4780_tcu_init(struct device_node *np)
-> +{
-> +	ingenic_tcu_init(np, ID_JZ4780);
-> +}
-> +CLK_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu-clocks", jz4780_tcu_init);
-
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 7694302c70a4..e97e85077da1 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -3,6 +3,10 @@ config COMMON_CLK_AMLOGIC
+ 	depends on OF
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 
++config COMMON_CLK_REGMAP_MESON
++	bool
++	select REGMAP
++
+ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 3c03ce583798..11a50586666a 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -6,3 +6,4 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-div
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
++obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+new file mode 100644
+index 000000000000..3645fdb62343
+--- /dev/null
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -0,0 +1,166 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include "clk-regmap.h"
++
++static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
++	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++
++	set ^= enable;
++
++	return regmap_update_bits(clk->map, gate->offset, BIT(gate->bit_idx),
++				  set ? BIT(gate->bit_idx) : 0);
++}
++
++static int clk_regmap_gate_enable(struct clk_hw *hw)
++{
++	return clk_regmap_gate_endisable(hw, 1);
++}
++
++static void clk_regmap_gate_disable(struct clk_hw *hw)
++{
++	clk_regmap_gate_endisable(hw, 0);
++}
++
++static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
++	unsigned int val;
++
++	regmap_read(clk->map, gate->offset, &val);
++	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
++		val ^= BIT(gate->bit_idx);
++
++	val &= BIT(gate->bit_idx);
++
++	return val ? 1 : 0;
++}
++
++const struct clk_ops clk_regmap_gate_ops = {
++	.enable = clk_regmap_gate_enable,
++	.disable = clk_regmap_gate_disable,
++	.is_enabled = clk_regmap_gate_is_enabled,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
++
++static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
++						unsigned long prate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk->map, div->offset, &val);
++	if (ret)
++		/* Gives a hint that something is wrong */
++		return 0;
++
++	val >>= div->shift;
++	val &= clk_div_mask(div->width);
++	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
++				   div->width);
++}
++
++static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *prate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
++	unsigned int val;
++	int ret;
++
++	/* if read only, just return current value */
++	if (div->flags & CLK_DIVIDER_READ_ONLY) {
++		ret = regmap_read(clk->map, div->offset, &val);
++		if (ret)
++			/* Gives a hint that something is wrong */
++			return 0;
++
++		val >>= div->shift;
++		val &= clk_div_mask(div->width);
++
++		return divider_ro_round_rate(hw, rate, prate, div->table,
++					     div->width, div->flags, val);
++	}
++
++	return divider_round_rate(hw, rate, prate, div->table, div->width,
++				  div->flags);
++}
++
++static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
++	unsigned int val;
++	int ret;
++
++	ret = divider_get_val(rate, parent_rate, div->table, div->width,
++			      div->flags);
++	if (ret < 0)
++		return ret;
++
++	val = (unsigned int)ret << div->shift;
++	return regmap_update_bits(clk->map, div->offset,
++				  clk_div_mask(div->width) << div->shift, val);
++};
++
++/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
++
++const struct clk_ops clk_regmap_divider_ops = {
++	.recalc_rate = clk_regmap_div_recalc_rate,
++	.round_rate = clk_regmap_div_round_rate,
++	.set_rate = clk_regmap_div_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
++
++const struct clk_ops clk_regmap_divider_ro_ops = {
++	.recalc_rate = clk_regmap_div_recalc_rate,
++	.round_rate = clk_regmap_div_round_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
++
++static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk->map, mux->offset, &val);
++	if (ret)
++		return ret;
++
++	val >>= mux->shift;
++	val &= mux->mask;
++	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
++}
++
++static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
++	unsigned int val = clk_mux_index_to_val(mux->table, mux->flags, index);
++
++	return regmap_update_bits(clk->map, mux->offset,
++				  mux->mask << mux->shift,
++				  val << mux->shift);
++}
++
++const struct clk_ops clk_regmap_mux_ops = {
++	.get_parent = clk_regmap_mux_get_parent,
++	.set_parent = clk_regmap_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
++
++const struct clk_ops clk_regmap_mux_ro_ops = {
++	.get_parent = clk_regmap_mux_get_parent,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+new file mode 100644
+index 000000000000..ab00a0578edf
+--- /dev/null
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#ifndef __CLK_REGMAP_H
++#define __CLK_REGMAP_H
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++/**
++ * struct clk_regmap - regmap backed clock
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @map:	pointer to the regmap structure controlling the clock
++ * @data:	data specific to the clock type
++ *
++ * Clock which is controlled by regmap backed registers. The actual type of
++ * of the clock is controlled by the clock_ops and data.
++ */
++struct clk_regmap {
++	struct clk_hw	hw;
++	struct regmap	*map;
++	void		*data;
++};
++
++#define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
++
++/**
++ * struct clk_regmap_gate_data - regmap backed gate specific data
++ *
++ * @offset:	offset of the register controlling gate
++ * @bit_idx:	single bit controlling gate
++ * @flags:	hardware-specific flags
++ *
++ * Flags:
++ * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
++ */
++struct clk_regmap_gate_data {
++	unsigned int	offset;
++	u8		bit_idx;
++	u8		flags;
++};
++
++static inline struct clk_regmap_gate_data *
++clk_get_regmap_gate_data(struct clk_regmap *clk)
++{
++	return (struct clk_regmap_gate_data *)clk->data;
++}
++
++extern const struct clk_ops clk_regmap_gate_ops;
++
++/**
++ * struct clk_regmap_div_data - regmap backed adjustable divider specific data
++ *
++ * @offset:	offset of the register controlling the divider
++ * @shift:	shift to the divider bit field
++ * @width:	width of the divider bit field
++ * @table:	array of value/divider pairs, last entry should have div = 0
++ *
++ * Flags:
++ * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
++ */
++struct clk_regmap_div_data {
++	unsigned int	offset;
++	u8		shift;
++	u8		width;
++	u8		flags;
++	const struct clk_div_table	*table;
++};
++
++static inline struct clk_regmap_div_data *
++clk_get_regmap_div_data(struct clk_regmap *clk)
++{
++	return (struct clk_regmap_div_data *)clk->data;
++}
++
++extern const struct clk_ops clk_regmap_divider_ops;
++extern const struct clk_ops clk_regmap_divider_ro_ops;
++
++/**
++ * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @offset:	offset of theregister controlling multiplexer
++ * @table:	array of parent indexed register values
++ * @shift:	shift to multiplexer bit field
++ * @width:	width of mutliplexer bit field
++ * @flags:	hardware-specific flags
++ *
++ * Flags:
++ * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
++ */
++struct clk_regmap_mux_data {
++	unsigned int	offset;
++	u32		*table;
++	u32		mask;
++	u8		shift;
++	u8		flags;
++};
++
++static inline struct clk_regmap_mux_data *
++clk_get_regmap_mux_data(struct clk_regmap *clk)
++{
++	return (struct clk_regmap_mux_data *)clk->data;
++}
++
++extern const struct clk_ops clk_regmap_mux_ops;
++extern const struct clk_ops clk_regmap_mux_ro_ops;
++
++#endif /* __CLK_REGMAP_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.3
