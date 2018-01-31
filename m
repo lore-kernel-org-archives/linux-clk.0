@@ -1,201 +1,184 @@
-Return-Path: <sriramx.periyasamy@intel.com>
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Patches Audio <patches.audio@intel.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Naveen M <naveen.m@intel.com>,
-	Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v7 4/6] ASoC: Intel: eve: Enable mclk and ssp sclk early
-Date: Thu,  4 Jan 2018 16:55:17 +0530
-Message-Id: <1515065119-1683-5-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 19/19] clk: meson: use hhi syscon if available
+Date: Wed, 31 Jan 2018 19:09:45 +0100
+Message-Id: <20180131180945.18025-20-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Naveen M <naveen.m@intel.com>
+On gxbb and axg, try to get the hhi regmap from the parent DT node, which
+should be the HHI system controller once the necessary changes have been
+made in amlogic's DTs
 
-rt5663 and rt5514 needs mclk/sclk early to synchronize its internal
-clocks.
+Until then, if getting regmap through the system controller fails, the
+clock controller will fall back to the old way, requesting memory region
+directly and then registering the regmap itself.
 
-Signed-off-by: Naveen M <naveen.m@intel.com>
-Signed-off-by: Harsha Priya <harshapriya.n@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+This should allow a smooth transition to syscon
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- sound/soc/intel/boards/Kconfig                     |  1 +
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  | 94 ++++++++++++++++++++++
- 2 files changed, 95 insertions(+)
+ drivers/clk/meson/Kconfig |  2 ++
+ drivers/clk/meson/axg.c   | 43 ++++++++++++++++++++++++++++++-------------
+ drivers/clk/meson/gxbb.c  | 39 ++++++++++++++++++++++++++++-----------
+ 3 files changed, 60 insertions(+), 24 deletions(-)
 
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index f62f2ab1481e..bdddab586e95 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -275,6 +275,7 @@ config SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
-         depends on X86_INTEL_LPSS && I2C && SPI
-         select SND_SOC_INTEL_SST
-         depends on SND_SOC_INTEL_SKYLAKE
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
-         select SND_SOC_RT5663
-         select SND_SOC_RT5514
-         select SND_SOC_RT5514_SPI
-diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-index 38512f0d1a73..f39f6e2f3db1 100644
---- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-@@ -30,6 +30,9 @@
- #include "../../codecs/rt5663.h"
- #include "../../codecs/hdac_hdmi.h"
- #include "../skylake/skl.h"
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 936afddae406..d5cbec522aec 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -22,6 +22,7 @@ config COMMON_CLK_GXBB
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+ 	select COMMON_CLK_REGMAP_MESON
++	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+@@ -31,6 +32,7 @@ config COMMON_CLK_AXG
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+ 	select COMMON_CLK_REGMAP_MESON
++	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index ae1dd35246f5..8c455f8c1d91 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -14,6 +14,7 @@
+ #include <linux/init.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
  
- #define KBL_REALTEK_CODEC_DAI "rt5663-aif"
- #define KBL_REALTEK_DMIC_CODEC_DAI "rt5514-aif1"
-@@ -58,6 +61,8 @@ struct kbl_codec_private {
- 	struct snd_soc_jack kabylake_headset;
- 	struct list_head hdmi_pcm_list;
- 	struct snd_soc_jack kabylake_hdmi[2];
-+	struct clk *mclk;
-+	struct clk *sclk;
- };
- 
- enum {
-@@ -79,6 +84,61 @@ static const struct snd_kcontrol_new kabylake_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("DMIC"),
- };
- 
-+static int platform_clock_control(struct snd_soc_dapm_widget *w,
-+			struct snd_kcontrol *k, int  event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct kbl_codec_private *priv = snd_soc_card_get_drvdata(card);
-+	int ret = 0;
-+
-+	/*
-+	 * MCLK/SCLK need to be ON early for a successful synchronization of
-+	 * codec internal clock. And the clocks are turned off during
-+	 * POST_PMD after the stream is stopped.
-+	 */
-+	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		/* Enable MCLK */
-+		ret = clk_set_rate(priv->mclk, 24000000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for mclk, err: %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->mclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Enable SCLK */
-+		ret = clk_set_rate(priv->sclk, 3072000);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't set rate for sclk, err: %d\n",
-+				ret);
-+			clk_disable_unprepare(priv->mclk);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(priv->sclk);
-+		if (ret < 0) {
-+			dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
-+			clk_disable_unprepare(priv->mclk);
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		clk_disable_unprepare(priv->mclk);
-+		clk_disable_unprepare(priv->sclk);
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphone Jack", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
-@@ -87,11 +147,15 @@ static const struct snd_soc_dapm_widget kabylake_widgets[] = {
- 	SND_SOC_DAPM_MIC("DMIC", NULL),
- 	SND_SOC_DAPM_SPK("HDMI1", NULL),
- 	SND_SOC_DAPM_SPK("HDMI2", NULL),
-+	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
-+			platform_clock_control, SND_SOC_DAPM_PRE_PMU |
-+			SND_SOC_DAPM_POST_PMD),
- 
- };
- 
- static const struct snd_soc_dapm_route kabylake_map[] = {
- 	/* Headphones */
-+	{ "Headphone Jack", NULL, "Platform Clock" },
- 	{ "Headphone Jack", NULL, "HPOL" },
- 	{ "Headphone Jack", NULL, "HPOR" },
- 
-@@ -100,6 +164,7 @@ static const struct snd_soc_dapm_route kabylake_map[] = {
- 	{ "Right Spk", NULL, "Right BE_OUT" },
- 
- 	/* other jacks */
-+	{ "Headset Mic", NULL, "Platform Clock" },
- 	{ "IN1P", NULL, "Headset Mic" },
- 	{ "IN1N", NULL, "Headset Mic" },
- 
-@@ -648,6 +713,7 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+@@ -850,25 +851,41 @@ static int axg_clkc_probe(struct platform_device *pdev)
  {
- 	struct kbl_codec_private *ctx;
- 	struct skl_machine_pdata *pdata;
-+	int ret = 0;
+ 	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+-	void __iomem *clk_base;
++	void __iomem *clk_base = NULL;
+ 	struct regmap *map;
+ 	int ret, i;
  
- 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
-@@ -663,6 +729,34 @@ static int kabylake_audio_probe(struct platform_device *pdev)
- 		dmic_constraints = pdata->dmic_num == 2 ?
- 			&constraints_dmic_2ch : &constraints_dmic_channels;
- 
-+	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
-+	if (IS_ERR(ctx->mclk)) {
-+		ret = PTR_ERR(ctx->mclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_mclk, defer probe\n");
-+			return -EPROBE_DEFER;
+-	/*  Generic clocks and PLLs */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -EINVAL;
++	/* Get the hhi system controller node if available */
++	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	if (IS_ERR(map)) {
++		dev_err(dev,
++			"failed to get HHI regmap - Trying obsolete regs\n");
++
++		/*
++		 * FIXME: HHI registers should be accessed through
++		 * the appropriate system controller. This is required because
++		 * there is more than just clocks in this register space
++		 *
++		 * This fallback method is only provided temporarily until
++		 * all the platform DTs are properly using the syscon node
++		 */
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		if (!res)
++			return -EINVAL;
++
++
++		clk_base = devm_ioremap(dev, res->start, resource_size(res));
++		if (!clk_base) {
++			dev_err(dev, "Unable to map clk base\n");
++			return -ENXIO;
 +		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
-+	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
-+	if (IS_ERR(ctx->sclk)) {
-+		ret = PTR_ERR(ctx->sclk);
-+		if (ret == -ENOENT) {
-+			dev_info(&pdev->dev,
-+				"Failed to get ssp1_sclk, defer probe\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
-+								ret);
-+		return ret;
-+	}
-+
- 	return devm_snd_soc_register_card(&pdev->dev, &kabylake_audio_card);
- }
  
+-	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!clk_base) {
+-		dev_err(dev, "Unable to map clk base\n");
+-		return -ENXIO;
++		map = devm_regmap_init_mmio(dev, clk_base,
++					    &clkc_regmap_config);
++		if (IS_ERR(map))
++			return PTR_ERR(map);
+ 	}
+ 
+-	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
+-
+ 	/* Populate regmap for the regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
+ 		axg_clk_regmaps[i]->map = map;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 92403ab2daf5..f9acd4015a1c 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -22,6 +22,7 @@
+ #include <linux/init.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+@@ -2042,19 +2043,35 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	if (!clkc_data)
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -EINVAL;
++	/* Get the hhi system controller node if available */
++	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	if (IS_ERR(map)) {
++		dev_err(dev,
++			"failed to get HHI regmap - Trying obsolete regs\n");
+ 
+-	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!clk_base) {
+-		pr_err("%s: Unable to map clk base\n", __func__);
+-		return -ENXIO;
+-	}
++		/*
++		 * FIXME: HHI registers should be accessed through
++		 * the appropriate system controller. This is required because
++		 * there is more than just clocks in this register space
++		 *
++		 * This fallback method is only provided temporarily until
++		 * all the platform DTs are properly using the syscon node
++		 */
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		if (!res)
++			return -EINVAL;
++
++		clk_base = devm_ioremap(dev, res->start, resource_size(res));
++		if (!clk_base) {
++			dev_err(dev, "Unable to map clk base\n");
++			return -ENXIO;
++		}
+ 
+-	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
++		map = devm_regmap_init_mmio(dev, clk_base,
++					    &clkc_regmap_config);
++		if (IS_ERR(map))
++			return PTR_ERR(map);
++	}
+ 
+ 	/* Populate regmap for the common regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
 -- 
-2.7.4
+2.14.3
