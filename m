@@ -1,201 +1,47 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v6 21/41] ARM: da850: add new clock init using common clock framework
-Date: Sat, 20 Jan 2018 11:14:00 -0600
-Message-Id: <1516468460-4908-22-git-send-email-david@lechnology.com>
-In-Reply-To: <1516468460-4908-1-git-send-email-david@lechnology.com>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1517343778-27902-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 09:42:42 +0100
+Message-ID: <CAMuHMdUmmAu5QTG58D7yG+JXGFfcU+ROzOAHhb2O3+eCxD4=qQ@mail.gmail.com>
+Subject: Re: [RFC v3 02/25] ARM: dts: r8a7743: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/da850.c
-using the new common clock framework drivers.
+On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also clean up the #includes since we are adding some here.
+Gr{oetje,eeting}s,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+                        Geert
 
-v6 changes:
-- add blank lines between function calls
-- include da8xx_register_cfgchip()
-- add async1 and async2 clock domains
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- arch/arm/mach-davinci/da850.c | 79 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 69 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 5c86d77..0fdf647 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -11,37 +11,44 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clkdev.h>
-+#include <linux/cpufreq.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/platform_device.h>
--#include <linux/cpufreq.h>
- #include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
--#include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
--#include <mach/da8xx.h>
- #include <mach/cpufreq.h>
-+#include <mach/cputype.h>
-+#include <mach/da8xx.h>
-+#include <mach/irqs.h>
- #include <mach/pm.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
-+
- #define DA850_PLL1_BASE		0x01e1a000
- #define DA850_TIMER64P2_BASE	0x01f0c000
- #define DA850_TIMER64P3_BASE	0x01f0d000
- 
- #define DA850_REF_FREQ		24000000
- 
-+#ifndef CONFIG_COMMON_CLK
- static int da850_set_armrate(struct clk *clk, unsigned long rate);
- static int da850_round_armrate(struct clk *clk, unsigned long rate);
- static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
-@@ -581,6 +588,7 @@ static struct clk_lookup da850_clks[] = {
- 	CLK("ecap.2",		"fck",		&ecap2_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1168,6 +1176,7 @@ int da850_register_cpufreq(char *async_clk)
- 	return platform_device_register(&da850_cpufreq_device);
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static int da850_round_armrate(struct clk *clk, unsigned long rate)
- {
- 	int ret = 0, diff;
-@@ -1230,12 +1239,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
- 
- 	return 0;
- }
-+#endif /* CONFIG_COMMON_CLK */
- #else
- int __init da850_register_cpufreq(char *async_clk)
- {
- 	return 0;
- }
- 
-+#ifndef CONFIG_COMMON_CLK
- static int da850_set_armrate(struct clk *clk, unsigned long rate)
- {
- 	return -EINVAL;
-@@ -1250,6 +1261,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
- {
- 	return clk->rate;
- }
-+#endif /* CONFIG_COMMON_CLK */
- #endif
- 
- /* VPIF resource, platform data */
-@@ -1381,6 +1393,52 @@ void __init da850_init(void)
- 
- void __init da850_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll0, *pll1, *psc0, *psc1;
-+	struct regmap *cfgchip;
-+	struct clk *clk;
-+	struct clk_hw *parent;
-+
-+	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
-+	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-+	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
-+
-+	cfgchip = da8xx_register_cfgchip();
-+	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
-+		return;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
-+
-+	da850_pll_clk_init(pll0, pll1);
-+
-+	da8xx_cfgchip_register_div4p5(cfgchip);
-+
-+	da8xx_cfgchip_register_async1(cfgchip);
-+
-+	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+
-+	clk = da8xx_cfgchip_register_async3(cfgchip);
-+
-+	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-+	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
-+	if (parent)
-+		clk_set_parent(clk, parent->clk);
-+	else
-+		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
-+
-+	da850_psc_clk_init(psc0, psc1);
-+
-+	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-+	clk_register_clkdev(clk, "rmii", NULL);
-+
-+	clk = da8xx_cfgchip_register_tbclk(cfgchip);
-+	clk_register_clkdev(clk, "tbclk", "ehrpwm.0");
-+	clk_register_clkdev(clk, "tbclk", "ehrpwm.1");
-+#else
- 	struct regmap *cfgchip;
- 
- 	cfgchip = da8xx_register_cfgchip();
-@@ -1392,5 +1450,6 @@ void __init da850_init_time(void)
- 	regmap_write_bits(cfgchip, CFGCHIP(3), CFGCHIP3_PLL1_MASTER_LOCK, 0);
- 
- 	davinci_clk_init(da850_clks);
-+#endif
- 	davinci_timer_init();
- }
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
