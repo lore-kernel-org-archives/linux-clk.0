@@ -1,61 +1,63 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 04/26] ARM: dts: r8a7790: Adjust SMP routine size
-Date: Wed, 31 Jan 2018 18:24:08 +0000
-Message-Id: <1517423070-24236-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62891 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752909AbeAaHmv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jan 2018 02:42:51 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v2 0/5] add MFD support for MediaTek audio subsystem
+Date: Wed, 31 Jan 2018 15:42:40 +0800
+Message-ID: <cover.1515639336.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3->4:
-* no change
+This is the 2nd version of the patch sets which modify clock driver to adapt
+audio subsystem.  I still keeping 'simple-mfd' in the binding for discussion.
+Rob, let me know if there is any problem with this.
 
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changes since v2:
+ - Drop useless changes in clk-mt7622-aud.c.
+ - Revise binding text: 
+	- Add more information about audio subsystem.
+	- Separate clock node and AFE node.
+ - Update license header.
+changes since v1:
+ - To avoid writing an MFD driver, we add "simple-mfd" in the audsys binding.
+ - Move three top clocks to audio driver [1] as we remove mfd/mtk-audsys.c in v1.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 3bbcc0b..a84bf35 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -443,7 +443,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
+Ryder Lee (5):
+  clk: mediatek: update missing clock data for MT7622 audsys
+  clk: mediatek: modify MT7622 audsys to adapt MFD device
+  clk: mediatek: add audsys support for MT2701
+  dt-bindings: clock: mediatek: update audsys documentation to adapt MFD
+    device
+  arm: dts: mediatek: add audio-subsystem node for both MT2701 and
+    MT7623
+
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  37 +++-
+ arch/arm/boot/dts/mt2701.dtsi                      | 192 ++++++++++----------
+ arch/arm/boot/dts/mt7623.dtsi                      | 193 ++++++++++-----------
+ drivers/clk/mediatek/Kconfig                       |   6 +
+ drivers/clk/mediatek/Makefile                      |   1 +
+ drivers/clk/mediatek/clk-mt2701-aud.c              | 175 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt7622-aud.c              |   4 +-
+ include/dt-bindings/clock/mt7622-clk.h             |   3 +-
+ 8 files changed, 406 insertions(+), 205 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
+
 -- 
-2.7.4
+1.9.1
+
