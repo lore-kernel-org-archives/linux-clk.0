@@ -1,115 +1,131 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34541 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeABQpP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jan 2018 11:45:15 -0500
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 1/6] clk: tegra: dfll registration for multiple SoCs
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <954797d1-ff6b-5aab-69cc-65c1a034a571@nvidia.com>
+Date: Wed, 31 Jan 2018 10:13:50 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180102150848.11314-13-paul@crapouillou.net>
-References: <20180102150848.11314-1-paul@crapouillou.net> <20180102150848.11314-13-paul@crapouillou.net>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Tue, 2 Jan 2018 22:15:14 +0530
-Message-ID: <CANc+2y4mJMMiN4SPiPtcXMrQ0AM_2XGnVRk1Dvyv9VYpNN3x-g@mail.gmail.com>
-Subject: Re: [PATCH v5 13/15] MIPS: JZ4770: Workaround for corrupted DMA transfers
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1516797938-32044-3-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
 
-On 2 January 2018 at 20:38, Paul Cercueil <paul@crapouillou.net> wrote:
-> From: Maarten ter Huurne <maarten@treewalker.org>
->
-> We have seen MMC DMA transfers read corrupted data from SDRAM when
-> a burst interval ends at physical address 0x10000000. To avoid this
-> problem, we remove the final page of low memory from the memory map.
->
-> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+On 24/01/18 12:45, Peter De Schrijver wrote:
+> In a future patch, support for the DFLL in Tegra210 will be introduced.
+> This requires support for more than 1 set of CVB and CPU max frequency
+> tables.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
->  arch/mips/kernel/setup.c |  8 ++++++++
->  2 files changed, 32 insertions(+)
->
->  v2: No change
->  v3: No change
->  v4: No change
->  v5: No change
->
-> diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-> index afd84ee966e8..6948b133a15d 100644
-> --- a/arch/mips/jz4740/setup.c
-> +++ b/arch/mips/jz4740/setup.c
-> @@ -23,6 +23,7 @@
->
->  #include <asm/bootinfo.h>
->  #include <asm/mips_machine.h>
-> +#include <asm/page.h>
->  #include <asm/prom.h>
->
->  #include <asm/mach-jz4740/base.h>
-> @@ -102,6 +103,29 @@ void __init arch_init_irq(void)
->         irqchip_init();
->  }
->
-> +/*
-> + * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
-> + * interval ends at physical address 0x10000000. To avoid this problem, we
-> + * remove the final page of low memory from the memory map.
-> + */
-> +void __init jz4770_reserve_unsafe_for_dma(void)
-> +{
-> +       int i;
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 43 +++++++++++++++++++++++-------
+>  1 file changed, 33 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index 269d359..440eb8d 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <soc/tegra/fuse.h>
+>  
+> @@ -28,8 +29,15 @@
+>  #include "clk-dfll.h"
+>  #include "cvb.h"
+>  
+> +struct dfll_fcpu_data {
+> +	const unsigned long *cpu_max_freq_table;
+> +	unsigned int cpu_max_freq_table_size;
+> +	const struct cvb_table *cpu_cvb_tables;
+> +	unsigned int cpu_cvb_tables_size;
+> +};
 > +
-> +       for (i = 0; i < boot_mem_map.nr_map; i++) {
-> +               struct boot_mem_map_entry *entry = boot_mem_map.map + i;
+>  /* Maximum CPU frequency, indexed by CPU speedo id */
+> -static const unsigned long cpu_max_freq_table[] = {
+> +static const unsigned long tegra124_cpu_max_freq_table[] = {
+>  	[0] = 2014500000UL,
+>  	[1] = 2320500000UL,
+>  	[2] = 2116500000UL,
+> @@ -82,16 +90,36 @@
+>  	},
+>  };
+>  
+> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
+> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
+> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
+> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
+> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
+> +};
 > +
-> +               if (entry->type != BOOT_MEM_RAM)
-> +                       continue;
+> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> +	{
+> +		.compatible = "nvidia,tegra124-dfll",
+> +		.data = &tegra124_dfll_fcpu_data,
+> +	},
+> +	{ },
+> +};
 > +
-> +               if (entry->addr + entry->size != 0x10000000)
-> +                       continue;
-> +
-> +               entry->size -= PAGE_SIZE;
-> +               break;
-> +       }
-> +}
-> +
-
-Just a wild idea (probably bad too). Changing the memory node in the
-device tree to skip this physical address would work I think. What is
-your opinion about that?
-
->  static int __init jz4740_machine_setup(void)
+>  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
 >  {
->         mips_machine_setup();
-> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-> index 85bc601e9a0d..5a2c20145aee 100644
-> --- a/arch/mips/kernel/setup.c
-> +++ b/arch/mips/kernel/setup.c
-> @@ -879,6 +879,14 @@ static void __init arch_mem_init(char **cmdline_p)
->
->         parse_early_param();
->
-> +#ifdef CONFIG_MACH_JZ4770
-> +       if (current_cpu_type() == CPU_JZRISC &&
-> +                               mips_machtype == MACH_INGENIC_JZ4770) {
-> +               extern void __init jz4770_reserve_unsafe_for_dma(void);
-> +               jz4770_reserve_unsafe_for_dma();
-> +       }
-> +#endif
+>  	int process_id, speedo_id, speedo_value, err;
+>  	struct tegra_dfll_soc_data *soc;
+> +	const struct of_device_id *of_id;
+> +	const struct dfll_fcpu_data *fcpu_data;
 > +
->         if (usermem) {
->                 pr_info("User-defined physical RAM map:\n");
->                 print_memory_map();
-> --
-> 2.11.0
->
->
+> +	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
+> +	fcpu_data = of_id->data;
+>  
+>  	process_id = tegra_sku_info.cpu_process_id;
+>  	speedo_id = tegra_sku_info.cpu_speedo_id;
+>  	speedo_value = tegra_sku_info.cpu_speedo_value;
+>  
+> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
+> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+>  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+>  			speedo_id);
+>  		return -ENODEV;
+> @@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> -	soc->max_freq = cpu_max_freq_table[speedo_id];
+> +	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+>  
+> -	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
+> -					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
+> +	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
+> +					   fcpu_data->cpu_cvb_tables_size,
+>  					   process_id, speedo_id, speedo_value,
+>  					   soc->max_freq);
+>  	if (IS_ERR(soc->cvb)) {
+> @@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> -	{ .compatible = "nvidia,tegra124-dfll", },
+> -	{ },
+> -};
+> -
+>  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+>  			   tegra_dfll_runtime_resume, NULL)
+> 
 
-Thanks,
-PrasannaKumar
+Thanks!
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
