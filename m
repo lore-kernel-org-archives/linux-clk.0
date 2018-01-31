@@ -1,59 +1,57 @@
 Return-Path: <jbrunet@baylibre.com>
 Return-Path: <jbrunet@baylibre.com>
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
 	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] clk: meson: check pll rate param table before using it
-Date: Thu, 18 Jan 2018 19:45:24 +0100
-Message-Id: <20180118184532.6856-2-jbrunet@baylibre.com>
-In-Reply-To: <20180118184532.6856-1-jbrunet@baylibre.com>
-References: <20180118184532.6856-1-jbrunet@baylibre.com>
+Subject: [PATCH 12/19] clk: meson: add regmap helpers for parm
+Date: Wed, 31 Jan 2018 19:09:38 +0100
+Message-Id: <20180131180945.18025-13-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure the rate param table is available before using it.
-Some read-only pll don't provide it, which is ok because the
-table is not used by read-only clock. R/W clock are supposed
-to provide it, but it does not hurt check it.
+Meson clock drivers are using struct parm to describe each field of the
+clock provider. Providing helpers to access these field with regmap helps
+keep drivers readable
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/clk-pll.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/meson/clkc.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 01341553f50b..2614341fc4ad 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -94,6 +94,13 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	const struct pll_rate_table *rate_table = pll->rate_table;
- 	int i;
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index aa2dfa0ff89f..8edc25297422 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -38,6 +38,22 @@ struct parm {
+ 	u8	width;
+ };
  
-+	/*
-+	 * if the table is missing, just return the current rate
-+	 * since we don't have the other available frequencies
-+	 */
-+	if (!rate_table)
-+		return meson_clk_pll_recalc_rate(hw, *parent_rate);
++static inline unsigned int meson_parm_read(struct regmap *map, struct parm *p)
++{
++	unsigned int val;
 +
- 	for (i = 0; i < pll->rate_count; i++) {
- 		if (rate <= rate_table[i].rate)
- 			return rate_table[i].rate;
-@@ -109,6 +116,9 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
- 	const struct pll_rate_table *rate_table = pll->rate_table;
- 	int i;
- 
-+	if (!rate_table)
-+		return NULL;
++	regmap_read(map, p->reg_off, &val);
++	return PARM_GET(p->width, p->shift, val);
++}
 +
- 	for (i = 0; i < pll->rate_count; i++) {
- 		if (rate == rate_table[i].rate)
- 			return &rate_table[i];
++static inline void meson_parm_write(struct regmap *map, struct parm *p,
++				    unsigned int val)
++{
++	regmap_update_bits(map, p->reg_off, SETPMASK(p->width, p->shift),
++			   val << p->shift);
++}
++
++
+ struct pll_rate_table {
+ 	unsigned long	rate;
+ 	u16		m;
 -- 
 2.14.3
