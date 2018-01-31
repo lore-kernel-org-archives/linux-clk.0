@@ -1,383 +1,461 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 7/9] clk: ingenic: Add JZ47xx TCU clocks driver
-Date: Wed, 10 Jan 2018 23:48:36 +0100
-Message-Id: <20180110224838.16711-7-paul@crapouillou.net>
-In-Reply-To: <20180110224838.16711-1-paul@crapouillou.net>
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 3/4] clk: qcom: Add support for controlling Fabia PLL
+Date: Wed, 31 Jan 2018 16:24:34 +0530
+Message-Id: <1517396075-29297-4-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
+References: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The TCU (Timer Counter Unit) of the Ingenic JZ47xx SoCs features 8
-channels, each one having its own clock, that can be started and
-stopped, reparented, and reclocked.
+Fabia PLL is a Digital Frequency Locked Loop (DFLL) clock
+generator which has a wide range of frequency output. It
+supports dynamic updating of the output frequency
+("frequency slewing") without need to turn off the PLL
+before configuration. Add support for initial configuration
+and programming sequence to control fabia PLLs.
 
-This driver only modifies the bits of the registers of the TCU that are
-related to clocks control. It provides one clock per TCU channel (plus
-one for the watchdog and one for the OS timer) that can be used by other
-drivers.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/clk/ingenic/Makefile |   2 +-
- drivers/clk/ingenic/tcu.c    | 319 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 320 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/ingenic/tcu.c
+ drivers/clk/qcom/clk-alpha-pll.c | 322 ++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/qcom/clk-alpha-pll.h |  16 ++
+ 2 files changed, 332 insertions(+), 6 deletions(-)
 
- v2: - Use SPDX identifier for the license
-     - Fix broken build caused by typo when correcting patch
- v3: - Move documentation to its own patch
-     - Get rid of ingenic_tcu structure. The "struct regmap *map" was
-	   added to struct ingenic_tcu_clk, the other fields are gone.
-	 - Replace clk_register / clk_register_clockdev /
-	   of_clk_add_provider with their "clk_hw" variant.
-
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index cd47b0664c2b..e373118a3726 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -1,3 +1,3 @@
--obj-y				+= cgu.o
-+obj-y				+= cgu.o tcu.o
- obj-$(CONFIG_MACH_JZ4740)	+= jz4740-cgu.o
- obj-$(CONFIG_MACH_JZ4780)	+= jz4780-cgu.o
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-new file mode 100644
-index 000000000000..b550b6ac8fb4
---- /dev/null
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -0,0 +1,319 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic JZ47xx SoC TCU clocks driver
-+ * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-+ */
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 6d04cd9..530b25a 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -58,6 +58,8 @@
+ #define PLL_TEST_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
+ #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
+ #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
++#define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
++#define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
+ 
+ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
+@@ -90,6 +92,18 @@
+ 		[PLL_OFF_TEST_CTL] = 0x1c,
+ 		[PLL_OFF_STATUS] = 0x24,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_FABIA] =  {
++		[PLL_OFF_L_VAL] = 0x04,
++		[PLL_OFF_USER_CTL] = 0x0c,
++		[PLL_OFF_USER_CTL_U] = 0x10,
++		[PLL_OFF_CONFIG_CTL] = 0x14,
++		[PLL_OFF_CONFIG_CTL_U] = 0x18,
++		[PLL_OFF_TEST_CTL] = 0x1c,
++		[PLL_OFF_TEST_CTL_U] = 0x20,
++		[PLL_OFF_STATUS] = 0x24,
++		[PLL_OFF_OPMODE] = 0x2c,
++		[PLL_OFF_FRAC] = 0x38,
++	},
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
+@@ -108,6 +122,12 @@
+ #define PLL_HUAYRA_N_MASK		0xff
+ #define PLL_HUAYRA_ALPHA_WIDTH		16
+ 
++#define FABIA_OPMODE_STANDBY	0x0
++#define FABIA_OPMODE_RUN	0x1
 +
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/ingenic-tcu.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
++#define FABIA_PLL_OUT_MASK	0x7
++#define FABIA_PLL_RATE_MARGIN	500
 +
-+#include <dt-bindings/clock/ingenic,tcu.h>
+ #define pll_alpha_width(p)					\
+ 		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+ 				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+@@ -441,16 +461,12 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
+ 	return alpha_pll_calc_rate(prate, l, a, alpha_width);
+ }
+ 
+-static int clk_alpha_pll_update_latch(struct clk_alpha_pll *pll,
+-				      int (*is_enabled)(struct clk_hw *))
 +
-+enum ingenic_version {
-+	ID_JZ4740,
-+	ID_JZ4770,
-+	ID_JZ4780,
-+};
-+
-+struct ingenic_tcu_clk_info {
-+	struct clk_init_data init_data;
-+	u8 gate_bit;
-+	u8 tcsr_reg;
-+};
-+
-+struct ingenic_tcu_clk {
-+	struct clk_hw hw;
-+
-+	struct regmap *map;
-+	const struct ingenic_tcu_clk_info *info;
-+
-+	unsigned int idx;
-+};
-+
-+#define to_tcu_clk(_hw) container_of(_hw, struct ingenic_tcu_clk, hw)
-+
-+static int ingenic_tcu_enable(struct clk_hw *hw)
++static int __clk_alpha_pll_update_latch(struct clk_alpha_pll *pll)
+ {
+ 	int ret;
+ 	u32 mode;
+ 
+-	if (!is_enabled(&pll->clkr.hw) ||
+-	    !(pll->flags & SUPPORTS_DYNAMIC_UPDATE))
+-		return 0;
+-
+ 	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &mode);
+ 
+ 	/* Latch the input to the PLL */
+@@ -489,6 +505,16 @@ static int clk_alpha_pll_update_latch(struct clk_alpha_pll *pll,
+ 	return 0;
+ }
+ 
++static int clk_alpha_pll_update_latch(struct clk_alpha_pll *pll,
++				      int (*is_enabled)(struct clk_hw *))
 +{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	if (!is_enabled(&pll->clkr.hw) ||
++	    !(pll->flags & SUPPORTS_DYNAMIC_UPDATE))
++		return 0;
 +
-+	regmap_write(tcu_clk->map, TCU_REG_TSCR, BIT(info->gate_bit));
-+	return 0;
++	return __clk_alpha_pll_update_latch(pll);
 +}
 +
-+static void ingenic_tcu_disable(struct clk_hw *hw)
-+{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
+ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long prate,
+ 				    int (*is_enabled)(struct clk_hw *))
+@@ -832,3 +858,287 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.recalc_rate = clk_alpha_pll_postdiv_recalc_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ro_ops);
 +
-+	regmap_write(tcu_clk->map, TCU_REG_TSSR, BIT(info->gate_bit));
++void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++			     const struct alpha_pll_config *config)
++{
++	u32 val, mask;
++
++	if (config->l)
++		regmap_write(regmap, PLL_L_VAL(pll), config->l);
++
++	if (config->alpha)
++		regmap_write(regmap, PLL_FRAC(pll), config->alpha);
++
++	if (config->config_ctl_val)
++		regmap_write(regmap, PLL_CONFIG_CTL(pll),
++						config->config_ctl_val);
++
++	if (config->post_div_mask) {
++		mask = config->post_div_mask;
++		val = config->post_div_val;
++		regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
++	}
++
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_UPDATE_BYPASS,
++							PLL_UPDATE_BYPASS);
++
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
 +}
 +
-+static int ingenic_tcu_is_enabled(struct clk_hw *hw)
++static int alpha_pll_fabia_enable(struct clk_hw *hw)
 +{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-+	unsigned int value;
-+
-+	regmap_read(tcu_clk->map, TCU_REG_TSR, &value);
-+
-+	return !(value & BIT(info->gate_bit));
-+}
-+
-+static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
-+{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-+	unsigned int val = 0;
 +	int ret;
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 val, opmode_val;
 +
-+	ret = regmap_read(tcu_clk->map, info->tcsr_reg, &val);
-+	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
++	ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (ret)
++		return ret;
 +
-+	return ffs(val & TCU_TCSR_PARENT_CLOCK_MASK) - 1;
++	/* If in FSM mode, just vote for it */
++	if (val & PLL_VOTE_FSM_ENA) {
++		ret = clk_enable_regmap(hw);
++		if (ret)
++			return ret;
++		return wait_for_pll_enable_active(pll);
++	}
++
++	/* Read opmode value */
++	ret = regmap_read(pll->clkr.regmap, PLL_OPMODE(pll), &opmode_val);
++	if (ret)
++		return ret;
++
++	/* Skip If PLL is already running */
++	if ((opmode_val & FABIA_OPMODE_RUN) && (val & PLL_OUTCTRL))
++		return 0;
++
++	/* Disable PLL output */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
++							PLL_OUTCTRL, 0);
++	if (ret)
++		return ret;
++
++	/* Set Operation mode to STANBY */
++	ret = regmap_write(pll->clkr.regmap, PLL_OPMODE(pll),
++							FABIA_OPMODE_STANDBY);
++	if (ret)
++		return ret;
++
++	/* PLL should be in STANDBY mode before continuing */
++	mb();
++
++	/* Bring PLL out of reset */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
++						PLL_RESET_N, PLL_RESET_N);
++	if (ret)
++		return ret;
++
++	/* Set Operation mode to RUN */
++	ret = regmap_write(pll->clkr.regmap, PLL_OPMODE(pll),
++							FABIA_OPMODE_RUN);
++	if (ret)
++		return ret;
++
++	ret = wait_for_pll_enable_lock(pll);
++	if (ret)
++		return ret;
++
++	/* Enable the main PLL output */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++				FABIA_PLL_OUT_MASK, FABIA_PLL_OUT_MASK);
++	if (ret)
++		return ret;
++
++	/* Enable PLL outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
++						PLL_OUTCTRL, PLL_OUTCTRL);
++	if (ret)
++		return ret;
++
++	/* Ensure that the write above goes through before returning. */
++	mb();
++
++	return ret;
 +}
 +
-+static int ingenic_tcu_set_parent(struct clk_hw *hw, u8 idx)
++static void alpha_pll_fabia_disable(struct clk_hw *hw)
 +{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-+	struct regmap *map = tcu_clk->map;
 +	int ret;
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 val;
++
++	ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (ret)
++		return;
++
++	/* If in FSM mode, just unvote it */
++	if (val & PLL_FSM_ENA) {
++		clk_disable_regmap(hw);
++		return;
++	}
++
++	/* Disable PLL outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
++							PLL_OUTCTRL, 0);
++	if (ret)
++		return;
++
++	/* Disable main outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++							FABIA_PLL_OUT_MASK, 0);
++	if (ret)
++		return;
++
++	/* Place the PLL in STANDBY */
++	ret = regmap_write(pll->clkr.regmap, PLL_OPMODE(pll),
++							FABIA_OPMODE_STANDBY);
++	if (ret)
++		return;
++}
++
++static unsigned long alpha_pll_fabia_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 l, frac, alpha_width = pll_alpha_width(pll);
++
++	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
++	regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac);
++
++	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
++}
++
++static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
++						unsigned long prate)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 val, l, alpha_width = pll_alpha_width(pll);
++	u64 a;
++	unsigned long rrate;
++	int ret = 0;
++
++	ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (ret)
++		return ret;
++
++	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
 +
 +	/*
-+	 * Our clock provider has the CLK_SET_PARENT_GATE flag set, so we know
-+	 * that the clk is in unprepared state. To be able to access TCSR
-+	 * we must ungate the clock supply and we gate it again when done.
++	 * Due to limited number of bits for fractional rate programming, the
++	 * rounded up rate could be marginally higher than the requested rate.
 +	 */
-+
-+	regmap_write(map, TCU_REG_TSCR, BIT(info->gate_bit));
-+
-+	ret = regmap_update_bits(map, info->tcsr_reg,
-+			TCU_TCSR_PARENT_CLOCK_MASK, BIT(idx));
-+	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
-+
-+	regmap_write(map, TCU_REG_TSSR, BIT(info->gate_bit));
-+
-+	return 0;
-+}
-+
-+static unsigned long ingenic_tcu_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-+	unsigned int prescale;
-+	int ret;
-+
-+	ret = regmap_read(tcu_clk->map, info->tcsr_reg, &prescale);
-+	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
-+
-+	prescale = (prescale & TCU_TCSR_PRESCALE_MASK) >> TCU_TCSR_PRESCALE_LSB;
-+
-+	return parent_rate >> (prescale * 2);
-+}
-+
-+static long ingenic_tcu_round_rate(struct clk_hw *hw, unsigned long req_rate,
-+		unsigned long *parent_rate)
-+{
-+	unsigned long rate = *parent_rate;
-+	unsigned int shift;
-+
-+	if (req_rate > rate)
++	if (rrate > (rate + FABIA_PLL_RATE_MARGIN) || rrate < rate) {
++		pr_err("Call set rate on the PLL with rounded rates!\n");
 +		return -EINVAL;
++	}
 +
-+	for (shift = 0; shift < 10; shift += 2)
-+		if ((rate >> shift) <= req_rate)
-+			break;
++	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
++	regmap_write(pll->clkr.regmap, PLL_FRAC(pll), a);
 +
-+	return rate >> shift;
++	return __clk_alpha_pll_update_latch(pll);
 +}
 +
-+static int ingenic_tcu_set_rate(struct clk_hw *hw, unsigned long req_rate,
-+		unsigned long parent_rate)
++const struct clk_ops clk_alpha_pll_fabia_ops = {
++	.enable = alpha_pll_fabia_enable,
++	.disable = alpha_pll_fabia_disable,
++	.is_enabled = clk_alpha_pll_is_enabled,
++	.set_rate = alpha_pll_fabia_set_rate,
++	.recalc_rate = alpha_pll_fabia_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_fabia_ops);
++
++const struct clk_ops clk_alpha_pll_fixed_fabia_ops = {
++	.enable = alpha_pll_fabia_enable,
++	.disable = alpha_pll_fabia_disable,
++	.is_enabled = clk_alpha_pll_is_enabled,
++	.recalc_rate = alpha_pll_fabia_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_fabia_ops);
++
++static unsigned long clk_alpha_pll_postdiv_fabia_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
 +{
-+	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
-+	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
-+	struct regmap *map = tcu_clk->map;
-+	u8 prescale = (ffs(parent_rate / req_rate) / 2)
-+			<< TCU_TCSR_PRESCALE_LSB;
++	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++	u32 i, div = 1, val;
 +	int ret;
 +
-+	/*
-+	 * Our clock provider has the CLK_SET_RATE_GATE flag set, so we know
-+	 * that the clk is in unprepared state. To be able to access TCSR
-+	 * we must ungate the clock supply and we gate it again when done.
-+	 */
-+
-+	regmap_write(map, TCU_REG_TSCR, BIT(info->gate_bit));
-+
-+	ret = regmap_update_bits(map, info->tcsr_reg,
-+				TCU_TCSR_PRESCALE_MASK, prescale);
-+	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
-+
-+	regmap_write(map, TCU_REG_TSSR, BIT(info->gate_bit));
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops ingenic_tcu_clk_ops = {
-+	.get_parent	= ingenic_tcu_get_parent,
-+	.set_parent	= ingenic_tcu_set_parent,
-+
-+	.recalc_rate	= ingenic_tcu_recalc_rate,
-+	.round_rate	= ingenic_tcu_round_rate,
-+	.set_rate	= ingenic_tcu_set_rate,
-+
-+	.enable		= ingenic_tcu_enable,
-+	.disable	= ingenic_tcu_disable,
-+	.is_enabled	= ingenic_tcu_is_enabled,
-+};
-+
-+static const char * const ingenic_tcu_timer_parents[] = {
-+	"pclk",
-+	"rtc",
-+	"ext",
-+};
-+
-+static const struct ingenic_tcu_clk_info ingenic_tcu_clk_info[] = {
-+#define DEF_TIMER(_name, _gate_bit, _tcsr)				\
-+	{								\
-+		.init_data = {						\
-+			.name = _name,					\
-+			.parent_names = ingenic_tcu_timer_parents,	\
-+			.num_parents = ARRAY_SIZE(ingenic_tcu_timer_parents),\
-+			.ops = &ingenic_tcu_clk_ops,			\
-+			.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE,\
-+		},							\
-+		.gate_bit = _gate_bit,					\
-+		.tcsr_reg = _tcsr,					\
-+	}
-+	[JZ4740_CLK_TIMER0] = DEF_TIMER("timer0", 0, TCU_REG_TCSRc(0)),
-+	[JZ4740_CLK_TIMER1] = DEF_TIMER("timer1", 1, TCU_REG_TCSRc(1)),
-+	[JZ4740_CLK_TIMER2] = DEF_TIMER("timer2", 2, TCU_REG_TCSRc(2)),
-+	[JZ4740_CLK_TIMER3] = DEF_TIMER("timer3", 3, TCU_REG_TCSRc(3)),
-+	[JZ4740_CLK_TIMER4] = DEF_TIMER("timer4", 4, TCU_REG_TCSRc(4)),
-+	[JZ4740_CLK_TIMER5] = DEF_TIMER("timer5", 5, TCU_REG_TCSRc(5)),
-+	[JZ4740_CLK_TIMER6] = DEF_TIMER("timer6", 6, TCU_REG_TCSRc(6)),
-+	[JZ4740_CLK_TIMER7] = DEF_TIMER("timer7", 7, TCU_REG_TCSRc(7)),
-+	[JZ4740_CLK_WDT]    = DEF_TIMER("wdt",   16, TCU_REG_WDT_TCSR),
-+	[JZ4770_CLK_OST]    = DEF_TIMER("ost",   15, TCU_REG_OST_TCSR),
-+#undef DEF_TIMER
-+};
-+
-+static int ingenic_tcu_register_clock(struct regmap *map, unsigned int idx,
-+		const struct ingenic_tcu_clk_info *info,
-+		struct clk_hw_onecell_data *clocks)
-+{
-+	struct ingenic_tcu_clk *tcu_clk;
-+	int err;
-+
-+	tcu_clk = kzalloc(sizeof(*tcu_clk), GFP_KERNEL);
-+	if (!tcu_clk)
-+		return -ENOMEM;
-+
-+	tcu_clk->hw.init = &info->init_data;
-+	tcu_clk->idx = idx;
-+	tcu_clk->info = info;
-+	tcu_clk->map = map;
-+
-+	/* Set EXT as the default parent clock */
-+	ingenic_tcu_set_parent(&tcu_clk->hw, 2);
-+
-+	ingenic_tcu_disable(&tcu_clk->hw);
-+
-+	err = clk_hw_register(NULL, &tcu_clk->hw);
-+	if (err)
-+		goto err_free_tcu_clk;
-+
-+	err = clk_hw_register_clkdev(&tcu_clk->hw, info->init_data.name, NULL);
-+	if (err)
-+		goto err_clk_unregister;
-+
-+	clocks->hws[idx] = &tcu_clk->hw;
-+	return 0;
-+
-+err_clk_unregister:
-+	clk_hw_unregister(&tcu_clk->hw);
-+err_free_tcu_clk:
-+	kfree(tcu_clk);
-+	return err;
-+}
-+
-+static void __init ingenic_tcu_init(struct device_node *np,
-+		enum ingenic_version id)
-+{
-+	struct clk_hw_onecell_data *clocks;
-+	struct regmap *map;
-+	size_t i, nb_clks;
-+	int ret = -ENOMEM;
-+
-+	if (id >= ID_JZ4770)
-+		nb_clks = (JZ4770_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
-+	else
-+		nb_clks = (JZ4740_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
-+
-+	map = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(map)) {
-+		pr_err("%s: failed to map TCU registers\n", __func__);
-+		return;
++	if (!pll->post_div_table) {
++		pr_err("Missing the post_div_table for the PLL\n");
++		return -EINVAL;
 +	}
 +
-+	clocks = kzalloc(sizeof(*clocks) +
-+					 sizeof(*clocks->hws) * nb_clks,
-+					 GFP_KERNEL);
-+	if (!clocks)
-+		return;
++	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
++	if (ret)
++		return ret;
 +
-+	clocks->num = nb_clks;
++	val >>= pll->post_div_shift;
++	val &= BIT(pll->width) - 1;
 +
-+	for (i = 0; i < nb_clks; i++) {
-+		ret = ingenic_tcu_register_clock(map, i,
-+				&ingenic_tcu_clk_info[JZ4740_CLK_TIMER0 + i],
-+				clocks);
-+		if (ret) {
-+			pr_err("%s: cannot register clocks\n", __func__);
-+			goto err_unregister;
++	for (i = 0; i < pll->num_post_div; i++) {
++		if (pll->post_div_table[i].val == val) {
++			div = pll->post_div_table[i].div;
++			break;
 +		}
 +	}
 +
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clocks);
-+	if (ret) {
-+		pr_err("%s: cannot add OF clock provider\n", __func__);
-+		goto err_unregister;
++	return (parent_rate / div);
++}
++
++static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
++				unsigned long rate, unsigned long *prate)
++{
++	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++
++	if (!pll->post_div_table) {
++		pr_err("Missing the post_div_table for the PLL\n");
++		return -EINVAL;
 +	}
 +
-+	return;
-+
-+err_unregister:
-+	for (i = 0; i < clocks->num; i++)
-+		if (clocks->hws[i])
-+			clk_hw_unregister(clocks->hws[i]);
-+	kfree(clocks);
++	return divider_round_rate(hw, rate, prate, pll->post_div_table,
++				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
 +}
 +
-+static void __init jz4740_tcu_init(struct device_node *np)
++static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
++				unsigned long rate, unsigned long parent_rate)
 +{
-+	ingenic_tcu_init(np, ID_JZ4740);
++	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++	int i, val = 0, div, ret;
++
++	/*
++	 * If the PLL is in FSM mode, then treat set_rate callback as a
++	 * no-operation.
++	 */
++	ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (ret)
++		return ret;
++
++	if (val & PLL_VOTE_FSM_ENA)
++		return 0;
++
++	if (!pll->post_div_table) {
++		pr_err("Missing the post_div_table for the PLL\n");
++		return -EINVAL;
++	}
++
++	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++	for (i = 0; i < pll->num_post_div; i++) {
++		if (pll->post_div_table[i].div == div) {
++			val = pll->post_div_table[i].val;
++			break;
++		}
++	}
++
++	return regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++				(BIT(pll->width) - 1) << pll->post_div_shift,
++				val << pll->post_div_shift);
 +}
 +
-+static void __init jz4770_tcu_init(struct device_node *np)
-+{
-+	ingenic_tcu_init(np, ID_JZ4770);
-+}
++const struct clk_ops clk_alpha_pll_postdiv_fabia_ops = {
++	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
++	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
++	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 7593e8a..45d68b4 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -22,6 +22,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT,
+ 	CLK_ALPHA_PLL_TYPE_HUAYRA,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO,
++	CLK_ALPHA_PLL_TYPE_FABIA,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+@@ -36,6 +37,8 @@ enum {
+ 	PLL_OFF_TEST_CTL,
+ 	PLL_OFF_TEST_CTL_U,
+ 	PLL_OFF_STATUS,
++	PLL_OFF_OPMODE,
++	PLL_OFF_FRAC,
+ 	PLL_OFF_MAX_REGS
+ };
+ 
+@@ -73,6 +76,10 @@ struct clk_alpha_pll {
+  * @offset: base address of registers
+  * @regs: alpha pll register map (see @clk_alpha_pll_regs)
+  * @width: width of post-divider
++ * @post_div_shift: shift to differentiate between odd & even post-divider
++ * @post_div_table: table with PLL odd and even post-divider settings
++ * @num_post_div: Number of PLL post-divider settings
++ *
+  * @clkr: regmap clock handle
+  */
+ struct clk_alpha_pll_postdiv {
+@@ -81,6 +88,9 @@ struct clk_alpha_pll_postdiv {
+ 	const u8 *regs;
+ 
+ 	struct clk_regmap clkr;
++	int post_div_shift;
++	const struct clk_div_table *post_div_table;
++	size_t num_post_div;
+ };
+ 
+ struct alpha_pll_config {
+@@ -109,7 +119,13 @@ struct alpha_pll_config {
+ extern const struct clk_ops clk_alpha_pll_huayra_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ro_ops;
+ 
++extern const struct clk_ops clk_alpha_pll_fabia_ops;
++extern const struct clk_ops clk_alpha_pll_fixed_fabia_ops;
++extern const struct clk_ops clk_alpha_pll_postdiv_fabia_ops;
 +
-+static void __init jz4780_tcu_init(struct device_node *np)
-+{
-+	ingenic_tcu_init(np, ID_JZ4780);
-+}
-+
-+/* We only probe via devicetree, no need for a platform driver */
-+CLK_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu-clocks", jz4740_tcu_init);
-+CLK_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu-clocks", jz4770_tcu_init);
-+CLK_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu-clocks", jz4780_tcu_init);
+ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config);
++void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++				const struct alpha_pll_config *config);
+ 
+ #endif
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
