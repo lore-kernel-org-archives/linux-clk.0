@@ -1,62 +1,93 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 24/25] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-Date: Tue, 30 Jan 2018 20:22:57 +0000
-Message-Id: <1517343778-27902-25-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v2 4/5] dt-bindings: clock: mediatek: update audsys documentation to adapt MFD device
+Date: Wed, 31 Jan 2018 15:42:44 +0800
+Message-ID: <8651585c91ee40f6ab3e30b893bcfb90fe5c2c25.1515639336.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1515639336.git.ryder.lee@mediatek.com>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+As the MediaTek audio hardware block that expose functionalities that are
+handled by separate subsystems in the kernel, and there are registers that
+are shared between related drivers.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Switch the current device to an MFD device, add more descriptions about the
+subsystem and modify example accordingly.
+
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
-v1->v3:
-* no change
+ .../bindings/arm/mediatek/mediatek,audsys.txt      | 37 ++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 7 deletions(-)
 
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 1d3e950..d364685 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -91,6 +91,11 @@
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index 9b8f578..677af40 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -1,22 +1,45 @@
+-MediaTek AUDSYS controller
++MediaTek Audio Subsystem
+ ============================
++The audio subsystem is one of the multi-function blocks of MediaTek SoCs.
++It contains a system controller, which provides a number registers giving
++access to two features: AUDSYS clocks and Audio Front End (AFE) components.
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
++For the top level node:
++- compatible: must be: "syscon", "simple-mfd";
++- reg: register area of the Audio Subsystem
 +
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
++Required sub-nodes:
++
++AUDSYS clocks:
++-------
+ The MediaTek AUDSYS controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+ - compatible: Should be one of:
+-	- "mediatek,mt7622-audsys", "syscon"
++	- "mediatek,mt2701-audsys";
++	- "mediatek,mt7622-audsys";
+ - #clock-cells: Must be 1
+ 
+ The AUDSYS controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+ The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+ 
++AFE components:
++-------
++For common binding part and usage, refer to
++../sonud/mt2701-afe-pcm.txt.
++
+ Example:
+ 
+-audsys: audsys@11220000 {
+-	compatible = "mediatek,mt7622-audsys", "syscon";
+-	reg = <0 0x11220000 0 0x1000>;
+-	#clock-cells = <1>;
+-};
++	audio-subsystem@11220000 {
++		compatible = "syscon", "simple-mfd";
++		reg = <0 0x11220000 0 0x2000>;
++
++		audsys: clock {
++			compatible = "mediatek,mt2701-audsys";
++			#clock-cells = <1>;
++		};
++
++		...
++	};
 -- 
-2.7.4
+1.9.1
