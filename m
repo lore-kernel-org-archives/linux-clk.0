@@ -1,67 +1,115 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	wens@csie.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Jose.Abreu@synopsys.com,
-	narmstrong@baylibre.com,
-	jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
 	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 03/12] drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
-Date: Wed, 17 Jan 2018 21:14:12 +0100
-Message-Id: <20180117201421.25954-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180117201421.25954-1-jernej.skrabec@siol.net>
-References: <20180117201421.25954-1-jernej.skrabec@siol.net>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 09/26] soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
+Date: Wed, 31 Jan 2018 18:24:13 +0000
+Message-Id: <1517423070-24236-10-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
-magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
+This patch allows for platform specific quirks as some of the SoC need
+further customization for the watchdog to work properly, like for R-Car
+Gen2 and for RZ/G.
 
-Tests show that one iteration is enough.
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+v3->4:
+* no change
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index a38db40ce990..7ca14d7325b5 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 	 * then write one of the FC registers several times.
- 	 *
- 	 * The number of iterations matters and depends on the HDMI TX revision
--	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
--	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
--	 * 4 and 1 iterations respectively.
-+	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
-+	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
-+	 * as needing the workaround, with 4 iterations for v1.30a and 1
-+	 * iteration for others.
- 	 */
+ drivers/soc/renesas/rcar-rst.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 3316b02..93febe6 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -13,8 +13,18 @@
+ #include <linux/of_address.h>
+ #include <linux/soc/renesas/rcar-rst.h>
  
- 	switch (hdmi->version) {
-@@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 		count = 4;
- 		break;
- 	case 0x131a:
-+	case 0x132a:
- 		count = 1;
- 		break;
- 	default:
++#define WDTRSTCR_RESET		0xA55A0002
++#define WDTRSTCR		0x0054
++
++static int rcar_rst_enable_wdt_reset(void __iomem *base)
++{
++	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
++	return 0;
++}
++
+ struct rst_config {
+-	unsigned int modemr;	/* Mode Monitoring Register Offset */
++	unsigned int modemr;		/* Mode Monitoring Register Offset */
++	int (*configure)(void *base);	/* Platform specific configuration */
+ };
+ 
+ static const struct rst_config rcar_rst_gen1 __initconst = {
+@@ -23,6 +33,11 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
+ 
+ static const struct rst_config rcar_rst_gen2 __initconst = {
+ 	.modemr = 0x60,
++	.configure = rcar_rst_enable_wdt_reset,
++};
++
++static const struct rst_config rcar_rst_gen3 __initconst = {
++	.modemr = 0x60,
+ };
+ 
+ static const struct of_device_id rcar_rst_matches[] __initconst = {
+@@ -38,11 +53,11 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
+-	/* R-Car Gen3 is handled like R-Car Gen2 */
+-	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
++	/* R-Car Gen3 */
++	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -71,6 +86,14 @@ static int __init rcar_rst_init(void)
+ 	rcar_rst_base = base;
+ 	cfg = match->data;
+ 	saved_mode = ioread32(base + cfg->modemr);
++	if (cfg->configure) {
++		error = cfg->configure(base);
++		if (error) {
++			pr_warn("%pOF: Cannot run SoC specific configuration\n",
++				np);
++			goto out_put;
++		}
++	}
+ 
+ 	pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
+ 
 -- 
-2.15.1
+2.7.4
