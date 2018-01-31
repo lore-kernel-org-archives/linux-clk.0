@@ -1,247 +1,82 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 6/9] irqchip: Add the ingenic-tcu-intc driver
-To: Paul Cercueil <paul@crapouillou.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180101143344.2099-1-paul@crapouillou.net>
- <20180110224838.16711-1-paul@crapouillou.net>
- <20180110224838.16711-6-paul@crapouillou.net>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <58349291-93cd-f803-52a9-f88120ace4dc@arm.com>
-Date: Thu, 11 Jan 2018 15:38:42 +0000
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180110224838.16711-6-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1517343778-27902-11-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-11-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 09:46:30 +0100
+Message-ID: <CAMuHMdXkHF9R0XfcG++s0RRup+Mdtam5p=FXw26z86wAOJhZfQ@mail.gmail.com>
+Subject: Re: [RFC v3 10/25] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01/18 22:48, Paul Cercueil wrote:
-> This simple driver handles the IRQ chip of the TCU
-> (Timer Counter Unit) of the JZ47xx Ingenic SoCs.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/irqchip/Kconfig           |   6 ++
->  drivers/irqchip/Makefile          |   1 +
->  drivers/irqchip/irq-ingenic-tcu.c | 153 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 160 insertions(+)
->  create mode 100644 drivers/irqchip/irq-ingenic-tcu.c
-> 
->  v2: - Use SPDX identifier for the license
->      - Make KConfig option select CONFIG_IRQ_DOMAIN since we depend on it
->  v3: - Move documentation to its own patch
->      - Add comment explaining why we only use IRQCHIP_DECLARE
-> 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index c70476b34a53..74668f3605b0 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -267,6 +267,12 @@ config INGENIC_IRQ
->  	depends on MACH_INGENIC
->  	default y
->  
-> +config INGENIC_TCU_IRQ
-> +	bool
-> +	depends on MACH_INGENIC || COMPILE_TEST
-> +	select IRQ_DOMAIN
-> +	default y
-> +
->  config RENESAS_H8300H_INTC
->          bool
->  	select IRQ_DOMAIN
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index d2df34a54d38..6effe0271cd6 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -70,6 +70,7 @@ obj-$(CONFIG_RENESAS_H8300H_INTC)	+= irq-renesas-h8300h.o
->  obj-$(CONFIG_RENESAS_H8S_INTC)		+= irq-renesas-h8s.o
->  obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
->  obj-$(CONFIG_INGENIC_IRQ)		+= irq-ingenic.o
-> +obj-$(CONFIG_INGENIC_TCU_IRQ)		+= irq-ingenic-tcu.o
->  obj-$(CONFIG_IMX_GPCV2)			+= irq-imx-gpcv2.o
->  obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
->  obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
-> diff --git a/drivers/irqchip/irq-ingenic-tcu.c b/drivers/irqchip/irq-ingenic-tcu.c
-> new file mode 100644
-> index 000000000000..52e9688b31f6
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-ingenic-tcu.c
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * JZ47xx SoCs TCU IRQ driver
-> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/mfd/syscon/ingenic-tcu.h>
-> +
-> +static void ingenic_tcu_intc_cascade(struct irq_desc *desc)
-> +{
-> +	struct irq_chip *irq_chip = irq_data_get_irq_chip(&desc->irq_data);
-> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-> +	struct irq_chip_generic *gc = irq_get_domain_generic_chip(domain, 0);
-> +	struct regmap *map = gc->private;
-> +	uint32_t irq_reg, irq_mask;
-> +	unsigned int i;
-> +
-> +	regmap_read(map, TCU_REG_TFR, &irq_reg);
-> +	regmap_read(map, TCU_REG_TMR, &irq_mask);
-> +
-> +	chained_irq_enter(irq_chip, desc);
-> +
-> +	irq_reg &= ~irq_mask;
-> +
-> +	for (i = 0; i < 32; i++) {
-> +		if (irq_reg & BIT(i))
-> +			generic_handle_irq(irq_linear_revmap(domain, i));
-> +	}
-> +
-> +	chained_irq_exit(irq_chip, desc);
-> +}
-> +
-> +static void ingenic_tcu_gc_unmask_enable_reg(struct irq_data *d)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-> +	struct regmap *map = gc->private;
-> +	u32 mask = d->mask;
-> +
-> +	irq_gc_lock(gc);
-> +	regmap_write(map, ct->regs.ack, mask);
-> +	regmap_write(map, ct->regs.enable, mask);
-> +	*ct->mask_cache |= mask;
-> +	irq_gc_unlock(gc);
-> +}
-> +
-> +static void ingenic_tcu_gc_mask_disable_reg(struct irq_data *d)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-> +	struct regmap *map = gc->private;
-> +	u32 mask = d->mask;
-> +
-> +	irq_gc_lock(gc);
-> +	regmap_write(map, ct->regs.disable, mask);
-> +	*ct->mask_cache &= ~mask;
-> +	irq_gc_unlock(gc);
-> +}
-> +
-> +static void ingenic_tcu_gc_mask_disable_reg_and_ack(struct irq_data *d)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-> +	struct regmap *map = gc->private;
-> +	u32 mask = d->mask;
-> +
-> +	irq_gc_lock(gc);
-> +	regmap_write(map, ct->regs.ack, mask);
-> +	regmap_write(map, ct->regs.disable, mask);
-> +	irq_gc_unlock(gc);
-> +}
-> +
-> +static int __init ingenic_tcu_intc_of_init(struct device_node *node,
-> +	struct device_node *parent)
-> +{
-> +	struct irq_domain *domain;
-> +	struct irq_chip_generic *gc;
-> +	struct irq_chip_type *ct;
-> +	int err, i, num_parent_irqs;
-> +	unsigned int parent_irqs[3];
+Hi Fabrizio,
 
-3 parent interrupts? Really? How do you pick one? Also, given the useage
-model below, "int" is the wrong type. Probably should be u32.
+On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This commit documents the compatibility with R-Car Gen2 and RZ/G
+> devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+> Also, this patch expands the list of SoC-specific compatible strings to
+> include RZ/G and R-Car Gen2 devices.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-> +	struct regmap *map;
-> +
-> +	num_parent_irqs = of_property_count_elems_of_size(
-> +			node, "interrupts", 4);
+Thanks for your patch!
 
-Nit: on a single line, as here is nothing that hurts my eyes more than
-reading something like(
-this). Also, 4 is better expressed as sizeof(u32).
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -1,17 +1,25 @@
+>  Renesas Watchdog Timer (WDT) Controller
+>
+>  Required properties:
+> -- compatible : Should be "renesas,<soctype>-wdt", and
+> -              "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
+> + - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
+> +               fallback compatible string when compatible with the generic
+> +               version.
+>                Examples with soctypes are:
+> +                - "renesas,r8a7743-wdt" (RZ/G1M)
+> +                - "renesas,r8a7745-wdt" (RZ/G1E)
+> +                - "renesas,r8a7790-wdt" (R-Car H2)
+> +                - "renesas,r8a7791-wdt" (R-Car M2-W)
+> +                - "renesas,r8a7792-wdt" (R-Car V2H)
+> +                - "renesas,r8a7793-wdt" (R-Car M2-N)
+> +                - "renesas,r8a7794-wdt" (R-Car E2)
+>                  - "renesas,r8a7795-wdt" (R-Car H3)
+>                  - "renesas,r8a7796-wdt" (R-Car M3-W)
+>                  - "renesas,r8a77995-wdt" (R-Car D3)
+>                  - "renesas,r7s72100-wdt" (RZ/A1)
+> +               The generic compatible string must be:
+> +                - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
+> +                - "renesas,rcar-gen3-wdt" for R-Car Gen3
 
+You've lost the generic "renesas,rza-wdt".
 
-> +	if (num_parent_irqs < 0 || num_parent_irqs > ARRAY_SIZE(parent_irqs))
-> +		return -EINVAL;
-> +
-> +	map = syscon_node_to_regmap(node->parent);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> +
-> +	domain = irq_domain_add_linear(node, 32, &irq_generic_chip_ops, NULL);
-> +	if (!domain)
-> +		return -ENOMEM;
-> +
-> +	err = irq_alloc_domain_generic_chips(domain, 32, 1, "TCU",
-> +			handle_level_irq, 0, IRQ_NOPROBE | IRQ_LEVEL, 0);
-> +	if (err)
-> +		goto out_domain_remove;
-> +
-> +	gc = irq_get_domain_generic_chip(domain, 0);
-> +	ct = gc->chip_types;
-> +
-> +	gc->wake_enabled = IRQ_MSK(32);
-> +	gc->private = map;
-> +
-> +	ct->regs.disable = TCU_REG_TMSR;
-> +	ct->regs.enable = TCU_REG_TMCR;
-> +	ct->regs.ack = TCU_REG_TFCR;
-> +	ct->chip.irq_unmask = ingenic_tcu_gc_unmask_enable_reg;
-> +	ct->chip.irq_mask = ingenic_tcu_gc_mask_disable_reg;
-> +	ct->chip.irq_mask_ack = ingenic_tcu_gc_mask_disable_reg_and_ack;
-> +	ct->chip.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
-> +
-> +	/* Mask all IRQs by default */
-> +	regmap_write(map, TCU_REG_TMSR, IRQ_MSK(32));
-> +
-> +	for (i = 0; i < num_parent_irqs; i++) {
-> +		parent_irqs[i] = irq_of_parse_and_map(node, i);
-> +		if (!parent_irqs[i]) {
-> +			err = -EINVAL;
-> +			goto out_unmap_irqs;
-> +		}
-> +
-> +		irq_set_chained_handler_and_data(parent_irqs[i],
-> +				ingenic_tcu_intc_cascade, domain);
-> +	}
+With that fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I don't get the multiple parent irq at all. How are the source interrupt
-routed to the various cascades?
+Gr{oetje,eeting}s,
 
-> +
-> +	return 0;
-> +
-> +out_unmap_irqs:
-> +	for (; i > 0; i--)
-> +		irq_dispose_mapping(parent_irqs[i - 1]);
-> +out_domain_remove:
-> +	irq_domain_remove(domain);
-> +	return err;
-> +}
-> +
-> +/* We only probe via devicetree, no need for a platform driver */
-> +IRQCHIP_DECLARE(jz4740_tcu_intc, "ingenic,jz4740-tcu-intc",
-> +		ingenic_tcu_intc_of_init);
-> +IRQCHIP_DECLARE(jz4770_tcu_intc, "ingenic,jz4770-tcu-intc",
-> +		ingenic_tcu_intc_of_init);
-> +IRQCHIP_DECLARE(jz4780_tcu_intc, "ingenic,jz4780-tcu-intc",
-> +		ingenic_tcu_intc_of_init);
-> 
+                        Geert
 
-Thanks,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
