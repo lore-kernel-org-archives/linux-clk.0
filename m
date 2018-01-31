@@ -1,63 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:52909 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752738AbeADLbZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Jan 2018 06:31:25 -0500
-From: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-To: ALSA ML <alsa-devel@alsa-project.org>,
-        Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Patches Audio <patches.audio@intel.com>,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-clk@vger.kernel.org,
-        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Subject: [alsa-devel] [PATCH v7 6/6] ASoC: Intel: Skylake: Add FW reply for MCLK/SCLK IPC
-Date: Thu,  4 Jan 2018 16:55:19 +0530
-Message-Id: <1515065119-1683-7-git-send-email-sriramx.periyasamy@intel.com>
-In-Reply-To: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
-References: <1515065119-1683-1-git-send-email-sriramx.periyasamy@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/19] clk: meson: use dev pointer where possible
+Date: Wed, 31 Jan 2018 19:09:27 +0100
+Message-Id: <20180131180945.18025-2-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+The 'dev' pointer is directly available in gxbb and axg clock
+controller, so consistently use it instead of going the through the
+'pdev' pointer once in while
 
-If mclk/sclk is already running, FW responds with IPC reply MCLK/SCLK
-already running. Add these to the IPC reply lookup table.
-
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- sound/soc/intel/skylake/skl-sst-ipc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/meson/axg.c  | 8 ++++----
+ drivers/clk/meson/gxbb.c | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-sst-ipc.c b/sound/soc/intel/skylake/skl-sst-ipc.c
-index 8708755a8f9a..9f3ce73593ae 100644
---- a/sound/soc/intel/skylake/skl-sst-ipc.c
-+++ b/sound/soc/intel/skylake/skl-sst-ipc.c
-@@ -249,6 +249,8 @@ enum skl_ipc_glb_reply {
- 	IPC_GLB_REPLY_INVALID_CONFIG_DATA_LEN = 121,
- 	IPC_GLB_REPLY_GATEWAY_NOT_INITIALIZED = 140,
- 	IPC_GLB_REPLY_GATEWAY_NOT_EXIST = 141,
-+	IPC_GLB_REPLY_SCLK_ALREADY_RUNNING = 150,
-+	IPC_GLB_REPLY_MCLK_ALREADY_RUNNING = 151,
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index b5dacfde64bb..0db0fc0762e2 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -804,7 +804,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	void __iomem *clk_base;
+ 	int ret, clkid, i;
  
- 	IPC_GLB_REPLY_PPL_NOT_INITIALIZED = 160,
- 	IPC_GLB_REPLY_PPL_NOT_EXIST = 161,
-@@ -401,6 +403,10 @@ struct skl_ipc_err_map {
- static struct skl_ipc_err_map skl_err_map[] = {
- 	{"DSP out of memory", IPC_GLB_REPLY_OUT_OF_MEMORY, -ENOMEM},
- 	{"DSP busy", IPC_GLB_REPLY_BUSY, -EBUSY},
-+	{"SCLK already running", IPC_GLB_REPLY_SCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_SCLK_ALREADY_RUNNING},
-+	{"MCLK already running", IPC_GLB_REPLY_MCLK_ALREADY_RUNNING,
-+			IPC_GLB_REPLY_MCLK_ALREADY_RUNNING},
- };
+-	clkc_data = of_device_get_match_data(&pdev->dev);
++	clkc_data = of_device_get_match_data(dev);
+ 	if (!clkc_data)
+ 		return -EINVAL;
  
- static int skl_ipc_set_reply_error_code(struct sst_generic_ipc *ipc, u32 reply)
+@@ -812,9 +812,9 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+-	clk_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	clk_base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!clk_base) {
+-		dev_err(&pdev->dev, "Unable to map clk base\n");
++		dev_err(dev, "Unable to map clk base\n");
+ 		return -ENXIO;
+ 	}
+ 
+@@ -849,7 +849,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 		ret = devm_clk_hw_register(dev,
+ 					clkc_data->hw_onecell_data->hws[clkid]);
+ 		if (ret) {
+-			dev_err(&pdev->dev, "Clock registration failed\n");
++			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
+ 		}
+ 	}
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a5f25cc1944c..423abcb8ef88 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1950,7 +1950,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	int ret, clkid, i;
+ 	struct device *dev = &pdev->dev;
+ 
+-	clkc_data = of_device_get_match_data(&pdev->dev);
++	clkc_data = of_device_get_match_data(dev);
+ 	if (!clkc_data)
+ 		return -EINVAL;
+ 
 -- 
-2.7.4
-
+2.14.3
