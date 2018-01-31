@@ -1,80 +1,245 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <linux-clk@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Jolly Shah <jollys@xilinx.com>, Tejas Patel <tejasp@xilinx.com>, Shubhrajyoti
- Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [RFC PATCH 1/2] drivers: clk: Add clk_get_children support
-Date: Mon, 8 Jan 2018 14:16:36 -0800
-Message-ID: <1515449797-5629-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
-References: <1515449797-5629-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 14/19] clk: meson: migrate the audio divider clock to clk_regmap
+Date: Wed, 31 Jan 2018 19:09:40 +0100
+Message-Id: <20180131180945.18025-15-jbrunet@baylibre.com>
+In-Reply-To: <20180131180945.18025-1-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This API helps to determine the users for any clock.
+Rework meson audio divider driver to use clk_regmap and move gxbb
+clock using meson_clk_audio_divider to clk_regmap.
 
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Signed-off-by: Tejas Patel <tejasp@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk.c            | 28 ++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 29 insertions(+)
+ drivers/clk/meson/clk-audio-divider.c | 63 +++++++++++------------------------
+ drivers/clk/meson/clkc.h              |  5 +--
+ drivers/clk/meson/gxbb.c              | 30 +++++------------
+ 3 files changed, 30 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b56c11f..7488787 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -258,6 +258,34 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
+diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
+index 6c07db06642d..f7ab5b1db342 100644
+--- a/drivers/clk/meson/clk-audio-divider.c
++++ b/drivers/clk/meson/clk-audio-divider.c
+@@ -28,8 +28,11 @@
+ #include <linux/clk-provider.h>
+ #include "clkc.h"
  
-+static unsigned int sibling;
-+
-+static void clk_show_subtree(struct clk_core *c,
-+			     int level)
+-#define to_meson_clk_audio_divider(_hw) container_of(_hw, \
+-				struct meson_clk_audio_divider, hw)
++static inline struct meson_clk_audio_div_data *
++meson_clk_audio_div_data(struct clk_regmap *clk)
 +{
-+	struct clk_core *child;
-+
-+	if (!c)
-+		return;
-+
-+	if (level == 1)
-+		sibling++;
-+
-+	hlist_for_each_entry(child, &c->children, child_node)
-+		clk_show_subtree(child, level + 1);
++	return (struct meson_clk_audio_div_data *)clk->data;
 +}
-+
-+unsigned int clk_get_children(char *name)
-+{
-+	struct clk_core *core;
-+	struct clk *pclk = __clk_lookup(name);
-+
-+	sibling = 0;
-+	core = pclk->core;
-+	clk_show_subtree(core, 0);
-+	return sibling;
-+}
-+
- static struct clk_core *__clk_lookup_subtree(const char *name,
- 					     struct clk_core *core)
+ 
+ static int _div_round(unsigned long parent_rate, unsigned long rate,
+ 		      unsigned long flags)
+@@ -45,15 +48,9 @@ static int _get_val(unsigned long parent_rate, unsigned long rate)
+ 	return DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
+ }
+ 
+-static int _valid_divider(struct clk_hw *hw, int divider)
++static int _valid_divider(unsigned int width, int divider)
  {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7c925e6..8191a32a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -743,6 +743,7 @@ unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
- unsigned long clk_hw_get_flags(const struct clk_hw *hw);
-+unsigned int clk_get_children(char *name);
- bool clk_hw_is_prepared(const struct clk_hw *hw);
- bool clk_hw_is_enabled(const struct clk_hw *hw);
- bool __clk_is_enabled(struct clk *clk);
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	int max_divider;
+-	u8 width;
+-
+-	width = adiv->div.width;
+-	max_divider = 1 << width;
++	int max_divider = 1 << width;
+ 
+ 	return clamp(divider, 1, max_divider);
+ }
+@@ -61,14 +58,11 @@ static int _valid_divider(struct clk_hw *hw, int divider)
+ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
+ 					       unsigned long parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	struct parm *p;
+-	unsigned long reg, divider;
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
++	unsigned long divider;
+ 
+-	p = &adiv->div;
+-	reg = readl(adiv->base + p->reg_off);
+-	divider = PARM_GET(p->width, p->shift, reg) + 1;
++	divider = meson_parm_read(clk->map, &adiv->div);
+ 
+ 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
+ }
+@@ -77,14 +71,14 @@ static long audio_divider_round_rate(struct clk_hw *hw,
+ 				     unsigned long rate,
+ 				     unsigned long *parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
+ 	unsigned long max_prate;
+ 	int divider;
+ 
+ 	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
+ 		divider = _div_round(*parent_rate, rate, adiv->flags);
+-		divider = _valid_divider(hw, divider);
++		divider = _valid_divider(adiv->div.width, divider);
+ 		return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
+ 	}
+ 
+@@ -93,7 +87,7 @@ static long audio_divider_round_rate(struct clk_hw *hw,
+ 
+ 	/* Get the corresponding rounded down divider */
+ 	divider = max_prate / rate;
+-	divider = _valid_divider(hw, divider);
++	divider = _valid_divider(adiv->div.width, divider);
+ 
+ 	/* Get actual rate of the parent */
+ 	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
+@@ -106,28 +100,11 @@ static int audio_divider_set_rate(struct clk_hw *hw,
+ 				  unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	struct parm *p;
+-	unsigned long reg, flags = 0;
+-	int val;
+-
+-	val = _get_val(parent_rate, rate);
+-
+-	if (adiv->lock)
+-		spin_lock_irqsave(adiv->lock, flags);
+-	else
+-		__acquire(adiv->lock);
+-
+-	p = &adiv->div;
+-	reg = readl(adiv->base + p->reg_off);
+-	reg = PARM_SET(p->width, p->shift, reg, val);
+-	writel(reg, adiv->base + p->reg_off);
+-
+-	if (adiv->lock)
+-		spin_unlock_irqrestore(adiv->lock, flags);
+-	else
+-		__release(adiv->lock);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
++	int val = _get_val(parent_rate, rate);
++
++	meson_parm_write(clk->map, &adiv->div, val);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 08a1ebfc65dc..a4a526cbca4c 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -142,12 +142,9 @@ struct meson_clk_mpll_data {
+ 	spinlock_t *lock;
+ };
+ 
+-struct meson_clk_audio_divider {
+-	struct clk_hw hw;
+-	void __iomem *base;
++struct meson_clk_audio_div_data {
+ 	struct parm div;
+ 	u8 flags;
+-	spinlock_t *lock;
+ };
+ 
+ #define MESON_GATE(_name, _reg, _bit)					\
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index d2724a7ce9e7..196557f11608 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -826,14 +826,15 @@ static struct clk_regmap gxbb_cts_amclk_sel = {
+ 	},
+ };
+ 
+-static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
+-	.div = {
+-		.reg_off = HHI_AUD_CLK_CNTL,
+-		.shift   = 0,
+-		.width   = 8,
++static struct clk_regmap gxbb_cts_amclk_div = {
++	.data = &(struct meson_clk_audio_div_data){
++		.div = {
++			.reg_off = HHI_AUD_CLK_CNTL,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+-	.flags = CLK_DIVIDER_ROUND_CLOSEST,
+-	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_amclk_div",
+ 		.ops = &meson_clk_audio_divider_ops,
+@@ -1777,10 +1778,6 @@ static struct meson_clk_pll *const gxl_clk_plls[] = {
+ 	&gxl_gp0_pll,
+ };
+ 
+-static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+-	&gxbb_cts_amclk_div,
+-};
+-
+ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_clk81,
+ 	&gxbb_ddr,
+@@ -1912,29 +1909,24 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_mpll0,
+ 	&gxbb_mpll1,
+ 	&gxbb_mpll2,
++	&gxbb_cts_amclk_div,
+ };
+ 
+ struct clkc_data {
+ 	struct meson_clk_pll *const *clk_plls;
+ 	unsigned int clk_plls_count;
+-	struct meson_clk_audio_divider *const *clk_audio_dividers;
+-	unsigned int clk_audio_dividers_count;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+ 
+ static const struct clkc_data gxbb_clkc_data = {
+ 	.clk_plls = gxbb_clk_plls,
+ 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
+-	.clk_audio_dividers = gxbb_audio_dividers,
+-	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+ };
+ 
+ static const struct clkc_data gxl_clkc_data = {
+ 	.clk_plls = gxl_clk_plls,
+ 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
+-	.clk_audio_dividers = gxbb_audio_dividers,
+-	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+ };
+ 
+@@ -1981,10 +1973,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < clkc_data->clk_plls_count; i++)
+ 		clkc_data->clk_plls[i]->base = clk_base;
+ 
+-	/* Populate base address for the audio dividers */
+-	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
+-		clkc_data->clk_audio_dividers[i]->base = clk_base;
+-
+ 	/* Populate regmap for the common regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
+ 		gx_clk_regmaps[i]->map = map;
 -- 
-2.7.4
+2.14.3
