@@ -1,66 +1,63 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 15/25] clk: renesas: r8a7745: Add rwdt clock
-Date: Tue, 30 Jan 2018 20:22:48 +0000
-Message-Id: <1517343778-27902-16-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 1/4] clk: qcom: Clear hardware clock control bit of RCG
+Date: Wed, 31 Jan 2018 16:24:32 +0530
+Message-Id: <1517396075-29297-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
+References: <1517396075-29297-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+For upcoming targets like sdm845, POR value of the hardware clock control
+bit is set for most of root clocks which needs to be cleared for software
+to be able to control. For older targets like MSM8996, this bit is reserved
+bit and having POR value as 0 so this patch will work for the older targets
+too. So update the configuration mask to take care of the same to clear
+hardware clock control bit.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
-v1->v3:
-* no change
+ drivers/clk/qcom/clk-rcg2.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 2859504..87f5a36 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7745_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7745_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7745_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7745_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7745_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7745_CLK_ZS),
- 	DEF_MOD("audio-dmac0",		 502,	R8A7745_CLK_HP),
-@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- };
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bbeaf9c..ef8b14a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -42,6 +42,7 @@
+ #define CFG_MODE_SHIFT		12
+ #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
+ #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
++#define CFG_HW_CLK_CTRL_MASK	BIT(20)
  
- static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
+ #define M_REG			0x8
+ #define N_REG			0xc
+@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	}
  
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
++	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
