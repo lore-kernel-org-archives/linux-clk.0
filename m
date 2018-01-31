@@ -1,40 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:39372 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbeAEPvR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jan 2018 10:51:17 -0500
-Date: Fri, 5 Jan 2018 09:51:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-Subject: Re: [PATCH 10/12] clk: mediatek: switch to use dev_get_regmap() for
- MT7622 audsys
-Message-ID: <20180105155115.xihnhkvlrj3lozsx@rob-hp-laptop>
-References: <cover.1514881870.git.ryder.lee@mediatek.com>
- <cbdada9cdbafda2452fe171a81588ce5b0d4f688.1514881870.git.ryder.lee@mediatek.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 0/6] Tegra210 DFLL implementation
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <31e9aad3-bb3d-2475-4fa7-3ecf43dc2f9e@nvidia.com>
+Date: Wed, 31 Jan 2018 11:28:31 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cbdada9cdbafda2452fe171a81588ce5b0d4f688.1514881870.git.ryder.lee@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 02, 2018 at 07:47:52PM +0800, Ryder Lee wrote:
-> As the new audsys wrapper driver is in place, switch to use dev_get_regmap()
-> to obtain the regmap from its parent.
-> 
-> This patch also add missing clock data 'CLK_AUDIO_AFE_CONN'.
 
-"also" is a keyword for this belonging in a separate patch.
-
+On 24/01/18 12:45, Peter De Schrijver wrote:
+> This series introduces support for the DFLL as a CPU clock source
+> on Tegra210. As Jetson TX2 uses a PWM controlled regulator IC which
+> is driven directly by the DFLLs PWM output, we also introduce support
+> for PWM regulators next to I2C controlled regulators. The DFLL output
+> frequency is directly controlled by the regulator voltage. The registers
+> for controlling the PWM are part of the DFLL IP block, so there's no
+> separate linux regulator object involved because the regulator IC only
+> supplies the rail powering the DFLL and the CPUs. It doesn't have any
+> other controls.
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt7622-aud.c  | 11 +++++++++--
->  include/dt-bindings/clock/mt7622-clk.h |  3 ++-
->  2 files changed, 11 insertions(+), 3 deletions(-)
+> Changes since v1:
+> * improved commit messages
+> * some style cleanups
+> 
+> Peter De Schrijver (6):
+>   clk: tegra: dfll registration for multiple SoCs
+>   clk: tegra: DT align parameter for CVB calculation
+>   clk: tegra: add CVB tables for Tegra210 CPU DFLL
+>   clk: tegra: dfll: support PWM regulator control
+>   clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
+>   cpufreq: tegra124-cpufreq: extend to support Tegra210
+> 
+>  drivers/clk/tegra/Kconfig                  |   5 +
+>  drivers/clk/tegra/Makefile                 |   2 +-
+>  drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
+>  drivers/clk/tegra/clk-dfll.h               |   7 +
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
+>  drivers/clk/tegra/cvb.c                    |  18 +-
+>  drivers/clk/tegra/cvb.h                    |   6 +-
+>  drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
+>  8 files changed, 920 insertions(+), 104 deletions(-)
+
+This series appears to be missing DT documentation and DT source changes?
+
+Cheers
+Jon
+
+-- 
+nvpublic
