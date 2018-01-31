@@ -1,72 +1,66 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v5 01/44] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-To: Adam Ford <aford173@gmail.com>, David Lechner <david@lechnology.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman
-	<khilman@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-2-git-send-email-david@lechnology.com>
- <ebd677dc-44a4-5053-2509-e3ee948ccf98@ti.com>
- <22409e49-5c14-4068-b137-7535afaf90d7@lechnology.com>
- <0f90b5f7-f21e-5f81-1154-9a815bbb786d@ti.com>
- <ba7fa842-cfc5-6f6f-f9bf-09c74ab08ec2@lechnology.com>
- <5aacc350-6236-2e4f-35bb-a681fc9d47e7@ti.com>
- <CAHCN7x+ZYezmEU_0mF=6_gF14DZxKnuDp1Cx=aC2=eN_QLNdJQ@mail.gmail.com>
- <fd162516-cddc-e857-ce60-2cd89303971e@lechnology.com>
- <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <14320e05-c6f7-fa2d-35cd-c01414c59f2f@ti.com>
-Date: Thu, 11 Jan 2018 21:17:52 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKORFriQ2Gjx85OsCUzHO-mavCQXLOzh5D3n4kEG=i-Yg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 17/26] clk: renesas: r8a7790: Add rwdt clock
+Date: Wed, 31 Jan 2018 18:24:21 +0000
+Message-Id: <1517423070-24236-18-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 11 January 2018 06:15 PM, Adam Ford wrote:
-> On Wed, Jan 10, 2018 at 8:50 PM, David Lechner <david@lechnology.com> wrote:
->> On 01/10/2018 04:24 PM, Adam Ford wrote:
->>>
->>>
->>> I am available tomorrow to build and test patches against the
->>> da850-evm.  I just need to know which version(s) to test.
->>
->>
->> Great. As per the cover letter:
->>
->> You can find a working branch with everything included in the
->> "common-clk-v5"
->> branch of https://github.com/dlech/ev3dev-kernel.git.
-> 
-> I wasn't sure if things had changed after some of the dialog about the
-> bindings and device tree.
-> 
-> Here is my log with DEBUG_LL and CONFIG_EARLY_PRINTK set :
-> 
-> Starting kernel ...
-> 
-> Uncompressing Linux... done, booting the kernel.
-> Booting Linux on physical CPU 0x0
-> Linux version 4.15.0-rc4-g8564e0f (aford@ubuntu16) (gcc version 7.2.0
-> (Buildroot 2017.11.1-00021-g7b43660)) #2 PREEMPT Thu Jan 11 06:35:29
-> CST 2018
-> CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=0005317f
-> CPU: VIVT data cache, VIVT instruction cache
-> OF: fdt: Machine model: DA850/AM1808/OMAP-L138 EVM
-> Memory policy: Data cache writethrough
-> cma: Reserved 16 MiB at 0xc2c00000
-> DaVinci da850/omap-l138 variant 0x0
-> random: fast init done
-> Built 1 zonelists, mobility grouping on.  Total pages: 16256
-> Kernel command line: console=ttyS2,115200n8 root=PARTUUID= rw
+Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Pretty sure an actual UUID is missing here.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v3->4:
+* no change
 
-Thanks,
-Sekhar
+ drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+index 46bb55b..f936cb7 100644
+--- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
+@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
+-- 
+2.7.4
