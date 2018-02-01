@@ -1,143 +1,88 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at
- init
-To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
-	<sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Dong Aisheng
-	<aisheng.dong@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
-Date: Thu, 15 Feb 2018 13:55:41 +0100
-MIME-version: 1.0
-In-reply-to: <20180214134340.17242-5-jbrunet@baylibre.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
-	<20180214134340.17242-5-jbrunet@baylibre.com>
-	<CGME20180215125542eucas1p218f5797e7254c28d9a6437d579220e52@eucas1p2.samsung.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v11 2/6] mailbox: qcom: Create APCS child device for clock
+ controller
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ linux-clk@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-arm-msm@vger.kernel.org, Devicetree List <devicetree@vger.kernel.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+ <20171205154701.27730-3-georgi.djakov@linaro.org>
+ <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
+ <20171224050625.GH12655@minitux>
+ <CABb+yY3e1YTnf4ZYvXVzXPhOT9-6PzusDfpWRBorwd9nB97SSQ@mail.gmail.com>
+ <f279f1ff-2117-c587-5018-3b3eeeedff8a@linaro.org>
+ <CABb+yY3UvNx71xpt+=j4tTiLEjPTFZTxps0qe2ePa6f4yV61kQ@mail.gmail.com>
+ <549f02e5-19d7-8cec-674f-247dfb2d2467@linaro.org>
+ <CABb+yY3GSvSGFm54g3mt5-=AWrq+g2N2pb9Q-pBZgEzE4MXSJg@mail.gmail.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <384da443-a206-8db3-0a5f-90a68b7f42c2@linaro.org>
+Date: Thu, 1 Feb 2018 10:01:44 +0200
+MIME-Version: 1.0
+In-Reply-To: <CABb+yY3GSvSGFm54g3mt5-=AWrq+g2N2pb9Q-pBZgEzE4MXSJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+On 02/01/2018 08:57 AM, Jassi Brar wrote:
+> On Thu, Feb 1, 2018 at 12:10 AM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> Hi Jassi,
+>>
+>> On 01/27/2018 05:44 AM, Jassi Brar wrote:
+>>> On Thu, Jan 4, 2018 at 10:26 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>>> Hi Jassi,
+>>>>
+>>>> On 12/29/2017 08:14 AM, Jassi Brar wrote:
+>>>>> Hi Bjorn,
+>>>>>
+>>>>> On Sun, Dec 24, 2017 at 10:36 AM, Bjorn Andersson
+>>>>> <bjorn.andersson@linaro.org> wrote:
+>>>>>> On Fri 22 Dec 20:57 PST 2017, Jassi Brar wrote:
+>>>>>>
+>>>>>>> On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>>>>>>> There is a clock controller functionality provided by the APCS hardware
+>>>>>>>> block of msm8916 devices. The device-tree would represent an APCS node
+>>>>>>>> with both mailbox and clock provider properties.
+>>>>>>>>
+>>>>>>> The spec might depict a 'clock' box and 'mailbox' box inside the
+>>>>>>> bigger APCS box. However, from the code I see in this patchset, they
+>>>>>>> are orthogonal and can & should be represented as independent DT
+>>>>>>> nodes.
+>>>>>>
+>>>>>> The APCS consists of a number of different hardware blocks, one of them
+>>>>>> being the "APCS global" block, which is what this node and drivers
+>>>>>> relate to. On 8916 this contains both the IPC register and clock
+>>>>>> control. But it's still just one block according to the hardware
+>>>>>> specification.
+>>>>>>
+>>>>>> As such DT should describe the one hardware block by one node IMHO.
+>>>>>>
+>>>>> In my even humbler opinion, DT should describe a h/w functional unit
+>>>>> which _could_ be seen as a standalone component.
+>>>>
+>>>> The APCS is one separate register block related to the CPU cluster. I
+>>>> haven't seen any strict guidelines for such cases in the DT docs, and
+>>>> during the discussion got the impression that this is the preferred
+>>>> binding. Rob has also reviewed the binding, so we should be fine to move
+>>>> forward with this one.
+>>>>
+>>> Well, I can't overrule Rob. But I am really not happy with random
+>>> device spawning from mailbox drivers. I know there are such instances
+>>> already in the kernel but that doesn't make it legit... unless there
+>>> is some hard dependency. Is there?
+>>
+>> The dependency is that on this SoC, these functionalities are combined
+>> into this "CPU subsystem" block.
+>>
+> I see the register space is shared between mailbox and the clock. So I
+> guess, yes, simply creating a device here and passing the common
+> regmap is tidier. Which patches are already picked up?
 
-On 2018-02-14 14:43, Jerome Brunet wrote:
-> The orphan clocks reparents should migrate any existing count from the
-> orphan clock to its new acestor clocks, otherwise we may have
-> inconsistent counts in the tree and end-up with gated critical clocks
->
-> Assuming we have two clocks, A and B.
-> * Clock A has CLK_IS_CRITICAL flag set.
-> * Clock B is an ancestor of A which can gate. Clock B gate is left
->    enabled by the bootloader.
->
-> Step 1: Clock A is registered. Since it is a critical clock, it is
-> enabled. The clock being still an orphan, no parent are enabled.
->
-> Step 2: Clock B is registered and reparented to clock A (potentially
-> through several other clocks). We are now in situation where the enable
-> count of clock A is 1 while the enable count of its ancestors is 0, which
-> is not good.
->
-> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
-> clock B being 0, clock B is gated and and critical clock A actually gets
-> disabled.
->
-> This situation was found while adding fdiv_clk gates to the meson8b
-> platform.  These clocks parent clk81 critical clock, which is the mother
-> of all peripheral clocks in this system. Because of the issue described
-> here, the system is crashing when clk_disable_unused() is called.
->
-> The situation is solved by reverting
-> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
-> To avoid breaking again the situation described in this commit
-> description, enabling critical clock should be done before walking the
-> orphan list. This way, a parent critical clock may not be accidentally
-> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
->
-> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Patches 3, 4 and 6 are already picked into the clk tree. Still pending
+are patches 1, 2 and 5.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-This patch fixes kernel oops on Exynos5422-based boards (Odroid XU3/XU4)
-mentioned in the following threads:
-https://patchwork.kernel.org/patch/10185357/
-https://www.spinics.net/lists/linux-samsung-soc/msg61766.html
-
-> ---
->   drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
->   1 file changed, 21 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index a4b4e4d6df5e..cca05ea2c058 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core *core)
->   		rate = 0;
->   	core->rate = core->req_rate = rate;
->   
-> +	/*
-> +	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-> +	 * don't get accidentally disabled when walking the orphan tree and
-> +	 * reparenting clocks
-> +	 */
-> +	if (core->flags & CLK_IS_CRITICAL) {
-> +		unsigned long flags;
-> +
-> +		clk_core_prepare(core);
-> +
-> +		flags = clk_enable_lock();
-> +		clk_core_enable(core);
-> +		clk_enable_unlock(flags);
-> +	}
-> +
->   	/*
->   	 * walk the list of orphan clocks and reparent any that newly finds a
->   	 * parent.
->   	 */
->   	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
->   		struct clk_core *parent = __clk_init_parent(orphan);
-> -		unsigned long flags;
->   
->   		/*
-> -		 * we could call __clk_set_parent, but that would result in a
-> -		 * redundant call to the .set_rate op, if it exists
-> +		 * We need to use __clk_set_parent_before() and _after() to
-> +		 * to properly migrate any prepare/enable count of the orphan
-> +		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-> +		 * are enabled during init but might not have a parent yet.
->   		 */
->   		if (parent) {
->   			/* update the clk tree topology */
-> -			flags = clk_enable_lock();
-> -			clk_reparent(orphan, parent);
-> -			clk_enable_unlock(flags);
-> +			__clk_set_parent_before(orphan, parent);
-> +			__clk_set_parent_after(orphan, parent, NULL);
->   			__clk_recalc_accuracies(orphan);
->   			__clk_recalc_rates(orphan, 0);
->   		}
-> @@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
->   	if (core->ops->init)
->   		core->ops->init(core->hw);
->   
-> -	if (core->flags & CLK_IS_CRITICAL) {
-> -		unsigned long flags;
-> -
-> -		clk_core_prepare(core);
-> -
-> -		flags = clk_enable_lock();
-> -		clk_core_enable(core);
-> -		clk_enable_unlock(flags);
-> -	}
-> -
->   	kref_init(&core->ref);
->   out:
->   	clk_pm_runtime_put(core);
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks,
+Georgi
