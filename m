@@ -1,33 +1,63 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 31/41] ARM: da830: Remove legacy clock init
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-32-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <245dbc64-0664-6d53-f826-482da67b5ee0@ti.com>
-Date: Wed, 7 Feb 2018 18:58:09 +0530
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 1 Feb 2018 11:30:27 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 0/6] Tegra210 DFLL implementation
+Message-ID: <20180201093027.GW7031@tbergstrom-lnx.Nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <31e9aad3-bb3d-2475-4fa7-3ecf43dc2f9e@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-32-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <31e9aad3-bb3d-2475-4fa7-3ecf43dc2f9e@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This removes the unused legacy clock init code from
-> arch/arm/mach-davinci/da830.c.
+On Wed, Jan 31, 2018 at 11:28:31AM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> On 24/01/18 12:45, Peter De Schrijver wrote:
+> > This series introduces support for the DFLL as a CPU clock source
+> > on Tegra210. As Jetson TX2 uses a PWM controlled regulator IC which
+> > is driven directly by the DFLLs PWM output, we also introduce support
+> > for PWM regulators next to I2C controlled regulators. The DFLL output
+> > frequency is directly controlled by the regulator voltage. The registers
+> > for controlling the PWM are part of the DFLL IP block, so there's no
+> > separate linux regulator object involved because the regulator IC only
+> > supplies the rail powering the DFLL and the CPUs. It doesn't have any
+> > other controls.
+> > 
+> > Changes since v1:
+> > * improved commit messages
+> > * some style cleanups
+> > 
+> > Peter De Schrijver (6):
+> >   clk: tegra: dfll registration for multiple SoCs
+> >   clk: tegra: DT align parameter for CVB calculation
+> >   clk: tegra: add CVB tables for Tegra210 CPU DFLL
+> >   clk: tegra: dfll: support PWM regulator control
+> >   clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
+> >   cpufreq: tegra124-cpufreq: extend to support Tegra210
+> > 
+> >  drivers/clk/tegra/Kconfig                  |   5 +
+> >  drivers/clk/tegra/Makefile                 |   2 +-
+> >  drivers/clk/tegra/clk-dfll.c               | 481 +++++++++++++++++++++++-----
+> >  drivers/clk/tegra/clk-dfll.h               |   7 +
+> >  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 492 ++++++++++++++++++++++++++++-
+> >  drivers/clk/tegra/cvb.c                    |  18 +-
+> >  drivers/clk/tegra/cvb.h                    |   6 +-
+> >  drivers/cpufreq/tegra124-cpufreq.c         |  13 +-
+> >  8 files changed, 920 insertions(+), 104 deletions(-)
+> 
+> This series appears to be missing DT documentation and DT source changes?
+> 
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Yes.. It seems I forgot those..
 
-Thanks,
-Sekhar
+Peter.
+
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
