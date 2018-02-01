@@ -1,51 +1,97 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 1 Feb 2018 12:31:57 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180201103157.GZ7031@tbergstrom-lnx.Nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+ <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+ <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
+ <f91af7fd-6152-2f44-6e85-f1900356ab1f@nvidia.com>
+ <20180201101559.GX7031@tbergstrom-lnx.Nvidia.com>
+ <2a864740-a394-038a-9bc0-e52750f639fb@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213134032.30235-1-a.hajda@samsung.com>
-References: <CGME20180213134056eucas1p270dae5e31eeb96f5c317fe512d761ddd@eucas1p2.samsung.com>
- <20180213134032.30235-1-a.hajda@samsung.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Thu, 15 Feb 2018 16:55:55 +0900
-Message-ID: <CA+Ln22HZKKJ4+Jz_qZGMpazr25NPawkYCsM-SyNc4NXkS6HeNg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] clk: samsung: fix PLL rates
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <2a864740-a394-038a-9bc0-e52750f639fb@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andrzej,
+On Thu, Feb 01, 2018 at 10:22:11AM +0000, Jon Hunter wrote:
+> 
+> On 01/02/18 10:15, Peter De Schrijver wrote:
+> > On Thu, Feb 01, 2018 at 09:53:43AM +0000, Jon Hunter wrote:
+> >>
+> >> On 01/02/18 09:25, Peter De Schrijver wrote:
+> >>> On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
+> >>>>
+> >>>> On 24/01/18 12:45, Peter De Schrijver wrote:
+> >>>>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> >>>>> support in this driver. Also allow for the case where the CPU voltage is
+> >>>>> controlled directly by the DFLL rather than by a separate regulator object.
+> >>>>>
+> >>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >>>>> ---
+> >>>>>  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+> >>>>>  1 file changed, 6 insertions(+), 7 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> >>>>> index 4353025..d631dc4 100644
+> >>>>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> >>>>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> >>>>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >>>>>  {
+> >>>>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >>>>>  	clk_disable_unprepare(priv->dfll_clk);
+> >>>>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> >>>>> +	if (priv->vdd_cpu_reg)
+> >>>>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >>>>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >>>>>  }
+> >>>>>  
+> >>>>> @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> >>>>>  		return -ENODEV;
+> >>>>>  
+> >>>>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> >>>>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> >>>>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> >>>>> -		goto out_put_np;
+> >>>>> -	}
+> >>>>> +	if (IS_ERR(priv->vdd_cpu_reg))
+> >>>>> +		priv->vdd_cpu_reg = NULL;
+> >>>>>  
+> >>>>
+> >>>> For Tegra124, don't we still want to return an error here?
+> >>>
+> >>> Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
+> >>> can be reworked to use this.
+> >>
+> >> Seems to me that we should use DT or soc-data to specify which is being
+> >> used and then do the appropriate thing. I don't think that we should
+> >> assume that because the regulator is not present we are using PWM.
+> > 
+> > I think we should rather move the sync logic into the DFLL driver in some
+> > future series. The DFLL driver does know about PWM vs I2C regulator.
+> 
+> Not sure I following what you mean by 'sync logic'. Also did you mean
 
-2018-02-13 22:40 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
-> Hi,
->
-> This patchset fixes PLL clock rates in all Samsung PLLs, moreover it adds
-> compile time validators to avoid such mistakes in the future.
-> The patchset has been compile tested for all variants, and runtime tested on
-> TM2 and Odroid XU3.
->
-> Regards
-> Andrzej
->
->
-> Andrzej Hajda (7):
->   clk: samsung: exynos3250: fix PLL rates
->   clk: samsung: exynos5250: fix PLL rates
->   clk: samsung: exynos5260: fix PLL rates
->   clk: samsung: exynos5433: fix PLL rates
->   clk: samsung: exynos7: fix PLL rates
->   clk: samsung: s3c2410: fix PLL rates
->   clk: samsung: add compile time PLL rate validators
+I meant the code in tegra124_cpu_switch_to_pllx() which ensures vdd_cpu
+voltage is set correctly when we switch back to pll_x.
 
-Thanks for the series. I really like the idea.
+> the DFLL driver does NOT know about PWM vs I2C? However, we still know
+> at probe time what is used right?
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+No, I meant the DFLL driver does know about PWM vs I2C, but the cpufreq
+driver does not.
 
-(with v2 of patch 7/7)
+Peter.
 
-Best regards,
-Tomasz
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
