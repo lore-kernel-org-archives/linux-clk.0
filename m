@@ -1,56 +1,51 @@
-Return-Path: <riku.voipio@linaro.org>
-Return-Path: <riku.voipio@linaro.org>
-From: riku.voipio@linaro.org
-To: linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: arnd@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	Riku Voipio <riku.voipio@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH] clk: enable hi655x common clk automatically
-Date: Mon, 12 Feb 2018 15:33:29 +0200
-Message-Id: <20180212133329.10518-1-riku.voipio@linaro.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 06/41] clk: davinci: Add platform information for TI
+ DM365 PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-7-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c80a7a0b-4fc8-6255-ce9e-9849d3ab7ac0@ti.com>
+Date: Thu, 1 Feb 2018 14:58:01 +0530
+MIME-Version: 1.0
+In-Reply-To: <1516468460-4908-7-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Riku Voipio <riku.voipio@linaro.org>
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+> +
+> +void __init dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
+> +{
+> +	const struct davinci_pll_sysclk_info *info;
+> +
+> +	davinci_pll_clk_register(&dm365_pll1_info, "ref_clk", pll1);
+> +
+> +	davinci_pll_auxclk_register("pll1_auxclk", pll1);
+> +
+> +	davinci_pll_sysclkbp_clk_register("pll1_sysclkbp", pll1);
+> +
+> +	davinci_pll_obsclk_register(&dm365_pll1_obsclk_info, pll1);
+> +
+> +	for (info = dm365_pll1_sysclk_info; info->name; info++)
+> +		davinci_pll_sysclk_register(info, pll1);
+> +
+> +	davinci_pll_clk_register(&dm365_pll2_info, "oscin", pll2);
 
-Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
-As suggested by Arnd, enable the driver automatically when the parent
-driver is selected. With sensible defaults in place, we can leave other
-choices for EXPERT.
+As pointed out in other patches, I think we can remove "oscin" here and
+also get rid of clk_register_fixed_factor() for oscin in
+davinci_pll_clk_register().
 
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Suggested-by: Arnd Bergmann <arnd@linaro.org>
-Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
----
-Previous discussion at https://patchwork.kernel.org/patch/9767143/
----
- drivers/clk/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Rest of the patch looks good to me.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc6e6c0..448ce83b334d 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -55,8 +55,10 @@ config COMMON_CLK_RK808
- 	  by control register.
- 
- config COMMON_CLK_HI655X
--	tristate "Clock driver for Hi655x"
--	depends on MFD_HI655X_PMIC || COMPILE_TEST
-+	tristate "Clock driver for Hi655x" if EXPERT
-+	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
-+	depends on REGMAP
-+	default MFD_HI655X_PMIC
- 	---help---
- 	  This driver supports the hi655x PMIC clock. This
- 	  multi-function device has one fixed-rate oscillator, clocked
--- 
-2.15.1
+Thanks,
+Sekhar
