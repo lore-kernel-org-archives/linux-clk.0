@@ -1,53 +1,75 @@
-Return-Path: <pure.logic@nexus-software.ie>
-Return-Path: <pure.logic@nexus-software.ie>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 05/34] clk: at91: update clk_pll_get_best_div_mul to return unsigned long
-Date: Mon,  1 Jan 2018 19:07:32 +0000
-Message-Id: <1514833681-30737-6-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+Return-Path: <jassisinghbrar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <549f02e5-19d7-8cec-674f-247dfb2d2467@linaro.org>
+References: <20171205154701.27730-1-georgi.djakov@linaro.org>
+ <20171205154701.27730-3-georgi.djakov@linaro.org> <CABb+yY146ho0gtbUzDv-Z_xESkU2y=UYfBA6i+522+m58LkABQ@mail.gmail.com>
+ <20171224050625.GH12655@minitux> <CABb+yY3e1YTnf4ZYvXVzXPhOT9-6PzusDfpWRBorwd9nB97SSQ@mail.gmail.com>
+ <f279f1ff-2117-c587-5018-3b3eeeedff8a@linaro.org> <CABb+yY3UvNx71xpt+=j4tTiLEjPTFZTxps0qe2ePa6f4yV61kQ@mail.gmail.com>
+ <549f02e5-19d7-8cec-674f-247dfb2d2467@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Thu, 1 Feb 2018 12:27:23 +0530
+Message-ID: <CABb+yY3GSvSGFm54g3mt5-=AWrq+g2N2pb9Q-pBZgEzE4MXSJg@mail.gmail.com>
+Subject: Re: [PATCH v11 2/6] mailbox: qcom: Create APCS child device for clock controller
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+	Devicetree List <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_pll_get_best_div_mul() returns a value directly as the return
-value to round_rate(). clk_ops->round_rate() has been changed to an
-unsigned long so for the sake of completeness and neatness this patch
-updates the helper function to return the same data-type.
+On Thu, Feb 1, 2018 at 12:10 AM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi Jassi,
+>
+> On 01/27/2018 05:44 AM, Jassi Brar wrote:
+> > On Thu, Jan 4, 2018 at 10:26 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >> Hi Jassi,
+> >>
+> >> On 12/29/2017 08:14 AM, Jassi Brar wrote:
+> >>> Hi Bjorn,
+> >>>
+> >>> On Sun, Dec 24, 2017 at 10:36 AM, Bjorn Andersson
+> >>> <bjorn.andersson@linaro.org> wrote:
+> >>>> On Fri 22 Dec 20:57 PST 2017, Jassi Brar wrote:
+> >>>>
+> >>>>> On Tue, Dec 5, 2017 at 9:16 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >>>>>> There is a clock controller functionality provided by the APCS hardware
+> >>>>>> block of msm8916 devices. The device-tree would represent an APCS node
+> >>>>>> with both mailbox and clock provider properties.
+> >>>>>>
+> >>>>> The spec might depict a 'clock' box and 'mailbox' box inside the
+> >>>>> bigger APCS box. However, from the code I see in this patchset, they
+> >>>>> are orthogonal and can & should be represented as independent DT
+> >>>>> nodes.
+> >>>>
+> >>>> The APCS consists of a number of different hardware blocks, one of them
+> >>>> being the "APCS global" block, which is what this node and drivers
+> >>>> relate to. On 8916 this contains both the IPC register and clock
+> >>>> control. But it's still just one block according to the hardware
+> >>>> specification.
+> >>>>
+> >>>> As such DT should describe the one hardware block by one node IMHO.
+> >>>>
+> >>> In my even humbler opinion, DT should describe a h/w functional unit
+> >>> which _could_ be seen as a standalone component.
+> >>
+> >> The APCS is one separate register block related to the CPU cluster. I
+> >> haven't seen any strict guidelines for such cases in the DT docs, and
+> >> during the discussion got the impression that this is the preferred
+> >> binding. Rob has also reviewed the binding, so we should be fine to move
+> >> forward with this one.
+> >>
+> > Well, I can't overrule Rob. But I am really not happy with random
+> > device spawning from mailbox drivers. I know there are such instances
+> > already in the kernel but that doesn't make it legit... unless there
+> > is some hard dependency. Is there?
+>
+> The dependency is that on this SoC, these functionalities are combined
+> into this "CPU subsystem" block.
+>
+I see the register space is shared between mailbox and the clock. So I
+guess, yes, simply creating a device here and passing the common
+regmap is tidier. Which patches are already picked up?
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/at91/clk-pll.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 4e7da3e..630203e 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -147,10 +147,11 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 	return (parent_rate / div) * (mul + 1);
- }
- 
--static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
--				     unsigned long parent_rate,
--				     u32 *div, u32 *mul,
--				     u32 *index) {
-+static unsigned long clk_pll_get_best_div_mul(struct clk_pll *pll,
-+					      unsigned long rate,
-+					      unsigned long parent_rate,
-+					      u32 *div, u32 *mul, u32 *index)
-+{
- 	const struct clk_pll_layout *layout = pll->layout;
- 	const struct clk_pll_characteristics *characteristics =
- 							pll->characteristics;
--- 
-2.7.4
+Cheers!
