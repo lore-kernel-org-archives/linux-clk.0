@@ -1,95 +1,90 @@
-Return-Path: <groeck7@gmail.com>
-Return-Path: <groeck7@gmail.com>
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
- Magnus Damm <magnus.damm@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das@bp.renesas.com>,
- Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <7d53a583-f8fa-b479-cc8a-408febdddc0e@roeck-us.net>
-Date: Thu, 1 Feb 2018 18:58:20 -0800
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 02/41] clk: davinci: New driver for davinci PLL clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-3-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
+Date: Thu, 1 Feb 2018 13:31:02 +0530
 MIME-Version: 1.0
-In-Reply-To: <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1516468460-4908-3-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/31/2018 10:24 AM, Fabrizio Castro wrote:
-> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> by means of the watchdog.
-> This patch adds a restart handler to rwdt_ops, and also makes sure we
-> keep its priority to a medium level, in order to not override other more
-> effective handlers.
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+> This adds a new driver for mach-davinci PLL clocks. This is porting the
+> code from arch/arm/mach-davinci/clock.c to the common clock framework.
+> Additionally, it adds device tree support for these clocks.
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
+> compile errors until the clock code in arch/arm/mach-davinci is removed.
+> 
+> Note: although there are similar clocks for TI Keystone we are not able
+> to share the code for a few reasons. The keystone clocks are device tree
+> only and use legacy one-node-per-clock bindings. Also the register
+> layouts are a bit different, which would add even more if/else mess
+> to the keystone clocks. And the keystone PLL driver doesn't support
+> setting clock rates.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Looks nice and clean to me. There is still some feedback though.
 
-> ---
-> v3->v4:
-> * New patch spawn out from patch 12/16. The restart handler on Gen3 is
->    controversial, hopefully this patch will help finalizing the discussion.
-> 
->   drivers/watchdog/renesas_wdt.c | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 0a1a402..6d1c4b9 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
->   	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
->   }
->   
-> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-> +			void *data)
+One thing missing is DIV4.5 clock. It will be nice to add that too,
+mostly just because it will make the binding complete.
+
+> +void of_davinci_pll_init(struct device_node *node,
+> +			 const struct davinci_pll_clk_info *info,
+> +			 const struct davinci_pll_obsclk_info *obsclk_info,
+> +			 const struct davinci_pll_sysclk_info *div_info,
+> +			 u8 max_sysclk_id)
 > +{
-> +	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+> +	struct device_node *child;
+> +	const char *parent_name;
+> +	void __iomem *base;
+> +	struct clk *clk;
 > +
-> +	pm_runtime_get_sync(wdev->parent);
+> +	base = of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("ioremap failed");
+> +		return;
+> +	}
 > +
-> +	rwdt_write(priv, 0x00, RWTCSRB);
-> +	rwdt_write(priv, 0x00, RWTCSRA);
-> +	rwdt_write(priv, 0xffff, RWTCNT);
-> +
-> +	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-> +		cpu_relax();
-> +
-> +	rwdt_write(priv, 0x80, RWTCSRA);
-> +	return 0;
-> +}
-> +
->   static const struct watchdog_info rwdt_ident = {
->   	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
->   	.identity = "Renesas WDT Watchdog",
-> @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
->   	.stop = rwdt_stop,
->   	.ping = rwdt_init_timeout,
->   	.get_timeleft = rwdt_get_timeleft,
-> +	.restart = rwdt_restart,
->   };
->   
->   static int rwdt_probe(struct platform_device *pdev)
-> @@ -176,6 +195,7 @@ static int rwdt_probe(struct platform_device *pdev)
->   	platform_set_drvdata(pdev, priv);
->   	watchdog_set_drvdata(&priv->wdev, priv);
->   	watchdog_set_nowayout(&priv->wdev, nowayout);
-> +	watchdog_set_restart_priority(&priv->wdev, 128);
->   
->   	/* This overrides the default timeout only if DT configuration was found */
->   	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
-> 
+> +	if (info->flags & PLL_HAS_OSCIN)
+> +		parent_name = of_clk_get_parent_name(node, 0);
+> +	else
+> +		parent_name = OSCIN_CLK_NAME;
+
+I don't think the reference clock input handling is fully correct/flexible.
+
+There are two ways to provide input clock (ref_clk) to PLL. Either use
+the internal oscillator with a crystal connected between OSCIN and
+OSCOUT (CLKMODE = 0) or a clean clock input (CLKMODE = 1) connected to
+OSCIN (OSCOUT disconnected).
+
+This is a board specific decision. On the LogicPD EVM, the former option
+is used, on the LCDK board, the later.
+
+So, I think what we need is a DT property like
+"ti,davinci-use-internal-osc" for the PLL. Boards can set or ignore it
+and you can switch CLKMODE on or off based on that.
+
+Setting CLKMODE = 1 will switch off the internal oscillator (and
+presumably save power), but it does not act as a mux. This explains why
+not worrying about setting this correctly in current mainline still works.
+
+I am also not sure if we really need PLL_HAS_OSCIN since all DaVinci
+SoCs set it anyway.
+
+Thanks,
+Sekhar
