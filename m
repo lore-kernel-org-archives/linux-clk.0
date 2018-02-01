@@ -1,213 +1,74 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 05/11] clk: actions: Add gate clock support
-Date: Sat, 10 Feb 2018 08:11:14 +0530
-Message-Id: <20180210024120.27503-6-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 1 Feb 2018 12:15:59 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180201101559.GX7031@tbergstrom-lnx.Nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+ <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+ <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
+ <f91af7fd-6152-2f44-6e85-f1900356ab1f@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <f91af7fd-6152-2f44-6e85-f1900356ab1f@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi gate clock together with helper
-functions to be used in composite clock.
+On Thu, Feb 01, 2018 at 09:53:43AM +0000, Jon Hunter wrote:
+> 
+> On 01/02/18 09:25, Peter De Schrijver wrote:
+> > On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
+> >>
+> >> On 24/01/18 12:45, Peter De Schrijver wrote:
+> >>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> >>> support in this driver. Also allow for the case where the CPU voltage is
+> >>> controlled directly by the DFLL rather than by a separate regulator object.
+> >>>
+> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >>> ---
+> >>>  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+> >>>  1 file changed, 6 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> >>> index 4353025..d631dc4 100644
+> >>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> >>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> >>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >>>  {
+> >>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >>>  	clk_disable_unprepare(priv->dfll_clk);
+> >>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> >>> +	if (priv->vdd_cpu_reg)
+> >>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >>>  }
+> >>>  
+> >>> @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> >>>  		return -ENODEV;
+> >>>  
+> >>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> >>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> >>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> >>> -		goto out_put_np;
+> >>> -	}
+> >>> +	if (IS_ERR(priv->vdd_cpu_reg))
+> >>> +		priv->vdd_cpu_reg = NULL;
+> >>>  
+> >>
+> >> For Tegra124, don't we still want to return an error here?
+> > 
+> > Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
+> > can be reworked to use this.
+> 
+> Seems to me that we should use DT or soc-data to specify which is being
+> used and then do the appropriate thing. I don't think that we should
+> assume that because the regulator is not present we are using PWM.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+I think we should rather move the sync logic into the DFLL driver in some
+future series. The DFLL driver does know about PWM vs I2C regulator.
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
- 
- clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
-new file mode 100644
-index 000000000000..25dd94ac0f35
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-gate.h"
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
-+{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
-+}
-+
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
-new file mode 100644
-index 000000000000..4fc609647ae4
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_gate_hw {
-+	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
-+};
-+
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
-+	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
-+	}
-+
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		},							\
-+	}								\
-+
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_gate, common);
-+}
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
-+
-+extern const struct clk_ops owl_gate_ops;
-+
-+#endif /* _OWL_GATE_H_ */
--- 
-2.14.1
+Peter.
