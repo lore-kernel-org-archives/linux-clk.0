@@ -1,69 +1,151 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 16 Feb 2018 10:09:25 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	architt@codeaurora.org, a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
-Message-ID: <20180216090925.bct4u3rfdg4epmpa@flea.lan>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v6 02/41] clk: davinci: New driver for davinci PLL clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-3-git-send-email-david@lechnology.com>
+ <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <3ed91881-8753-a541-31aa-c835329141b3@lechnology.com>
+Date: Thu, 1 Feb 2018 12:57:52 -0600
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v7eapcxguafrbstv"
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
+In-Reply-To: <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/01/2018 02:01 AM, Sekhar Nori wrote:
+> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>> This adds a new driver for mach-davinci PLL clocks. This is porting the
+>> code from arch/arm/mach-davinci/clock.c to the common clock framework.
+>> Additionally, it adds device tree support for these clocks.
+>>
+>> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
+>> compile errors until the clock code in arch/arm/mach-davinci is removed.
+>>
+>> Note: although there are similar clocks for TI Keystone we are not able
+>> to share the code for a few reasons. The keystone clocks are device tree
+>> only and use legacy one-node-per-clock bindings. Also the register
+>> layouts are a bit different, which would add even more if/else mess
+>> to the keystone clocks. And the keystone PLL driver doesn't support
+>> setting clock rates.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+> 
+> Looks nice and clean to me. There is still some feedback though.
+> 
+> One thing missing is DIV4.5 clock. It will be nice to add that too,
+> mostly just because it will make the binding complete.
+> 
+>> +void of_davinci_pll_init(struct device_node *node,
+>> +			 const struct davinci_pll_clk_info *info,
+>> +			 const struct davinci_pll_obsclk_info *obsclk_info,
+>> +			 const struct davinci_pll_sysclk_info *div_info,
+>> +			 u8 max_sysclk_id)
+>> +{
+>> +	struct device_node *child;
+>> +	const char *parent_name;
+>> +	void __iomem *base;
+>> +	struct clk *clk;
+>> +
+>> +	base = of_iomap(node, 0);
+>> +	if (!base) {
+>> +		pr_err("ioremap failed");
+>> +		return;
+>> +	}
+>> +
+>> +	if (info->flags & PLL_HAS_OSCIN)
+>> +		parent_name = of_clk_get_parent_name(node, 0);
+>> +	else
+>> +		parent_name = OSCIN_CLK_NAME;
+> 
+> I don't think the reference clock input handling is fully correct/flexible.
+> 
+> There are two ways to provide input clock (ref_clk) to PLL. Either use
+> the internal oscillator with a crystal connected between OSCIN and
+> OSCOUT (CLKMODE = 0) or a clean clock input (CLKMODE = 1) connected to
+> OSCIN (OSCOUT disconnected).
+> 
+> This is a board specific decision. On the LogicPD EVM, the former option
+> is used, on the LCDK board, the later.
+> 
+> So, I think what we need is a DT property like
+> "ti,davinci-use-internal-osc" for the PLL. Boards can set or ignore it
+> and you can switch CLKMODE on or off based on that.
+> 
+> Setting CLKMODE = 1 will switch off the internal oscillator (and
+> presumably save power), but it does not act as a mux. This explains why
+> not worrying about setting this correctly in current mainline still works.
+> 
+> I am also not sure if we really need PLL_HAS_OSCIN since all DaVinci
+> SoCs set it anyway.
 
---v7eapcxguafrbstv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2018 at 09:08:54PM +0100, Jernej Skrabec wrote:
-> This patch series implements support for A83T DW HDMI and PHY. Contrary to
-> v1 series, this one is based on latest linux-next, since all needed patch=
-es
-> were merged.
->=20
-> While exactly this combination of HDMI controller and PHY is not common in
-> Allwinner SoCs, this patch series nevertheless makes groundwork for other
-> SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H=
-5.
->=20
-> Please take a look.
+I realize this is a bit confusing. I think that part of this comes from
+the fact that OSCIN is not used consistently in the TRMs. It is used as
+the name of the actual pin on the SoC for connecting an external clock
+signal or crystal. It is also used as an input to CLKMODE where it means
+the output of the internal oscillator rather than the external pin (some
+SoCs show CLKMODE as a mux with OSCIN and CLKIN, but I agree that it is
+not really a mux since OSCIN and CLKIN are the same external pin on the
+SoC - then other SoCs show OSCIN meaning only the external pin here).
+Furthermore, OSCIN is listed as one of the inputs of EXTCLKSRC also as
+one of the inputs of OBSCLK on da850-type SoCs.
 
-Applied and pushed everything, thanks!
-Maxime
+So, the option I went with here is that "ref_clk" is the external clock
+connected to the OSCIN pin and that the "oscin" clock is the clock domain
+_after_ CLKMODE. This matches the use of OSCIN in the TRMs where "OSCIN"
+is used as an input for EXTCLKSRC and OBSCLK. Also the fact that the
+external reference clock is sometimes called CLKSRC instead of OSCIN
+influenced the decision go with "oscin" being the internal (to the PLL)
+clock domain.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+I think what I should have done, though, is named PLL_HAS_OSCIN as
+PLL_HAS_CLKMODE instead. I think what you are missing here is that
+PLL_HAS_OSCIN (or PLL_HAS_CLKMODE) only means that the PLL _has_
+PLLCTL[CLKMODE]. It does _not_ mean that we set (or clear) PLLCTL[CLKMODE].
+On SoCs with two PLLs, only one of them has the PLLCTL[CLKMODE] bit (and
+therefore the PLL_HAS_OSCIN flag) and the output of this is shared by both
+PLLs, e.g. Figure 7-1. PLLC Structure in the AM1808 TRM (spruh82c). So,
+the clock tree in Linux ends up looking like this:
 
---v7eapcxguafrbstv
-Content-Type: application/pgp-signature; name="signature.asc"
+ref_clk - the external clock - aka CLKSRC
++-oscin - internal clock domain after CLKMODE - shared by both PLLs
+   +-pll0_extclksrc
+   +-pll0_prediv
+   +-pll0_auxclk
+   +-pll0_obsclk - via the OSCSRC mux
+   +-pll1_pllen
+   +-pll1_pllout
+   +-pll1_obsclk - via the OSCSRC mux
 
------BEGIN PGP SIGNATURE-----
+Clocks beyond two levels deep are omitted for brevity.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqGn8QACgkQ0rTAlCFN
-r3RXPw/9GDjBOi4+Nv9x+jhnrPNiddQ1dIuAA4seBO1Hg6/GanA6niQnTF0FhYmS
-wWn6iC8ZHYfmtinO3kSAiqHGHVO4J6LBL682+ycoy8Su2XzUsAo7X76nZxI5m7Kw
-rSqByCmPgCXfiXmcHvizK9axkwNlHyNRy9fWDUR1CSyD45YgkaQrpGdecvbQ4JY/
-Lj+wU+2zq6cqIZ4xnESOH+qshWyL988gIGWcR8VtF+SCv/9dgdpJge/T6EnYzj7K
-aDayrsmJGEqng/GAWT90fCEYt4XzLGEMAqbXU2whTR2rT4LKJUgTwvc+sITpM8/I
-6wCP3ChT2ZYZ0h/YGGiKgFsYU3aSD5JldDAhLqVG7/6Q206zblBI+21XZ7L88Vv4
-aTBizZXFbIsuMFTqMZD+Y1RkfrW2xw0dtblcqwjTBRvW3pk0ufJhdIwFZSkHc4N4
-wZu/gTRFASGz+wr3DzKa+qHerRI9xU6Ycm7748fSeMp/RV7JcqXTjAQF5Zej5COT
-JuVKw2Xrt5dbWApHNdTMdQbV2Zs4x5fsjjKJTg4vrcC3HulPcqEADRHN1CxAv2fh
-ALMN3FWz/rUdHMs4FGAK5HmsPHxMyEDpvs3Nk3ydEZn0syDqQIVo4zNVfXzfL2xE
-VJL82vp9OeUwbUjDj2jpKU9mrWrmxsxM7RtjVuKbuJ4WHK/SpNo=
-=fIM/
------END PGP SIGNATURE-----
+It should be easy to see the correlation here Figure 7-1 with the
+exception that in Figure 7-1 "OSCIN" has the meaning of "the physical
+pin on the chip" (which Linux calls "ref_clk") and there is no clear
+label in Figure 7-1 of what the clock domain after PLLCTL[CLKMODE] is
+called (which Linux calls "oscin").
 
---v7eapcxguafrbstv--
+Sure, it would work just fine if we left "oscin" out of the picture,
+but it simplifies the driver implementation by having a known "oscin"
+clock that is fully controlled by the clock driver code instead of
+having to pass the user-supplied "ref_clk" around a bunch of places.
+And, we could try to call it something other than "oscin" to try
+to avoid confusion, but then you will just cause confusion in other
+places (which could be less total confusion, so I am open to change
+here).
+
+---
+
+Switching topics to CLKMODE and DT...
+
+There is a "ti,clkmode-square-wave" property in the proposed DT bindings
+that does exactly what you have suggested, except the logic is
+reversed. When omitted, it assumes the use of a crystal oscillator.
+I believe this is the most common configuration, which is why I made
+it the default instead of the other way around.
