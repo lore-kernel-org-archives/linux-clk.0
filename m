@@ -1,207 +1,318 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 06/42] clk: davinci: Add platform information for TI DM365 PLL
-Date: Mon, 19 Feb 2018 14:21:27 -0600
-Message-Id: <1519071723-31790-7-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de,
+	"A . s . Dong" <aisheng.dong@nxp.com>,
+	linux-imx@nxp.com
+Subject: [PATCH v2 3/4] clk: imx: add SCCG PLL type
+Date: Thu,  1 Feb 2018 18:54:11 +0100
+Message-Id: <20180201175412.9480-3-l.stach@pengutronix.de>
+In-Reply-To: <20180201175412.9480-1-l.stach@pengutronix.de>
+References: <20180201175412.9480-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM365 based systems.
+The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+The driver currently misses the PLL lock check, as the preliminary
+documentation mentions lock configurations, but is quiet about where
+to find the actual lock status signal.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
+ drivers/clk/imx/Makefile       |   3 +-
+ drivers/clk/imx/clk-sccg-pll.c | 235 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   9 ++
+ 3 files changed, 246 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
 
-v7 changes:
-- split registration functions for each PLL
-- Add platform_device_id lookup
-
-v6 changes:
-- Added dm365_pll{1,2}_info with controller-specific information
-- Changed OBSCLK data
-- Add empty lines between function calls
-
-
- drivers/clk/davinci/Makefile    |   1 +
- drivers/clk/davinci/pll-dm365.c | 119 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |   2 +
- drivers/clk/davinci/pll.h       |   3 +
- 4 files changed, 125 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm365.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6720bd0..353aa02 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -5,4 +5,5 @@ obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 9892ae63539c..bfcbd5272d12 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-sccg-pll.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
 new file mode 100644
-index 0000000..8654ca7
+index 000000000000..3a79f952564b
 --- /dev/null
-+++ b/drivers/clk/davinci/pll-dm365.c
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -0,0 +1,235 @@
 +/*
-+ * PLL clock descriptions for TI DM365
++ * Copyright 2017 NXP.
 + *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
 +
-+#include "pll.h"
++#include "clk.h"
 +
-+#define OCSEL_OCSRC_ENABLE	0
++/* PLL CFGs */
++#define PLL_CFG0	0x0
++#define PLL_CFG1	0x4
++#define PLL_CFG2	0x8
 +
-+static const struct davinci_pll_clk_info dm365_pll1_info __initconst = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
-+		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
++#define PLL_DIVF1_SHIFT	13
++#define PLL_DIVF2_SHIFT	7
++#define PLL_DIVF_MASK	0x3f
++
++#define PLL_DIVR1_SHIFT	25
++#define PLL_DIVR2_SHIFT	19
++#define PLL_DIVR1_MASK	0x3
++#define PLL_DIVR2_MASK	0x3f
++#define PLL_REF_SHIFT	0
++#define PLL_REF_MASK	0x3
++
++#define PLL_LOCK	31
++#define PLL_PD		7
++
++#define OSC_25M		25000000
++#define OSC_27M		27000000
++
++struct clk_sccg_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
 +};
 +
-+static const struct davinci_pll_sysclk_info dm365_pll1_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
++#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
 +
-+/*
-+ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
-+ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
-+ * multiplexer. By modeling it as a single parent mux clock, the clock code will
-+ * still do the right thing in this case.
-+ */
-+static const char * const dm365_pll_obsclk_parent_names[] __initconst = {
-+	"oscin",
-+};
-+
-+static u32 dm365_pll_obsclk_table[] = {
-+	OCSEL_OCSRC_ENABLE,
-+};
-+
-+static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info __initconst = {
-+	.name = "pll1_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+static const struct davinci_pll_clk_info dm365_pll2_info __initconst = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
-+		 PLL_PLLM_2X,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm365_pll2_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
-+	{ }
-+};
-+
-+static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info __initconst = {
-+	.name = "pll2_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+int __init dm365_pll1_init(struct device *dev, void __iomem *base)
++static int clk_pll1_is_prepared(struct clk_hw *hw)
 +{
-+	const struct davinci_pll_sysclk_info *info;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
 +
-+	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	return (val & (1 << PLL_PD)) ? 0 : 1;
++}
 +
-+	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, divf;
 +
-+	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
 +
-+	davinci_pll_obsclk_register(dev, &dm365_pll1_obsclk_info, base);
++	return parent_rate * 2 * (divf + 1);
++}
 +
-+	for (info = dm365_pll1_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(dev, info, base);
++static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	u32 div;
++
++	div = rate / (parent_rate * 2);
++
++	return parent_rate * div * 2;
++}
++
++static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++	u32 divf;
++
++	divf = rate / (parent_rate * 2);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
++	val |= (divf - 1) << PLL_DIVF1_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	/* FIXME: PLL lock check */
 +
 +	return 0;
 +}
 +
-+int __init dm365_pll2_init(struct device *dev, void __iomem *base)
++static int clk_pll1_prepare(struct clk_hw *hw)
 +{
-+	const struct davinci_pll_sysclk_info *info;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
 +
-+	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++	val = readl_relaxed(pll->base);
++	val &= ~(1 << PLL_PD);
++	writel_relaxed(val, pll->base);
 +
-+	davinci_pll_auxclk_register(dev, "pll2_auxclk", base);
-+
-+	davinci_pll_obsclk_register(dev, &dm365_pll2_obsclk_info, base);
-+
-+	for (info = dm365_pll2_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(dev, info, base);
++	/* FIXME: PLL lock check */
 +
 +	return 0;
 +}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index f72ea30..c8dd3fa 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -758,6 +758,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
- 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
- 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
-+	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
-+	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
- 	{ }
++
++static void clk_pll1_unprepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base);
++	val |= (1 << PLL_PD);
++	writel_relaxed(val, pll->base);
++}
++
++static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, ref, divr1, divf1, divr2, divf2;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
++	case 0:
++		ref = OSC_25M;
++		break;
++	case 1:
++		ref = OSC_27M;
++		break;
++	default:
++		ref = OSC_25M;
++		break;
++	}
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
++	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
++	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
++	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
++
++	temp64 = ref * 2;
++	temp64 *= (divf1 + 1) * (divf2 + 1);
++
++	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++
++	return (unsigned long)temp64;
++}
++
++static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 div;
++	unsigned long parent_rate = *prate;
++
++	div = rate / (parent_rate);
++
++	return parent_rate * div;
++}
++
++static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 val;
++	u32 divf;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++
++	divf = rate / (parent_rate);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
++	val |= (divf - 1) << PLL_DIVF2_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static const struct clk_ops clk_sccg_pll1_ops = {
++	.is_prepared	= clk_pll1_is_prepared,
++	.recalc_rate	= clk_pll1_recalc_rate,
++	.round_rate	= clk_pll1_round_rate,
++	.set_rate	= clk_pll1_set_rate,
++};
++
++static const struct clk_ops clk_sccg_pll2_ops = {
++	.prepare	= clk_pll1_prepare,
++	.unprepare	= clk_pll1_unprepare,
++	.recalc_rate	= clk_pll2_recalc_rate,
++	.round_rate	= clk_pll2_round_rate,
++	.set_rate	= clk_pll2_set_rate,
++};
++
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base, enum imx_sccg_pll_type pll_type)
++{
++	struct clk_sccg_pll *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++	init.name = name;
++	switch (pll_type) {
++	case SCCG_PLL1:
++		init.ops = &clk_sccg_pll1_ops;
++		break;
++	case SCCG_PLL2:
++		init.ops = &clk_sccg_pll2_ops;
++		break;
++	}
++
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 287610902ea8..809509758e24 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -21,6 +21,11 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
  };
  
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 6bd73d7..b911c8a 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -129,4 +129,7 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base);
- int dm355_pll1_init(struct device *dev, void __iomem *base);
- int dm355_pll2_init(struct device *dev, void __iomem *base);
- 
-+int dm365_pll1_init(struct device *dev, void __iomem *base);
-+int dm365_pll2_init(struct device *dev, void __iomem *base);
++enum imx_sccg_pll_type {
++	SCCG_PLL1,
++	SCCG_PLL2,
++};
 +
- #endif /* __CLK_DAVINCI_PLL_H___ */
+ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ 		const char *parent, void __iomem *base);
+ 
+@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+ 
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base,
++			     enum imx_sccg_pll_type pll_type);
++
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
 -- 
-2.7.4
+2.15.1
