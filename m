@@ -1,75 +1,85 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Thu, 8 Feb 2018 00:04:01 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car
- Gen2 support
-Message-ID: <20180207230401.uvpare7cwk7tpqk7@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+ <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+ <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
+ <f91af7fd-6152-2f44-6e85-f1900356ab1f@nvidia.com>
+ <20180201101559.GX7031@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <2a864740-a394-038a-9bc0-e52750f639fb@nvidia.com>
+Date: Thu, 1 Feb 2018 10:22:11 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="i7htazl5c3cbyi6c"
-In-Reply-To: <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <20180201101559.GX7031@tbergstrom-lnx.Nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---i7htazl5c3cbyi6c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 01/02/18 10:15, Peter De Schrijver wrote:
+> On Thu, Feb 01, 2018 at 09:53:43AM +0000, Jon Hunter wrote:
+>>
+>> On 01/02/18 09:25, Peter De Schrijver wrote:
+>>> On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
+>>>>
+>>>> On 24/01/18 12:45, Peter De Schrijver wrote:
+>>>>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+>>>>> support in this driver. Also allow for the case where the CPU voltage is
+>>>>> controlled directly by the DFLL rather than by a separate regulator object.
+>>>>>
+>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>> ---
+>>>>>  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+>>>>>  1 file changed, 6 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+>>>>> index 4353025..d631dc4 100644
+>>>>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+>>>>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+>>>>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+>>>>>  {
+>>>>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+>>>>>  	clk_disable_unprepare(priv->dfll_clk);
+>>>>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+>>>>> +	if (priv->vdd_cpu_reg)
+>>>>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+>>>>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+>>>>>  }
+>>>>>  
+>>>>> @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>>>>>  		return -ENODEV;
+>>>>>  
+>>>>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+>>>>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+>>>>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+>>>>> -		goto out_put_np;
+>>>>> -	}
+>>>>> +	if (IS_ERR(priv->vdd_cpu_reg))
+>>>>> +		priv->vdd_cpu_reg = NULL;
+>>>>>  
+>>>>
+>>>> For Tegra124, don't we still want to return an error here?
+>>>
+>>> Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
+>>> can be reworked to use this.
+>>
+>> Seems to me that we should use DT or soc-data to specify which is being
+>> used and then do the appropriate thing. I don't think that we should
+>> assume that because the regulator is not present we are using PWM.
+> 
+> I think we should rather move the sync logic into the DFLL driver in some
+> future series. The DFLL driver does know about PWM vs I2C regulator.
 
-On Wed, Jan 31, 2018 at 06:24:15PM +0000, Fabrizio Castro wrote:
-> This commit documents the compatibility with R-Car Gen2 and RZ/G
-> devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
-> Also, this patch expands the list of SoC-specific compatible strings to
-> include RZ/G and R-Car Gen2 devices.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Not sure I following what you mean by 'sync logic'. Also did you mean
+the DFLL driver does NOT know about PWM vs I2C? However, we still know
+at probe time what is used right?
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cheers
+Jon
 
-
---i7htazl5c3cbyi6c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7heAACgkQFA3kzBSg
-KbYriw/7BT40MBbg0dFnn3nMKJv8vGFJ/C3BIVsh0gy5T+crZE+9Famm2EYPRAU5
-l5gmh/e38DCrves2Eys2ifrfVzG8kp/69Zkp89hhkkDzNddji3+JjMsMgBsjePTZ
-dPZKMWPFI05mR+SlvdLmmjLX0hAODG+3llEjCCd02YvM6P1PrWVdFB5IPA0NSOCG
-LXKuFAobA93/Q58J4oBGwKsbPvptRFxUVuNoCjyd5bmAzY3QuemXYuVTclrVjUZc
-9dTlRfstdhazi3gkHSv3bN2yR2NH6cqc7cCV0LTN6rUFZPtXU4XF6tEk9oYMp78R
-RpaGl3TFrWym2IBLGoDEZLDH0FDmp3m3qou7Bxek1UpbuytmTOHr8TSLU7Iz1b6z
-1ccDL5Q8A7ESf6rxenttuIrC/gp8VJm4mNmW0NK8rVf4xpU7lfnARXVL9FG70EUj
-lYAJ5hJCUQX7QOsZBhu8y0odB4GlkEw3Zbc2L3s14In2uvmqKwF86mTDCqKXeuFG
-RxXAxAXyX4BSwEpq1ZXbHRlvDyKzinlwf0wOXdFLJxGvdgQzOPNpKMoJw4Izo5UE
-szFfjDa0s6JpAwHps/Qzt31/FmuVA48CyOf8K5KJXZTinHdPcWv1GHMHFs3d9DSI
-RpnZ+wBczYVS+uCFRrYlFJwPCSCV7iFTTeyIqMJLVpJnuzpymhY=
-=DrUQ
------END PGP SIGNATURE-----
-
---i7htazl5c3cbyi6c--
+-- 
+nvpublic
