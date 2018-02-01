@@ -1,245 +1,294 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v7 08/15] clk: qcom: Add support for Krait clocks
-Date: Mon, 26 Feb 2018 15:23:24 +0530
-Message-Id: <1519638811-17269-9-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de,
+	"A . s . Dong" <aisheng.dong@nxp.com>,
+	linux-imx@nxp.com
+Subject: [PATCH v2 2/4] clk: imx: add fractional PLL output clock
+Date: Thu,  1 Feb 2018 18:54:10 +0100
+Message-Id: <20180201175412.9480-2-l.stach@pengutronix.de>
+In-Reply-To: <20180201175412.9480-1-l.stach@pengutronix.de>
+References: <20180201175412.9480-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+This is a new clock type introduced on i.MX8.
 
-The Krait clocks are made up of a series of muxes and a divider
-that choose between a fixed rate clock and dedicated HFPLLs for
-each CPU. Instead of using mmio accesses to remux parents, the
-Krait implementation exposes the remux control via cp15
-registers. Support these clocks.
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- drivers/clk/qcom/Kconfig     |   4 ++
- drivers/clk/qcom/Makefile    |   1 +
- drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-krait.h |  38 +++++++++++++
- 4 files changed, 167 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-krait.c
- create mode 100644 drivers/clk/qcom/clk-krait.h
+ drivers/clk/imx/Makefile       |   1 +
+ drivers/clk/imx/clk-frac-pll.c | 229 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   3 +
+ 3 files changed, 233 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-frac-pll.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d9ae51e..bf14f56 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -234,3 +234,7 @@ config QCOM_HFPLL
- 	  Support for the high-frequency PLLs present on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8974, APQ8084, etc.
-+
-+config KRAIT_CLOCKS
-+	bool
-+	select KRAIT_L2_ACCESSORS
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index c57b808..e1e96f6 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += clk-regmap-mux-div.o
-+clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
- clk-qcom-y += clk-hfpll.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index f91f2b2e11cd..9892ae63539c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -6,6 +6,7 @@ obj-y += \
+ 	clk-cpu.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
++	clk-frac-pll.o \
+ 	clk-gate-exclusive.o \
+ 	clk-gate2.o \
+ 	clk-pllv1.o \
+diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
 new file mode 100644
-index 0000000..2e41767
+index 000000000000..30736d53dfbe
 --- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++++ b/drivers/clk/imx/clk-frac-pll.c
+@@ -0,0 +1,229 @@
++/*
++ * Copyright 2017 NXP.
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
++#include <linux/clk-provider.h>
 +#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/jiffies.h>
 +
-+#include <asm/krait-l2-accessors.h>
++#include "clk.h"
 +
-+#include "clk-krait.h"
++#define PLL_CFG0 	0x0
++#define PLL_CFG1	0x4
 +
-+/* Secondary and primary muxes share the same cp15 register */
-+static DEFINE_SPINLOCK(krait_clock_reg_lock);
++#define PLL_LOCK_STATUS	(0x1 << 31)
++#define PLL_CLKE	21
++#define PLL_PD		19
++#define PLL_BYPASS	14
++#define PLL_NEWDIV_VAL		(1 << 12)
++#define PLL_NEWDIV_ACK		(1 << 11)
++#define PLL_FRAC_DIV_MASK	0xffffff
++#define PLL_INT_DIV_MASK	0x7f
++#define PLL_FRAC_DENOM		0x1000000
 +
-+#define LPL_SHIFT	8
-+static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
-+{
-+	unsigned long flags;
-+	u32 regval;
-+
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	regval = krait_get_l2_indirect_reg(mux->offset);
-+	regval &= ~(mux->mask << mux->shift);
-+	regval |= (sel & mux->mask) << mux->shift;
-+	if (mux->lpl) {
-+		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
-+		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
-+	}
-+	krait_set_l2_indirect_reg(mux->offset, regval);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
-+
-+	/* Wait for switch to complete. */
-+	mb();
-+	udelay(1);
-+}
-+
-+static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = clk_mux_reindex(index, mux->parent_map, 0);
-+	mux->en_mask = sel;
-+	/* Don't touch mux if CPU is off as it won't work */
-+	if (__clk_is_enabled(hw->clk))
-+		__krait_mux_set_sel(mux, sel);
-+
-+	return 0;
-+}
-+
-+static u8 krait_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = krait_get_l2_indirect_reg(mux->offset);
-+	sel >>= mux->shift;
-+	sel &= mux->mask;
-+	mux->en_mask = sel;
-+
-+	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
-+}
-+
-+const struct clk_ops krait_mux_clk_ops = {
-+	.set_parent = krait_mux_set_parent,
-+	.get_parent = krait_mux_get_parent,
-+	.determine_rate = __clk_mux_determine_rate_closest,
++struct clk_frac_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
 +};
-+EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
 +
-+/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
-+static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long *parent_rate)
++#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
++
++static int clk_wait_lock(struct clk_frac_pll *pll)
 +{
-+	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
-+	return DIV_ROUND_UP(*parent_rate, 2);
++	unsigned long timeout = jiffies + msecs_to_jiffies(10);
++
++	/* Wait for PLL to lock */
++	do {
++		if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
++			break;
++		if (time_after(jiffies, timeout))
++			break;
++	} while (1);
++
++	return readl_relaxed(pll->base) & PLL_LOCK_STATUS ? 0 : -ETIMEDOUT;
 +}
 +
-+static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
++static int clk_wait_ack(struct clk_frac_pll *pll)
 +{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	unsigned long flags;
++	unsigned long timeout = jiffies + msecs_to_jiffies(50);
++
++	/* return directly if the pll is in powerdown or in bypass */
++	if (readl_relaxed(pll->base) & ((1 << PLL_PD) | (1 << PLL_BYPASS)))
++		return 0;
++
++	/* Wait for the pll's divfi and divff to be reloaded */
++	do {
++		if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
++			break;
++		if (time_after(jiffies, timeout))
++			break;
++	} while (1);
++
++	return readl_relaxed(pll->base) & PLL_NEWDIV_ACK ? 0 : ETIMEDOUT;
++}
++
++static int clk_pll_prepare(struct clk_hw *hw)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
 +	u32 val;
-+	u32 mask = BIT(d->width) - 1;
 +
-+	if (d->lpl)
-+		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~(1 << PLL_PD);
++	writel_relaxed(val, pll->base + PLL_CFG0);
 +
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	val = krait_get_l2_indirect_reg(d->offset);
-+	val &= ~mask;
-+	krait_set_l2_indirect_reg(d->offset, val);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
-+
-+	return 0;
++	return clk_wait_lock(pll);
 +}
 +
-+static unsigned long
-+krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++static void clk_pll_unprepare(struct clk_hw *hw)
 +{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	u32 mask = BIT(d->width) - 1;
-+	u32 div;
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val;
 +
-+	div = krait_get_l2_indirect_reg(d->offset);
-+	div >>= d->shift;
-+	div &= mask;
-+	div = (div + 1) * 2;
-+
-+	return DIV_ROUND_UP(parent_rate, div);
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val |= (1 << PLL_PD);
++	writel_relaxed(val, pll->base + PLL_CFG0);
 +}
 +
-+const struct clk_ops krait_div2_clk_ops = {
-+	.round_rate = krait_div2_round_rate,
-+	.set_rate = krait_div2_set_rate,
-+	.recalc_rate = krait_div2_recalc_rate,
++static int clk_pll_is_prepared(struct clk_hw *hw)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	return (val & (1 << PLL_PD)) ? 0 : 1;
++}
++
++static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val, divff, divfi, divq;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	divq = ((val & 0x1f) + 1) * 2;
++	val = readl_relaxed(pll->base + PLL_CFG1);
++	divff = (val >> 7) & PLL_FRAC_DIV_MASK;
++	divfi = (val & PLL_INT_DIV_MASK);
++
++	temp64 = (u64)parent_rate * 8;
++	temp64 *= divff;
++	do_div(temp64, PLL_FRAC_DENOM);
++	temp64 /= divq;
++
++	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
++}
++
++static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 divff, divfi;
++	u64 temp64;
++	unsigned long parent_rate = *prate;
++
++	parent_rate *= 8;
++	rate *= 2;
++	divfi = rate / parent_rate;
++	temp64 = (u64)(rate - divfi * parent_rate);
++	temp64 *= PLL_FRAC_DENOM;
++	do_div(temp64, parent_rate);
++	divff = temp64;
++
++	temp64 = (u64)parent_rate;
++	temp64 *= divff;
++	do_div(temp64, PLL_FRAC_DENOM);
++
++	return (parent_rate * divfi + (unsigned long)temp64) / 2;
++}
++
++/*
++ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
++ * (means the PLL output will be divided by 2). So the PLL output can use
++ * the below formula:
++ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
++ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
++ */
++static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
++	u32 val, divfi, divff;
++	u64 temp64;
++	int ret;
++
++	parent_rate *= 8;
++	rate *= 2;
++	divfi = rate / parent_rate;
++	temp64 = (u64) (rate - divfi * parent_rate);
++	temp64 *= PLL_FRAC_DENOM;
++	do_div(temp64, parent_rate);
++	divff = temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG1);
++	val &= ~((PLL_FRAC_DIV_MASK << 7) | (PLL_INT_DIV_MASK));
++	val |= ((divff << 7) | (divfi - 1));
++	writel_relaxed(val, pll->base + PLL_CFG1);
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~0x1f;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val |= PLL_NEWDIV_VAL;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	ret = clk_wait_ack(pll);
++
++	/* clear the NEV_DIV_VAL */
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~PLL_NEWDIV_VAL;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	return ret;
++}
++
++static const struct clk_ops clk_frac_pll_ops = {
++	.prepare	= clk_pll_prepare,
++	.unprepare	= clk_pll_unprepare,
++	.is_prepared	= clk_pll_is_prepared,
++	.recalc_rate	= clk_pll_recalc_rate,
++	.round_rate	= clk_pll_round_rate,
++	.set_rate	= clk_pll_set_rate,
 +};
-+EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
-diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-new file mode 100644
-index 0000000..71890bc
---- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.h
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+#ifndef __QCOM_CLK_KRAIT_H
-+#define __QCOM_CLK_KRAIT_H
++struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
++			     void __iomem *base)
++{
++	struct clk_frac_pll *pll;
++	struct clk *clk;
++	struct clk_init_data init;
 +
-+#include <linux/clk-provider.h>
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
 +
-+struct krait_mux_clk {
-+	unsigned int	*parent_map;
-+	u32		offset;
-+	u32		mask;
-+	u32		shift;
-+	u32		en_mask;
-+	bool		lpl;
++	pll->base = base;
++	init.name = name;
++	init.ops = &clk_frac_pll_ops;
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
 +
-+	struct clk_hw	hw;
-+	struct notifier_block   clk_nb;
-+};
++	pll->hw.init = &init;
 +
-+#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk))
++		kfree(pll);
 +
-+extern const struct clk_ops krait_mux_clk_ops;
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bbf3597..287610902ea8 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ 		void __iomem *base);
+ 
++struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
++			     void __iomem *base);
 +
-+struct krait_div2_clk {
-+	u32		offset;
-+	u8		width;
-+	u32		shift;
-+	bool		lpl;
-+
-+	struct clk_hw	hw;
-+};
-+
-+#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
-+
-+extern const struct clk_ops krait_div2_clk_ops;
-+
-+#endif
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.15.1
