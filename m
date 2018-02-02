@@ -1,69 +1,128 @@
-Return-Path: <brendanhiggins@google.com>
+Return-Path: <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+ <20180202105304.gow2znzgxqmuxgol@flea.lan>
+ <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+ <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+ <aa43a02a-3ea9-2f61-eaf6-ddc7980f78a5@micronovasrl.com>
+ <20180202155252.vhlih33ju6zh26oh@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <ee1f5d36-5b85-f770-1670-527632367f01@micronovasrl.com>
+Date: Fri, 2 Feb 2018 18:21:18 +0100
 MIME-Version: 1.0
-In-Reply-To: <CAHb3i=uvj_KS4tZ_qZjQdMZ2CCg9_+11FbmvmF4D5DFGtaAW=g@mail.gmail.com>
-References: <1517818975-11427-1-git-send-email-tmaimon77@gmail.com>
- <1517818975-11427-3-git-send-email-tmaimon77@gmail.com> <CAFd5g445Ae-uBO52sn1WH67tMgc0n_sbi6cS-SuKLhR__D98kg@mail.gmail.com>
- <CAHb3i=un-LjnV+DWBMkEcDKNFyEi63wh0RR0dHWsHpv2K9erTw@mail.gmail.com> <CAHb3i=uvj_KS4tZ_qZjQdMZ2CCg9_+11FbmvmF4D5DFGtaAW=g@mail.gmail.com>
-From: Brendan Higgins <brendanhiggins@google.com>
-Date: Thu, 8 Feb 2018 16:07:44 -0800
-Message-ID: <CAFd5g44vTyOciaT5+YcVOdxd0=7sxWb3r+gO6_DFv3bmS=EL-w@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: npcm: add NPCM7xx clock driver
-To: Tali Perry <tali.perry1@gmail.com>
-Cc: =?UTF-8?Q?=E2=80=8B_Tomer_Maimon?= <tmaimon77@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Avi Fishman <avifishman70@gmail.com>, Joel Stanley <joel@jms.id.au>, linux-clk@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180202155252.vhlih33ju6zh26oh@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-<snip>
->> +
->> +       /* Define fixed clocks.
->> +        * Notice: the following clocks are fixed value on NPCM7XX and should
->> +        * not be changed.
->> +        * therefor they are not exposed to the dev tree .
->
-> I am not convinced. The top level .dtsi is usually SoC specific.
->
-> - CLKREF should be fixed on 25MHz. I didn't want to put it in DT since
-> it might appear as something that is changeable.
->  on npcm750 all clocks are set in ROM +BB (several possible settings)
-> , so this entire driver is only used for reading the current clock
-> settings. All clocks are read only and derived from CLKREF. CLKREF is
-> fixed so no point in putting it in DT and exposing it outside of this
-> driver.
+Hi,
 
-I understand your rationale, but the *.dtsi is typically used to describe the
-SoC, things that cannot change. For example, consider
-arch/arm/boot/dts/nuvoton-npcm750.dtsi, it describes the CPU cores, cache
-hierarchy, peripherals and what busses they reside on, memory layout, etc. None
-of these things are configurable; the *.dtsi just describes the SoC. Typically,
-a *.dts is made for a particular board and imports a *.dtsi and does some
-configuration, but it is not supposed to override things like what I listed
-above (amoung other things).
+Il 02/02/2018 16:52, Maxime Ripard ha scritto:
+> On Fri, Feb 02, 2018 at 04:38:13PM +0100, Giulio Benetti wrote:
+>> Hi,
+>>
+>> Il 02/02/2018 14:35, Maxime Ripard ha scritto:
+>>> On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
+>>>> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
+>>>>> Hi,
+>>>>>
+>>>>> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+>>>>>>>>> What kernel version did you use?
+>>>>>>>>
+>>>>>>>> Latest mainline.
+>>>>>>>
+>>>>>>> I guess this patch could fix it:
+>>>>>>> http://code.bulix.org/1kitrq-268936?raw
+>>>>>>
+>>>>>> This should prevent from modifying parent clock. But my problem was
+>>>>>> different.
+>>>>>>
+>>>>>> On A20, gpu_clk can have different PLL, not I've found out the way
+>>>>>> to choose right one with assigned-parent-clocks.
+>>>>>>
+>>>>>> I have patchset ready for adding A20 mali node, but I need some more
+>>>>>> time to complete with OPP, then I will submit entire patchset.
+>>>>>>
+>>>>>> Now it works correctly, using right pll(dedicated PLL8), setting
+>>>>>> right frequency.
+>>>>>
+>>>>> The point is that we really don't care about which PLL is actually
+>>>>> being used, as long as the rate is correct and we don't break anything
+>>>>> else. If the GPU rate is accessible through one of the other PLL, it
+>>>>> makes even more sense to not use the GPU PLL and keep it disabled,
+>>>>> since it will result in some power savings.
+>>>>
+>>>> Ah! I see the point now, very clever system for power saving.
+>>>> I'm going to check if it's resolutive,
+>>>> but it sounds good.
+>>>>
+>>>>>
+>>>>>> Btw, do I need to add a board using it, or can I add only Mali node
+>>>>>> to sun7i-a20.dtsi(plus other little patches)?
+>>>>>
+>>>>> You can add it to the DTSI without a board using it (and actually,
+>>>>> nothing should be in the board DTS, everything in the DT for the Mali
+>>>>> applies to all boards).
+>>>>
+>>>> Sure. So I would also add the patch you've addressed me:
+>>>> http://code.bulix.org/1kitrq-268936?raw
+>>>> as a commit. Can I submit it in patchset to complete the whole job?
+>>>
+>>> I already sent that patch quite some time ago, I'll just apply it. You
+>>> can send the DT patch :)
+>>
+>> Thanks. Sorry for my ignorance, but where are you applying patches?
+>> Because I've tried to check sunxi-next and a lot of other Repo but I can't
+>> find this and neither "Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali
+>> changing dclk frequency"
+> 
+> Usually, in the git tree listed in MAINTAINERS :)
 
-There are several reasons that you put this information that cannot change in a
-*.dtsi. For one it is a convenient, all in one place description of the SoC that
-serves as a form of documentation. But more importantly, if you were to create a
-variation of the 750 with a different number of cores, a different memory
-layout, a different reference clock, etc, you could potentiallly use the same
-drivers for both SoCs, and you would only have to write a new *.dtsi. I know you
-may have no intention to do this, but many other CPU vendors do. And for this
-reason, this is how drivers are expected to be written.
+Please don't laugh at me! :)
 
-I hope this makes sense.
+I've tried to check for your patch(drivers/gpu/drm/sun4i/sun4i_tcon.c) on:
+https://cgit.freedesktop.org/drm/drm-misc/
+according to MAINTAINERS file and nothing found.
 
->
->> +        */
->> +       pr_debug("\tclk register fixed clocks\n");
->> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_REFCLK,
->> +               NULL, 0, 25000000);
->> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_SYSBYPCK,
->> +               NULL, 0, 800000000); // rarely used. mostly testing. TBD: remove
->> +       hw = clk_hw_register_fixed_rate(NULL, NPCM7XX_CLK_S_MCBYPCK,
->> +               NULL, 0, 800000000); // rarely used.  mostly testing. TBD:remove
->> +
->> +
-<snip>
+For the other one(arch/arm/boot/dts/sun7i-a20.dtsi), I've checked
+on:
+https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git/
+
+Nothing neither here!
+
+In MAINTANERS file there's no arch/arm/boot/dts/sun* association.
+
+I don't know where else to look, I'm going nut!
+And for sure I'm looking idiot,
+this is why I've prepended "Please don't laugh at me!" :))
+
+Help!
+
+> 
+> Maxime
+> 
+
+
+-- 
+Giulio Benetti
+R&D Manager &
+Advanced Research
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
