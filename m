@@ -1,63 +1,59 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
-	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
-	FRAMEWORK)
-Subject: [PATCH v2 2/7] clk: samsung: exynos5250: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:49 +0100
-Message-id: <20180216145754.14428-3-a.hajda@samsung.com>
-In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145804eucas1p20cc58695fce84f9acc03a16b6913fcb2@eucas1p2.samsung.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 18/41] clk: davinci: New driver for TI DA8XX CFGCHIP
+ clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-19-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c2138795-edcd-bb7d-094d-47dc049c33df@ti.com>
+Date: Fri, 2 Feb 2018 18:49:07 +0530
+MIME-Version: 1.0
+In-Reply-To: <1516468460-4908-19-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of parent might be being
-set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+> +static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
+> +	.enable		= da8xx_cfgchip_gate_clk_enable,
+> +	.disable	= da8xx_cfgchip_gate_clk_disable,
+> +	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
 
-To fix this issue declared rates are changed to exactly match rates generated
-by a PLL, as calculated from the P, M, S, K coefficients.
+I assume the reason for not using clk-gate.c is lack of regmap support
+there?
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clk/samsung/clk-exynos5250.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> +	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
+> +};
+> +
+> +static struct clk * __init
+> +da8xx_cfgchip_gate_clk_register(const struct da8xx_cfgchip_gate_clk_info *info,
+> +				const char *parent_name,
+> +				struct regmap *regmap)
+> +{
+> +	struct da8xx_cfgchip_gate_clk *gate;
+> +	struct clk_init_data init;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = info->name;
+> +	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
+> +		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
+> +	else
+> +		init.ops = &da8xx_cfgchip_gate_clk_ops;
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 9b073c98a891..923c608b1b95 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -711,13 +711,13 @@ static const struct samsung_pll_rate_table epll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
--	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
-+	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
- 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
- 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
--	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-+	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
- 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
--	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
--	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
-+	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
- 	{ },
- };
- 
--- 
-2.16.1
+This will be easier to read using ternary operator, I think. But you
+will probably have line breaks.
+
+Thanks,
+Sekhar
