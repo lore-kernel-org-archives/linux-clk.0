@@ -1,226 +1,78 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 04/11] clk: actions: Add common clock driver support
-Date: Sat, 10 Feb 2018 08:11:13 +0530
-Message-Id: <20180210024120.27503-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee
+ Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel
+ Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
+Subject: [PATCH 13/14] clk: stm32mp1: add MCO clocks
+Date: Fri, 2 Feb 2018 15:03:41 +0100
+Message-ID: <1517580222-23301-14-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi common clock driver with generic structures
-and interface functions.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Two micro-controller clock output (MCO) pins are available: MCO1 and MCO2.
+For each output, it is possible to select a clock source.
+The selected clock can be divided thanks to configurable prescaler.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/Kconfig              |  1 +
- drivers/clk/Makefile             |  1 +
- drivers/clk/actions/Kconfig      |  4 ++
- drivers/clk/actions/Makefile     |  3 ++
- drivers/clk/actions/owl-common.c | 84 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-common.h | 40 +++++++++++++++++++
- 6 files changed, 133 insertions(+)
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
+ drivers/clk/clk-stm32mp1.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc6e6c0..6313a4f4327a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 1cb06b0..0402a0e 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1188,6 +1188,16 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
+ }
  
-+source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e6364f..554b67e4d0c6 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
++#define _GATEMUXDIV(_gate_offset, _bit_idx,\
++		    _mux_offset, _mux_bit, _mux_width,\
++		    _div_offset, _div_bit, _div_width\
++		)\
++{\
++	_DIV(_div_offset, _div_bit, _div_width, 0),\
++	_GATE(_gate_offset, _bit_idx, 0),\
++	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
++}
++
+ #define _MP1_GATE(_gate_offset, _bit_idx, _flags)\
+ 		  _GATE_OPS(_gate_offset, _bit_idx, _flags, &mp1_gate_clk_ops)
  
- # please keep this section sorted lexicographically by directory path name
-+obj-$(CONFIG_ARCH_ACTIONS)		+= actions/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
- obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
- obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-new file mode 100644
-index 000000000000..13a3e5083d43
---- /dev/null
-+++ b/drivers/clk/actions/Kconfig
-@@ -0,0 +1,4 @@
-+config CLK_ACTIONS
-+	bool "Clock driver for Actions Semi SoCs"
-+	depends on ARCH_ACTIONS || COMPILE_TEST
-+	default ARCH_ACTIONS
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-new file mode 100644
-index 000000000000..64a50fc2d335
---- /dev/null
-+++ b/drivers/clk/actions/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+@@ -1543,6 +1553,19 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
+ 		  CLK_SET_RATE_PARENT,
+ 		  _GATEMUX(RCC_BDCR, 20, RCC_BDCR, 16, 2)),
 +
-+clk-owl-y			+= owl-common.o
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-new file mode 100644
-index 000000000000..a7cb698fdc86
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++	/* MCO clocks */
++	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATEMUXDIV(RCC_MCO1CFGR, 12,
++			      RCC_MCO1CFGR, 0, 3,
++			      RCC_MCO1CFGR, 4, 4)),
 +
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-common.h"
-+
-+static const struct regmap_config owl_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xffff,
-+	.fast_io	= true,
-+};
-+
-+static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
-+			 struct regmap *regmap)
-+{
-+	int i;
-+	struct owl_clk_common *clks;
-+
-+	for (i = 0; i < desc->num_clks; i++) {
-+		clks = desc->clks[i];
-+		if (!clks)
-+			continue;
-+
-+		clks->regmap = regmap;
-+	}
-+}
-+
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc)
-+{
-+	void __iomem *base;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct regmap *regmap;
-+
-+	base = of_iomap(node, 0);
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
-+	if (IS_ERR_OR_NULL(regmap)) {
-+		pr_err("failed to init regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	owl_clk_set_regmap(desc, regmap);
-+
-+	return 0;
-+}
-+
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
-+{
-+	int i, ret;
-+	struct clk_hw *hw;
-+
-+	for (i = 0; i < hw_clks->num; i++) {
-+
-+		hw = hw_clks->hws[i];
-+
-+		if (!hw)
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider\n");
-+
-+	return ret;
-+}
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-new file mode 100644
-index 000000000000..e7ea23a6c8f1
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.h
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_COMMON_H_
-+#define _OWL_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+struct device_node;
-+
-+struct owl_clk_common {
-+	struct regmap			*regmap;
-+	struct clk_hw			hw;
-+};
-+
-+struct owl_clk_desc {
-+	struct owl_clk_common		**clks;
-+	unsigned long			num_clks;
-+	struct clk_hw_onecell_data	*hw_clks;
-+};
-+
-+static inline struct owl_clk_common *
-+	hw_to_owl_clk_common(const struct clk_hw *hw)
-+{
-+	return container_of(hw, struct owl_clk_common, hw);
-+}
-+
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc);
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
-+
-+#endif /* _OWL_COMMON_H_ */
++	COMPOSITE(CK_MCO2, "ck_mco2", mco2_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATEMUXDIV(RCC_MCO2CFGR, 12,
++			      RCC_MCO2CFGR, 0, 3,
++			      RCC_MCO2CFGR, 4, 4)),
+ };
+ 
+ struct stm32_clock_match_data {
 -- 
-2.14.1
+1.9.1
