@@ -1,67 +1,84 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 09/12] drm/sun4i: Add support for A83T second DE2 mixer
-Date: Wed,  7 Feb 2018 22:17:10 +0100
-Message-Id: <20180207211713.3638-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+Return-Path: <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+ <20180202105304.gow2znzgxqmuxgol@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+Date: Fri, 2 Feb 2018 11:57:20 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180202105304.gow2znzgxqmuxgol@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-It supports 1 VI and 1 UI plane and HW scaling on both planes.
+Il 02/02/2018 11:53, Maxime Ripard ha scritto:
+> Hi,
+> 
+> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+>>>>> What kernel version did you use?
+>>>>
+>>>> Latest mainline.
+>>>
+>>> I guess this patch could fix it:
+>>> http://code.bulix.org/1kitrq-268936?raw
+>>
+>> This should prevent from modifying parent clock. But my problem was
+>> different.
+>>
+>> On A20, gpu_clk can have different PLL, not I've found out the way
+>> to choose right one with assigned-parent-clocks.
+>>
+>> I have patchset ready for adding A20 mali node, but I need some more
+>> time to complete with OPP, then I will submit entire patchset.
+>>
+>> Now it works correctly, using right pll(dedicated PLL8), setting
+>> right frequency.
+> 
+> The point is that we really don't care about which PLL is actually
+> being used, as long as the rate is correct and we don't break anything
+> else. If the GPU rate is accessible through one of the other PLL, it
+> makes even more sense to not use the GPU PLL and keep it disabled,
+> since it will result in some power savings.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Ah! I see the point now, very clever system for power saving.
+I'm going to check if it's resolutive,
+but it sounds good.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 2cbb2de6d39c..9b0256d31a61 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -485,6 +485,13 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
- 	.vi_num		= 1,
- };
- 
-+static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -498,6 +505,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
- 		.data = &sun8i_a83t_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
-+		.data = &sun8i_a83t_mixer1_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
+> 
+>> Btw, do I need to add a board using it, or can I add only Mali node
+>> to sun7i-a20.dtsi(plus other little patches)?
+> 
+> You can add it to the DTSI without a board using it (and actually,
+> nothing should be in the board DTS, everything in the DT for the Mali
+> applies to all boards).
+
+Sure. So I would also add the patch you've addressed me:
+http://code.bulix.org/1kitrq-268936?raw
+as a commit. Can I submit it in patchset to complete the whole job?
+
+> 
+> Maxime
+> 
+
+
 -- 
-2.16.1
+Giulio Benetti
+R&D Manager &
+Advanced Research
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
