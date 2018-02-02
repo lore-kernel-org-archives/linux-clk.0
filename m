@@ -1,33 +1,68 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [v2,7/8] clk: divider: read-only divider can propagate rate
- change
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180214134340.17242-8-jbrunet@baylibre.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f1d4688b-87ce-01df-ab94-72bf20579330@lechnology.com>
-Date: Mon, 19 Feb 2018 11:30:38 -0600
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 20/41] ARM: da830: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-21-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
+Date: Fri, 2 Feb 2018 19:42:42 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180214134340.17242-8-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1516468460-4908-21-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/14/2018 07:43 AM, Jerome Brunet wrote:
-> When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
-> register shall be left un-touched, but it does not mean the clock
-> should stop rate propagation if CLK_SET_RATE_PARENT is set
-> 
-> This is properly handled in qcom clk-regmap-divider but it was not in
-> the generic divider
-> 
-> To fix this situation, introduce a new helper function
-> divider_ro_round_rate, on the same model as divider_round_rate.
-> 
-> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>  void __init da830_init_time(void)
+>  {
+> +#ifdef CONFIG_COMMON_CLK
+> +	void __iomem *pll0, *psc0, *psc1;
+> +	struct clk *clk;
+> +
+> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
+> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
+> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
+> +
+> +	da8xx_register_cfgchip();
+> +
+> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
+> +
+> +	da830_pll_clk_init(pll0);
+> +
+> +	da830_psc_clk_init(psc0, psc1);
+> +
 
-Working for me with the davinci clk drivers I am developing.
+> +	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
+> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
+> +
+> +	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
+> +	clk_register_clkdev(clk, "timer0", NULL);
+> +
+> +	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
+> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
 
-Tested-By: David Lechner <david@lechnology.com>
+Isn't this better done in da830_pll_clk_init() ? I think we can get rid
+of the dummy fixed factor clock too and directly use the pll0_auxclk.
+That reminds me, is "pll0_aux_clk" above correct, or should it be
+"pll0_auxclk" like in da830_pll_clk_init()?
+
+> +
+> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
+> +	clk_register_clkdev(clk, "rmii", NULL);
+
+I don't see any driver looking for this clock using con_id "rmii". I
+know this came from existing code. But its most likely a vestige and can
+be dropped.
+
+Thanks,
+Sekhar
