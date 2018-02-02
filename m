@@ -1,156 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54530 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934443AbeBMLc1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Feb 2018 06:32:27 -0500
-Subject: Re: BUG: A31s Not booting anymore
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
- <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
- <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <9f7123d1-a14b-c51a-d7a8-63c58a3f83dd@gmail.com>
-Date: Tue, 13 Feb 2018 12:32:15 +0100
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee
+ Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel
+ Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
+Subject: [PATCH 08/14] clk: stm32mp1: add Sub System clocks
+Date: Fri, 2 Feb 2018 15:03:36 +0100
+Message-ID: <1517580222-23301-9-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
+The RCC handles three sub-system clocks: ck_mpuss, ck_axiss and ck_mcuss.
+This patch adds also some MUX system and several prescalers.
 
-On 13.02.2018 03:59, Chen-Yu Tsai wrote:
-> On Tue, Feb 13, 2018 at 9:25 AM, Philipp Rossak <embed3d@gmail.com> wrote:
->>
->>
->> On 12.02.2018 19:21, Philipp Rossak wrote:
->>>
->>> Hey,
->>>
->>> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting
->>> kernel ... . After enabling the earlyprintk I could capture this log: [1].
->>>
->>> After reverting those 5 commits from Chen-Yu I was able to boot again:
->>>
->>>
->>> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
->>> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
->>>
->>> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
->>> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
->>>
->>> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
->>> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
->>>
->>> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
->>> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
->>>
->>> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
->>> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
->>>
->>>
->>> I allready tried to fix it with making them save against zero:
->>>
->>> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
->>>           cmp->fixed_post_div with)
->>>                  rate *= cmp->fixed_post_div;
->>>
->>> But that didn't help.
->>>
->>> Any ideas?
->>>
->>> Regards,
->>> Philipp
->>>
->>> [1]: https://pastebin.com/64Fzzqvg
->>
->>
->> It took me some time, but I have now a few more infos:
->>
->> Right now the code breaks at this point here [1], with this clock [2].
->> If we have a look now at the clock config [3], we see here a table which is
->> an u8 array and also a fixed_predivs struct.
-> 
-> The u8 array is for mapping the parents from the index in the parents
-> array to the actual register value you listed below.
-> 
-> How are you figuring out which clock is triggering this? Because that
-> is not even the right type of clock. The backtrace you posted shows
-> the error occurring in a DIV or M type clock, not the MP type you
-> are pointing to.
-> 
-> Could you add some noisy printk calls to the sunxi_ccu_probe()
-> function in drivers/clk/sunxi-ng/ccu_common.c so it's much clearer
-> which clock is failing?
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-Thats what I basically did to find out which clock is failing. This here 
-are the changes I'm doing [1]  and thats the dirty log [2]. It fails at 
-clock NR 155 which is this one [3] mentioned before.
-
-> 
-> 
->>
->> If we have a look at the function call where it breaks [4], shouldn't the
->> table be a clk_div_table struct instead of an u8?
-> 
-> The table argument is an option. Did you go through how the sunxi-ng driver
-> calls this function? As mentioned above, you are looking at the wrong thing.
-> 
-> Thanks
-> ChenYu
-
-I followed the failing call to this function (through the clock driver). 
-As you can see I added an additional printk statement to see where it fails.
-
-Regards,
-Philipp
-> 
->>
->> The a31s is the only board where we have this combination of a fixed_predivs
->> and a table.
->>
->> Philipp
->>
->>
->> Related Clock source register A31s:
->>
->> 0000: OSC24MHz/750=32KHz
->> 0001: LOSC
->> 0010: OSC24MHz
->> 0011: /
->> 0100: /
->> 0101: /
->> 0110: /
->> 0111: /
->> 1000: /
->> 1001: /
->> 1010: /
->> 1011: AXICLK/4
->> 1100: /
->> 1101: AHB1CLK/4
->> 1110: /
->> 1111: /
->>
->>
->> [1]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
->>
->> [2]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
->>
->> [3]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
->>
->> [4]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
->>
-
-[1]: https://pastebin.com/tvDunAWq
-[2]: https://pastebin.com/SBn2VQLu
-[3]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/include/dt-bindings/clock/sun6i-a31-ccu.h#L187
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 15cd488..d85c619 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -332,6 +332,26 @@
+ 	"ck_mpu", "ck_axi", "ck_mcu", "pll4_p", "ck_hse", "ck_hsi"
+ };
+ 
++static const struct clk_div_table axi_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
++	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
++	{ 0 },
++};
++
++static const struct clk_div_table mcu_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 32 }, { 6, 64 }, { 7, 128 },
++	{ 8, 512 }, { 9, 512 }, { 10, 512}, { 11, 512 },
++	{ 12, 512 }, { 13, 512 }, { 14, 512}, { 15, 512 },
++	{ 0 },
++};
++
++static const struct clk_div_table apb_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 16 }, { 6, 16 }, { 7, 16 },
++	{ 0 },
++};
++
+ struct clock_config {
+ 	u32 id;
+ 	const char *name;
+@@ -1001,6 +1021,15 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 	_NO_MUX,\
+ }
+ 
++#define _MUXDIV(_mux_offset, _mux_bit, _mux_width,\
++		_div_offset, _div_shift, _div_width,\
++		_div_table)\
++{\
++	_DIV_TABLE(_div_offset, _div_shift, _div_width, 0, _div_table),\
++	_NO_GATE,\
++	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
++}
++
+ #define MP1_GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
+ {\
+ 	.id		= _id,\
+@@ -1091,6 +1120,38 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 	COMPOSITE(PLL4_R, "pll4_r", PARENT("pll4"), 0,
+ 		  _GATEDIV(RCC_PLL4CR, 6,
+ 			   RCC_PLL4CFGR2, 16, 7, NULL)),
++
++	/* MUX system clocks */
++	MUX(CK_PER, "ck_per", per_src, CLK_OPS_PARENT_ENABLE,
++	    RCC_CPERCKSELR, 0, 2, 0),
++
++	MUX(CK_MPU, "ck_mpu", cpu_src, CLK_OPS_PARENT_ENABLE | CLK_IS_CRITICAL,
++	    RCC_MPCKSELR, 0, 2, 0),
++
++	COMPOSITE(CK_AXI, "ck_axi", axi_src, CLK_IS_CRITICAL |
++		  CLK_OPS_PARENT_ENABLE,
++		  _MUXDIV(RCC_ASSCKSELR, 0, 2,
++			  RCC_AXIDIVR, 0, 3, axi_div_table)),
++
++	COMPOSITE(CK_MCU, "ck_mcu", mcu_src, CLK_IS_CRITICAL |
++		  CLK_OPS_PARENT_ENABLE,
++		  _MUXDIV(RCC_MSSCKSELR, 0, 2,
++			  RCC_MCUDIVR, 0, 4, mcu_div_table)),
++
++	DIV_TABLE(NO_ID, "pclk1", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB1DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk2", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB2DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk3", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB3DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk4", "ck_axi", CLK_IGNORE_UNUSED, RCC_APB4DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk5", "ck_axi", CLK_IGNORE_UNUSED, RCC_APB5DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
