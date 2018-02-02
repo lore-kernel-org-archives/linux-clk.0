@@ -1,348 +1,251 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 10/11] clk: actions: Add pll clock support
-Date: Sat, 10 Feb 2018 08:11:19 +0530
-Message-Id: <20180210024120.27503-11-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee
+ Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel
+ Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
+Subject: [PATCH 04/14] clk: stm32mp1: add MP1 gate for osc hse/hsi/csi oscillators
+Date: Fri, 2 Feb 2018 15:03:32 +0100
+Message-ID: <1517580222-23301-5-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi PLL clock
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+MP1 Gate is a gate with a set and a clear register.
+This patch also introduces divider and fixed factor clocks.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/actions/Makefile  |   1 +
- drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
+ drivers/clk/clk-stm32mp1.c | 186 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 186 insertions(+)
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 53431aef6e9c..31b68eab9309 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
- clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
- clk-owl-y			+= owl-composite.o
-+clk-owl-y			+= owl-pll.o
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-new file mode 100644
-index 000000000000..3560c7324f9c
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 6e39e85..be5a4e5 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -355,6 +355,19 @@ struct gate_cfg {
+ 	u8 gate_flags;
+ };
+ 
++struct fixed_factor_cfg {
++	unsigned int mult;
++	unsigned int div;
++};
 +
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
++struct div_cfg {
++	u32 reg_off;
++	u8 shift;
++	u8 width;
++	u8 div_flags;
++	const struct clk_div_table *table;
++};
 +
-+#include "owl-pll.h"
-+
-+static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
+ static struct clk_hw *
+ _clk_hw_register_gate(struct device *dev,
+ 		      struct clk_hw_onecell_data *clk_data,
+@@ -373,6 +386,122 @@ struct gate_cfg {
+ 				    lock);
+ }
+ 
++static struct clk_hw *
++_clk_hw_register_fixed_factor(struct device *dev,
++			      struct clk_hw_onecell_data *clk_data,
++			      void __iomem *base, spinlock_t *lock,
++			      const struct clock_config *cfg)
 +{
-+	u32 mul;
++	struct fixed_factor_cfg *ff_cfg = cfg->cfg;
 +
-+	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
-+	if (mul < pll_hw->min_mul)
-+		mul = pll_hw->min_mul;
-+	else if (mul > pll_hw->max_mul)
-+		mul = pll_hw->max_mul;
-+
-+	return mul &= mul_mask(pll_hw);
++	return clk_hw_register_fixed_factor(dev, cfg->name, cfg->parent_name,
++					    cfg->flags, ff_cfg->mult,
++					    ff_cfg->div);
 +}
 +
-+static unsigned int _get_table_rate(const struct clk_pll_table *table,
-+		unsigned int val)
++static struct clk_hw *
++_clk_hw_register_divider_table(struct device *dev,
++			       struct clk_hw_onecell_data *clk_data,
++			       void __iomem *base, spinlock_t *lock,
++			       const struct clock_config *cfg)
 +{
-+	const struct clk_pll_table *clkt;
++	struct div_cfg *div_cfg = cfg->cfg;
 +
-+	for (clkt = table; clkt->rate; clkt++)
-+		if (clkt->val == val)
-+			return clkt->rate;
++	return clk_hw_register_divider_table(dev,
++					     cfg->name,
++					     cfg->parent_name,
++					     cfg->flags,
++					     div_cfg->reg_off + base,
++					     div_cfg->shift,
++					     div_cfg->width,
++					     div_cfg->div_flags,
++					     div_cfg->table,
++					     lock);
++}
++
++/* MP1 Gate clock with set & clear registers */
++
++static int mp1_gate_clk_enable(struct clk_hw *hw)
++{
++	if (!clk_gate_ops.is_enabled(hw))
++		clk_gate_ops.enable(hw);
 +
 +	return 0;
 +}
 +
-+static const struct clk_pll_table *_get_pll_table(
-+		const struct clk_pll_table *table, unsigned long rate)
++static void mp1_gate_clk_disable(struct clk_hw *hw)
 +{
-+	const struct clk_pll_table *clkt;
++	struct clk_gate *gate = to_clk_gate(hw);
++	unsigned long flags = 0;
 +
-+	for (clkt = table; clkt->rate; clkt++) {
-+		if (clkt->rate == rate) {
-+			table = clkt;
-+			break;
-+		} else if (clkt->rate < rate)
-+			table = clkt;
++	if (clk_gate_ops.is_enabled(hw)) {
++		spin_lock_irqsave(gate->lock, flags);
++		writel_relaxed(BIT(gate->bit_idx), gate->reg + RCC_CLR);
++		spin_unlock_irqrestore(gate->lock, flags);
 +	}
-+
-+	return table;
 +}
 +
-+static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct clk_pll_table *clkt;
-+	u32 mul;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		return clkt->rate;
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	mul = owl_pll_calculate_mul(pll_hw, rate);
-+
-+	return pll_hw->bfreq * mul;
-+}
-+
-+static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 val;
-+
-+	if (pll_hw->table) {
-+		regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+		val = val >> pll_hw->shift;
-+		val &= mul_mask(pll_hw);
-+
-+		return _get_table_rate(pll_hw->table, val);
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+	val = val >> pll_hw->shift;
-+	val &= mul_mask(pll_hw);
-+
-+	return pll_hw->bfreq * val;
-+}
-+
-+static int owl_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	return !!(reg & BIT(pll_hw->bit_idx));
-+}
-+
-+static void owl_pll_set(const struct owl_clk_common *common,
-+		       const struct owl_pll_hw *pll_hw, bool enable)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	if (enable)
-+		reg |= BIT(pll_hw->bit_idx);
-+	else
-+		reg &= ~BIT(pll_hw->bit_idx);
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+}
-+
-+static int owl_pll_enable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, true);
-+
-+	return 0;
-+}
-+
-+static void owl_pll_disable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, false);
-+}
-+
-+static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	const struct clk_pll_table *clkt;
-+	u32 val, reg;
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return 0;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		val = clkt->val;
-+	} else {
-+		val = owl_pll_calculate_mul(pll_hw, rate);
-+	}
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	reg &= ~mul_mask(pll_hw);
-+	reg |= val << pll_hw->shift;
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+
-+	udelay(PLL_STABILITY_WAIT_US);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops owl_pll_ops = {
-+	.enable = owl_pll_enable,
-+	.disable = owl_pll_disable,
-+	.is_enabled = owl_pll_is_enabled,
-+	.round_rate = owl_pll_round_rate,
-+	.recalc_rate = owl_pll_recalc_rate,
-+	.set_rate = owl_pll_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-new file mode 100644
-index 000000000000..0aae30abd5dc
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_PLL_H_
-+#define _OWL_PLL_H_
-+
-+#include "owl-common.h"
-+
-+/* last entry should have rate = 0 */
-+struct clk_pll_table {
-+	unsigned int		val;
-+	unsigned long		rate;
++const struct clk_ops mp1_gate_clk_ops = {
++	.enable		= mp1_gate_clk_enable,
++	.disable	= mp1_gate_clk_disable,
++	.is_enabled	= clk_gate_is_enabled,
 +};
 +
-+struct owl_pll_hw {
-+	u32			reg;
-+	u32			bfreq;
-+	u8			bit_idx;
-+	u8			shift;
-+	u8			width;
-+	u8			min_mul;
-+	u8			max_mul;
-+	const struct clk_pll_table *table;
-+};
-+
-+struct owl_pll {
-+	struct owl_pll_hw	pll_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
-+		   _width, _min_mul, _max_mul, _table)			\
-+	{								\
-+		.reg		= _reg,					\
-+		.bfreq		= _bfreq,				\
-+		.bit_idx	= _bit_idx,				\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.min_mul	= _min_mul,				\
-+		.max_mul	= _max_mul,				\
-+		.table		= _table,				\
-+	}
-+
-+#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT(_name,			\
-+					       _parent,			\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define mul_mask(m)		((1 << ((m)->width)) - 1)
-+#define PLL_STABILITY_WAIT_US	(50)
-+
-+static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
++static struct clk_hw *clk_register_mp1_gate(struct device *dev,
++					    const char *name,
++					    const char *parent_name,
++					    unsigned long flags,
++					    void __iomem *reg, u8 bit_idx,
++					    u8 clk_gate_flags, spinlock_t *lock)
 +{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++	struct clk_init_data init = { NULL };
++	struct clk_gate *gate;
++	int ret;
++	struct clk_hw *hw;
 +
-+	return container_of(common, struct owl_pll, common);
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &mp1_gate_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = flags;
++
++	gate->reg = reg;
++	gate->bit_idx = bit_idx;
++	gate->lock = lock;
++
++	gate->hw.init = &init;
++	hw = &gate->hw;
++
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++	return hw;
 +}
 +
-+extern const struct clk_ops owl_pll_ops;
++static struct clk_hw *
++_clk_register_mp1_gate(struct device *dev,
++		       struct clk_hw_onecell_data *clk_data,
++		       void __iomem *base, spinlock_t *lock,
++		       const struct clock_config *cfg)
++{
++	struct gate_cfg *gate_cfg = cfg->cfg;
 +
-+#endif /* _OWL_PLL_H_ */
++	return clk_register_mp1_gate(dev,
++				     cfg->name,
++				     cfg->parent_name,
++				     cfg->flags,
++				     gate_cfg->reg_off + base,
++				     gate_cfg->bit_idx,
++				     gate_cfg->gate_flags,
++				     lock);
++}
++
+ #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
+ {\
+ 	.id		= _id,\
+@@ -387,10 +516,67 @@ struct gate_cfg {
+ 	.func		= _clk_hw_register_gate,\
+ }
+ 
++#define FIXED_FACTOR(_id, _name, _parent, _flags, _mult, _div)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_name	= _parent,\
++	.flags		= _flags,\
++	.cfg		=  &(struct fixed_factor_cfg) {\
++		.mult = _mult,\
++		.div = _div,\
++	},\
++	.func		= _clk_hw_register_fixed_factor,\
++}
++
++#define DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
++		  _div_flags, _div_table)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_name	= _parent,\
++	.flags		= _flags,\
++	.cfg		=  &(struct div_cfg) {\
++		.reg_off	= _offset,\
++		.shift		= _shift,\
++		.width		= _width,\
++		.div_flags	= _div_flags,\
++		.table		= _div_table,\
++	},\
++	.func		= _clk_hw_register_divider_table,\
++}
++
++#define DIV(_id, _name, _parent, _flags, _offset, _shift, _width, _div_flags)\
++	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
++		  _div_flags, NULL)
++
++#define MP1_GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_name	= _parent,\
++	.flags		= _flags,\
++	.cfg		=  &(struct gate_cfg) {\
++		.reg_off	= _offset,\
++		.bit_idx	= _bit_idx,\
++		.gate_flags	= _gate_flags,\
++	},\
++	.func		= _clk_register_mp1_gate,\
++}
++
+ static const struct clock_config stm32mp1_clock_cfg[] = {
++	/* Oscillator divider */
++	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
++	    CLK_DIVIDER_READ_ONLY),
++
+ 	/*  External / Internal Oscillators */
++	MP1_GATE(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
++	MP1_GATE(CK_CSI, "ck_csi", "clk-csi", 0, RCC_OCENSETR, 4, 0),
++	MP1_GATE(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
+ 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
+ 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
++
++	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
+ };
+ 
+ struct stm32_clock_match_data {
 -- 
-2.14.1
+1.9.1
