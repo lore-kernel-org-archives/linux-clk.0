@@ -1,34 +1,39 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 7 Feb 2018 10:47:44 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
- constraints
-Message-ID: <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
- <20180206163544.GI5681@sirena.org.uk>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 27/41] ARM: da8xx: add new sata_refclk init using
+ common clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-28-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <8bb4fff4-df9b-f940-0dbe-888942f55abf@ti.com>
+Date: Fri, 2 Feb 2018 20:29:24 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180206163544.GI5681@sirena.org.uk>
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <1516468460-4908-28-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
+> This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
+> using the new common clock framework drivers.
 > 
-> On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
-> > From: Laxman Dewangan <ldewangan@nvidia.com>
-> > 
-> > Add API to get min/max rail voltage configured from platform for
-> > given rails.
+> The #ifdefs are needed to prevent compile errors until the entire
+> ARCH_DAVINCI is converted.
 > 
-> because...
+> Also, the #includes are sorted since we are adding some here.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-of the next patch where this is used to retrieve the minimum rail voltage.
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-Peter.
+Thanks,
+Sekhar
