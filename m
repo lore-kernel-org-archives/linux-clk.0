@@ -1,29 +1,77 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Fri, 2 Feb 2018 11:44:59 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	robh+dt@kernel.org, mark.rutland@arm.com, kernel@pengutronix.de,
-	fabio.estevam@nxp.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@codeaurora.org, adriana.reus@nxp.com,
-	stefan@agner.ch, dongas86@gmail.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 2/2] ARM: dts: imx7s: add snvs rtc clock
-Message-ID: <20180202034457.GF20833@dragon>
-References: <1515491526-14060-1-git-send-email-Anson.Huang@nxp.com>
- <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 21/41] ARM: da850: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-22-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <73d2c30d-ee86-1269-dd4b-1ebfe88a3149@ti.com>
+Date: Fri, 2 Feb 2018 19:50:39 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1515491526-14060-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1516468460-4908-22-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 05:52:06PM +0800, Anson Huang wrote:
-> Add i.MX7 SNVS RTC clock.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
+>  void __init da850_init_time(void)
+>  {
+> +#ifdef CONFIG_COMMON_CLK
+> +	void __iomem *pll0, *pll1, *psc0, *psc1;
+> +	struct regmap *cfgchip;
+> +	struct clk *clk;
+> +	struct clk_hw *parent;
+> +
+> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
+> +	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
+> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
+> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
+> +
+> +	cfgchip = da8xx_register_cfgchip();
+> +	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
+> +		return;
+> +
+> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
+> +
+> +	da850_pll_clk_init(pll0, pll1);
+> +
+> +	da8xx_cfgchip_register_div4p5(cfgchip);
+> +
+> +	da8xx_cfgchip_register_async1(cfgchip);
+> +
+> +	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
+> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
+> +	clk_register_clkdev(clk, "timer0", NULL);
+> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
 
-Looks fine to me.  Ping me when clk driver part lands mainline.
+I think its better to get these clkdevs registered in
+da850_pll_clk_init() itself.
 
-Shawn
+> +
+> +	clk = da8xx_cfgchip_register_async3(cfgchip);
+> +
+> +	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
+> +	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
+> +	if (parent)
+> +		clk_set_parent(clk, parent->clk);
+> +	else
+> +		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
+> +
+> +	da850_psc_clk_init(psc0, psc1);
+> +
+> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
+> +	clk_register_clkdev(clk, "rmii", NULL);
+
+Like in da830, can drop this rmii clock, I think.
+
+Thanks,
+Sekhar
