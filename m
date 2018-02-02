@@ -1,183 +1,137 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 5/9] clk: imx: add composite clk support
-Date: Tue, 13 Feb 2018 21:28:10 +0800
-Message-ID: <1518528494-25723-6-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee
+ Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel
+ Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
+Subject: [PATCH 11/14] clk: stm32mp1: add Kernel clocks
+Date: Fri, 2 Feb 2018 15:03:39 +0100
+Message-ID: <1517580222-23301-12-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-NOTE pcc can only be operated when clk is gated.
+Some peripherals need also a dedicated clock for their communication
+interface, this clock is generally asynchronous with respect to the bus
+interface clock (peripheral clock), and is named kernel clock.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * remove an unneeded blank line change
- * use clk_hw_register
----
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 90 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  6 +++
- 3 files changed, 97 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+ drivers/clk/clk-stm32mp1.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 9c04ae4..eab606c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -4,6 +4,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
-new file mode 100644
-index 0000000..78b891e
---- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,90 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * The code contained herein is licensed under the GNU General Public
-+ * License. You may obtain a copy of the GNU General Public License
-+ * Version 2 or later at the following locations:
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
-+
-+struct clk_hw *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
-+{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *hw;
-+
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
-+
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
-+
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
-+
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux_hw, &clk_mux_ops, fd_hw,
-+				       &clk_fractional_divider_ops, gate_hw,
-+				       &clk_gate_ops, CLK_SET_RATE_GATE |
-+				       CLK_SET_PARENT_GATE);
-+	if (IS_ERR(hw)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index ccd7181..fed7660 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index ea78a6a..5a1142c 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1179,6 +1179,17 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
+ }
  
-+struct clk_hw *imx_clk_composite(const char *name,
-+				 const char * const *parent_names,
-+				 int num_parents, bool mux_present,
-+				 bool rate_present, bool gate_present,
-+				 void __iomem *reg);
++#define _MP1_GATE(_gate_offset, _bit_idx, _flags)\
++		  _GATE_OPS(_gate_offset, _bit_idx, _flags, &mp1_gate_clk_ops)
 +
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
++#define _MP1_GATEMUX(_gate_offset, _bit_idx,\
++		     _mux_offset, _mux_bit, _mux_width)\
++{\
++	_NO_DIV,\
++	_MP1_GATE(_gate_offset, _bit_idx, 0),\
++	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
++}
++
+ #define MP1_GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
+ {\
+ 	.id		= _id,\
+@@ -1226,6 +1237,11 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	     MP1_GATE(_id, _name, _parent, _flags,\
+ 		      RCC_##_reg##ENSETR, _gate_idx, 0)
+ 
++#define KCLK(_reg, _id, _bit_idx, _mux_offset, _name, _parents, _flags)\
++	     COMPOSITE(_id, _name, _parents, CLK_OPS_PARENT_ENABLE | _flags,\
++		       _MP1_GATEMUX(RCC_##_reg##ENSETR, _bit_idx,\
++					   _mux_offset, 0, 3))
++
+ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	/* Oscillator divider */
+ 	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
+@@ -1451,6 +1467,65 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	PCLK(AHB6, CRC1, "crc1", "ck_axi", 20, 0),
+ 	PCLK(AHB6, USBH, "usbh", "ck_axi", 24, 0),
+ 	PCLK(AHB6LP, ETHSTP, "ethstp", "ck_axi", 11, 0),
++
++	/* Kernel clocks */
++	KCLK(AHB6, SDMMC1_K, 16, RCC_SDMMC12CKSELR, "sdmmc1_k", sdmmc1_src, 0),
++	KCLK(AHB6, SDMMC2_K, 17, RCC_SDMMC12CKSELR, "sdmmc2_k", sdmmc2_src, 0),
++	KCLK(AHB2, SDMMC3_K, 16, RCC_SDMMC3CKSELR, "sdmmc3_k", sdmmc3_src, 0),
++	KCLK(AHB6, FMC_K, 12, RCC_FMCCKSELR, "fmc_k", fmc_src, 0),
++	KCLK(AHB6, QSPI_K, 14, RCC_QSPICKSELR, "qspi_k", qspi_src, 0),
++	KCLK(AHB6, ETHMAC_K, 10, RCC_ETHCKSELR, "ethmac_k", eth_src, 0),
++	KCLK(AHB5, RNG1_K, 6, RCC_RNG1CKSELR, "rng1_k", rng_src, 0),
++	KCLK(AHB3, RNG2_K, 6, RCC_RNG2CKSELR, "rng2_k", rng_src, 0),
++	KCLK(APB4, USBPHY_K, 16, RCC_USBCKSELR, "usbphy_k", usbphy_src, 0),
++	KCLK(APB5, STGEN_K, 20, RCC_STGENCKSELR, "stgen_k",  stgen_src,
++	     CLK_IGNORE_UNUSED),
++	KCLK(APB1, SPDIF_K, 26, RCC_SPDIFCKSELR, "spdif_k",  spdif_src, 0),
++	KCLK(APB2, SPI1_K, 8, RCC_SPI2S1CKSELR, "spi1_k", spi1_src, 0),
++	KCLK(APB1, SPI2_K, 11, RCC_SPI2S23CKSELR, "spi2_k", spi2_src, 0),
++	KCLK(APB1, SPI3_K, 12, RCC_SPI2S23CKSELR, "spi3_k", spi3_src, 0),
++	KCLK(APB2, SPI4_K, 9, RCC_SPI2S45CKSELR, "spi4_k", spi4_src, 0),
++	KCLK(APB2, SPI5_K, 10, RCC_SPI2S45CKSELR, "spi5_k", spi5_src, 0),
++	KCLK(APB5, SPI6_K, 0, RCC_SPI6CKSELR, "spi6_k", spi6_src, 0),
++	KCLK(APB1, CEC_K, 27, RCC_CECCKSELR, "cec_k", cec_src, 0),
++	KCLK(APB1, I2C1_K, 21, RCC_I2C12CKSELR, "i2c1_k", i2c1_src, 0),
++	KCLK(APB1, I2C2_K, 22, RCC_I2C12CKSELR, "i2c2_k", i2c2_src, 0),
++	KCLK(APB1, I2C3_K, 23, RCC_I2C35CKSELR, "i2c3_k", i2c3_src, 0),
++	KCLK(APB5, I2C4_K, 2, RCC_I2C4CKSELR, "i2c4_k", i2c4_src, 0),
++	KCLK(APB1, I2C5_K, 24, RCC_I2C35CKSELR, "i2c5_k", i2c5_src, 0),
++	KCLK(APB5, I2C6_K, 3, RCC_I2C4CKSELR, "i2c6_k", i2c6_src, 0),
++	KCLK(APB1, LPTIM1_K, 9, RCC_LPTIM1CKSELR, "lptim1_k", lptim1_src, 0),
++	KCLK(APB3, LPTIM2_K, 0, RCC_LPTIM23CKSELR, "lptim2_k", lptim2_src, 0),
++	KCLK(APB3, LPTIM3_K, 1, RCC_LPTIM23CKSELR, "lptim3_k", lptim3_src, 0),
++	KCLK(APB3, LPTIM4_K, 2, RCC_LPTIM45CKSELR, "lptim4_k", lptim4_src, 0),
++	KCLK(APB3, LPTIM5_K, 3, RCC_LPTIM45CKSELR, "lptim5_k", lptim5_src, 0),
++	KCLK(APB5, USART1_K, 4, RCC_UART1CKSELR, "usart1_k", usart1_src, 0),
++	KCLK(APB1, USART2_K, 14, RCC_UART24CKSELR, "usart2_k", usart2_src, 0),
++	KCLK(APB1, USART3_K, 15, RCC_UART35CKSELR, "usart3_k", usart3_src, 0),
++	KCLK(APB1, UART4_K, 16, RCC_UART24CKSELR, "uart4_k", uart4_src, 0),
++	KCLK(APB1, UART5_K, 17, RCC_UART35CKSELR, "uart5_k", uart5_src, 0),
++	KCLK(APB2, USART6_K, 13, RCC_UART6CKSELR, "uart6_k", usart6_src, 0),
++	KCLK(APB1, UART7_K, 18, RCC_UART78CKSELR, "uart7_k",  uart7_src, 0),
++	KCLK(APB1, UART8_K, 19, RCC_UART78CKSELR, "uart8_k",  uart8_src, 0),
++	KCLK(APB2, DFSDM_K, 20, RCC_DFSDMCKSELR, "dfsdm_k", dfsdm_src, 0),
++	KCLK(APB2, FDCAN_K, 24, RCC_FDCANCKSELR, "fdcan_k", fdcan_src, 0),
++	KCLK(APB2, SAI1_K, 16, RCC_SAI1CKSELR, "sai1_k", sai_src, 0),
++	KCLK(APB2, SAI2_K, 17, RCC_SAI2CKSELR, "sai2_k", sai2_src, 0),
++	KCLK(APB2, SAI3_K, 18, RCC_SAI3CKSELR, "sai3_k", sai_src, 0),
++	KCLK(APB3, SAI4_K, 8, RCC_SAI4CKSELR, "sai4_k", sai_src, 0),
++	KCLK(AHB2, ADC12_K, 5, RCC_ADCCKSELR, "adc12_k", adc12_src,
++	     CLK_IGNORE_UNUSED),
++	KCLK(APB4, DSI_K, 4, RCC_DSICKSELR, "dsi_k", dsi_src, 0),
++	KCLK(APB2, ADFSDM_K, 21, RCC_SAI1CKSELR, "adfsdm_k", adfsdm_src, 0),
++
++	/* particulary Kernel clocks */
++	COMPOSITE(USBO_K, "usbo_k", usbo_src, CLK_OPS_PARENT_ENABLE,
++		  _MP1_GATEMUX(RCC_AHB2ENSETR, 8, RCC_USBCKSELR, 4, 1)),
++
++	MP1_GATE(LTDC_K, "ltdc_k", "pll4_q", CLK_SET_RATE_PARENT,
++		 RCC_APB4ENSETR, 0, 0),
++
++	MP1_GATE(GPU_K, "gpu_k", "pll2_q", 0, RCC_AHB6ENSETR, 5, 0),
+ };
+ 
+ struct stm32_clock_match_data {
 -- 
-2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
