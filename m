@@ -1,62 +1,98 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+Return-Path: <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
+ frequency
 To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 08/15] drm/sun4i: Fix polarity configuration for DW HDMI PHY
-Date: Mon, 26 Feb 2018 17:19:58 +0100
-Message-ID: <2043407.cqGGRsJjYq@jernej-laptop>
-In-Reply-To: <20180226093930.mipjyr6sr35ldkw6@flea.lan>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-9-jernej.skrabec@siol.net> <20180226093930.mipjyr6sr35ldkw6@flea.lan>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
+ <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
+ <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
+ <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
+ <20180202105304.gow2znzgxqmuxgol@flea.lan>
+ <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+ <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <aa43a02a-3ea9-2f61-eaf6-ddc7980f78a5@micronovasrl.com>
+Date: Fri, 2 Feb 2018 16:38:13 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180202133516.uoy7ppuozd6cnldm@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
 
-Dne ponedeljek, 26. februar 2018 ob 10:39:30 CET je Maxime Ripard napisal(a):
-> Hi,
+Il 02/02/2018 14:35, Maxime Ripard ha scritto:
+> On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
+>> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
+>>> Hi,
+>>>
+>>> On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
+>>>>>>> What kernel version did you use?
+>>>>>>
+>>>>>> Latest mainline.
+>>>>>
+>>>>> I guess this patch could fix it:
+>>>>> http://code.bulix.org/1kitrq-268936?raw
+>>>>
+>>>> This should prevent from modifying parent clock. But my problem was
+>>>> different.
+>>>>
+>>>> On A20, gpu_clk can have different PLL, not I've found out the way
+>>>> to choose right one with assigned-parent-clocks.
+>>>>
+>>>> I have patchset ready for adding A20 mali node, but I need some more
+>>>> time to complete with OPP, then I will submit entire patchset.
+>>>>
+>>>> Now it works correctly, using right pll(dedicated PLL8), setting
+>>>> right frequency.
+>>>
+>>> The point is that we really don't care about which PLL is actually
+>>> being used, as long as the rate is correct and we don't break anything
+>>> else. If the GPU rate is accessible through one of the other PLL, it
+>>> makes even more sense to not use the GPU PLL and keep it disabled,
+>>> since it will result in some power savings.
+>>
+>> Ah! I see the point now, very clever system for power saving.
+>> I'm going to check if it's resolutive,
+>> but it sounds good.
+>>
+>>>
+>>>> Btw, do I need to add a board using it, or can I add only Mali node
+>>>> to sun7i-a20.dtsi(plus other little patches)?
+>>>
+>>> You can add it to the DTSI without a board using it (and actually,
+>>> nothing should be in the board DTS, everything in the DT for the Mali
+>>> applies to all boards).
+>>
+>> Sure. So I would also add the patch you've addressed me:
+>> http://code.bulix.org/1kitrq-268936?raw
+>> as a commit. Can I submit it in patchset to complete the whole job?
 > 
-> On Sat, Feb 24, 2018 at 10:45:38PM +0100, Jernej Skrabec wrote:
-> > Current polarity configuration code is cleary wrong since it compares
-> > same flag two times. However, even if flag name is fixed, it won't work
-> > well for resolutions which have one polarity positive and another
-> > negative.
-> > 
-> > Fix that by properly set each bit according to each polarity. Since
-> > those two bits are not described in any documentation, relationships
-> > were obtained by experimentation.
-> > 
-> > Fixes: b7c7436a5ff0 ("drm/sun4i: Implement A83T HDMI driver")
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c index e5bfcdd43ec9..f48e8b70fabe
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > @@ -35,10 +35,11 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi,
-> > void *data,> 
-> >  	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
-> >  	u32 val = 0;
-> > 
-> > -	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) &&
-> > -	    (mode->flags & DRM_MODE_FLAG_NHSYNC)) {
-> > -		val = 0x03;
-> > -	}
-> > +	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-> > +		val |= 0x01;
-> > +
-> > +	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-> > +		val |= 0x02;
+> I already sent that patch quite some time ago, I'll just apply it. You
+> can send the DT patch :)
+
+Thanks. Sorry for my ignorance, but where are you applying patches?
+Because I've tried to check sunxi-next and a lot of other Repo but I 
+can't find this and neither "Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: 
+Fix mali changing dclk frequency"
+
 > 
-> Can you introduce defines for those?
+> Maxime
+> 
 
-Of course.
 
-Best regards,
-Jernej
+-- 
+Giulio Benetti
+R&D Manager &
+Advanced Research
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
