@@ -1,33 +1,39 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, architt@codeaurora.org, a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com, Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com, p.zabel@pengutronix.de, hjc@rock-chips.com
-Subject: Re: [PATCH v5 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-Date: Fri, 16 Feb 2018 08:03:59 +0100
-Message-ID: <5806685.TbOkgmbs60@phil>
-In-Reply-To: <20180214200906.31509-6-jernej.skrabec@siol.net>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net> <20180214200906.31509-6-jernej.skrabec@siol.net>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 23/41] ARM: dm365: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-24-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <1550e88d-9f89-3185-7da4-0cf5ebb7475a@ti.com>
+Date: Fri, 2 Feb 2018 20:07:49 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1516468460-4908-24-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 14. Februar 2018, 21:08:59 CET schrieb Jernej Skrabec:
-> dw_hdmi shouldn't set drvdata since some drivers might need to store
-> it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
-> instead to store it in drvdata. This way drivers are responsible to
-> store and pass structure when needed.
+On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
+> This adds the new board-specific clock init in mach-davinci/dm365.c
+> using the new common clock framework drivers.
 > 
-> Idea was taken from the following commit:
-> 8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
+> The #ifdefs are needed to prevent compile errors until the entire
+> ARCH_DAVINCI is converted.
 > 
-> Cc: p.zabel@pengutronix.de
-> Cc: narmstrong@baylibre.com
-> Cc: Laurent.pinchart@ideasonboard.com
-> Cc: hjc@rock-chips.com
-> Cc: heiko@sntech.de
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> Also clean up the #includes since we are adding some here.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-For the Rockchip-part
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+
+Thanks,
+Sekhar
