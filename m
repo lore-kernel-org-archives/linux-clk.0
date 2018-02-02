@@ -1,47 +1,34 @@
-Return-Path: <Tali.Perry@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
-        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v10 0/3] NPCM750: clk controller, DT and binding
-Date: Sun, 25 Feb 2018 12:12:16 +0200
-Message-Id: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 29/41] ARM: davinci_all_defconfig: remove
+ CONFIG_DAVINCI_RESET_CLOCKS
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-30-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <72273614-3dd8-89fa-939d-6493384901e2@ti.com>
+Date: Fri, 2 Feb 2018 20:34:22 +0530
+MIME-Version: 1.0
+In-Reply-To: <1516468460-4908-30-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Nuvoton BMC NPCM7xx clock driver.
+On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
+> This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
+> the kernel.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Nuvoton BMC NPCM7xx contain integrated clock controller which
-generates and supplies clock to all modules within the NPCM7xx BMC
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-2 ==> 10
-update documentation. add external clocks as inputs to clk driver.
-fix SPDX comment.
-
-1 ==> 2
-This patch includes fix request described here:
-https://patchwork.kernel.org/patch/10200033/
-(move fixed clocks to DT)
-
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-
-Tali Perry (3):
-  NPCM750: add clock controller to DT
-  NPCM750: add clock tree doc and binding
-  NPCM750: add clock controller driver
-
- .../bindings/clock/nuvoton,npcm750-clk.txt         |  100 ++
- arch/arm/boot/dts/nuvoton-npcm750.dtsi             | 1221 ++++++++++++++++++++
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-npcm7xx.c                          |  757 ++++++++++++
- include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |   44 +
- 5 files changed, 2123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
- create mode 100644 arch/arm/boot/dts/nuvoton-npcm750.dtsi
- create mode 100644 drivers/clk/clk-npcm7xx.c
- create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-
--- 
-2.14.1
+Thanks,
+Sekhar
