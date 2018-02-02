@@ -1,180 +1,85 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: dinguyen@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Subject: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings information for Stratix10
-Date: Mon,  5 Feb 2018 10:22:45 -0600
-Message-Id: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 04/41] clk: davinci: Add platform information for TI
+ DA850 PLL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-5-git-send-email-david@lechnology.com>
+ <7d7e0522-30d5-6232-853e-7ab32fadfe48@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ceec9849-e3fb-0e9b-4000-aab3ca2f5a43@ti.com>
+Date: Fri, 2 Feb 2018 14:07:31 +0530
+MIME-Version: 1.0
+In-Reply-To: <7d7e0522-30d5-6232-853e-7ab32fadfe48@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Document that Stratix10 clock bindings, and add the clock header file. The
-clock header is an enumeration of all the different clocks on the Stratix10
-platform.
+On Friday 02 February 2018 12:52 AM, David Lechner wrote:
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v3:
-- s/intc/intel for correct vendor prefix
-- fixup node name to "intel,stratix10-clkmgr"
-- document the required fixed-clock for oscillators
-v2:
-- use a single binding for the clock controller
----
- .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
- include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
- 2 files changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
- create mode 100644 include/dt-bindings/clock/stratix10-clock.h
+>> +static const char * const da850_pll1_obsclk_parent_names[]
+>> __initconst = {
+>> +    "oscin",
+> 
+> Re: the issue of "ref_clk" vs. "oscin"...
+> 
+> This is one of the places where having the otherwise unnecessary "oscin"
+> clock
+> really helps out. The PLL driver doesn't control "ref_clk" - it comes
+> from somewhere
+> else. And in the case of DT, it may not even be named "ref_clk", so we
+> really
+> don't want to hard-code the name "ref_clk" here.
 
-diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-new file mode 100644
-index 0000000..8d218f4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-@@ -0,0 +1,47 @@
-+Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible : shall be
-+	"intel,stratix10-clkmgr"
-+
-+- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
-+
-+- #clock-cells : from common clock binding, shall be set to 1.
-+
-+- clocks : Should contain fixed-clock sources, such as oscillators.
-+
-+Example:
-+	clkmgr: clock-controller@ffd10000 {
-+		compatible = "intel,stratix10-clkmgr";
-+		reg = <0xffd10000 0x1000>;
-+		#clock-cells = <1>;
-+
-+		clocks {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+			};
-+
-+			cb_intosc_ls_clk: cb_intosc_ls_clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+			};
-+
-+			f2s_free_clk: f2s_free_clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+			};
-+
-+			osc1: osc1 {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+			};
-+		};
-+	};
-diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
-new file mode 100644
-index 0000000..bbbd9fd
---- /dev/null
-+++ b/include/dt-bindings/clock/stratix10-clock.h
-@@ -0,0 +1,85 @@
-+/*
-+ * SPDX-License-Identifier:	GPL-2.0
-+ *
-+ * Copyright (C) 2017, Intel Corporation
-+ */
-+
-+#ifndef __STRATIX10_CLOCK_H
-+#define __STRATIX10_CLOCK_H
-+
-+/* fixed rate clocks */
-+#define STRATIX10_OSC1			0
-+#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
-+#define STRATIX10_CB_INTOSC_LS_CLK	2
-+#define STRATIX10_F2S_FREE_CLK		3
-+
-+/* fixed factor clocks */
-+#define STRATIX10_L4_SYS_FREE_CLK	4
-+#define STRATIX10_MPU_PERIPH_CLK	5
-+#define STRATIX10_MPU_L2RAM_CLK		6
-+#define STRATIX10_SDMMC_CIU_CLK		7
-+
-+/* PLL clocks */
-+#define STRATIX10_MAIN_PLL_CLK		8
-+#define STRATIX10_PERIPH_PLL_CLK	9
-+#define STRATIX10_BOOT_CLK		10
-+
-+/* Periph clocks */
-+#define STRATIX10_MAIN_MPU_BASE_CLK	11
-+#define STRATIX10_MAIN_NOC_BASE_CLK	12
-+#define STRATIX10_MAIN_EMACA_CLK	13
-+#define STRATIX10_MAIN_EMACB_CLK	14
-+#define STRATIX10_MAIN_EMAC_PTP_CLK	15
-+#define STRATIX10_MAIN_GPIO_DB_CLK	16
-+#define STRATIX10_MAIN_SDMMC_CLK	17
-+#define STRATIX10_MAIN_S2F_USR0_CLK	18
-+#define STRATIX10_MAIN_S2F_USR1_CLK	19
-+#define STRATIX10_MAIN_PSI_REF_CLK	20
-+
-+#define STRATIX10_PERI_MPU_BASE_CLK	21
-+#define STRATIX10_PERI_NOC_BASE_CLK	22
-+#define STRATIX10_PERI_EMACA_CLK	23
-+#define STRATIX10_PERI_EMACB_CLK	24
-+#define STRATIX10_PERI_EMAC_PTP_CLK	25
-+#define STRATIX10_PERI_GPIO_DB_CLK	26
-+#define STRATIX10_PERI_SDMMC_CLK	27
-+#define STRATIX10_PERI_S2F_USR0_CLK	28
-+#define STRATIX10_PERI_S2F_USR1_CLK	29
-+#define STRATIX10_PERI_PSI_REF_CLK	30
-+
-+#define STRATIX10_MPU_FREE_CLK		31
-+#define STRATIX10_NOC_FREE_CLK		32
-+#define STRATIX10_S2F_USR0_CLK		33
-+#define STRATIX10_NOC_CLK		34
-+#define STRATIX10_EMAC_A_FREE_CLK	35
-+#define STRATIX10_EMAC_B_FREE_CLK	36
-+#define STRATIX10_EMAC_PTP_FREE_CLK	37
-+#define STRATIX10_GPIO_DB_FREE_CLK	38
-+#define STRATIX10_SDMMC_FREE_CLK	39
-+#define STRATIX10_S2F_USER1_FREE_CLK	40
-+#define STRATIX10_PSI_REF_FREE_CLK	41
-+
-+/* Gate clocks */
-+#define STRATIX10_MPU_CLK		42
-+#define STRATIX10_L4_MAIN_CLK		43
-+#define	STRATIX10_L4_MP_CLK		44
-+#define STRATIX10_L4_SP_CLK		45
-+#define STRATIX10_CS_AT_CLK		46
-+#define STRATIX10_CS_TRACE_CLK		47
-+#define STRATIX10_CS_PDBG_CLK		48
-+#define STRATIX10_CS_TIMER_CLK		49
-+#define STRATIX10_S2F_USER0_CLK		50
-+#define STRATIX10_S2F_USER1_CLK		51
-+#define STRATIX10_EMAC0_CLK		52
-+#define STRATIX10_EMAC1_CLK		53
-+#define STRATIX10_EMAC2_CLK		54
-+#define STRATIX10_EMAC_PTP_CLK		55
-+#define STRATIX10_GPIO_DB_CLK		56
-+#define STRATIX10_SDMMC_CLK		57
-+#define STRATIX10_PSI_REF_CLK		58
-+#define STRATIX10_USB_CLK		59
-+#define STRATIX10_SPI_M_CLK		60
-+#define STRATIX10_NAND_CLK		61
-+#define STRATIX10_NUM_CLKS		62
-+
-+#endif	/* __STRATIX10_CLOCK_H */
--- 
-2.7.4
+TBH, I don't really see what is wrong with mandating the name "ref_clk"
+as the reference clock name to be provided. And for all board-files and
+DTs to supply the same name.
+
+> If we have to allow a variable name here, it just makes more work in the
+> driver
+> shuffling names around.
+> 
+> And the name "oscin" totally makes sense here because the TRM lists this
+> input to the
+> mux as "OSCIN".
+
+Fine with me if you feel it simplifies implementation for you (and also
+because of the distinction you want to make between the external "before
+CLKMODE" clock and internal "after CLKMODE" clock). What I do care about
+though is:
+
+a) In the DT case, ability for different boards to provide different
+   ref_clk frequencies. We never really had this in the legacy board
+   file way (except some rudimentary support on DM6467T). And its fine
+   to continue with status quo for board files.
+
+b) In the DT case, ability for board to specify whether it uses the
+   on-chip oscillator or has an external clean clock provider.
+
+>> +void __init da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1)
+>> +{
+>> +    const struct davinci_pll_sysclk_info *info;
+>> +
+>> +    davinci_pll_clk_register(&da850_pll0_info, "ref_clk", pll0);
+> 
+> And really, we probably shouldn't be hard-coding "ref_clk" here either.
+> Basically, we are making the assumption that the board file has registered
+> a clock named "ref_clk". It would probably be better to pass the name
+> as a parameter.
+
+As I noted before, I am not sure if this level of naming flexibility is
+needed. Every board needs to have one anyway. They might as well call it
+by the same name.
+
+That said, I wont oppose it either if you decide to have that flexibility.
+
+Thanks,
+Sekhar
