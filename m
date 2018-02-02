@@ -1,104 +1,70 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
-Date: Wed, 28 Feb 2018 22:55:03 +0100
-Message-ID: <3220888.aQMeRaSCkl@jernej-laptop>
-In-Reply-To: <20180228073440.6ejo3wjdqag6h4nl@flea>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net> <20180227222701.9716-2-jernej.skrabec@siol.net> <20180228073440.6ejo3wjdqag6h4nl@flea>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee
+ Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel
+ Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
+Subject: [PATCH 12/14] clk: stm32mp1: add RTC clock
+Date: Fri, 2 Feb 2018 15:03:40 +0100
+Message-ID: <1517580222-23301-13-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Dne sreda, 28. februar 2018 ob 08:34:40 CET je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Tue, Feb 27, 2018 at 11:26:46PM +0100, Jernej Skrabec wrote:
-> > Some NM PLLs doesn't work well when their output clock rate is set below
-> > certain rate.
-> > 
-> > Add support for that constrain.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
-> >  drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
-> >  2 files changed, 34 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-> > index a16de092bf94..7fc743c78c1b 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_nm.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_nm.c
-> > @@ -20,7 +20,7 @@ struct _ccu_nm {
-> > 
-> >  };
-> >  
-> >  static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
-> > 
-> > -			     struct _ccu_nm *nm)
-> > +			     unsigned long min_rate, struct _ccu_nm *nm)
-> > 
-> >  {
-> >  
-> >  	unsigned long best_rate = 0;
-> >  	unsigned long best_n = 0, best_m = 0;
-> > 
-> > @@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent,
-> > unsigned long rate,> 
-> >  		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
-> >  		
-> >  			unsigned long tmp_rate = parent * _n  / _m;
-> > 
-> > -			if (tmp_rate > rate)
-> > +			if (tmp_rate > rate || tmp_rate < min_rate)
-> > 
-> >  				continue;
-> >  			
-> >  			if ((rate - tmp_rate) < (rate - best_rate)) {
-> > 
-> > @@ -117,6 +117,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw,
-> > unsigned long rate,> 
-> >  	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> >  	
-> >  		rate *= nm->fixed_post_div;
-> > 
-> > +	if (rate < nm->min_rate)
-> > +		rate = nm->min_rate;
-> > +
-> 
-> I guess you can just return there. There's no point in trying to find
-> the factors at this point, since the minimum should be a value that
-> can be reached.
-> 
+This patch adds the RTC clock.
 
-Right, I already tested it and it works.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Best regards,
-Jernej
-
-> >  	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
-> >  	
-> >  		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> >  		
-> >  			rate /= nm->fixed_post_div;
-> > 
-> > @@ -134,7 +137,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw,
-> > unsigned long rate,> 
-> >  	_nm.min_m = 1;
-> >  	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
-> > 
-> > -	ccu_nm_find_best(*parent_rate, rate, &_nm);
-> > +	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
-> 
-> Therefore, you don't need to change the prototype there either.
-> 
-> Maxime
-> 
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 5a1142c..1cb06b0 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1179,6 +1179,15 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
+ }
+ 
++#define _GATEMUX(_gate_offset,\
++		 _bit_idx,\
++		 _mux_offset, _mux_bit, _mux_width)\
++{\
++	_NO_DIV,\
++	_GATE(_gate_offset, _bit_idx, 0),\
++	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
++}
++
+ #define _MP1_GATE(_gate_offset, _bit_idx, _flags)\
+ 		  _GATE_OPS(_gate_offset, _bit_idx, _flags, &mp1_gate_clk_ops)
+ 
+@@ -1526,6 +1535,14 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 		 RCC_APB4ENSETR, 0, 0),
+ 
+ 	MP1_GATE(GPU_K, "gpu_k", "pll2_q", 0, RCC_AHB6ENSETR, 5, 0),
++
++	/* RTC clock */
++	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7,
++	    CLK_DIVIDER_ALLOW_ZERO),
++
++	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_PARENT,
++		  _GATEMUX(RCC_BDCR, 20, RCC_BDCR, 16, 2)),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
