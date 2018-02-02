@@ -1,57 +1,97 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
-	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
-	FRAMEWORK)
-Subject: [PATCH v2 0/7] clk: samsung: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:47 +0100
-Message-id: <20180216145754.14428-1-a.hajda@samsung.com>
-References: <CGME20180216145803eucas1p2b75e6f26d2979ee129152f674a31e886@eucas1p2.samsung.com>
+Return-Path: <groeck7@gmail.com>
+Return-Path: <groeck7@gmail.com>
+Sender: Guenter Roeck <groeck7@gmail.com>
+Subject: Re: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das@bp.renesas.com>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <2dd9f76d-b3e9-31f2-11eb-272d327f3b01@roeck-us.net>
+Date: Thu, 1 Feb 2018 18:56:16 -0800
+MIME-Version: 1.0
+In-Reply-To: <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 01/31/2018 10:24 AM, Fabrizio Castro wrote:
+> Due to commits:
+> * "ARM: shmobile: Add watchdog support",
+> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
+> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+> we now have everything we needed for the watchdog to work on Gen2 and
+> RZ/G1.
+> 
+> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+> always ON, when suspending to RAM we need to explicitly disable the
+> counting by clearing TME from RWTCSRA.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+> v3->4:
+> * in this new version the changes to the driver have been splitted into
+>    two commits, this patch takes care of the basic Gen2 support, patch 13/26
+>    takes care of the restart handler.
+> 
+>   drivers/watchdog/renesas_wdt.c | 42 +++++++++++++++++++++++++++++++++++++-----
+>   1 file changed, 37 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 831ef83..0a1a402 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -203,13 +203,42 @@ static int rwdt_remove(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> -/*
+> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+> - * to work there, one also needs a RESET (RST) driver which does not exist yet
+> - * due to HW issues. This needs to be solved before adding compatibles here.
+> - */
+> +#ifdef CONFIG_PM
+> +static int rwdt_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev;
+> +	struct rwdt_priv *priv;
+> +
+> +	pdev = to_platform_device(dev);
+> +	priv = platform_get_drvdata(pdev);
+> +	if (watchdog_active(&priv->wdev)) {
+> +		rwdt_write(priv, priv->cks, RWTCSRA);
+> +	}
 
-This patchset fixes PLL clock rates in all Samsung PLLs, moreover it adds
-compile time validators to avoid such mistakes in the future.
-The patchset has been compile tested for all variants, and runtime tested on
-TM2 and Odroid XU3.
+Unnecessary { }
 
-v2:
-- modified commit message of patches 1-6/7,
-- rebased,
-- added Acks,
-- patch is the same as v2 already posted in prev thread (except rebase changes).
+> +	return 0;
+> +}
+> +
+> +static int rwdt_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev;
+> +	struct rwdt_priv *priv;
+> +
+> +	pdev = to_platform_device(dev);
+> +	priv = platform_get_drvdata(pdev);
+> +	if (watchdog_active(&priv->wdev)) {
+> +		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
+> +	}
 
-Regards
-Andrzej
+Same here. FWIW, checkpatch does complain about that.
 
-
-Andrzej Hajda (7):
-  clk: samsung: exynos3250: fix PLL rates
-  clk: samsung: exynos5250: fix PLL rates
-  clk: samsung: exynos5260: fix PLL rates
-  clk: samsung: exynos5433: fix PLL rates
-  clk: samsung: exynos7: fix PLL rates
-  clk: samsung: s3c2410: fix PLL rates
-  clk: samsung: add compile time PLL rate validators
-
- drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++-----------------
- drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++---------------
- drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++--------
- drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
- drivers/clk/samsung/clk-exynos5410.c |  20 +++---
- drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
- drivers/clk/samsung/clk-exynos5433.c | 116 +++++++++++++++++------------------
- drivers/clk/samsung/clk-exynos7.c    |   2 +-
- drivers/clk/samsung/clk-pll.h        |  48 ++++++++++++---
- drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++----------------
- 10 files changed, 372 insertions(+), 344 deletions(-)
-
--- 
-2.16.1
+Guenter
