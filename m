@@ -1,67 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42448 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030514AbeBNOAJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:09 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 00/10] clk: qcom: CPU clock driver for msm8996
-Date: Wed, 14 Feb 2018 15:59:42 +0200
-Message-Id: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1517575828.3153.23.camel@baylibre.com>
+Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Linus
+ Walleij <linus.walleij@linaro.org>, Quentin Schulz
+ <quentin.schulz@free-electrons.com>, Kevin Hilman <khilman@baylibre.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Date: Fri, 02 Feb 2018 13:50:28 +0100
+In-Reply-To: <20180201174307.GC23162@codeaurora.org>
+References: <20171201215200.23523-1-jbrunet@baylibre.com>
+	 <151373031022.33554.13905466641279532222@resonance>
+	 <20171222021520.GO7997@codeaurora.org>
+	 <1517217778.3153.1.camel@baylibre.com>
+	 <20180201174307.GC23162@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
+On Thu, 2018-02-01 at 09:43 -0800, Stephen Boyd wrote:
+> > > > Applied to clk-protect-rate, with the exception that I did not apply
+> > > > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
+> > > > qcom clk code.
+> > > > 
+> > > > Stephen, do you plan to fix up the qcom clock code so that the
+> > > > SET_RATE_GATE improvement can go in?
+> > > > 
+> > > 
+> > > I started working on it a while back. Let's see if I can finish
+> > > it off this weekend.
+> > > 
+> > 
+> > Hi Stephen,
+> > 
+> > Have you been able find something to fix the qcom code regarding this issue ?
+> > 
+> 
+> This is what I have. I'm unhappy with a few things. First, I made
+> a spinlock for each clk, which is overkill. Most likely, just a
+> single spinlock is needed per clk-controller device. Second, I
+> haven't finished off the branch/gate part, so gating/ungating of
+> branches needs to be locked as well to prevent branches from
+> turning on while rates change. And finally, the 'branches' list is
+> duplicating a bunch of information about the child clks of an
+> RCG, so it feels like we need a core framework API to enable and
+> disable clks forcibly while remembering what is enabled/disabled
+> or at least to walk the clk tree and call some function.
 
-This series adds support for the CPU clocks on msm8996 devices.
+Looks similar to Mike's CCR idea ;)
 
-The driver uses the existing PLL drivers and is required
-to control the CPU frequency scaling on the MSM8996.
+> 
+> The spinlock per clk-controller is duplicating the regmap lock we
+> already have, so we may want a regmap API to grab the lock, and
+> then another regmap API to do reads/writes without grabbing the
+> lock, and then finally release the lock with a regmap unlock API.
 
-A previous post of RFC can be found here
-https://patchwork.kernel.org/patch/10144485/
+There is 'regsequence' for multiple write in a burst, but that's only if you do
+write only ... I suppose you are more in read/update/writeback mode, so it
+probably does not help much.
 
-Ilia Lin (6):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: qcom: Add DT bindings for CPU clock driver for msm8996
-  clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  DT: QCOM: Add cpufreq-dt to msm8996
-  DT: QCOM: Add thermal mitigation to msm8996
+Maybe we could extend regmap's regsequence, to do a sequence of
+regmap_update_bits() ?
 
-Rajendra Nayak (4):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Another possibility could be to provide your own lock/unlock ops when
+registering the regmap. With this, you might be able to supply your own spinlock
+to regmap. This is already supported by regmap, would it help ?
 
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- arch/arm64/Kconfig.platforms                       |   7 +
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   4 +-
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 286 ++++++++++-
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 554 +++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/perf/qcom_l2_pmu.c                         |  50 +-
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  64 +++
- include/soc/qcom/kryo-l2-accessors.h               |  22 +
- 14 files changed, 956 insertions(+), 64 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
--- 
-1.9.1
-
+> This part is mostly an optimization, but it would be nice to have
+> so that multiple writes could be done in sequence. This way, the
+> RCG code could do the special locking sequence and the branch
+> code could do the fire and forget single bit update.
