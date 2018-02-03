@@ -1,184 +1,108 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/19] clk: meson: use hhi syscon if available
-Date: Mon, 12 Feb 2018 15:58:46 +0100
-Message-Id: <20180212145846.19380-20-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 6/6] arm64: allwinner: h6: add support for Pine H64 board
+Date: Sat,  3 Feb 2018 23:49:42 +0800
+Message-Id: <20180203154942.63566-7-icenowy@aosc.io>
+In-Reply-To: <20180203154942.63566-1-icenowy@aosc.io>
+References: <20180203154942.63566-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On gxbb and axg, try to get the hhi regmap from the parent DT node, which
-should be the HHI system controller once the necessary changes have been
-made in amlogic's DTs
+Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
+features:
 
-Until then, if getting regmap through the system controller fails, the
-clock controller will fall back to the old way, requesting memory region
-directly and then registering the regmap itself.
+- 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
+accessible)
+- AXP805 PMIC
+- Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
+compatible with the "Euler" on Pine A64) and "Expansion" pin header
+- 2 USB 2.0 ports and 1 USB 3.0 ports
+- Audio jack
+- MicroSD slot and eMMC module slot
+- on-board SPI NOR flash
+- 1Gbps Ethernet port (via RTL8211E PHY)
+- HDMI port
 
-This should allow a smooth transition to syscon
+Adds initial support for it, including the UART on the Expansion pin
+header.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/meson/Kconfig |  2 ++
- drivers/clk/meson/axg.c   | 43 ++++++++++++++++++++++++++++++-------------
- drivers/clk/meson/gxbb.c  | 39 ++++++++++++++++++++++++++++-----------
- 3 files changed, 60 insertions(+), 24 deletions(-)
+Changes in v2:
+- Switch to SPDX license identifier.
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 936afddae406..d5cbec522aec 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -22,6 +22,7 @@ config COMMON_CLK_GXBB
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
- 	select COMMON_CLK_REGMAP_MESON
-+	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-@@ -31,6 +32,7 @@ config COMMON_CLK_AXG
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
- 	select COMMON_CLK_REGMAP_MESON
-+	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on AmLogic A113D devices, aka axg.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 6813b632c1a9..acb63c8e0fd8 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -14,6 +14,7 @@
- #include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
-@@ -850,25 +851,41 @@ static int axg_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
--	void __iomem *clk_base;
-+	void __iomem *clk_base = NULL;
- 	struct regmap *map;
- 	int ret, i;
- 
--	/*  Generic clocks and PLLs */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
-+	/* Get the hhi system controller node if available */
-+	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(map)) {
-+		dev_err(dev,
-+			"failed to get HHI regmap - Trying obsolete regs\n");
+ arch/arm64/boot/dts/allwinner/Makefile             |  1 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 30 ++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index f505227b0250..addf245226f6 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+new file mode 100644
+index 000000000000..dc850a1c0885
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ or MIT)
++ */
 +
-+		/*
-+		 * FIXME: HHI registers should be accessed through
-+		 * the appropriate system controller. This is required because
-+		 * there is more than just clocks in this register space
-+		 *
-+		 * This fallback method is only provided temporarily until
-+		 * all the platform DTs are properly using the syscon node
-+		 */
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!res)
-+			return -EINVAL;
++/dts-v1/;
 +
++#include "sun50i-h6.dtsi"
 +
-+		clk_base = devm_ioremap(dev, res->start, resource_size(res));
-+		if (!clk_base) {
-+			dev_err(dev, "Unable to map clk base\n");
-+			return -ENXIO;
-+		}
- 
--	clk_base = devm_ioremap(dev, res->start, resource_size(res));
--	if (!clk_base) {
--		dev_err(dev, "Unable to map clk base\n");
--		return -ENXIO;
-+		map = devm_regmap_init_mmio(dev, clk_base,
-+					    &clkc_regmap_config);
-+		if (IS_ERR(map))
-+			return PTR_ERR(map);
- 	}
- 
--	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
--
- 	/* Populate regmap for the regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
- 		axg_clk_regmaps[i]->map = map;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 5ab8338eb894..bb0b0529ca81 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -22,6 +22,7 @@
- #include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
-@@ -2045,19 +2046,35 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	if (!clkc_data)
- 		return -EINVAL;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
-+	/* Get the hhi system controller node if available */
-+	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(map)) {
-+		dev_err(dev,
-+			"failed to get HHI regmap - Trying obsolete regs\n");
- 
--	clk_base = devm_ioremap(dev, res->start, resource_size(res));
--	if (!clk_base) {
--		pr_err("%s: Unable to map clk base\n", __func__);
--		return -ENXIO;
--	}
-+		/*
-+		 * FIXME: HHI registers should be accessed through
-+		 * the appropriate system controller. This is required because
-+		 * there is more than just clocks in this register space
-+		 *
-+		 * This fallback method is only provided temporarily until
-+		 * all the platform DTs are properly using the syscon node
-+		 */
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!res)
-+			return -EINVAL;
++#include <dt-bindings/gpio/gpio.h>
 +
-+		clk_base = devm_ioremap(dev, res->start, resource_size(res));
-+		if (!clk_base) {
-+			dev_err(dev, "Unable to map clk base\n");
-+			return -ENXIO;
-+		}
- 
--	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
-+		map = devm_regmap_init_mmio(dev, clk_base,
-+					    &clkc_regmap_config);
-+		if (IS_ERR(map))
-+			return PTR_ERR(map);
-+	}
- 
- 	/* Populate regmap for the common regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
++/ {
++	model = "Pine H64";
++	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_ph_pins>;
++	status = "okay";
++};
 -- 
-2.14.3
+2.15.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
