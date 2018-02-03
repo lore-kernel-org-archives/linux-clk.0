@@ -1,119 +1,110 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <ebc57f3b-4f5d-612f-5b63-ddda4dd25031@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
- <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com> <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
- <ebc57f3b-4f5d-612f-5b63-ddda4dd25031@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 21 Feb 2018 18:46:28 +0100
-Message-ID: <CAMRc=MdQy-Y3mDh++sfFPhV3o544J-K_P9DMuzWZq9XCfESH5A@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v7_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:56522 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752742AbeBCPvT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Feb 2018 10:51:19 -0500
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 3/6] clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+Date: Sat,  3 Feb 2018 23:49:39 +0800
+Message-Id: <20180203154942.63566-4-icenowy@aosc.io>
+In-Reply-To: <20180203154942.63566-1-icenowy@aosc.io>
+References: <20180203154942.63566-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-02-21 18:05 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/21/2018 06:01 AM, Bartosz Golaszewski wrote:
->>
->> 2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->>>>>
->>>>>
->>>>> This series converts mach-davinci to use the common clock framework.
->>>>>
->>>>>
->>>>
->>>> Hi David,
->>>>
->>>> just some quick results from today's playing with v7.
->>>>
->>>> I started out with da850-lcdk with my standard rootfs over NFS. I was
->>>> not able to boot to console so far. The first problem is that mdio
->>>> fails to probe:
->>>>
->>>> libphy: Fixed MDIO Bus: probed
->>>> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
->>>> davinci_mdio 1e24000.mdio: no live phy, scanning all
->>>> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
->>>> digging I noticed that the supplied clock rate differs
->>>> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
->>>> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
->>>> not help like with lcdc.
->>>
->>>
->>>
->>> Can you post the output of this command so that I can see how your
->>> clocks are setup:
->>>
->>> cat /sys/kernel/debug/clk/clk_summary
->>>
->>>
->>>>
->>>> After that, the boot just hangs without ever getting to emac's probe.
->>>
->>>
->>>
->>> Using your workaround, can you run:
->>>
->>> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->>>
->>> If you see:
->>>    1e27000.clock-controller: emac  off-0
->>>
->>> then genpd is not working like it is supposed to. You should see
->>> something
->>> like this for device that are working:
->>>            1e27000.clock-controller: uart2  on
->>>      /devices/platform/soc@1c00000/1d0d000.serial        active
->>>
->>>
->>>>
->>>> Once I set the emac clock to always enabled (a workaround that was
->>>> necessary with v6, but could be dropped with my first
->>>> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
->>>> pointer dereference:
->>>
->>>
->>>
->>> I noticed this too when adding the power-domains property to some device
->>> tree nodes. This is part of the reason why I didn't add it everywhere.
->>> I wasn't able to figure out the cause of this yet. As a work around
->>> though, please try removing the power-domains property from the emac
->>> and mdio nodes and use your previous workaround of having an always
->>> enabled clock.
->>>
->>>
->>
->> When I use any of the workarounds I just keep getting more problems
->> (e.g. [1] from blk and pinctrl). I only had a couple hours today to
->> play with it but it seems to me we have some memory corruption
->> somewhere. I'll check the initialization order of all the frameworks
->> involved tomorrow.
->>
->> Best regards,
->> Bartosz
->>
->> [1] https://pastebin.com/75mkkuJL
->>
->
-> I wonder if we need to delete all of the __init and __initconst attributes
-> now that this has been converted to platform devices.
->
+On the new Allwinner H6 SoC, multiple PLL's are NMP style clocks
+(modelled as NKMP with no K) and have fixed post-dividers.
 
-Duh... Of course we do. IIRC everything in the init section gets
-removed after late_initcall. I'll test that tomorrow.
+Add fixed post divider support to the NKMP style clocks.
 
-Bart
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+No changes in v2.
+
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 20 +++++++++++++++++---
+ drivers/clk/sunxi-ng/ccu_nkmp.h |  2 ++
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..497ac20deb19 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 					unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+-	unsigned long n, m, k, p;
++	unsigned long n, m, k, p, rate;
+ 	u32 reg;
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+@@ -107,7 +107,11 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 	p = reg >> nkmp->p.shift;
+ 	p &= (1 << nkmp->p.width) - 1;
+ 
+-	return (parent_rate * n * k >> p) / m;
++	rate = (parent_rate * n * k >> p) / m;
++	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate /= nkmp->fixed_post_div;
++
++	return rate;
+ }
+ 
+ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -116,6 +120,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+ 	struct _ccu_nkmp _nkmp;
+ 
++	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate *= nkmp->fixed_post_div;
++
+ 	_nkmp.min_n = nkmp->n.min ?: 1;
+ 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min ?: 1;
+@@ -127,7 +134,11 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
+ 
+-	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
++	rate = *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
++	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate / nkmp->fixed_post_div;
++
++	return rate;
+ }
+ 
+ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -138,6 +149,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	u32 reg;
+ 
++	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate = rate * nkmp->fixed_post_div;
++
+ 	_nkmp.min_n = nkmp->n.min ?: 1;
+ 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min ?: 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
+index a82facbc6144..6940503e7fc4 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.h
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
+@@ -34,6 +34,8 @@ struct ccu_nkmp {
+ 	struct ccu_div_internal		m;
+ 	struct ccu_div_internal		p;
+ 
++	unsigned int		fixed_post_div;
++
+ 	struct ccu_common	common;
+ };
+ 
+-- 
+2.15.1
+
