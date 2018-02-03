@@ -1,68 +1,246 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 22/26] ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-Date: Mon, 12 Feb 2018 17:44:31 +0000
-Message-Id: <1518457475-4480-23-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180131180945.18025-9-jbrunet@baylibre.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com> <20180131180945.18025-9-jbrunet@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 3 Feb 2018 19:53:24 +0100
+Message-ID: <CAFBinCD2TRRraJ7hGoLy2Y42-LAK1ZXyvOLbPCsf1Aip_ELJHQ@mail.gmail.com>
+Subject: Re: [PATCH 08/19] clk: meson: add regmap to the clock controllers
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7790 dtsi.
+On Wed, Jan 31, 2018 at 7:09 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> This change register a regmap in meson8b, gxbb and axg controllers.
+> The clock are still accessing their registers directly through iomem.
+> Once all clocks handled by these controllers have been move to regmap,
+> the regmap register will be removed and replaced with a syscon request.
+maybe you can add a comment that some of the registers from this area
+need to be accessed outside the clock driver (by the HDMI driver for
+example - which is the case on GX and Meson8/8b IIRC) if you have to
+re-spin this series
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index a84bf35..83d6704 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -218,6 +218,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7790-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7790",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.7.4
+> ---
+>  drivers/clk/meson/Kconfig   |  2 ++
+>  drivers/clk/meson/axg.c     | 15 ++++++++++++++-
+>  drivers/clk/meson/gxbb.c    | 33 +++++++++++++++++++++++----------
+>  drivers/clk/meson/meson8b.c | 14 +++++++++++++-
+>  4 files changed, 52 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 33d148e19066..9735335b17a9 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -11,6 +11,7 @@ config COMMON_CLK_MESON8B
+>         bool
+>         depends on COMMON_CLK_AMLOGIC
+>         select RESET_CONTROLLER
+> +       select REGMAP
+>         help
+>           Support for the clock controller on AmLogic S802 (Meson8),
+>           S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+> @@ -29,6 +30,7 @@ config COMMON_CLK_AXG
+>         bool
+>         depends on COMMON_CLK_AMLOGIC
+>         select RESET_CONTROLLER
+> +       select REGMAP
+>         help
+>           Support for the clock controller on AmLogic A113D devices, aka axg.
+>           Say Y if you want peripherals and CPU frequency scaling to work.
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index f84927e76f88..669d0ed84ebc 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -11,10 +11,11 @@
+>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/init.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/init.h>
+> +#include <linux/regmap.h>
+>
+>  #include "clkc.h"
+>  #include "axg.h"
+> @@ -791,12 +792,19 @@ static const struct of_device_id clkc_match_table[] = {
+>         {}
+>  };
+>
+> +static const struct regmap_config clkc_regmap_config = {
+> +       .reg_bits       = 32,
+> +       .val_bits       = 32,
+> +       .reg_stride     = 4,
+> +};
+> +
+>  static int axg_clkc_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+>         const struct clkc_data *clkc_data;
+>         struct resource *res;
+>         void __iomem *clk_base;
+> +       struct regmap *map;
+>         int ret, i;
+>
+>         clkc_data = of_device_get_match_data(dev);
+> @@ -807,12 +815,17 @@ static int axg_clkc_probe(struct platform_device *pdev)
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         if (!res)
+>                 return -EINVAL;
+> +
+>         clk_base = devm_ioremap(dev, res->start, resource_size(res));
+>         if (!clk_base) {
+>                 dev_err(dev, "Unable to map clk base\n");
+>                 return -ENXIO;
+>         }
+>
+> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+> +       if (IS_ERR(map))
+> +               return PTR_ERR(map);
+> +
+>         /* Populate base address for PLLs */
+>         for (i = 0; i < clkc_data->clk_plls_count; i++)
+>                 clkc_data->clk_plls[i]->base = clk_base;
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 6609024eee00..e3faf0a0fdb7 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -19,10 +19,11 @@
+>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/init.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/init.h>
+> +#include <linux/regmap.h>
+>
+>  #include "clkc.h"
+>  #include "gxbb.h"
+> @@ -1937,10 +1938,18 @@ static const struct of_device_id clkc_match_table[] = {
+>         {},
+>  };
+>
+> +static const struct regmap_config clkc_regmap_config = {
+> +       .reg_bits       = 32,
+> +       .val_bits       = 32,
+> +       .reg_stride     = 4,
+> +};
+> +
+>  static int gxbb_clkc_probe(struct platform_device *pdev)
+>  {
+>         const struct clkc_data *clkc_data;
+> +       struct resource *res;
+>         void __iomem *clk_base;
+> +       struct regmap *map;
+>         int ret, i;
+>         struct device *dev = &pdev->dev;
+>
+> @@ -1948,13 +1957,20 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>         if (!clkc_data)
+>                 return -EINVAL;
+>
+> -       /*  Generic clocks and PLLs */
+> -       clk_base = of_iomap(dev->of_node, 0);
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res)
+> +               return -EINVAL;
+> +
+> +       clk_base = devm_ioremap(dev, res->start, resource_size(res));
+>         if (!clk_base) {
+>                 pr_err("%s: Unable to map clk base\n", __func__);
+>                 return -ENXIO;
+>         }
+>
+> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+> +       if (IS_ERR(map))
+> +               return PTR_ERR(map);
+> +
+>         /* Populate base address for PLLs */
+>         for (i = 0; i < clkc_data->clk_plls_count; i++)
+>                 clkc_data->clk_plls[i]->base = clk_base;
+> @@ -1991,17 +2007,14 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>
+>                 ret = devm_clk_hw_register(dev,
+>                                            clkc_data->hw_onecell_data->hws[i]);
+> -               if (ret)
+> -                       goto iounmap;
+> +               if (ret) {
+> +                       dev_err(dev, "Clock registration failed\n");
+> +                       return ret;
+> +               }
+>         }
+>
+> -
+>         return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>                                            clkc_data->hw_onecell_data);
+> -
+> -iounmap:
+> -       iounmap(clk_base);
+> -       return ret;
+>  }
+>
+>  static struct platform_driver gxbb_driver = {
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index db017c29a84c..0981e970de3d 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -23,11 +23,12 @@
+>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/init.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+> -#include <linux/init.h>
+> +#include <linux/regmap.h>
+>
+>  #include "clkc.h"
+>  #include "meson8b.h"
+> @@ -804,16 +805,27 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
+>         .deassert = meson8b_clk_reset_deassert,
+>  };
+>
+> +static const struct regmap_config clkc_regmap_config = {
+> +       .reg_bits       = 32,
+> +       .val_bits       = 32,
+> +       .reg_stride     = 4,
+> +};
+> +
+>  static int meson8b_clkc_probe(struct platform_device *pdev)
+>  {
+>         int ret, i;
+>         struct clk_hw *parent_hw;
+>         struct clk *parent_clk;
+>         struct device *dev = &pdev->dev;
+> +       struct regmap *map;
+>
+>         if (!clk_base)
+>                 return -ENXIO;
+>
+> +       map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+> +       if (IS_ERR(map))
+> +               return PTR_ERR(map);
+> +
+>         /* Populate base address for PLLs */
+>         for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
+>                 meson8b_clk_plls[i]->base = clk_base;
+> --
+> 2.14.3
+>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
