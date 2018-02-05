@@ -1,81 +1,69 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <ulfalizer@gmail.com>
+Return-Path: <ulfalizer@gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org,
+	tfiga@chromium.org,
+	paul.burton@mips.com,
+	m.szyprowski@samsung.com,
+	egtvedt@samfundet.no,
+	linus.walleij@linaro.org,
+	vgupta@synopsys.com,
+	mgorman@techsingularity.net,
+	hch@lst.de,
+	mina86@mina86.com,
+	robh@kernel.org,
+	sboyd@codeaurora.org,
+	paulus@ozlabs.org,
+	will.deacon@arm.com,
+	tony@atomide.com,
+	npiggin@gmail.com,
+	yamada.masahiro@socionext.com,
+	Ulf Magnusson <ulfalizer@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 05/11] clk: meson: add gp0 frac parameter for axg and gxl
-Date: Mon, 19 Feb 2018 12:21:40 +0100
-Message-Id: <20180219112146.21746-6-jbrunet@baylibre.com>
-In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
-References: <20180219112146.21746-1-jbrunet@baylibre.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 09/20] clk: sunxi-ng: Remove SUNXI_CCU_* selects
+Date: Mon,  5 Feb 2018 02:21:21 +0100
+Message-Id: <20180205012146.23981-10-ulfalizer@gmail.com>
+In-Reply-To: <20180205012146.23981-1-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the frac parameter for the gp0 pll of the axg and gxl.
-This allows to achieve rates between the fixed settings provided
-by the table.
+The selected symbols were removed in commit 06e226c7fb23 ("clk:
+sunxi-ng: Move all clock types to a library").
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Remove the selects from SUN4I_A10_CCU.
+
+Discovered with the
+https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+script.
+
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- drivers/clk/meson/axg.c  | 7 ++++++-
- drivers/clk/meson/gxbb.c | 7 ++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 4f13929cd594..892572a2d70f 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -193,7 +193,7 @@ static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
- };
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 6427d0ebe2de..33168f94ee39 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -13,13 +13,6 @@ config SUN50I_A64_CCU
  
- const struct reg_sequence axg_gp0_init_regs[] = {
--	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
-+	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084b000 },
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
-@@ -218,6 +218,11 @@ static struct clk_regmap axg_gp0_pll = {
- 			.shift   = 16,
- 			.width   = 2,
- 		},
-+		.frac = {
-+			.reg_off = HHI_GP0_PLL_CNTL1,
-+			.shift   = 0,
-+			.width   = 10,
-+		},
- 		.l = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
- 			.shift   = 31,
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index ac48eef0f490..fdeb372863de 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -437,7 +437,7 @@ static struct clk_regmap gxbb_gp0_pll = {
- };
- 
- const struct reg_sequence gxl_gp0_init_regs[] = {
--	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
-+	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084b000 },
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
-@@ -462,6 +462,11 @@ static struct clk_regmap gxl_gp0_pll = {
- 			.shift   = 16,
- 			.width   = 2,
- 		},
-+		.frac = {
-+			.reg_off = HHI_GP0_PLL_CNTL1,
-+			.shift   = 0,
-+			.width   = 10,
-+		},
- 		.l = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
- 			.shift   = 31,
+ config SUN4I_A10_CCU
+ 	bool "Support for the Allwinner A10/A20 CCU"
+-	select SUNXI_CCU_DIV
+-	select SUNXI_CCU_MULT
+-	select SUNXI_CCU_NK
+-	select SUNXI_CCU_NKM
+-	select SUNXI_CCU_NM
+-	select SUNXI_CCU_MP
+-	select SUNXI_CCU_PHASE
+ 	default MACH_SUN4I
+ 	default MACH_SUN7I
+ 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
 -- 
-2.14.3
+2.14.1
