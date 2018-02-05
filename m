@@ -1,39 +1,42 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
- CFGCHIP clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-18-git-send-email-david@lechnology.com>
- <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
-Date: Fri, 2 Feb 2018 11:50:23 -0600
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 5 Feb 2018 00:08:45 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A77980 support
+Message-ID: <20180205060845.ksaczxkdil7wuir6@rob-hp-laptop>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+ <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/02/2018 12:20 AM, Sekhar Nori wrote:
-> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->> +EMIFA clock source (ASYNC1)
->> +---------------------------
->> +Required properties:
->> +- compatible: shall be "ti,da850-async1-clksrc".
->> +- #clock-cells: from common clock binding; shall be set to 0.
->> +- clocks: phandles to the parent clocks corresponding to clock-names
->> +- clock-names: shall be "pll0_sysclk3", "div4.5"
+On Wed, Jan 31, 2018 at 11:31:05PM +0300, Sergei Shtylyov wrote:
+> Add R-Car V3H (R8A77980) Clock Pulse Generator / Module Standby and
+> Software Reset support,  using the CPG/MSSR driver core and the common
+> R-Car Gen3 code.
 > 
-> Is this clock really referred to as aysnc1 in documentation? I don't get
-> hits for async1 in OMAP-L138 TRM.
+> Based on the original (and large) patch by Vladimir Barinov.
 > 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
 
-It looks like it is only called ASYNC1 in the datasheet, not the TRM.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Table 6-5. Maximum Internal Clock Frequencies at Each Voltage Operating
-Point
+>  drivers/clk/renesas/Kconfig                                  |    5 
+>  drivers/clk/renesas/Makefile                                 |    1 
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c                      |  227 +++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+>  drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+>  6 files changed, 243 insertions(+), 2 deletions(-)
