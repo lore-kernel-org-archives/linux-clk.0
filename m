@@ -1,116 +1,77 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] clk: Use octal instead of symbolic permissions
-Date: Wed,  3 Jan 2018 12:06:15 +0100
-Message-Id: <1514977577-11854-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
-References: <1514977577-11854-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Mon, 5 Feb 2018 14:46:38 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	tfiga@chromium.org, paul.burton@mips.com, m.szyprowski@samsung.com,
+	egtvedt@samfundet.no, linus.walleij@linaro.org, vgupta@synopsys.com,
+	mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+	robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+	will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+	yamada.masahiro@socionext.com, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/20] clk: sunxi-ng: Remove SUNXI_CCU_* selects
+Message-ID: <20180205134638.ugngvfmdixnpxihk@flea>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+ <20180205012146.23981-10-ulfalizer@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qibptpmrcb5iyvxp"
+In-Reply-To: <20180205012146.23981-10-ulfalizer@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Octal permissions are preferred, as they are easier to read than
-symbolic permissions.  Hence replace "S_IRUGO" by "0444".
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/clk/clk.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+--qibptpmrcb5iyvxp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8c4769c50a71be93..240b1d427fadab66 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2600,48 +2600,48 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 
- 	core->dentry = d;
- 
--	d = debugfs_create_u32("clk_rate", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_rate", 0444, core->dentry,
- 			(u32 *)&core->rate);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_accuracy", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_accuracy", 0444, core->dentry,
- 			(u32 *)&core->accuracy);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_phase", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_phase", 0444, core->dentry,
- 			(u32 *)&core->phase);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_x32("clk_flags", S_IRUGO, core->dentry,
-+	d = debugfs_create_x32("clk_flags", 0444, core->dentry,
- 			(u32 *)&core->flags);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_prepare_count", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_prepare_count", 0444, core->dentry,
- 			(u32 *)&core->prepare_count);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_enable_count", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_enable_count", 0444, core->dentry,
- 			(u32 *)&core->enable_count);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_protect_count", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_protect_count", 0444, core->dentry,
- 			(u32 *)&core->protect_count);
- 	if (!d)
- 		goto err_out;
- 
--	d = debugfs_create_u32("clk_notifier_count", S_IRUGO, core->dentry,
-+	d = debugfs_create_u32("clk_notifier_count", 0444, core->dentry,
- 			(u32 *)&core->notifier_count);
- 	if (!d)
- 		goto err_out;
- 
- 	if (core->num_parents > 1) {
--		d = debugfs_create_file("clk_possible_parents", S_IRUGO,
-+		d = debugfs_create_file("clk_possible_parents", 0444,
- 				core->dentry, core, &possible_parents_fops);
- 		if (!d)
- 			goto err_out;
-@@ -2737,22 +2737,22 @@ static int __init clk_debug_init(void)
- 	if (!rootdir)
- 		return -ENOMEM;
- 
--	d = debugfs_create_file("clk_summary", S_IRUGO, rootdir, &all_lists,
-+	d = debugfs_create_file("clk_summary", 0444, rootdir, &all_lists,
- 				&clk_summary_fops);
- 	if (!d)
- 		return -ENOMEM;
- 
--	d = debugfs_create_file("clk_dump", S_IRUGO, rootdir, &all_lists,
-+	d = debugfs_create_file("clk_dump", 0444, rootdir, &all_lists,
- 				&clk_dump_fops);
- 	if (!d)
- 		return -ENOMEM;
- 
--	d = debugfs_create_file("clk_orphan_summary", S_IRUGO, rootdir,
-+	d = debugfs_create_file("clk_orphan_summary", 0444, rootdir,
- 				&orphan_list, &clk_summary_fops);
- 	if (!d)
- 		return -ENOMEM;
- 
--	d = debugfs_create_file("clk_orphan_dump", S_IRUGO, rootdir,
-+	d = debugfs_create_file("clk_orphan_dump", 0444, rootdir,
- 				&orphan_list, &clk_dump_fops);
- 	if (!d)
- 		return -ENOMEM;
--- 
-2.7.4
+Hi Ulf,
+
+On Mon, Feb 05, 2018 at 02:21:21AM +0100, Ulf Magnusson wrote:
+> The selected symbols were removed in commit 06e226c7fb23 ("clk:
+> sunxi-ng: Move all clock types to a library").
+>=20
+> Remove the selects from SUN4I_A10_CCU.
+>=20
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefin=
+ed.py
+> script.
+>=20
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+
+This has already been submitted by Corentin:
+https://patchwork.kernel.org/patch/10175435/
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--qibptpmrcb5iyvxp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp4YD4ACgkQ0rTAlCFN
+r3QtyA/9Fm+szM2mf5g406tyFmVHFdbHaTDP5jD54fhjBPPK1Jg0uw8Ig9dpFOe5
+m4Bcq7rPAMfjAYHOAd+FCv7P0oT4/K7n3NQ/9I7e1WqMNAKzqNyN/WcloDjFS/gK
+lhxPPorybKvvChE2ZddU9w5oC4AETILJ5B+gveN2IsTO3YDJv2Ufly8YmS4+OyO9
+AtNh84XQ1lTen1W9HvS9S3hCJwXHYMq1cMoVS83azCMMBBM38D5DOoeMaJID2kR8
+N8LHkVxrtYMB7tE9mjTRRHDWqIxRQww0B+/5qUcFN513NgQxsOcSmIJp9xu9N4qw
+Ypk74ydvysGOylvBmn69tdW5Q4BYY9w0HEPBxNwbEVrsr4Ez8Ij8aKY4YD2uPm0S
+5svM5KJBA1vXi244n4689MnC+EYdrGwzDtYK0H1F1p24yRAtdXRgDxVHoz+9A10L
+dvMVCeSsqBm+WQlXnCiIItbLHRyAYeuxsV75ANnQDiqNN1GsDvsYMLcSXjXBgPhp
+vyDMkzgCYQwDvDCQ0sdIPg5niDiKONdIGWyADPNiy7s/It2hT0dGofezV/yC8Odl
+uX8pV4yvd8rdBTNSS566kjYaqyTUyPegwov651837ZzxOZwyVBEM/GYOt90po6Se
+79uIi7P/koSCTRbe9zEFrUkcdh9hGR2h9Uxvho0kjjhxXYCPB+s=
+=vQgV
+-----END PGP SIGNATURE-----
+
+--qibptpmrcb5iyvxp--
