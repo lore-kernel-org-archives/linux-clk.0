@@ -1,64 +1,128 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43618 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030633AbeBNOAc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-Date: Wed, 14 Feb 2018 15:59:49 +0200
-Message-Id: <1518616792-29028-8-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45550 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbeBEJLg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Feb 2018 04:11:36 -0500
+Message-ID: <1517821892.12510.32.camel@mtkswgap22>
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: mediatek: update audsys
+ documentation to adapt MFD device
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: <devicetree@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>, "Mark Brown" <broonie@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 5 Feb 2018 17:11:32 +0800
+In-Reply-To: <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+         <8651585c91ee40f6ab3e30b893bcfb90fe5c2c25.1515639336.git.ryder.lee@mediatek.com>
+         <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The PLLs must be prepared enabled during the probe to be
-accessible by the OPPs. Otherwise an OPP may switch
-to non-enabled clock.
+On Mon, 2018-02-05 at 00:08 -0600, Rob Herring wrote:
+> On Wed, Jan 31, 2018 at 03:42:44PM +0800, Ryder Lee wrote:
+> > As the MediaTek audio hardware block that expose functionalities that are
+> > handled by separate subsystems in the kernel, and there are registers that
+> > are shared between related drivers.
+> > 
+> > Switch the current device to an MFD device, add more descriptions about the
+> > subsystem and modify example accordingly.
+> > 
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,audsys.txt      | 37 ++++++++++++++++++----
+> >  1 file changed, 30 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > index 9b8f578..677af40 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > @@ -1,22 +1,45 @@
+> > -MediaTek AUDSYS controller
+> > +MediaTek Audio Subsystem
+> >  ============================
+> > +The audio subsystem is one of the multi-function blocks of MediaTek SoCs.
+> > +It contains a system controller, which provides a number registers giving
+> > +access to two features: AUDSYS clocks and Audio Front End (AFE) components.
+> >  
+> > +For the top level node:
+> > +- compatible: must be: "syscon", "simple-mfd";
+> 
+> This should have some SoC specific compatible.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+As we don't have a specific driver (compatible string) for it and if we
+need to add that I think the term '*-audsys' is very suitable here, but
+unfortunately, it has already picked for clock driver (see child node).
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 854f327..b0a3b73 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -15,7 +15,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
--
-+#include <linux/clk-provider.h>
- #include "clk-alpha-pll.h"
- 
- #define VCO(a, b, c) { \
-@@ -376,6 +376,18 @@ struct clk_hw_clks {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	/* Enable all PLLs and alt PLLs */
-+	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(pwrcl_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_pll.clkr.hw.clk);
-+
-+	/* Set initial boot frequencies for power/perf PLLs */
-+	clk_set_rate(pwrcl_alt_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(perfcl_alt_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(pwrcl_pll.clkr.hw.clk, 652800000);
-+	clk_set_rate(perfcl_pll.clkr.hw.clk, 652800000);
-+
- 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
- 	if (ret)
- 		return ret;
--- 
-1.9.1
+I also took ../../marvell/*-system-controller.txt as examples for my
+case. Thus, I'm not sure should we still need a new one here?
+
+> > +- reg: register area of the Audio Subsystem
+> > +
+> > +Required sub-nodes:
+> > +
+> > +AUDSYS clocks:
+> > +-------
+> >  The MediaTek AUDSYS controller provides various clocks to the system.
+> >  
+> >  Required Properties:
+> >  
+> >  - compatible: Should be one of:
+> > -	- "mediatek,mt7622-audsys", "syscon"
+> > +	- "mediatek,mt2701-audsys";
+> > +	- "mediatek,mt7622-audsys";
+> >  - #clock-cells: Must be 1
+> >  
+> >  The AUDSYS controller uses the common clk binding from
+> >  Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> 
+> There's no register range associated with the clocks? If there is, add a 
+> reg property.
+
+No, we don't need reg property here, as the two sub-drivers will obtain
+the regmap  which is propagated from the parent.
+
+Thanks
+
+> >  
+> > +AFE components:
+> > +-------
+> > +For common binding part and usage, refer to
+> > +../sonud/mt2701-afe-pcm.txt.
+> > +
+> >  Example:
+> >  
+> > -audsys: audsys@11220000 {
+> > -	compatible = "mediatek,mt7622-audsys", "syscon";
+> > -	reg = <0 0x11220000 0 0x1000>;
+> > -	#clock-cells = <1>;
+> > -};
+> > +	audio-subsystem@11220000 {
+> > +		compatible = "syscon", "simple-mfd";
+> > +		reg = <0 0x11220000 0 0x2000>;
+> > +
+> > +		audsys: clock {
+> > +			compatible = "mediatek,mt2701-audsys";
+> > +			#clock-cells = <1>;
+> > +		};
+> > +
+> > +		...
+> > +	};
+> > -- 
+> > 1.9.1
+> > 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
 
