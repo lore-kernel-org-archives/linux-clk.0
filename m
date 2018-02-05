@@ -1,151 +1,42 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org,
-	Russell King <linux@arm.linux.org.uk>,
-	Courtney Cavin <courtney.cavin@sonymobile.com>
-Subject: [PATCH v6 01/15] ARM: Add Krait L2 register accessor functions
-Date: Tue,  6 Feb 2018 09:38:14 +0530
-Message-Id: <1517890108-8140-2-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com"
+	<gabriel.fernandez.st@gmail.com>,
+        Olivier BIDEAU <olivier.bideau@st.com>
+Subject: Re: [PATCH 02/14] dt-bindings: clock: add STM32MP1 clocks
+Date: Mon, 5 Feb 2018 07:02:24 +0000
+Message-ID: <ec89b70e-1500-df15-639c-59165fb2014b@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+ <1517580222-23301-3-git-send-email-gabriel.fernandez@st.com>
+ <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
+In-Reply-To: <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
-
-Krait CPUs have a handful of L2 cache controller registers that
-live behind a cp15 based indirection register. First you program
-the indirection register (l2cpselr) to point the L2 'window'
-register (l2cpdr) at what you want to read/write.  Then you
-read/write the 'window' register to do what you want. The
-l2cpselr register is not banked per-cpu so we must lock around
-accesses to it to prevent other CPUs from re-pointing l2cpdr
-underneath us.
-
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Courtney Cavin <courtney.cavin@sonymobile.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/common/Kconfig                   |  3 ++
- arch/arm/common/Makefile                  |  1 +
- arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
- 4 files changed, 62 insertions(+)
- create mode 100644 arch/arm/common/krait-l2-accessors.c
- create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
-
-diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
-index e5ad070..c8e1986 100644
---- a/arch/arm/common/Kconfig
-+++ b/arch/arm/common/Kconfig
-@@ -7,6 +7,9 @@ config DMABOUNCE
- 	bool
- 	select ZONE_DMA
- 
-+config KRAIT_L2_ACCESSORS
-+	bool
-+
- config SHARP_LOCOMO
- 	bool
- 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14..eec6cd1 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -7,6 +7,7 @@ obj-y				+= firmware.o
- 
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
-+obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
-new file mode 100644
-index 0000000..9a97dda
---- /dev/null
-+++ b/arch/arm/common/krait-l2-accessors.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/spinlock.h>
-+#include <linux/export.h>
-+
-+#include <asm/barrier.h>
-+#include <asm/krait-l2-accessors.h>
-+
-+static DEFINE_RAW_SPINLOCK(krait_l2_lock);
-+
-+void krait_set_l2_indirect_reg(u32 addr, u32 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then write to the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
-+	isb();
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+}
-+EXPORT_SYMBOL(krait_set_l2_indirect_reg);
-+
-+u32 krait_get_l2_indirect_reg(u32 addr)
-+{
-+	u32 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then read from the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(krait_get_l2_indirect_reg);
-diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
-new file mode 100644
-index 0000000..dd7c474
---- /dev/null
-+++ b/arch/arm/include/asm/krait-l2-accessors.h
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
-+#define __ASMARM_KRAIT_L2_ACCESSORS_H
-+
-+extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
-+extern u32 krait_get_l2_indirect_reg(u32 addr);
-+
-+#endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+DQoNCk9uIDAyLzA1LzIwMTggMDc6MDkgQU0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBGcmks
+IEZlYiAwMiwgMjAxOCBhdCAwMzowMzozMFBNICswMTAwLCBnYWJyaWVsLmZlcm5hbmRlekBzdC5j
+b20gd3JvdGU6DQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpA
+c3QuY29tPg0KPj4NCj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgY2xvY2sgYmluZGluZyBlbnRyeSBm
+b3IgU1RNMzJNUDENCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBHYWJyaWVsIEZlcm5hbmRleiA8Z2Fi
+cmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4gLS0tDQo+PiAgIGluY2x1ZGUvZHQtYmluZGluZ3Mv
+Y2xvY2svc3RtMzJtcDEtY2xrcy5oIHwgMjQ4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Kw0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMjQ4IGluc2VydGlvbnMoKykNCj4+ICAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJtcDEtY2xrcy5oDQo+IFlv
+dSBjYW4gc3F1YXNoIHRoaXMgaW50byB0aGUgcHJldmlvdXMgcGF0Y2guDQpPayBUaGFua3MhDQoN
+CkJSDQpHYWJyaWVsDQo=
