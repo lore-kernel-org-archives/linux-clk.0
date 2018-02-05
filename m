@@ -1,105 +1,45 @@
-Return-Path: <boris.brezillon@bootlin.com>
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	linux-mtd@lists.infradead.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	David Airlie <airlied@linux.ie>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] Update Boris Brezillon email address
-Date: Fri, 16 Feb 2018 11:44:49 +0100
-Message-Id: <20180216104449.15546-1-boris.brezillon@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+Date: Mon, 05 Feb 2018 15:22:28 +0100
+Message-id: <20180205142230.9755-1-s.nawrocki@samsung.com>
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Free Electrons is now Bootlin.
+Add more definitions to the exynos5433_aud_pll_rates table so the
+AUD_PLL can be used as a root clock source for the I2S1 and the HDMI
+interface.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-Note that I'm planning to take this patch through the MTD tree.
----
- .mailmap    |  7 ++++---
- MAINTAINERS | 10 +++++-----
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/.mailmap b/.mailmap
-index e18cab73e209..50c1d6bf36b2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
- Ben Gardner <bgardner@wabtec.com>
- Ben M Cahill <ben.m.cahill@intel.com>
- Björn Steinbrink <B.Steinbrink@gmx.de>
--Boris Brezillon <boris.brezillon@free-electrons.com>
--Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
--Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
-+Boris Brezillon <boris.brezillon@bootlin.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon.dev@gmail.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon@overkiz.com>
- Brian Avery <b.avery@hp.com>
- Brian King <brking@us.ibm.com>
- Christoph Hellwig <hch@lst.de>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 34b2e9ed6d3d..38fcbabbc55b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1232,7 +1232,7 @@ F:	arch/arm/boot/dts/aspeed-*
- F:	drivers/*/*aspeed*
- 
- ARM/ATMEL AT91 Clock Support
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- S:	Maintained
- F:	drivers/clk/at91
- 
-@@ -4644,7 +4644,7 @@ F:	Documentation/gpu/meson.rst
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
- DRM DRIVERS FOR ATMEL HLCDC
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- L:	dri-devel@lists.freedesktop.org
- S:	Supported
- F:	drivers/gpu/drm/atmel-hlcdc/
-@@ -8412,7 +8412,7 @@ F:	include/uapi/drm/armada_drm.h
- F:	Documentation/devicetree/bindings/display/armada/
- 
- MARVELL CRYPTO DRIVER
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- M:	Arnaud Ebalard <arno@natisbad.org>
- F:	drivers/crypto/marvell/
- S:	Maintained
-@@ -9034,7 +9034,7 @@ F:	mm/
- MEMORY TECHNOLOGY DEVICES (MTD)
- M:	David Woodhouse <dwmw2@infradead.org>
- M:	Brian Norris <computersforpeace@gmail.com>
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- M:	Marek Vasut <marek.vasut@gmail.com>
- M:	Richard Weinberger <richard@nod.at>
- M:	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-@@ -9452,7 +9452,7 @@ S:	Supported
- F:	drivers/net/ethernet/myricom/myri10ge/
- 
- NAND FLASH SUBSYSTEM
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- R:	Richard Weinberger <richard@nod.at>
- L:	linux-mtd@lists.infradead.org
- W:	http://www.linux-mtd.infradead.org/
--- 
-2.14.1
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index db270908037a..74b70ddab4d6 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -765,6 +765,14 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
+ 	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+ 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+ 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
++	PLL_36XX_RATE(200000000U, 200, 3, 3,      0),
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
++	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
++	PLL_36XX_RATE(100000000U, 200, 3, 4,      0),
++	PLL_36XX_RATE(65536003U,  131, 3, 4,   4719),
++	PLL_36XX_RATE(49152000U,  197, 3, 5, -25690),
++	PLL_36XX_RATE(32768001U,  131, 3, 5,   4719),
+ 	{ /* sentinel */ }
+ };
+
+--
+2.14.2
