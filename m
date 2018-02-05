@@ -1,54 +1,50 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 08/11] clk: tegra: build clk-dfll.c for Tegra124 and Tegra210
-Date: Tue, 6 Feb 2018 18:34:09 +0200
-Message-ID: <1517934852-23255-9-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
+ CFGCHIP clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-18-git-send-email-david@lechnology.com>
+ <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
+ <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <f57cae4e-560a-0ea4-16dd-bdf8696d4f7b@ti.com>
+Date: Mon, 5 Feb 2018 15:12:35 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 has a DFLL as well and can share the majority of the code with
-the Tegra124 implementation. So build the same code for both platforms.
+On Friday 02 February 2018 11:20 PM, David Lechner wrote:
+> On 02/02/2018 12:20 AM, Sekhar Nori wrote:
+>> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>>> +EMIFA clock source (ASYNC1)
+>>> +---------------------------
+>>> +Required properties:
+>>> +- compatible: shall be "ti,da850-async1-clksrc".
+>>> +- #clock-cells: from common clock binding; shall be set to 0.
+>>> +- clocks: phandles to the parent clocks corresponding to clock-names
+>>> +- clock-names: shall be "pll0_sysclk3", "div4.5"
+>>
+>> Is this clock really referred to as aysnc1 in documentation? I don't get
+>> hits for async1 in OMAP-L138 TRM.
+>>
+> 
+> It looks like it is only called ASYNC1 in the datasheet, not the TRM.
+> 
+> Table 6-5. Maximum Internal Clock Frequencies at Each Voltage Operating
+> Point
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Kconfig  | 5 +++++
- drivers/clk/tegra/Makefile | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+I see it now. Its fine to use async1 then.
 
-diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
-index 7ddacae..57902ab 100644
---- a/drivers/clk/tegra/Kconfig
-+++ b/drivers/clk/tegra/Kconfig
-@@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
- config CLK_TEGRA_BPMP
- 	def_bool y
- 	depends on TEGRA_BPMP
-+
-+config TEGRA_CLK_DFLL
-+	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
-+	select PM_OPP
-+	def_bool y
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index b716923..fc7f4b4 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -19,7 +19,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
--obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-+obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
- obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
--- 
-1.9.1
+Thanks,
+Sekhar
