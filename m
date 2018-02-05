@@ -1,128 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45550 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbeBEJLg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Feb 2018 04:11:36 -0500
-Message-ID: <1517821892.12510.32.camel@mtkswgap22>
-Subject: Re: [PATCH v2 4/5] dt-bindings: clock: mediatek: update audsys
- documentation to adapt MFD device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <devicetree@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>, "Mark Brown" <broonie@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date: Mon, 5 Feb 2018 17:11:32 +0800
-In-Reply-To: <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
-         <8651585c91ee40f6ab3e30b893bcfb90fe5c2c25.1515639336.git.ryder.lee@mediatek.com>
-         <20180205060833.p56dun5i4bvs3jye@rob-hp-laptop>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1517824279.3153.42.camel@baylibre.com>
+Subject: Re: [PATCH 08/19] clk: meson: add regmap to the clock controllers
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
+ <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Carlo
+ Caione <carlo@caione.org>,  linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Date: Mon, 05 Feb 2018 10:51:19 +0100
+In-Reply-To: <CAFBinCD2TRRraJ7hGoLy2Y42-LAK1ZXyvOLbPCsf1Aip_ELJHQ@mail.gmail.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
+	 <20180131180945.18025-9-jbrunet@baylibre.com>
+	 <CAFBinCD2TRRraJ7hGoLy2Y42-LAK1ZXyvOLbPCsf1Aip_ELJHQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-02-05 at 00:08 -0600, Rob Herring wrote:
-> On Wed, Jan 31, 2018 at 03:42:44PM +0800, Ryder Lee wrote:
-> > As the MediaTek audio hardware block that expose functionalities that are
-> > handled by separate subsystems in the kernel, and there are registers that
-> > are shared between related drivers.
-> > 
-> > Switch the current device to an MFD device, add more descriptions about the
-> > subsystem and modify example accordingly.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,audsys.txt      | 37 ++++++++++++++++++----
-> >  1 file changed, 30 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > index 9b8f578..677af40 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > @@ -1,22 +1,45 @@
-> > -MediaTek AUDSYS controller
-> > +MediaTek Audio Subsystem
-> >  ============================
-> > +The audio subsystem is one of the multi-function blocks of MediaTek SoCs.
-> > +It contains a system controller, which provides a number registers giving
-> > +access to two features: AUDSYS clocks and Audio Front End (AFE) components.
-> >  
-> > +For the top level node:
-> > +- compatible: must be: "syscon", "simple-mfd";
+On Sat, 2018-02-03 at 19:53 +0100, Martin Blumenstingl wrote:
+> On Wed, Jan 31, 2018 at 7:09 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > This change register a regmap in meson8b, gxbb and axg controllers.
+> > The clock are still accessing their registers directly through iomem.
+> > Once all clocks handled by these controllers have been move to regmap,
+> > the regmap register will be removed and replaced with a syscon request.
 > 
-> This should have some SoC specific compatible.
+> maybe you can add a comment that some of the registers from this area
+> need to be accessed outside the clock driver (by the HDMI driver for
+> example - which is the case on GX and Meson8/8b IIRC) if you have to
+> re-spin this series
 
-As we don't have a specific driver (compatible string) for it and if we
-need to add that I think the term '*-audsys' is very suitable here, but
-unfortunately, it has already picked for clock driver (see child node).
+I think it was mentioned in the cover letter, but you are right, I should
+mention it here as well.
 
-I also took ../../marvell/*-system-controller.txt as examples for my
-case. Thus, I'm not sure should we still need a new one here?
-
-> > +- reg: register area of the Audio Subsystem
-> > +
-> > +Required sub-nodes:
-> > +
-> > +AUDSYS clocks:
-> > +-------
-> >  The MediaTek AUDSYS controller provides various clocks to the system.
-> >  
-> >  Required Properties:
-> >  
-> >  - compatible: Should be one of:
-> > -	- "mediatek,mt7622-audsys", "syscon"
-> > +	- "mediatek,mt2701-audsys";
-> > +	- "mediatek,mt7622-audsys";
-> >  - #clock-cells: Must be 1
-> >  
-> >  The AUDSYS controller uses the common clk binding from
-> >  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
 > 
-> There's no register range associated with the clocks? If there is, add a 
-> reg property.
-
-No, we don't need reg property here, as the two sub-drivers will obtain
-the regmap  which is propagated from the parent.
-
-Thanks
-
-> >  
-> > +AFE components:
-> > +-------
-> > +For common binding part and usage, refer to
-> > +../sonud/mt2701-afe-pcm.txt.
-> > +
-> >  Example:
-> >  
-> > -audsys: audsys@11220000 {
-> > -	compatible = "mediatek,mt7622-audsys", "syscon";
-> > -	reg = <0 0x11220000 0 0x1000>;
-> > -	#clock-cells = <1>;
-> > -};
-> > +	audio-subsystem@11220000 {
-> > +		compatible = "syscon", "simple-mfd";
-> > +		reg = <0 0x11220000 0 0x2000>;
-> > +
-> > +		audsys: clock {
-> > +			compatible = "mediatek,mt2701-audsys";
-> > +			#clock-cells = <1>;
-> > +		};
-> > +
-> > +		...
-> > +	};
-> > -- 
-> > 1.9.1
-> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
