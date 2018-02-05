@@ -1,245 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42618 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030565AbeBNOAJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:09 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 01/10] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Wed, 14 Feb 2018 15:59:43 +0200
-Message-Id: <1518616792-29028-2-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 20/41] ARM: da830: add new clock init using common
+ clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-21-git-send-email-david@lechnology.com>
+ <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
+ <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4fc7b926-a21f-d49a-005e-44ad7f06e2e7@ti.com>
+Date: Mon, 5 Feb 2018 16:36:58 +0530
+MIME-Version: 1.0
+In-Reply-To: <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+On Friday 02 February 2018 11:33 PM, David Lechner wrote:
+> On 02/02/2018 08:12 AM, Sekhar Nori wrote:
+>> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
+>>>   void __init da830_init_time(void)
+>>>   {
+>>> +#ifdef CONFIG_COMMON_CLK
+>>> +    void __iomem *pll0, *psc0, *psc1;
+>>> +    struct clk *clk;
+>>> +
+>>> +    pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
+>>> +    psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
+>>> +    psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
+>>> +
+>>> +    da8xx_register_cfgchip();
+>>> +
+>>> +    clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
+>>> +
+>>> +    da830_pll_clk_init(pll0);
+>>> +
+>>> +    da830_psc_clk_init(psc0, psc1);
+>>> +
+>>
+>>> +    clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0,
+>>> 1, 1);
+>>> +    clk_register_clkdev(clk, NULL, "i2c_davinci.1");
+>>> +
+>>> +    clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk",
+>>> 0, 1, 1);
+>>> +    clk_register_clkdev(clk, "timer0", NULL);
+>>> +
+>>> +    clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk",
+>>> 0, 1, 1);
+>>> +    clk_register_clkdev(clk, NULL, "davinci-wdt");
+>>
+>> Isn't this better done in da830_pll_clk_init() ? I think we can get rid
+>> of the dummy fixed factor clock too and directly use the pll0_auxclk.
+> 
+> 
+> I considered it, but I kind of like keeping the fixed factor clocks for
+> debugging purposes. If you just have "pll0_auxclk" the enable count is
+> not helpful because you don't know which driver did the enabling.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/Kconfig.platforms         |  7 ++++
- drivers/perf/qcom_l2_pmu.c           | 50 ++--------------------------
- drivers/soc/qcom/Makefile            |  1 +
- drivers/soc/qcom/kryo-l2-accessors.c | 64 ++++++++++++++++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 22 +++++++++++++
- 5 files changed, 96 insertions(+), 48 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+I think it is better to more or less reflect the hardware here. We would
+not be doing this in the DT case, for example.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fbedbd8..78a103b 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -145,6 +145,13 @@ config ARCH_REALTEK
- 	  This enables support for the ARMv8 based Realtek chipsets,
- 	  like the RTD1295.
- 
-+config ARCH_MSM8996
-+    bool "Enable Support for Qualcomm Technologies, Inc. MSM8996"
-+	depends on ARCH_QCOM
-+	help
-+	This enables support for the MSM8996 chipset. If you do not
-+	wish to build a kernel that runs on this chipset, say 'N' here.
-+
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
- 	select ARCH_HAS_RESET_CONTROLLER
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 4fdc848..8cece9e 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -1,4 +1,4 @@
--/* Copyright (c) 2015-2017 The Linux Foundation. All rights reserved.
-+/* Copyright (c) 2015-2018 The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -30,7 +30,7 @@
- 
- #include <asm/barrier.h>
- #include <asm/local64.h>
--#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #define MAX_L2_CTRS             9
- 
-@@ -87,9 +87,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
- 
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
--
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
- /*
-@@ -107,49 +104,6 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
--
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
--
- struct cluster_pmu;
- 
- /*
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index dcebf28..4e91e2a 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -12,3 +12,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_ARCH_MSM8996) +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..6743848
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,64 @@
-+/*
-+ * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-+
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
-+
-+/**
-+ * set_l2_indirect_reg: write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void set_l2_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(set_l2_indirect_reg);
-+
-+/**
-+ * get_l2_indirect_reg: read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 get_l2_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(get_l2_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..e9a5eab
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-+#define __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-+
-+#ifdef CONFIG_ARCH_QCOM
-+void set_l2_indirect_reg(u64 reg_addr, u64 val);
-+u64 get_l2_indirect_reg(u64 reg_addr);
-+#endif
-+
-+#endif
--- 
-1.9.1
+I see your point on debugging. Such code can perhaps be temporarily
+introduced if really debugging such an issue. This will be the case with
+any shared clock.
 
+Thanks,
+Sekhar
