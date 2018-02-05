@@ -1,70 +1,50 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH 2/2] clk: mediatek: fix PWM clock source by adding a fixed-factor clock
-Date: Thu, 1 Mar 2018 11:27:51 +0800
-Message-ID: <b6eafb38f8d697bd8d00c8d86a0b22be809f8062.1519874655.git.sean.wang@mediatek.com>
-In-Reply-To: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
-References: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 5 Feb 2018 00:08:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car
+ Gen2 support
+Message-ID: <20180205033433.zldw5xywxjz4jset@rob-hp-laptop>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Wed, Jan 31, 2018 at 06:24:15PM +0000, Fabrizio Castro wrote:
+> This commit documents the compatibility with R-Car Gen2 and RZ/G
+> devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+> Also, this patch expands the list of SoC-specific compatible strings to
+> include RZ/G and R-Car Gen2 devices.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3->4:
+> * Reinstated lost "renesas,rza-wdt" compatible string
+> 
+>  .../devicetree/bindings/watchdog/renesas-wdt.txt      | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 
-The clock for which all PWM devices on MT7623 or MT2701 actually depending
-on has to be divided by four from its parent clock axi_sel in the clock
-path prior to PWM devices.
-
-Consequently, adding a fixed-factor clock axisel_d4 as one-fourth of
-clock axi_sel allows that PWM devices can have the correct resolution
-calculation.
-
-Cc: stable@vger.kernel.org
-Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2701.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 8e7f16f..deca752 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -148,6 +148,7 @@ static const struct mtk_fixed_factor top_fixed_divs[] = {
- 	FACTOR(CLK_TOP_CLK26M_D8, "clk26m_d8", "clk26m", 1, 8),
- 	FACTOR(CLK_TOP_32K_INTERNAL, "32k_internal", "clk26m", 1, 793),
- 	FACTOR(CLK_TOP_32K_EXTERNAL, "32k_external", "rtc32k", 1, 1),
-+	FACTOR(CLK_TOP_AXISEL_D4, "axisel_d4", "axi_sel", 1, 4),
- };
- 
- static const char * const axi_parents[] = {
-@@ -857,13 +858,13 @@ static const struct mtk_gate peri_clks[] = {
- 	GATE_PERI0(CLK_PERI_USB1, "usb1_ck", "usb20_sel", 11),
- 	GATE_PERI0(CLK_PERI_USB0, "usb0_ck", "usb20_sel", 10),
- 	GATE_PERI0(CLK_PERI_PWM, "pwm_ck", "axi_sel", 9),
--	GATE_PERI0(CLK_PERI_PWM7, "pwm7_ck", "axi_sel", 8),
--	GATE_PERI0(CLK_PERI_PWM6, "pwm6_ck", "axi_sel", 7),
--	GATE_PERI0(CLK_PERI_PWM5, "pwm5_ck", "axi_sel", 6),
--	GATE_PERI0(CLK_PERI_PWM4, "pwm4_ck", "axi_sel", 5),
--	GATE_PERI0(CLK_PERI_PWM3, "pwm3_ck", "axi_sel", 4),
--	GATE_PERI0(CLK_PERI_PWM2, "pwm2_ck", "axi_sel", 3),
--	GATE_PERI0(CLK_PERI_PWM1, "pwm1_ck", "axi_sel", 2),
-+	GATE_PERI0(CLK_PERI_PWM7, "pwm7_ck", "axisel_d4", 8),
-+	GATE_PERI0(CLK_PERI_PWM6, "pwm6_ck", "axisel_d4", 7),
-+	GATE_PERI0(CLK_PERI_PWM5, "pwm5_ck", "axisel_d4", 6),
-+	GATE_PERI0(CLK_PERI_PWM4, "pwm4_ck", "axisel_d4", 5),
-+	GATE_PERI0(CLK_PERI_PWM3, "pwm3_ck", "axisel_d4", 4),
-+	GATE_PERI0(CLK_PERI_PWM2, "pwm2_ck", "axisel_d4", 3),
-+	GATE_PERI0(CLK_PERI_PWM1, "pwm1_ck", "axisel_d4", 2),
- 	GATE_PERI0(CLK_PERI_THERM, "therm_ck", "axi_sel", 1),
- 	GATE_PERI0(CLK_PERI_NFI, "nfi_ck", "nfi2x_sel", 0),
- 
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
