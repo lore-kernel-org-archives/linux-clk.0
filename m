@@ -1,64 +1,35 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
-Date: Sat, 10 Feb 2018 17:35:01 +0100
-Message-ID: <11171053.oOJPuGlHoK@phil>
-In-Reply-To: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+	linux-kernel@vger.kernel.org, krzk@kernel.org, tomasz.figa@gmail.com,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+Date: Mon, 05 Feb 2018 15:41:58 +0100
+Message-id: <20180205144158.10500-1-s.nawrocki@samsung.com>
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Add a missing git tree entry for drivers/clk/samsung.
 
-Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a negative number in the
-> allocation below.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/soc/rockchip/pm_domains.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-> index 5c342167b9db7a16..9936038d38771784 100644
-> --- a/drivers/soc/rockchip/pm_domains.c
-> +++ b/drivers/soc/rockchip/pm_domains.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-not wanting to be to nitpicky, but clk-provider.h seems that it should be
-used from drivers exposing clocks to the system, not from clock users.
-
-I just remember that in the past clk maintainers tried to keep their
-layering intact, so I've included them for clarification.
-
-Mike, Stephen: the power-domain driver of Rockchip socs needs
-to toggle all clocks of domain peripherals when turning a domain
-on or off, so has a variable list of clocks in the clocks property in dt.
-Hence the of_count_... call which could be replaced with
-of_clk_get_parent_count to not open-code this.
-
-
-Heiko
-
->  #include <linux/regmap.h>
->  #include <linux/mfd/syscon.h>
->  #include <dt-bindings/power/rk3288-power.h>
-> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->  		return -EINVAL;
->  	}
->  
-> -	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-> +	clk_cnt = of_clk_get_parent_count(node);
->  	pd = devm_kzalloc(pmu->dev,
->  			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
->  			  GFP_KERNEL);
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aa71ab52fd76..502442dc08eb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ S:	Supported
+ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+ F:	drivers/clk/samsung/
+ F:	include/dt-bindings/clock/exynos*.h
+ F:	Documentation/devicetree/bindings/clock/exynos*.txt
+-- 
+2.14.2
