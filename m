@@ -1,44 +1,81 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 6 Feb 2018 09:57:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v6 15/15] dt-bindings: cpufreq: Document
- operating-points-v2-krait-cpu
-Message-ID: <20180206042729.GH28462@vireshk-i7>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
- <1517890108-8140-16-git-send-email-sricharan@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517890108-8140-16-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <335d92c8-1af2-da64-e366-95d7513ad69d@lechnology.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-41-git-send-email-david@lechnology.com> <335d92c8-1af2-da64-e366-95d7513ad69d@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 5 Feb 2018 15:04:00 +0100
+Message-ID: <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
+Subject: Re: [PATCH v6 40/41] ARM: da8xx-dt: switch to device tree clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06-02-18, 09:38, Sricharan R wrote:
-> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-> that has KRAIT processors the voltage/current value of each OPP
-> varies based on the silicon variant in use.
-> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
-> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
-> reads the efuse value from the SoC to provide the required information
-> that is used to determine the voltage and current value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
->  1 file changed, 363 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+2018-01-24 4:26 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 01/20/2018 11:14 AM, David Lechner wrote:
+>>
+>> This removes all of the clock init code from da8xx-dt.c. This includes
+>> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> v6 changes:
+>> - removed misleading statement from commit message
+>>
+>>   arch/arm/mach-davinci/da8xx-dt.c | 61
+>> +---------------------------------------
+>>   1 file changed, 1 insertion(+), 60 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-davinci/da8xx-dt.c
+>> b/arch/arm/mach-davinci/da8xx-dt.c
+>
+>
+>>   static void __init da850_init_machine(void)
+>>   {
+>> -       /* All existing boards use 100MHz SATA refclkpn */
+>> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+>> -
+>> -       int ret;
+>> -
+>> -       ret = da8xx_register_usb20_phy_clk(false);
+>> -       if (ret)
+>> -               pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+>> -                       __func__, ret);
+>> -       ret = da8xx_register_usb11_phy_clk(false);
+>> -       if (ret)
+>> -               pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
+>> -                       __func__, ret);
+>> -
+>> -       ret = da850_register_sata_refclk(sata_refclkpn);
+>> -       if (ret)
+>> -               pr_warn("%s: registering SATA REFCLK failed: %d",
+>> -                       __func__, ret);
+>> -
+>> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+>> +       of_platform_default_populate(NULL, NULL, NULL);
+>
+>
+> of_platform_default_populate() can actually be removed completely.
+> of_platform_default_populate_init() is called implicitly during
+> arch_initcall_sync
+>
+>>         davinci_pm_init();
+>>         pdata_quirks_init();
+>>   }
 
-You can add my Ack if Rob also finds everything to be fine here.
+Hi David,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+this patch breaks nand on da850-lcdk (and probably on da850-evm) since
+the nand driver can no longer clk_get() the nand clock. We would need
+to keep the dev_auxdata at least for aemif.
 
--- 
-viresh
+Thanks,
+Bartosz
