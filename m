@@ -1,67 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16813 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751979AbeBEEHj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Feb 2018 23:07:39 -0500
-Message-ID: <1517803655.1173.12.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>
-Date: Mon, 5 Feb 2018 12:07:35 +0800
-In-Reply-To: <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
-         <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
-         <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com"
+	<gabriel.fernandez.st@gmail.com>,
+        Olivier BIDEAU <olivier.bideau@st.com>
+Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Date: Mon, 5 Feb 2018 07:15:28 +0000
+Message-ID: <1f0de7b8-6607-e0f0-0f77-59be53328f7a@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+ <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
+ <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
+In-Reply-To: <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
-> 
-> On 01/31/2018 08:42 AM, Ryder Lee wrote:
-> > As the new MFD parent is in place, switch probing method to adapt it.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> > index 13f752d..8c18536 100644
-> > --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> > +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> > @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
-> >  {
-> >  	struct clk_onecell_data *clk_data;
-> >  	struct device_node *node = pdev->dev.of_node;
-> > +	struct device_node *pnode = pdev->dev.parent->of_node;
-> >  	int r;
-> >  
-> >  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
-> >  
-> > -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
-> 
-> We will need a fallback here for older device tree bindings.
-> 
-> Regards,
-> Matthias
-
-Up to now, I didn't see both driver and bindings are used anywhere.
-Should I still care about that?
-
-Thanks.
-
-
-
+DQoNCk9uIDAyLzA1LzIwMTggMDc6MDkgQU0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBGcmks
+IEZlYiAwMiwgMjAxOCBhdCAwMzowMzoyOVBNICswMTAwLCBnYWJyaWVsLmZlcm5hbmRlekBzdC5j
+b20gd3JvdGU6DQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpA
+c3QuY29tPg0KPj4NCj4+IFRoZSBSQ0MgYmxvY2sgaXMgcmVzcG9uc2libGUgb2YgdGhlIG1hbmFn
+ZW1lbnQgb2YgdGhlIGNsb2NrIGFuZCByZXNldA0KPj4gZ2VuZXJhdGlvbiBmb3IgdGhlIGNvbXBs
+ZXRlIGNpcmN1aXQuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogR2FicmllbCBGZXJuYW5kZXogPGdh
+YnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+IC0tLQ0KPj4gICAuLi4vZGV2aWNldHJlZS9iaW5k
+aW5ncy9tZmQvc3Qsc3RtMzItcmNjLnR4dCAgICAgICB8IDg1ICsrKysrKysrKysrKysrKysrKysr
+KysNCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDg1IGluc2VydGlvbnMoKykNCj4+ICAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qsc3RtMzIt
+cmNjLnR4dA0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiBp
+bmRleCAwMDAwMDAwLi4yODAxN2ExDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+IEBAIC0w
+LDAgKzEsODUgQEANCj4+ICtTVE1pY3JvZWxlY3Ryb25pY3MgU1RNMzIgUGVyaXBoZXJhbCBSZXNl
+dCBDbG9jayBDb250cm9sbGVyDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPj4gKw0KPj4gK1RoZSBSQ0MgSVAgaXMgYm90aCBh
+IHJlc2V0IGFuZCBhIGNsb2NrIGNvbnRyb2xsZXIuDQo+PiArDQo+PiArUGxlYXNlIGFsc28gcmVm
+ZXIgdG8gcmVzZXQudHh0IGZvciBjb21tb24gcmVzZXQgY29udHJvbGxlciBiaW5kaW5nIHVzYWdl
+Lg0KPj4gKw0KPj4gK1BsZWFzZSBhbHNvIHJlZmVyIHRvIGNsb2NrLWJpbmRpbmdzLnR4dCBmb3Ig
+Y29tbW9uIGNsb2NrIGNvbnRyb2xsZXINCj4+ICtiaW5kaW5nIHVzYWdlLg0KPj4gKw0KPj4gKw0K
+Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+PiArLSBjb21wYXRpYmxlOiAic2ltcGxlLW1mZCIs
+ICJzeXNjb24iDQo+DQo+PiArLSByZWc6IHNob3VsZCBiZSByZWdpc3RlciBiYXNlIGFuZCBsZW5n
+dGggYXMgZG9jdW1lbnRlZCBpbiB0aGUgZGF0YXNoZWV0DQo+PiArDQo+PiArLSBTdWItbm9kZXM6
+DQo+PiArICAtIGNvbXBhdGlibGU6ICJzdCxzdG0zMm1wMS1yY2MtY2xrIg0KPj4gKwktICNjbG9j
+ay1jZWxsczogMSwgZGV2aWNlIG5vZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSBjbG9jayBpbiB0aGVp
+cg0KPj4gKwkgICJjbG9ja3MiIHByb3BlcnR5LCBjb250YWluaW5nIGEgcGhhbmRsZSB0byB0aGUg
+Y2xvY2sgZGV2aWNlIG5vZGUsDQo+PiArCSAgYW4gaW5kZXggc3BlY2lmeWluZyB0aGUgY2xvY2sg
+dG8gdXNlLg0KPj4gKw0KPj4gKyAgLSBjb21wYXRpYmxlOiAic3Qsc3RtMzJtcDEtcmNjLXJzdCIN
+Cj4+ICsJLSAjcmVzZXQtY2VsbHM6IFNoYWxsIGJlIDENCj4+ICsNCj4+ICtFeGFtcGxlOg0KPj4g
+KwlyY2M6IHJjY0A1MDAwMDAwMCB7DQo+PiArCQljb21wYXRpYmxlID0gInN5c2NvbiIsICJzaW1w
+bGUtbWZkIjsNCj4+ICsJCXJlZyA9IDwweDUwMDAwMDAwIDB4MTAwMD47DQo+PiArDQo+PiArCQly
+Y2NfY2xrOiByY2MtY2xrQDUwMDAwMDAwIHsNCj4+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+
+PiArCQkJY29tcGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1yY2MtY2xrIjsNCj4+ICsJCX07DQo+PiAr
+DQo+PiArCQlyY2NfcnN0OiByY2MtcmVzZXRANTAwMDAwMDAgew0KPiBZb3Ugc2hvdWxkIG5vdCBo
+YXZlIHRoZSBzYW1lIHVuaXQtYWRkcmVzcyB0d2ljZS4NCmkgY2FuIGNoYW5nZSBpZiB5b3Ugd2Fu
+dCBpbnRvOg0KDQogwqDCoMKgIMKgwqDCoCByY2M6IHJjY0A1MDAwMDAwMCB7DQogwqDCoMKgIMKg
+wqDCoCDCoMKgwqAgY29tcGF0aWJsZSA9ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQoNCiDCoMKg
+wqAgwqDCoMKgIMKgwqDCoCByZWcgPSA8MHg1MDAwMDAwMCAweDEwMDA+Ow0KDQogwqDCoMKgIMKg
+wqDCoCDCoMKgwqAgcmNjX2NsazogcmNjLWNsayB7DQogwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDC
+oMKgICNjbG9jay1jZWxscyA9IDwxPjsNCiDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgY29t
+cGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1yY2MtY2xrIjsNCiDCoMKgwqAgwqDCoMKgIMKgwqDCoCB9
+Ow0KDQogwqDCoMKgIMKgwqDCoCDCoMKgwqAgcmNjX3JzdDogcmNjLXJlc2V0IHsNCiDCoMKgwqAg
+wqDCoMKgIMKgwqDCoCDCoMKgwqAgI3Jlc2V0LWNlbGxzID0gPDE+Ow0KIMKgwqDCoCDCoMKgwqAg
+wqDCoMKgIMKgwqDCoCBjb21wYXRpYmxlID0gInN0LHN0bTMybXAxLXJjYy1yc3QiOw0KIMKgwqDC
+oCDCoMKgwqAgwqDCoMKgIH07DQpCUg0KR2FicmllbA0KDQo+IElNTywgdGhpcyBzaG91bGQganVz
+dCBiZToNCj4NCj4gCXJjYzogcmNjQDUwMDAwMDAwIHsNCj4gCQljb21wYXRpYmxlID0gInN0LXN0
+bTMybXAxLXJjYyI7DQo+IAkJcmVnID0gPDB4NTAwMDAwMDAgMHgxMDAwPjsNCj4gCQkjY2xvY2st
+Y2VsbHMgPSA8MT47DQo+IAkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPiAJfTsNCj4NCj4gVGhlcmUn
+cyBubyByZWFzb24gYSBub2RlIGNhbid0IHByb3ZpZGUgbW9yZSB0aGFuIDEgZnVuY3Rpb24uDQo+
+DQo+DQo+PiArCQkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPj4gKwkJCWNvbXBhdGlibGUgPSAic3Qs
+c3RtMzJtcDEtcmNjLXJzdCI7DQo+PiArCQl9Ow0KPj4gKwl9Ow0KPj4gKw0KPj4gK1NwZWNpZnlp
+bmcgY2xvY2tzDQo+PiArPT09PT09PT09PT09PT09PT0NCj4+ICsNCj4+ICtBbGwgYXZhaWxhYmxl
+IGNsb2NrcyBhcmUgZGVmaW5lZCBhcyBwcmVwcm9jZXNzb3IgbWFjcm9zIGluDQo+PiArZHQtYmlu
+ZGluZ3MvY2xvY2svc3RtMzJtcDEtY2xrcy5oIGhlYWRlciBhbmQgY2FuIGJlIHVzZWQgaW4gZGV2
+aWNlDQo+PiArdHJlZSBzb3VyY2VzLg0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+PiArDQo+PiArCS8q
+IEFjY2Vzc2luZyBETUExIGNsb2NrICovDQo+PiArCS4uLiB7DQo+PiArCQljbG9ja3MgPSA8JnJj
+Y19jbGsgRE1BMT4NCj4+ICsJfTsNCj4+ICsNCj4+ICsJLyogQWNjZXNzaW5nIFNQSTYga2VybmVs
+IGNsb2NrICovDQo+PiArCS4uLiB7DQo+PiArCQljbG9ja3MgPSA8JnJjY19jbGsgU1BJNl9LPg0K
+Pj4gKwl9Ow0KPiBPdGhlciB0aGFuIHRoZSBwYXRoIHRvIGhlYWRlciwgdGhlIGNsb2NrIGJpbmRp
+bmcgZXhwbGFpbnMgYWxsIHRoaXMuIE5vDQo+IG5lZWQgdG8gZHVwbGljYXRlIGhlcmUuDQo+DQo+
+PiArDQo+PiArU3BlY2lmeWluZyBzb2Z0cmVzZXQgY29udHJvbCBvZiBkZXZpY2VzDQo+PiArPT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+PiArDQo+PiArRGV2aWNlIG5v
+ZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSByZXNldCBjaGFubmVsIHJlcXVpcmVkIGluIHRoZWlyICJy
+ZXNldHMiDQo+PiArcHJvcGVydHksIGNvbnRhaW5pbmcgYSBwaGFuZGxlIHRvIHRoZSByZXNldCBk
+ZXZpY2Ugbm9kZSBhbmQgYW4gaW5kZXggc3BlY2lmeWluZw0KPj4gK3doaWNoIGNoYW5uZWwgdG8g
+dXNlLg0KPj4gK1RoZSBpbmRleCBpcyB0aGUgYml0IG51bWJlciB3aXRoaW4gdGhlIFJDQyByZWdp
+c3RlcnMgYmFuaywgc3RhcnRpbmcgZnJvbSBSQ0MNCj4+ICtiYXNlIGFkZHJlc3MuDQo+PiArSXQg
+aXMgY2FsY3VsYXRlZCBhczogaW5kZXggPSByZWdpc3Rlcl9vZmZzZXQgLyA0ICogMzIgKyBiaXRf
+b2Zmc2V0Lg0KPj4gK1doZXJlIGJpdF9vZmZzZXQgaXMgdGhlIGJpdCBvZmZzZXQgd2l0aGluIHRo
+ZSByZWdpc3Rlci4NCj4+ICsNCj4+ICtGb3IgZXhhbXBsZSBvbiBTVE0zMk1QMSwgZm9yIExUREMg
+cmVzZXQ6DQo+PiArIGx0ZGMgPSBBUEI0X1JTVFNFVFJfb2Zmc2V0IC8gNCAqIDMyICsgTFREQ19i
+aXRfb2Zmc2V0DQo+PiArICAgICAgPSAweDE4MCAvIDQgKiAzMiArIDAgPSAzMDcyDQo+PiArDQo+
+PiArVGhlIGxpc3Qgb2YgdmFsaWQgaW5kaWNlcyBmb3IgU1RNMzJNUDEgaXMgYXZhaWxhYmxlIGlu
+Og0KPj4gK2luY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQtY29udHJvbGxlci9zdG0zMm1wMS1yZXNl
+dHMuaA0KPj4gKw0KPj4gK1RoaXMgZmlsZSBpbXBsZW1lbnRzIGRlZmluZXMgbGlrZToNCj4+ICsj
+ZGVmaW5lIExURENfUgkzMDcyDQo+PiArDQo+PiArZXhhbXBsZToNCj4+ICsNCj4+ICsJbHRkYyB7
+DQo+PiArCQlyZXNldHMgPSA8JnJjY19yc3QgTFREQ19SPjsNCj4+ICsJfTsNCj4+IC0tIA0KPj4g
+MS45LjENCj4+DQo=
