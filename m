@@ -1,413 +1,91 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v7 15/15] dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
-Date: Mon, 26 Feb 2018 15:23:31 +0530
-Message-Id: <1519638811-17269-16-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
+References: <1516468460-4908-1-git-send-email-david@lechnology.com>
+ <1516468460-4908-41-git-send-email-david@lechnology.com> <335d92c8-1af2-da64-e366-95d7513ad69d@lechnology.com>
+ <CAMRc=McJsneYdh8zDmYcUsFLiAyOmSeyOKhKfim4or7LwyEH1w@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 5 Feb 2018 16:33:34 +0100
+Message-ID: <CAMRc=MdtgYB6Fa3ZeARncTDWfEXrZ4EYFXC0Lf=RHv0-ZSZf5A@mail.gmail.com>
+Subject: Re: [PATCH v6 40/41] ARM: da8xx-dt: switch to device tree clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-that has KRAIT processors the voltage/current value of each OPP
-varies based on the silicon variant in use.
-operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
-and the operating-points-v2 table for each opp. The qcom-cpufreq driver
-reads the efuse value from the SoC to provide the required information
-that is used to determine the voltage and current value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+2018-02-05 15:04 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> 2018-01-24 4:26 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 01/20/2018 11:14 AM, David Lechner wrote:
+>>>
+>>> This removes all of the clock init code from da8xx-dt.c. This includes
+>>> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>>
+>>> v6 changes:
+>>> - removed misleading statement from commit message
+>>>
+>>>   arch/arm/mach-davinci/da8xx-dt.c | 61
+>>> +---------------------------------------
+>>>   1 file changed, 1 insertion(+), 60 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-davinci/da8xx-dt.c
+>>> b/arch/arm/mach-davinci/da8xx-dt.c
+>>
+>>
+>>>   static void __init da850_init_machine(void)
+>>>   {
+>>> -       /* All existing boards use 100MHz SATA refclkpn */
+>>> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+>>> -
+>>> -       int ret;
+>>> -
+>>> -       ret = da8xx_register_usb20_phy_clk(false);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+>>> -                       __func__, ret);
+>>> -       ret = da8xx_register_usb11_phy_clk(false);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
+>>> -                       __func__, ret);
+>>> -
+>>> -       ret = da850_register_sata_refclk(sata_refclkpn);
+>>> -       if (ret)
+>>> -               pr_warn("%s: registering SATA REFCLK failed: %d",
+>>> -                       __func__, ret);
+>>> -
+>>> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+>>> +       of_platform_default_populate(NULL, NULL, NULL);
+>>
+>>
+>> of_platform_default_populate() can actually be removed completely.
+>> of_platform_default_populate_init() is called implicitly during
+>> arch_initcall_sync
+>>
+>>>         davinci_pm_init();
+>>>         pdata_quirks_init();
+>>>   }
+>
+> Hi David,
+>
+> this patch breaks nand on da850-lcdk (and probably on da850-evm) since
+> the nand driver can no longer clk_get() the nand clock. We would need
+> to keep the dev_auxdata at least for aemif.
+>
+> Thanks,
+> Bartosz
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
- 1 file changed, 363 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+Actually scratch that last e-mail, I missed the fact that the nand
+node is only there in the board dts files. I've just sent you a patch
+that enables nand on da850-lcdk. Please include it in your series.
+I'll do the same for evm shortly.
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-new file mode 100644
-index 0000000..7b083c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-@@ -0,0 +1,363 @@
-+QCOM KRAIT CPUFreq and OPP bindings
-+===================================
-+
-+In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-+that has KRAIT processors the voltage value of each OPP varies
-+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+defines the voltage and current value based on the speed/pvs/version
-+combination blown in the efuse. The qcom-cpufreq driver reads the efuse
-+value from the SoC to provide the OPP framework with required information.
-+This is used to determine the voltage and current value for each OPP of
-+operating-points-v2 table when it is parsed by the OPP framework.
-+
-+Required properties:
-+--------------------
-+In 'cpus' nodes:
-+- operating-points-v2: Phandle to the operating-points-v2 table to use.
-+
-+In 'operating-points-v2' table:
-+- compatible: Should be
-+	- 'operating-points-v2-krait-cpu' for ipq8064, apq8064, msm8960,
-+					      msm8974.
-+- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-+		efuse registers that has information about the
-+		speedbin/pvs/version that is used to select the right
-+		voltage/current value pair. Note that the length field of the
-+		nvmem-cell is used to differentiate between format 'A' or 'B'
-+		efuse settings. len of '4' bytes is for format 'A' and '8'
-+		bytes for format 'B'. Please refer the for nvmem-cells
-+		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
-+		and also examples below for both the cases.
-+Example 1:
-+---------
-+
-+/* For arch/arm/boot/dts/apq8064.dtsi --> format 'A' */
-+cpus {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	CPU0: cpu@0 {
-+		compatible = "qcom,krait";
-+		enable-method = "qcom,kpss-acc-v1";
-+		device_type = "cpu";
-+		reg = <0>;
-+		next-level-cache = <&L2>;
-+		qcom,acc = <&acc0>;
-+		qcom,saw = <&saw0>;
-+		cpu-idle-states = <&CPU_SPC>;
-+		operating-points-v2 = <&cpu_opp_table>;
-+	};
-+};
-+
-+qfprom: qfprom@700000 {
-+	compatible      = "qcom,qfprom";
-+	reg	      = <0x00700000 0x1000>;
-+	#address-cells  = <1>;
-+	#size-cells     = <1>;
-+	ranges;
-+	pvs_efuse: pvs {
-+		reg = <0xc0 0x4>;
-+	};
-+};
-+
-+cpu_opp_table: opp-table {
-+	compatible = "operating-points-v2-krait-cpu";
-+	nvmem-cells = <&pvs_efuse>;
-+
-+		/*
-+		 * Missing opp-shared property means CPUs switch DVFS states
-+		 * independently.
-+		 */
-+
-+		opp-918000000 {
-+			opp-hz = /bits/ 64 <918000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1100000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1050000>;
-+			opp-microvolt-speed0-pvs3-v0 = <1000000>;
-+			opp-microvolt-speed0-pvs4-v0 = <975000>;
-+			opp-microvolt-speed1-pvs0-v0 = <1025000>;
-+			opp-microvolt-speed1-pvs1-v0 = <1000000>;
-+			opp-microvolt-speed1-pvs2-v0 = <950000>;
-+			opp-microvolt-speed1-pvs3-v0 = <925000>;
-+			opp-microvolt-speed1-pvs4-v0 = <900000>;
-+			opp-microvolt-speed1-pvs5-v0 = <900000>;
-+			opp-microvolt-speed1-pvs6-v0 = <900000>;
-+			opp-microvolt-speed2-pvs0-v0 = <975000>;
-+			opp-microvolt-speed2-pvs1-v0 = <950000>;
-+			opp-microvolt-speed2-pvs2-v0 = <925000>;
-+			opp-microvolt-speed2-pvs3-v0 = <912500>;
-+			opp-microvolt-speed2-pvs4-v0 = <900000>;
-+			opp-microvolt-speed2-pvs5-v0 = <900000>;
-+			opp-microvolt-speed2-pvs6-v0 = <900000>;
-+			opp-microvolt-speed14-pvs0-v0 = <1025000>;
-+			opp-microvolt-speed14-pvs1-v0 = <1000000>;
-+			opp-microvolt-speed14-pvs2-v0 = <950000>;
-+			opp-microvolt-speed14-pvs3-v0 = <925000>;
-+			opp-microvolt-speed14-pvs4-v0 = <900000>;
-+			opp-microvolt-speed14-pvs5-v0 = <900000>;
-+			opp-microvolt-speed14-pvs6-v0 = <900000>;
-+		};
-+
-+		opp-810000000 {
-+			opp-hz = /bits/ 64 <810000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1075000>;
-+			opp-microvolt-speed0-pvs1-v0 = <1025000>;
-+			opp-microvolt-speed0-pvs3-v0 = <975000>;
-+			opp-microvolt-speed0-pvs3-v0 = <962500>;
-+			opp-microvolt-speed1-pvs0-v0 = <1000000>;
-+			opp-microvolt-speed1-pvs1-v0 = <975000>;
-+			opp-microvolt-speed1-pvs2-v0 = <937500>;
-+			opp-microvolt-speed1-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs4-v0 = <887500>;
-+			opp-microvolt-speed1-pvs5-v0 = <887500>;
-+			opp-microvolt-speed1-pvs6-v0 = <887500>;
-+			opp-microvolt-speed2-pvs0-v0 = <962500>;
-+			opp-microvolt-speed2-pvs1-v0 = <937500>;
-+			opp-microvolt-speed2-pvs2-v0 = <912500>;
-+			opp-microvolt-speed2-pvs3-v0 = <900000>;
-+			opp-microvolt-speed2-pvs4-v0 = <887500>;
-+			opp-microvolt-speed2-pvs5-v0 = <887500>;
-+			opp-microvolt-speed2-pvs6-v0 = <887500>;
-+			opp-microvolt-speed14-pvs0-v0 = <1000000>;
-+			opp-microvolt-speed14-pvs1-v0 = <975000>;
-+			opp-microvolt-speed14-pvs2-v0 = <937500>;
-+			opp-microvolt-speed14-pvs3-v0 = <900000>;
-+			opp-microvolt-speed14-pvs4-v0 = <887500>;
-+			opp-microvolt-speed14-pvs5-v0 = <887500>;
-+			opp-microvolt-speed14-pvs6-v0 = <887500>;
-+		};
-+
-+		opp-702000000 {
-+			opp-hz = /bits/ 64 <702000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1025000>;
-+			opp-microvolt-speed0-pvs1-v0 = <975000>;
-+			opp-microvolt-speed0-pvs3-v0 = <925000>;
-+			opp-microvolt-speed0-pvs3-v0 = <925000>;
-+			opp-microvolt-speed1-pvs0-v0 = <962500>;
-+			opp-microvolt-speed1-pvs1-v0 = <962500>;
-+			opp-microvolt-speed1-pvs2-v0 = <925000>;
-+			opp-microvolt-speed1-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs4-v0 = <875000>;
-+			opp-microvolt-speed1-pvs5-v0 = <875000>;
-+			opp-microvolt-speed1-pvs6-v0 = <875000>;
-+			opp-microvolt-speed2-pvs0-v0 = <950000>;
-+			opp-microvolt-speed2-pvs1-v0 = <925000>;
-+			opp-microvolt-speed2-pvs2-v0 = <900000>;
-+			opp-microvolt-speed2-pvs3-v0 = 900000>;
-+			opp-microvolt-speed2-pvs4-v0 = <875000>;
-+			opp-microvolt-speed2-pvs5-v0 = <875000>;
-+			opp-microvolt-speed2-pvs6-v0 = <875000>;
-+			opp-microvolt-speed14-pvs0-v0 = <962500>;
-+			opp-microvolt-speed14-pvs1-v0 = <962500>;
-+			opp-microvolt-speed14-pvs2-v0 = <925000>;
-+			opp-microvolt-speed14-pvs3-v0 = <900000>;
-+			opp-microvolt-speed14-pvs4-v0 = <875000>;
-+			opp-microvolt-speed14-pvs5-v0 = <875000>;
-+			opp-microvolt-speed14-pvs6-v0 = <875000>;
-+		};
-+
-+		opp-594000000 {
-+			opp-hz = /bits/ 64 <594000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <1000000>;
-+			opp-microvolt-speed0-pvs1-v0 = <950000>;
-+			opp-microvolt-speed0-pvs3-v0 = <900000>;
-+			opp-microvolt-speed0-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs0-v0 = <950000>;
-+			opp-microvolt-speed1-pvs1-v0 = <950000>;
-+			opp-microvolt-speed1-pvs2-v0 = <925000>;
-+			opp-microvolt-speed1-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs4-v0 = <875000>;
-+			opp-microvolt-speed1-pvs5-v0 = <875000>;
-+			opp-microvolt-speed1-pvs6-v0 = <875000>;
-+			opp-microvolt-speed2-pvs0-v0 = <950000>;
-+			opp-microvolt-speed2-pvs1-v0 = <925000>;
-+			opp-microvolt-speed2-pvs2-v0 = <900000>;
-+			opp-microvolt-speed2-pvs3-v0 = <900000>;
-+			opp-microvolt-speed2-pvs4-v0 = <875000>;
-+			opp-microvolt-speed2-pvs5-v0 = <875000>;
-+			opp-microvolt-speed2-pvs6-v0 = <875000>;
-+			opp-microvolt-speed14-pvs0-v0 = <950000>;
-+			opp-microvolt-speed14-pvs1-v0 = <950000>;
-+			opp-microvolt-speed14-pvs2-v0 = <925000>;
-+			opp-microvolt-speed14-pvs3-v0 = <900000>;
-+			opp-microvolt-speed14-pvs4-v0 = <875000>;
-+			opp-microvolt-speed14-pvs5-v0 = <875000>;
-+			opp-microvolt-speed14-pvs6-v0 = <875000>;
-+		};
-+
-+		opp-486000000 {
-+			opp-hz = /bits/ 64 <486000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <975000>;
-+			opp-microvolt-speed0-pvs1-v0 = <925000>;
-+			opp-microvolt-speed0-pvs3-v0 = <875000>;
-+			opp-microvolt-speed0-pvs3-v0 = <875000>;
-+			opp-microvolt-speed1-pvs0-v0 = <950000>;
-+			opp-microvolt-speed1-pvs1-v0 = <950000>;
-+			opp-microvolt-speed1-pvs2-v0 = <925000>;
-+			opp-microvolt-speed1-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs4-v0 = <875000>;
-+			opp-microvolt-speed1-pvs5-v0 = <875000>;
-+			opp-microvolt-speed1-pvs6-v0 = <875000>;
-+			opp-microvolt-speed2-pvs0-v0 = <950000>;
-+			opp-microvolt-speed2-pvs1-v0 = <925000>;
-+			opp-microvolt-speed2-pvs2-v0 = <900000>;
-+			opp-microvolt-speed2-pvs3-v0 = <900000>;
-+			opp-microvolt-speed2-pvs4-v0 = <875000>;
-+			opp-microvolt-speed2-pvs5-v0 = <875000>;
-+			opp-microvolt-speed2-pvs6-v0 = <875000>;
-+			opp-microvolt-speed14-pvs0-v0 = <950000>;
-+			opp-microvolt-speed14-pvs1-v0 = <950000>;
-+			opp-microvolt-speed14-pvs2-v0 = <925000>;
-+			opp-microvolt-speed14-pvs3-v0 = <900000>;
-+			opp-microvolt-speed14-pvs4-v0 = <875000>;
-+			opp-microvolt-speed14-pvs5-v0 = <875000>;
-+			opp-microvolt-speed14-pvs6-v0 = <875000>;
-+		};
-+
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-microvolt-speed0-pvs0-v0 = <950000>;
-+			opp-microvolt-speed0-pvs1-v0 = <900000>;
-+			opp-microvolt-speed0-pvs3-v0 = <850000>;
-+			opp-microvolt-speed0-pvs3-v0 = <850000>;
-+			opp-microvolt-speed1-pvs0-v0 = <950000>;
-+			opp-microvolt-speed1-pvs1-v0 = <950000>;
-+			opp-microvolt-speed1-pvs2-v0 = <925000>;
-+			opp-microvolt-speed1-pvs3-v0 = <900000>;
-+			opp-microvolt-speed1-pvs4-v0 = <875000>;
-+			opp-microvolt-speed1-pvs5-v0 = <875000>;
-+			opp-microvolt-speed1-pvs6-v0 = <875000>;
-+			opp-microvolt-speed2-pvs0-v0 = <950000>;
-+			opp-microvolt-speed2-pvs1-v0 = <925000>;
-+			opp-microvolt-speed2-pvs2-v0 = <900000>;
-+			opp-microvolt-speed2-pvs3-v0 = <900000>;
-+			opp-microvolt-speed2-pvs4-v0 = <875000>;
-+			opp-microvolt-speed2-pvs5-v0 = <875000>;
-+			opp-microvolt-speed2-pvs6-v0 = <875000>;
-+			opp-microvolt-speed14-pvs0-v0 = <950000>;
-+			opp-microvolt-speed14-pvs1-v0 = <950000>;
-+			opp-microvolt-speed14-pvs2-v0 = <925000>;
-+			opp-microvolt-speed14-pvs3-v0 = <900000>;
-+			opp-microvolt-speed14-pvs4-v0 = <875000>;
-+			opp-microvolt-speed14-pvs5-v0 = <875000>;
-+			opp-microvolt-speed14-pvs6-v0 = <875000>;
-+		};
-+};
-+
-+EXAMPLE 2:
-+---------
-+/* For arch/arm/boot/dts/qcom-msm8974.dtsi--> format 'B' */
-+
-+qfprom: qfprom@700000 {
-+	compatible      = "qcom,qfprom";
-+	reg		= <0x00700000 0x1000>;
-+	#address-cells	= <1>;
-+	#size-cells	= <1>;
-+	ranges;
-+	pvs_efuse: pvs {
-+		reg = <0xc0 0x8>;
-+	};
-+};
-+
-+cpu_opp_table: opp-table {
-+	compatible = "operating-points-v2-krait-cpu";
-+	nvmem-cells = <&pvs_efuse>;
-+
-+		/*
-+		 * Missing opp-shared property means CPUs switch DVFS states
-+		 * independently.
-+		 */
-+	opp-960000000 {
-+		opp-hz = /bits/ 64 <960000000>;
-+		opp-microvolt-speed0-pvs0-v0 = <915000>;
-+		opp-microvolt-speed0-pvs1-v0 = <895000>;
-+		opp-microvolt-speed0-pvs2-v0 = <875000>;
-+		opp-microvolt-speed0-pvs3-v0 = <860000>;
-+		opp-microvolt-speed0-pvs4-v0 = <850000>;
-+		opp-microvolt-speed0-pvs5-v0 = <840000>;
-+		opp-microvolt-speed0-pvs6-v0 = <830000>;
-+		opp-microvolt-speed2-pvs0-v0 = <875000>;
-+		opp-microvolt-speed2-pvs1-v0 = <860000>;
-+		opp-microvolt-speed2-pvs2-v0 = <845000>;
-+		opp-microvolt-speed2-pvs3-v0 = <830000>;
-+		opp-microvolt-speed2-pvs4-v0 = <820000>;
-+		opp-microvolt-speed2-pvs5-v0 = <810000>;
-+		opp-microvolt-speed2-pvs6-v0 = <800000>;
-+		opp-microvolt-speed1-pvs0-v0 = <840000>;
-+		opp-microvolt-speed1-pvs1-v0 = <825000>;
-+		opp-microvolt-speed1-pvs2-v0 = <810000>;
-+		opp-microvolt-speed1-pvs3-v0 = <795000>;
-+		opp-microvolt-speed1-pvs4-v0 = <785000>;
-+		opp-microvolt-speed1-pvs5-v0 = <775000>;
-+		opp-microvolt-speed1-pvs6-v0 = <765000>;
-+
-+		opp-microamp-speed0-pvs0-v0 = <252>;
-+		opp-microamp-speed0-pvs1-v0 = <252>;
-+		opp-microamp-speed0-pvs2-v0 = <252>;
-+		opp-microamp-speed0-pvs3-v0 = <252>;
-+		opp-microamp-speed0-pvs4-v0 = <252>;
-+		opp-microamp-speed0-pvs5-v0 = <252>;
-+		opp-microamp-speed0-pvs6-v0 = <252>;
-+		opp-microamp-speed2-pvs0-v0 = <245>;
-+		opp-microamp-speed2-pvs1-v0 = <245>;
-+		opp-microamp-speed2-pvs2-v0 = <245>;
-+		opp-microamp-speed2-pvs3-v0 = <245>;
-+		opp-microamp-speed2-pvs4-v0 = <245>;
-+		opp-microamp-speed2-pvs5-v0 = <245>;
-+		opp-microamp-speed2-pvs6-v0 = <245>;
-+		opp-microamp-speed1-pvs0-v0 = <242>;
-+		opp-microamp-speed1-pvs1-v0 = <242>;
-+		opp-microamp-speed1-pvs2-v0 = <242>;
-+		opp-microamp-speed1-pvs3-v0 = <242>;
-+		opp-microamp-speed1-pvs4-v0 = <242>;
-+		opp-microamp-speed1-pvs5-v0 = <242>;
-+		opp-microamp-speed1-pvs6-v0 = <242>;
-+	};
-+
-+	opp-883200000 {
-+		opp-hz = /bits/ 64 <883200000>;
-+		opp-microvolt-speed0-pvs0-v0 = <900000>;
-+		opp-microvolt-speed0-pvs1-v0 = <885000>;
-+		opp-microvolt-speed0-pvs2-v0 = <865000>;
-+		opp-microvolt-speed0-pvs3-v0 = <850000>;
-+		opp-microvolt-speed0-pvs4-v0 = <840000>;
-+		opp-microvolt-speed0-pvs5-v0 = <830000>;
-+		opp-microvolt-speed0-pvs6-v0 = <820000>;
-+		opp-microvolt-speed2-pvs0-v0 = <865000>;
-+		opp-microvolt-speed2-pvs1-v0 = <850000>;
-+		opp-microvolt-speed2-pvs2-v0 = <835000>;
-+		opp-microvolt-speed2-pvs3-v0 = <820000>;
-+		opp-microvolt-speed2-pvs4-v0 = <810000>;
-+		opp-microvolt-speed2-pvs5-v0 = <800000>;
-+		opp-microvolt-speed2-pvs6-v0 = <790000>;
-+		opp-microvolt-speed1-pvs0-v0 = <830000>;
-+		opp-microvolt-speed1-pvs1-v0 = <815000>;
-+		opp-microvolt-speed1-pvs2-v0 = <800000>;
-+		opp-microvolt-speed1-pvs3-v0 = <785000>;
-+		opp-microvolt-speed1-pvs4-v0 = <775000>;
-+		opp-microvolt-speed1-pvs5-v0 = <765000>;
-+		opp-microvolt-speed1-pvs6-v0 = <755000>;
-+
-+		opp-microamp-speed0-pvs0-v0 = <229>;
-+		opp-microamp-speed0-pvs1-v0 = <229>;
-+		opp-microamp-speed0-pvs2-v0 = <229>;
-+		opp-microamp-speed0-pvs3-v0 = <229>;
-+		opp-microamp-speed0-pvs4-v0 = <229>;
-+		opp-microamp-speed0-pvs5-v0 = <229>;
-+		opp-microamp-speed0-pvs6-v0 = <229>;
-+		opp-microamp-speed2-pvs0-v0 = <223>;
-+		opp-microamp-speed2-pvs1-v0 = <223>;
-+		opp-microamp-speed2-pvs2-v0 = <223>;
-+		opp-microamp-speed2-pvs3-v0 = <223>;
-+		opp-microamp-speed2-pvs4-v0 = <223>;
-+		opp-microamp-speed2-pvs5-v0 = <223>;
-+		opp-microamp-speed2-pvs6-v0 = <223>;
-+		opp-microamp-speed1-pvs0-v0 = <221>;
-+		opp-microamp-speed1-pvs1-v0 = <221>;
-+		opp-microamp-speed1-pvs2-v0 = <221>;
-+		opp-microamp-speed1-pvs3-v0 = <221>;
-+		opp-microamp-speed1-pvs4-v0 = <221>;
-+		opp-microamp-speed1-pvs5-v0 = <221>;
-+		opp-microamp-speed1-pvs6-v0 = <221>;
-+	};
-+};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Thanks,
+Bartosz
