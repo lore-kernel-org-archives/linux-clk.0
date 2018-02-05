@@ -1,45 +1,90 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Message-id: <5A7D4CE9.6070900@samsung.com>
-Date: Fri, 09 Feb 2018 16:25:29 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-In-reply-to: <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-	<20180205142230.9755-1-s.nawrocki@samsung.com>
-	<5A7916A2.7010307@samsung.com>
-	<75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
-	<5A7AE1E0.8000509@samsung.com>
-	<086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
+ propagation
+Date: Mon, 05 Feb 2018 15:22:29 +0100
+Message-id: <20180205142230.9755-2-s.nawrocki@samsung.com>
+In-reply-to: <20180205142230.9755-1-s.nawrocki@samsung.com>
+References: <20180205142230.9755-1-s.nawrocki@samsung.com>
+	<CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 02월 07일 22:04, Sylwester Nawrocki wrote:
-> On 02/07/2018 12:24 PM, Chanwoo Choi wrote:
->> Could you share your equation?
->> because your result is a little bit different of my result.
->> - my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
-> 
-> It resembles the code from samsung_pll36xx_recalc_rate():
-> 
-> (24 * 10^6 * (M * 2^16 + K)) / (P * 2^S) / 2^16
-> 
-> and a more accurate one
-> 
-> ROUNDDOWN(ROUNDDOWN(24 * 10^6 * (M * 2^16 + K), 0) / ROUNDDOWN(P * 2^S, 0) / 2^16, 0)
-> 
-> Shouldn't you substitute 65535 with 65536?
+CLK_SET_RATE_PARENT flag is added to definitions of clocks on a path
+starting from CLK_SCLK_I2S1 up to AUD_PLL in order to allow setting
+required audio root clock frequency for the I2S1 block. This is now
+only done for the I2S1 block, related CMU_TOP, CMU_PERIC clock
+definitions are changed.
 
-65536 is right. It is my mistake using 65535.
-Thanks for your share.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 74b70ddab4d6..d74361736e64 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
+ 
+ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 	/* MUX_SEL_TOP0 */
+-	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+-			4, 1),
++	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
++	      4, 1, CLK_SET_RATE_PARENT, 0),
+ 	MUX(CLK_MOUT_ISP_PLL, "mout_isp_pll", mout_isp_pll_p, MUX_SEL_TOP0,
+ 			0, 1),
+ 
+ 	/* MUX_SEL_TOP1 */
+-	MUX(CLK_MOUT_AUD_PLL_USER_T, "mout_aud_pll_user_t",
+-			mout_aud_pll_user_p, MUX_SEL_TOP1, 12, 1),
++	MUX_F(CLK_MOUT_AUD_PLL_USER_T, "mout_aud_pll_user_t",
++	      mout_aud_pll_user_p, MUX_SEL_TOP1, 12, 1, CLK_SET_RATE_PARENT, 0),
+ 	MUX(CLK_MOUT_MPHY_PLL_USER, "mout_mphy_pll_user", mout_mphy_pll_user_p,
+ 			MUX_SEL_TOP1, 8, 1),
+ 	MUX(CLK_MOUT_MFC_PLL_USER, "mout_mfc_pll_user", mout_mfc_pll_user_p,
+@@ -370,8 +370,8 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 			MUX_SEL_TOP_PERIC1, 16, 1),
+ 	MUX(CLK_MOUT_SCLK_SPDIF, "mout_sclk_spdif", mout_sclk_spdif_p,
+ 			MUX_SEL_TOP_PERIC1, 12, 2),
+-	MUX(CLK_MOUT_SCLK_AUDIO1, "mout_sclk_audio1", mout_sclk_audio1_p,
+-			MUX_SEL_TOP_PERIC1, 4, 2),
++	MUX_F(CLK_MOUT_SCLK_AUDIO1, "mout_sclk_audio1", mout_sclk_audio1_p,
++			MUX_SEL_TOP_PERIC1, 4, 2, CLK_SET_RATE_PARENT, 0),
+ 	MUX(CLK_MOUT_SCLK_AUDIO0, "mout_sclk_audio0", mout_sclk_audio0_p,
+ 			MUX_SEL_TOP_PERIC1, 0, 2),
+ 
+@@ -524,12 +524,12 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 			DIV_TOP_PERIC2, 0, 4),
+ 
+ 	/* DIV_TOP_PERIC3 */
+-	DIV(CLK_DIV_SCLK_I2S1, "div_sclk_i2s1", "sclk_audio1",
+-			DIV_TOP_PERIC3, 16, 6),
++	DIV_F(CLK_DIV_SCLK_I2S1, "div_sclk_i2s1", "sclk_audio1",
++			DIV_TOP_PERIC3, 16, 6, CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DIV_SCLK_PCM1, "div_sclk_pcm1", "sclk_audio1",
+ 			DIV_TOP_PERIC3, 8, 8),
+-	DIV(CLK_DIV_SCLK_AUDIO1, "div_sclk_audio1", "mout_sclk_audio1",
+-			DIV_TOP_PERIC3, 4, 4),
++	DIV_F(CLK_DIV_SCLK_AUDIO1, "div_sclk_audio1", "mout_sclk_audio1",
++			DIV_TOP_PERIC3, 4, 4, CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DIV_SCLK_AUDIO0, "div_sclk_audio0", "mout_sclk_audio0",
+ 			DIV_TOP_PERIC3, 0, 4),
+ 
+@@ -693,7 +693,7 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_SLIMBUS, "sclk_slimbus", "mout_sclk_slimbus",
+ 			MUX_ENABLE_TOP_PERIC1, 16, 0, 0),
+ 	GATE(CLK_SCLK_AUDIO1, "sclk_audio1", "div_sclk_audio1",
+-			MUX_ENABLE_TOP_PERIC1, 4, 0, 0),
++			MUX_ENABLE_TOP_PERIC1, 4, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_AUDIO0, "sclk_audio0", "div_sclk_audio0",
+ 			MUX_ENABLE_TOP_PERIC1, 0, 0, 0),
+ };
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.2
