@@ -1,223 +1,172 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-Date: Fri, 23 Feb 2018 20:35:54 +0800
-Message-Id: <20180223123555.64009-7-icenowy@aosc.io>
-In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
-References: <20180223123555.64009-6-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 04/15] clk: qcom: Add HFPLL driver
+Date: Tue,  6 Feb 2018 09:38:17 +0530
+Message-Id: <1517890108-8140-5-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
-memory map fully reworked and some high-speed peripherals (PCIe, USB
-3.0) introduced.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-This commit adds the basical DTSI file of it, including the clock
-support and UART support.
+On some devices (MSM8974 for example), the HFPLLs are
+instantiated within the Krait processor subsystem as separate
+register regions. Add a driver for these PLLs so that we can
+provide HFPLL clocks for use by the system.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Changes in v3:
-- SPDX license identifier fix.
+ drivers/clk/qcom/Kconfig  |  8 ++++
+ drivers/clk/qcom/Makefile |  1 +
+ drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
+ create mode 100644 drivers/clk/qcom/hfpll.c
 
-Changes in v2:
-- Add APB1 clock as PIO's APB clock.
-- Switched to SPDX license identifier.
-
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177 +++++++++++++++++++++++++++
- 1 file changed, 177 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index fbf4532..d9ae51e 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -226,3 +226,11 @@ config SPMI_PMIC_CLKDIV
+ 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+ 	  clkdiv outputs of the PMIC. These clocks are typically wired
+ 	  through alternate functions on GPIO pins.
++
++config QCOM_HFPLL
++	tristate "High-Frequency PLL (HFPLL) Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the high-frequency PLLs present on Qualcomm devices.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as MSM8974, APQ8084, etc.
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index a2b7888..c57b808 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -39,3 +39,4 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
 new file mode 100644
-index 000000000000..4a6236bd9778
+index 0000000..a6de7101
 --- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ */
++++ b/drivers/clk/qcom/hfpll.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun50i-h6-ccu.h>
-+#include <dt-bindings/reset/sun50i-h6-ccu.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
 +
-+/ {
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
++#include "clk-regmap.h"
++#include "clk-hfpll.h"
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++static const struct hfpll_data hdata = {
++	.mode_reg = 0x00,
++	.l_reg = 0x04,
++	.m_reg = 0x08,
++	.n_reg = 0x0c,
++	.user_reg = 0x10,
++	.config_reg = 0x14,
++	.config_val = 0x430405d,
++	.status_reg = 0x1c,
++	.lock_bit = 16,
 +
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	iosc: internal-osc-clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <16000000>;
-+		clock-accuracy = <300000000>;
-+		clock-output-names = "iosc";
-+	};
-+
-+	osc24M: osc24M_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24M";
-+	};
-+
-+	osc32k: osc32k_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		clock-output-names = "osc32k";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ccu: clock@3001000 {
-+			compatible = "allwinner,sun50i-h6-ccu";
-+			reg = <0x03001000 0x1000>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		gic: interrupt-controller@3021000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x03021000 0x1000>,
-+			      <0x03022000 0x2000>,
-+			      <0x03024000 0x2000>,
-+			      <0x03026000 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+
-+		pio: pinctrl@300b000 {
-+			compatible = "allwinner,sun50i-h6-pinctrl";
-+			reg = <0x0300b000 0x400>;
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+
-+			uart0_ph_pins: uart0-ph {
-+				pins = "PH0", "PH1";
-+				function = "uart0";
-+			};
-+		};
-+
-+		uart0: serial@5000000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000000 0x400>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@5000400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000400 0x400>;
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@5000800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000800 0x400>;
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@5000c00 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000c00 0x400>;
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART3>;
-+			resets = <&ccu RST_BUS_UART3>;
-+			status = "disabled";
-+		};
-+	};
++	.user_val = 0x8,
++	.user_vco_mask = 0x100000,
++	.low_vco_max_rate = 1248000000,
++	.min_rate = 537600000UL,
++	.max_rate = 2900000000UL,
 +};
++
++static const struct of_device_id qcom_hfpll_match_table[] = {
++	{ .compatible = "qcom,hfpll" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
++
++static const struct regmap_config hfpll_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0x30,
++	.fast_io	= true,
++};
++
++static int qcom_hfpll_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	void __iomem *base;
++	struct regmap *regmap;
++	struct clk_hfpll *h;
++	struct clk_init_data init = {
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_ops_hfpll,
++	};
++
++	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
++	if (!h)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	if (of_property_read_string_index(dev->of_node, "clock-output-names",
++					  0, &init.name))
++		return -ENODEV;
++
++	h->d = &hdata;
++	h->clkr.hw.init = &init;
++	spin_lock_init(&h->lock);
++
++	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
++}
++
++static struct platform_driver qcom_hfpll_driver = {
++	.probe		= qcom_hfpll_probe,
++	.driver		= {
++		.name	= "qcom-hfpll",
++		.of_match_table = qcom_hfpll_match_table,
++	},
++};
++module_platform_driver(qcom_hfpll_driver);
++
++MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-hfpll");
 -- 
-2.15.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
