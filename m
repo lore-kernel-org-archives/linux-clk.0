@@ -1,73 +1,50 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 6 Feb 2018 16:35:44 +0000
+From: Mark Brown <broonie@kernel.org>
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
- <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
- <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f91af7fd-6152-2f44-6e85-f1900356ab1f@nvidia.com>
-Date: Thu, 1 Feb 2018 09:53:43 +0000
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180206163544.GI5681@sirena.org.uk>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="16qp2B0xu0fRvRD7"
+In-Reply-To: <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-On 01/02/18 09:25, Peter De Schrijver wrote:
-> On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
->>
->> On 24/01/18 12:45, Peter De Schrijver wrote:
->>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
->>> support in this driver. Also allow for the case where the CPU voltage is
->>> controlled directly by the DFLL rather than by a separate regulator object.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
->>>  1 file changed, 6 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->>> index 4353025..d631dc4 100644
->>> --- a/drivers/cpufreq/tegra124-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->>>  {
->>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->>>  	clk_disable_unprepare(priv->dfll_clk);
->>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
->>> +	if (priv->vdd_cpu_reg)
->>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->>>  }
->>>  
->>> @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->>>  		return -ENODEV;
->>>  
->>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
->>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
->>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
->>> -		goto out_put_np;
->>> -	}
->>> +	if (IS_ERR(priv->vdd_cpu_reg))
->>> +		priv->vdd_cpu_reg = NULL;
->>>  
->>
->> For Tegra124, don't we still want to return an error here?
-> 
-> Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
-> can be reworked to use this.
+--16qp2B0xu0fRvRD7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Seems to me that we should use DT or soc-data to specify which is being
-used and then do the appropriate thing. I don't think that we should
-assume that because the regulator is not present we are using PWM.
+On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+> From: Laxman Dewangan <ldewangan@nvidia.com>
+>=20
+> Add API to get min/max rail voltage configured from platform for
+> given rails.
 
-Cheers
-Jon
+because...
 
--- 
-nvpublic
+--16qp2B0xu0fRvRD7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp52V8ACgkQJNaLcl1U
+h9DBgAf+OdyKG/f5oYdyXZ93Kw5JIObHMLEhA67kdXohj98/gACA98gmUZ7DiAiK
+YCxKIW30T339lpMPuABtO+NZrkcy7Oz7G1WF9w6wWzr8ycJGWPnI7G6XQTJwvzjZ
+6hFlnJKD5dYo9w98Q1JVAx4IZnpBijixWql0wK2VbuidWhcuE+T1fzUjxwLeaRnU
+hF/iOMn+hUfbY0MSt3o/vFIQsdku26WfO8Oj2xKyGpBmCYDr5eikvpBu4Ubn9TX+
+2nfYW5enskrk71easS+mPZpQ4A8nsn5GTWnxDJ4J/a4x9q3+kmN/O1dgmnMiss0z
+5T6jbzmy8FXl5+XCanx2XTsW3Aa5LQ==
+=HvtB
+-----END PGP SIGNATURE-----
+
+--16qp2B0xu0fRvRD7--
