@@ -1,57 +1,129 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v3 07/11] dt-bindings: tegra: Update DFLL binding for PWM regulator
+Date: Tue, 6 Feb 2018 18:34:08 +0200
+Message-ID: <1517934852-23255-8-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <694c5137-0020-bb62-68c7-f9729c101462@gmail.com>
-References: <20180217130504.8668-1-wens@csie.org> <694c5137-0020-bb62-68c7-f9729c101462@gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 20 Feb 2018 11:17:06 +0800
-Message-ID: <CAGb2v64F9oHCv=uOGmeLc4_Qnz4BZO29ct8mCbJsRgdTJMDk3w@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Feb 17, 2018 at 9:54 PM, Philipp Rossak <embed3d@gmail.com> wrote:
->
->
-> On 17.02.2018 14:05, Chen-Yu Tsai wrote:
->>
->> When support for the A31/A31s CCU was first added, the clock ops for
->> the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
->> but the ops was set for div (M) clocks. This went unnoticed until now.
->> This was because while they are different clocks, their data structures
->> aligned in a way that ccu_div_ops would access the second ccu_div_internal
->> and ccu_mux_internal structures, which were valid, if not incorrect.
->>
->> Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
->> kHz clock signal to the WiFi chip. This was achievable by using the parent
->> with the same clock rate and no divider. So the incorrect divider setting
->> did not affect this usage.
->>
->> Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
->> style clocks") added a new field to the ccu_mp structure, which broke
->> the aforementioned alignment. Now the system crashes as div_ops tries
->> to look up a nonexistent table.
->>
->> Reported-by: Philipp Rossak <embed3d@gmail.com>
->> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->
-> Tested-by: Philipp Rossak <embed3d@gmail.com>
->>
->> ---
->>
->> Philipp, can you give this a test and report if this fixes thing?
->> I don't have any A31/A31s boards online to test this.
->>
-> Thanks!
-> That fixes that bug!
+Add new properties to configure the DFLL PWM regulator support. Also
+add an example and make the I2C clock only required when I2C support is
+used.
 
-Thanks.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ .../bindings/clock/nvidia,tegra124-dfll.txt        | 76 +++++++++++++++++++++-
+ 1 file changed, 74 insertions(+), 2 deletions(-)
 
-It looks like this has been applied by Maxime.
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index dff236f..a4903f7 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -23,7 +23,8 @@ Required properties:
+ - clock-names: Must include the following entries:
+   - soc: Clock source for the DFLL control logic.
+   - ref: The closed loop reference clock
+-  - i2c: Clock source for the integrated I2C master.
++  - i2c: Clock source for the integrated I2C master (only required when
++	 using I2C mode).
+ - resets: Must contain an entry for each entry in reset-names.
+   See ../reset/reset.txt for details.
+ - reset-names: Must include the following entries:
+@@ -45,10 +46,28 @@ Required properties for the control loop parameters:
+ Optional properties for the control loop parameters:
+ - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+ 
++Optional properties for mode selection:
++- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
++
+ Required properties for I2C mode:
+ - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+ 
+-Example:
++Required properties for PWM mode:
++- nvidia,pwm-period: period of PWM square wave in us.
++- nvidia,init-uv: Regulator voltage in uV when PWM control is disabled.
++- nvidia,align-offset-uv: Regulator voltage in uV when PWM control is enabled
++			  and PWM output is low.
++- nvidia,align-step-uv: Voltage increase in uV corresponding to a 1/33th
++			increase in duty cycle. Eg the voltage for 2/33th duty
++			cycle would be:
++			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
++- pinctrl-0: I/O pad configuration when PWM control is enabled.
++- pinctrl-1: I/O pad configuration when PWM control is disabled.
++- pinctrl-names: must include the following entries:
++  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
++  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
++
++Example for I2C:
+ 
+ clock@70110000 {
+         compatible = "nvidia,tegra124-dfll";
+@@ -76,3 +95,56 @@ clock@70110000 {
+ 
+         nvidia,i2c-fs-rate = <400000>;
+ };
++
++Example for PWM:
++
++clock@70110000 {
++        compatible = "nvidia,tegra124-dfll";
++        reg = <0 0x70110000 0 0x100>, /* DFLL control */
++              <0 0x70110000 0 0x100>, /* I2C output control */
++              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
++              <0 0x70110200 0 0x100>; /* Look-up table RAM */
++        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
++                 <&tegra_car TEGRA210_CLK_DFLL_REF>;
++        clock-names = "soc", "ref";
++        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
++        reset-names = "dvco";
++        #clock-cells = <0>;
++        clock-output-names = "dfllCPU_out";
++	nvidia,pwm-to-pmic;
++	nvidia,init-uv = <1000000>;
++	nvidia,align-step-uv = <19200>; /* 19.2mV */
++	nvidia,align-offset-uv = <708000>; /* 708mV */
++	nvidia,sample-rate = <25000>;
++	nvidia,droop-ctrl = <0x00000f00>;
++	nvidia,force-mode = <1>;
++	nvidia,cf = <6>;
++	nvidia,ci = <0>;
++	nvidia,cg = <2>;
++	nvidia,idle-override;
++	nvidia,one-shot-calibrate;
++	nvidia,pwm-period = <2500>; /* 2.5us */
++	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
++	pinctrl-0 = <&dvfs_pwm_active_state>;
++	pinctrl-1 = <&dvfs_pwm_inactive_state>;
++};
++
++/* pinmux nodes added for completeness. Binding doc can be found in:
++ * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
++ */
++
++pinmux: pinmux@700008d4 {
++	dvfs_pwm_active_state: dvfs_pwm_active {
++		dvfs_pwm_pbb1 {
++			nvidia,pins = "dvfs_pwm_pbb1";
++			nvidia,tristate = <TEGRA_PIN_DISABLE>;
++		};
++	};
++	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
++		dvfs_pwm_pbb1 {
++			nvidia,pins = "dvfs_pwm_pbb1";
++			nvidia,tristate = <TEGRA_PIN_ENABLE>;
++		};
++	};
++};
+-- 
+1.9.1
