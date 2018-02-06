@@ -1,108 +1,93 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 2 Feb 2018 14:35:16 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun4i-a10: Fix mali changing dclk
- frequency
-Message-ID: <20180202133516.uoy7ppuozd6cnldm@flea.lan>
-References: <1517354639-92978-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180131084349.du2ijvhh5rxa5vvt@flea.lan>
- <7be1e297-4fac-a7a2-a8cc-54061d4e2fde@micronovasrl.com>
- <20180201124551.kfyz6frx4lcx4wbz@flea.lan>
- <8c2fef37-8eb6-38c6-de3d-547edafac8b7@micronovasrl.com>
- <20180202105304.gow2znzgxqmuxgol@flea.lan>
- <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="l4rzk2xpisn644pn"
-In-Reply-To: <1b3d96ae-c6e6-4f58-b140-7b1738c12adc@micronovasrl.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 05/15] dt-bindings: clock: Document qcom,hfpll
+Date: Tue,  6 Feb 2018 09:38:18 +0530
+Message-Id: <1517890108-8140-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Stephen Boyd <sboyd@codeaurora.org>
 
---l4rzk2xpisn644pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adds bindings document for qcom,hfpll instantiated within
+the Krait processor subsystem as separate register region.
 
-On Fri, Feb 02, 2018 at 11:57:20AM +0100, Giulio Benetti wrote:
-> Il 02/02/2018 11:53, Maxime Ripard ha scritto:
-> > Hi,
-> >=20
-> > On Thu, Feb 01, 2018 at 05:17:11PM +0100, Giulio Benetti wrote:
-> > > > > > What kernel version did you use?
-> > > > >=20
-> > > > > Latest mainline.
-> > > >=20
-> > > > I guess this patch could fix it:
-> > > > http://code.bulix.org/1kitrq-268936?raw
-> > >=20
-> > > This should prevent from modifying parent clock. But my problem was
-> > > different.
-> > >=20
-> > > On A20, gpu_clk can have different PLL, not I've found out the way
-> > > to choose right one with assigned-parent-clocks.
-> > >=20
-> > > I have patchset ready for adding A20 mali node, but I need some more
-> > > time to complete with OPP, then I will submit entire patchset.
-> > >=20
-> > > Now it works correctly, using right pll(dedicated PLL8), setting
-> > > right frequency.
-> >=20
-> > The point is that we really don't care about which PLL is actually
-> > being used, as long as the rate is correct and we don't break anything
-> > else. If the GPU rate is accessible through one of the other PLL, it
-> > makes even more sense to not use the GPU PLL and keep it disabled,
-> > since it will result in some power savings.
->=20
-> Ah! I see the point now, very clever system for power saving.
-> I'm going to check if it's resolutive,
-> but it sounds good.
->=20
-> >=20
-> > > Btw, do I need to add a board using it, or can I add only Mali node
-> > > to sun7i-a20.dtsi(plus other little patches)?
-> >=20
-> > You can add it to the DTSI without a board using it (and actually,
-> > nothing should be in the board DTS, everything in the DT for the Mali
-> > applies to all boards).
->=20
-> Sure. So I would also add the patch you've addressed me:
-> http://code.bulix.org/1kitrq-268936?raw
-> as a commit. Can I submit it in patchset to complete the whole job?
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
 
-I already sent that patch quite some time ago, I'll just apply it. You
-can send the DT patch :)
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---l4rzk2xpisn644pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp0aRMACgkQ0rTAlCFN
-r3SAcBAAhhPt0DtFatN1dtDWCDvuHw3pA63c7pDGWLGG6gHckzoxZvGiVEjyXaJ7
-mZgqeR70ZATpgHPWBP2apnnFOTfq2MQp/TksO6dePlt9BFJpwKPy2rMjfnJFK5qE
-a03oItlMFem1deR8/MxotfcdUE3GyMBQTpo2NqEv/9EoxRi7t3SnDvUaLTdLnSom
-cFHFGECOHqC4wBSD/B7EMqysgNQ68AHslIgy7qJ9dprFrIqvlnK+/KsxywTrTpdz
-H+I2KdGKLmdVTBjsA3Gme3DPyuDwrIspPAbH8oddmVarih9C3pFfck+TQJbjb8Bh
-25HABSyRJVQFbOwNvhaPp8AEw1WGwM5hxGbC8XzQqpKgLf+4vtxNsV9CuK2cY7ZE
-LHzkb424tRB2PUnH0paigx+gCH97seZezYPQR9zIc1EovwTOwIdjqWsn5RNNM5Fa
-T6iKJYj/TxD6+mj0lSkerG+9/GwJsJO8g6/8Bm5irSdGDua1p5gK7uGRl++BYYaL
-pnSHG/I4jRH8Ocq1KpiWKJOQYA77rVONiLV5ob6t/Fm7yL7pp3k5Cp5s9VN4kXRN
-Yny8ycM0spWws35avmFqKCbT+lO42B1oxfG5xi6BmA74epewoWz749Iaq2lUFmyv
-0nsExkCTXXN6xk6JpetYo+j+X/q8YLesaaLW5JFgCiaWKm39m7g=
-=X7sj
------END PGP SIGNATURE-----
-
---l4rzk2xpisn644pn--
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+new file mode 100644
+index 0000000..771cb0a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -0,0 +1,46 @@
++High-Frequency PLL (HFPLL)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>:
++		shall contain only one of the following. The generic
++		compatible "qcom,hfpll" should be also included.
++
++                        "qcom,hfpll-ipq8064", "qcom,hfpll"
++                        "qcom,hfpll-apq8064", "qcom,hfpll"
++                        "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8960", "qcom,hfpll"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: address and size of HPLL registers. An optional second
++		    element specifies the address and size of the alias
++		    register region.
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
++		    starting at 0. Otherwise hfpll_Y where Y is more specific
++		    such as "l2".
++
++Example:
++
++1) An HFPLL for the L2 cache.
++
++	clock-controller@f9016000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf9016000 0x30>;
++		clock-output-names = "hfpll_l2";
++	};
++
++2) An HFPLL for CPU0. This HFPLL has the alias register region.
++
++	clock-controller@f908a000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
++		clock-output-names = "hfpll0";
++	};
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
