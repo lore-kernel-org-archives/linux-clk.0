@@ -1,177 +1,88 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 16/16] ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
-Date: Tue, 27 Feb 2018 23:27:01 +0100
-Message-Id: <20180227222701.9716-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH v3 01/11] regulator: core: add API to get voltage constraints
+Date: Tue, 6 Feb 2018 18:34:02 +0200
+Message-ID: <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on all boards with HDMI connector.
+From: Laxman Dewangan <ldewangan@nvidia.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Add API to get min/max rail voltage configured from platform for
+given rails.
+
+Changes to the commit message by
+Peter De Schrijver <pdeschrijver@nvidia.com>
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 25 ++++++++++++++++++++++
- .../dts/allwinner/sun50i-h5-orangepi-prime.dts     | 25 ++++++++++++++++++++++
- .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    | 25 ++++++++++++++++++++++
- 3 files changed, 75 insertions(+)
+ drivers/regulator/core.c           | 31 +++++++++++++++++++++++++++++++
+ include/linux/regulator/consumer.h |  2 ++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-index 58505fbc2667..98862c7c7258 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-@@ -67,6 +67,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index be767dd..c498774 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3246,6 +3246,37 @@ int regulator_get_voltage(struct regulator *regulator)
+ EXPORT_SYMBOL_GPL(regulator_get_voltage);
  
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
+ /**
++ * regulator_get_constraint_voltages - get platform specific constraint voltage,
++ * @regulator: regulator source
++ * @min_uV: Minimum microvolts.
++ * @max_uV: Maximum microvolts.
++ *
++ * This returns the current regulator voltage in uV.
++ *
++ * NOTE: If the regulator is disabled it will return the voltage value. This
++ * function should not be used to determine regulator state.
++ */
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
++int regulator_get_constraint_voltages(struct regulator *regulator,
++	int *min_uV, int *max_uV)
++{
++	struct regulator_dev *rdev = regulator->rdev;
 +
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -121,6 +132,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
++	if (rdev->desc && rdev->desc->fixed_uV && rdev->desc->n_voltages == 1) {
++		*min_uV = rdev->desc->fixed_uV;
++		*max_uV = rdev->desc->fixed_uV;
++		return 0;
++	}
++	if (rdev->constraints) {
++		*min_uV = rdev->constraints->min_uV;
++		*max_uV = rdev->constraints->max_uV;
++		return 0;
++	}
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(regulator_get_constraint_voltages);
 +
- &ehci0 {
- 	status = "okay";
- };
-@@ -153,6 +168,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-index 803566608ed8..b75ca4d7d001 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-@@ -62,6 +62,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -128,6 +139,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +175,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-index eda24d813282..53c8c11620e0 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-@@ -58,6 +58,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc3v3: vcc3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc3v3";
-@@ -73,6 +84,20 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_vcc3v3>;
- 	bus-width = <4>;
++/**
+  * regulator_set_current_limit - set regulator output current limit
+  * @regulator: regulator source
+  * @min_uA: Minimum supported current in uA
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index df176d7..d3f495a 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -250,6 +250,8 @@ int regulator_is_supported_voltage(struct regulator *regulator,
+ int regulator_set_voltage_time(struct regulator *regulator,
+ 			       int old_uV, int new_uV);
+ int regulator_get_voltage(struct regulator *regulator);
++int regulator_get_constraint_voltages(struct regulator *regulator,
++	int *min_uV, int *max_uV);
+ int regulator_sync_voltage(struct regulator *regulator);
+ int regulator_set_current_limit(struct regulator *regulator,
+ 			       int min_uA, int max_uA);
 -- 
-2.16.2
+1.9.1
