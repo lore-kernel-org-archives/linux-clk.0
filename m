@@ -1,199 +1,126 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: dinguyen@kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Subject: [PATCHv5 2/3] arm64: dts: stratix10: use clock bindings for the Stratix10 platform
-Date: Tue, 20 Feb 2018 09:44:32 -0600
-Message-Id: <1519141473-1253-2-git-send-email-dinguyen@kernel.org>
-In-Reply-To: <1519141473-1253-1-git-send-email-dinguyen@kernel.org>
-References: <1519141473-1253-1-git-send-email-dinguyen@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH] clk: migrate the count of orphaned clocks at init
+Date: Tue,  6 Feb 2018 11:54:04 +0100
+Message-Id: <20180206105404.13086-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the clock bindings for the Stratix10 SoC. This includes changing the old
-binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
-this can be done is that there are currently no clock driver for Stratix10,
-thus there are no consumers of the old binding. So changing the binding will
-not break any legacy code.
+The orphan clocks reparents should migrate any existing count from the
+orphan clock to its new acestor clocks, otherwise we may have
+inconsistent counts in the tree and end-up with gated critical clocks
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v5:
-- no changes
-v4:
-- remove '_' in name of clock nodes
-- use clock-controller in SoCDK node in dts file
-v3:
-- use the correct vendor prefix
-- explain the binding change
-v2:
-- use a single clock binding for the clock controller
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 50 +++++++++++++++++++++-
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 10 +++++
- 2 files changed, 58 insertions(+), 2 deletions(-)
+Assuming we have two clocks, A and B.
+* Clock A has CLK_IS_CRITICAL flag set.
+* Clock B is an ancestor of A which can gate. Clock B gate is left
+  enabled by the bootloader.
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index c89d0c30..5a6a699 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -17,6 +17,7 @@
- /dts-v1/;
- #include <dt-bindings/reset/altr,rst-mgr-s10.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/stratix10-clock.h>
+Step 1: Clock A is registered. Since it is a critical clock, it is
+enabled. The clock being still an orphan, no parent are enabled.
+
+Step 2: Clock B is registered and reparented to clock A (potentially
+through several other clocks). We are now in situation where the enable
+count of clock A is 1 while the enable count of its ancestors is 0, which
+is not good.
+
+Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+clock B being 0, clock B is gated and and critical clock A actually gets
+disabled.
+
+This situation was found while adding fdiv_clk gates to the meson8b
+platform.  These clocks parent clk81 critical clock, which is the mother
+of all peripheral clocks in this system. Because of the issue described
+here, the system is crashing when clk_disable_unused() is called.
+
+The situation is solved by reverting
+commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
+To avoid breaking again the situation described in this commit
+description, enabling critical clock should be done before walking the
+orphan list. This way, a parent critical clock may not be accidentally
+disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+
+Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a4b4e4d6df5e..cca05ea2c058 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
  
- / {
- 	compatible = "altr,socfpga-stratix10";
-@@ -92,9 +93,35 @@
- 		interrupt-parent = <&intc>;
- 		ranges = <0 0 0 0xffffffff>;
- 
--		clkmgr@ffd1000 {
--			compatible = "altr,clk-mgr";
-+		clkmgr: clock-controller@ffd10000 {
-+			compatible = "intel,stratix10-clkmgr";
- 			reg = <0xffd10000 0x1000>;
-+			#clock-cells = <1>;
++	/*
++	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
++	 * don't get accidentally disabled when walking the orphan tree and
++	 * reparenting clocks
++	 */
++	if (core->flags & CLK_IS_CRITICAL) {
++		unsigned long flags;
 +
-+			clocks {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++		clk_core_prepare(core);
 +
-+				cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
++		flags = clk_enable_lock();
++		clk_core_enable(core);
++		clk_enable_unlock(flags);
++	}
 +
-+				cb_intosc_ls_clk: cb-intosc-ls-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				f2s_free_clk: f2s-free-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				osc1: osc1 {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+			};
- 		};
+ 	/*
+ 	 * walk the list of orphan clocks and reparent any that newly finds a
+ 	 * parent.
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
+-		unsigned long flags;
  
- 		gmac0: ethernet@ff800000 {
-@@ -105,6 +132,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC0_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
+ 		/*
+-		 * we could call __clk_set_parent, but that would result in a
+-		 * redundant call to the .set_rate op, if it exists
++		 * We need to use __clk_set_parent_before() and _after() to
++		 * to properly migrate any prepare/enable count of the orphan
++		 * clock. This is important for CLK_IS_CRITICAL clocks, which
++		 * are enabled during init but might not have a parent yet.
+ 		 */
+ 		if (parent) {
+ 			/* update the clk tree topology */
+-			flags = clk_enable_lock();
+-			clk_reparent(orphan, parent);
+-			clk_enable_unlock(flags);
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
+ 		}
+@@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->ops->init)
+ 		core->ops->init(core->hw);
  
-@@ -116,6 +145,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC1_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -127,6 +158,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC2_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -229,6 +262,9 @@
- 			fifo-depth = <0x400>;
- 			resets = <&rst SDMMC_RESET>;
- 			reset-names = "reset";
-+			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
-+				 <&clkmgr STRATIX10_SDMMC_CLK>;
-+			clock-names = "biu", "ciu";
- 			status = "disabled";
- 		};
- 
-@@ -288,24 +324,32 @@
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 113 4>;
- 			reg = <0xffc03000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer1: timer1@ffc03100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 114 4>;
- 			reg = <0xffc03100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer2: timer2@ffd00000 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 115 4>;
- 			reg = <0xffd00000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer3: timer3@ffd00100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 116 4>;
- 			reg = <0xffd00100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		uart0: serial0@ffc02000 {
-@@ -315,6 +359,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART0_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -325,6 +370,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART1_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 0007564..b7f0b6b 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -50,6 +50,16 @@
- 		/* We expect the bootloader to fill in the reg */
- 		reg = <0 0 0 0>;
- 	};
-+
-+	soc {
-+		clock-controller@ffd10000 {
-+			clocks {
-+				osc1 {
-+					clock-frequency = <25000000>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &gpio1 {
+-	if (core->flags & CLK_IS_CRITICAL) {
+-		unsigned long flags;
+-
+-		clk_core_prepare(core);
+-
+-		flags = clk_enable_lock();
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
+-	}
+-
+ 	kref_init(&core->ref);
+ out:
+ 	clk_pm_runtime_put(core);
 -- 
-2.7.4
+2.14.3
