@@ -1,43 +1,80 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v1 1/5] dt-bindings: soc: update MT2712 power dt-bindings
-Date: Thu, 22 Feb 2018 13:48:47 +0800
-Message-ID: <20180222054851.26096-3-weiyi.lu@mediatek.com>
-In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH] clk: call the clock init() callback before any other ops callback
+Date: Tue,  6 Feb 2018 12:18:55 +0100
+Message-Id: <20180206111855.18827-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new power domains(MFG_SC1/MFG_SC2/MFG_SC3)
-for MT2712 according to ECO design change.
+Some clocks may need to initialize things, whatever it is, before
+being able to properly operate. Move the .init() call before any
+other callback, such recalc_rate() or get_phase(), so the clock
+is properly setup before being used.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- include/dt-bindings/power/mt2712-power.h | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
-index 92b46d772fae..2c147817efc2 100644
---- a/include/dt-bindings/power/mt2712-power.h
-+++ b/include/dt-bindings/power/mt2712-power.h
-@@ -22,5 +22,8 @@
- #define MT2712_POWER_DOMAIN_USB		5
- #define MT2712_POWER_DOMAIN_USB2	6
- #define MT2712_POWER_DOMAIN_MFG		7
-+#define MT2712_POWER_DOMAIN_MFG_SC1	8
-+#define MT2712_POWER_DOMAIN_MFG_SC2	9
-+#define MT2712_POWER_DOMAIN_MFG_SC3	10
+Hi Stephen, Mike,
+
+This change is addressing a problem I have with clock driver I'm working
+on. This driver needs the .init() callback to run first is order to answer
+correctly .get_phase(). It does not address an existing issue, not one
+that I'm aware of at least, which is why I did not put a Fixes tag.
+
+In any case, it makes sense to run init before running anything else.
+
+Since this changes the same region, this patch applies top of [0]
+
+[0]: https://lkml.kernel.org/r/20180206105404.13086-1-jbrunet@baylibre.com
+
+ drivers/clk/clk.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cca05ea2c058..9d56be6ead39 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2929,6 +2929,17 @@ static int __clk_core_init(struct clk_core *core)
+ 		core->orphan = true;
+ 	}
  
- #endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
++	/*
++	 * optional platform-specific magic
++	 *
++	 * The .init callback is not used by any of the basic clock types, but
++	 * exists for weird hardware that must perform initialization magic.
++	 * Please consider other ways of solving initialization problems before
++	 * using this callback, as its use is discouraged.
++	 */
++	if (core->ops->init)
++		core->ops->init(core->hw);
++
+ 	/*
+ 	 * Set clk's accuracy.  The preferred method is to use
+ 	 * .recalc_accuracy. For simple clocks and lazy developers the default
+@@ -3006,17 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+ 		}
+ 	}
+ 
+-	/*
+-	 * optional platform-specific magic
+-	 *
+-	 * The .init callback is not used by any of the basic clock types, but
+-	 * exists for weird hardware that must perform initialization magic.
+-	 * Please consider other ways of solving initialization problems before
+-	 * using this callback, as its use is discouraged.
+-	 */
+-	if (core->ops->init)
+-		core->ops->init(core->hw);
+-
+ 	kref_init(&core->ref);
+ out:
+ 	clk_pm_runtime_put(core);
 -- 
-2.12.5
+2.14.3
