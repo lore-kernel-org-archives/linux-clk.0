@@ -1,151 +1,79 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v6 02/41] clk: davinci: New driver for davinci PLL clocks
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-3-git-send-email-david@lechnology.com>
- <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <3ed91881-8753-a541-31aa-c835329141b3@lechnology.com>
-Date: Thu, 1 Feb 2018 12:57:52 -0600
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 6 Feb 2018 18:28:03 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Tuomas Tynkkynen <tuomas@tuxera.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180206162803.GF7031@tbergstrom-lnx.Nvidia.com>
+References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
+ <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
+ <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+ <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
+ <20180206142720.3a52b532@duuni>
 MIME-Version: 1.0
-In-Reply-To: <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180206142720.3a52b532@duuni>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/01/2018 02:01 AM, Sekhar Nori wrote:
-> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->> This adds a new driver for mach-davinci PLL clocks. This is porting the
->> code from arch/arm/mach-davinci/clock.c to the common clock framework.
->> Additionally, it adds device tree support for these clocks.
->>
->> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
->> compile errors until the clock code in arch/arm/mach-davinci is removed.
->>
->> Note: although there are similar clocks for TI Keystone we are not able
->> to share the code for a few reasons. The keystone clocks are device tree
->> only and use legacy one-node-per-clock bindings. Also the register
->> layouts are a bit different, which would add even more if/else mess
->> to the keystone clocks. And the keystone PLL driver doesn't support
->> setting clock rates.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
+On Tue, Feb 06, 2018 at 02:27:20PM +0200, Tuomas Tynkkynen wrote:
+> (Attempting to post through Gmane - let's see if this works at all).
 > 
-> Looks nice and clean to me. There is still some feedback though.
+> On Thu, 1 Feb 2018 11:25:20 +0200
+> Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > 
-> One thing missing is DIV4.5 clock. It will be nice to add that too,
-> mostly just because it will make the binding complete.
+> > On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
+> > > 
+> > > On 24/01/18 12:45, Peter De Schrijver wrote:  
+> > > > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > > > support in this driver. Also allow for the case where the CPU voltage is
+> > > > controlled directly by the DFLL rather than by a separate regulator object.
+> > > > 
+> > > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > ---
+> > > >  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
+> > > >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > > > index 4353025..d631dc4 100644
+> > > > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > > > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > > > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> > > >  {
+> > > >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> > > >  	clk_disable_unprepare(priv->dfll_clk);
+> > > > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > > > +	if (priv->vdd_cpu_reg)
+> > > > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> > > >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> > > >  }
+> > > >  
+> > > > @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> > > >  		return -ENODEV;
+> > > >  
+> > > >  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> > > > -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> > > > -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> > > > -		goto out_put_np;
+> > > > -	}
+> > > > +	if (IS_ERR(priv->vdd_cpu_reg))
+> > > > +		priv->vdd_cpu_reg = NULL;
+> > > >    
+> > > 
+> > > For Tegra124, don't we still want to return an error here?  
+> > 
+> > Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
+> > can be reworked to use this.
+> > 
+> > Peter.
+> > 
 > 
->> +void of_davinci_pll_init(struct device_node *node,
->> +			 const struct davinci_pll_clk_info *info,
->> +			 const struct davinci_pll_obsclk_info *obsclk_info,
->> +			 const struct davinci_pll_sysclk_info *div_info,
->> +			 u8 max_sysclk_id)
->> +{
->> +	struct device_node *child;
->> +	const char *parent_name;
->> +	void __iomem *base;
->> +	struct clk *clk;
->> +
->> +	base = of_iomap(node, 0);
->> +	if (!base) {
->> +		pr_err("ioremap failed");
->> +		return;
->> +	}
->> +
->> +	if (info->flags & PLL_HAS_OSCIN)
->> +		parent_name = of_clk_get_parent_name(node, 0);
->> +	else
->> +		parent_name = OSCIN_CLK_NAME;
-> 
-> I don't think the reference clock input handling is fully correct/flexible.
-> 
-> There are two ways to provide input clock (ref_clk) to PLL. Either use
-> the internal oscillator with a crystal connected between OSCIN and
-> OSCOUT (CLKMODE = 0) or a clean clock input (CLKMODE = 1) connected to
-> OSCIN (OSCOUT disconnected).
-> 
-> This is a board specific decision. On the LogicPD EVM, the former option
-> is used, on the LCDK board, the later.
-> 
-> So, I think what we need is a DT property like
-> "ti,davinci-use-internal-osc" for the PLL. Boards can set or ignore it
-> and you can switch CLKMODE on or off based on that.
-> 
-> Setting CLKMODE = 1 will switch off the internal oscillator (and
-> presumably save power), but it does not act as a mux. This explains why
-> not worrying about setting this correctly in current mainline still works.
-> 
-> I am also not sure if we really need PLL_HAS_OSCIN since all DaVinci
-> SoCs set it anyway.
+> Regardless of that, you need to bail out on -EPROBE_DEFER I think.
 
+Ah yes, likely. That said the code isn't correct because the voltage margin
+when using PLLX is higher than when using CL-DVFS..
 
-I realize this is a bit confusing. I think that part of this comes from
-the fact that OSCIN is not used consistently in the TRMs. It is used as
-the name of the actual pin on the SoC for connecting an external clock
-signal or crystal. It is also used as an input to CLKMODE where it means
-the output of the internal oscillator rather than the external pin (some
-SoCs show CLKMODE as a mux with OSCIN and CLKIN, but I agree that it is
-not really a mux since OSCIN and CLKIN are the same external pin on the
-SoC - then other SoCs show OSCIN meaning only the external pin here).
-Furthermore, OSCIN is listed as one of the inputs of EXTCLKSRC also as
-one of the inputs of OBSCLK on da850-type SoCs.
-
-So, the option I went with here is that "ref_clk" is the external clock
-connected to the OSCIN pin and that the "oscin" clock is the clock domain
-_after_ CLKMODE. This matches the use of OSCIN in the TRMs where "OSCIN"
-is used as an input for EXTCLKSRC and OBSCLK. Also the fact that the
-external reference clock is sometimes called CLKSRC instead of OSCIN
-influenced the decision go with "oscin" being the internal (to the PLL)
-clock domain.
-
-I think what I should have done, though, is named PLL_HAS_OSCIN as
-PLL_HAS_CLKMODE instead. I think what you are missing here is that
-PLL_HAS_OSCIN (or PLL_HAS_CLKMODE) only means that the PLL _has_
-PLLCTL[CLKMODE]. It does _not_ mean that we set (or clear) PLLCTL[CLKMODE].
-On SoCs with two PLLs, only one of them has the PLLCTL[CLKMODE] bit (and
-therefore the PLL_HAS_OSCIN flag) and the output of this is shared by both
-PLLs, e.g. Figure 7-1. PLLC Structure in the AM1808 TRM (spruh82c). So,
-the clock tree in Linux ends up looking like this:
-
-ref_clk - the external clock - aka CLKSRC
-+-oscin - internal clock domain after CLKMODE - shared by both PLLs
-   +-pll0_extclksrc
-   +-pll0_prediv
-   +-pll0_auxclk
-   +-pll0_obsclk - via the OSCSRC mux
-   +-pll1_pllen
-   +-pll1_pllout
-   +-pll1_obsclk - via the OSCSRC mux
-
-Clocks beyond two levels deep are omitted for brevity.
-
-It should be easy to see the correlation here Figure 7-1 with the
-exception that in Figure 7-1 "OSCIN" has the meaning of "the physical
-pin on the chip" (which Linux calls "ref_clk") and there is no clear
-label in Figure 7-1 of what the clock domain after PLLCTL[CLKMODE] is
-called (which Linux calls "oscin").
-
-Sure, it would work just fine if we left "oscin" out of the picture,
-but it simplifies the driver implementation by having a known "oscin"
-clock that is fully controlled by the clock driver code instead of
-having to pass the user-supplied "ref_clk" around a bunch of places.
-And, we could try to call it something other than "oscin" to try
-to avoid confusion, but then you will just cause confusion in other
-places (which could be less total confusion, so I am open to change
-here).
-
----
-
-Switching topics to CLKMODE and DT...
-
-There is a "ti,clkmode-square-wave" property in the proposed DT bindings
-that does exactly what you have suggested, except the logic is
-reversed. When omitted, it assumes the use of a crystal oscillator.
-I believe this is the most common configuration, which is why I made
-it the default instead of the other way around.
+Peter.
