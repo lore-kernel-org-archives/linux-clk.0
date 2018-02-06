@@ -1,264 +1,97 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 06/15] clk: qcom: Add MSM8960/APQ8064's HFPLLs
-Date: Tue, 27 Feb 2018 19:36:53 +0530
-Message-Id: <1519740422-3835-7-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 6 Feb 2018 09:56:42 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v6 14/15] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+Message-ID: <20180206042642.GG28462@vireshk-i7>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+ <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On 06-02-18, 09:38, Sricharan R wrote:
+> diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
+> new file mode 100644
+> index 0000000..5b988d4
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq.c
+> @@ -0,0 +1,161 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/slab.h>
+> +#include "cpufreq-dt.h"
+> +#include <linux/nvmem-consumer.h>
 
-Describe the HFPLLs present on MSM8960 and APQ8064 devices.
+I don't think you need all of these anymore, isn't it ? Can you cross check
+which ones are really required? For example, cpufreq-dt.h isn't required for
+sure.
 
-Acked-by: Rob Herring <robh@kernel.org> (bindings)
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/gcc-msm8960.c               | 172 +++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8960.h |   2 +
- 2 files changed, 174 insertions(+)
+> +static int __init qcom_cpufreq_driver_init(void)
+> +{
+> +	struct device *cpu_dev;
+> +	struct device_node *np;
+> +	struct nvmem_cell *pvs_nvmem;
+> +	int ret;
+> +
+> +	cpu_dev = get_cpu_device(0);
+> +	if (!cpu_dev)
+> +		return -ENODEV;
+> +
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+> +	if (!np)
+> +		return -ENOENT;
+> +
+> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
+> +		of_node_put(np);
+> +		return -ENODEV;
+> +	}
+> +
+> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
+> +	if (IS_ERR(pvs_nvmem)) {
+> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
+> +		return PTR_ERR(pvs_nvmem);
+> +	}
+> +
+> +	of_node_put(np);
+> +
+> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
+> +						       -1, NULL, 0));
 
-diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
-index eb551c7..809f16a 100644
---- a/drivers/clk/qcom/gcc-msm8960.c
-+++ b/drivers/clk/qcom/gcc-msm8960.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
- 
- static struct clk_pll pll3 = {
-@@ -86,6 +87,164 @@
- 	},
- };
- 
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
-+};
-+
-+static struct hfpll_data hfpll1_8064_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3254,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
-+
-+static struct hfpll_data hfpll2_data = {
-+	.mode_reg = 0x3280,
-+	.l_reg = 0x3288,
-+	.m_reg = 0x328c,
-+	.n_reg = 0x3290,
-+	.config_reg = 0x3284,
-+	.status_reg = 0x329c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3294,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll2 = {
-+	.d = &hfpll2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll2.lock),
-+};
-+
-+static struct hfpll_data hfpll3_data = {
-+	.mode_reg = 0x32c0,
-+	.l_reg = 0x32c8,
-+	.m_reg = 0x32cc,
-+	.n_reg = 0x32d0,
-+	.config_reg = 0x32c4,
-+	.status_reg = 0x32dc,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x32d4,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll3 = {
-+	.d = &hfpll3_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll3",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll3.lock),
-+};
-+
-+static struct hfpll_data hfpll_l2_8064_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3400,
-+	.l_reg = 0x3408,
-+	.m_reg = 0x340c,
-+	.n_reg = 0x3410,
-+	.config_reg = 0x3404,
-+	.status_reg = 0x341c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3414,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -3112,6 +3271,9 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
- };
- 
- static const struct qcom_reset_map gcc_msm8960_resets[] = {
-@@ -3323,6 +3485,11 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
-+	[PLL16] = &hfpll2.clkr,
-+	[PLL17] = &hfpll3.clkr,
- };
- 
- static const struct qcom_reset_map gcc_apq8064_resets[] = {
-@@ -3482,6 +3649,11 @@ static int gcc_msm8960_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (match->data == &gcc_apq8064_desc) {
-+		hfpll1.d = &hfpll1_8064_data;
-+		hfpll_l2.d = &hfpll_l2_8064_data;
-+	}
-+
- 	tsens = platform_device_register_data(&pdev->dev, "qcom-tsens", -1,
- 					      NULL, 0);
- 	if (IS_ERR(tsens))
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8960.h b/include/dt-bindings/clock/qcom,gcc-msm8960.h
-index 7d20eed..e02742f 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8960.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8960.h
-@@ -319,5 +319,7 @@
- #define CE3_SRC					303
- #define CE3_CORE_CLK				304
- #define CE3_H_CLK				305
-+#define PLL16					306
-+#define PLL17					307
- 
- #endif
+Wanna do proper error handling here? For example, unset OPP name on failure here
+so that resources get freed ?
+
+> +}
+> +module_init(qcom_cpufreq_driver_init);
+> +
+> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+viresh
