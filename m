@@ -1,92 +1,145 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1518708141.2883.94.camel@baylibre.com>
-Subject: Re: [PATCH] clk: use get_phase() if available
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 15 Feb 2018 16:22:21 +0100
-In-Reply-To: <20180215102822.7721-1-jbrunet@baylibre.com>
-References: <20180215102822.7721-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 07/15] clk: qcom: Add IPQ806X's HFPLLs
+Date: Tue,  6 Feb 2018 09:38:20 +0530
+Message-Id: <1517890108-8140-8-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-02-15 at 11:28 +0100, Jerome Brunet wrote:
-> When the get_phase() callback is available, we should use it
-> instead of just relying the values cached, and assumed un-rounded,
-> by the framework
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
-> 
-> Hi Mike, Stephen,
-> 
-> This changes applies on top of the phase fix I've sent [0]
-> 
-> [0]: https://lkml.kernel.org/r/20180215101958.22676-1-jbrunet@baylibre.com
-> 
->  drivers/clk/clk.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b33d362239e7..bcd6ec980903 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2297,6 +2297,21 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
->  }
->  EXPORT_SYMBOL_GPL(clk_set_parent);
->  
-> +static int clk_core_get_phase_nolock(struct clk_core *core)
-> +{
-> +	int ret;
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-+	if (!core)
-+		return 0;
+Describe the HFPLLs present on IPQ806X devices.
 
-Forgot this, will add it the v2
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-> +
-> +	if (!core->ops->get_phase)
-> +		return core->phase;
-> +
-> +	/* Update the phase if the callback is available */
-> +	ret = core->ops->get_phase(core->hw);
-> +	if (ret >= 0)
-> +		core->phase = ret;
-> +
-> +	return ret;
-> +}
-> +
->  static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  {
->  	int ret = -EINVAL;
-> @@ -2314,12 +2329,16 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  	if (core->ops->set_phase)
->  		ret = core->ops->set_phase(core->hw, degrees);
->  
-> -	if (!ret)
-> +	if (!ret) {
->  		core->phase = degrees;
->  
-> +		/* Read back the phase in case it got rounded */
-> +		ret = clk_core_get_phase_nolock(core);
-> +	}
-> +
->  	trace_clk_set_phase_complete(core, degrees);
->  
-> -	return ret;
-> +	return ret > 0 ? 0 : ret;
->  }
->  
->  /**
-> @@ -2375,7 +2394,7 @@ static int clk_core_get_phase(struct clk_core *core)
->  	int ret;
->  
->  	clk_prepare_lock();
-> -	ret = core->phase;
-> +	ret = clk_core_get_phase_nolock(core);
->  	clk_prepare_unlock();
->  
->  	return ret;
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 28eb200..d571cf8 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
+ 
+ static struct clk_pll pll0 = {
+@@ -113,6 +114,84 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -2800,6 +2879,9 @@ enum {
+ 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
+ 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
+ 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
