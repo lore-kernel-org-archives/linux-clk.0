@@ -1,82 +1,167 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] clk: meson: poke pll CNTL last
-Date: Mon, 19 Feb 2018 12:21:37 +0100
-Message-Id: <20180219112146.21746-3-jbrunet@baylibre.com>
-In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
-References: <20180219112146.21746-1-jbrunet@baylibre.com>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 09/15] clk: qcom: Add KPSS ACC/GCC driver
+Date: Tue,  6 Feb 2018 09:38:22 +0530
+Message-Id: <1517890108-8140-10-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Poking CNTL first may take the PLL out of reset while we are still
-applying the initial settings, including the filter values
-initialization. This is the case for the axg and gxl gp0 pll.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Doing this poke last ensures the pll stays in reset while the initial
-settings are applied.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. For CPUfreq
+purposes probe these devices and expose a mux clock that chooses
+between PXO and PLL8.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/meson/axg.c  | 2 +-
- drivers/clk/meson/gxbb.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/Kconfig    |  8 +++++
+ drivers/clk/qcom/Makefile   |  1 +
+ drivers/clk/qcom/kpss-xcc.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index acb63c8e0fd8..8226b82c67fd 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -193,12 +193,12 @@ static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
- };
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index bf14f56..8fca65d 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -235,6 +235,14 @@ config QCOM_HFPLL
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
  
- const struct reg_sequence axg_gp0_init_regs[] = {
--	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
- 	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
- 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
-+	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
- };
- 
- static struct clk_regmap axg_gp0_pll = {
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index bb0b0529ca81..3cd07f960489 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -390,10 +390,10 @@ static struct clk_regmap gxbb_sys_pll = {
- };
- 
- const struct reg_sequence gxbb_gp0_init_regs[] = {
--	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x6a000228 },
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0x69c80000 },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a5590c4 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0x0000500d },
-+	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x4a000228 },
- };
- 
- static struct clk_regmap gxbb_gp0_pll = {
-@@ -437,12 +437,12 @@ static struct clk_regmap gxbb_gp0_pll = {
- };
- 
- const struct reg_sequence gxl_gp0_init_regs[] = {
--	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
- 	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
- 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
-+	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
- };
- 
- static struct clk_regmap gxl_gp0_pll = {
++config KPSS_XCC
++	tristate "KPSS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the Krait ACC and GCC clock controllers. Say Y
++	  if you want to support CPU frequency scaling on devices such
++	  as MSM8960, APQ8064, etc.
++
+ config KRAIT_CLOCKS
+ 	bool
+ 	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index e1e96f6..24e598a 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -40,4 +40,5 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+ obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
+new file mode 100644
+index 0000000..8590b5e
+--- /dev/null
++++ b/drivers/clk/qcom/kpss-xcc.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++
++static const char *aux_parents[] = {
++	"pll8_vote",
++	"pxo",
++};
++
++static unsigned int aux_parent_map[] = {
++	3,
++	0,
++};
++
++static const struct of_device_id kpss_xcc_match_table[] = {
++	{ .compatible = "qcom,kpss-acc-v1", .data = (void *)1UL },
++	{ .compatible = "qcom,kpss-gcc" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
++
++static int kpss_xcc_driver_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *id;
++	struct clk *clk;
++	struct resource *res;
++	void __iomem *base;
++	const char *name;
++
++	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
++	if (!id)
++		return -ENODEV;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	if (id->data) {
++		if (of_property_read_string_index(pdev->dev.of_node,
++						  "clock-output-names",
++						  0, &name))
++			return -ENODEV;
++		base += 0x14;
++	} else {
++		name = "acpu_l2_aux";
++		base += 0x28;
++	}
++
++	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
++				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
++				     0, aux_parent_map, NULL);
++
++	platform_set_drvdata(pdev, clk);
++
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static int kpss_xcc_driver_remove(struct platform_device *pdev)
++{
++	clk_unregister_mux(platform_get_drvdata(pdev));
++	return 0;
++}
++
++static struct platform_driver kpss_xcc_driver = {
++	.probe = kpss_xcc_driver_probe,
++	.remove = kpss_xcc_driver_remove,
++	.driver = {
++		.name = "kpss-xcc",
++		.of_match_table = kpss_xcc_match_table,
++	},
++};
++module_platform_driver(kpss_xcc_driver);
++
++MODULE_DESCRIPTION("Krait Processor Sub System (KPSS) Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:kpss-xcc");
 -- 
-2.14.3
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
