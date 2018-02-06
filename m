@@ -1,95 +1,47 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v1 2/5] soc: mediatek: update power domain data of MT2712
-Date: Thu, 22 Feb 2018 13:48:48 +0800
-Message-ID: <20180222054851.26096-4-weiyi.lu@mediatek.com>
-In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5A790E4F.7060701@samsung.com>
+Date: Tue, 06 Feb 2018 11:09:19 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krzk@kernel.org, tomasz.figa@gmail.com, b.zolnierkie@samsung.com,
+	m.szyprowski@samsung.com
+Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+In-reply-to: <20180205144158.10500-1-s.nawrocki@samsung.com>
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
+	<20180205144158.10500-1-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
-according to MT2712 ECO design change
-2. add subdomain support for MT2712
+Hi Sylwester,
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+On 2018년 02월 05일 23:41, Sylwester Nawrocki wrote:
+> Add a missing git tree entry for drivers/clk/samsung.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aa71ab52fd76..502442dc08eb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12001,6 +12001,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+>  M:	Chanwoo Choi <cw00.choi@samsung.com>
+>  S:	Supported
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+>  F:	drivers/clk/samsung/
+>  F:	include/dt-bindings/clock/exynos*.h
+>  F:	Documentation/devicetree/bindings/clock/exynos*.txt
+> 
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 59bd749c2f25..edf8fd6c2c85 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
- 		.name = "mfg",
- 		.sta_mask = PWR_STATUS_MFG,
- 		.ctl_offs = SPM_MFG_PWR_CON,
--		.sram_pdn_bits = GENMASK(11, 8),
--		.sram_pdn_ack_bits = GENMASK(19, 16),
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(16, 16),
- 		.clk_id = {CLK_MFG},
- 		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
- 		.active_wakeup = true,
- 	},
-+	[MT2712_POWER_DOMAIN_MFG_SC1] = {
-+		.name = "mfg_sc1",
-+		.sta_mask = BIT(22),
-+		.ctl_offs = 0x02c0,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(16, 16),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_MFG_SC2] = {
-+		.name = "mfg_sc2",
-+		.sta_mask = BIT(23),
-+		.ctl_offs = 0x02c4,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(16, 16),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+	[MT2712_POWER_DOMAIN_MFG_SC3] = {
-+		.name = "mfg_sc3",
-+		.sta_mask = BIT(30),
-+		.ctl_offs = 0x01f8,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(16, 16),
-+		.clk_id = {CLK_NONE},
-+		.active_wakeup = true,
-+	},
-+};
-+
-+static const struct scp_subdomain scp_subdomain_mt2712[] = {
-+	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
-+	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
-+	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
-+	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
-+	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
-+	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
- };
- 
- /*
-@@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
- static const struct scp_soc_data mt2712_data = {
- 	.domains = scp_domain_data_mt2712,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
-+	.subdomains = scp_subdomain_mt2712,
-+	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
- 	.regs = {
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.12.5
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
