@@ -1,127 +1,151 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-Date: Mon, 12 Feb 2018 17:44:09 +0000
-Message-Id: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org,
+	Russell King <linux@arm.linux.org.uk>,
+	Courtney Cavin <courtney.cavin@sonymobile.com>
+Subject: [PATCH v6 01/15] ARM: Add Krait L2 register accessor functions
+Date: Tue,  6 Feb 2018 09:38:14 +0530
+Message-Id: <1517890108-8140-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-this series has been around for some time as RFC, and it has collected
-useful comments from the community along the way.
-The solution proposed by this patch set works for most R-Car Gen2 and
-RZ/G1 devices, but not all of them. We now know that for some R-Car
-Gen2 early revisions there is no proper software fix. Anyway, no
-product has been built around early revisions, but development boards
-mounting early revisions (basically prototypes) are still out there.
-As a result, this series isn't enabling the internal watchdog on R-Car
-Gen2 boards, developers may enable it in board specific device trees
-if needed.
-This series has been tested by me on the iwg20d, iwg22d, Lager, Alt,
-and Koelsch boards.
+Krait CPUs have a handful of L2 cache controller registers that
+live behind a cp15 based indirection register. First you program
+the indirection register (l2cpselr) to point the L2 'window'
+register (l2cpdr) at what you want to read/write.  Then you
+read/write the 'window' register to do what you want. The
+l2cpselr register is not banked per-cpu so we must lock around
+accesses to it to prevent other CPUs from re-pointing l2cpdr
+underneath us.
 
-The problem
-===========
-To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
-to ICRAM1 and we program the [S]BAR registers so that when we turn ON
-the non-boot CPUs they are redirected to the reset vector installed by
-Linux in ICRAM1, and eventually they continue the execution to RAM,
-where the SMP bring-up code will take care of the rest.
-The content of the [S]BAR registers survives a watchdog triggered reset,
-and as such after the watchdog fires the boot core will try and execute
-the SMP bring-up code instead of jumping to the bootrom code.
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Courtney Cavin <courtney.cavin@sonymobile.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/arm/common/Kconfig                   |  3 ++
+ arch/arm/common/Makefile                  |  1 +
+ arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
+ 4 files changed, 62 insertions(+)
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
 
-The fix
-=======
-The main strategy for the solution is to let the reset vector decide
-if it needs to jump to shmobile_boot_fn or to the bootrom code.
-In a watchdog triggered reset scenario, since the [S]BAR registers keep
-their values, the boot CPU will jump into the newly designed reset
-vector, the assembly routine will eventually test WOVF (a bit in register
-RWTCSRA that indicates if the watchdog counter has overflown, the value
-of this bit gets retained in this scenario), and jump to the bootrom code
-which will in turn load up the bootloader, etc.
-When bringing up SMP or using CPU hotplug, the reset vector will jump
-to shmobile_boot_fn instead.
-
-Thank you All for your help.
-
-Best regards,
-
-Fabrizio Castro (26):
-  ARM: shmobile: Add watchdog support
-  ARM: dts: r8a7743: Adjust SMP routine size
-  ARM: dts: r8a7745: Adjust SMP routine size
-  ARM: dts: r8a7790: Adjust SMP routine size
-  ARM: dts: r8a7791: Adjust SMP routine size
-  ARM: dts: r8a7792: Adjust SMP routine size
-  ARM: dts: r8a7793: Adjust SMP routine size
-  ARM: dts: r8a7794: Adjust SMP routine size
-  soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
-  ARM: shmobile: rcar-gen2: Add watchdog support
-  dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-  watchdog: renesas_wdt: Add R-Car Gen2 support
-  watchdog: renesas_wdt: Add restart handler
-  ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-  clk: renesas: r8a7743: Add rwdt clock
-  clk: renesas: r8a7745: Add rwdt clock
-  clk: renesas: r8a7790: Add rwdt clock
-  clk: renesas: r8a7791/r8a7793: Add rwdt clock
-  clk: renesas: r8a7794: Add rwdt clock
-  ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-  ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-  ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   | 19 ++++++--
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++-
- arch/arm/configs/shmobile_defconfig                |  1 +
- arch/arm/mach-shmobile/common.h                    |  6 +++
- arch/arm/mach-shmobile/headsmp.S                   | 55 ++++++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c              | 15 ++++--
- drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
- drivers/soc/renesas/rcar-rst.c                     | 35 +++++++++++---
- drivers/watchdog/renesas_wdt.c                     | 39 +++++++++++++--
- 22 files changed, 229 insertions(+), 26 deletions(-)
-
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index e5ad070..c8e1986 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -7,6 +7,9 @@ config DMABOUNCE
+ 	bool
+ 	select ZONE_DMA
+ 
++config KRAIT_L2_ACCESSORS
++	bool
++
+ config SHARP_LOCOMO
+ 	bool
+ 
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14..eec6cd1 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -7,6 +7,7 @@ obj-y				+= firmware.o
+ 
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
++obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+new file mode 100644
+index 0000000..9a97dda
+--- /dev/null
++++ b/arch/arm/common/krait-l2-accessors.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/spinlock.h>
++#include <linux/export.h>
++
++#include <asm/barrier.h>
++#include <asm/krait-l2-accessors.h>
++
++static DEFINE_RAW_SPINLOCK(krait_l2_lock);
++
++void krait_set_l2_indirect_reg(u32 addr, u32 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then write to the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
++	isb();
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++}
++EXPORT_SYMBOL(krait_set_l2_indirect_reg);
++
++u32 krait_get_l2_indirect_reg(u32 addr)
++{
++	u32 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then read from the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+new file mode 100644
+index 0000000..dd7c474
+--- /dev/null
++++ b/arch/arm/include/asm/krait-l2-accessors.h
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
++#define __ASMARM_KRAIT_L2_ACCESSORS_H
++
++extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
++extern u32 krait_get_l2_indirect_reg(u32 addr);
++
++#endif
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
