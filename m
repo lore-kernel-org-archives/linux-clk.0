@@ -1,144 +1,245 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 03/42] clk: davinci: Add platform information for TI DA830 PLL
-Date: Mon, 19 Feb 2018 14:21:24 -0600
-Message-Id: <1519071723-31790-4-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v6 08/15] clk: qcom: Add support for Krait clocks
+Date: Tue,  6 Feb 2018 09:38:21 +0530
+Message-Id: <1517890108-8140-9-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI DA830/
-OMAP-L137/AM17XX SoCs.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: David Lechner <david@lechnology.com>
+The Krait clocks are made up of a series of muxes and a divider
+that choose between a fixed rate clock and dedicated HFPLLs for
+each CPU. Instead of using mmio accesses to remux parents, the
+Krait implementation exposes the remux control via cp15
+registers. Support these clocks.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/qcom/Kconfig     |   4 ++
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-krait.h |  38 +++++++++++++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
 
-v7 changes:
-- include clkdev lookup registration here instead of in mach-davinci
-- Add platform_device_id lookup
-
-v6 changes:
-- Added da830_pll_info with controller-specific information
-- Add empty lines between function calls
-
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/pll-da830.c | 58 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |  1 +
- drivers/clk/davinci/pll.h       |  4 +++
- 4 files changed, 64 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-da830.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index d9673bd..9061e19 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -2,4 +2,5 @@
- 
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
-+obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- endif
-diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d9ae51e..bf14f56 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -234,3 +234,7 @@ config QCOM_HFPLL
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
++
++config KRAIT_CLOCKS
++	bool
++	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index c57b808..e1e96f6 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
 new file mode 100644
-index 0000000..240b17a
+index 0000000..2e41767
 --- /dev/null
-+++ b/drivers/clk/davinci/pll-da830.c
-@@ -0,0 +1,58 @@
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -0,0 +1,124 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DA830/OMAP-L137/AM17XX
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+#include <linux/clkdev.h>
-+#include <linux/bitops.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
 +#include <linux/init.h>
-+#include <linux/types.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
 +
-+#include "pll.h"
++#include <asm/krait-l2-accessors.h>
 +
-+static const struct davinci_pll_clk_info da830_pll_info __initconst = {
-+	.name = "pll0",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
-+};
++#include "clk-krait.h"
 +
-+/*
-+ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
-+ * meaning that we could change the divider as long as we keep the correct
-+ * ratio between all of the clocks, but we don't support that because there is
-+ * currently not a need for it.
-+ */
++/* Secondary and primary muxes share the same cp15 register */
++static DEFINE_SPINLOCK(krait_clock_reg_lock);
 +
-+static const struct davinci_pll_sysclk_info da830_pll_sysclk_info[] __initconst = {
-+	SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV),
-+	SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0),
-+	SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV),
-+	SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0),
-+	SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV),
-+	SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0),
-+	{ }
-+};
-+
-+int __init da830_pll_init(struct device *dev, void __iomem *base)
++#define LPL_SHIFT	8
++static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
 +{
-+	const struct davinci_pll_sysclk_info *info;
-+	struct clk *clk;
++	unsigned long flags;
++	u32 regval;
 +
-+	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	regval = krait_get_l2_indirect_reg(mux->offset);
++	regval &= ~(mux->mask << mux->shift);
++	regval |= (sel & mux->mask) << mux->shift;
++	if (mux->lpl) {
++		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
++		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
++	}
++	krait_set_l2_indirect_reg(mux->offset, regval);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
 +
-+	clk = davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
++	/* Wait for switch to complete. */
++	mb();
++	udelay(1);
++}
 +
-+	for (info = da830_pll_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(dev, info, base);
++static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	mux->en_mask = sel;
++	/* Don't touch mux if CPU is off as it won't work */
++	if (__clk_is_enabled(hw->clk))
++		__krait_mux_set_sel(mux, sel);
 +
 +	return 0;
 +}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index e4f3e5f..9a22511 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -751,6 +751,7 @@ static const struct of_device_id davinci_pll_of_match[] = {
- };
- 
- static const struct platform_device_id davinci_pll_id_table[] = {
-+	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 50fe429..5c4c5c8 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -117,4 +117,8 @@ int of_davinci_pll_init(struct device *dev,
- 			u8 max_sysclk_id,
- 			void __iomem *base);
- 
-+/* Platform-specific callbacks */
 +
-+int da830_pll_init(struct device *dev, void __iomem *base);
++static u8 krait_mux_get_parent(struct clk_hw *hw)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
 +
- #endif /* __CLK_DAVINCI_PLL_H___ */
++	sel = krait_get_l2_indirect_reg(mux->offset);
++	sel >>= mux->shift;
++	sel &= mux->mask;
++	mux->en_mask = sel;
++
++	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
++}
++
++const struct clk_ops krait_mux_clk_ops = {
++	.set_parent = krait_mux_set_parent,
++	.get_parent = krait_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate_closest,
++};
++EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
++
++/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
++static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
++	return DIV_ROUND_UP(*parent_rate, 2);
++}
++
++static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	unsigned long flags;
++	u32 val;
++	u32 mask = BIT(d->width) - 1;
++
++	if (d->lpl)
++		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	val = krait_get_l2_indirect_reg(d->offset);
++	val &= ~mask;
++	krait_set_l2_indirect_reg(d->offset, val);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	u32 mask = BIT(d->width) - 1;
++	u32 div;
++
++	div = krait_get_l2_indirect_reg(d->offset);
++	div >>= d->shift;
++	div &= mask;
++	div = (div + 1) * 2;
++
++	return DIV_ROUND_UP(parent_rate, div);
++}
++
++const struct clk_ops krait_div2_clk_ops = {
++	.round_rate = krait_div2_round_rate,
++	.set_rate = krait_div2_set_rate,
++	.recalc_rate = krait_div2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+new file mode 100644
+index 0000000..71890bc
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __QCOM_CLK_KRAIT_H
++#define __QCOM_CLK_KRAIT_H
++
++#include <linux/clk-provider.h>
++
++struct krait_mux_clk {
++	unsigned int	*parent_map;
++	u32		offset;
++	u32		mask;
++	u32		shift;
++	u32		en_mask;
++	bool		lpl;
++
++	struct clk_hw	hw;
++	struct notifier_block   clk_nb;
++};
++
++#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
++
++extern const struct clk_ops krait_mux_clk_ops;
++
++struct krait_div2_clk {
++	u32		offset;
++	u8		width;
++	u32		shift;
++	bool		lpl;
++
++	struct clk_hw	hw;
++};
++
++#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
++
++extern const struct clk_ops krait_div2_clk_ops;
++
++#endif
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
