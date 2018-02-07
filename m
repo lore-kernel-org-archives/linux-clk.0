@@ -1,64 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:58482 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeB0Qmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Feb 2018 11:42:55 -0500
-Date: Tue, 27 Feb 2018 08:42:48 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-omap@vger.kernel.org, jsarha@ti.com
-Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
-Message-ID: <20180227164142.GA5448@atomide.com>
-References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
- <20180226220520.GI16043@atomide.com>
- <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:20:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 20/26] ARM: dts: r8a7743: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232025.cm4mdr4l65lwej2j@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2bzzwp6v4ficjmmb"
+In-Reply-To: <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [180227 06:35]:
-> On 27/02/18 00:05, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > * Tero Kristo <t-kristo@ti.com> [180226 15:11]:
-> > > This patch adds clock rate propagation support for clkctrl clocks. This
-> > > is needed on am33xx beaglebone black device at least, otherwise the
-> > > display does not work. Similar problem appears to be present on am43xx
-> > > but haven't heard of any reports of such so far, maybe Jyri can confirm
-> > > this?
-> > 
-> > I think I was also hitting this with the system timers with ti-sysc
-> > where set_parent() would fail unless the dts has the following for
-> > timers:
-> > 
-> > clocks = <&l4_wkup_clkctrl OMAP4_TIMER1_CLKCTRL 24>;
-> > 
-> > So bit 24 instead of 0.
-> > 
-> > Hmm so should we have all the timers use bit 0 in the dtsi?
-> > Or default to bit 24 for all of them?
-> 
-> Who is going to control the clkctrl clock for the timers if you just control
-> the opt clock? Also, ain't the bit 24 the clksel mux setting? Tweaking that
-> would seem wrong...
 
-Yeah OK.
+--2bzzwp6v4ficjmmb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If you were facing problems with setting the clock source, we could maybe
-> just apply the CLK_SET_RATE_PARENT globally to all clkctrl clocks (modify
-> the patch #1 in this series to always set the flag, instead of clecking
-> against the CLKF_xyz flag.) Any thoughts?
+On Wed, Jan 31, 2018 at 06:24:24PM +0000, Fabrizio Castro wrote:
+> This patch adds watchdog support to the r8a7743 SoC dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sounds good to me if that keeps omap_dm_timer_init_one() working
-for clk_set_parent() for configuring timer via dts :)
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I think there's a reserved range for the parent clocks that is
-different from the opt clocks in the clkctrl registers so it
-can be maybe checked that way?
 
-Regards,
+--2bzzwp6v4ficjmmb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tony
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ibkACgkQFA3kzBSg
+KbbEKhAAsGL4jtMZjwlGDZZBSTLblrBqh1HCII4vwxPudWz/FM3TomJ7qjtk7Dl7
+ytCgwcJ7V9mmENc7PnC92AfYiPhuYFQP+9q/+UP9BjGW1z6gUfhJ8UbjwLWYHffj
+z/MMhzpwQScdtbznY/vCM8RU6157b5z0ZUh2ANF3DxnV18WZ3kz/VA6arqQ4et2a
+fALAhp0juJoghpZtXGhuV9x9ot0mEHRXirlHfcLKCts8+FsXTxwuxqy02qCeSNhi
+eoefthCmD0VdB20bvav8nLP5iJyn9BvXhuhjBbzFt833jtF3Wbq5TYNvHML49OG+
+A9n/Ebi++d+6aHvJyN4JDlgNeOalDGJiLLvsMPsCzYcqCeC+BReK0Ty/XIvDKkiG
+Qer+2WxROyM7uMI/pjyZ6C7nf7QsIhdbAbHcP/TpweyF2PsttuNVHAgUiD7kkxRS
+qPM4PoVfnO6cBj8FieWtBrGzjuuWJdbCkwu/oE5MAixHlRbBgslbRV7ZRL5aqZH5
+7Z9QOgtc4IQGlwPZHiqnstP4+yS7el8P5kxL6SuOkVaOgAzB7utZfgqZQ3HY5np9
+LaAGoIF+n5tXTLRFEWjxTyodoPdfCLpz6x3aJyiVPFWR9mXdZdEBUHHFxlkxjd7e
+PCQLErJH6ZnHsrO1sCsyz/1Cd+ZXMCmlZ0lQA+HkQNU26tyKSQs=
+=OPdP
+-----END PGP SIGNATURE-----
+
+--2bzzwp6v4ficjmmb--
