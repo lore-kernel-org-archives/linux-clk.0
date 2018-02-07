@@ -1,136 +1,72 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/8] clk: divider: export clk_div_mask() helper
-Date: Wed, 14 Feb 2018 14:43:33 +0100
-Message-Id: <20180214134340.17242-2-jbrunet@baylibre.com>
-In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:20:30 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 21/26] ARM: dts: r8a7745: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232030.s2x5hp46p4p2zj67@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-22-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vsrsw5hbc4cw6auk"
+In-Reply-To: <1517423070-24236-22-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export clk_div_mask() in clk-provider header so every clock providers
-derived from the generic clock divider may share the definition instead
-of redefining it.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+--vsrsw5hbc4cw6auk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have 's/div_mask/clk_div_mask' to avoid the conflict with
-tegra's divider, which also defines the macro div_mask() but does not
-actually derives from the generic divider.
+On Wed, Jan 31, 2018 at 06:24:25PM +0000, Fabrizio Castro wrote:
+> This patch adds watchdog support to the r8a7745 SoC dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- drivers/clk/clk-divider.c    | 24 +++++++++++-------------
- include/linux/clk-provider.h |  1 +
- 2 files changed, 12 insertions(+), 13 deletions(-)
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index b49942b9fe50..3c98d2650fa3 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -28,12 +28,10 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
- 
--#define div_mask(width)	((1 << (width)) - 1)
--
- static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
- 				      u8 width)
- {
--	unsigned int maxdiv = 0, mask = div_mask(width);
-+	unsigned int maxdiv = 0, mask = clk_div_mask(width);
- 	const struct clk_div_table *clkt;
- 
- 	for (clkt = table; clkt->div; clkt++)
-@@ -57,12 +55,12 @@ static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width,
- 				unsigned long flags)
- {
- 	if (flags & CLK_DIVIDER_ONE_BASED)
--		return div_mask(width);
-+		return clk_div_mask(width);
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
--		return 1 << div_mask(width);
-+		return 1 << clk_div_mask(width);
- 	if (table)
- 		return _get_table_maxdiv(table, width);
--	return div_mask(width) + 1;
-+	return clk_div_mask(width) + 1;
- }
- 
- static unsigned int _get_table_div(const struct clk_div_table *table,
-@@ -84,7 +82,7 @@ static unsigned int _get_div(const struct clk_div_table *table,
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return 1 << val;
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
--		return val ? val : div_mask(width) + 1;
-+		return val ? val : clk_div_mask(width) + 1;
- 	if (table)
- 		return _get_table_div(table, val);
- 	return val + 1;
-@@ -109,7 +107,7 @@ static unsigned int _get_val(const struct clk_div_table *table,
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return __ffs(div);
- 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
--		return (div == div_mask(width) + 1) ? 0 : div;
-+		return (div == clk_div_mask(width) + 1) ? 0 : div;
- 	if (table)
- 		return  _get_table_val(table, div);
- 	return div - 1;
-@@ -141,7 +139,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 	unsigned int val;
- 
- 	val = clk_readl(divider->reg) >> divider->shift;
--	val &= div_mask(divider->width);
-+	val &= clk_div_mask(divider->width);
- 
- 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
- 				   divider->flags, divider->width);
-@@ -353,7 +351,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 	/* if read only, just return current value */
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
- 		bestdiv = clk_readl(divider->reg) >> divider->shift;
--		bestdiv &= div_mask(divider->width);
-+		bestdiv &= clk_div_mask(divider->width);
- 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
- 			divider->width);
- 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
-@@ -376,7 +374,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 
- 	value = _get_val(table, div, flags, width);
- 
--	return min_t(unsigned int, value, div_mask(width));
-+	return min_t(unsigned int, value, clk_div_mask(width));
- }
- EXPORT_SYMBOL_GPL(divider_get_val);
- 
-@@ -399,10 +397,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 		__acquire(divider->lock);
- 
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
--		val = div_mask(divider->width) << (divider->shift + 16);
-+		val = clk_div_mask(divider->width) << (divider->shift + 16);
- 	} else {
- 		val = clk_readl(divider->reg);
--		val &= ~(div_mask(divider->width) << divider->shift);
-+		val &= ~(clk_div_mask(divider->width) << divider->shift);
- 	}
- 	val |= (u32)value << divider->shift;
- 	clk_writel(val, divider->reg);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f711be6e8c44..d8ba26d03332 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -399,6 +399,7 @@ struct clk_divider {
- 	spinlock_t	*lock;
- };
- 
-+#define clk_div_mask(width)	((1 << (width)) - 1)
- #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
- 
- #define CLK_DIVIDER_ONE_BASED		BIT(0)
--- 
-2.14.3
+
+--vsrsw5hbc4cw6auk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ib4ACgkQFA3kzBSg
+KbaXMw//bYlKgLd+lCecEDqYbKRcQeTAIDRQCtdsUYqlzmoTaJDGZ+GmCPi6kUfs
+CrgFVEsgoH0UR8H+acsaNKvjLW7mJOyzRWhdwxSN+eK4SgRfIun7sRn3Qk0hoJ5V
+72AhytPGEpffW3RWe+v2z2FFpmD+ffx3Z8wPUubx4BNEOeMDroBT1FlOSx1+IPwr
+0CA3NydzUa1uq7/qXj7STYYPlrvtSPrDG2Gfv8qnuaZPF37J7UgFdrJYrWkfYszx
+bU2SCvuvl9qscIfRDdpUKWAzg+mo+9reBJyRL8CSQmiZqWPA58RDVNFq6RAZYITC
+CZSiTsQC2u1mw6eIVGWcm1Hf/M7CGLfWG25Jj7WuiVCyZjlsoZTc9gV7GuxZwvUF
+nsi9W3TbfaJapsktkUfYXAD0i81qCZWEzJNcMmXqCp2IsA5yrni6pB5mDJ5Do9Cw
+5tcGF36bOKt5l0HL/5XOlcgf4SvUqzc6Xf/MgaQaf9alTzIKiKGGDmgOssmkKlBd
+uYcnaE9ojXjWAmwuHawbAYeC6EXJL4EGdy5HOkwF4IdSt+2uoAHVK44AS8LdNCze
+qSIRRxTPbrar3CiE9HsOvLENM93zmgy8lWlyT6hjkw/fSYkDQj28c4IXAMQ9YTeD
+0x7FIFToLQ+UubN4fR3XpA4fOJYX+5gdhsjRYBFt3a12R6ZWo5o=
+=qK23
+-----END PGP SIGNATURE-----
+
+--vsrsw5hbc4cw6auk--
