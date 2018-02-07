@@ -1,34 +1,111 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 11/41] clk: davinci: Add platform information for TI
- DA830 PSC
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-12-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <62041cef-50ed-b9d7-f31f-a8e2921a1ef6@ti.com>
-Date: Thu, 1 Feb 2018 17:04:03 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-12-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v4 00/12] drm/sun4i: Add A83T HDMI support
+Date: Wed,  7 Feb 2018 22:17:01 +0100
+Message-Id: <20180207211713.3638-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> This adds platform-specific declarations for the PSC clocks on TI DA830/
-> OMAP-L137/AM17XX SoCs.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+This patch series implements support for A83T DW HDMI and PHY. Contrary to
+v1 series, this one is based on latest linux-next, since all needed patches
+were merged.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+While exactly this combination of HDMI controller and PHY is not common in
+Allwinner SoCs, this patch series nevertheless makes groundwork for other
+SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
 
-Thanks,
-Sekhar
+Please take a look.
+
+Best regards,
+Jernej
+
+Changes from v3:
+- Collected tags
+- drop patch for changing NKMP formula
+- add patch to use 64 bit intermediate variable for calculating NKMP
+  clock rate and thus preventing overflow in some cases
+- rework DT bindings patch according Rob's suggestions
+- move TMDS clock from PHY to controller driver, since documentation
+  suggest such relationship
+
+Changes from v2:
+- Collected ACKs and Review-by tags
+- patch for deinit callback was replaced with the one which gives control
+  of drvdata to driver
+- fixed meson driver (renamed reset function)
+- prototypes for newly exported functions in dw_hdmi.h were reordered
+
+Changes from v1:
+- Collected ACKs
+- Separated bindings for controller and PHY
+- Split driver into two parts - controller and PHY
+- HDMI PHY driver now uses regmap for writes
+- added defines for PHY registers and bits
+- updated DT entries to accomodate new bindings
+- removed already merged clock patch
+- reworked first clock patch according to comments
+- added new clock patch which changes NKMP formula
+- split TCON patch in two, one for quirk and one for new compatible
+- reworked patch which exports DW HDMI PHY functions:
+  - remove "gen2" from some function names
+  - removed parameter from dw_hdmi_phy_reset()
+  - added address parameter to dw_hdmi_phy_i2c_set_addr()
+- updated most of commit messages
+
+Jernej Skrabec (12):
+  clk: sunxi-ng: Mask nkmp factors when setting register
+  clk: sunxi-ng: Use u64 for calculation of nkmp rate
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
+  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+  drm/sun4i: Add has_channel_0 TCON quirk
+  drm/sun4i: Add support for A83T second TCON
+  drm/sun4i: Add support for A83T second DE2 mixer
+  drm/sun4i: Implement A83T HDMI driver
+  ARM: dts: sun8i: a83t: Add HDMI display pipeline
+  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+
+ .../bindings/display/sunxi/sun4i-drm.txt           | 195 ++++++++++++++-
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 119 ++++++++-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  42 +++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 ++++---
+ drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
+ drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+ drivers/gpu/drm/sun4i/Makefile                     |   4 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 196 +++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  44 ++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 270 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
+ include/drm/bridge/dw_hdmi.h                       |  24 +-
+ 18 files changed, 1040 insertions(+), 89 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+
+-- 
+2.16.1
