@@ -1,120 +1,75 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
-	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea@microchip.com>
-Subject: [PATCH v3 06/10] pwm: add PWM modes
-Date: Thu, 22 Feb 2018 14:01:17 +0200
-Message-ID: <1519300881-8136-7-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:04:01 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car
+ Gen2 support
+Message-ID: <20180207230401.uvpare7cwk7tpqk7@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: claudiu.beznea@microchip.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="i7htazl5c3cbyi6c"
+In-Reply-To: <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add PWM normal and complementary modes.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- Documentation/devicetree/bindings/pwm/pwm.txt |  9 +++++++--
- Documentation/pwm.txt                         | 26 +++++++++++++++++++++++---
- include/dt-bindings/pwm/pwm.h                 |  1 +
- 3 files changed, 31 insertions(+), 5 deletions(-)
+--i7htazl5c3cbyi6c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
-index 8556263b8502..c2b4b9ba0e3f 100644
---- a/Documentation/devicetree/bindings/pwm/pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm.txt
-@@ -46,11 +46,16 @@ period in nanoseconds.
- Optionally, the pwm-specifier can encode a number of flags (defined in
- <dt-bindings/pwm/pwm.h>) in a third cell:
- - PWM_POLARITY_INVERTED: invert the PWM signal polarity
-+- PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
-+channels two outputs); if not specified, the default for PWM channel will
-+be used
- 
--Example with optional PWM specifier for inverse polarity
-+Example with optional PWM specifier for inverse polarity and complementary
-+mode:
- 
- 	bl: backlight {
--		pwms = <&pwm 0 5000000 PWM_POLARITY_INVERTED>;
-+		pwms = <&pwm 0 5000000
-+			(PWM_DTMODE_COMPLEMENTARY | PWM_POLARITY_INVERTED)>;
- 		pwm-names = "backlight";
- 	};
- 
-diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
-index 8fbf0aa3ba2d..59592f8cc381 100644
---- a/Documentation/pwm.txt
-+++ b/Documentation/pwm.txt
-@@ -61,9 +61,9 @@ In addition to the PWM state, the PWM API also exposes PWM arguments, which
- are the reference PWM config one should use on this PWM.
- PWM arguments are usually platform-specific and allows the PWM user to only
- care about dutycycle relatively to the full period (like, duty = 50% of the
--period). struct pwm_args contains 2 fields (period and polarity) and should
--be used to set the initial PWM config (usually done in the probe function
--of the PWM user). PWM arguments are retrieved with pwm_get_args().
-+period). struct pwm_args contains 3 fields (period, polarity and mode) and
-+should be used to set the initial PWM config (usually done in the probe
-+function of the PWM user). PWM arguments are retrieved with pwm_get_args().
- 
- Using PWMs with the sysfs interface
- -----------------------------------
-@@ -110,6 +110,26 @@ channel that was exported. The following properties will then be available:
- 	- 0 - disabled
- 	- 1 - enabled
- 
-+  mode
-+    Get/set PWM channel working mode.
-+
-+    Normal mode - for PWM channels with one output; this should be the
-+        default working mode for every PWM channel; output waveforms looks
-+        like this:
-+             __    __    __    __
-+    PWM   __|  |__|  |__|  |__|  |__
-+            <--T-->
-+
-+    Complementary mode - for PWM channels two outputs; output waveforms
-+        looks line this:
-+             __    __    __    __
-+    PWMH1 __|  |__|  |__|  |__|  |__
-+          __    __    __    __    __
-+    PWML1   |__|  |__|  |__|  |__|
-+            <--T-->
-+
-+    Where T is the signal period.
-+
- Implementing a PWM driver
- -------------------------
- 
-diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
-index ab9a077e3c7d..b4d61269aced 100644
---- a/include/dt-bindings/pwm/pwm.h
-+++ b/include/dt-bindings/pwm/pwm.h
-@@ -11,5 +11,6 @@
- #define _DT_BINDINGS_PWM_PWM_H
- 
- #define PWM_POLARITY_INVERTED			(1 << 0)
-+#define PWM_DTMODE_COMPLEMENTARY		(1 << 1)
- 
- #endif
--- 
-2.7.4
+On Wed, Jan 31, 2018 at 06:24:15PM +0000, Fabrizio Castro wrote:
+> This commit documents the compatibility with R-Car Gen2 and RZ/G
+> devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+> Also, this patch expands the list of SoC-specific compatible strings to
+> include RZ/G and R-Car Gen2 devices.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--i7htazl5c3cbyi6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7heAACgkQFA3kzBSg
+KbYriw/7BT40MBbg0dFnn3nMKJv8vGFJ/C3BIVsh0gy5T+crZE+9Famm2EYPRAU5
+l5gmh/e38DCrves2Eys2ifrfVzG8kp/69Zkp89hhkkDzNddji3+JjMsMgBsjePTZ
+dPZKMWPFI05mR+SlvdLmmjLX0hAODG+3llEjCCd02YvM6P1PrWVdFB5IPA0NSOCG
+LXKuFAobA93/Q58J4oBGwKsbPvptRFxUVuNoCjyd5bmAzY3QuemXYuVTclrVjUZc
+9dTlRfstdhazi3gkHSv3bN2yR2NH6cqc7cCV0LTN6rUFZPtXU4XF6tEk9oYMp78R
+RpaGl3TFrWym2IBLGoDEZLDH0FDmp3m3qou7Bxek1UpbuytmTOHr8TSLU7Iz1b6z
+1ccDL5Q8A7ESf6rxenttuIrC/gp8VJm4mNmW0NK8rVf4xpU7lfnARXVL9FG70EUj
+lYAJ5hJCUQX7QOsZBhu8y0odB4GlkEw3Zbc2L3s14In2uvmqKwF86mTDCqKXeuFG
+RxXAxAXyX4BSwEpq1ZXbHRlvDyKzinlwf0wOXdFLJxGvdgQzOPNpKMoJw4Izo5UE
+szFfjDa0s6JpAwHps/Qzt31/FmuVA48CyOf8K5KJXZTinHdPcWv1GHMHFs3d9DSI
+RpnZ+wBczYVS+uCFRrYlFJwPCSCV7iFTTeyIqMJLVpJnuzpymhY=
+=DrUQ
+-----END PGP SIGNATURE-----
+
+--i7htazl5c3cbyi6c--
