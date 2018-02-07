@@ -1,162 +1,72 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:20:41 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 07/42] clk: davinci: Add platform information for TI DM644x PLL
-Date: Mon, 19 Feb 2018 14:21:28 -0600
-Message-Id: <1519071723-31790-8-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 23/26] ARM: dts: r8a7791: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232041.vgo2i7cmkljwvluy@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5lywdttzvhqp5tef"
+In-Reply-To: <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM644x based systems.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+--5lywdttzvhqp5tef
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v7 changes:
-- split registration functions for each PLL
-- Add platform_device_id lookup
+On Wed, Jan 31, 2018 at 06:24:27PM +0000, Fabrizio Castro wrote:
+> This commit adds watchdog support to the r8a7791 dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-v6 changes:
-- Added dm644x_pll{1,2}_info with controller-specific information
-- Add empty lines between function calls
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- drivers/clk/davinci/Makefile     |  1 +
- drivers/clk/davinci/pll-dm644x.c | 76 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c        |  2 ++
- drivers/clk/davinci/pll.h        |  3 ++
- 4 files changed, 82 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm644x.c
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 353aa02..59d8ab6 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -6,4 +6,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
-new file mode 100644
-index 0000000..cb31aa0
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm644x.c
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM644X
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+static const struct davinci_pll_clk_info dm644x_pll1_info __initconst = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 400000000,
-+	.pllout_max_rate = 600000000, /* 810MHz @ 1.3V, -810 only */
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_POSTDIV,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm644x_pll1_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV),
-+	SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV),
-+	SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV),
-+	SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, SYSCLK_FIXED_DIV),
-+	{ }
-+};
-+
-+static const struct davinci_pll_clk_info dm644x_pll2_info __initconst = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 400000000,
-+	.pllout_max_rate = 900000000,
-+	.flags = PLL_HAS_POSTDIV | PLL_POSTDIV_FIXED_DIV,
-+};
-+
-+static const struct davinci_pll_sysclk_info dm644x_pll2_sysclk_info[] __initconst = {
-+	SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0),
-+	SYSCLK(2, pll2_sysclk2, pll2_pllen, 4, 0),
-+	{ }
-+};
-+
-+int __init dm644x_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	const struct davinci_pll_sysclk_info *info;
-+
-+	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base);
-+
-+	for (info = dm644x_pll1_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(dev, info, base);
-+
-+	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
-+
-+	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
-+
-+	return 0;
-+}
-+
-+int __init dm644x_pll2_init(struct device *dev, void __iomem *base)
-+{
-+	const struct davinci_pll_sysclk_info *info;
-+
-+	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base);
-+
-+	for (info = dm644x_pll2_sysclk_info; info->name; info++)
-+		davinci_pll_sysclk_register(dev, info, base);
-+
-+	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index c8dd3fa..613ec24 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -760,6 +760,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
- 	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
- 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
-+	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
-+	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index b911c8a..df977a6 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -132,4 +132,7 @@ int dm355_pll2_init(struct device *dev, void __iomem *base);
- int dm365_pll1_init(struct device *dev, void __iomem *base);
- int dm365_pll2_init(struct device *dev, void __iomem *base);
- 
-+int dm644x_pll1_init(struct device *dev, void __iomem *base);
-+int dm644x_pll2_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
--- 
-2.7.4
+--5lywdttzvhqp5tef
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ickACgkQFA3kzBSg
+KbbmUA/9GVhdEFtaR7aTq7KbbW4Vcee6HlK7E9Bnhcxwqvc9pXckaReLWp+NcsBo
+O4KMkEfPFuylGXnAGTADDBgZnb0+mgQw03NsBN6Gclo/E3O0QwLv9DVCBimjjPs5
+ePQw2FDC1hXxrr6hE5BZ4RNycamyEj5l5N++KtmPc/IXgiuRX0iOphAUrEpCO0gD
+CKCom0bM0Uh3J3kS3CreGu0xH1JIdF80DzTqH4JJ+R1WzOM+th/TKN1aJh4ClOx1
+V74+rTG6dc1JNIhgNUiDwgMe75TzMoD+K/gYDdYNHPdBZGo67vzM5ers+EwEy3Li
+PldfJIcK8dmF/y8aj3/hEXKxghg+qEBWhlhRubk3PcXgqAmtwm30YdjYBpI07Zpf
+oruYV5nE5zlaY/SI4OzPENIyT1A4LCz93qSxFCdYzFmV1y5ESsgJIv2M14ZOb7cK
+0ZdvJvbfwsuiDPoWjNiX37KVl+2aA7AhyZLbI04SuHdqUplHLomqekeSgA8nTXwN
+oiD1fw91jmxClBKlc94lhAYJgMg7mJadqaSmy7Ee20O92nVjVy9t1UT4Ljm8C9kz
+jz1t+lDRm4SBvXWDn0TMbFpAdrnnNJsZvfckM+FiQUtvsd01vs8buv7c/3ZBl81t
+YdSfuUyA/MKPXtgk0bpDJTBQGfzcZo1cMCSczyOnGWFF3X3I0Yo=
+=OeS1
+-----END PGP SIGNATURE-----
+
+--5lywdttzvhqp5tef--
