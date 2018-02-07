@@ -1,97 +1,39 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 6 Feb 2018 09:56:42 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v6 14/15] cpufreq: Add module to register cpufreq on
- Krait CPUs
-Message-ID: <20180206042642.GG28462@vireshk-i7>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
- <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 7 Feb 2018 14:37:51 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180207104351.GA6003@sirena.org.uk>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06-02-18, 09:38, Sricharan R wrote:
-> diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
-> new file mode 100644
-> index 0000000..5b988d4
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq.c
-> @@ -0,0 +1,161 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/slab.h>
-> +#include "cpufreq-dt.h"
-> +#include <linux/nvmem-consumer.h>
+On Wed, Feb 07, 2018 at 10:43:51AM +0000, Mark Brown wrote:
+> On Wed, Feb 07, 2018 at 10:47:44AM +0200, Peter De Schrijver wrote:
+> > On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
+> > > On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+> 
+> > > > Add API to get min/max rail voltage configured from platform for
+> > > > given rails.
+> 
+> > > because...
+> 
+> > of the next patch where this is used to retrieve the minimum rail voltage.
+> 
+> And that in turn is needed for...?
 
-I don't think you need all of these anymore, isn't it ? Can you cross check
-which ones are really required? For example, cpufreq-dt.h isn't required for
-sure.
+To calculate the required voltage for each frequency.
 
-> +static int __init qcom_cpufreq_driver_init(void)
-> +{
-> +	struct device *cpu_dev;
-> +	struct device_node *np;
-> +	struct nvmem_cell *pvs_nvmem;
-> +	int ret;
-> +
-> +	cpu_dev = get_cpu_device(0);
-> +	if (!cpu_dev)
-> +		return -ENODEV;
-> +
-> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +	if (!np)
-> +		return -ENOENT;
-> +
-> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
-> +		of_node_put(np);
-> +		return -ENODEV;
-> +	}
-> +
-> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
-> +	if (IS_ERR(pvs_nvmem)) {
-> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
-> +		return PTR_ERR(pvs_nvmem);
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
-> +						       -1, NULL, 0));
-
-Wanna do proper error handling here? For example, unset OPP name on failure here
-so that resources get freed ?
-
-> +}
-> +module_init(qcom_cpufreq_driver_init);
-> +
-> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
--- 
-viresh
+Peter.
