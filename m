@@ -1,88 +1,292 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
-In-Reply-To: <20180208134338.24590-3-boris.brezillon@bootlin.com>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-3-boris.brezillon@bootlin.com>
-Date: Thu, 08 Feb 2018 15:15:42 +0000
-Message-ID: <87po5f5x7l.fsf@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-he1eur01on0071.outbound.protection.outlook.com ([104.47.0.71]:5834
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752488AbeBGB6X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Feb 2018 20:58:23 -0500
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc for imx6sll
+Date: Wed,  7 Feb 2018 10:00:18 +0800
+Message-Id: <1517968819-12869-3-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
+References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Add clock binding doc update for imx6sll.
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+change from v2->v3:
+ - remove the leading 0s
+ - move the  imx6sll-clock.h to this patch.
+---
+ .../devicetree/bindings/clock/imx6sll-clock.txt    |  37 ++++
+ include/dt-bindings/clock/imx6sll-clock.h          | 204 +++++++++++++++++++++
+ 2 files changed, 241 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+ create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
 
-> In order to enable a PLL, not only the PLL has to be powered up and
-> locked, but you also have to de-assert the reset signal. The last part
-> was missing. Add it so PLLs that were not enabled by the FW/bootloader
-> can be enabled from Linux.
->
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
- domain clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index a07f6451694a..6c5d4a8e426c 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
->  	const struct bcm2835_pll_data *data =3D pll->data;
->=20=20
->  	spin_lock(&cprman->regs_lock);
-> +	cprman_write(cprman, data->a2w_ctrl_reg,
-> +		     cprman_read(cprman, data->a2w_ctrl_reg) &
-> +		     ~A2W_PLL_CTRL_PRST_DISABLE);
->  	cprman_write(cprman, data->cm_ctrl_reg,
->  		     cprman_read(cprman, data->cm_ctrl_reg) |
->  		     CM_PLL_ANARST);
+diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+new file mode 100644
+index 0000000..b5d272f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+@@ -0,0 +1,37 @@
++* Clock bindings for Freescale i.MX6 SLL
++
++Required properties:
++- compatible: Should be "fsl,imx6sll-ccm"
++- reg: Address and length of the register set
++- #clock-cells: Should be <1>
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names
++- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
++for the full list of i.MX6 SLL clock IDs.
++
++Examples:
++
++#include <dt-bindings/clock/imx6sll-clock.h>
++
++clks: ccm@20c4000 {
++		compatible = "fsl,imx6sll-ccm";
++		reg = <0x020c4000 0x4000>;
++		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++		#clock-cells = <1>;
++		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
++		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
++};
++
++uart1: serial@2020000 {
++		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
++		reg = <0x02020000 0x4000>;
++		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
++			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
++		clock-names = "ipg", "per";
++		status = "disabled";
++};
+diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
+new file mode 100644
+index 0000000..39c2567
+--- /dev/null
++++ b/include/dt-bindings/clock/imx6sll-clock.h
+@@ -0,0 +1,204 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H
++#define __DT_BINDINGS_CLOCK_IMX6SLL_H
++
++#define IMX6SLL_CLK_DUMMY		0
++#define IMX6SLL_CLK_CKIL		1
++#define IMX6SLL_CLK_OSC			2
++#define IMX6SLL_PLL1_BYPASS_SRC		3
++#define IMX6SLL_PLL2_BYPASS_SRC		4
++#define IMX6SLL_PLL3_BYPASS_SRC		5
++#define IMX6SLL_PLL4_BYPASS_SRC		6
++#define IMX6SLL_PLL5_BYPASS_SRC		7
++#define IMX6SLL_PLL6_BYPASS_SRC		8
++#define IMX6SLL_PLL7_BYPASS_SRC		9
++#define IMX6SLL_CLK_PLL1		10
++#define IMX6SLL_CLK_PLL2		11
++#define IMX6SLL_CLK_PLL3		12
++#define IMX6SLL_CLK_PLL4		13
++#define IMX6SLL_CLK_PLL5		14
++#define IMX6SLL_CLK_PLL6		15
++#define IMX6SLL_CLK_PLL7		16
++#define IMX6SLL_PLL1_BYPASS		17
++#define IMX6SLL_PLL2_BYPASS		18
++#define IMX6SLL_PLL3_BYPASS		19
++#define IMX6SLL_PLL4_BYPASS		20
++#define IMX6SLL_PLL5_BYPASS		21
++#define IMX6SLL_PLL6_BYPASS		22
++#define IMX6SLL_PLL7_BYPASS		23
++#define IMX6SLL_CLK_PLL1_SYS		24
++#define IMX6SLL_CLK_PLL2_BUS		25
++#define IMX6SLL_CLK_PLL3_USB_OTG	26
++#define IMX6SLL_CLK_PLL4_AUDIO		27
++#define IMX6SLL_CLK_PLL5_VIDEO		28
++#define IMX6SLL_CLK_PLL6_ENET		29
++#define IMX6SLL_CLK_PLL7_USB_HOST	30
++#define IMX6SLL_CLK_USBPHY1		31
++#define IMX6SLL_CLK_USBPHY2		32
++#define IMX6SLL_CLK_USBPHY1_GATE	33
++#define IMX6SLL_CLK_USBPHY2_GATE	34
++#define IMX6SLL_CLK_PLL2_PFD0		35
++#define IMX6SLL_CLK_PLL2_PFD1		36
++#define IMX6SLL_CLK_PLL2_PFD2		37
++#define IMX6SLL_CLK_PLL2_PFD3		38
++#define IMX6SLL_CLK_PLL3_PFD0		39
++#define IMX6SLL_CLK_PLL3_PFD1		40
++#define IMX6SLL_CLK_PLL3_PFD2		41
++#define IMX6SLL_CLK_PLL3_PFD3		42
++#define IMX6SLL_CLK_PLL4_POST_DIV	43
++#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
++#define IMX6SLL_CLK_PLL5_POST_DIV	45
++#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
++#define IMX6SLL_CLK_PLL2_198M		47
++#define IMX6SLL_CLK_PLL3_120M		48
++#define IMX6SLL_CLK_PLL3_80M		49
++#define IMX6SLL_CLK_PLL3_60M		50
++#define IMX6SLL_CLK_STEP		51
++#define IMX6SLL_CLK_PLL1_SW		52
++#define IMX6SLL_CLK_AXI_ALT_SEL		53
++#define IMX6SLL_CLK_AXI_SEL		54
++#define IMX6SLL_CLK_PERIPH_PRE		55
++#define IMX6SLL_CLK_PERIPH2_PRE		56
++#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
++#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
++#define IMX6SLL_CLK_PERCLK_SEL		59
++#define IMX6SLL_CLK_USDHC1_SEL		60
++#define IMX6SLL_CLK_USDHC2_SEL		61
++#define IMX6SLL_CLK_USDHC3_SEL		62
++#define IMX6SLL_CLK_SSI1_SEL		63
++#define IMX6SLL_CLK_SSI2_SEL		64
++#define IMX6SLL_CLK_SSI3_SEL		65
++#define IMX6SLL_CLK_PXP_SEL		66
++#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
++#define IMX6SLL_CLK_LCDIF_SEL		68
++#define IMX6SLL_CLK_EPDC_PRE_SEL	69
++#define IMX6SLL_CLK_SPDIF_SEL		70
++#define IMX6SLL_CLK_ECSPI_SEL		71
++#define IMX6SLL_CLK_UART_SEL		72
++#define IMX6SLL_CLK_ARM			73
++#define IMX6SLL_CLK_PERIPH		74
++#define IMX6SLL_CLK_PERIPH2		75
++#define IMX6SLL_CLK_PERIPH2_CLK2	76
++#define IMX6SLL_CLK_PERIPH_CLK2		77
++#define IMX6SLL_CLK_MMDC_PODF		78
++#define IMX6SLL_CLK_AXI_PODF		79
++#define IMX6SLL_CLK_AHB			80
++#define IMX6SLL_CLK_IPG			81
++#define IMX6SLL_CLK_PERCLK		82
++#define IMX6SLL_CLK_USDHC1_PODF		83
++#define IMX6SLL_CLK_USDHC2_PODF		84
++#define IMX6SLL_CLK_USDHC3_PODF		85
++#define IMX6SLL_CLK_SSI1_PRED		86
++#define IMX6SLL_CLK_SSI2_PRED		87
++#define IMX6SLL_CLK_SSI3_PRED		88
++#define IMX6SLL_CLK_SSI1_PODF		89
++#define IMX6SLL_CLK_SSI2_PODF		90
++#define IMX6SLL_CLK_SSI3_PODF		91
++#define IMX6SLL_CLK_PXP_PODF		92
++#define IMX6SLL_CLK_LCDIF_PRED		93
++#define IMX6SLL_CLK_LCDIF_PODF		94
++#define IMX6SLL_CLK_EPDC_SEL		95
++#define IMX6SLL_CLK_EPDC_PODF		96
++#define IMX6SLL_CLK_SPDIF_PRED		97
++#define IMX6SLL_CLK_SPDIF_PODF		98
++#define IMX6SLL_CLK_ECSPI_PODF		99
++#define IMX6SLL_CLK_UART_PODF		100
++
++/* CCGR 0 */
++#define IMX6SLL_CLK_AIPSTZ1		101
++#define IMX6SLL_CLK_AIPSTZ2		102
++#define IMX6SLL_CLK_DCP			103
++#define IMX6SLL_CLK_UART2_IPG		104
++#define IMX6SLL_CLK_UART2_SERIAL	105
++
++/* CCGR 1 */
++#define IMX6SLL_CLK_ECSPI1		106
++#define IMX6SLL_CLK_ECSPI2		107
++#define IMX6SLL_CLK_ECSPI3		108
++#define IMX6SLL_CLK_ECSPI4		109
++#define IMX6SLL_CLK_UART3_IPG		110
++#define IMX6SLL_CLK_UART3_SERIAL	111
++#define IMX6SLL_CLK_UART4_IPG		112
++#define IMX6SLL_CLK_UART4_SERIAL	113
++#define IMX6SLL_CLK_EPIT1		114
++#define IMX6SLL_CLK_EPIT2		115
++#define IMX6SLL_CLK_GPT_BUS		116
++#define IMX6SLL_CLK_GPT_SERIAL		117
++
++/* CCGR2 */
++#define IMX6SLL_CLK_CSI			118
++#define IMX6SLL_CLK_I2C1		119
++#define IMX6SLL_CLK_I2C2		120
++#define IMX6SLL_CLK_I2C3		121
++#define IMX6SLL_CLK_OCOTP		122
++#define IMX6SLL_CLK_LCDIF_APB		123
++#define IMX6SLL_CLK_PXP			124
++
++/* CCGR3 */
++#define IMX6SLL_CLK_UART5_IPG		125
++#define IMX6SLL_CLK_UART5_SERIAL	126
++#define IMX6SLL_CLK_EPDC_AXI		127
++#define IMX6SLL_CLK_EPDC_PIX		128
++#define IMX6SLL_CLK_LCDIF_PIX		129
++#define IMX6SLL_CLK_WDOG1		130
++#define IMX6SLL_CLK_MMDC_P0_FAST	131
++#define IMX6SLL_CLK_MMDC_P0_IPG		132
++#define IMX6SLL_CLK_OCRAM		133
++
++/* CCGR4 */
++#define IMX6SLL_CLK_PWM1		134
++#define IMX6SLL_CLK_PWM2		135
++#define IMX6SLL_CLK_PWM3		136
++#define IMX6SLL_CLK_PWM4		137
++
++/* CCGR 5 */
++#define IMX6SLL_CLK_ROM			138
++#define IMX6SLL_CLK_SDMA		139
++#define IMX6SLL_CLK_KPP			140
++#define IMX6SLL_CLK_WDOG2		141
++#define IMX6SLL_CLK_SPBA		142
++#define IMX6SLL_CLK_SPDIF		143
++#define IMX6SLL_CLK_SPDIF_GCLK		144
++#define IMX6SLL_CLK_SSI1		145
++#define IMX6SLL_CLK_SSI1_IPG		146
++#define IMX6SLL_CLK_SSI2		147
++#define IMX6SLL_CLK_SSI2_IPG		148
++#define IMX6SLL_CLK_SSI3		149
++#define IMX6SLL_CLK_SSI3_IPG		150
++#define IMX6SLL_CLK_UART1_IPG		151
++#define IMX6SLL_CLK_UART1_SERIAL	152
++
++/* CCGR 6 */
++#define IMX6SLL_CLK_USBOH3		153
++#define IMX6SLL_CLK_USDHC1		154
++#define IMX6SLL_CLK_USDHC2		155
++#define IMX6SLL_CLK_USDHC3		156
++
++#define IMX6SLL_CLK_IPP_DI0		157
++#define IMX6SLL_CLK_IPP_DI1		158
++#define IMX6SLL_CLK_LDB_DI0_SEL		159
++#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
++#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
++#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
++#define IMX6SLL_CLK_LDB_DI0		163
++#define IMX6SLL_CLK_LDB_DI1_SEL		164
++#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
++#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
++#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
++#define IMX6SLL_CLK_LDB_DI1		168
++#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
++#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
++#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
++#define IMX6SLL_CLK_EXTERN_AUDIO        172
++
++#define IMX6SLL_CLK_END			173
++
++#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
+-- 
+1.9.1
 
-For turning off, the FW just does the equivalent of:
-
-	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
-	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-
-How about we do that, instead?
-
-> @@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
->  		cpu_relax();
->  	}
->=20=20
-> +	cprman_write(cprman, data->a2w_ctrl_reg,
-> +		     cprman_read(cprman, data->a2w_ctrl_reg) |
-> +		     A2W_PLL_CTRL_PRST_DISABLE);
-> +
->  	return 0;
->  }
-
-I agree with this hunk -- they drop PRST at the very end, after lock.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp8aZ4ACgkQtdYpNtH8
-nuiQ4A//cJlURcGmhGZTIdVh+95GAgjnwM6lAF21DVKkRsZhK6pic3OG83XNMJDt
-OY3UvdCIwEBMwXhpjUQcJY745VqdVf0rpbwBswa5fHDxS4OpNnt/USRH0LPLVEsB
-95rnxxISMYlj/bfmN6J/QwGmXpb8r6RUxBcGuszXCr4KUP5lIu5hESVAgxmoBHAH
-wIuAIo48OjxFoiFeO2iVfn6YLfD0+WhB/ugLValpVvx6DWj4922lJYHbzUa8haIZ
-aqTDCPpvO0lXYRUxw53X0hfZzNfwcVZxayZMGWurzD5px+l3gn3WrTQzQsAxE6MZ
-lW1+zHzlsQudeH/DLeKXxb37uq8toX4y2xnwqmXmIkzIcO+1ax8TXv/fsMBnrqbX
-jN/9JI/kNF3yvclfyp/8RdGCu2HMnZ51Myj8ymGr8Budb/K92b9xH+7ruHU2ebfB
-ufQDwVTQ3ZN76W/B6Nm+0pNGsAm3vGHYD8wnNF48c4x8o4GhrjDiHY48iWKq/Ky/
-wpPh4XQMxgegnyVisolo7PHTwsJQCkXSabb+mgx1fDwRXozb5oE593grFabLhD+I
-SUPDNg7UO63gDiWuV5TCZiGO7pqURMiS6nTzHjWV8kDHoX41JKdza7sIrcRKMNMp
-1r6sK/akHPKZ/l4cUQvyFZ6RMtAzW7QxuoUGX1EgPxZV1snZnpo=
-=E0l7
------END PGP SIGNATURE-----
---=-=-=--
