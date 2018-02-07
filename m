@@ -1,67 +1,196 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A7916A2.7010307@samsung.com>
-Date: Tue, 06 Feb 2018 11:44:50 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-	m.szyprowski@samsung.com
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-In-reply-to: <20180205142230.9755-1-s.nawrocki@samsung.com>
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-	<20180205142230.9755-1-s.nawrocki@samsung.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v4 11/12] ARM: dts: sun8i: a83t: Add HDMI display pipeline
+Date: Wed,  7 Feb 2018 22:17:12 +0100
+Message-Id: <20180207211713.3638-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
+References: <20180207211713.3638-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
+hdmi, hdmi phy and hdmi pinctrl entries.
 
-When I developed the clk-exynos5433.c I referred to the following description.
-TRM specified that "Samsung recommends only the values
-between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 119 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 118 insertions(+), 1 deletion(-)
 
-It looks like that you refer to clk-exynos5420.c driver.
-But, I'm wondering exynos5433 might not guarantee the additional clock
-of this patch as the stable clock.
-
-On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
-> Add more definitions to the exynos5433_aud_pll_rates table so the
-> AUD_PLL can be used as a root clock source for the I2S1 and the HDMI
-> interface.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index db270908037a..74b70ddab4d6 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -765,6 +765,14 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
->  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
-> +	PLL_36XX_RATE(200000000U, 200, 3, 3,      0),
-> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-> +	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
-> +	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
-> +	PLL_36XX_RATE(100000000U, 200, 3, 4,      0),
-> +	PLL_36XX_RATE(65536003U,  131, 3, 4,   4719),
-> +	PLL_36XX_RATE(49152000U,  197, 3, 5, -25690),
-> +	PLL_36XX_RATE(32768001U,  131, 3, 5,   4719),
->  	{ /* sentinel */ }
->  };
-> 
-> --
-> 2.14.2
-> 
-> 
-> 
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 7f4955a5fab7..b8e629e5dbf3 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -155,7 +155,7 @@
+ 
+ 	de: display-engine {
+ 		compatible = "allwinner,sun8i-a83t-display-engine";
+-		allwinner,pipelines = <&mixer0>;
++		allwinner,pipelines = <&mixer0>, <&mixer1>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -208,6 +208,32 @@
+ 			};
+ 		};
+ 
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer1_out_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_in_mixer1>;
++					};
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
+@@ -256,6 +282,43 @@
+ 			};
+ 		};
+ 
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun8i-a83t-mmc",
+ 				     "allwinner,sun7i-a20-mmc";
+@@ -427,6 +490,11 @@
+ 				drive-strength = <40>;
+ 			};
+ 
++			hdmi_pins: hdmi-pins {
++				pins = "PH6", "PH7", "PH8";
++				function = "hdmi";
++			};
++
+ 			i2c0_pins: i2c0-pins {
+ 				pins = "PH0", "PH1";
+ 				function = "i2c0";
+@@ -685,6 +753,55 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			pinctrl-names = "default";
++			pinctrl-0 = <&hdmi_pins>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun8i-a83t-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		r_intc: interrupt-controller@1f00c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-intc",
+ 				     "allwinner,sun6i-a31-r-intc";
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.16.1
