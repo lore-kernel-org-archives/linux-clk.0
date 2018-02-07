@@ -1,72 +1,62 @@
-Return-Path: <rui.silva@linaro.org>
-Return-Path: <rui.silva@linaro.org>
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: horia.geanta@nxp.com,
-	aymen.sghaier@nxp.com,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ryan Harkin <ryan.harkin@linaro.org>,
-	Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Subject: [PATCH v4 3/4] clk: imx7d: add CAAM clock
-Date: Thu, 22 Feb 2018 14:22:49 +0000
-Message-Id: <20180222142250.31348-4-rui.silva@linaro.org>
-In-Reply-To: <20180222142250.31348-1-rui.silva@linaro.org>
-References: <20180222142250.31348-1-rui.silva@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
+Date: Wed, 07 Feb 2018 11:29:40 +0100
+MIME-version: 1.0
+In-reply-to: <5A7916A2.7010307@samsung.com>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+	<20180205142230.9755-1-s.nawrocki@samsung.com>
+	<5A7916A2.7010307@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add CAAM clock so that we could use the Cryptographic Acceleration and
-Assurance Module (CAAM) hardware block.
+On 02/06/2018 03:44 AM, Chanwoo Choi wrote:
+> When I developed the clk-exynos5433.c I referred to the following description.
+> TRM specified that "Samsung recommends only the values
+> between 252MH ~ 400MHz in the PMS2460X PMS value" for aud_pll.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- drivers/clk/imx/clk-imx7d.c             | 1 +
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Thanks, I somehow missed it. There is also another sentence pointing to
+a contact person if other values are needed.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211eb74b..52ab096fb39c 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
-+	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index e2f99ae72d5c..2bc5618feaeb 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -452,5 +452,6 @@
- #define IMX7D_OCOTP_CLK			439
- #define IMX7D_NAND_RAWNAND_CLK		440
- #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
--#define IMX7D_CLK_END			442
-+#define IMX7D_CAAM_CLK			442
-+#define IMX7D_CLK_END			443
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
--- 
-2.16.2
+> It looks like that you refer to clk-exynos5420.c driver.
+> But, I'm wondering exynos5433 might not guarantee the additional clock
+> of this patch as the stable clock.
+
+I took the values from downstream SM-N910C_LL kernel, I would say they
+are well tested and reliable. How about adding just these 3 entries:
+
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
++	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
+?
+ 
+They are needed for audio sample rates that are multiple of 32000, 44100
+or 48000 Hz. The AUD PLL frequency values which are currently defined
+are not useful for anything except fs 48000 (fpll = 393216000 Hz).
+
+We could add new PLL rates: 361267218, 262144000, but I'm not convinced
+these would be any better than values used in a shipped product. We would 
+need to confirm below values with the HW team, and I'm not sure what 
+would be the P, M, S, K set for 262144000 frequency.
+
+	PLL_36XX_RATE(361267218U, 301, 5, 2,   3671),
+
+As it turns out, the 393216000 Hz entry needs correction, the actual 
+frequency value from the P, M, S, K equation is 393216003:
+
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+
+Hmm, I have tested with the PLL frequency set to 393216003 Hz and there
+are some glitches during audio playback, I can't get it to work properly.
+
+--
+Regards,
+Sylwester
