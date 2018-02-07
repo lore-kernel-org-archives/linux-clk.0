@@ -1,97 +1,72 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:20:47 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 24/26] ARM: dts: r8a7794: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232047.xsn47jioh6fhdc2y@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com> <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 21 Feb 2018 13:01:44 +0100
-Message-ID: <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v7_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zugzwndemsnf6qmm"
+In-Reply-To: <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
->>
->> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>>
->>
->> Hi David,
->>
->> just some quick results from today's playing with v7.
->>
->> I started out with da850-lcdk with my standard rootfs over NFS. I was
->> not able to boot to console so far. The first problem is that mdio
->> fails to probe:
->>
->> libphy: Fixed MDIO Bus: probed
->> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
->> davinci_mdio 1e24000.mdio: no live phy, scanning all
->> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
->> digging I noticed that the supplied clock rate differs
->> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
->> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
->> not help like with lcdc.
->
->
-> Can you post the output of this command so that I can see how your
-> clocks are setup:
->
-> cat /sys/kernel/debug/clk/clk_summary
->
->
->>
->> After that, the boot just hangs without ever getting to emac's probe.
->
->
-> Using your workaround, can you run:
->
-> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->
-> If you see:
->   1e27000.clock-controller: emac  off-0
->
-> then genpd is not working like it is supposed to. You should see something
-> like this for device that are working:
->           1e27000.clock-controller: uart2  on
->     /devices/platform/soc@1c00000/1d0d000.serial        active
->
->
->>
->> Once I set the emac clock to always enabled (a workaround that was
->> necessary with v6, but could be dropped with my first
->> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
->> pointer dereference:
->
->
-> I noticed this too when adding the power-domains property to some device
-> tree nodes. This is part of the reason why I didn't add it everywhere.
-> I wasn't able to figure out the cause of this yet. As a work around
-> though, please try removing the power-domains property from the emac
-> and mdio nodes and use your previous workaround of having an always
-> enabled clock.
->
->
 
-When I use any of the workarounds I just keep getting more problems
-(e.g. [1] from blk and pinctrl). I only had a couple hours today to
-play with it but it seems to me we have some memory corruption
-somewhere. I'll check the initialization order of all the frameworks
-involved tomorrow.
+--zugzwndemsnf6qmm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Bartosz
+On Wed, Jan 31, 2018 at 06:24:28PM +0000, Fabrizio Castro wrote:
+> This commit adds watchdog support to the r8a7794 dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[1] https://pastebin.com/75mkkuJL
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--zugzwndemsnf6qmm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ic8ACgkQFA3kzBSg
+KbZPbg//Q6sS8M3/6jUFnHYSLIjgsm7lYNLYoz1mCGUHZZj6Kit8KaCcj3pP1RY9
+wfXA0hB8SKs1Jo8dG4jT8VmVtwgwLT2j4LNGjLjZnjCGrtoCFr93RraFClQTchHL
+/KvNRYJn/CPhcAKXjYbVO7y53y917fm5D4LRp+EASzjq3BBX4r3wzCXf5pCge828
+OGdSPEiF8SYGIElEdq1LGDGl6jU6+luFHwQF77ZksRmAoQFk7mgZITFxnGMFN6hX
+9fd6Qw8VWrU4bxPUhbA8Cua3F3SF3w8x4hlV1OUsBJ0u50c7proavRpxMKF96OXv
+1i5jQdaUTs/q/iwWPGqBm4/+6T2tHtb+fkObuKKFm9JpXav4DmGd3upP/M2hChes
+zLOz2gQIFCBwJSbgoPmH5CNuFsOKTQctk8x4P/FewWm9Z2XdV2DYXg26UbFjGxT+
+e6e2/3T7cetlRMeuzKdFu4CAbufRS+xm6Wz84akmZHtCigXCCNXm3scKADJLEW/6
+0Ixnxk59OW1IJ1+ySyG1A3osKcVBHsKnk34IToBGV8EcMHABc+lz2Zjq545nFqrK
+NQA+/0Mo9b+gxTu4wV+fDZzLmkXt0XQU0Y213Q9AQNlNiWXwdjFUVjmWUFKfxK+W
+FwOJGxuAY+xSoq7OGL/UrlvfrL6Wd58VPvzVEkMaSYSRB2tqenI=
+=19gc
+-----END PGP SIGNATURE-----
+
+--zugzwndemsnf6qmm--
