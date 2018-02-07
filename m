@@ -1,62 +1,64 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
-	<ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-Date: Mon, 12 Feb 2018 11:38:41 +0000
-Message-ID: <TY1PR06MB08958A4A75A0F3BB2BF1D086C0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180207230309.goxig2irkpxrw5el@katana>
- <TY1PR06MB089578618AA33335D90D16CEC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <20180212105456.3zejp3j7hfuzyc3c@ninjato>
-In-Reply-To: <20180212105456.3zejp3j7hfuzyc3c@ninjato>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-he1eur01on0074.outbound.protection.outlook.com ([104.47.0.74]:1536
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751558AbeBGB6R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Feb 2018 20:58:17 -0500
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v3 2/4] driver: clk: imx: add new gate/gate2 wrapper funtion
+Date: Wed,  7 Feb 2018 10:00:17 +0800
+Message-Id: <1517968819-12869-2-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
+References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> > > I used to have this simpler version (back then for the UP case):
-> > >
-> > > +rwdt_start(wdev);
-> > > +rwdt_write(priv, 0xffff, RWTCNT);
-> > > +return 0;
-> > >
-> > > It should still work probably...
-> >
-> > It should still work, but it would be slower, I would stick with the
-> > version I have submitted if you don't mind.
->
-> Actually, I do mind. Because of code duplication reasons. We have a fix
-> in the works for rwdt_start() and it would be too easy to overlook the
-> same fix will be needed for a restart.
+Add new gate/gate2 wrapper function to register clocks with optional flags.
 
-The code is very similar indeed, but not exactly duplicated as it sets the =
-registers in order to reset
-the system as quickly as possible.
-But since you have strong feelings about this I'll reuse this other version=
- for the next submission.
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ drivers/clk/imx/clk.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Thanks,
-Fabrizio
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bb..8076ec0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -123,6 +123,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 			shift, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -137,6 +144,13 @@ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+ 			shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
++static inline struct clk *imx_clk_gate2_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate2(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift,
+ 		unsigned int *share_count)
+-- 
+1.9.1
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
