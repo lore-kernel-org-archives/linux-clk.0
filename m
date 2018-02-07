@@ -1,38 +1,87 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix phase reported being zero
-Date: Thu, 15 Feb 2018 11:19:58 +0100
-Message-Id: <20180215101958.22676-1-jbrunet@baylibre.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v4 12/12] ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+Date: Wed,  7 Feb 2018 22:17:13 +0100
+Message-Id: <20180207211713.3638-13-jernej.skrabec@siol.net>
+In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
+References: <20180207211713.3638-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-While introducing clk_core_set_phase_nolock, assigning core->phase was
-mistakenly removed. Fixing this now
+BananaPi M3 includes HDMI connector, so add support for it.
 
-Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9d56be6ead39..b33d362239e7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2314,6 +2314,9 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
- 	if (core->ops->set_phase)
- 		ret = core->ops->set_phase(core->hw, degrees);
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index 6550bf0e594b..00e47423cd07 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+	if (!ret)
-+		core->phase = degrees;
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- 	trace_clk_set_phase_complete(core, degrees);
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	reg_usb1_vbus: reg-usb1-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1-vbus";
+@@ -82,6 +93,10 @@
+ 	};
+ };
  
- 	return ret;
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	/* Terminus Tech FE 1.1s 4-port USB 2.0 hub here */
+ 	status = "okay";
+@@ -100,6 +115,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mdio {
+ 	rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-2.14.3
+2.16.1
