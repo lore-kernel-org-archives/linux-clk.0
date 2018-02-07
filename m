@@ -1,163 +1,73 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/8] clk: mux: add helper function for index/value translation
-Date: Wed, 14 Feb 2018 14:43:34 +0100
-Message-Id: <20180214134340.17242-3-jbrunet@baylibre.com>
-In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:11:56 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
+Message-ID: <20180207231156.3o2eeymgb7eec3e3@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ghjh2tvtbi7qarpp"
+In-Reply-To: <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add helper functions for the translation between parent index and
-register value in the generic multiplexer function. The purpose of
-this change is avoid duplicating the code in other clock providers,
-using the same generic logic.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-mux.c        | 75 +++++++++++++++++++++++++-------------------
- include/linux/clk-provider.h |  4 +++
- 2 files changed, 47 insertions(+), 32 deletions(-)
+--ghjh2tvtbi7qarpp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 39cabe157163..ac4a042f8658 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -26,35 +26,24 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
--static u8 clk_mux_get_parent(struct clk_hw *hw)
-+int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			 unsigned int val)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
--	u32 val;
- 
--	/*
--	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
--	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
--	 * to 0x7 (index starts at one)
--	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
--	 * val = 0x4 really means "bit 2, index starts at bit 0"
--	 */
--	val = clk_readl(mux->reg) >> mux->shift;
--	val &= mux->mask;
--
--	if (mux->table) {
-+	if (table) {
- 		int i;
- 
- 		for (i = 0; i < num_parents; i++)
--			if (mux->table[i] == val)
-+			if (table[i] == val)
- 				return i;
- 		return -EINVAL;
- 	}
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-+	if (val && (flags & CLK_MUX_INDEX_BIT))
- 		val = ffs(val) - 1;
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-+	if (val && (flags & CLK_MUX_INDEX_ONE))
- 		val--;
- 
- 	if (val >= num_parents)
-@@ -62,36 +51,58 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 
- 	return val;
- }
-+EXPORT_SYMBOL_GPL(clk_mux_val_to_index);
- 
--static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
--	u32 val;
--	unsigned long flags = 0;
-+	unsigned int val = index;
- 
--	if (mux->table) {
--		index = mux->table[index];
-+	if (table) {
-+		val = table[index];
- 	} else {
--		if (mux->flags & CLK_MUX_INDEX_BIT)
--			index = 1 << index;
-+		if (flags & CLK_MUX_INDEX_BIT)
-+			val = 1 << index;
- 
--		if (mux->flags & CLK_MUX_INDEX_ONE)
--			index++;
-+		if (flags & CLK_MUX_INDEX_ONE)
-+			val++;
- 	}
- 
-+	return val;
-+}
-+EXPORT_SYMBOL_GPL(clk_mux_index_to_val);
-+
-+static u8 clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val;
-+
-+	val = clk_readl(mux->reg) >> mux->shift;
-+	val &= mux->mask;
-+
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-+}
-+
-+static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+	unsigned long flags = 0;
-+	u32 reg;
-+
- 	if (mux->lock)
- 		spin_lock_irqsave(mux->lock, flags);
- 	else
- 		__acquire(mux->lock);
- 
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
--		val = mux->mask << (mux->shift + 16);
-+		reg = mux->mask << (mux->shift + 16);
- 	} else {
--		val = clk_readl(mux->reg);
--		val &= ~(mux->mask << mux->shift);
-+		reg = clk_readl(mux->reg);
-+		reg &= ~(mux->mask << mux->shift);
- 	}
--	val |= index << mux->shift;
--	clk_writel(val, mux->reg);
-+	val = val << mux->shift;
-+	reg |= val;
-+	clk_writel(reg, mux->reg);
- 
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index d8ba26d03332..fe720d679c31 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -511,6 +511,10 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
-+int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			 unsigned int val);
-+unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index);
-+
- void clk_unregister_mux(struct clk *clk);
- void clk_hw_unregister_mux(struct clk_hw *hw);
- 
--- 
-2.14.3
+On Wed, Jan 31, 2018 at 06:24:18PM +0000, Fabrizio Castro wrote:
+> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+> its driver by default.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+
+Given the rest of the series works (same for the later patches):
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--ghjh2tvtbi7qarpp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7h7wACgkQFA3kzBSg
+KbbNhg/8CA58qpPJ8IG15ptynCnCyyFcFrz0ljGiJXpGcuL2MI1FBxN7gPc1BsqE
+kFOghwLAbv/meyZ4JjU1YjPMGm2Iqed0JAs1563VScCL0uoaCEjTo7RZnWTs1AFa
+x+fY4OQIpr4VqenJRhak/fGx0l8OPcgetXUoaSNyJzj3UWeLnDV2738tB0F48ggT
+RjKJdZguE/UmPMewIGUoyCgeS4U4qM7IfoQrygh1Phdg8Ia9rYlCW9oXb4ZzQdy8
+FPu5LVRlC8wHBccXiKuwmQxgDMp8Ve9NgTLVMSXAgckFv+WW0brqcUkMJrGPzGg8
+W1tlVq+8w2hNf/Kw6ZvjAAAI2a7315P4t7rn78AdfVu7oDHEYZimdJ4BobANDQ6m
+m41Jx3I85T5EtDiYqk9rWJ5ZqD9j8C3NJ3AqwZjfFsoiUV/gLjiEC7u71boy48wc
+YoDjVTyNhZCoLtljuPJTojSoZTwoNzCpd80wI+HqPzPxqph0m1ah0sufvY7Izpj5
+4/NcPErVPFL0g2VHx7fM7IHJRMS05V1yEcvA34lM78hJE83l7oYmnSGM25vy4RYI
+b65K4T9iKFpebv/EbJ82f7tWCEikdUvvjNaJEDh1FLX1S5yBOKml/409vG9aMQvF
+PoILsfiOq6tuvDySZmWnwUsshqZQjW4rrwGHYLLuadOAgoAQ0os=
+=krTo
+-----END PGP SIGNATURE-----
+
+--ghjh2tvtbi7qarpp--
