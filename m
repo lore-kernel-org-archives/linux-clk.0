@@ -1,74 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v3 1/5] clk: mediatek: update missing clock data for
- MT7622 audsys
-To: Ryder Lee <ryder.lee@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Rob Herring <robh+dt@kernel.org>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
- <ee93f496edb238935940233d88f5548940b53b6a.1518424204.git.ryder.lee@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <8af9dd65-13da-299d-fb38-fe2da4685e1a@gmail.com>
-Date: Tue, 13 Feb 2018 10:13:33 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-he1eur01on0053.outbound.protection.outlook.com ([104.47.0.53]:58257
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751558AbeBGB6K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Feb 2018 20:58:10 -0500
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v3 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag for busy diviver and busy mux
+Date: Wed,  7 Feb 2018 10:00:16 +0800
+Message-Id: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <ee93f496edb238935940233d88f5548940b53b6a.1518424204.git.ryder.lee@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-mediatek@lists.infradead.org, Lee Jones <lee.jones@linaro.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The busy divider and busy mux is actually used by the system critical clocks,
+so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
 
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ drivers/clk/imx/clk-busy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 02/12/2018 12:28 PM, Ryder Lee wrote:
-> Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
->  include/dt-bindings/clock/mt7622-clk.h | 3 ++-
->  2 files changed, 3 insertions(+), 1 deletion(-)>
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 6df3389..9903652 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ 	init.name = name;
+ 	init.ops = &clk_busy_divider_ops;
+-	init.flags = CLK_SET_RATE_PARENT;
++	init.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+@@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 
+ 	init.name = name;
+ 	init.ops = &clk_busy_mux_ops;
+-	init.flags = 0;
++	init.flags = CLK_IS_CRITICAL;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+ 
+-- 
+1.9.1
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> index fad7d9f..13f752d 100644
-> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> @@ -106,6 +106,7 @@
->  	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
->  	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
->  	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
-> +	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
->  	/* AUDIO2 */
->  	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
->  	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
-> diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
-> index 3e514ed..e9d77f0 100644
-> --- a/include/dt-bindings/clock/mt7622-clk.h
-> +++ b/include/dt-bindings/clock/mt7622-clk.h
-> @@ -235,7 +235,8 @@
->  #define CLK_AUDIO_MEM_ASRC3		43
->  #define CLK_AUDIO_MEM_ASRC4		44
->  #define CLK_AUDIO_MEM_ASRC5		45
-> -#define CLK_AUDIO_NR_CLK		46
-> +#define CLK_AUDIO_AFE_CONN		46
-> +#define CLK_AUDIO_NR_CLK		47
->  
->  /* SSUSBSYS */
->  
-> 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
