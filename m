@@ -1,104 +1,70 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/19] clk: meson: remove superseded aoclk_gate_regmap
-Date: Mon, 12 Feb 2018 15:58:34 +0100
-Message-Id: <20180212145846.19380-8-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 7 Feb 2018 14:18:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207141846.GC6003@sirena.org.uk>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
+ <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
+In-Reply-To: <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-aoclk_gate_regmap has been replaced by meson's clk_regmap.
-It is no longer necessary so, remove it
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb-aoclk-regmap.c | 46 -----------------------------------
- drivers/clk/meson/gxbb-aoclk.h        | 10 --------
- 2 files changed, 56 deletions(-)
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+--2JFBq9zoW8cOFH7v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/meson/gxbb-aoclk-regmap.c b/drivers/clk/meson/gxbb-aoclk-regmap.c
-deleted file mode 100644
-index 2515fbfa0467..000000000000
---- a/drivers/clk/meson/gxbb-aoclk-regmap.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--/*
-- * Copyright (c) 2017 BayLibre, SAS.
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/bitfield.h>
--#include <linux/regmap.h>
--#include "gxbb-aoclk.h"
--
--static int aoclk_gate_regmap_enable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	return regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--				  BIT(gate->bit_idx), BIT(gate->bit_idx));
--}
--
--static void aoclk_gate_regmap_disable(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--
--	regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
--			   BIT(gate->bit_idx), 0);
--}
--
--static int aoclk_gate_regmap_is_enabled(struct clk_hw *hw)
--{
--	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
--	unsigned int val;
--	int ret;
--
--	ret = regmap_read(gate->regmap, AO_RTI_GEN_CNTL_REG0, &val);
--	if (ret)
--		return ret;
--
--	return (val & BIT(gate->bit_idx)) != 0;
--}
--
--const struct clk_ops meson_aoclk_gate_regmap_ops = {
--	.enable = aoclk_gate_regmap_enable,
--	.disable = aoclk_gate_regmap_disable,
--	.is_enabled = aoclk_gate_regmap_is_enabled,
--};
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index 127d58954cca..0be78383f257 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -17,16 +17,6 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
- 
--struct aoclk_gate_regmap {
--	struct clk_hw hw;
--	unsigned bit_idx;
--	struct regmap *regmap;
--	spinlock_t *lock;
--};
--
--#define to_aoclk_gate_regmap(_hw) \
--	container_of(_hw, struct aoclk_gate_regmap, hw)
--
- extern const struct clk_ops meson_aoclk_gate_regmap_ops;
- 
- struct aoclk_cec_32k {
--- 
-2.14.3
+On Wed, Feb 07, 2018 at 02:37:51PM +0200, Peter De Schrijver wrote:
+> On Wed, Feb 07, 2018 at 10:43:51AM +0000, Mark Brown wrote:
+> > On Wed, Feb 07, 2018 at 10:47:44AM +0200, Peter De Schrijver wrote:
+> > > On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
+> > > > On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+
+> > > > > Add API to get min/max rail voltage configured from platform for
+> > > > > given rails.
+
+> > > > because...
+
+> > > of the next patch where this is used to retrieve the minimum rail voltage.
+
+> > And that in turn is needed for...?
+
+> To calculate the required voltage for each frequency.
+
+You're going to have to provide a much better explanation of what this
+is doing - right now it seems like an abuse of constraints.  Client
+drivers can already determine if a particular voltage they want to set
+is available via regulator_list_voltage() and so on, that's what
+constraints are there to set.  It sounds like you're trying to use them
+for something else but you're really not explaining your use case
+clearly.
+
+--2JFBq9zoW8cOFH7v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7CsUACgkQJNaLcl1U
+h9D8NQf9HArPCGOGdxVM2WXctuVLm1L69UeQZ4U5agoguZ9RA64DKMLKWWMWP9sm
+XmnSvULmxvpwoRJG0lhRGlQKnd9PpsBiKCIcIixPgWRqdjEdfV8eFd1rKlpqUgss
+ahAPnok+UzhsRJTXum2ibaZOyiQb6MDwyxvXvAXJrZ3fKQ68WpxMIvNLgTdx9YK0
+/oEEbp4T/jSTLLm1Cf7+1OYJ64muqNh25QcxJR1S9UnlNw5qdEjUXaoQvL9XXxro
+Su1vPDfnb0E+W0DEIBW8wWyJLGU8nmAOFX+mbPSukmq+VwQjBMzp66khYbpgGjVQ
+p/CdoTHiJ+CI0E3ymlqYhkE6pkcXnQ==
+=IooP
+-----END PGP SIGNATURE-----
+
+--2JFBq9zoW8cOFH7v--
