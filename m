@@ -1,172 +1,71 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v1 5/5] clk: mediatek: update clock driver of MT2712
-Date: Thu, 22 Feb 2018 13:48:51 +0800
-Message-ID: <20180222054851.26096-7-weiyi.lu@mediatek.com>
-In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:16:52 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 16/26] clk: renesas: r8a7745: Add rwdt clock
+Message-ID: <20180207231652.4rr5xuazarh7lwml@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-17-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="b6h7wdwfbvkfq6zs"
+In-Reply-To: <1517423070-24236-17-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to ECO design change,
-1. add new clock mux data and change some
-2. add new clock gate data and clock factor data
-3. change status register offset of infra subsystem
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2712.c | 69 +++++++++++++++++++++++++++++++--------
- 1 file changed, 55 insertions(+), 14 deletions(-)
+--b6h7wdwfbvkfq6zs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index 498d13799388..d4a7497a2417 100644
---- a/drivers/clk/mediatek/clk-mt2712.c
-+++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -141,6 +141,8 @@ static const struct mtk_fixed_factor top_divs[] = {
- 		1),
- 	FACTOR(CLK_TOP_APLL1_D2, "apll1_d2", "apll1_ck", 1,
- 		2),
-+	FACTOR(CLK_TOP_APLL1_D3, "apll1_d3", "apll1_ck", 1,
-+		3),
- 	FACTOR(CLK_TOP_APLL1_D4, "apll1_d4", "apll1_ck", 1,
- 		4),
- 	FACTOR(CLK_TOP_APLL1_D8, "apll1_d8", "apll1_ck", 1,
-@@ -625,7 +627,7 @@ static const char * const ether_125m_parents[] = {
- static const char * const ether_50m_parents[] = {
- 	"clk26m",
- 	"etherpll_50m",
--	"univpll_d26",
-+	"apll1_d3",
- 	"univpll3_d4"
- };
- 
-@@ -686,7 +688,7 @@ static const char * const i2c_parents[] = {
- 
- static const char * const msdc0p_aes_parents[] = {
- 	"clk26m",
--	"msdcpll_ck",
-+	"syspll_d2",
- 	"univpll_d3",
- 	"vcodecpll_ck"
- };
-@@ -719,6 +721,17 @@ static const char * const aud_apll2_parents[] = {
- 	"clkaud_ext_i_2"
- };
- 
-+static const char * const apll1_ref_parents[] = {
-+	"clkaud_ext_i_2",
-+	"clkaud_ext_i_1",
-+	"clki2si0_mck_i",
-+	"clki2si1_mck_i",
-+	"clki2si2_mck_i",
-+	"clktdmin_mclk_i",
-+	"clki2si2_mck_i",
-+	"clktdmin_mclk_i"
-+};
-+
- static const char * const audull_vtx_parents[] = {
- 	"d2a_ulclk_6p5m",
- 	"clkaud_ext_i_0"
-@@ -884,6 +897,10 @@ static struct mtk_composite top_muxes[] = {
- 		aud_apll1_parents, 0x134, 0, 1),
- 	MUX(CLK_TOP_AUD_APLL2_SEL, "aud_apll2_sel",
- 		aud_apll2_parents, 0x134, 1, 1),
-+	MUX(CLK_TOP_APLL1_REF_SEL, "apll1_ref_sel",
-+		apll1_ref_parents, 0x134, 4, 3),
-+	MUX(CLK_TOP_APLL2_REF_SEL, "apll2_ref_sel",
-+		apll1_ref_parents, 0x134, 7, 3),
- 	MUX(CLK_TOP_DA_AUDULL_VTX_6P5M_SEL, "audull_vtx_sel",
- 		audull_vtx_parents, 0x134, 31, 1),
- };
-@@ -932,36 +949,56 @@ static const struct mtk_clk_divider top_adj_divs[] = {
- 	DIV_ADJ(CLK_TOP_APLL_DIV7, "apll_div7", "i2si3_sel", 0x128, 24, 8),
- };
- 
--static const struct mtk_gate_regs top_cg_regs = {
-+static const struct mtk_gate_regs top0_cg_regs = {
- 	.set_ofs = 0x120,
- 	.clr_ofs = 0x120,
- 	.sta_ofs = 0x120,
- };
- 
--#define GATE_TOP(_id, _name, _parent, _shift) {	\
-+static const struct mtk_gate_regs top1_cg_regs = {
-+	.set_ofs = 0x424,
-+	.clr_ofs = 0x424,
-+	.sta_ofs = 0x424,
-+};
-+
-+#define GATE_TOP0(_id, _name, _parent, _shift) {	\
- 		.id = _id,				\
- 		.name = _name,				\
- 		.parent_name = _parent,			\
--		.regs = &top_cg_regs,			\
-+		.regs = &top0_cg_regs,			\
- 		.shift = _shift,			\
- 		.ops = &mtk_clk_gate_ops_no_setclr,	\
- 	}
- 
-+#define GATE_TOP1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &top1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
-+	}
-+
- static const struct mtk_gate top_clks[] = {
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN0, "apll_div_pdn0", "i2so1_sel", 0),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN1, "apll_div_pdn1", "i2so2_sel", 1),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN2, "apll_div_pdn2", "i2so3_sel", 2),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN3, "apll_div_pdn3", "tdmo0_sel", 3),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN4, "apll_div_pdn4", "tdmo1_sel", 4),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN5, "apll_div_pdn5", "i2si1_sel", 5),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN6, "apll_div_pdn6", "i2si2_sel", 6),
--	GATE_TOP(CLK_TOP_APLL_DIV_PDN7, "apll_div_pdn7", "i2si3_sel", 7),
-+	/* TOP0 */
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN0, "apll_div_pdn0", "i2so1_sel", 0),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN1, "apll_div_pdn1", "i2so2_sel", 1),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN2, "apll_div_pdn2", "i2so3_sel", 2),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN3, "apll_div_pdn3", "tdmo0_sel", 3),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN4, "apll_div_pdn4", "tdmo1_sel", 4),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN5, "apll_div_pdn5", "i2si1_sel", 5),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN6, "apll_div_pdn6", "i2si2_sel", 6),
-+	GATE_TOP0(CLK_TOP_APLL_DIV_PDN7, "apll_div_pdn7", "i2si3_sel", 7),
-+	/* TOP1 */
-+	GATE_TOP1(CLK_TOP_NFI2X_EN, "nfi2x_en", "nfi2x_sel", 0),
-+	GATE_TOP1(CLK_TOP_NFIECC_EN, "nfiecc_en", "nfiecc_sel", 1),
-+	GATE_TOP1(CLK_TOP_NFI1X_CK_EN, "nfi1x_ck_en", "nfi2x_sel", 2),
- };
- 
- static const struct mtk_gate_regs infra_cg_regs = {
- 	.set_ofs = 0x40,
- 	.clr_ofs = 0x44,
--	.sta_ofs = 0x40,
-+	.sta_ofs = 0x48,
- };
- 
- #define GATE_INFRA(_id, _name, _parent, _shift) {	\
-@@ -1120,6 +1157,10 @@ static const struct mtk_gate peri_clks[] = {
- 		"msdc50_0_h_sel", 4),
- 	GATE_PERI2(CLK_PERI_MSDC50_3_HCLK_EN, "per_msdc50_3_h",
- 		"msdc50_3_h_sel", 5),
-+	GATE_PERI2(CLK_PERI_MSDC30_0_QTR_EN, "per_msdc30_0_q",
-+		"axi_sel", 6),
-+	GATE_PERI2(CLK_PERI_MSDC30_3_QTR_EN, "per_msdc30_3_q",
-+		"mem_sel", 7),
- };
- 
- #define MT2712_PLL_FMAX		(3000UL * MHZ)
--- 
-2.12.5
+On Wed, Jan 31, 2018 at 06:24:20PM +0000, Fabrizio Castro wrote:
+> Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--b6h7wdwfbvkfq6zs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iOQACgkQFA3kzBSg
+Kbav1Q/+Pq0nxXVmD8ouZLqlkab4XbW/KsPGA2K1LZWPYGmS+/b3d5f2DnL6ZAFJ
+wrFlPlhj+TR6e6xXb5C/Ycih13rFXrmkV/getxWSnizDWRFGE6/4vOFbwLvAh0Uo
+dydYbx6nq8FvQOLttz3Ag4TFBeYd6Ck0Jr62ak/Ggu4SpGVxLYtfyvs0/+j/rm/a
+dwhQ8OU83jqeO/ccVlWxtSmNAuw7/FXWjCJprD0IsiXSPr3d67cFcU6Pwg7+y8zj
+thQjg2gIEbTlrA+V1UOUgQ4RR/ZvwjZZpJjEfHG8vZ3sYZOmffokEWQ54q0PM9Rw
+bckDaSEAS4840D8xgBE2ow+g+n1+zifz3KYuM2UdJL0emLB8p7ttlnHB9zKhmfYa
+L6HY8DYy7WeGGlMpzILMbEtZBRnU7w91sVn2oIXzIzTNWjyG0U5I+F3XZj/XMNnv
+uflv+/eknWVVCye0fFXXREsHFx51YfXjty+gpFRlNAcWY5dDROCyuYUZIsGJagqK
+mM/XMbAiLlm1ueZvzI1poQnB6zKR/C0Hy5Lw7PFKEDXGFUiKWa5UZQdPMbn8umJF
+v+zo3t2lQL4bTJAvEQf7LFkoz7Nehy7MECTGa+Kugud4ctveB6LL0ggmJme3LEnf
+lREj8bnnql7e9zE/KmCuQLWVvarET6sAcSpFhMM2WfID1QuMydA=
+=5N09
+-----END PGP SIGNATURE-----
+
+--b6h7wdwfbvkfq6zs--
