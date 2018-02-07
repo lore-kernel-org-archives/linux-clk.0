@@ -1,61 +1,71 @@
-Return-Path: <boris.brezillon@bootlin.com>
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:17:15 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
-Date: Thu,  8 Feb 2018 14:43:37 +0100
-Message-Id: <20180208134338.24590-3-boris.brezillon@bootlin.com>
-In-Reply-To: <20180208134338.24590-1-boris.brezillon@bootlin.com>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 19/26] clk: renesas: r8a7794: Add rwdt clock
+Message-ID: <20180207231715.r42l7aekecwszeqd@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-20-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2ppkhvycs7w7moi3"
+In-Reply-To: <1517423070-24236-20-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to enable a PLL, not only the PLL has to be powered up and
-locked, but you also have to de-assert the reset signal. The last part
-was missing. Add it so PLLs that were not enabled by the FW/bootloader
-can be enabled from Linux.
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+--2ppkhvycs7w7moi3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index a07f6451694a..6c5d4a8e426c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	const struct bcm2835_pll_data *data = pll->data;
- 
- 	spin_lock(&cprman->regs_lock);
-+	cprman_write(cprman, data->a2w_ctrl_reg,
-+		     cprman_read(cprman, data->a2w_ctrl_reg) &
-+		     ~A2W_PLL_CTRL_PRST_DISABLE);
- 	cprman_write(cprman, data->cm_ctrl_reg,
- 		     cprman_read(cprman, data->cm_ctrl_reg) |
- 		     CM_PLL_ANARST);
-@@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
- 		cpu_relax();
- 	}
- 
-+	cprman_write(cprman, data->a2w_ctrl_reg,
-+		     cprman_read(cprman, data->a2w_ctrl_reg) |
-+		     A2W_PLL_CTRL_PRST_DISABLE);
-+
- 	return 0;
- }
- 
--- 
-2.14.1
+On Wed, Jan 31, 2018 at 06:24:23PM +0000, Fabrizio Castro wrote:
+> Add "rwdt" clock to r8a7794_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--2ppkhvycs7w7moi3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iPoACgkQFA3kzBSg
+Kbabqg/+PRinXdRPLN9NnawvsTfFj6IjK5Nou7kfTGjvbEMRZMhZSf4fOwB3Df73
+O9Wsc5kG9fUC/R1qrSl+H7wQflfGazbY9WrwUjfH0DTcdbFFjnLgjiZg4S6rzK4W
+OV10rOnayOQCcb3H8UwcjLgk3EZkAfY85vC+T22LglEH9larVmP+EoTpY0zRDb2D
+Iuv0QAuj5VThbIYacFzPjVpJ/S+WnJqV76mPJw8w0i4um3sG4BlV6FSNC0Lvvk7g
+DRpOmilYt91bPzLk7OzLwnbnlR3aLlau+w2yqQur81IZbPWqXVrHhzbJ0k1hDuxM
+RRnH82zlXm/RFirnDOb1s8mut5wRAm8jOy+CT9f1utBI6/aKjIdH30VQGm1khfqP
+HovodgbD3Veh9bQmQYwGV5woh3/lmkTSKcndKII9pWDDqAcBPI1Wr9qquupQkp3I
+MQpY39rhioCi4Hkyea3ctnU4xrdzujcDw94QZNp4KcX2S3/EzlFJXmOEHSstrp5B
+iN/zuEurQyNz44voI5PsY7NYm3NaSxbIiOld45VbWZLrfAKo/ii1FFpVsvvDp3IY
+joIHI9Gqq6GJ1ITDuMk9jSeH8IC6UzfwK4VHASIxSEANSaRXKuqLI+uasFgS1mh+
+8jQwfQzbfIjV6MoEmBeOn6yFmcqUe7pqETe484HqyFAiYyQRVVY=
+=kbA+
+-----END PGP SIGNATURE-----
+
+--2ppkhvycs7w7moi3--
