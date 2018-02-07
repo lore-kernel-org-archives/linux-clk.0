@@ -1,594 +1,225 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/19] clk: meson: migrate dividers to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:37 +0100
-Message-Id: <20180212145846.19380-11-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:59245 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753314AbeBGJLU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Feb 2018 04:11:20 -0500
+Date: Wed, 07 Feb 2018 17:11:11 +0800
+In-Reply-To: <20180207090210.jlxleeh32tojvzp5@flea>
+References: <20180203154942.63566-1-icenowy@aosc.io> <20180203154942.63566-5-icenowy@aosc.io> <20180207090210.jlxleeh32tojvzp5@flea>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6 CCU
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <3AB5A169-5EA5-4A45-95AF-4CA56F13A1CA@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move meson8b, gxbb and axg clocks using clk_divider to clk_regmap
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c     |  61 ++++++-------
- drivers/clk/meson/gxbb.c    | 217 ++++++++++++++++++++++----------------------
- drivers/clk/meson/meson8b.c |  23 ++---
- 3 files changed, 142 insertions(+), 159 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index ed14f6ea7b07..f8b8ff2eba6c 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -433,14 +433,15 @@ static struct clk_mux axg_mpeg_clk_sel = {
- 	},
- };
- 
--static struct clk_divider axg_mpeg_clk_div = {
--	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap axg_mpeg_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPEG_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -487,15 +488,16 @@ static struct clk_mux axg_sd_emmc_b_clk0_sel = {
- 	},
- };
- 
--static struct clk_divider axg_sd_emmc_b_clk0_div = {
--	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.shift = 16,
--	.width = 7,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap axg_sd_emmc_b_clk0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.shift = 16,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_b_clk0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -531,15 +533,16 @@ static struct clk_mux axg_sd_emmc_c_clk0_sel = {
- 	},
- };
- 
--static struct clk_divider axg_sd_emmc_c_clk0_div = {
--	.reg = (void *)HHI_NAND_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap axg_sd_emmc_c_clk0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_NAND_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_c_clk0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -706,12 +709,6 @@ static struct clk_mux *const axg_clk_muxes[] = {
- 	&axg_sd_emmc_c_clk0_sel,
- };
- 
--static struct clk_divider *const axg_clk_dividers[] = {
--	&axg_mpeg_clk_div,
--	&axg_sd_emmc_b_clk0_div,
--	&axg_sd_emmc_c_clk0_div,
--};
--
- static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_clk81,
- 	&axg_ddr,
-@@ -760,6 +757,9 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_ao_i2c,
- 	&axg_sd_emmc_b_clk0,
- 	&axg_sd_emmc_c_clk0,
-+	&axg_mpeg_clk_div,
-+	&axg_sd_emmc_b_clk0_div,
-+	&axg_sd_emmc_c_clk0_div,
- };
- 
- struct clkc_data {
-@@ -769,8 +769,6 @@ struct clkc_data {
- 	unsigned int clk_plls_count;
- 	struct clk_mux *const *clk_muxes;
- 	unsigned int clk_muxes_count;
--	struct clk_divider *const *clk_dividers;
--	unsigned int clk_dividers_count;
- 	struct clk_hw_onecell_data *hw_onecell_data;
- };
- 
-@@ -781,8 +779,6 @@ static const struct clkc_data axg_clkc_data = {
- 	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
- 	.clk_muxes = axg_clk_muxes,
- 	.clk_muxes_count = ARRAY_SIZE(axg_clk_muxes),
--	.clk_dividers = axg_clk_dividers,
--	.clk_dividers_count = ARRAY_SIZE(axg_clk_dividers),
- 	.hw_onecell_data = &axg_hw_onecell_data,
- };
- 
-@@ -838,11 +834,6 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		clkc_data->clk_muxes[i]->reg = clk_base +
- 			(u64)clkc_data->clk_muxes[i]->reg;
- 
--	/* Populate base address for dividers */
--	for (i = 0; i < clkc_data->clk_dividers_count; i++)
--		clkc_data->clk_dividers[i]->reg = clk_base +
--			(u64)clkc_data->clk_dividers[i]->reg;
--
- 	/* Populate regmap for the regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
- 		axg_clk_regmaps[i]->map = map;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index ccbbebb6a69b..ec515dc71476 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -604,14 +604,15 @@ static struct clk_mux gxbb_mpeg_clk_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_mpeg_clk_div = {
--	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_mpeg_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPEG_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_sel" },
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-@@ -647,14 +648,15 @@ static struct clk_mux gxbb_sar_adc_clk_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_sar_adc_clk_div = {
--	.reg = (void *)HHI_SAR_CLK_CNTL,
--	.shift = 0,
--	.width = 8,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_sar_adc_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SAR_CLK_CNTL,
-+		.shift = 0,
-+		.width = 8,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sar_adc_clk_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sar_adc_clk_sel" },
- 		.num_parents = 1,
- 	},
-@@ -705,14 +707,15 @@ static struct clk_mux gxbb_mali_0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_mali_0_div = {
--	.reg = (void *)HHI_MALI_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_mali_0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MALI_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "mali_0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_NO_REPARENT,
-@@ -753,14 +756,15 @@ static struct clk_mux gxbb_mali_1_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_mali_1_div = {
--	.reg = (void *)HHI_MALI_CLK_CNTL,
--	.shift = 16,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_mali_1_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MALI_CLK_CNTL,
-+		.shift = 16,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mali_1_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "mali_1_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_NO_REPARENT,
-@@ -864,15 +868,16 @@ static struct clk_mux gxbb_cts_mclk_i958_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_cts_mclk_i958_div = {
--	.reg = (void *)HHI_AUD_CLK_CNTL2,
--	.shift = 16,
--	.width = 8,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap gxbb_cts_mclk_i958_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_AUD_CLK_CNTL2,
-+		.shift = 16,
-+		.width = 8,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cts_mclk_i958_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "cts_mclk_i958_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -911,14 +916,15 @@ static struct clk_mux gxbb_cts_i958 = {
- 	},
- };
- 
--static struct clk_divider gxbb_32k_clk_div = {
--	.reg = (void *)HHI_32K_CLK_CNTL,
--	.shift = 0,
--	.width = 14,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_32k_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_32K_CLK_CNTL,
-+		.shift = 0,
-+		.width = 14,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "32k_clk_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "32k_clk_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
-@@ -983,15 +989,16 @@ static struct clk_mux gxbb_sd_emmc_a_clk0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
--	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap gxbb_sd_emmc_a_clk0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_a_clk0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_a_clk0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1027,15 +1034,16 @@ static struct clk_mux gxbb_sd_emmc_b_clk0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
--	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
--	.shift = 16,
--	.width = 7,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap gxbb_sd_emmc_b_clk0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SD_EMMC_CLK_CNTL,
-+		.shift = 16,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_b_clk0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_b_clk0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1071,15 +1079,16 @@ static struct clk_mux gxbb_sd_emmc_c_clk0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
--	.reg = (void *)HHI_NAND_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+static struct clk_regmap gxbb_sd_emmc_c_clk0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_NAND_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "sd_emmc_c_clk0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "sd_emmc_c_clk0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1126,14 +1135,15 @@ static struct clk_mux gxbb_vpu_0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_vpu_0_div = {
--	.reg = (void *)HHI_VPU_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vpu_0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_VPU_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "vpu_0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1173,14 +1183,15 @@ static struct clk_mux gxbb_vpu_1_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_vpu_1_div = {
--	.reg = (void *)HHI_VPU_CLK_CNTL,
--	.shift = 16,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vpu_1_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_VPU_CLK_CNTL,
-+		.shift = 16,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vpu_1_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "vpu_1_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1245,14 +1256,15 @@ static struct clk_mux gxbb_vapb_0_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_vapb_0_div = {
--	.reg = (void *)HHI_VAPBCLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vapb_0_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_VAPBCLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_0_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "vapb_0_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1292,14 +1304,15 @@ static struct clk_mux gxbb_vapb_1_sel = {
- 	},
- };
- 
--static struct clk_divider gxbb_vapb_1_div = {
--	.reg = (void *)HHI_VAPBCLK_CNTL,
--	.shift = 16,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+static struct clk_regmap gxbb_vapb_1_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_VAPBCLK_CNTL,
-+		.shift = 16,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "vapb_1_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "vapb_1_sel" },
- 		.num_parents = 1,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -1781,22 +1794,6 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_vapb_sel,
- };
- 
--static struct clk_divider *const gxbb_clk_dividers[] = {
--	&gxbb_mpeg_clk_div,
--	&gxbb_sar_adc_clk_div,
--	&gxbb_mali_0_div,
--	&gxbb_mali_1_div,
--	&gxbb_cts_mclk_i958_div,
--	&gxbb_32k_clk_div,
--	&gxbb_sd_emmc_a_clk0_div,
--	&gxbb_sd_emmc_b_clk0_div,
--	&gxbb_sd_emmc_c_clk0_div,
--	&gxbb_vpu_0_div,
--	&gxbb_vpu_1_div,
--	&gxbb_vapb_0_div,
--	&gxbb_vapb_1_div,
--};
--
- static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
- 	&gxbb_cts_amclk_div,
- };
-@@ -1898,6 +1895,19 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_vapb_0,
- 	&gxbb_vapb_1,
- 	&gxbb_vapb,
-+	&gxbb_mpeg_clk_div,
-+	&gxbb_sar_adc_clk_div,
-+	&gxbb_mali_0_div,
-+	&gxbb_mali_1_div,
-+	&gxbb_cts_mclk_i958_div,
-+	&gxbb_32k_clk_div,
-+	&gxbb_sd_emmc_a_clk0_div,
-+	&gxbb_sd_emmc_b_clk0_div,
-+	&gxbb_sd_emmc_c_clk0_div,
-+	&gxbb_vpu_0_div,
-+	&gxbb_vpu_1_div,
-+	&gxbb_vapb_0_div,
-+	&gxbb_vapb_1_div,
- };
- 
- struct clkc_data {
-@@ -1907,8 +1917,6 @@ struct clkc_data {
- 	unsigned int clk_plls_count;
- 	struct clk_mux *const *clk_muxes;
- 	unsigned int clk_muxes_count;
--	struct clk_divider *const *clk_dividers;
--	unsigned int clk_dividers_count;
- 	struct meson_clk_audio_divider *const *clk_audio_dividers;
- 	unsigned int clk_audio_dividers_count;
- 	struct clk_hw_onecell_data *hw_onecell_data;
-@@ -1921,8 +1929,6 @@ static const struct clkc_data gxbb_clkc_data = {
- 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
- 	.clk_muxes = gxbb_clk_muxes,
- 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
--	.clk_dividers = gxbb_clk_dividers,
--	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
- 	.clk_audio_dividers = gxbb_audio_dividers,
- 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxbb_hw_onecell_data,
-@@ -1935,8 +1941,6 @@ static const struct clkc_data gxl_clkc_data = {
- 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
- 	.clk_muxes = gxbb_clk_muxes,
- 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
--	.clk_dividers = gxbb_clk_dividers,
--	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
- 	.clk_audio_dividers = gxbb_audio_dividers,
- 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxl_hw_onecell_data,
-@@ -1994,11 +1998,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 		clkc_data->clk_muxes[i]->reg = clk_base +
- 			(u64)clkc_data->clk_muxes[i]->reg;
- 
--	/* Populate base address for dividers */
--	for (i = 0; i < clkc_data->clk_dividers_count; i++)
--		clkc_data->clk_dividers[i]->reg = clk_base +
--			(u64)clkc_data->clk_dividers[i]->reg;
--
- 	/* Populate base address for the audio dividers */
- 	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
- 		clkc_data->clk_audio_dividers[i]->base = clk_base;
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 835dbb1d2c9d..e9c5278072cd 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -393,14 +393,15 @@ struct clk_mux meson8b_mpeg_clk_sel = {
- 	},
- };
- 
--struct clk_divider meson8b_mpeg_clk_div = {
--	.reg = (void *)HHI_MPEG_CLK_CNTL,
--	.shift = 0,
--	.width = 7,
--	.lock = &meson_clk_lock,
-+struct clk_regmap meson8b_mpeg_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPEG_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
--		.ops = &clk_divider_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_sel" },
- 		.num_parents = 1,
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-@@ -623,10 +624,6 @@ static struct clk_mux *const meson8b_clk_muxes[] = {
- 	&meson8b_mpeg_clk_sel,
- };
- 
--static struct clk_divider *const meson8b_clk_dividers[] = {
--	&meson8b_mpeg_clk_div,
--};
--
- static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_clk81,
- 	&meson8b_ddr,
-@@ -706,6 +703,7 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_ao_ahb_sram,
- 	&meson8b_ao_ahb_bus,
- 	&meson8b_ao_iface,
-+	&meson8b_mpeg_clk_div,
- };
- 
- static const struct meson8b_clk_reset_line {
-@@ -844,11 +842,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 		meson8b_clk_muxes[i]->reg = clk_base +
- 			(u32)meson8b_clk_muxes[i]->reg;
- 
--	/* Populate base address for dividers */
--	for (i = 0; i < ARRAY_SIZE(meson8b_clk_dividers); i++)
--		meson8b_clk_dividers[i]->reg = clk_base +
--			(u32)meson8b_clk_dividers[i]->reg;
--
- 	/* Populate regmap for the regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
- 		meson8b_clk_regmaps[i]->map = map;
--- 
-2.14.3
+于 2018年2月7日 GMT+08:00 下午5:02:10, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>Hi,
+>
+>On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
+>> +	/* Force the output divider of video PLLs to 0 */
+>> +	for (i = 0; i < ARRAY_SIZE(pll_video_regs); i++) {
+>> +		val = readl(reg + pll_video_regs[i]);
+>> +		val &= ~BIT(0);
+>> +		writel(val, reg + pll_video_regs[i]);
+>> +	}
+>
+>Why?
+
+According to the manual the output divider here is
+test only, and for daily use it should be 0.
+
+>
+>> +	/* Force OHCI 12M clock sources to 00 (12MHz divided from 48MHz) */
+>> +	for (i = 0; i < ARRAY_SIZE(usb2_clk_regs); i++) {
+>> +		val = readl(reg + usb2_clk_regs[i]);
+>> +		val &= ~GENMASK(25, 24);
+>> +		writel (val, reg + usb2_clk_regs[i]);
+>> +	}
+>
+>Why?
+
+Just make them have a sure working parent. Why this
+muxs exist is still mysterious.
+
+>
+>> +	/*
+>> +	 * Force the post-divider of pll-video to 8 and the output divider
+
+oh here's a typo -- it's audio, not video.
+
+>> +	 * of it to 1.
+>> +	 */
+>> +	val = readl(reg + SUN50I_H6_PLL_AUDIO_REG);
+>> +	val &= ~(GENMASK(21, 16) | BIT(0));
+>> +	writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
+>
+>Why?
+
+See the comments about pll-audio in the former sources :-)
+
+>> diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h
+>b/include/dt-bindings/clock/sun50i-h6-ccu.h
+>> new file mode 100644
+>> index 000000000000..f7ddb241012c
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
+>> @@ -0,0 +1,125 @@
+>> +/*
+>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+>> + *
+>> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_SUN50I_H6_H_
+>> +#define _DT_BINDINGS_CLK_SUN50I_H6_H_
+>> +
+>> +#define CLK_PLL_PERIPH0		3
+>
+>Why is that needed?
+
+Parent of AR100 clock in PRCM.
+
+>
+>> +
+>> +#define CLK_CPUX		21
+>> +
+>> +#define CLK_APB1		26
+>
+>Same thing here
+
+As discussed in v1, the APB bus clock is used for PIO.
+
+>
+>> +
+>> +#define CLK_DE			29
+>> +#define CLK_BUS_DE		30
+>> +#define CLK_DEINTERLACE		31
+>> +#define CLK_BUS_DEINTERLACE	32
+>> +#define CLK_GPU			33
+>> +#define CLK_BUS_GPU		34
+>> +#define CLK_CE			35
+>> +#define CLK_BUS_CE		36
+>> +#define CLK_VE			37
+>> +#define CLK_BUS_VE		38
+>> +#define CLK_EMCE		39
+>> +#define CLK_BUS_EMCE		40
+>> +#define CLK_VP9			41
+>> +#define CLK_BUS_VP9		42
+>> +#define CLK_BUS_DMA		43
+>> +#define CLK_BUS_MSGBOX		44
+>> +#define CLK_BUS_SPINLOCK	45
+>> +#define CLK_BUS_HSTIMER		46
+>> +#define CLK_AVS			47
+>> +#define CLK_BUS_DBG		48
+>> +#define CLK_BUS_PSI		49
+>> +#define CLK_BUS_PWM		50
+>> +#define CLK_BUS_IOMMU		51
+>> +
+>> +#define CLK_MBUS_DMA		53
+>> +#define CLK_MBUS_VE		54
+>> +#define CLK_MBUS_CE		55
+>> +#define CLK_MBUS_TS		56
+>> +#define CLK_MBUS_NAND		57
+>> +#define CLK_MBUS_CSI		58
+>> +#define CLK_MBUS_DEINTERLACE	59
+>> +
+>> +#define CLK_NAND0		61
+>> +#define CLK_NAND1		62
+>> +#define CLK_BUS_NAND		63
+>> +#define CLK_MMC0		64
+>> +#define CLK_MMC1		65
+>> +#define CLK_MMC2		66
+>> +#define CLK_BUS_MMC0		67
+>> +#define CLK_BUS_MMC1		68
+>> +#define CLK_BUS_MMC2		69
+>> +#define CLK_BUS_UART0		70
+>> +#define CLK_BUS_UART1		71
+>> +#define CLK_BUS_UART2		72
+>> +#define CLK_BUS_UART3		73
+>> +#define CLK_BUS_I2C0		74
+>> +#define CLK_BUS_I2C1		75
+>> +#define CLK_BUS_I2C2		76
+>> +#define CLK_BUS_I2C3		77
+>> +#define CLK_BUS_SCR0		78
+>> +#define CLK_BUS_SCR1		79
+>> +#define CLK_SPI0		80
+>> +#define CLK_SPI1		81
+>> +#define CLK_BUS_SPI0		82
+>> +#define CLK_BUS_SPI1		83
+>> +#define CLK_BUS_EMAC		84
+>> +#define CLK_TS			85
+>> +#define CLK_BUS_TS		86
+>> +#define CLK_IR_TX		87
+>> +#define CLK_BUS_IR_TX		88
+>> +#define CLK_BUS_THS		89
+>> +#define CLK_I2S3		90
+>> +#define CLK_I2S0		91
+>> +#define CLK_I2S1		92
+>> +#define CLK_I2S2		93
+>> +#define CLK_BUS_I2S0		94
+>> +#define CLK_BUS_I2S1		95
+>> +#define CLK_BUS_I2S2		96
+>> +#define CLK_BUS_I2S3		97
+>> +#define CLK_SPDIF		98
+>> +#define CLK_BUS_SPDIF		99
+>> +#define CLK_DMIC		100
+>> +#define CLK_BUS_DMIC		101
+>> +#define CLK_AUDIO_HUB		102
+>> +#define CLK_BUS_AUDIO_HUB	103
+>> +#define CLK_USB_OHCI0		104
+>> +#define CLK_USB_PHY0		105
+>> +#define CLK_USB_PHY1		106
+>> +#define CLK_USB_OHCI3		107
+>> +#define CLK_USB_PHY3		108
+>> +#define CLK_USB_HSIC_12M	109
+>> +#define CLK_USB_HSIC		110
+>> +#define CLK_BUS_OHCI0		111
+>> +#define CLK_BUS_OHCI3		112
+>> +#define CLK_BUS_EHCI0		113
+>> +#define CLK_BUS_XHCI		114
+>> +#define CLK_BUS_EHCI3		115
+>> +#define CLK_BUS_OTG		116
+>> +#define CLK_PCIE_REF_100M	117
+>> +#define CLK_PCIE_REF		118
+>> +#define CLK_PCIE_REF_OUT	119
+>> +#define CLK_PCIE_MAXI		120
+>> +#define CLK_PCIE_AUX		121
+>
+>Dito.
+
+I think AUX clock is used in PCIe code.
+
+BTW the REF_100M clock is intermediate, and
+does't need to be exported. Will fix it in the next version.
+
+>
+>> +#define CLK_BUS_PCIE		122
+>> +#define CLK_HDMI		123
+>> +#define CLK_HDMI_CEC		124
+>> +#define CLK_BUS_HDMI		125
+>> +#define CLK_BUS_TCON_TOP	126
+>
+>Ditto.
+
+TCON_TOP is not a clock parent -- it's a dedicated hw
+part which controlls the connection between
+DE2/3 mixers and TCONs.
+
+>
+>Remember, you should only expose here the clocks that devices are
+>going to use, and remove as much intermediate clocks as possible.
+>
+>If you're unsure, keep them out of the dt-binding include, we can
+>always move one to the dt-binding header, while the other way isn't
+>possible.
