@@ -1,245 +1,72 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:20:36 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/19] clk: meson: migrate the audio divider clock to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:41 +0100
-Message-Id: <20180212145846.19380-15-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 22/26] ARM: dts: r8a7790: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232036.jrbaqx6wszeqto2c@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-23-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u7l36mxx4tportae"
+In-Reply-To: <1517423070-24236-23-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework meson audio divider driver to use clk_regmap and move gxbb
-clock using meson_clk_audio_divider to clk_regmap.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-audio-divider.c | 63 +++++++++++------------------------
- drivers/clk/meson/clkc.h              |  5 +--
- drivers/clk/meson/gxbb.c              | 30 +++++------------
- 3 files changed, 30 insertions(+), 68 deletions(-)
+--u7l36mxx4tportae
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index 6c07db06642d..f7ab5b1db342 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -28,8 +28,11 @@
- #include <linux/clk-provider.h>
- #include "clkc.h"
- 
--#define to_meson_clk_audio_divider(_hw) container_of(_hw, \
--				struct meson_clk_audio_divider, hw)
-+static inline struct meson_clk_audio_div_data *
-+meson_clk_audio_div_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_audio_div_data *)clk->data;
-+}
- 
- static int _div_round(unsigned long parent_rate, unsigned long rate,
- 		      unsigned long flags)
-@@ -45,15 +48,9 @@ static int _get_val(unsigned long parent_rate, unsigned long rate)
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
- }
- 
--static int _valid_divider(struct clk_hw *hw, int divider)
-+static int _valid_divider(unsigned int width, int divider)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	int max_divider;
--	u8 width;
--
--	width = adiv->div.width;
--	max_divider = 1 << width;
-+	int max_divider = 1 << width;
- 
- 	return clamp(divider, 1, max_divider);
- }
-@@ -61,14 +58,11 @@ static int _valid_divider(struct clk_hw *hw, int divider)
- static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
- 					       unsigned long parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	struct parm *p;
--	unsigned long reg, divider;
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
-+	unsigned long divider;
- 
--	p = &adiv->div;
--	reg = readl(adiv->base + p->reg_off);
--	divider = PARM_GET(p->width, p->shift, reg) + 1;
-+	divider = meson_parm_read(clk->map, &adiv->div);
- 
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
- }
-@@ -77,14 +71,14 @@ static long audio_divider_round_rate(struct clk_hw *hw,
- 				     unsigned long rate,
- 				     unsigned long *parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
- 	unsigned long max_prate;
- 	int divider;
- 
- 	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
- 		divider = _div_round(*parent_rate, rate, adiv->flags);
--		divider = _valid_divider(hw, divider);
-+		divider = _valid_divider(adiv->div.width, divider);
- 		return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
- 	}
- 
-@@ -93,7 +87,7 @@ static long audio_divider_round_rate(struct clk_hw *hw,
- 
- 	/* Get the corresponding rounded down divider */
- 	divider = max_prate / rate;
--	divider = _valid_divider(hw, divider);
-+	divider = _valid_divider(adiv->div.width, divider);
- 
- 	/* Get actual rate of the parent */
- 	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-@@ -106,28 +100,11 @@ static int audio_divider_set_rate(struct clk_hw *hw,
- 				  unsigned long rate,
- 				  unsigned long parent_rate)
- {
--	struct meson_clk_audio_divider *adiv =
--		to_meson_clk_audio_divider(hw);
--	struct parm *p;
--	unsigned long reg, flags = 0;
--	int val;
--
--	val = _get_val(parent_rate, rate);
--
--	if (adiv->lock)
--		spin_lock_irqsave(adiv->lock, flags);
--	else
--		__acquire(adiv->lock);
--
--	p = &adiv->div;
--	reg = readl(adiv->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, val);
--	writel(reg, adiv->base + p->reg_off);
--
--	if (adiv->lock)
--		spin_unlock_irqrestore(adiv->lock, flags);
--	else
--		__release(adiv->lock);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
-+	int val = _get_val(parent_rate, rate);
-+
-+	meson_parm_write(clk->map, &adiv->div, val);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 08a1ebfc65dc..a4a526cbca4c 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -142,12 +142,9 @@ struct meson_clk_mpll_data {
- 	spinlock_t *lock;
- };
- 
--struct meson_clk_audio_divider {
--	struct clk_hw hw;
--	void __iomem *base;
-+struct meson_clk_audio_div_data {
- 	struct parm div;
- 	u8 flags;
--	spinlock_t *lock;
- };
- 
- #define MESON_GATE(_name, _reg, _bit)					\
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d2724a7ce9e7..196557f11608 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -826,14 +826,15 @@ static struct clk_regmap gxbb_cts_amclk_sel = {
- 	},
- };
- 
--static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
--	.div = {
--		.reg_off = HHI_AUD_CLK_CNTL,
--		.shift   = 0,
--		.width   = 8,
-+static struct clk_regmap gxbb_cts_amclk_div = {
-+	.data = &(struct meson_clk_audio_div_data){
-+		.div = {
-+			.reg_off = HHI_AUD_CLK_CNTL,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
- 	},
--	.flags = CLK_DIVIDER_ROUND_CLOSEST,
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cts_amclk_div",
- 		.ops = &meson_clk_audio_divider_ops,
-@@ -1777,10 +1778,6 @@ static struct meson_clk_pll *const gxl_clk_plls[] = {
- 	&gxl_gp0_pll,
- };
- 
--static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
--	&gxbb_cts_amclk_div,
--};
--
- static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_clk81,
- 	&gxbb_ddr,
-@@ -1912,29 +1909,24 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_mpll0,
- 	&gxbb_mpll1,
- 	&gxbb_mpll2,
-+	&gxbb_cts_amclk_div,
- };
- 
- struct clkc_data {
- 	struct meson_clk_pll *const *clk_plls;
- 	unsigned int clk_plls_count;
--	struct meson_clk_audio_divider *const *clk_audio_dividers;
--	unsigned int clk_audio_dividers_count;
- 	struct clk_hw_onecell_data *hw_onecell_data;
- };
- 
- static const struct clkc_data gxbb_clkc_data = {
- 	.clk_plls = gxbb_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
--	.clk_audio_dividers = gxbb_audio_dividers,
--	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxbb_hw_onecell_data,
- };
- 
- static const struct clkc_data gxl_clkc_data = {
- 	.clk_plls = gxl_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
--	.clk_audio_dividers = gxbb_audio_dividers,
--	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
- 	.hw_onecell_data = &gxl_hw_onecell_data,
- };
- 
-@@ -1981,10 +1973,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
- 
--	/* Populate base address for the audio dividers */
--	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
--		clkc_data->clk_audio_dividers[i]->base = clk_base;
--
- 	/* Populate regmap for the common regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
- 		gx_clk_regmaps[i]->map = map;
--- 
-2.14.3
+On Wed, Jan 31, 2018 at 06:24:26PM +0000, Fabrizio Castro wrote:
+> This commit adds watchdog support to the r8a7790 dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--u7l36mxx4tportae
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7icQACgkQFA3kzBSg
+KbYtjRAArwnZ+Jeb6rbsuMYgWKT54EjBlN9YeQjCOLUv6NC+dFSBuuQVTjYigJMI
+ARTVYdCErYKzQ0rOwKlC0F0zP7YYNxtkOwvCDcx1elkbPw8N9Sh9oCkYEZhuhhCb
+L/lXdTJwP7H1IvEDnOCfpygkwJnPBeURF5Yc86CKywojCXzq8GOHPKcug4Z5SRMT
+DhW+h9IMnr3Cnu6WCrYiSlX2IjFDD02jNjKbIRAvNRirhEtlgvQbj6f4PlbVzPhl
++aRVfwXA7j780EMMYXpixM8PmlZxS+nj+kKckqoeh98uhTzWVm6hgpwV2JwbrEf1
+U0JOLh2Rg0NecJeiJcgh5CR1YfEdprHYrVagxq5VGvENNVVmfRbqQc8BSmrSR47K
+ve0yWt4hASG0qi91WElEeL5aCapEfULtmkwBFxqPeEZLOsKPxydDYQoZZMLHCeuQ
+o4YD/zM2Q1hnm0gYp8LD9UpJ+VFi4WGFFOc7CKeXdRDnWVeGDG9DgJPaCroEjbxg
+Huwke+m1LGPIVSXdgA5sZhVHfk0KiRJ2L0L20F5RtqcYmKQoth+AAhZ85pviUs9W
+55GMMwU44rGAEXjzvKnd77Z0hHiVmUOnLWSnCTaIvCJtPYIPcN2DAnQ0WbvZEfQV
+osXLFrE5FFxCALc+GKLDFx+bc6RcFHOE7/Q87EUsWniigbIvJQ4=
+=2/Em
+-----END PGP SIGNATURE-----
+
+--u7l36mxx4tportae--
