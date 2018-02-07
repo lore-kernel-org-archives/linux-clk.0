@@ -1,79 +1,67 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
-	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
-	FRAMEWORK)
-Subject: [PATCH v2 6/7] clk: samsung: s3c2410: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:53 +0100
-Message-id: <20180216145754.14428-7-a.hajda@samsung.com>
-In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145807eucas1p2260082a8178bc746dc8110982f2b0c2b@eucas1p2.samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
+ device
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+References: <cover.1515639336.git.ryder.lee@mediatek.com>
+ <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
+ <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
+ <1517803655.1173.12.camel@mtkswgap22>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
+Date: Wed, 7 Feb 2018 16:18:59 +0100
+MIME-Version: 1.0
+In-Reply-To: <1517803655.1173.12.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of parent might be being
-set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by a PLL, as calculated from the P, M, S, K coefficients.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clk/samsung/clk-s3c2410.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On 02/05/2018 05:07 AM, Ryder Lee wrote:
+> On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
+>>
+>> On 01/31/2018 08:42 AM, Ryder Lee wrote:
+>>> As the new MFD parent is in place, switch probing method to adapt it.
+>>>
+>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+>>> ---
+>>>  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+>>> index 13f752d..8c18536 100644
+>>> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+>>> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+>>> @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+>>>  {
+>>>  	struct clk_onecell_data *clk_data;
+>>>  	struct device_node *node = pdev->dev.of_node;
+>>> +	struct device_node *pnode = pdev->dev.parent->of_node;
+>>>  	int r;
+>>>  
+>>>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+>>>  
+>>> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+>>> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
+>>
+>> We will need a fallback here for older device tree bindings.
+>>
+>> Regards,
+>> Matthias
+> 
+> Up to now, I didn't see both driver and bindings are used anywhere.
+> Should I still care about that?
+> 
 
-diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-index e0650c33863b..d8e58a659467 100644
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
- 	PLL_35XX_RATE(226000000, 105, 1, 1),
- 	PLL_35XX_RATE(210000000, 132, 2, 1),
- 	/* 2410 common */
--	PLL_35XX_RATE(203000000, 161, 3, 1),
-+	PLL_35XX_RATE(202800000, 161, 3, 1),
- 	PLL_35XX_RATE(192000000, 88, 1, 1),
- 	PLL_35XX_RATE(186000000, 85, 1, 1),
- 	PLL_35XX_RATE(180000000, 82, 1, 1),
-@@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
- 	PLL_35XX_RATE(147000000, 90, 2, 1),
- 	PLL_35XX_RATE(135000000, 82, 2, 1),
- 	PLL_35XX_RATE(124000000, 116, 1, 2),
--	PLL_35XX_RATE(118000000, 150, 2, 2),
-+	PLL_35XX_RATE(118500000, 150, 2, 2),
- 	PLL_35XX_RATE(113000000, 105, 1, 2),
--	PLL_35XX_RATE(101000000, 127, 2, 2),
-+	PLL_35XX_RATE(101250000, 127, 2, 2),
- 	PLL_35XX_RATE(90000000, 112, 2, 2),
--	PLL_35XX_RATE(85000000, 105, 2, 2),
-+	PLL_35XX_RATE(84750000, 105, 2, 2),
- 	PLL_35XX_RATE(79000000, 71, 1, 2),
--	PLL_35XX_RATE(68000000, 82, 2, 2),
--	PLL_35XX_RATE(56000000, 142, 2, 3),
-+	PLL_35XX_RATE(67500000, 82, 2, 2),
-+	PLL_35XX_RATE(56250000, 142, 2, 3),
- 	PLL_35XX_RATE(48000000, 120, 2, 3),
--	PLL_35XX_RATE(51000000, 161, 3, 3),
-+	PLL_35XX_RATE(50700000, 161, 3, 3),
- 	PLL_35XX_RATE(45000000, 82, 1, 3),
--	PLL_35XX_RATE(34000000, 82, 2, 3),
-+	PLL_35XX_RATE(33750000, 82, 2, 3),
- 	{ /* sentinel */ },
- };
- 
--- 
-2.16.1
+Yes please, we have to ensure that newer kernel work with older bindings and
+vice-versa.
+
+Thanks,
+Matthias
