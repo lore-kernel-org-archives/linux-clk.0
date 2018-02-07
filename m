@@ -1,55 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:31779 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeBIHAC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 02:00:02 -0500
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/2] clk: meson-axg: Add AO Cloclk and Reset driver
-Date: Fri, 9 Feb 2018 15:00:24 +0800
-Message-ID: <20180209070026.193879-1-yixun.lan@amlogic.com>
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:21:03 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 25/26] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+Message-ID: <20180207232103.p5ynehmgngoalq5x@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="465r3sfkhjhucg7t"
+In-Reply-To: <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-  This patch try to add AO clock and Reset driver in Amlogic's
-Meson-AXG SoC.
 
-  Please note this patchset actually depend on the clock regmap
-conversion series [1].
+--465r3sfkhjhucg7t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1] clk: meson: use regmap in clock controllers
- https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
+On Wed, Jan 31, 2018 at 06:24:29PM +0000, Fabrizio Castro wrote:
+> This patch enables the watchdog from within the iwg20m SoM dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
-Yixun Lan (2):
-  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-  clk: meson-axg: Add AO Clock and Reset controller driver
+--465r3sfkhjhucg7t
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/clk/meson/Makefile             |   2 +-
- drivers/clk/meson/axg-aoclk.c          | 236 +++++++++++++++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h          |  25 ++++
- include/dt-bindings/clock/axg-aoclkc.h |  26 ++++
- include/dt-bindings/reset/axg-aoclkc.h |  20 +++
- 5 files changed, 308 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.15.1
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7id8ACgkQFA3kzBSg
+KbYzQRAAlvPTx08aRzmDIK3C1VadQr8UcUhoztAC9o7zTzLsqFCxe/8SSHEhMQSx
+IoZ/j2jCC/MP1K5Xrue71jW2urf+igpn0MiAaSDOcpFYHas/cZfM8It3G++yLigC
+0JMymDqyJm5HN/4EQDh91YlGav1gbDodMHdN+9rLc7hSHiFExIAOsoKkIBnnJ2CQ
+z8g+Gt78fPS6ocwsXmnyT41Qf08eJ7XjF4ri7xqLocjv6+U1Vao/SyfyEsph0vOq
+Ly2oE+X5PAGMrOOXskzUXuYqRh5KSa51hxg8FNQkjK+baBUczUvTr3xDrT50+apr
+xqFntQo917bj0mLoqc9E+ednuv+Vxup3LEmwKM0UvuL06Ql4ipYkeUww3QBPLZWH
+QZy6vbHAwgWUIU6fbsbURDoSnk0VjYXkERsGM/I7x5udlaZm6imYTUv8gV/gaeCf
+aLqF+PsOexFjU9Va0ta/PWPzLOKhG64w8lvxxYcndw6XuG89TpUkknhRvdTiU5ZS
+BFomSsMHFtmqKBVI19nDsYkHjY4W9r27ssTzP3OpiidhPDBbQL1x+Y4C08DKLRob
+96iFzwYKPWkcWwk0VN3zUlU3AKA9oMCrgaYaLSSS0lE6S9pux3QCSQ3DxehqtAcR
+dREbcnyz9ePpl6A2khZOuXRJcvdk5lm2Pghk0xYzxFgRiPLCtl0=
+=V973
+-----END PGP SIGNATURE-----
 
+--465r3sfkhjhucg7t--
