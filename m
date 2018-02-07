@@ -1,47 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 8 Feb 2018 14:18:19 -0600
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Message-ID: <20180208201819.dxc4e3utyybocbyj@rob-hp-laptop>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-5-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180203154942.63566-5-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
+ propagation
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+	m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
+Date: Wed, 07 Feb 2018 16:18:32 +0100
+MIME-version: 1.0
+In-reply-to: <5A7929C1.8040706@samsung.com>
+Content-type: text/plain; charset="utf-8"
+References: <20180205142230.9755-1-s.nawrocki@samsung.com>
+	<CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
+	<20180205142230.9755-2-s.nawrocki@samsung.com>
+	<5A7929C1.8040706@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has a CCU which has been largely rearranged.
-> 
-> Add support for it in the sunxi-ng CCU framework.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v2:
-> - Exported APB1 bus clock for PIO.
-> - Switch to SPDX license identifier.
-> 
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+Hi Chanwoo,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
+>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
+>>  1 file changed, 11 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index 74b70ddab4d6..d74361736e64 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
+>>  
+>>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>>  	/* MUX_SEL_TOP0 */
+>> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+>> -			4, 1),
+>> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+>> +	      4, 1, CLK_SET_RATE_PARENT, 0),
+>
+> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
+> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
+> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
+> mout_aud_pll_user would not want to change the parent's clock.
+> 
+>     fout_aud_pll                          2            2   196608009          0 0  
+>        mout_aud_pll_user                  1            1   196608009          0 0  
+>        mout_aud_pll                       0            0   196608009          0 0  
 
->  drivers/clk/sunxi-ng/Kconfig                       |    5 +
->  drivers/clk/sunxi-ng/Makefile                      |    1 +
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1199 ++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   57 +
->  include/dt-bindings/clock/sun50i-h6-ccu.h          |  125 ++
->  include/dt-bindings/reset/sun50i-h6-ccu.h          |   74 ++
->  7 files changed, 1462 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
->  create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+I'd say the range of changes is such that the consumers of the affected child 
+clocks can cope and could adjust to the changed frequencies. Those consumer 
+devices are all components/peripherals of the audio subsystem (LPASS) and, 
+for example, in case of TM2 there is no issues at all with varying the AUD PLL
+frequency depending on the HDMI audio sample rate. The other audio path uses
+the audio CODEC's internal PLL as the root clock source. The AUD PLL frequency
+will need to be adjusted somehow anyway, we could also get the PLL clock 
+directly and set it's rate, instead of relying on that rate propagation 
+algorithm.  I think we could also export a function from the exynos-lpass mfd 
+driver for setting the PLL's rate directly, after listing the AUD PLL clock 
+in the lpass DT node. That would be more flexible API, easier to adopt for 
+various use cases/boards, now we have only TM2. I can't list the PLL clock 
+in the sound node, that would not have passed the DT maintainters' review. 
+
+-- 
+Regards,
+Sylwester
