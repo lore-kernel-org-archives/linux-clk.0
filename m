@@ -1,71 +1,57 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 28 Feb 2018 13:58:50 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	linux-omap@vger.kernel.org, jsarha@ti.com
-Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
-Message-ID: <20180228215850.GH5448@atomide.com>
-References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
- <20180226220520.GI16043@atomide.com>
- <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
- <20180227164142.GA5448@atomide.com>
- <20180227164813.GB5448@atomide.com>
- <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 7 Feb 2018 16:32:13 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
+ constraints
+Message-ID: <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
+ <20180206163544.GI5681@sirena.org.uk>
+ <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
+ <20180207104351.GA6003@sirena.org.uk>
+ <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+ <20180207141846.GC6003@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180207141846.GC6003@sirena.org.uk>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [180228 05:38]:
-> On 27/02/18 18:48, Tony Lindgren wrote:
-> > * Tony Lindgren <tony@atomide.com> [180227 16:43]:
-> > > * Tero Kristo <t-kristo@ti.com> [180227 06:35]:
-> > > > On 27/02/18 00:05, Tony Lindgren wrote:
-> > > > > Hmm so should we have all the timers use bit 0 in the dtsi?
-> > > > > Or default to bit 24 for all of them?
-> > > > 
-> > > > Who is going to control the clkctrl clock for the timers if you just control
-> > > > the opt clock? Also, ain't the bit 24 the clksel mux setting? Tweaking that
-> > > > would seem wrong...
-> > > 
-> > > Yeah OK.
-> > 
-> > $ git grep TIMER arch/arm/boot/dts/* | grep CLKCTRL
-> > 
-> > And that shows timer1 using bit 24 for omap4, omap5 and dra7
-> > dtsi files.
-> > 
-> > So shouldn't that then be just bit 0 instead of bit 24 for
-> > those? And then we let omap_dm_timer_init_one() reparent it?
+On Wed, Feb 07, 2018 at 02:18:46PM +0000, Mark Brown wrote:
+> On Wed, Feb 07, 2018 at 02:37:51PM +0200, Peter De Schrijver wrote:
+> > On Wed, Feb 07, 2018 at 10:43:51AM +0000, Mark Brown wrote:
+> > > On Wed, Feb 07, 2018 at 10:47:44AM +0200, Peter De Schrijver wrote:
+> > > > On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
+> > > > > On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
 > 
-> Actually, that fck setting is because of this patch:
+> > > > > > Add API to get min/max rail voltage configured from platform for
+> > > > > > given rails.
 > 
-> 138f7ca78f5a0677f591fdf23d0309c2f4774bf7
-> ARM: OMAP2+: timer: add support for fetching fck handle from DT
+> > > > > because...
 > 
-> So, you need to provide the clock handle at bit offset 24.
+> > > > of the next patch where this is used to retrieve the minimum rail voltage.
 > 
-> The main clkctrl clock is still handled via hwmod core, or via the
-> interconnect driver.
+> > > And that in turn is needed for...?
+> 
+> > To calculate the required voltage for each frequency.
+> 
+> You're going to have to provide a much better explanation of what this
+> is doing - right now it seems like an abuse of constraints.  Client
+> drivers can already determine if a particular voltage they want to set
+> is available via regulator_list_voltage() and so on, that's what
+> constraints are there to set.  It sounds like you're trying to use them
+> for something else but you're really not explaining your use case
+> clearly.
 
-Yeah but in timer.c we just need to enable the module and it's
-clock and reparent if needed. There's nothing else to manage
-there, omap_dm_timer_init_one() just queries the rate.
+There is no way to query what voltage I will actually get for a given input
+voltage. If you read drivers/clk/tegra/cvb. (you did do that right?), you
+will see that there is a minimum and maximum voltage defined by
+charaterization which needs to be capped to the regulator generated voltages
+for those points.
 
-So I now think something is is wrong. For the interconnect target
-module we need to provide the module clock (bit 0) in the dts,
-not the source mux clock (bit 24).
-
-Then omap_dm_timer_init_one() can configure the source clock
-which is bit 24. My guess is that 138f7ca78f is really a
-workaround for set_parent() not working properly for clkctrl
-clock :)
-
-Then a board can specify it's desired source clock for system
-timer(s) by configure "assigned-lcok-parents" and set it to
-32KiHz clock or SYS_CLK.
-
-Regards,
-
-Tony
+Peter.
