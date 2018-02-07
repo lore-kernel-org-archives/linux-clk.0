@@ -1,87 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:32975 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752736AbeB0NjN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Feb 2018 08:39:13 -0500
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Thu, 8 Feb 2018 00:17:02 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 17/26] clk: renesas: r8a7790: Add rwdt clock
+Message-ID: <20180207231702.4e6kzyddzi5nyfuq@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-18-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNASOzMdk_ej-U_T3_m-OtseJUOs+TqUv-BqZFLvS3e0kww@mail.gmail.com>
-References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
- <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
- <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
- <CAK7LNAQBLTk7rduT2eQQKRhRiGTw-8MRhpz2ZJdEwKTx=-zY-Q@mail.gmail.com>
- <CAK8P3a1cEcBTiH7_gcUPZtsuRaeoOYaH3H4cYxkUBQiLMTMq=A@mail.gmail.com> <CAK7LNASOzMdk_ej-U_T3_m-OtseJUOs+TqUv-BqZFLvS3e0kww@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 27 Feb 2018 14:39:11 +0100
-Message-ID: <CAK8P3a2t9a=qzSpxSQ7j5r20i_cR2G=kAZE9amT2fFypU0whzw@mail.gmail.com>
-Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
- 'select MFD_SYSCON'
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ohc7ewrxqim5dlf4"
+In-Reply-To: <1517423070-24236-18-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 11:22 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-02-27 18:03 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> On Tue, Feb 27, 2018 at 1:46 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> But, we need to decide what the right solution is.
->>
->> I think for consistency, we should change the existing
->> 'depends on MFD_SYSCON' to 'select MFD_SYSCON'. This
->> matches what we do with REGMAP_MMIO.
->>
->> MFD_SYSCON is really a thin wrapper around REGMAP_MMIO,
->> so I would keep using the same conventions here, even though
->> we normally prefer to not 'select' any user-visible options.
->>
->> It might be possible to make MFD_SYSCON a silent symbol
->> as well, but we'd have to make sure that all users select the symbol
->> then.
->>
->>         Arnd
->
->
-> If we agree, I can send the following three patches.
->
->
-> [1] Add "depends on HAS_IOMEM"
->     to all drivers selecting MFD_SYSCON
->     (Unmet dependencies will be fixed by this)
->
-> [2] For consistency, convert existing "depends on MFD_SYSCON"
->     to "select MFD_SYSCON" + "depends on HAS_IOMEM"
 
-Those sound good.
+--ohc7ewrxqim5dlf4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> [3] Change MFD_SYSCON to user-unconfigurable option.
->     But, for COMPILE_TEST, allow users to enable it independently.
->     Like follows:
->
->     config MFD_SYSCON
->         bool "System Controller Register R/W Based on Regmap" if COMPILE_TEST
->         select REGMAP_MMIO
->         help
->           Select this option to enable accessing system control registers
->           via regmap.
->
->
-> Is this OK?
+On Wed, Jan 31, 2018 at 06:24:21PM +0000, Fabrizio Castro wrote:
+> Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
 
-I'm unsure about the third one, since we have drivers that can optionally
-use syscon, depending on the platform. With this change, any user that
-manually enabled syscon to use that with a driver that requires it on their
-platform but not on others will see a regression.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-If we do make MFD_SYSCON a silent option like that, we should remove
-the #else section in include/linux/mfd/syscon.h to force a build error,
-and require all drivers to 'select MFD_SYSCON' if they are able to use it.
 
-       Arnd
+--ohc7ewrxqim5dlf4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iO4ACgkQFA3kzBSg
+Kba0sg//ZiqvkxGuqd0reaNIc0/8qp6LCxyWq8dEcMqc7WbhG4GHYIrCtNSTT4RG
+S/LigsDl+K/qEs278NRPSue8K3c/0hjoIzDL3tkcrxSLqFCpG31mmt7uUAZZJMdx
+grOVuSgjNRhcdx3H558z8tZQbvtQSv8Cee8lKEDUB9kEC7XFnfHp+DTDGin3wMyn
+p8yP7W3BTaUN3sgduHvayzhB9LCigOaWpFXJjGHjHnTVPmQAJMNz1dIuu4vFbI7D
+K3NiU2O5GJ5NDMp6THVbJmpjFNgGeIO1SKQpC73p8MhNALWinyCoTe7/7HMsIGb1
+cqftKVlS3esFtH/3/Cw7QwygOXI8KnGWV2w0LvCIipAVv2kIDqWUL/DK9gLlWjYn
+UnO6haj4RwNDb9FGGr1JmMSwneDChrNReJYM8LnLketuaIMSV40hqqJ0pWMQWeVa
+S1yc+WyJRBQr57/Bqj3H6C3iY6CF+4CdrNQyaE4qtBnsRgk7lSMOBc2jYxznGLrU
+f6NBi2QxlKCdeG6t0mgAWlcucms0lnT1kKx1d2T+dFUcBfXSMVoD+LVOyqjSzQZv
+zu48fU69rnqMDb6kjnmv6seck1lz+VhU+Yfb72xCNd61Wg7BHVA0m4Kldojz0wm1
+pdG+MvdgyyTySdT08XrYvs9fB4nDPBZtqitoaw51F9qmLoPqf38=
+=Qp//
+-----END PGP SIGNATURE-----
+
+--ohc7ewrxqim5dlf4--
