@@ -1,84 +1,88 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Mon, 12 Feb 2018 21:58:58 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-Message-ID: <20180212205857.54nmli2jnv4fxrwm@katana>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+In-Reply-To: <20180208134338.24590-3-boris.brezillon@bootlin.com>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-3-boris.brezillon@bootlin.com>
+Date: Thu, 08 Feb 2018 15:15:42 +0000
+Message-ID: <87po5f5x7l.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fwmxrfzpbjqoxo45"
-In-Reply-To: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-
---fwmxrfzpbjqoxo45
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 12, 2018 at 05:44:21PM +0000, Fabrizio Castro wrote:
-> Due to commits:
-> * "ARM: shmobile: Add watchdog support",
-> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
-> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-> we now have everything we needed for the watchdog to work on Gen2 and
-> RZ/G1.
->=20
-> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
-> always ON, when suspending to RAM we need to explicitly disable the
-> counting by clearing TME from RWTCSRA.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
+
+> In order to enable a PLL, not only the PLL has to be powered up and
+> locked, but you also have to de-assert the reset signal. The last part
+> was missing. Add it so PLLs that were not enabled by the FW/bootloader
+> can be enabled from Linux.
+>
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
+ domain clocks")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 > ---
-> v4->v5:
-> * various improvements suggested by Wolfram
->=20
+>  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index a07f6451694a..6c5d4a8e426c 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+>  	const struct bcm2835_pll_data *data =3D pll->data;
+>=20=20
+>  	spin_lock(&cprman->regs_lock);
+> +	cprman_write(cprman, data->a2w_ctrl_reg,
+> +		     cprman_read(cprman, data->a2w_ctrl_reg) &
+> +		     ~A2W_PLL_CTRL_PRST_DISABLE);
+>  	cprman_write(cprman, data->cm_ctrl_reg,
+>  		     cprman_read(cprman, data->cm_ctrl_reg) |
+>  		     CM_PLL_ANARST);
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+For turning off, the FW just does the equivalent of:
 
+	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
 
---fwmxrfzpbjqoxo45
+How about we do that, instead?
+
+> @@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
+>  		cpu_relax();
+>  	}
+>=20=20
+> +	cprman_write(cprman, data->a2w_ctrl_reg,
+> +		     cprman_read(cprman, data->a2w_ctrl_reg) |
+> +		     A2W_PLL_CTRL_PRST_DISABLE);
+> +
+>  	return 0;
+>  }
+
+I agree with this hunk -- they drop PRST at the very end, after lock.
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqCAA0ACgkQFA3kzBSg
-KbbZ+w/9FyTriWtGeRWOvopVj5eil9PSeM1rjVIwx399i7/OiqC+180H214SwvrP
-U6knmbhPDT5hK42DPyY9OXRcMAInFbkxdNNnCyOysYW95ukf5xWSG0A0s3NoUE0e
-ALbzhebzjVNfvIPANTswz+Eykih+NEv0xlOCjbHos2aESJIfUcarrPQgcJXgubOt
-06cX+fAV7f20g2dg/g1sqE9np0N8CPIrDTCHUVi4bsAd7iwpYvOKy6pDEWgnk09z
-Q4bjFRY/xXbzjThl93n+RsuOQBEQtsfcGTeG7b2hMtQLyQ02QRmwsGT2BK829u3k
-aIHtxmrm8O6uJLTCF/qaWIu3ZheVOvRuF4gbjdKTgDpv0hLV7OLLKp4lWpqAfJ+7
-pVKxKdRPi5O+t3L36SngaYRXob751s1f+51ut89Nf1iCfLr7MfY0Yl/7gUTgP+ys
-1kDAH7oWqstKspSRQkOw4MAyoUpWMMIjVLfzsG3i1zbn4T9iWlpKJb+teTd9pdfb
-UnS7EjAa9ciggTwSadK5kfj/3l15lmmqRBJRHHC5P0c107NjjjPWdOYRYstTFlxF
-20V+74xmZ8y1BJkvAox4gR6p6Ialldi99xduDMDfJ0YxhSV5WR8DGjWPOF+U80hw
-NCcDCaxkFdvjmHJO4M4KyZqQS6vc+HW9kxh9WahzW/yZrzJamZY=
-=YcjP
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp8aZ4ACgkQtdYpNtH8
+nuiQ4A//cJlURcGmhGZTIdVh+95GAgjnwM6lAF21DVKkRsZhK6pic3OG83XNMJDt
+OY3UvdCIwEBMwXhpjUQcJY745VqdVf0rpbwBswa5fHDxS4OpNnt/USRH0LPLVEsB
+95rnxxISMYlj/bfmN6J/QwGmXpb8r6RUxBcGuszXCr4KUP5lIu5hESVAgxmoBHAH
+wIuAIo48OjxFoiFeO2iVfn6YLfD0+WhB/ugLValpVvx6DWj4922lJYHbzUa8haIZ
+aqTDCPpvO0lXYRUxw53X0hfZzNfwcVZxayZMGWurzD5px+l3gn3WrTQzQsAxE6MZ
+lW1+zHzlsQudeH/DLeKXxb37uq8toX4y2xnwqmXmIkzIcO+1ax8TXv/fsMBnrqbX
+jN/9JI/kNF3yvclfyp/8RdGCu2HMnZ51Myj8ymGr8Budb/K92b9xH+7ruHU2ebfB
+ufQDwVTQ3ZN76W/B6Nm+0pNGsAm3vGHYD8wnNF48c4x8o4GhrjDiHY48iWKq/Ky/
+wpPh4XQMxgegnyVisolo7PHTwsJQCkXSabb+mgx1fDwRXozb5oE593grFabLhD+I
+SUPDNg7UO63gDiWuV5TCZiGO7pqURMiS6nTzHjWV8kDHoX41JKdza7sIrcRKMNMp
+1r6sK/akHPKZ/l4cUQvyFZ6RMtAzW7QxuoUGX1EgPxZV1snZnpo=
+=E0l7
 -----END PGP SIGNATURE-----
-
---fwmxrfzpbjqoxo45--
+--=-=-=--
