@@ -1,89 +1,83 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 01/12] clk: sunxi-ng: Mask nkmp factors when setting register
-Date: Wed,  7 Feb 2018 22:17:02 +0100
-Message-Id: <20180207211713.3638-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Thu, 8 Feb 2018 18:49:35 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com, Stephen Warren
+ <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-rpi-kernel@lists.infradead.org, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal
+ when appropriate
+Message-ID: <20180208184935.126eec48@bbrezillon>
+In-Reply-To: <87po5f5x7l.fsf@anholt.net>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+	<20180208134338.24590-3-boris.brezillon@bootlin.com>
+	<87po5f5x7l.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, if one of the factors isn't present, bit 0 gets always set to
-1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
-K is not specified, it's offset, width and shift is 0. Driver assumes
-that lowest value possible is 1, otherwise we would get division by 0.
-That situation causes that bit 0 is always set, which may change wanted
-clock rate.
+On Thu, 08 Feb 2018 15:15:42 +0000
+Eric Anholt <eric@anholt.net> wrote:
 
-Fix that by masking every factor according to it's specified width.
-Factors with width set to 0 won't have any influence to final register
-value.
+> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+> 
+> > In order to enable a PLL, not only the PLL has to be powered up and
+> > locked, but you also have to de-assert the reset signal. The last part
+> > was missing. Add it so PLLs that were not enabled by the FW/bootloader
+> > can be enabled from Linux.
+> >
+> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > ---
+> >  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> > index a07f6451694a..6c5d4a8e426c 100644
+> > --- a/drivers/clk/bcm/clk-bcm2835.c
+> > +++ b/drivers/clk/bcm/clk-bcm2835.c
+> > @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+> >  	const struct bcm2835_pll_data *data = pll->data;
+> >  
+> >  	spin_lock(&cprman->regs_lock);
+> > +	cprman_write(cprman, data->a2w_ctrl_reg,
+> > +		     cprman_read(cprman, data->a2w_ctrl_reg) &
+> > +		     ~A2W_PLL_CTRL_PRST_DISABLE);
+> >  	cprman_write(cprman, data->cm_ctrl_reg,
+> >  		     cprman_read(cprman, data->cm_ctrl_reg) |
+> >  		     CM_PLL_ANARST);  
+> 
+> For turning off, the FW just does the equivalent of:
+> 
+> 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+> 	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
+> 
+> How about we do that, instead?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+Agreed.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index e58c95787f94..a99068a08315 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -134,6 +134,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
-+	u32 n_mask, k_mask, m_mask, p_mask;
- 	struct _ccu_nkmp _nkmp;
- 	unsigned long flags;
- 	u32 reg;
-@@ -149,18 +150,20 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
- 
-+	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
-+	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
-+	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
-+	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
-+
- 	spin_lock_irqsave(nkmp->common.lock, flags);
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
--	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
--	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
--	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
--	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
--
--	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
--	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
--	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
--	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
-+	reg &= ~(n_mask | k_mask | m_mask | p_mask);
-+
-+	reg |= ((_nkmp.n - nkmp->n.offset) << nkmp->n.shift) & n_mask;
-+	reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) & k_mask;
-+	reg |= ((_nkmp.m - nkmp->m.offset) << nkmp->m.shift) & m_mask;
-+	reg |= (ilog2(_nkmp.p) << nkmp->p.shift) & p_mask;
- 
- 	writel(reg, nkmp->common.base + nkmp->common.reg);
- 
+> 
+> > @@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
+> >  		cpu_relax();
+> >  	}
+> >  
+> > +	cprman_write(cprman, data->a2w_ctrl_reg,
+> > +		     cprman_read(cprman, data->a2w_ctrl_reg) |
+> > +		     A2W_PLL_CTRL_PRST_DISABLE);
+> > +
+> >  	return 0;
+> >  }  
+> 
+> I agree with this hunk -- they drop PRST at the very end, after lock.
+
+
+
 -- 
-2.16.1
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
