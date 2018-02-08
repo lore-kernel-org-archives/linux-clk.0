@@ -1,110 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56522 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752742AbeBCPvT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:51:19 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 3/6] clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-Date: Sat,  3 Feb 2018 23:49:39 +0800
-Message-Id: <20180203154942.63566-4-icenowy@aosc.io>
-In-Reply-To: <20180203154942.63566-1-icenowy@aosc.io>
-References: <20180203154942.63566-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: bcm2835: Protect sections updating shared registers
+In-Reply-To: <20180208134338.24590-2-boris.brezillon@bootlin.com>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-2-boris.brezillon@bootlin.com>
+Date: Thu, 08 Feb 2018 15:14:08 +0000
+Message-ID: <87shab5xa7.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On the new Allwinner H6 SoC, multiple PLL's are NMP style clocks
-(modelled as NKMP with no K) and have fixed post-dividers.
+--=-=-=
+Content-Type: text/plain
 
-Add fixed post divider support to the NKMP style clocks.
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-No changes in v2.
+> CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
+> handlers and must be accessed with ->regs_lock held.
+> Update the sections where this protection is missing.
+>
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
- drivers/clk/sunxi-ng/ccu_nkmp.c | 20 +++++++++++++++++---
- drivers/clk/sunxi-ng/ccu_nkmp.h |  2 ++
- 2 files changed, 19 insertions(+), 3 deletions(-)
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index e58c95787f94..497ac20deb19 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -81,7 +81,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
--	unsigned long n, m, k, p;
-+	unsigned long n, m, k, p, rate;
- 	u32 reg;
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
-@@ -107,7 +107,11 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	p = reg >> nkmp->p.shift;
- 	p &= (1 << nkmp->p.width) - 1;
- 
--	return (parent_rate * n * k >> p) / m;
-+	rate = (parent_rate * n * k >> p) / m;
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= nkmp->fixed_post_div;
-+
-+	return rate;
- }
- 
- static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -116,6 +120,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
- 	struct _ccu_nkmp _nkmp;
- 
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= nkmp->fixed_post_div;
-+
- 	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min ?: 1;
-@@ -127,7 +134,11 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
- 
--	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
-+	rate = *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nkmp->fixed_post_div;
-+
-+	return rate;
- }
- 
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -138,6 +149,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nkmp->fixed_post_div;
-+
- 	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min ?: 1;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
-index a82facbc6144..6940503e7fc4 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
-@@ -34,6 +34,8 @@ struct ccu_nkmp {
- 	struct ccu_div_internal		m;
- 	struct ccu_div_internal		p;
- 
-+	unsigned int		fixed_post_div;
-+
- 	struct ccu_common	common;
- };
- 
--- 
-2.15.1
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp8aUAACgkQtdYpNtH8
+nuh8cA//XtKGZJiKBHfSNoV1a827YLr1Ffush7cWpS3WsQX7hz7jLIqgSU8YF79u
+MIXJ0y3gY862J4Z+RPm9rNhBbglsBkRpRUCUejr/ZsZ0zzzwxvK59mYoICzxWs61
+ZqL2AVlg0gBlb7ygQAq84NMnWQOafo5AUR5X8Sq3Om2h3RgShJOJoRXNR+KReRn6
+Oh8TlZ0OYDJgjzFsTPRNO6QEhOGpE6z+bJUMiaTaQ+cWaFdtrKCVIryySWuGBhJ3
+p12eFVqd9gW+Iq2sA+3h8apPyeZUcvhAyLIJ08FoUROZJybyZ1Ux7zwBOMEcwHtx
+j/TxZWySaRkf3LXvvJiOK/qhisxNKOG8D+L6SCsW3q5P9cKP7AKwujO2bPocXg/A
+cvGo17/p2YJJWh8e8LSfs9y2k9SBrUiw7PlkQQjq2lf3jXYHI9aKngvB5M9kAazR
+V36+n8kzve5uEuTQVgd6fYn//v0Ehfz4E7QgZKri/HLIR3RBjfUZxhNf43TCbYTo
+b69btLXXAi2+Z5m1oyFlK5940iP4mgKsUOC9spBrEfOmpEViRK/8H60g/2xPlUWr
+TmaT+8m85kGzoztHG1gKfYDp4sdbGXWbu1Emek4ZUtheqpWsLgcXoM4DSBLWncKK
+p/UQ8UmcaqfqpVTN+50vpgOfHvrqpua2QM//thI1bMqSrZsgiXc=
+=+qqJ
+-----END PGP SIGNATURE-----
+--=-=-=--
