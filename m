@@ -1,197 +1,64 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: dinguyen@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Subject: [PATCHv4 2/3] arm64: dts: stratix10: use clock bindings for the Stratix10 platform
-Date: Tue, 13 Feb 2018 04:04:45 -0600
-Message-Id: <1518516286-14428-2-git-send-email-dinguyen@kernel.org>
-In-Reply-To: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
-References: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <boris.brezillon@bootlin.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-rpi-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/4] clk: bcm2835: Fix ana->maskX definitions
+Date: Thu,  8 Feb 2018 14:43:35 +0100
+Message-Id: <20180208134338.24590-1-boris.brezillon@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the clock bindings for the Stratix10 SoC. This includes changing the old
-binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
-this can be done is that there are currently no clock driver for Stratix10,
-thus there are no consumers of the old binding. So changing the binding will
-not break any legacy code.
+ana->maskX values are already '~'-ed in bcm2835_pll_set_rate(). Remove
+the '~' in the definition to fix ANA setup.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v4:
-- remove '_' in name of clock nodes
-- use clock-controller in SoCDK node in dts file
-v3:
-- use the correct vendor prefix
-- explain the binding change
-v2:
-- use a single clock binding for the clock controller
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 50 +++++++++++++++++++++-
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 10 +++++
- 2 files changed, 58 insertions(+), 2 deletions(-)
+Note that this commit fixes a long standing bug preventing one from
+using an HDMI display if it's plugged after the FW has booted Linux.
+This is because PLLH is used by the HDMI encoder to generate the pixel
+clock.
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index c89d0c30..5a6a699 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -17,6 +17,7 @@
- /dts-v1/;
- #include <dt-bindings/reset/altr,rst-mgr-s10.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/stratix10-clock.h>
- 
- / {
- 	compatible = "altr,socfpga-stratix10";
-@@ -92,9 +93,35 @@
- 		interrupt-parent = <&intc>;
- 		ranges = <0 0 0 0xffffffff>;
- 
--		clkmgr@ffd1000 {
--			compatible = "altr,clk-mgr";
-+		clkmgr: clock-controller@ffd10000 {
-+			compatible = "intel,stratix10-clkmgr";
- 			reg = <0xffd10000 0x1000>;
-+			#clock-cells = <1>;
-+
-+			clocks {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				cb_intosc_ls_clk: cb-intosc-ls-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				f2s_free_clk: f2s-free-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				osc1: osc1 {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+			};
- 		};
- 
- 		gmac0: ethernet@ff800000 {
-@@ -105,6 +132,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC0_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -116,6 +145,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC1_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -127,6 +158,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC2_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -229,6 +262,9 @@
- 			fifo-depth = <0x400>;
- 			resets = <&rst SDMMC_RESET>;
- 			reset-names = "reset";
-+			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
-+				 <&clkmgr STRATIX10_SDMMC_CLK>;
-+			clock-names = "biu", "ciu";
- 			status = "disabled";
- 		};
- 
-@@ -288,24 +324,32 @@
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 113 4>;
- 			reg = <0xffc03000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer1: timer1@ffc03100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 114 4>;
- 			reg = <0xffc03100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer2: timer2@ffd00000 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 115 4>;
- 			reg = <0xffd00000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer3: timer3@ffd00100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 116 4>;
- 			reg = <0xffd00100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		uart0: serial0@ffc02000 {
-@@ -315,6 +359,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART0_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -325,6 +370,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART1_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 0007564..b7f0b6b 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -50,6 +50,16 @@
- 		/* We expect the bootloader to fill in the reg */
- 		reg = <0 0 0 0>;
- 	};
-+
-+	soc {
-+		clock-controller@ffd10000 {
-+			clocks {
-+				osc1 {
-+					clock-frequency = <25000000>;
-+				};
-+			};
-+		};
-+	};
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 44301a3d9963..2108a274185a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -449,17 +449,17 @@ struct bcm2835_pll_ana_bits {
+ static const struct bcm2835_pll_ana_bits bcm2835_ana_default = {
+ 	.mask0 = 0,
+ 	.set0 = 0,
+-	.mask1 = (u32)~(A2W_PLL_KI_MASK | A2W_PLL_KP_MASK),
++	.mask1 = A2W_PLL_KI_MASK | A2W_PLL_KP_MASK,
+ 	.set1 = (2 << A2W_PLL_KI_SHIFT) | (8 << A2W_PLL_KP_SHIFT),
+-	.mask3 = (u32)~A2W_PLL_KA_MASK,
++	.mask3 = A2W_PLL_KA_MASK,
+ 	.set3 = (2 << A2W_PLL_KA_SHIFT),
+ 	.fb_prediv_mask = BIT(14),
  };
  
- &gpio1 {
+ static const struct bcm2835_pll_ana_bits bcm2835_ana_pllh = {
+-	.mask0 = (u32)~(A2W_PLLH_KA_MASK | A2W_PLLH_KI_LOW_MASK),
++	.mask0 = A2W_PLLH_KA_MASK | A2W_PLLH_KI_LOW_MASK,
+ 	.set0 = (2 << A2W_PLLH_KA_SHIFT) | (2 << A2W_PLLH_KI_LOW_SHIFT),
+-	.mask1 = (u32)~(A2W_PLLH_KI_HIGH_MASK | A2W_PLLH_KP_MASK),
++	.mask1 = A2W_PLLH_KI_HIGH_MASK | A2W_PLLH_KP_MASK,
+ 	.set1 = (6 << A2W_PLLH_KP_SHIFT),
+ 	.mask3 = 0,
+ 	.set3 = 0,
 -- 
-2.7.4
+2.14.1
