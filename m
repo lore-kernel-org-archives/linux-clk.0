@@ -1,106 +1,70 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v7_00/42]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
- <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
- <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <ebc57f3b-4f5d-612f-5b63-ddda4dd25031@lechnology.com>
-Date: Wed, 21 Feb 2018 11:05:41 -0600
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 8 Feb 2018 09:03:35 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+        Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 02/12] clk: sunxi-ng: Use u64 for calculation of nkmp
+ rate
+Message-ID: <20180208080335.uduk2aa6vdkaa5n3@flea>
+References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+ <20180207211713.3638-3-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Mf_pumyTZPn9T=sG7Ab95YS3KqKc2bT0evhESTRRFeiuQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gmiu3sxsclb4fsnm"
+In-Reply-To: <20180207211713.3638-3-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/21/2018 06:01 AM, Bartosz Golaszewski wrote:
-> 2018-02-20 19:39 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
->>>
->>> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->>>>
->>>> This series converts mach-davinci to use the common clock framework.
->>>>
->>>>
->>>
->>> Hi David,
->>>
->>> just some quick results from today's playing with v7.
->>>
->>> I started out with da850-lcdk with my standard rootfs over NFS. I was
->>> not able to boot to console so far. The first problem is that mdio
->>> fails to probe:
->>>
->>> libphy: Fixed MDIO Bus: probed
->>> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
->>> davinci_mdio 1e24000.mdio: no live phy, scanning all
->>> davinci_mdio: probe of 1e24000.mdio failed with error -5> After some
->>> digging I noticed that the supplied clock rate differs
->>> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
->>> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
->>> not help like with lcdc.
->>
->>
->> Can you post the output of this command so that I can see how your
->> clocks are setup:
->>
->> cat /sys/kernel/debug/clk/clk_summary
->>
->>
->>>
->>> After that, the boot just hangs without ever getting to emac's probe.
->>
->>
->> Using your workaround, can you run:
->>
->> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->>
->> If you see:
->>    1e27000.clock-controller: emac  off-0
->>
->> then genpd is not working like it is supposed to. You should see something
->> like this for device that are working:
->>            1e27000.clock-controller: uart2  on
->>      /devices/platform/soc@1c00000/1d0d000.serial        active
->>
->>
->>>
->>> Once I set the emac clock to always enabled (a workaround that was
->>> necessary with v6, but could be dropped with my first
->>> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
->>> pointer dereference:
->>
->>
->> I noticed this too when adding the power-domains property to some device
->> tree nodes. This is part of the reason why I didn't add it everywhere.
->> I wasn't able to figure out the cause of this yet. As a work around
->> though, please try removing the power-domains property from the emac
->> and mdio nodes and use your previous workaround of having an always
->> enabled clock.
->>
->>
-> 
-> When I use any of the workarounds I just keep getting more problems
-> (e.g. [1] from blk and pinctrl). I only had a couple hours today to
-> play with it but it seems to me we have some memory corruption
-> somewhere. I'll check the initialization order of all the frameworks
-> involved tomorrow.
-> 
-> Best regards,
-> Bartosz
-> 
-> [1] https://pastebin.com/75mkkuJL
-> 
 
-I wonder if we need to delete all of the __init and __initconst attributes
-now that this has been converted to platform devices.
+--gmiu3sxsclb4fsnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 07, 2018 at 10:17:03PM +0100, Jernej Skrabec wrote:
+> When parent rate is 24MHz and multiplier N >=3D 180, intermediate clock
+> rate doesn't fit in 32 bit variable anymore.
+>=20
+> Because of that, introduce function for calculating clock rate which
+> uses 64 bit variable for intermediate result.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--gmiu3sxsclb4fsnm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp8BFYACgkQ0rTAlCFN
+r3TClRAAg2q00R9Ae7dCh1Zyb5ztVhCT4VAqCTFiAZSlSW7NBYxrMCUBt1+JXl2H
+tlld0BOW+3nVnMnql3U6unl8/lfqTsndVczVXEW/Qz+WNBQgqaS9jGfZSdgMcrLk
+lgXd5cOvkvVBYQdFlkClQx5BbESN4l9MefFM++oVj08icksy+P5WLz39/PxZ0WG8
+/GlTMs9+vl/d0OZRRnbRnzrDm58cy2GhIcedqJMP0wlsME5jA319aea2+2jAJSAP
+Sxa3ds+oS0CifxVWqQam3uyUxuyOjPP+ZnNQNmhVBpqwYiPW2+NFGUm7AjUZ/ScP
+0bBIybY1xqu6VjIWuzgF4TPeZQ5R0E5lOyTT7BwwKhbMZsR4LBjy4jCFQPQtAeHj
+e21D/6tAZ2de3xlgIx2P7+Ij4a1Np2gI+s+2btj9pYAMEMFjojjbvG5eDepf32gq
+E8QySefQE5dF82jFiM28IhucNUfgDM1+Ya5uisBzGvvVmiiHa516ePt9YNoGZS+J
+jZ0bS6RXM0bzQXHnK8G9JhU53yZb/iDXbc3SlzFNH38vleFbOnVoHpOAW+6pQMHg
+LpfHzvGa5Sd51+0/u+bLcbvvlFRuVAhDodES+8BdGlo8BoBE60JU1BoAX8/n4RGg
+nxxQX28qhaw6Zg9wjrSlYVNmfrI5BXxF1tc9DQ+unLf8/fGeWlw=
+=05Kc
+-----END PGP SIGNATURE-----
+
+--gmiu3sxsclb4fsnm--
