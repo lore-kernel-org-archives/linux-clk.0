@@ -1,49 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:39913 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbeB0QFu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Feb 2018 11:05:50 -0500
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/2] ARM: dts: imx7s: add Keypad Port module
-Date: Tue, 27 Feb 2018 17:05:44 +0100
-Message-Id: <20180227160544.11446-2-stefan@agner.ch>
-In-Reply-To: <20180227160544.11446-1-stefan@agner.ch>
-References: <20180227160544.11446-1-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1518077220.15707.3.camel@baylibre.com>
+Subject: Re: [PATCH 05/19] clk: meson: add regmap clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Carlo Caione
+	 <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Date: Thu, 08 Feb 2018 09:07:00 +0100
+In-Reply-To: <0bd2c95c-dab3-9796-1267-472e6a00a403@amlogic.com>
+References: <20180131180945.18025-1-jbrunet@baylibre.com>
+	 <20180131180945.18025-6-jbrunet@baylibre.com>
+	 <0bd2c95c-dab3-9796-1267-472e6a00a403@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the Keypad Port module. Add it disabled by default since
-only some boards use it. Boards which do need to specify
-additional properties as documented in the device tree bindings.
+On Thu, 2018-02-08 at 15:33 +0800, Yixun Lan wrote:
+> > +/**
+> > + * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
+> > + *
+> > + * @hw:              handle between common and hardware-specific interfaces
+> > + * @offset:  offset of theregister controlling multiplexer
+> > + * @table:   array of parent indexed register values
+> > + * @shift:   shift to multiplexer bit field
+> > + * @width:   width of mutliplexer bit field
+> 
+>       ~~~~~~ this is wrong, please update to keep it sync with the
+> struct definition
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx7s.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Indeed, it is.
+This is just a copy/paste of the mux documentation provided in
+include/linux/clk-provider.h ... which is also inaccurate.
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 097b066ed23c..46400ba2217a 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -499,6 +499,14 @@
- 				status = "disabled";
- 			};
- 
-+			kpp: kpp@30320000 {
-+				compatible = "fsl,imx7d-kpp", "fsl,imx21-kpp";
-+				reg = <0x30320000 0x10000>;
-+				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX7D_KPP_ROOT_CLK>;
-+				status = "disabled";
-+			};
-+
- 			iomuxc: iomuxc@30330000 {
- 				compatible = "fsl,imx7d-iomuxc";
- 				reg = <0x30330000 0x10000>;
--- 
-2.16.2
+Thanks for pointing it out
 
+> 
+> > + * @flags:   hardware-specific flags
+> > + *
+> > + * Flags:
+> > + * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
+> > + */
+> > +struct clk_regmap_mux_data {
+> > +     unsigned int    offset;
+> > +     u32             *table;
+> > +     u32             mask;
+> 
+>                         ~~~~~ here
+> > +     u8              shift;
+> > +     u8              flags;
+> > +};
+> > +
