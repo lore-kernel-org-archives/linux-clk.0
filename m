@@ -1,33 +1,62 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 34/41] ARM: dm365: Remove legacy clock init
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-35-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7549c901-b84a-332f-39eb-8f8da8718486@ti.com>
-Date: Wed, 7 Feb 2018 19:14:48 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-35-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <boris.brezillon@bootlin.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-rpi-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 2/4] clk: bcm2835: Protect sections updating shared registers
+Date: Thu,  8 Feb 2018 14:43:36 +0100
+Message-Id: <20180208134338.24590-2-boris.brezillon@bootlin.com>
+In-Reply-To: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This removes the unused legacy clock init code from
-> arch/arm/mach-davinci/dm365.c.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
+handlers and must be accessed with ->regs_lock held.
+Update the sections where this protection is missing.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Sekhar
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2108a274185a..a07f6451694a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -623,8 +623,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
+ 		     ~A2W_PLL_CTRL_PWRDN);
+ 
+ 	/* Take the PLL out of reset. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, data->cm_ctrl_reg,
+ 		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	/* Wait for the PLL to lock. */
+ 	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
+@@ -701,9 +703,11 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 	}
+ 
+ 	/* Unmask the reference clock from the oscillator. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, A2W_XOSC_CTRL,
+ 		     cprman_read(cprman, A2W_XOSC_CTRL) |
+ 		     data->reference_enable_mask);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	if (do_ana_setup_first)
+ 		bcm2835_pll_write_ana(cprman, data->ana_reg_base, ana);
+-- 
+2.14.1
