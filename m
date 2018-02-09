@@ -1,74 +1,44 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <1519193048.18794.42.camel@mtkswgap22>
-Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
- audsys documentation to adapt MFD device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Date: Wed, 21 Feb 2018 14:04:08 +0800
-In-Reply-To: <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
- <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
- <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:33572 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeBIPvx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 10:51:53 -0500
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
- linux-clk <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20180129180154.29626-2-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au> <20180129180154.29626-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Feb 2018 16:51:51 +0100
+Message-ID: <CAMuHMdU11h-iTQtfRJk7_F1UzkzLPJTNFZErs+Vtf9mnmsVT_A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: renesas: rcar-gen3: Add Z clock divider support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-02-19 at 12:29 -0600, Rob Herring wrote:
-> On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> > The MediaTek audio hardware block that exposes functionalities that are
-> > handled by separate subsystems in the kernel.  These functions are all
-> > mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
-> > up with other functions within the same registers.
-> 
-> I still don't think this change is necessary.
-> 
-> Just because a hardware block in DT maps to different subsystems in a
-> particular OS doesn't mean you need a DT node for each OS subsystem.
-> What we have subsystems for changes over time and DT shouldn't really
-> be changing based on that. And DT is not the only way to instantiate
-> drivers.
-> 
+On Mon, Jan 29, 2018 at 7:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock divider support for R-Car Gen3 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Apart right now we have the definition of both functions. The other
-location is here:../sonud/mt2701-afe-pcm.txt. The ways I could come up
-with are:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-1. Add a dummy MFD driver (need to think a new compatible or just use
-'*-audsys' which has already been picked by clock driver) to instantiate
-two sub-devices through id_table and mfd_cell.
+I.e. will queue in clk-renesas-for-v4.17.
 
-2. For the sake of simplification - add a new compatible "simple-mfd".
+Gr{oetje,eeting}s,
 
-3. The last thing - keep two nodes separated/independent. (x)
+                        Geert
 
-I'm not sure which one is better.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-
-@Lee @Matthias: What do you suggest?
-
-Ryder.
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
