@@ -1,29 +1,44 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, yang.zheng@rock-chips.com, zhangqing@rock-chips.com
-Subject: Re: [PATCH 0/7] clk: rockchip: rk3328 fixes in preparation of graphics support
-Date: Mon, 12 Feb 2018 15:02:29 +0100
-Message-ID: <4164196.RnrTvLKjBY@phil>
-In-Reply-To: <20180122141530.12398-1-heiko@sntech.de>
-References: <20180122141530.12398-1-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:38030 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbeBIPyC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 10:54:02 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180129180154.29626-3-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au> <20180129180154.29626-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Feb 2018 16:54:01 +0100
+Message-ID: <CAMuHMdVoQO-M4+SSD5Z2wSnGh8G0m4D7N82NbuSxsA2Ogz01-w@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 22. Januar 2018, 15:15:23 CET schrieb Heiko Stuebner:
-> Fix some clock issues on rk3328 to make way for the upcoming graphics
-> support on rk3328.
-> 
-> Heiko Stuebner (6):
->   clk: rockchip: fix hclk_vio_niu on rk3328
->   clk: rockchip: remove HCLK_VIO from rk3328 dt header
->   clk: rockchip: export sclk_hdmi_sfc on rk3328
->   clk: rockchip: protect all remaining rk3328 interconnect clocks
->   clk: rockchip: remove ignore_unused flag from rk3328 vio_h2p clocks
->   clk: rockchip: document hdmi_phy external input for rk3328
-> 
-> Zheng Yang (1):
->   clk: rockchip: add flags for rk3328 dclk_lcdc
+On Mon, Jan 29, 2018 at 7:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-applied for 4.17
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I.e. will queue in clk-renesas-for-v4.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
