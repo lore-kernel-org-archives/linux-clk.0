@@ -1,129 +1,106 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 07/11] dt-bindings: tegra: Update DFLL binding for PWM regulator
-Date: Tue, 6 Feb 2018 18:34:08 +0200
-Message-ID: <1517934852-23255-8-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4/4] clk: bcm2835: Make sure the PLL is gated before changing its rate
+In-Reply-To: <20180208185619.667a4daf@bbrezillon>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-4-boris.brezillon@bootlin.com> <87mv0j5wzz.fsf@anholt.net> <20180208185619.667a4daf@bbrezillon>
+Date: Fri, 09 Feb 2018 09:32:40 +0000
+Message-ID: <87vaf6v77r.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new properties to configure the DFLL PWM regulator support. Also
-add an example and make the I2C clock only required when I2C support is
-used.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- .../bindings/clock/nvidia,tegra124-dfll.txt        | 76 +++++++++++++++++++++-
- 1 file changed, 74 insertions(+), 2 deletions(-)
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-index dff236f..a4903f7 100644
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-@@ -23,7 +23,8 @@ Required properties:
- - clock-names: Must include the following entries:
-   - soc: Clock source for the DFLL control logic.
-   - ref: The closed loop reference clock
--  - i2c: Clock source for the integrated I2C master.
-+  - i2c: Clock source for the integrated I2C master (only required when
-+	 using I2C mode).
- - resets: Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names: Must include the following entries:
-@@ -45,10 +46,28 @@ Required properties for the control loop parameters:
- Optional properties for the control loop parameters:
- - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
- 
-+Optional properties for mode selection:
-+- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
-+
- Required properties for I2C mode:
- - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
- 
--Example:
-+Required properties for PWM mode:
-+- nvidia,pwm-period: period of PWM square wave in us.
-+- nvidia,init-uv: Regulator voltage in uV when PWM control is disabled.
-+- nvidia,align-offset-uv: Regulator voltage in uV when PWM control is enabled
-+			  and PWM output is low.
-+- nvidia,align-step-uv: Voltage increase in uV corresponding to a 1/33th
-+			increase in duty cycle. Eg the voltage for 2/33th duty
-+			cycle would be:
-+			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
-+- pinctrl-0: I/O pad configuration when PWM control is enabled.
-+- pinctrl-1: I/O pad configuration when PWM control is disabled.
-+- pinctrl-names: must include the following entries:
-+  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
-+  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
-+
-+Example for I2C:
- 
- clock@70110000 {
-         compatible = "nvidia,tegra124-dfll";
-@@ -76,3 +95,56 @@ clock@70110000 {
- 
-         nvidia,i2c-fs-rate = <400000>;
- };
-+
-+Example for PWM:
-+
-+clock@70110000 {
-+        compatible = "nvidia,tegra124-dfll";
-+        reg = <0 0x70110000 0 0x100>, /* DFLL control */
-+              <0 0x70110000 0 0x100>, /* I2C output control */
-+              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
-+              <0 0x70110200 0 0x100>; /* Look-up table RAM */
-+        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+                 <&tegra_car TEGRA210_CLK_DFLL_REF>;
-+        clock-names = "soc", "ref";
-+        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
-+        reset-names = "dvco";
-+        #clock-cells = <0>;
-+        clock-output-names = "dfllCPU_out";
-+	nvidia,pwm-to-pmic;
-+	nvidia,init-uv = <1000000>;
-+	nvidia,align-step-uv = <19200>; /* 19.2mV */
-+	nvidia,align-offset-uv = <708000>; /* 708mV */
-+	nvidia,sample-rate = <25000>;
-+	nvidia,droop-ctrl = <0x00000f00>;
-+	nvidia,force-mode = <1>;
-+	nvidia,cf = <6>;
-+	nvidia,ci = <0>;
-+	nvidia,cg = <2>;
-+	nvidia,idle-override;
-+	nvidia,one-shot-calibrate;
-+	nvidia,pwm-period = <2500>; /* 2.5us */
-+	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+	pinctrl-0 = <&dvfs_pwm_active_state>;
-+	pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+};
-+
-+/* pinmux nodes added for completeness. Binding doc can be found in:
-+ * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-+ */
-+
-+pinmux: pinmux@700008d4 {
-+	dvfs_pwm_active_state: dvfs_pwm_active {
-+		dvfs_pwm_pbb1 {
-+			nvidia,pins = "dvfs_pwm_pbb1";
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+		};
-+	};
-+	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-+		dvfs_pwm_pbb1 {
-+			nvidia,pins = "dvfs_pwm_pbb1";
-+			nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+};
--- 
-1.9.1
+> On Thu, 08 Feb 2018 15:20:16 +0000
+> Eric Anholt <eric@anholt.net> wrote:
+>
+>> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+>>=20
+>> > All bcm2835 PLLs should be gated before their rate can be changed.
+>> > Setting CLK_SET_RATE_GATE will let the core enforce that, but this is
+>> > not enough to make the code work in all situations. Indeed, the
+>> > CLK_SET_RATE_GATE flag prevents a user from changing the rate while
+>> > the clock is enabled, but this check only guarantees there's no Linux
+>> > users. In our case, the clock might have been enabled by the
+>> > bootloader/FW, and, because we have CLK_IGNORE_UNUSED set, Linux never
+>> > disables the PLL. So we have to make sure the PLL is actually disabled
+>> > before changing the rate.
+>> >
+>> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the au=
+dio domain clocks")
+>> > Cc: <stable@vger.kernel.org>
+>> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>> > ---
+>> >  drivers/clk/bcm/clk-bcm2835.c | 14 +++++++++++++-
+>> >  1 file changed, 13 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm28=
+35.c
+>> > index 6c5d4a8e426c..051ce769c109 100644
+>> > --- a/drivers/clk/bcm/clk-bcm2835.c
+>> > +++ b/drivers/clk/bcm/clk-bcm2835.c
+>> > @@ -678,6 +678,18 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+>> >  	u32 ana[4];
+>> >  	int i;
+>> >=20=20
+>> > +	/*
+>> > +	 * Normally, the CLK_SET_RATE_GATE flag prevents a user from changing
+>> > +	 * the rate while the clock is enabled, but this check only makes su=
+re
+>> > +	 * there's no Linux users.
+>> > +	 * In our case, the clock might have been enabled by the bootloader/=
+FW,
+>> > +	 * and, since CLK_IGNORE_UNUSED flag is set, Linux never disables it.
+>> > +	 * So we have to make sure the clk is actually disabled before chang=
+ing
+>> > +	 * the rate.
+>> > +	 */
+>> > +	if (bcm2835_pll_is_on(hw))
+>> > +		bcm2835_pll_off(hw);
+>> > +=20=20
+>>=20
+>> I'm not sure this improves the situation.  If the PLL was on, then
+>> presumably there's a divider using it and a CM clock using that, so
+>> we'll probably end up driving some glitches on them.
+>
+> Hm, yes, but if someone is trying to change the rate of the PLL, and the
+> core doesn't know other clks depend on this PLL (which is the case if
+> we reach this point), we're already in big trouble.
+>
+>>=20
+>> Does the common clk framework have a way to disable unused clocks from
+>> the leaf clocks up to this root, before the general
+>> disable-unused-clocks path happens late in the boot process?
+>
+> Not that I know of. What do you have in mind?=20
+
+I was hoping that Stephen Boyd or Mike might have an answer for this
+problem.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp9argACgkQtdYpNtH8
+nugogQ//SSkqKPehDEo05anOPzReww5XjTNWYZpT6DVinAVUjQvpYtjn4nnR9hO8
+kjhiD2HKpHNKFyBOhewmlSGkwSQB5JaNDpKpTYg2PrhQS2IshV0Kg+uOgIw2BJbF
+HmUnNa4ZReFH6M0VMmc0CgefSyTd+HxIg5uk/LJ6Zc8zkeTNwiM2a/Hq2jLHmO9J
+4vwstvJ5JFcV37pXSo8NUN6eS1WDGEJmDKPzZG1G0JfwCSvl80WXDhr4IJlo/Lkg
+IWmP5wVFjYNtfjoCkT0+kU9VWD4OMhgNl44jgSMH9OO7TNJOZTyEHsKMrufmFlpz
+SLALWp/5JOBcUx7dNo3+pkd6tJKzvPSc6lLi52wFn+U2/sy6N8ogs0rw1SjEF6OD
+ZbrFiqRxplDSa4tCNcwgywCZeGGGwHOVT1fLrZQWA3FaWgpOMK2mdCT5ECKgEnlu
+J8equYZviVdeu8Iv4AVBzL9nw+c7ui5UncciB7mUkLWZxJv+S8a5ZjVEqYcHejVs
+5XQkIlMZm4+kcP8wSXZfAJcj9/SLyzLX4aq/U4q4OVcpPbnjpRkmP6/GVkN41Jks
+6YoznpaOqcqEwDr7GaUi3WwfSRKtesVV4Wy9OZWQ9y+ZBPBwD8bPY3W2Il0KN7eg
+fEDEHm1eioBlnqhfCwTmoWlUBQuWiX39/RZEniklBBb0uFApiMA=
+=1kxr
+-----END PGP SIGNATURE-----
+--=-=-=--
