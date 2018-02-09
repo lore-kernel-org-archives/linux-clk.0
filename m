@@ -1,58 +1,55 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:54341 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934034AbeBLL3p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 06:29:45 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:31779 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbeBIHAC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 02:00:02 -0500
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v3 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD device
-Date: Mon, 12 Feb 2018 19:28:48 +0800
-Message-ID: <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1518424204.git.ryder.lee@mediatek.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] clk: meson-axg: Add AO Cloclk and Reset driver
+Date: Fri, 9 Feb 2018 15:00:24 +0800
+Message-ID: <20180209070026.193879-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As the new MFD device is in place, switch probing method to adapt it.
+  This patch try to add AO clock and Reset driver in Amlogic's
+Meson-AXG SoC.
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/clk-mt7622-aud.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+  Please note this patchset actually depend on the clock regmap
+conversion series [1].
 
-diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index 13f752d..68c52a9 100644
---- a/drivers/clk/mediatek/clk-mt7622-aud.c
-+++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -142,11 +142,16 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *pnode = pdev->dev.parent->of_node;
- 	int r;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
- 
--	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-+	/* Check if called from MFD */
-+	if (!pnode)
-+		pnode = node;
-+
-+	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
- 			       clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+[1] clk: meson: use regmap in clock controllers
+ https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
+
+
+Yixun Lan (2):
+  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+  clk: meson-axg: Add AO Clock and Reset controller driver
+
+ drivers/clk/meson/Makefile             |   2 +-
+ drivers/clk/meson/axg-aoclk.c          | 236 +++++++++++++++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h          |  25 ++++
+ include/dt-bindings/clock/axg-aoclkc.h |  26 ++++
+ include/dt-bindings/reset/axg-aoclkc.h |  20 +++
+ 5 files changed, 308 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+
 -- 
-1.9.1
+2.15.1
 
