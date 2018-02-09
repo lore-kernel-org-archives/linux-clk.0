@@ -1,174 +1,196 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 8 Feb 2018 20:43:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings
+ information for Stratix10
+Message-ID: <20180209024340.f7sijb7h5egdn675@rob-hp-laptop>
+References: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180221183223.qacrmmuzoqlzzbpo@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdX=m9ui6GczF51SJH2X7Cw1OnxoH9pfk1DybpDX-A873Q@mail.gmail.com>
- <20180221161326.ktvf3mlzzxith5kw@verge.net.au> <CAMuHMdUTSmrWggMK4ehSL3Ux-JUzVpamTuToveuXogjuvGKkaw@mail.gmail.com>
- <20180221183223.qacrmmuzoqlzzbpo@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Feb 2018 09:38:39 +0100
-Message-ID: <CAMuHMdXCt1-coXGgtgFBm4rZLGBRMvSjbgeBSweiyKrOfCF0Xg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-To: Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+On Mon, Feb 05, 2018 at 10:22:45AM -0600, Dinh Nguyen wrote:
+> Document that Stratix10 clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Stratix10
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v3:
+> - s/intc/intel for correct vendor prefix
+> - fixup node name to "intel,stratix10-clkmgr"
+> - document the required fixed-clock for oscillators
+> v2:
+> - use a single binding for the clock controller
+> ---
+>  .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
+>  include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
+>  2 files changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+>  create mode 100644 include/dt-bindings/clock/stratix10-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+> new file mode 100644
+> index 0000000..8d218f4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+> @@ -0,0 +1,47 @@
+> +Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible : shall be
+> +	"intel,stratix10-clkmgr"
+> +
+> +- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
+> +
+> +- #clock-cells : from common clock binding, shall be set to 1.
+> +
+> +- clocks : Should contain fixed-clock sources, such as oscillators.
+> +
+> +Example:
+> +	clkmgr: clock-controller@ffd10000 {
+> +		compatible = "intel,stratix10-clkmgr";
+> +		reg = <0xffd10000 0x1000>;
+> +		#clock-cells = <1>;
+> +
+> +		clocks {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
 
-On Wed, Feb 21, 2018 at 7:32 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Feb 21, 2018 at 05:30:12PM +0100, Geert Uytterhoeven wrote:
->> On Wed, Feb 21, 2018 at 5:13 PM, Simon Horman <horms@verge.net.au> wrote:
->> > On Tue, Feb 20, 2018 at 01:51:28PM +0100, Geert Uytterhoeven wrote:
->> >> On Mon, Feb 12, 2018 at 6:44 PM, Fabrizio Castro
->> >> <fabrizio.castro@bp.renesas.com> wrote:
->> >> > this series has been around for some time as RFC, and it has collected
->> >> > useful comments from the community along the way.
->> >> > The solution proposed by this patch set works for most R-Car Gen2 and
->> >> > RZ/G1 devices, but not all of them. We now know that for some R-Car
->> >> > Gen2 early revisions there is no proper software fix. Anyway, no
->> >> > product has been built around early revisions, but development boards
->> >> > mounting early revisions (basically prototypes) are still out there.
->> >> > As a result, this series isn't enabling the internal watchdog on R-Car
->> >> > Gen2 boards, developers may enable it in board specific device trees
->> >> > if needed.
->> >> > This series has been tested by me on the iwg20d, iwg22d, Lager, Alt,
->> >> > and Koelsch boards.
->> >> >
->> >> > The problem
->> >> > ===========
->> >> > To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
->> >> > to ICRAM1 and we program the [S]BAR registers so that when we turn ON
->> >> > the non-boot CPUs they are redirected to the reset vector installed by
->> >> > Linux in ICRAM1, and eventually they continue the execution to RAM,
->> >> > where the SMP bring-up code will take care of the rest.
->> >> > The content of the [S]BAR registers survives a watchdog triggered reset,
->> >> > and as such after the watchdog fires the boot core will try and execute
->> >> > the SMP bring-up code instead of jumping to the bootrom code.
->> >> >
->> >> > The fix
->> >> > =======
->> >> > The main strategy for the solution is to let the reset vector decide
->> >> > if it needs to jump to shmobile_boot_fn or to the bootrom code.
->> >> > In a watchdog triggered reset scenario, since the [S]BAR registers keep
->> >> > their values, the boot CPU will jump into the newly designed reset
->> >> > vector, the assembly routine will eventually test WOVF (a bit in register
->> >> > RWTCSRA that indicates if the watchdog counter has overflown, the value
->> >> > of this bit gets retained in this scenario), and jump to the bootrom code
->> >> > which will in turn load up the bootloader, etc.
->> >> > When bringing up SMP or using CPU hotplug, the reset vector will jump
->> >> > to shmobile_boot_fn instead.
->> >> >
->> >> > Thank you All for your help.
->> >> >
->> >> > Best regards,
->> >> >
->> >> > Fabrizio Castro (26):
->> >> >   ARM: shmobile: Add watchdog support
->> >> >   ARM: dts: r8a7743: Adjust SMP routine size
->> >> >   ARM: dts: r8a7745: Adjust SMP routine size
->> >> >   ARM: dts: r8a7790: Adjust SMP routine size
->> >> >   ARM: dts: r8a7791: Adjust SMP routine size
->> >> >   ARM: dts: r8a7792: Adjust SMP routine size
->> >> >   ARM: dts: r8a7793: Adjust SMP routine size
->> >> >   ARM: dts: r8a7794: Adjust SMP routine size
->> >> >   soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
->> >> >   ARM: shmobile: rcar-gen2: Add watchdog support
->> >> >   dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
->> >> >   watchdog: renesas_wdt: Add R-Car Gen2 support
->> >> >   watchdog: renesas_wdt: Add restart handler
->> >> >   ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
->> >> >   clk: renesas: r8a7743: Add rwdt clock
->> >> >   clk: renesas: r8a7745: Add rwdt clock
->> >> >   clk: renesas: r8a7790: Add rwdt clock
->> >> >   clk: renesas: r8a7791/r8a7793: Add rwdt clock
->> >> >   clk: renesas: r8a7794: Add rwdt clock
->> >> >   ARM: dts: r8a7743: Add watchdog support to SoC dtsi
->> >> >   ARM: dts: r8a7745: Add watchdog support to SoC dtsi
->> >> >   ARM: dts: r8a7790: Add watchdog support to SoC dtsi
->> >> >   ARM: dts: r8a7791: Add watchdog support to SoC dtsi
->> >> >   ARM: dts: r8a7794: Add watchdog support to SoC dtsi
->> >> >   ARM: dts: iwg20m: Add watchdog support to SoM dtsi
->> >> >   ARM: dts: iwg22m: Add watchdog support to SoM dtsi
->> >> >
->> >> >  .../devicetree/bindings/watchdog/renesas-wdt.txt   | 19 ++++++--
->> >> >  arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
->> >> >  arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++-
->> >> >  arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
->> >> >  arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++-
->> >> >  arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++-
->> >> >  arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++-
->> >> >  arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
->> >> >  arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
->> >> >  arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++-
->> >> >  arch/arm/configs/shmobile_defconfig                |  1 +
->> >> >  arch/arm/mach-shmobile/common.h                    |  6 +++
->> >> >  arch/arm/mach-shmobile/headsmp.S                   | 55 ++++++++++++++++++++++
->> >> >  arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
->> >> >  arch/arm/mach-shmobile/pm-rcar-gen2.c              | 15 ++++--
->> >> >  drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
->> >> >  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
->> >> >  drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
->> >> >  drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
->> >> >  drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
->> >> >  drivers/soc/renesas/rcar-rst.c                     | 35 +++++++++++---
->> >> >  drivers/watchdog/renesas_wdt.c                     | 39 +++++++++++++--
->> >>
->> >> Thanks, I've queued the clock patches in clk-renesas-for-v4.17, as they are
->> >> a hard dependency for:
->> >>   (1) The new reset vector in arch/arm/mach-shmobile/
->> >>   (2) The watchdog driver.
->> >>
->> >> Note that the watchdog driver itself (2) has a hard dependency on the
->> >> new reset vector (1).
->> >
->> > Thanks, I have marked the watchdog driver patch as Deferred.
->> > Please resubmit or otherwise ping me once they dependencies
->> > are in an rc release.
->>
->> I gave the dependencies a bit more thought.
->>
->> I think we can gain once release cycle if you would postpone the DTS patches
->> (both SMP routine size adjustments and RWDT device node additions) to v4.18.
->> Then all other parts can be upstreamed in parallel in v4.17, as nothing
->> will be activated before the DTS parts are in.
->>
->> Does this look sane?
->
-> What about new DTS on old kernels of a specific vintage?
+Don't use '_' in node names.
 
-New DTS would work fine on v4.16 and older, which don't have any of the
-other patches from this series.
-New DTS would work fine on v4.17, assumed all other patches from this
-series get into v4.17.
+> +				#clock-cells = <0>;
+> +				compatible = "fixed-clock";
 
-The only issue would be a new DTS on a kernel that has some but not all
-other patches from this series.
+fixed clock with no frequency?
 
-If we want to fast-track everything into v4.17, we need a stable branch, to be
-pulled by all 5 actors (clk-renesas, mach-shmobile, soc-renesas, watchdog,
-renesas-dts).
+> +			};
+> +
+> +			cb_intosc_ls_clk: cb_intosc_ls_clk {
+> +				#clock-cells = <0>;
+> +				compatible = "fixed-clock";
+> +			};
+> +
+> +			f2s_free_clk: f2s_free_clk {
+> +				#clock-cells = <0>;
+> +				compatible = "fixed-clock";
+> +			};
+> +
+> +			osc1: osc1 {
+> +				#clock-cells = <0>;
+> +				compatible = "fixed-clock";
+> +			};
+> +		};
+> +	};
+> diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
+> new file mode 100644
+> index 0000000..bbbd9fd
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/stratix10-clock.h
+> @@ -0,0 +1,85 @@
+> +/*
+> + * SPDX-License-Identifier:	GPL-2.0
 
-Gr{oetje,eeting}s,
+This should be first line. Sorry, it's a moving target.
 
-                        Geert
+> + *
+> + * Copyright (C) 2017, Intel Corporation
+> + */
+> +
+> +#ifndef __STRATIX10_CLOCK_H
+> +#define __STRATIX10_CLOCK_H
+> +
+> +/* fixed rate clocks */
+> +#define STRATIX10_OSC1			0
+> +#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
+> +#define STRATIX10_CB_INTOSC_LS_CLK	2
+> +#define STRATIX10_F2S_FREE_CLK		3
+> +
+> +/* fixed factor clocks */
+> +#define STRATIX10_L4_SYS_FREE_CLK	4
+> +#define STRATIX10_MPU_PERIPH_CLK	5
+> +#define STRATIX10_MPU_L2RAM_CLK		6
+> +#define STRATIX10_SDMMC_CIU_CLK		7
+> +
+> +/* PLL clocks */
+> +#define STRATIX10_MAIN_PLL_CLK		8
+> +#define STRATIX10_PERIPH_PLL_CLK	9
+> +#define STRATIX10_BOOT_CLK		10
+> +
+> +/* Periph clocks */
+> +#define STRATIX10_MAIN_MPU_BASE_CLK	11
+> +#define STRATIX10_MAIN_NOC_BASE_CLK	12
+> +#define STRATIX10_MAIN_EMACA_CLK	13
+> +#define STRATIX10_MAIN_EMACB_CLK	14
+> +#define STRATIX10_MAIN_EMAC_PTP_CLK	15
+> +#define STRATIX10_MAIN_GPIO_DB_CLK	16
+> +#define STRATIX10_MAIN_SDMMC_CLK	17
+> +#define STRATIX10_MAIN_S2F_USR0_CLK	18
+> +#define STRATIX10_MAIN_S2F_USR1_CLK	19
+> +#define STRATIX10_MAIN_PSI_REF_CLK	20
+> +
+> +#define STRATIX10_PERI_MPU_BASE_CLK	21
+> +#define STRATIX10_PERI_NOC_BASE_CLK	22
+> +#define STRATIX10_PERI_EMACA_CLK	23
+> +#define STRATIX10_PERI_EMACB_CLK	24
+> +#define STRATIX10_PERI_EMAC_PTP_CLK	25
+> +#define STRATIX10_PERI_GPIO_DB_CLK	26
+> +#define STRATIX10_PERI_SDMMC_CLK	27
+> +#define STRATIX10_PERI_S2F_USR0_CLK	28
+> +#define STRATIX10_PERI_S2F_USR1_CLK	29
+> +#define STRATIX10_PERI_PSI_REF_CLK	30
+> +
+> +#define STRATIX10_MPU_FREE_CLK		31
+> +#define STRATIX10_NOC_FREE_CLK		32
+> +#define STRATIX10_S2F_USR0_CLK		33
+> +#define STRATIX10_NOC_CLK		34
+> +#define STRATIX10_EMAC_A_FREE_CLK	35
+> +#define STRATIX10_EMAC_B_FREE_CLK	36
+> +#define STRATIX10_EMAC_PTP_FREE_CLK	37
+> +#define STRATIX10_GPIO_DB_FREE_CLK	38
+> +#define STRATIX10_SDMMC_FREE_CLK	39
+> +#define STRATIX10_S2F_USER1_FREE_CLK	40
+> +#define STRATIX10_PSI_REF_FREE_CLK	41
+> +
+> +/* Gate clocks */
+> +#define STRATIX10_MPU_CLK		42
+> +#define STRATIX10_L4_MAIN_CLK		43
+> +#define	STRATIX10_L4_MP_CLK		44
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+A stray tab...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +#define STRATIX10_L4_SP_CLK		45
+> +#define STRATIX10_CS_AT_CLK		46
+> +#define STRATIX10_CS_TRACE_CLK		47
+> +#define STRATIX10_CS_PDBG_CLK		48
+> +#define STRATIX10_CS_TIMER_CLK		49
+> +#define STRATIX10_S2F_USER0_CLK		50
+> +#define STRATIX10_S2F_USER1_CLK		51
+> +#define STRATIX10_EMAC0_CLK		52
+> +#define STRATIX10_EMAC1_CLK		53
+> +#define STRATIX10_EMAC2_CLK		54
+> +#define STRATIX10_EMAC_PTP_CLK		55
+> +#define STRATIX10_GPIO_DB_CLK		56
+> +#define STRATIX10_SDMMC_CLK		57
+> +#define STRATIX10_PSI_REF_CLK		58
+> +#define STRATIX10_USB_CLK		59
+> +#define STRATIX10_SPI_M_CLK		60
+> +#define STRATIX10_NAND_CLK		61
+> +#define STRATIX10_NUM_CLKS		62
+> +
+> +#endif	/* __STRATIX10_CLOCK_H */
+> -- 
+> 2.7.4
+> 
