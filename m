@@ -1,97 +1,152 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 7/7] arm64: allwinner: h6: add support for Pine H64 board
-Date: Fri, 23 Feb 2018 20:35:55 +0800
-Message-Id: <20180223123555.64009-8-icenowy@aosc.io>
-In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
-References: <20180223123555.64009-6-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 8 Feb 2018 20:22:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	tali.perry1@gmail.com, avifishman70@gmail.com,
+	brendanhiggins@google.com, joel@jms.id.au,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v1 1/2] dt-binding: clock: document NPCM7xx clock DT
+ bindings
+Message-ID: <20180209022238.v52rw5filxcig6mg@rob-hp-laptop>
+References: <1517818975-11427-1-git-send-email-tmaimon77@gmail.com>
+ <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
-features:
+On Mon, Feb 05, 2018 at 10:22:54AM +0200, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton NPCM7xx clocks.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../bindings/clock/nuvoton,npcm7xx-clk.txt         | 84 ++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
+> new file mode 100644
+> index 000000000000..1ba1945d3616
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
+> @@ -0,0 +1,84 @@
+> +* Nuvoton NPCM7XX Clock Controller
+> +
+> +Nuvoton Poleg BMC NPCM7XX contain integrated clock
 
-- 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
-accessible)
-- AXP805 PMIC
-- Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
-compatible with the "Euler" on Pine A64) and "Expansion" pin header
-- 2 USB 2.0 ports and 1 USB 3.0 ports
-- Audio jack
-- MicroSD slot and eMMC module slot
-- on-board SPI NOR flash
-- 1Gbps Ethernet port (via RTL8211E PHY)
-- HDMI port
+s/contain/contains/
 
-Adds initial support for it, including the UART on the Expansion pin
-header.
+And your line break is strange.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
----
-Changes in v3:
-- SPDX license identifier fix.
-- Add Andre's Reviewed-by/Tested-by tags.
+> +controller, which generates and supplies clock to all modules within the BMC.
 
-Changes in v2:
-- Switch to SPDX license identifier.
+s/clock/clocks/
 
- arch/arm64/boot/dts/allwinner/Makefile             |  1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 29 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> +
+> +Required Properties:
+> +
+> +- compatible: should be one of following:
+> +	- "nuvoton,npcm750-clk" : for clock controller of Nuvoton
+> +	  Poleg BMC NPCM750
+> +
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +
+> +
+> +- #clock-cells: should be 1.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/nuvoton,npcm7xx-clock.h header and can beused in device tree
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index f505227b0250..addf245226f6 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-new file mode 100644
-index 000000000000..d36de5eb81f3
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h6.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Pine H64";
-+	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_ph_pins>;
-+	status = "okay";
-+};
--- 
-2.15.1
+This file should be part of this patch.
+
+> +sources.
+> +
+> +External clocks:
+> +
+> +There are several clocks that are generated outside the BMC. All clocks are of
+> +a known fixed value that cannot be chagned. Therefor these values are hard coded
+
+s/chagned/changed/
+
+s/Therefor/Therefore/
+
+> +inside the driver and registered on init.
+> +
+> +The clock modules contains 4 PLL, 20 dividers and 11 muxes. All these settings
+> +are set before Linux boot and are not to be altered by the Linux. This driver is
+> +used only to read the values clocks, not to set them.
+> +
+> +In addition to the clock driver, there are 3 external clocks suppling the
+
+The binding describes h/w, not a driver.
+
+> +network, which are of fixed values, set on on the device tree, but not used by
+> + the clock module. Example can be found below.
+   ^
+extra space
+
+All this description belongs at the top of this doc.
+
+> +
+> +Example: Clock controller node:
+> +
+> +	clk: clock-controller@f0801000 {
+> +		compatible = "nuvoton,npcm750-clk";
+> +		#clock-cells = <1>;
+> +		clock-controller;
+> +		reg = <0xf0801000 0x1000>;
+> +		status = "okay";
+> +	};
+> +
+> +Example: Required external clocks for network:
+> +
+> +		/* external clock signal rg1refck, supplied by the phy */
+> +		clk_rg1refck: clk_rg1refck {
+
+Use '-' rather than '_' in node names.
+
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <125000000>;
+> +			clock-output-names = "clk_rg1refck";
+> +		};
+> +
+> +		/* external clock signal rg2refck, supplied by the phy */
+> +		clk_rg2refck: clk_rg2refck {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <125000000>;
+> +			clock-output-names = "clk_rg2refck";
+> +		};
+> +
+> +		clk_xin: clk_xin {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <50000000>;
+> +			clock-output-names = "clk_xin";
+> +		};
+> +
+> +Example: UART controller node that consumes the clock generated by the clock
+> +  controller (refer to the standard clock bindings for information about
+> +  "clocks" and "clock-names" properties):
+> +
+> +	uart0: serial@e2900000 {
+> +		compatible = "Nuvoton,s5pv210-uart";
+
+s/Nuvoton/nuvoton/
+
+> +		reg = <0xe2900000 0x400>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <10>;
+> +		clock-names = "uart", "clk_uart_baud0",
+> +				"clk_uart_baud1";
+> +		clocks = <&clocks UART0>, <&clocks UART0>,
+> +				<&clocks SCLK_UART0>;
+> +	};
+> -- 
+> 2.14.1
+> 
