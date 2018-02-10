@@ -1,172 +1,184 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
 	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v6 04/15] clk: qcom: Add HFPLL driver
-Date: Tue,  6 Feb 2018 09:38:17 +0530
-Message-Id: <1517890108-8140-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 06/11] clk: actions: Add mux clock support
+Date: Sat, 10 Feb 2018 08:11:15 +0530
+Message-Id: <20180210024120.27503-7-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Add support for Actions Semi mux clock together with helper
+functions to be used in composite clock.
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
-
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index fbf4532..d9ae51e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -226,3 +226,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
-+
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index a2b7888..c57b808 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -39,3 +39,4 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 1f0917872c9d..2d4aa8f35d90 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ 
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
 new file mode 100644
-index 0000000..a6de7101
+index 000000000000..f9c6cf2540e4
 --- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
 +#include <linux/clk-provider.h>
 +#include <linux/regmap.h>
 +
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
++#include "owl-mux.h"
 +
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
-+};
-+
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
 +{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_ops_hfpll,
-+	};
++	u32 reg;
++	u8 parent;
 +
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
++	return parent;
 +}
 +
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_hfpll_driver);
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
 +
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
++
++	return 0;
++}
++
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
++}
++
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
+new file mode 100644
+index 000000000000..834284c8c3ae
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
++
++#include "owl-common.h"
++
++struct owl_mux_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++};
++
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_MUX_HW(_reg, _shift, _width)		\
++	{						\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
++	}
++
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
++		},							\
++	}
++
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_mux, common);
++}
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
++
++extern const struct clk_ops owl_mux_ops;
++
++#endif /* _OWL_MUX_H_ */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.1
