@@ -1,69 +1,111 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
+References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+ <20180210024120.27503-2-manivannan.sadhasivam@linaro.org> <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Date: Sat, 10 Feb 2018 13:32:54 +0530
+Message-ID: <CAOZjjhk5LZ+OT4=tyfDTCGNe8gjXfoPc3z=S1d9bB+rqSBk1qA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, liuwei@actions-semi.com,
+	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>, LKML <linux-kernel@vger.kernel.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v6 12/15] dt-bindings: clock: Document qcom,krait-cc
-Date: Tue,  6 Feb 2018 09:38:25 +0530
-Message-Id: <1517890108-8140-13-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Philippe,
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
+On 10 February 2018 at 13:06, Philippe Ombredanne <pombredanne@nexb.com> wrote:
+> Dear Manivannan,
+>
+> On Sat, Feb 10, 2018 at 3:41 AM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+>> Add Actions Semi S900 clock bindings.
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>
+> <snip>
+>
+>> diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+>> new file mode 100644
+>> index 000000000000..2fa94e19922b
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/actions,s900-cmu.h
+>> @@ -0,0 +1,139 @@
+>> +/*
+>> + * Device Tree binding constants for Actions S900 Clock Management Unit
+>> + *
+>> + * Copyright (c) 2014 Actions Semi Inc.
+>> + * Copyright (c) 2017 Linaro Ltd.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+>> + * GNU General Public License for more details.
+>> + */
+>
+> Would you consider using the new SPDX license ids rather that this
+> time-tested but rather boring legalese?
+>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+Very sorry! I converted all the driver code to SPDX license tag but since
+this file was already Acked, I forgot to do so.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..874138f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,22 @@
-+Krait Clock Controller
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		#clock-cells = <1>;
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Will clean it up.
+
+> The (still new and fresh) license documentation contributed by tglx
+> --the only maintainer that I know that understands both the innards of
+> Spectre and Meltdown and the beauty of reStructuredText -- is in:
+> Documentation/process/license-rules.rst
+>
+> Practically this means replacing the above by a simple single line and
+> getting rid of a whopping 8 comment lines!
+>
+> SPDX-License-Identifier: GPL-2.0+
+>
+> You get to save a few tree as a bonus if you also do the same for all
+> Linaro-copyrighted files. Yes this is saving trees because I will use
+> less paper each time I print a listing of the kernel source code.
+> Which is something that I rarely if ever do: but somebody must do it
+> somewhere for sure.
+>
+
+This is something I will consider doing it in a separate patchset.
+
+> If I do the math: we have ~60K files in the kernel, and say we can
+> remove roughly 5 lines of legalese per file on average. Each printed
+> source code page is roughly 60 lines : this will mean a saving of
+> about 6000 paper sheets saved on each printout! A letter-size paper
+> ream is 500 pages, about 2.5 Kg and costs about ~$8.  You can extract
+> about 10K to 20k sheets of paper per tree [1].
+> Therefore my Fermi estimate is that using shorter legalese in the
+> kernel will eventually save roughly ONE FULL smaller tree (6K pages)
+> each time someone prints the kernel code: incredible, right?
+>
+> Thank  you for helping make the kernel a mostly legalese-free codebase
+> and saving trees at the same time!
+>
+
+Thanks for the finding!
+
+Regards,
+Mani
+
+> [1] https://www.sierraclub.org/sierra/2014-4-july-august/green-life/how-much-paper-does-one-tree-produce
+> --
+> Cordially
+> Philippe Ombredanne
