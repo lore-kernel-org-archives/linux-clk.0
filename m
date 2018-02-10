@@ -1,67 +1,127 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
 	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v5 03/12] drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
-Date: Wed, 14 Feb 2018 21:08:57 +0100
-Message-Id: <20180214200906.31509-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+	linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 00/11] Add clock driver for Actions S900 SoC
+Date: Sat, 10 Feb 2018 08:11:09 +0530
+Message-Id: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
-magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
+This patchset adds clock support for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree data.
 
-Tests show that one iteration is enough.
+Driver has been validated on Bubblegum-96 board.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Thanks,
+Mani
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index a38db40ce990..7ca14d7325b5 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 	 * then write one of the FC registers several times.
- 	 *
- 	 * The number of iterations matters and depends on the HDMI TX revision
--	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
--	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
--	 * 4 and 1 iterations respectively.
-+	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
-+	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
-+	 * as needing the workaround, with 4 iterations for v1.30a and 1
-+	 * iteration for others.
- 	 */
- 
- 	switch (hdmi->version) {
-@@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 		count = 4;
- 		break;
- 	case 0x131a:
-+	case 0x132a:
- 		count = 1;
- 		break;
- 	default:
+Changes in V3:
+
+* Completely refactored the clock driver based on sunxi-ng
+  clock structure
+* Removed all owl_ prefixed functions for registering the
+  clock driver and used the registration functions directly
+* Moved to SPDX based license tag
+* Removed module dependencies from the driver
+* Made I2C clocks as simple gate clocks due to the lack of
+  information about factor rates
+* Added Ack from Rob for DT bindings
+* Sourced CMU clock for UART5
+
+Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
+
+* Changed the directory structure to actions/ and used owl- prefix
+  for sources.
+* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
+* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
+* Changed the license from GPLv2 to GPLv2+.
+* Moved fixed clock sources to DT
+* Changed clock-controller node name to cmu in DT
+* Added clocks property to cmu node in DT
+* Changed compatible property value to "actions,s900-cmu"
+* Fixed example UART controller node in documentation
+* Fixed tab vs space issue
+
+Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
+
+* Addressed last year's review comments from Stephen
+- https://patchwork.kernel.org/patch/9254471/
+
+Manivannan Sadhasivam (11):
+  dt-bindings: clock: Add Actions S900 clock bindings
+  arm64: dts: actions: Add S900 clock management unit nodes
+  arm64: dts: actions: Source CMU clock for UART5
+  clk: actions: Add common clock driver support
+  clk: actions: Add gate clock support
+  clk: actions: Add mux clock support
+  clk: actions: Add divider clock support
+  clk: actions: Add factor clock support
+  clk: actions: Add composite clock support
+  clk: actions: Add pll clock support
+  clk: actions: Add S900 SoC clock support
+
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
+ arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |  12 +
+ drivers/clk/actions/owl-common.c                   |  84 +++
+ drivers/clk/actions/owl-common.h                   |  40 ++
+ drivers/clk/actions/owl-composite.c                | 155 +++++
+ drivers/clk/actions/owl-composite.h                | 101 ++++
+ drivers/clk/actions/owl-divider.c                  |  94 +++
+ drivers/clk/actions/owl-divider.h                  |  75 +++
+ drivers/clk/actions/owl-factor.c                   | 222 +++++++
+ drivers/clk/actions/owl-factor.h                   |  83 +++
+ drivers/clk/actions/owl-gate.c                     |  77 +++
+ drivers/clk/actions/owl-gate.h                     |  73 +++
+ drivers/clk/actions/owl-mux.c                      |  60 ++
+ drivers/clk/actions/owl-mux.h                      |  61 ++
+ drivers/clk/actions/owl-pll.c                      | 194 ++++++
+ drivers/clk/actions/owl-pll.h                      |  92 +++
+ drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
+ drivers/clk/actions/owl-s900.h                     |  61 ++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++
+ 24 files changed, 2373 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
+ create mode 100644 drivers/clk/actions/owl-s900.c
+ create mode 100644 drivers/clk/actions/owl-s900.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
+
 -- 
-2.16.1
+2.14.1
