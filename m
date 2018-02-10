@@ -1,116 +1,348 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v7_00/42]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
-Date: Tue, 20 Feb 2018 12:39:59 -0600
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 10/11] clk: actions: Add pll clock support
+Date: Sat, 10 Feb 2018 08:11:19 +0530
+Message-Id: <20180210024120.27503-11-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
-> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
->> This series converts mach-davinci to use the common clock framework.
->>
->>
-> 
-> Hi David,
-> 
-> just some quick results from today's playing with v7.
-> 
-> I started out with da850-lcdk with my standard rootfs over NFS. I was
-> not able to boot to console so far. The first problem is that mdio
-> fails to probe:
-> 
-> libphy: Fixed MDIO Bus: probed
-> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
-> davinci_mdio 1e24000.mdio: no live phy, scanning all
-> davinci_mdio: probe of 1e24000.mdio failed with error -5> 
-> After some digging I noticed that the supplied clock rate differs
-> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
-> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
-> not help like with lcdc.
+Add support for Actions Semi PLL clock
 
-Can you post the output of this command so that I can see how your
-clocks are setup:
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile  |   1 +
+ drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
 
-cat /sys/kernel/debug/clk/clk_summary
-
-
-> 
-> After that, the boot just hangs without ever getting to emac's probe.
-
-Using your workaround, can you run:
-
-cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-
-If you see:
-   
-1e27000.clock-controller: emac  off-0
-
-then genpd is not working like it is supposed to. You should see something
-like this for device that are working:
-           
-1e27000.clock-controller: uart2  on
-     /devices/platform/soc@1c00000/1d0d000.serial        active
-
-
-> 
-> Once I set the emac clock to always enabled (a workaround that was
-> necessary with v6, but could be dropped with my first
-> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
-> pointer dereference:
-
-I noticed this too when adding the power-domains property to some device
-tree nodes. This is part of the reason why I didn't add it everywhere.
-I wasn't able to figure out the cause of this yet. As a work around
-though, please try removing the power-domains property from the emac
-and mdio nodes and use your previous workaround of having an always
-enabled clock.
-
-> 
-> Backtrace:
-> [<c049d464>] (strlen) from [<c01f32a8>] (start_creating+0x58/0xc0)
-> [<c01f3250>] (start_creating) from [<c01f34c8>] (debugfs_create_dir+0x14/0xd8)
->   r7:c04dadbc r6:c0567480 r5:c0656274 r4:c68a9300
-> [<c01f34b4>] (debugfs_create_dir) from [<c0296838>]
-> (clk_debug_create_one+0x28/0x1d0)
->   r5:c0656274 r4:c68a9300
-> [<c0296810>] (clk_debug_create_one) from [<c05cdf84>]
-> (clk_debug_init+0x100/0x15c)
->   r5:c0656274 r4:c68a9300
-> [<c05cde84>] (clk_debug_init) from [<c000a54c>] (do_one_initcall+0x50/0x19c)
->   r7:c05e3834 r6:ffffe000 r5:c05f7008 r4:c05cde84
-> [<c000a4fc>] (do_one_initcall) from [<c05b6eb4>]
-> (kernel_init_freeable+0x110/0x1cc)
->   r9:c05b4584 r8:c05b6614 r7:c05e3834 r6:c063cc80 r5:00000073 r4:c05f2354
-> [<c05b6da4>] (kernel_init_freeable) from [<c04a2ce4>] (kernel_init+0x10/0xfc)
->   r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c04a2cd4
->   r4:00000000
-> [<c04a2cd4>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
-> 
-> It turns out that the emac clock is correctly registered in
-> __davinci_psc_register_clocks() and a corresponding clk_core structure
-> is added to the list and core->name is correctly assigned, but then
-> later when clk_debug_init() is called, the name in emac clk_core is
-> NULL. This is the direct reason for the panic. Interestingly other
-> members of clk_core seem to be fine.
-> 
-> I'll continue on debugging it. Let me know if you have any ideas.
-> 
-> Best regards,
-> Bartosz Golaszewski
-> 
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 53431aef6e9c..31b68eab9309 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
+ clk-owl-y			+= owl-divider.o
+ clk-owl-y			+= owl-factor.o
+ clk-owl-y			+= owl-composite.o
++clk-owl-y			+= owl-pll.o
+diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+new file mode 100644
+index 000000000000..3560c7324f9c
+--- /dev/null
++++ b/drivers/clk/actions/owl-pll.c
+@@ -0,0 +1,194 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL pll clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++
++#include "owl-pll.h"
++
++static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
++{
++	u32 mul;
++
++	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
++	if (mul < pll_hw->min_mul)
++		mul = pll_hw->min_mul;
++	else if (mul > pll_hw->max_mul)
++		mul = pll_hw->max_mul;
++
++	return mul &= mul_mask(pll_hw);
++}
++
++static unsigned int _get_table_rate(const struct clk_pll_table *table,
++		unsigned int val)
++{
++	const struct clk_pll_table *clkt;
++
++	for (clkt = table; clkt->rate; clkt++)
++		if (clkt->val == val)
++			return clkt->rate;
++
++	return 0;
++}
++
++static const struct clk_pll_table *_get_pll_table(
++		const struct clk_pll_table *table, unsigned long rate)
++{
++	const struct clk_pll_table *clkt;
++
++	for (clkt = table; clkt->rate; clkt++) {
++		if (clkt->rate == rate) {
++			table = clkt;
++			break;
++		} else if (clkt->rate < rate)
++			table = clkt;
++	}
++
++	return table;
++}
++
++static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct clk_pll_table *clkt;
++	u32 mul;
++
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		return clkt->rate;
++	}
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	mul = owl_pll_calculate_mul(pll_hw, rate);
++
++	return pll_hw->bfreq * mul;
++}
++
++static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 val;
++
++	if (pll_hw->table) {
++		regmap_read(common->regmap, pll_hw->reg, &val);
++
++		val = val >> pll_hw->shift;
++		val &= mul_mask(pll_hw);
++
++		return _get_table_rate(pll_hw->table, val);
++	}
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	regmap_read(common->regmap, pll_hw->reg, &val);
++
++	val = val >> pll_hw->shift;
++	val &= mul_mask(pll_hw);
++
++	return pll_hw->bfreq * val;
++}
++
++static int owl_pll_is_enabled(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 reg;
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	return !!(reg & BIT(pll_hw->bit_idx));
++}
++
++static void owl_pll_set(const struct owl_clk_common *common,
++		       const struct owl_pll_hw *pll_hw, bool enable)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	if (enable)
++		reg |= BIT(pll_hw->bit_idx);
++	else
++		reg &= ~BIT(pll_hw->bit_idx);
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
++}
++
++static int owl_pll_enable(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
++
++	owl_pll_set(common, &pll->pll_hw, true);
++
++	return 0;
++}
++
++static void owl_pll_disable(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
++
++	owl_pll_set(common, &pll->pll_hw, false);
++}
++
++static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	const struct clk_pll_table *clkt;
++	u32 val, reg;
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return 0;
++
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		val = clkt->val;
++	} else {
++		val = owl_pll_calculate_mul(pll_hw, rate);
++	}
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	reg &= ~mul_mask(pll_hw);
++	reg |= val << pll_hw->shift;
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
++
++	udelay(PLL_STABILITY_WAIT_US);
++
++	return 0;
++}
++
++const struct clk_ops owl_pll_ops = {
++	.enable = owl_pll_enable,
++	.disable = owl_pll_disable,
++	.is_enabled = owl_pll_is_enabled,
++	.round_rate = owl_pll_round_rate,
++	.recalc_rate = owl_pll_recalc_rate,
++	.set_rate = owl_pll_set_rate,
++};
+diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
+new file mode 100644
+index 000000000000..0aae30abd5dc
+--- /dev/null
++++ b/drivers/clk/actions/owl-pll.h
+@@ -0,0 +1,92 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL pll clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_PLL_H_
++#define _OWL_PLL_H_
++
++#include "owl-common.h"
++
++/* last entry should have rate = 0 */
++struct clk_pll_table {
++	unsigned int		val;
++	unsigned long		rate;
++};
++
++struct owl_pll_hw {
++	u32			reg;
++	u32			bfreq;
++	u8			bit_idx;
++	u8			shift;
++	u8			width;
++	u8			min_mul;
++	u8			max_mul;
++	const struct clk_pll_table *table;
++};
++
++struct owl_pll {
++	struct owl_pll_hw	pll_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
++		   _width, _min_mul, _max_mul, _table)			\
++	{								\
++		.reg		= _reg,					\
++		.bfreq		= _bfreq,				\
++		.bit_idx	= _bit_idx,				\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.min_mul	= _min_mul,				\
++		.max_mul	= _max_mul,				\
++		.table		= _table,				\
++	}
++
++#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT(_name,			\
++					       _parent,			\
++					       &owl_pll_ops,		\
++					       _flags),			\
++		},							\
++	}
++
++#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
++					       &owl_pll_ops,		\
++					       _flags),			\
++		},							\
++	}
++
++#define mul_mask(m)		((1 << ((m)->width)) - 1)
++#define PLL_STABILITY_WAIT_US	(50)
++
++static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_pll, common);
++}
++
++extern const struct clk_ops owl_pll_ops;
++
++#endif /* _OWL_PLL_H_ */
+-- 
+2.14.1
