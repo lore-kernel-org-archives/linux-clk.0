@@ -1,128 +1,239 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/19] clk: meson: only one loop index is necessary in probe
-Date: Mon, 12 Feb 2018 15:58:30 +0100
-Message-Id: <20180212145846.19380-4-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+	linux-arm-kernel@lists.infradead.org,
+	viresh.kumar@linaro.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Sat, 10 Feb 2018 08:11:10 +0530
+Message-Id: <20180210024120.27503-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We don't need several loop index variables in the probe function
-This is far from being critical but since we are doing a vast
-rework of meson clock controllers, now is the time to lower the
-entropy a bit
+Add Actions Semi S900 clock bindings.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/meson/axg.c     |  8 ++++----
- drivers/clk/meson/gxbb.c    | 13 ++++++-------
- drivers/clk/meson/meson8b.c |  8 ++++----
- 3 files changed, 14 insertions(+), 15 deletions(-)
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 +++++++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++++++++++++++++++
+ 2 files changed, 186 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index e16d53b6be30..3bb77b4f1e8d 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -802,7 +802,7 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	const struct clkc_data *clkc_data;
- 	struct resource *res;
- 	void __iomem *clk_base;
--	int ret, clkid, i;
-+	int ret, i;
- 
- 	clkc_data = of_device_get_match_data(dev);
- 	if (!clkc_data)
-@@ -841,13 +841,13 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		clkc_data->clk_dividers[i]->reg = clk_base +
- 			(u64)clkc_data->clk_dividers[i]->reg;
- 
--	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
-+	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
- 		/* array might be sparse */
--		if (!clkc_data->hw_onecell_data->hws[clkid])
-+		if (!clkc_data->hw_onecell_data->hws[i])
- 			continue;
- 
- 		ret = devm_clk_hw_register(dev,
--					clkc_data->hw_onecell_data->hws[clkid]);
-+					   clkc_data->hw_onecell_data->hws[i]);
- 		if (ret) {
- 			dev_err(dev, "Clock registration failed\n");
- 			return ret;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 17f44ac751b3..e6adab49c0ba 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1947,7 +1947,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	const struct clkc_data *clkc_data;
- 	void __iomem *clk_base;
--	int ret, clkid, i;
-+	int ret, i;
- 	struct device *dev = &pdev->dev;
- 
- 	clkc_data = of_device_get_match_data(dev);
-@@ -1988,16 +1988,15 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
- 		clkc_data->clk_audio_dividers[i]->base = clk_base;
- 
--	/*
--	 * register all clks
--	 */
--	for (clkid = 0; clkid < clkc_data->hw_onecell_data->num; clkid++) {
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+new file mode 100644
+index 000000000000..93e4fb827cd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+@@ -0,0 +1,47 @@
++* Actions S900 Clock Management Unit (CMU)
 +
-+	/* Register all clks */
-+	for (i = 0; i < clkc_data->hw_onecell_data->num; i++) {
- 		/* array might be sparse */
--		if (!clkc_data->hw_onecell_data->hws[clkid])
-+		if (!clkc_data->hw_onecell_data->hws[i])
- 			continue;
- 
- 		ret = devm_clk_hw_register(dev,
--					clkc_data->hw_onecell_data->hws[clkid]);
-+					   clkc_data->hw_onecell_data->hws[i]);
- 		if (ret)
- 			goto iounmap;
- 	}
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index abac079ff77f..ffadad27375e 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -806,7 +806,7 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
- 
- static int meson8b_clkc_probe(struct platform_device *pdev)
- {
--	int ret, clkid, i;
-+	int ret, i;
- 	struct clk_hw *parent_hw;
- 	struct clk *parent_clk;
- 	struct device *dev = &pdev->dev;
-@@ -844,13 +844,13 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 	 * register all clks
- 	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
- 	 */
--	for (clkid = CLKID_XTAL; clkid < CLK_NR_CLKS; clkid++) {
-+	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
- 		/* array might be sparse */
--		if (!meson8b_hw_onecell_data.hws[clkid])
-+		if (!meson8b_hw_onecell_data.hws[i])
- 			continue;
- 
- 		/* FIXME convert to devm_clk_register */
--		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[clkid]);
-+		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
- 		if (ret)
- 			return ret;
- 	}
++The Actions S900 clock management unit generates and supplies clock to various
++controllers within the SoC. The clock binding described here is applicable to
++S900 SoC.
++
++Required Properties:
++
++- compatible: should be "actions,s900-cmu"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- clocks: Reference to the parent clocks ("hosc", "losc")
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier, and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/actions,s900-cmu.h header and can be used in device
++tree sources.
++
++External clocks:
++
++The hosc clock used as input for the plls is generated outside the SoC. It is
++expected that it is defined using standard clock bindings as "hosc".
++
++Actions S900 CMU also requires one more clock:
++ - "losc" - internal low frequency oscillator
++
++Example: Clock Management Unit node:
++
++        cmu: clock-controller@e0160000 {
++                compatible = "actions,s900-cmu";
++                reg = <0x0 0xe0160000 0x0 0x1000>;
++                clocks = <&hosc>, <&losc>;
++                #clock-cells = <1>;
++        };
++
++Example: UART controller node that consumes clock generated by the clock
++management unit:
++
++        uart: serial@e012a000 {
++                compatible = "actions,s900-uart", "actions,owl-uart";
++                reg = <0x0 0xe012a000 0x0 0x2000>;
++                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cmu CLK_UART5>;
++        };
+diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+new file mode 100644
+index 000000000000..2fa94e19922b
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s900-cmu.h
+@@ -0,0 +1,139 @@
++/*
++ * Device Tree binding constants for Actions S900 Clock Management Unit
++ *
++ * Copyright (c) 2014 Actions Semi Inc.
++ * Copyright (c) 2017 Linaro Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
++#define __DT_BINDINGS_CLOCK_S900_CMU_H
++
++#define CLK_NONE			0
++
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
++
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_DSI_PLL			8
++#define CLK_ASSIST_PLL			9
++#define CLK_AUDIO_PLL			10
++
++/* system clock */
++#define CLK_CPU				15
++#define CLK_DEV				16
++#define CLK_NOC				17
++#define CLK_NOC_MUX			18
++#define CLK_NOC_DIV			19
++#define CLK_AHB				20
++#define CLK_APB				21
++#define CLK_DMAC			22
++
++/* peripheral device clock */
++#define CLK_GPIO			23
++
++#define CLK_BISP			24
++#define CLK_CSI0			25
++#define CLK_CSI1			26
++
++#define CLK_DE0				27
++#define CLK_DE1				28
++#define CLK_DE2				29
++#define CLK_DE3				30
++#define CLK_DSI				32
++
++#define CLK_GPU				33
++#define CLK_GPU_CORE			34
++#define CLK_GPU_MEM			35
++#define CLK_GPU_SYS			36
++
++#define CLK_HDE				37
++#define CLK_I2C0			38
++#define CLK_I2C1			39
++#define CLK_I2C2			40
++#define CLK_I2C3			41
++#define CLK_I2C4			42
++#define CLK_I2C5			43
++#define CLK_I2SRX			44
++#define CLK_I2STX			45
++#define CLK_IMX				46
++#define CLK_LCD				47
++#define CLK_NAND0			48
++#define CLK_NAND1			49
++#define CLK_PWM0			50
++#define CLK_PWM1			51
++#define CLK_PWM2			52
++#define CLK_PWM3			53
++#define CLK_PWM4			54
++#define CLK_PWM5			55
++#define CLK_SD0				56
++#define CLK_SD1				57
++#define CLK_SD2				58
++#define CLK_SD3				59
++#define CLK_SENSOR			60
++#define CLK_SPEED_SENSOR		61
++#define CLK_SPI0			62
++#define CLK_SPI1			63
++#define CLK_SPI2			64
++#define CLK_SPI3			65
++#define CLK_THERMAL_SENSOR		66
++#define CLK_UART0			67
++#define CLK_UART1			68
++#define CLK_UART2			69
++#define CLK_UART3			70
++#define CLK_UART4			71
++#define CLK_UART5			72
++#define CLK_UART6			73
++#define CLK_VCE				74
++#define CLK_VDE				75
++
++#define CLK_USB3_480MPLL0		76
++#define CLK_USB3_480MPHY0		77
++#define CLK_USB3_5GPHY			78
++#define CLK_USB3_CCE			79
++#define CLK_USB3_MAC			80
++
++#define CLK_TIMER			83
++
++#define CLK_HDMI_AUDIO			84
++
++#define CLK_24M				85
++
++#define CLK_EDP				86
++
++#define CLK_24M_EDP			87
++#define CLK_EDP_PLL			88
++#define CLK_EDP_LINK			89
++
++#define CLK_USB2H0_PLLEN		90
++#define CLK_USB2H0_PHY			91
++#define CLK_USB2H0_CCE			92
++#define CLK_USB2H1_PLLEN		93
++#define CLK_USB2H1_PHY			94
++#define CLK_USB2H1_CCE			95
++
++#define CLK_DDR0			96
++#define CLK_DDR1			97
++#define CLK_DMM				98
++
++#define CLK_ETH_MAC			99
++#define CLK_RMII_REF			100
++
++#define CLK_NR_CLKS			(CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
 -- 
-2.14.3
+2.14.1
