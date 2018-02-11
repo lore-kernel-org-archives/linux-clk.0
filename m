@@ -1,109 +1,113 @@
-Return-Path: <groeck7@gmail.com>
-Return-Path: <groeck7@gmail.com>
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 12 Feb 2018 11:24:15 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-Message-ID: <20180212192415.GA22927@roeck-us.net>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35136 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932241AbeBKX1R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 11 Feb 2018 18:27:17 -0500
+Subject: Re: [linux-sunxi] [PATCH v2 6/6] arm64: allwinner: h6: add support
+ for Pine H64 board
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20180203154942.63566-1-icenowy@aosc.io>
+ <20180203154942.63566-7-icenowy@aosc.io>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <3705fc05-f1ec-a6ee-d204-d1f8f0916069@arm.com>
+Date: Sun, 11 Feb 2018 23:26:51 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <20180203154942.63566-7-icenowy@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 05:44:21PM +0000, Fabrizio Castro wrote:
-> Due to commits:
-> * "ARM: shmobile: Add watchdog support",
-> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
-> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-> we now have everything we needed for the watchdog to work on Gen2 and
-> RZ/G1.
-> 
-> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
-> always ON, when suspending to RAM we need to explicitly disable the
-> counting by clearing TME from RWTCSRA.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Hi,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 03/02/18 15:49, Icenowy Zheng wrote:
+> Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
+> features:
+> 
+> - 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
+> accessible)
+> - AXP805 PMIC
+> - Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
+> compatible with the "Euler" on Pine A64) and "Expansion" pin header
+> - 2 USB 2.0 ports and 1 USB 3.0 ports
+> - Audio jack
+> - MicroSD slot and eMMC module slot
+> - on-board SPI NOR flash
+> - 1Gbps Ethernet port (via RTL8211E PHY)
+> - HDMI port
+> 
+> Adds initial support for it, including the UART on the Expansion pin
+> header.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+
+I booted this to the point where the kernel complained about the missing
+rootfs, also with an initrd to the prompt. So:
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+
+Thanks!
+Andre.
 
 > ---
-> v4->v5:
-> * various improvements suggested by Wolfram
+> Changes in v2:
+> - Switch to SPDX license identifier.
 > 
->  drivers/watchdog/renesas_wdt.c | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
+>  arch/arm64/boot/dts/allwinner/Makefile             |  1 +
+>  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 30 ++++++++++++++++++++++
+>  2 files changed, 31 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
 > 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 831ef83..e972b7b 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -203,13 +203,29 @@ static int rwdt_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -/*
-> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-> - * to work there, one also needs a RESET (RST) driver which does not exist yet
-> - * due to HW issues. This needs to be solved before adding compatibles here.
-> - */
-> +static int __maybe_unused rwdt_suspend(struct device *dev)
-> +{
-> +	struct rwdt_priv *priv = dev_get_drvdata(dev);
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> index f505227b0250..addf245226f6 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> new file mode 100644
+> index 000000000000..dc850a1c0885
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+> @@ -0,0 +1,30 @@
+> +/*
+> + * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> + */
 > +
-> +	if (watchdog_active(&priv->wdev))
-> +		rwdt_write(priv, priv->cks, RWTCSRA);
-> +	return 0;
-> +}
+> +/dts-v1/;
 > +
-> +static int __maybe_unused rwdt_resume(struct device *dev)
-> +{
-> +	struct rwdt_priv *priv = dev_get_drvdata(dev);
+> +#include "sun50i-h6.dtsi"
 > +
-> +	if (watchdog_active(&priv->wdev))
-> +		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-> +	return 0;
-> +}
+> +#include <dt-bindings/gpio/gpio.h>
 > +
-> +static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
+> +/ {
+> +	model = "Pine H64";
+> +	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
 > +
->  static const struct of_device_id rwdt_ids[] = {
->  	{ .compatible = "renesas,rcar-gen3-wdt", },
-> +	{ .compatible = "renesas,rcar-gen2-wdt", },
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, rwdt_ids);
-> @@ -218,6 +234,7 @@ static struct platform_driver rwdt_driver = {
->  	.driver = {
->  		.name = "renesas_wdt",
->  		.of_match_table = rwdt_ids,
-> +		.pm = &rwdt_pm_ops,
->  	},
->  	.probe = rwdt_probe,
->  	.remove = rwdt_remove,
-> -- 
-> 2.7.4
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_ph_pins>;
+> +	status = "okay";
+> +};
 > 
+
