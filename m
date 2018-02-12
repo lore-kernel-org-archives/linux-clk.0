@@ -1,39 +1,68 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <086b44d2-6556-fa7c-1a5b-01c243bf0682@samsung.com>
-Date: Wed, 07 Feb 2018 14:04:18 +0100
-MIME-version: 1.0
-In-reply-to: <5A7AE1E0.8000509@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
-	<20180205142230.9755-1-s.nawrocki@samsung.com>
-	<5A7916A2.7010307@samsung.com>
-	<75cac4e7-9bbb-e591-36a1-dcacc3f94ace@samsung.com>
-	<5A7AE1E0.8000509@samsung.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 20/26] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
+Date: Mon, 12 Feb 2018 17:44:29 +0000
+Message-Id: <1518457475-4480-21-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/07/2018 12:24 PM, Chanwoo Choi wrote:
-> Could you share your equation?
-> because your result is a little bit different of my result.
-> - my equation : ((mdiv + kdiv/65535) x 24MHz) / (pdiv x POWER(2,sdiv))
+This patch adds watchdog support to the r8a7743 SoC dtsi.
 
-It resembles the code from samsung_pll36xx_recalc_rate():
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v4->v5:
+* no change
 
-(24 * 10^6 * (M * 2^16 + K)) / (P * 2^S) / 2^16
+ arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-and a more accurate one
-
-ROUNDDOWN(ROUNDDOWN(24 * 10^6 * (M * 2^16 + K), 0) / ROUNDDOWN(P * 2^S, 0) / 2^16, 0)
-
-Shouldn't you substitute 65535 with 65536?
-
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index c2943d7..1d4505f 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -368,6 +368,16 @@
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
+ 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7743-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7743-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
 -- 
-Regards,
-Sylwester
+2.7.4
