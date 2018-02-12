@@ -1,8 +1,6 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Thu, 8 Feb 2018 00:20:25 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Wim Van Sebroeck <wim@iguana.be>,
@@ -14,59 +12,56 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 20/26] ARM: dts: r8a7743: Add watchdog support to SoC
- dtsi
-Message-ID: <20180207232025.cm4mdr4l65lwej2j@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2bzzwp6v4ficjmmb"
-In-Reply-To: <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v5 16/26] clk: renesas: r8a7745: Add rwdt clock
+Date: Mon, 12 Feb 2018 17:44:25 +0000
+Message-Id: <1518457475-4480-17-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
---2bzzwp6v4ficjmmb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v4->v5:
+* no change
 
-On Wed, Jan 31, 2018 at 06:24:24PM +0000, Fabrizio Castro wrote:
-> This patch adds watchdog support to the r8a7743 SoC dtsi.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---2bzzwp6v4ficjmmb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ibkACgkQFA3kzBSg
-KbbEKhAAsGL4jtMZjwlGDZZBSTLblrBqh1HCII4vwxPudWz/FM3TomJ7qjtk7Dl7
-ytCgwcJ7V9mmENc7PnC92AfYiPhuYFQP+9q/+UP9BjGW1z6gUfhJ8UbjwLWYHffj
-z/MMhzpwQScdtbznY/vCM8RU6157b5z0ZUh2ANF3DxnV18WZ3kz/VA6arqQ4et2a
-fALAhp0juJoghpZtXGhuV9x9ot0mEHRXirlHfcLKCts8+FsXTxwuxqy02qCeSNhi
-eoefthCmD0VdB20bvav8nLP5iJyn9BvXhuhjBbzFt833jtF3Wbq5TYNvHML49OG+
-A9n/Ebi++d+6aHvJyN4JDlgNeOalDGJiLLvsMPsCzYcqCeC+BReK0Ty/XIvDKkiG
-Qer+2WxROyM7uMI/pjyZ6C7nf7QsIhdbAbHcP/TpweyF2PsttuNVHAgUiD7kkxRS
-qPM4PoVfnO6cBj8FieWtBrGzjuuWJdbCkwu/oE5MAixHlRbBgslbRV7ZRL5aqZH5
-7Z9QOgtc4IQGlwPZHiqnstP4+yS7el8P5kxL6SuOkVaOgAzB7utZfgqZQ3HY5np9
-LaAGoIF+n5tXTLRFEWjxTyodoPdfCLpz6x3aJyiVPFWR9mXdZdEBUHHFxlkxjd7e
-PCQLErJH6ZnHsrO1sCsyz/1Cd+ZXMCmlZ0lQA+HkQNU26tyKSQs=
-=OPdP
------END PGP SIGNATURE-----
-
---2bzzwp6v4ficjmmb--
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 2859504..87f5a36 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7745_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7745_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7745_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7745_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7745_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7745_CLK_ZS),
+ 	DEF_MOD("audio-dmac0",		 502,	R8A7745_CLK_HP),
+@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
+-- 
+2.7.4
