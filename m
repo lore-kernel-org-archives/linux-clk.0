@@ -1,107 +1,37 @@
-Return-Path: <embed3d@gmail.com>
-Return-Path: <embed3d@gmail.com>
-From: Philipp Rossak <embed3d@gmail.com>
-To: wens@csie.org,
-	a.zummo@towertech.it,
-	alexandre.belloni@bootlin.com,
-	maxime.ripard@bootlin.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-rtc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4] rtc: ac100: Fix ac100 determine rate bug
-Date: Mon, 26 Feb 2018 22:19:01 +0100
-Message-Id: <20180226211901.9805-1-embed3d@gmail.com>
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+	linux-kernel@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
+	m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] clk: exynos5433: Extend list of available AUD_PLL output
+ frequencies
+Date: Mon, 12 Feb 2018 16:52:27 +0100
+Message-id: <20180212155227.20605-1-s.nawrocki@samsung.com>
+References: <CGME20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3@epcas2p3.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch fixes a bug, that prevents the Allwinner A83T and the A80
-from a successful boot.
+Add one more entry to the exynos5433_aud_pll_rates table, this allows
+to support audio sample rates: 48000, 96000, 192000 Hz with minimum
+error. The M, P, S, K values re confirmed by the HW team.
 
-The bug is there since v4.16-rc1 and appeared after the clk branch was
-merged.
-
-You can find the shortend trace below:
-
-Unable to handle kernel NULL pointer dereference at virtual address
-00000000
-pgd = (ptrval)
-[00000000] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-Hardware name: Allwinner sun8i Family
-Workqueue: events deferred_probe_work_func
-PC is at clk_hw_get_rate+0x0/0x34
-LR is at ac100_clkout_determine_rate+0x48/0x19c
-
-[ ... ]
-
-(clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-(ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-(clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-(clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-(of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
-
-To fix that bug, we first check if the return of the
-clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-clock parent.
-
-The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
-
-Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
-
-Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos5433.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v4:
-	* add more information to the comment
-Changes in v3:
-	* add information when the bug appeared 
-	* make the comment more clear
-Changes in v2:
-	* add tag Fixes: ... to commit message
-	* add comment to if statement why we are doing this check
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index ebd18586e325..b08a9028653f 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -765,6 +765,7 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
+ 	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+ 	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+ 	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
++	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+ 	{ /* sentinel */ }
+ };
 
- drivers/rtc/rtc-ac100.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-index 8ff9dc3fe5bf..08ca8c46a8ff 100644
---- a/drivers/rtc/rtc-ac100.c
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -183,7 +183,29 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
- 
- 	for (i = 0; i < num_parents; i++) {
- 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
--		unsigned long tmp, prate = clk_hw_get_rate(parent);
-+		unsigned long tmp, prate;
-+
-+		/*
-+		 * The clock has two parents, one is a fixed clock which is
-+		 * internally registered by the ac100 driver. The other parent
-+		 * is a clock from the codec side of the chip, which we
-+		 * properly declare and reference in the devicetree and is
-+		 * not implemented in any driver right now.
-+		 * If the clock core looks for the parent of that second
-+		 * missing clock, it can't find one that is registered and
-+		 * returns NULL.
-+		 * So we end up in a situation where clk_hw_get_num_parents
-+		 * returns the amount of clocks we can be parented to, but
-+		 * clk_hw_get_parent_by_index will not return the orphan
-+		 * clocks.
-+		 * Thus we need to check if the parent exists before
-+		 * we get the parent rate, so we could use the RTC
-+		 * without waiting for the codec to be supported.
-+		 */
-+		if (!parent)
-+			continue;
-+
-+		prate = clk_hw_get_rate(parent);
- 
- 		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
- 
--- 
-2.11.0
+--
+2.14.2
