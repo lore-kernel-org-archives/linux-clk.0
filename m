@@ -1,43 +1,67 @@
-Return-Path: <joe@perches.com>
-Message-ID: <1518473028.22190.20.camel@perches.com>
-Subject: usleep_range without a range
-From: Joe Perches <joe@perches.com>
-To: UlfHansson <ulf.hansson@linaro.org>, MichaelTurquette
- <mturquette@baylibre.com>, StephenBoyd <sboyd@kernel.org>,
- "RafaelJ.Wysocki" <rjw@rjwysocki.net>, VireshKumar
- <viresh.kumar@linaro.org>,  BenjaminHerrenschmidt
- <benh@kernel.crashing.org>, PaulMackerras <paulus@samba.org>,
- MichaelEllerman <mpe@ellerman.id.au>,  SakariAilus <sakari.ailus@iki.fi>,
- MauroCarvalhoChehab <mchehab@kernel.org>, SebastianReichel
- <sre@kernel.org>, GregKroah-Hartman <gregkh@linuxfoundation.org>,
- LiamGirdwood <lgirdwood@gmail.com>, MarkBrown <broonie@kernel.org>,
- JaroslavKysela <perex@perex.cz>, TakashiIwai <tiwai@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-	devel@driverdev.osuosl.org, alsa-devel@alsa-project.org
-Date: Mon, 12 Feb 2018 14:03:48 -0800
-Content-Type: text/plain; charset="ISO-8859-1"
-Mime-Version: 1.0
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 19/26] clk: renesas: r8a7794: Add rwdt clock
+Date: Mon, 12 Feb 2018 17:44:28 +0000
+Message-Id: <1518457475-4480-20-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-scheduling can generally be better when these values are
-not identical.  Perhaps these ranges should be expanded.
+Add "rwdt" clock to r8a7794_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-$ git grep -P -n "usleep_range\s*\(\s*([\w\.\>\-]+)\s*,\s*\1\s*\)"
-drivers/clk/ux500/clk-sysctrl.c:45:             usleep_range(clk->enable_delay_us, clk->enable_delay_us);
-drivers/cpufreq/pmac64-cpufreq.c:140:           usleep_range(1000, 1000);
-drivers/cpufreq/pmac64-cpufreq.c:239:   usleep_range(10000, 10000); /* should be faster , to fix */
-drivers/cpufreq/pmac64-cpufreq.c:284:           usleep_range(500, 500);
-drivers/media/i2c/smiapp/smiapp-core.c:1228:    usleep_range(1000, 1000);
-drivers/media/i2c/smiapp/smiapp-core.c:1235:    usleep_range(1000, 1000);
-drivers/media/i2c/smiapp/smiapp-core.c:1240:    usleep_range(sleep, sleep);
-drivers/media/i2c/smiapp/smiapp-core.c:1387:    usleep_range(5000, 5000);
-drivers/media/i2c/smiapp/smiapp-quirk.c:205:    usleep_range(2000, 2000);
-drivers/media/i2c/smiapp/smiapp-regs.c:279:             usleep_range(2000, 2000);
-drivers/power/supply/ab8500_fg.c:643:   usleep_range(100, 100);
-drivers/staging/rtl8192u/r819xU_phy.c:180:      usleep_range(1000, 1000);
-drivers/staging/rtl8192u/r819xU_phy.c:736:                      usleep_range(1000, 1000);
-drivers/staging/rtl8192u/r819xU_phy.c:740:                      usleep_range(1000, 1000);
-sound/soc/codecs/ab8500-codec.c:1065:                   usleep_range(AB8500_ANC_SM_DELAY, AB8500_ANC_SM_DELAY);
-sound/soc/codecs/ab8500-codec.c:1068:                   usleep_range(AB8500_ANC_SM_DELAY, AB8500_ANC_SM_DELAY);
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v4->v5:
+* no change
+
+ drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+index ec091a4..2a40bbe 100644
+--- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+@@ -121,6 +121,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7794_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7794_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7794_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7794_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7794_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7794_CLK_ZS),
+ 	DEF_MOD("audio-dmac0",		 502,	R8A7794_CLK_HP),
+@@ -190,6 +191,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7794_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
+-- 
+2.7.4
