@@ -1,100 +1,109 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
- Controller (RCC) bindings
-Date: Tue, 13 Feb 2018 14:36:24 +0000
-Message-ID: <3152089f-5a87-513b-7d6b-93ba38cf1d9f@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
- <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
- <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
- <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
-In-Reply-To: <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <groeck7@gmail.com>
+Return-Path: <groeck7@gmail.com>
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 12 Feb 2018 11:24:15 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+Message-ID: <20180212192415.GA22927@roeck-us.net>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCk9uIDAyLzA3LzIwMTggMDc6MDMgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBNb24s
-IEZlYiA1LCAyMDE4IGF0IDE6MDEgQU0sIEdhYnJpZWwgRkVSTkFOREVaDQo+IDxnYWJyaWVsLmZl
-cm5hbmRlekBzdC5jb20+ICB3cm90ZToNCj4+IEhpIFJvYiwNCj4+DQo+PiBUaGFua3MgZm9yIHJl
-dmlld2luZy4NCj4+DQo+Pg0KPj4gT24gMDIvMDUvMjAxOCAwNzowOSBBTSwgUm9iIEhlcnJpbmcg
-d3JvdGU6DQo+Pj4gT24gRnJpLCBGZWIgMDIsIDIwMTggYXQgMDM6MDM6MjlQTSArMDEwMCxnYWJy
-aWVsLmZlcm5hbmRlekBzdC5jb20gIHdyb3RlOg0KPj4+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRl
-ejxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+Pj4+DQo+Pj4+IFRoZSBSQ0MgYmxvY2sgaXMg
-cmVzcG9uc2libGUgb2YgdGhlIG1hbmFnZW1lbnQgb2YgdGhlIGNsb2NrIGFuZCByZXNldA0KPj4+
-PiBnZW5lcmF0aW9uIGZvciB0aGUgY29tcGxldGUgY2lyY3VpdC4NCj4+Pj4NCj4+Pj4gU2lnbmVk
-LW9mZi1ieTogR2FicmllbCBGZXJuYW5kZXo8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4+
-PiAtLS0NCj4+Pj4gICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50
-eHQgICAgICAgfCA4NSArKysrKysrKysrKysrKysrKysrKysrDQo+Pj4+ICAgIDEgZmlsZSBjaGFu
-Z2VkLCA4NSBpbnNlcnRpb25zKCspDQo+Pj4+ICAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+Pj4NCj4+
-Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qs
-c3RtMzItcmNjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qs
-c3RtMzItcmNjLnR4dA0KPj4+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4+PiBpbmRleCAwMDAw
-MDAwLi4yODAxN2ExDQo+Pj4+IC0tLSAvZGV2L251bGwNCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9zdCxzdG0zMi1yY2MudHh0DQo+Pj4+IEBAIC0wLDAg
-KzEsODUgQEANCj4+Pj4gK1NUTWljcm9lbGVjdHJvbmljcyBTVE0zMiBQZXJpcGhlcmFsIFJlc2V0
-IENsb2NrIENvbnRyb2xsZXINCj4+Pj4gKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4+Pj4gKw0KPj4+PiArVGhlIFJDQyBJUCBpcyBi
-b3RoIGEgcmVzZXQgYW5kIGEgY2xvY2sgY29udHJvbGxlci4NCj4+Pj4gKw0KPj4+PiArUGxlYXNl
-IGFsc28gcmVmZXIgdG8gcmVzZXQudHh0IGZvciBjb21tb24gcmVzZXQgY29udHJvbGxlciBiaW5k
-aW5nIHVzYWdlLg0KPj4+PiArDQo+Pj4+ICtQbGVhc2UgYWxzbyByZWZlciB0byBjbG9jay1iaW5k
-aW5ncy50eHQgZm9yIGNvbW1vbiBjbG9jayBjb250cm9sbGVyDQo+Pj4+ICtiaW5kaW5nIHVzYWdl
-Lg0KPj4+PiArDQo+Pj4+ICsNCj4+Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+Pj4+ICstIGNv
-bXBhdGlibGU6ICJzaW1wbGUtbWZkIiwgInN5c2NvbiINCj4+Pj4gKy0gcmVnOiBzaG91bGQgYmUg
-cmVnaXN0ZXIgYmFzZSBhbmQgbGVuZ3RoIGFzIGRvY3VtZW50ZWQgaW4gdGhlIGRhdGFzaGVldA0K
-Pj4+PiArDQo+Pj4+ICstIFN1Yi1ub2RlczoNCj4+Pj4gKyAgLSBjb21wYXRpYmxlOiAic3Qsc3Rt
-MzJtcDEtcmNjLWNsayINCj4+Pj4gKyAgICAtICNjbG9jay1jZWxsczogMSwgZGV2aWNlIG5vZGVz
-IHNob3VsZCBzcGVjaWZ5IHRoZSBjbG9jayBpbiB0aGVpcg0KPj4+PiArICAgICAgImNsb2NrcyIg
-cHJvcGVydHksIGNvbnRhaW5pbmcgYSBwaGFuZGxlIHRvIHRoZSBjbG9jayBkZXZpY2Ugbm9kZSwN
-Cj4+Pj4gKyAgICAgIGFuIGluZGV4IHNwZWNpZnlpbmcgdGhlIGNsb2NrIHRvIHVzZS4NCj4+Pj4g
-Kw0KPj4+PiArICAtIGNvbXBhdGlibGU6ICJzdCxzdG0zMm1wMS1yY2MtcnN0Ig0KPj4+PiArICAg
-IC0gI3Jlc2V0LWNlbGxzOiBTaGFsbCBiZSAxDQo+Pj4+ICsNCj4+Pj4gK0V4YW1wbGU6DQo+Pj4+
-ICsgICAgcmNjOiByY2NANTAwMDAwMDAgew0KPj4+PiArICAgICAgICAgICAgY29tcGF0aWJsZSA9
-ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQo+Pj4+ICsgICAgICAgICAgICByZWcgPSA8MHg1MDAw
-MDAwMCAweDEwMDA+Ow0KPj4+PiArDQo+Pj4+ICsgICAgICAgICAgICByY2NfY2xrOiByY2MtY2xr
-QDUwMDAwMDAwIHsNCj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+
-Ow0KPj4+PiArICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInN0LHN0bTMybXAxLXJj
-Yy1jbGsiOw0KPj4+PiArICAgICAgICAgICAgfTsNCj4+Pj4gKw0KPj4+PiArICAgICAgICAgICAg
-cmNjX3JzdDogcmNjLXJlc2V0QDUwMDAwMDAwIHsNCj4+PiBZb3Ugc2hvdWxkIG5vdCBoYXZlIHRo
-ZSBzYW1lIHVuaXQtYWRkcmVzcyB0d2ljZS4NCj4+Pg0KPj4+IElNTywgdGhpcyBzaG91bGQganVz
-dCBiZToNCj4+Pg0KPj4+ICAgICAgICByY2M6IHJjY0A1MDAwMDAwMCB7DQo+Pj4gICAgICAgICAg
-ICAgICAgY29tcGF0aWJsZSA9ICJzdC1zdG0zMm1wMS1yY2MiOw0KPj4+ICAgICAgICAgICAgICAg
-IHJlZyA9IDwweDUwMDAwMDAwIDB4MTAwMD47DQo+Pj4gICAgICAgICAgICAgICAgI2Nsb2NrLWNl
-bGxzID0gPDE+Ow0KPj4+ICAgICAgICAgICAgICAgICNyZXNldC1jZWxscyA9IDwxPjsNCj4+PiAg
-ICAgICAgfTsNCj4+Pg0KPj4+IFRoZXJlJ3Mgbm8gcmVhc29uIGEgbm9kZSBjYW4ndCBwcm92aWRl
-IG1vcmUgdGhhbiAxIGZ1bmN0aW9uLg0KPj4gUkNDIGlzIGFuIGRlZGljYXRlZCBJUCBmb3IgY2xv
-Y2tzIGFuZCByZXNldHMsIGJ1dCBhbHNvIGZvciBwb3dlcg0KPj4gbWFuYWdlbWVudCAocGF0Y2hl
-cyB3aWxsIGJlIHNlbnQgbGF0ZXIpDQo+IElmIHRoZXJlJ3MgYWRkaXRpb25hbCBmdW5jdGlvbnMs
-IHRoZXkgc2hvdWxkIGJlIHBhcnQgb2YgdGhlIGJpbmRpbmcNCj4gbm93LCBub3QgbGF0ZXIuIGJp
-bmRpbmdzIHNob3VsZCBub3QgdW5uZWNlc3NhcmlseSBldm9sdmUuDQpZZXMgeW91J3JlIHJpZ2h0
-IGkgd2lsbCBkbyBpdC4NCj4+IFRoZW4gaSBuZWVkIHRvIHByb2JlIDMgZHJpdmVycyB3aXRoIHNh
-bWUgSVAuDQo+IERyaXZlcnMgYW5kIERUIG5vZGVzIGRvbid0IGhhdmUgdG8gYmUgMS0xLiBBIHBh
-cmVudCBkcml2ZXIgY2FuIGNyZWF0ZQ0KPiBhZGRpdGlvbmFsIGNoaWxkIGRldmljZXMuDQo+DQo+
-IEFsc28sIGxvb2tpbmcgYXQgeW91ciBleGlzdGluZyBiaW5kaW5ncyBmb3IgUkNDIElQLCBpdCBp
-cyBkb25lIGFzIEkgc3VnZ2VzdGVkLg0KPg0KPj4gSXQncyBhbHNvIGEgd2F5IHRvIGF2b2lkIHVz
-ZSBvZiAnQ0xLX09GX0RFQ0xBUkVfRFJJVkVSJyBhbmQgaSBuZWVkIGl0IHRvDQo+PiBwcm9iZSB0
-aGUgM3RoIGRyaXZlci4NCj4gU291bmRzIGxpa2UgYSBMaW51eCBwcm9ibGVtLCBub3QgYSBEVCBp
-c3N1ZS4NCj4NCj4gUm9iDQpSQ0MgaXMgYW4gSVAgYmxvY2sgd2ljaCBleHBvc2VkIG11bHRpcGxl
-IGZ1bmN0aW9uYWxpdGllcyAoY2xvY2ssIHJlc2V0LCANCnBvd2VyIG1hbmFnZW1lbnQpLA0KbWZk
-IHNob3VsZCBiZSB0aGUgYmVzdCBzb2x1dGlvbiB0byBwb3B1bGF0ZSBlYWNoIGZ1bmN0aW9uYWxp
-dHkgaW4gDQpuYXR1cmFsIHdheSwNCmFuZCB0byBhY2Nlc3MgdG8gcmVnaXN0ZXJzID8NCg0KR2Fi
-cmllbA0KDQoNCg==
+On Mon, Feb 12, 2018 at 05:44:21PM +0000, Fabrizio Castro wrote:
+> Due to commits:
+> * "ARM: shmobile: Add watchdog support",
+> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
+> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+> we now have everything we needed for the watchdog to work on Gen2 and
+> RZ/G1.
+> 
+> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+> always ON, when suspending to RAM we need to explicitly disable the
+> counting by clearing TME from RWTCSRA.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+> v4->v5:
+> * various improvements suggested by Wolfram
+> 
+>  drivers/watchdog/renesas_wdt.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 831ef83..e972b7b 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -203,13 +203,29 @@ static int rwdt_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -/*
+> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+> - * to work there, one also needs a RESET (RST) driver which does not exist yet
+> - * due to HW issues. This needs to be solved before adding compatibles here.
+> - */
+> +static int __maybe_unused rwdt_suspend(struct device *dev)
+> +{
+> +	struct rwdt_priv *priv = dev_get_drvdata(dev);
+> +
+> +	if (watchdog_active(&priv->wdev))
+> +		rwdt_write(priv, priv->cks, RWTCSRA);
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused rwdt_resume(struct device *dev)
+> +{
+> +	struct rwdt_priv *priv = dev_get_drvdata(dev);
+> +
+> +	if (watchdog_active(&priv->wdev))
+> +		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
+> +
+>  static const struct of_device_id rwdt_ids[] = {
+>  	{ .compatible = "renesas,rcar-gen3-wdt", },
+> +	{ .compatible = "renesas,rcar-gen2-wdt", },
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, rwdt_ids);
+> @@ -218,6 +234,7 @@ static struct platform_driver rwdt_driver = {
+>  	.driver = {
+>  		.name = "renesas_wdt",
+>  		.of_match_table = rwdt_ids,
+> +		.pm = &rwdt_pm_ops,
+>  	},
+>  	.probe = rwdt_probe,
+>  	.remove = rwdt_remove,
+> -- 
+> 2.7.4
+> 
