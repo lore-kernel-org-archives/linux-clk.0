@@ -1,145 +1,133 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v6 07/15] clk: qcom: Add IPQ806X's HFPLLs
-Date: Tue,  6 Feb 2018 09:38:20 +0530
-Message-Id: <1517890108-8140-8-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 06/19] clk: meson: switch gxbb ao_clk to clk_regmap
+Date: Mon, 12 Feb 2018 15:58:33 +0100
+Message-Id: <20180212145846.19380-7-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Drop the gxbb ao specific regmap based clock and use the
+meson clk_regmap based clock instead.
 
-Describe the HFPLLs present on IPQ806X devices.
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ drivers/clk/meson/Kconfig      |  1 +
+ drivers/clk/meson/Makefile     |  2 +-
+ drivers/clk/meson/gxbb-aoclk.c | 20 ++++++++++----------
+ drivers/clk/meson/gxbb-aoclk.h |  1 -
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 28eb200..d571cf8 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index e97e85077da1..33d148e19066 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -20,6 +20,7 @@ config COMMON_CLK_GXBB
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
++	select COMMON_CLK_REGMAP_MESON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 11a50586666a..465086118d62 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -4,6 +4,6 @@
  
- static struct clk_pll pll0 = {
-@@ -113,6 +114,84 @@
- 	},
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+-obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
++obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 6c161e0a8e59..9ec23ae9a219 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -62,10 +62,9 @@
+ #include <linux/delay.h>
+ #include <dt-bindings/clock/gxbb-aoclkc.h>
+ #include <dt-bindings/reset/gxbb-aoclkc.h>
++#include "clk-regmap.h"
+ #include "gxbb-aoclk.h"
+ 
+-static DEFINE_SPINLOCK(gxbb_aoclk_lock);
+-
+ struct gxbb_aoclk_reset_controller {
+ 	struct reset_controller_dev reset;
+ 	unsigned int *data;
+@@ -87,12 +86,14 @@ static const struct reset_control_ops gxbb_aoclk_reset_ops = {
  };
  
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
-+};
-+
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
-+
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -2800,6 +2879,9 @@ enum {
- 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
- 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
- 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
+ #define GXBB_AO_GATE(_name, _bit)					\
+-static struct aoclk_gate_regmap _name##_ao = {				\
+-	.bit_idx = (_bit),						\
+-	.lock = &gxbb_aoclk_lock,					\
++static struct clk_regmap _name##_ao = {					\
++	.data = &(struct clk_regmap_gate_data) {			\
++		.offset = AO_RTI_GEN_CNTL_REG0,				\
++		.bit_idx = (_bit),					\
++	},								\
+ 	.hw.init = &(struct clk_init_data) {				\
+ 		.name = #_name "_ao",					\
+-		.ops = &meson_aoclk_gate_regmap_ops,			\
++		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+ 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
+@@ -107,7 +108,6 @@ GXBB_AO_GATE(uart2, 5);
+ GXBB_AO_GATE(ir_blaster, 6);
+ 
+ static struct aoclk_cec_32k cec_32k_ao = {
+-	.lock = &gxbb_aoclk_lock,
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "cec_32k_ao",
+ 		.ops = &meson_aoclk_cec_32k_ops,
+@@ -126,7 +126,7 @@ static unsigned int gxbb_aoclk_reset[] = {
+ 	[RESET_AO_IR_BLASTER] = 23,
  };
  
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
+-static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
++static struct clk_regmap *gxbb_aoclk_gate[] = {
+ 	[CLKID_AO_REMOTE] = &remote_ao,
+ 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
+ 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
+@@ -177,10 +177,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+ 	 * Populate regmap and register all clks
+ 	 */
+ 	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
+-		gxbb_aoclk_gate[clkid]->regmap = regmap;
++		gxbb_aoclk_gate[clkid]->map = regmap;
+ 
+ 		ret = devm_clk_hw_register(dev,
+-					gxbb_aoclk_onecell_data.hws[clkid]);
++					   gxbb_aoclk_onecell_data.hws[clkid]);
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index e8604c8f7eee..127d58954cca 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -32,7 +32,6 @@ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
+ struct aoclk_cec_32k {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+-	spinlock_t *lock;
+ };
+ 
+ #define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.3
