@@ -1,95 +1,69 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Wed, 14 Feb 2018 11:37:22 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- bcm-kernel-feedback-list@broadcom.com, Stephen Warren
- <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-rpi-kernel@lists.infradead.org, Mike Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal
- when appropriate
-Message-ID: <20180214113722.6b9f578c@bbrezillon>
-In-Reply-To: <87po5f5x7l.fsf@anholt.net>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
-	<20180208134338.24590-3-boris.brezillon@bootlin.com>
-	<87po5f5x7l.fsf@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12424 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933433AbeBLMeS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 07:34:18 -0500
+Date: Mon, 12 Feb 2018 14:34:11 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+CC: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+Message-ID: <20180212123411.GJ5850@tbergstrom-lnx.Nvidia.com>
+References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+ <a40f0593-24d8-a91e-9f8c-f7eafc379591@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <a40f0593-24d8-a91e-9f8c-f7eafc379591@kapsi.fi>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 08 Feb 2018 15:15:42 +0000
-Eric Anholt <eric@anholt.net> wrote:
-
-> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+On Mon, Feb 12, 2018 at 02:05:36PM +0200, Mikko Perttunen wrote:
+> This seems to cause a system hang with an HDMI monitor attached -
+> likely in unpowergate as if I disable powergating the hang doesn't
+> happen.
 > 
-> > In order to enable a PLL, not only the PLL has to be powered up and
-> > locked, but you also have to de-assert the reset signal. The last part
-> > was missing. Add it so PLLs that were not enabled by the FW/bootloader
-> > can be enabled from Linux.
+> Have you tested with a display attached?
+> 
+
+Yes. A DSI display at least seems to work.
+
+Peter.
+
+> Mikko
+> 
+> On 01/25/2018 04:00 PM, Peter De Schrijver wrote:
+> >This patch series introduces the Memory Built-In Self Test (MBIST)
+> >work around (WAR) needed when power ungating certain domains. More
+> >details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+> >implement the WAR in the Tegra210 clock driver, because most accesses are
+> >to CAR registers and for the VENC domain, we need to make sure the CSI
+> >clock source is not changed during the WAR execution.
 > >
-> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > ---
-> >  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
+> >Changes in v4:
+> >* moved locking and clock control to tegra210_clk_handle_mbist_war()
+> >* propagate errors during WAR execution to user
+> >* rework error handling tegra210_mbist_clk_init() slightly
 > >
-> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> > index a07f6451694a..6c5d4a8e426c 100644
-> > --- a/drivers/clk/bcm/clk-bcm2835.c
-> > +++ b/drivers/clk/bcm/clk-bcm2835.c
-> > @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
-> >  	const struct bcm2835_pll_data *data = pll->data;
-> >  
-> >  	spin_lock(&cprman->regs_lock);
-> > +	cprman_write(cprman, data->a2w_ctrl_reg,
-> > +		     cprman_read(cprman, data->a2w_ctrl_reg) &
-> > +		     ~A2W_PLL_CTRL_PRST_DISABLE);
-> >  	cprman_write(cprman, data->cm_ctrl_reg,
-> >  		     cprman_read(cprman, data->cm_ctrl_reg) |
-> >  		     CM_PLL_ANARST);  
-> 
-> For turning off, the FW just does the equivalent of:
-> 
-> 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
-> 	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-
-Hm, the write to ->a2w_ctrl_reg overwrites the 
-NDIV/PDIV values done in bcm2835_pll_set_rate(). So, either we do:
-
-	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
-	cprman_write(cprman, data->a2w_ctrl_reg,
-		     cprman_read(cprman, data->a2w_ctrl_reg) |
-		     A2W_PLL_CTRL_PWRDN);
-
-or we cache the pdiv/ndiv values in struct bcm2835_pll and only apply
-them in bcm2835_pll_on().
-
-I'd recommend going for the former to keep the changes easily
-backportable to older kernels.
-
-> 
-> How about we do that, instead?
-> 
-> > @@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
-> >  		cpu_relax();
-> >  	}
-> >  
-> > +	cprman_write(cprman, data->a2w_ctrl_reg,
-> > +		     cprman_read(cprman, data->a2w_ctrl_reg) |
-> > +		     A2W_PLL_CTRL_PRST_DISABLE);
-> > +
-> >  	return 0;
-> >  }  
-> 
-> I agree with this hunk -- they drop PRST at the very end, after lock.
-
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+> >Changes in v3:
+> >* fix compile problem on non-Tegra210 platforms
+> >* fix clock handling bug in tegra210_generic_mbist_war()
+> >* addressed minor comments
+> >
+> >Changes in v2:
+> >* Use readl for fence_delay() rather than readl_relaxed
+> >* clarify MBIST and WAR acronyms
+> >
+> >Peter De Schrijver (4):
+> >   clk: tegra: Add la clock for Tegra210
+> >   clk: tegra: add fence_delay for clock registers
+> >   clk: tegra: MBIST work around for Tegra210
+> >   soc/tegra: pmc: MBIST work around for Tegra210
+> >
+> >  drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
+> >  drivers/clk/tegra/clk.h                  |   7 +
+> >  drivers/soc/tegra/pmc.c                  |   7 +
+> >  include/dt-bindings/clock/tegra210-car.h |   2 +-
+> >  include/linux/clk/tegra.h                |   6 +
+> >  5 files changed, 376 insertions(+), 3 deletions(-)
+> >
