@@ -1,152 +1,156 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 8 Feb 2018 20:22:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	tali.perry1@gmail.com, avifishman70@gmail.com,
-	brendanhiggins@google.com, joel@jms.id.au,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v1 1/2] dt-binding: clock: document NPCM7xx clock DT
- bindings
-Message-ID: <20180209022238.v52rw5filxcig6mg@rob-hp-laptop>
-References: <1517818975-11427-1-git-send-email-tmaimon77@gmail.com>
- <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517818975-11427-2-git-send-email-tmaimon77@gmail.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 01/26] ARM: shmobile: Add watchdog support
+Date: Mon, 12 Feb 2018 17:44:10 +0000
+Message-Id: <1518457475-4480-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 10:22:54AM +0200, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton NPCM7xx clocks.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/clock/nuvoton,npcm7xx-clk.txt         | 84 ++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
-> new file mode 100644
-> index 000000000000..1ba1945d3616
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm7xx-clk.txt
-> @@ -0,0 +1,84 @@
-> +* Nuvoton NPCM7XX Clock Controller
-> +
-> +Nuvoton Poleg BMC NPCM7XX contain integrated clock
+On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
+boot CPUs run a routine designed to bring up SMP and deal with hot plug.
+The value contained in the SBAR registers is not initialized by a WDT
+triggered reset, which means that after a WDT triggered reset we jump
+to the SMP bring up routine, preventing the system from executing the
+bootrom code.
 
-s/contain/contains/
+The purpose of this patch is to jump to the bootrom code in case of a
+WDT triggered reset, and keep the SMP functionality untouched.
+In order to tell if the code had been called due to the WDT overflowing
+we are testing WOVF from register RWTCSRA.
 
-And your line break is strange.
+The new function shmobile_boot_vector_gen2 isn't replacing
+shmobile_boot_vector for backward compatibility reasons. The kernel
+will install the best option (either shmobile_boot_vector or
+shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
+according to the amount of memory available.
 
-> +controller, which generates and supplies clock to all modules within the BMC.
+Since shmobile_boot_vector has become bigger, "reg" property of nodes
+compatible with "renesas,smp-sram" now need to be set to a value
+greater or equal to "<0 0x60>".
 
-s/clock/clocks/
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v4->v5:
+* no change
 
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of following:
-> +	- "nuvoton,npcm750-clk" : for clock controller of Nuvoton
-> +	  Poleg BMC NPCM750
-> +
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +
-> +
-> +- #clock-cells: should be 1.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/nuvoton,npcm7xx-clock.h header and can beused in device tree
+ arch/arm/mach-shmobile/common.h  |  6 +++++
+ arch/arm/mach-shmobile/headsmp.S | 55 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
 
-This file should be part of this patch.
-
-> +sources.
-> +
-> +External clocks:
-> +
-> +There are several clocks that are generated outside the BMC. All clocks are of
-> +a known fixed value that cannot be chagned. Therefor these values are hard coded
-
-s/chagned/changed/
-
-s/Therefor/Therefore/
-
-> +inside the driver and registered on init.
-> +
-> +The clock modules contains 4 PLL, 20 dividers and 11 muxes. All these settings
-> +are set before Linux boot and are not to be altered by the Linux. This driver is
-> +used only to read the values clocks, not to set them.
-> +
-> +In addition to the clock driver, there are 3 external clocks suppling the
-
-The binding describes h/w, not a driver.
-
-> +network, which are of fixed values, set on on the device tree, but not used by
-> + the clock module. Example can be found below.
-   ^
-extra space
-
-All this description belongs at the top of this doc.
-
-> +
-> +Example: Clock controller node:
-> +
-> +	clk: clock-controller@f0801000 {
-> +		compatible = "nuvoton,npcm750-clk";
-> +		#clock-cells = <1>;
-> +		clock-controller;
-> +		reg = <0xf0801000 0x1000>;
-> +		status = "okay";
-> +	};
-> +
-> +Example: Required external clocks for network:
-> +
-> +		/* external clock signal rg1refck, supplied by the phy */
-> +		clk_rg1refck: clk_rg1refck {
-
-Use '-' rather than '_' in node names.
-
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <125000000>;
-> +			clock-output-names = "clk_rg1refck";
-> +		};
-> +
-> +		/* external clock signal rg2refck, supplied by the phy */
-> +		clk_rg2refck: clk_rg2refck {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <125000000>;
-> +			clock-output-names = "clk_rg2refck";
-> +		};
-> +
-> +		clk_xin: clk_xin {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <50000000>;
-> +			clock-output-names = "clk_xin";
-> +		};
-> +
-> +Example: UART controller node that consumes the clock generated by the clock
-> +  controller (refer to the standard clock bindings for information about
-> +  "clocks" and "clock-names" properties):
-> +
-> +	uart0: serial@e2900000 {
-> +		compatible = "Nuvoton,s5pv210-uart";
-
-s/Nuvoton/nuvoton/
-
-> +		reg = <0xe2900000 0x400>;
-> +		interrupt-parent = <&vic1>;
-> +		interrupts = <10>;
-> +		clock-names = "uart", "clk_uart_baud0",
-> +				"clk_uart_baud1";
-> +		clocks = <&clocks UART0>, <&clocks UART0>,
-> +				<&clocks SCLK_UART0>;
-> +	};
-> -- 
-> 2.14.1
-> 
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index a8fa4f7..d8c11f5 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -7,6 +7,12 @@ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+ extern unsigned long shmobile_boot_size;
++#ifdef CONFIG_ARCH_RCAR_GEN2
++extern void shmobile_boot_vector_gen2(void);
++extern unsigned long shmobile_boot_fn_gen2;
++extern unsigned long shmobile_boot_cpu_gen2;
++extern unsigned long shmobile_boot_size_gen2;
++#endif /* CONFIG_ARCH_RCAR_GEN2 */
+ extern void shmobile_smp_boot(void);
+ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index 32e0bf6..cef8e8c 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -16,6 +16,11 @@
+ #include <asm/assembler.h>
+ #include <asm/memory.h>
+ 
++#define SCTLR_MMU	0x01
++#define BOOTROM_ADDRESS	0xE6340000
++#define RWTCSRA_ADDRESS 0xE6020004
++#define RWTCSRA_WOVF	0x10
++
+ /*
+  * Reset vector for secondary CPUs.
+  * This will be mapped at address 0 by SBAR register.
+@@ -37,6 +42,56 @@ shmobile_boot_fn:
+ shmobile_boot_size:
+ 	.long	. - shmobile_boot_vector
+ 
++#ifdef CONFIG_ARCH_RCAR_GEN2
++/*
++ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
++ * This will be mapped at address 0 by SBAR register.
++ */
++ENTRY(shmobile_boot_vector_gen2)
++	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
++	ldr	r1, shmobile_boot_cpu_gen2
++	cmp	r0, r1
++	bne	shmobile_smp_continue_gen2
++
++	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
++	and	r0, r1, #SCTLR_MMU
++	cmp	r0, #SCTLR_MMU
++	beq	shmobile_smp_continue_gen2
++
++	ldr	r0, rwtcsra
++	mov	r1, #0
++	ldrb	r1, [r0]
++	and	r0, r1, #RWTCSRA_WOVF
++	cmp	r0, #RWTCSRA_WOVF
++	bne	shmobile_smp_continue_gen2
++
++	ldr	r0, bootrom
++	bx	r0
++
++shmobile_smp_continue_gen2:
++	ldr     r1, shmobile_boot_fn_gen2
++	bx	r1
++
++ENDPROC(shmobile_boot_vector_gen2)
++
++	.align	4
++rwtcsra:
++	.word	RWTCSRA_ADDRESS
++bootrom:
++	.word	BOOTROM_ADDRESS
++	.globl	shmobile_boot_cpu_gen2
++shmobile_boot_cpu_gen2:
++	.word	0x00000000
++
++	.align	2
++	.globl	shmobile_boot_fn_gen2
++shmobile_boot_fn_gen2:
++	.space	4
++	.globl	shmobile_boot_size_gen2
++shmobile_boot_size_gen2:
++	.long	. - shmobile_boot_vector_gen2
++#endif /* CONFIG_ARCH_RCAR_GEN2 */
++
+ /*
+  * Per-CPU SMP boot function/argument selection code based on MPIDR
+  */
+-- 
+2.7.4
