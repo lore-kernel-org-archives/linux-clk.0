@@ -1,79 +1,95 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v6 21/41] ARM: da850: add new clock init using common
- clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-22-git-send-email-david@lechnology.com>
- <73d2c30d-ee86-1269-dd4b-1ebfe88a3149@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <a54220c3-7108-1b53-9883-b4643eda2ef3@lechnology.com>
-Date: Fri, 2 Feb 2018 12:05:08 -0600
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <73d2c30d-ee86-1269-dd4b-1ebfe88a3149@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <9b8ae02b-67d5-8d0a-2e35-cab85f89470d@kernel.org>
+References: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
+ <20180209024340.f7sijb7h5egdn675@rob-hp-laptop> <9b8ae02b-67d5-8d0a-2e35-cab85f89470d@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 12 Feb 2018 10:41:22 -0600
+Message-ID: <CAL_JsqJhYvB7haMpx7gBxpmS7ZVStvEwe5VDsrcN+z+0UxHASw@mail.gmail.com>
+Subject: Re: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings
+ information for Stratix10
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/02/2018 08:20 AM, Sekhar Nori wrote:
-> On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
->>   void __init da850_init_time(void)
->>   {
->> +#ifdef CONFIG_COMMON_CLK
->> +	void __iomem *pll0, *pll1, *psc0, *psc1;
->> +	struct regmap *cfgchip;
->> +	struct clk *clk;
->> +	struct clk_hw *parent;
->> +
->> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
->> +	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
->> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
->> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
->> +
->> +	cfgchip = da8xx_register_cfgchip();
->> +	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
->> +		return;
->> +
->> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
->> +
->> +	da850_pll_clk_init(pll0, pll1);
->> +
->> +	da8xx_cfgchip_register_div4p5(cfgchip);
->> +
->> +	da8xx_cfgchip_register_async1(cfgchip);
->> +
->> +	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
->> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
->> +	clk_register_clkdev(clk, "timer0", NULL);
->> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
-> 
-> I think its better to get these clkdevs registered in
-> da850_pll_clk_init() itself.
+On Fri, Feb 9, 2018 at 12:19 PM, Dinh Nguyen <dinguyen@kernel.org> wrote:
+> Hi Rob,
+>
+>
+> On 02/08/2018 08:43 PM, Rob Herring wrote:
+>> On Mon, Feb 05, 2018 at 10:22:45AM -0600, Dinh Nguyen wrote:
+>>> Document that Stratix10 clock bindings, and add the clock header file. The
+>>> clock header is an enumeration of all the different clocks on the Stratix10
+>>> platform.
+>>>
+>>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>>> ---
+>>> v3:
+>>> - s/intc/intel for correct vendor prefix
+>>> - fixup node name to "intel,stratix10-clkmgr"
+>>> - document the required fixed-clock for oscillators
+>>> v2:
+>>> - use a single binding for the clock controller
+>>> ---
+>>>  .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
+>>>  include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
+>>>  2 files changed, 132 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+>>>  create mode 100644 include/dt-bindings/clock/stratix10-clock.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+>>> new file mode 100644
+>>> index 0000000..8d218f4
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+>>> @@ -0,0 +1,47 @@
+>>> +Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
+>>> +
+>>> +This binding uses the common clock binding[1].
+>>> +
+>>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>> +
+>>> +Required properties:
+>>> +- compatible : shall be
+>>> +    "intel,stratix10-clkmgr"
+>>> +
+>>> +- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
+>>> +
+>>> +- #clock-cells : from common clock binding, shall be set to 1.
+>>> +
+>>> +- clocks : Should contain fixed-clock sources, such as oscillators.
+>>> +
+>>> +Example:
+>>> +    clkmgr: clock-controller@ffd10000 {
+>>> +            compatible = "intel,stratix10-clkmgr";
+>>> +            reg = <0xffd10000 0x1000>;
+>>> +            #clock-cells = <1>;
+>>> +
+>>> +            clocks {
+>>> +                    #address-cells = <1>;
+>>> +                    #size-cells = <0>;
+>>> +
+>>> +                    cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
+>>
+>> Don't use '_' in node names.
+>>
+>
+> Ok..
+>
+>>> +                            #clock-cells = <0>;
+>>> +                            compatible = "fixed-clock";
+>>
+>> fixed clock with no frequency?
+>
+> The frequency gets populated in the board's dts file. This provides for
+> the scenario where different boards might use different oscillator
+> frequencies.
 
-Sounds good to me.
+That is irrelevant for examples. The SoC vs. board file split is
+outside the scope of the binding (i.e. not part of the ABI). Well, at
+least until it is done with overlays.
 
-> 
->> +
->> +	clk = da8xx_cfgchip_register_async3(cfgchip);
->> +
->> +	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
->> +	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
->> +	if (parent)
->> +		clk_set_parent(clk, parent->clk);
->> +	else
->> +		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
->> +
->> +	da850_psc_clk_init(psc0, psc1);
->> +
->> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
->> +	clk_register_clkdev(clk, "rmii", NULL);
-> 
-> Like in da830, can drop this rmii clock, I think.
-> 
-> Thanks,
-> Sekhar
-> 
+Rob
