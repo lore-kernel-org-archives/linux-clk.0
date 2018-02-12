@@ -1,80 +1,61 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v6 20/41] ARM: da830: add new clock init using common
- clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-21-git-send-email-david@lechnology.com>
- <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
-Date: Fri, 2 Feb 2018 12:03:36 -0600
-MIME-Version: 1.0
-In-Reply-To: <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 07/26] ARM: dts: r8a7793: Adjust SMP routine size
+Date: Mon, 12 Feb 2018 17:44:16 +0000
+Message-Id: <1518457475-4480-8-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/02/2018 08:12 AM, Sekhar Nori wrote:
-> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->>   void __init da830_init_time(void)
->>   {
->> +#ifdef CONFIG_COMMON_CLK
->> +	void __iomem *pll0, *psc0, *psc1;
->> +	struct clk *clk;
->> +
->> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
->> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
->> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
->> +
->> +	da8xx_register_cfgchip();
->> +
->> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
->> +
->> +	da830_pll_clk_init(pll0);
->> +
->> +	da830_psc_clk_init(psc0, psc1);
->> +
-> 
->> +	clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0, 1, 1);
->> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
->> +
->> +	clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk", 0, 1, 1);
->> +	clk_register_clkdev(clk, "timer0", NULL);
->> +
->> +	clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk", 0, 1, 1);
->> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
-> 
-> Isn't this better done in da830_pll_clk_init() ? I think we can get rid
-> of the dummy fixed factor clock too and directly use the pll0_auxclk.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4->v5:
+* no change
 
-I considered it, but I kind of like keeping the fixed factor clocks for
-debugging purposes. If you just have "pll0_auxclk" the enable count is
-not helpful because you don't know which driver did the enabling.
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On the other hand, once things are working, you don't really need to
-do any debugging.
-
-
-> That reminds me, is "pll0_aux_clk" above correct, or should it be
-> "pll0_auxclk" like in da830_pll_clk_init()?
-
-Yes, it should be "pll0_auxclk".
-
-> 
->> +
->> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
->> +	clk_register_clkdev(clk, "rmii", NULL);
-> 
-> I don't see any driver looking for this clock using con_id "rmii". I
-> know this came from existing code. But its most likely a vestige and can
-> be dropped.
-> 
-> Thanks,
-> Sekhar
-> 
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index aa7d779..bde6969 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -392,7 +392,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
