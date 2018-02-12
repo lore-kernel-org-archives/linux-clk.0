@@ -1,42 +1,82 @@
-Return-Path: <horms@verge.net.au>
-Date: Tue, 13 Feb 2018 09:19:10 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 09/26] soc: renesas: rcar-rst: Enable watchdog as
- reset trigger for Gen2
-Message-ID: <20180213081910.x5llcsmwza44u4ow@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-10-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1518457475-4480-10-git-send-email-fabrizio.castro@bp.renesas.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/19] clk: meson: use devm_of_clk_add_hw_provider
+Date: Mon, 12 Feb 2018 15:58:29 +0100
+Message-Id: <20180212145846.19380-3-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 05:44:18PM +0000, Fabrizio Castro wrote:
-> This patch allows for platform specific quirks as some of the SoC need
-> further customization for the watchdog to work properly, like for R-Car
-> Gen2 and for RZ/G.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+There is no remove callbacks in meson's clock controllers and
+of_clk_del_provider is never called if of_clk_add_hw_provider has been
+executed, introducing a potential memory leak.
+Fixing this by the using the devm variant.
 
-I am fine with this patch but please rebase it on top of
-renesas-devel-20180212-v4.16-rc1 (or later).
+In reality, the leak would never happen since these controllers are
+never unloaded once in use ... still, this is worth cleaning.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c     | 4 ++--
+ drivers/clk/meson/gxbb.c    | 5 +++--
+ drivers/clk/meson/meson8b.c | 4 ++--
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 1f48649a7d2a..e16d53b6be30 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -854,8 +854,8 @@ static int axg_clkc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+-			clkc_data->hw_onecell_data);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   clkc_data->hw_onecell_data);
+ }
+ 
+ static struct platform_driver axg_driver = {
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 423abcb8ef88..17f44ac751b3 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -2002,8 +2002,9 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 			goto iounmap;
+ 	}
+ 
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+-			clkc_data->hw_onecell_data);
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   clkc_data->hw_onecell_data);
+ 
+ iounmap:
+ 	iounmap(clk_base);
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 3ffea80c1308..abac079ff77f 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -878,8 +878,8 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+-			&meson8b_hw_onecell_data);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   &meson8b_hw_onecell_data);
+ }
+ 
+ static const struct of_device_id meson8b_clkc_match_table[] = {
+-- 
+2.14.3
