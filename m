@@ -1,286 +1,252 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v7 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
-Date: Mon, 26 Feb 2018 15:23:30 +0530
-Message-Id: <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 18/19] clk: meson: remove obsolete cpu_clk
+Date: Mon, 12 Feb 2018 15:58:45 +0100
+Message-Id: <20180212145846.19380-19-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+meson8b cpu_clk has been replaced by a set of divider and mux clocks.
+meson_cpu_clk is no longer used and can be removed
 
-Register a cpufreq-generic device whenever we detect that a
-"qcom,krait" compatible CPU is present in DT.
-
-Cc: <devicetree@vger.kernel.org>
-[Sricharan: updated to use dev_pm_opp_set_prop_name and
-	    nvmem apis]
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/cpufreq/Kconfig.arm          |  10 ++
- drivers/cpufreq/Makefile             |   3 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
- drivers/cpufreq/qcom-cpufreq.c       | 182 +++++++++++++++++++++++++++++++++++
- 4 files changed, 200 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+ drivers/clk/meson/Makefile  |   2 +-
+ drivers/clk/meson/clk-cpu.c | 178 --------------------------------------------
+ drivers/clk/meson/clkc.h    |  11 ---
+ 3 files changed, 1 insertion(+), 190 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-cpu.c
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 3a88e33..826f9e7 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 465086118d62..ffee82e60b7a 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Meson specific clk
+ #
  
-+config ARM_QCOM_CPUFREQ
-+	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
-+	depends on ARCH_QCOM
-+	select PM_OPP
-+	help
-+	  This enables the CPUFreq driver for Qualcomm SoCs with
-+	  KRAIT processors.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index c60c1e1..21894f6 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
-+obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
-+obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..e2e9a99 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -127,6 +127,11 @@
- 	{ .compatible = "ti,am43", },
- 	{ .compatible = "ti,dra7", },
+-obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
+deleted file mode 100644
+index f8b2b7efd016..000000000000
+--- a/drivers/clk/meson/clk-cpu.c
++++ /dev/null
+@@ -1,178 +0,0 @@
+-/*
+- * Copyright (c) 2015 Endless Mobile, Inc.
+- * Author: Carlo Caione <carlo@endlessm.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-/*
+- * CPU clock path:
+- *
+- *                           +-[/N]-----|3|
+- *             MUX2  +--[/3]-+----------|2| MUX1
+- * [sys_pll]---|1|   |--[/2]------------|1|-|1|
+- *             | |---+------------------|0| | |----- [a5_clk]
+- *          +--|0|                          | |
+- * [xtal]---+-------------------------------|0|
+- *
+- *
+- *
+- */
+-
+-#include <linux/delay.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/slab.h>
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
+-
+-#define MESON_CPU_CLK_CNTL1		0x00
+-#define MESON_CPU_CLK_CNTL		0x40
+-
+-#define MESON_CPU_CLK_MUX1		BIT(7)
+-#define MESON_CPU_CLK_MUX2		BIT(0)
+-
+-#define MESON_N_WIDTH			9
+-#define MESON_N_SHIFT			20
+-#define MESON_SEL_WIDTH			2
+-#define MESON_SEL_SHIFT			2
+-
+-#include "clkc.h"
+-
+-#define to_meson_clk_cpu_hw(_hw) container_of(_hw, struct meson_clk_cpu, hw)
+-#define to_meson_clk_cpu_nb(_nb) container_of(_nb, struct meson_clk_cpu, clk_nb)
+-
+-static long meson_clk_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+-				     unsigned long *prate)
+-{
+-	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
+-
+-	return divider_round_rate(hw, rate, prate, clk_cpu->div_table,
+-				  MESON_N_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+-}
+-
+-static int meson_clk_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long parent_rate)
+-{
+-	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
+-	unsigned int div, sel, N = 0;
+-	u32 reg;
+-
+-	div = DIV_ROUND_UP(parent_rate, rate);
+-
+-	if (div <= 3) {
+-		sel = div - 1;
+-	} else {
+-		sel = 3;
+-		N = div / 2;
+-	}
+-
+-	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
+-	reg = PARM_SET(MESON_N_WIDTH, MESON_N_SHIFT, reg, N);
+-	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
+-
+-	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
+-	reg = PARM_SET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg, sel);
+-	writel(reg, clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
+-
+-	return 0;
+-}
+-
+-static unsigned long meson_clk_cpu_recalc_rate(struct clk_hw *hw,
+-					       unsigned long parent_rate)
+-{
+-	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_hw(hw);
+-	unsigned int N, sel;
+-	unsigned int div = 1;
+-	u32 reg;
+-
+-	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL1);
+-	N = PARM_GET(MESON_N_WIDTH, MESON_N_SHIFT, reg);
+-
+-	reg = readl(clk_cpu->base + clk_cpu->reg_off + MESON_CPU_CLK_CNTL);
+-	sel = PARM_GET(MESON_SEL_WIDTH, MESON_SEL_SHIFT, reg);
+-
+-	if (sel < 3)
+-		div = sel + 1;
+-	else
+-		div = 2 * N;
+-
+-	return parent_rate / div;
+-}
+-
+-/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
+-static int meson_clk_cpu_pre_rate_change(struct meson_clk_cpu *clk_cpu,
+-					 struct clk_notifier_data *ndata)
+-{
+-	u32 cpu_clk_cntl;
+-
+-	/* switch MUX1 to xtal */
+-	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
+-				+ MESON_CPU_CLK_CNTL);
+-	cpu_clk_cntl &= ~MESON_CPU_CLK_MUX1;
+-	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
+-				+ MESON_CPU_CLK_CNTL);
+-	udelay(100);
+-
+-	/* switch MUX2 to sys-pll */
+-	cpu_clk_cntl |= MESON_CPU_CLK_MUX2;
+-	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
+-				+ MESON_CPU_CLK_CNTL);
+-
+-	return 0;
+-}
+-
+-/* FIXME MUX1 & MUX2 should be struct clk_hw objects */
+-static int meson_clk_cpu_post_rate_change(struct meson_clk_cpu *clk_cpu,
+-					  struct clk_notifier_data *ndata)
+-{
+-	u32 cpu_clk_cntl;
+-
+-	/* switch MUX1 to divisors' output */
+-	cpu_clk_cntl = readl(clk_cpu->base + clk_cpu->reg_off
+-				+ MESON_CPU_CLK_CNTL);
+-	cpu_clk_cntl |= MESON_CPU_CLK_MUX1;
+-	writel(cpu_clk_cntl, clk_cpu->base + clk_cpu->reg_off
+-				+ MESON_CPU_CLK_CNTL);
+-	udelay(100);
+-
+-	return 0;
+-}
+-
+-/*
+- * This clock notifier is called when the frequency of the of the parent
+- * PLL clock is to be changed. We use the xtal input as temporary parent
+- * while the PLL frequency is stabilized.
+- */
+-int meson_clk_cpu_notifier_cb(struct notifier_block *nb,
+-				     unsigned long event, void *data)
+-{
+-	struct clk_notifier_data *ndata = data;
+-	struct meson_clk_cpu *clk_cpu = to_meson_clk_cpu_nb(nb);
+-	int ret = 0;
+-
+-	if (event == PRE_RATE_CHANGE)
+-		ret = meson_clk_cpu_pre_rate_change(clk_cpu, ndata);
+-	else if (event == POST_RATE_CHANGE)
+-		ret = meson_clk_cpu_post_rate_change(clk_cpu, ndata);
+-
+-	return notifier_from_errno(ret);
+-}
+-
+-const struct clk_ops meson_clk_cpu_ops = {
+-	.recalc_rate	= meson_clk_cpu_recalc_rate,
+-	.round_rate	= meson_clk_cpu_round_rate,
+-	.set_rate	= meson_clk_cpu_set_rate,
+-};
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index cc1a964cd4d7..8d8fe608cff4 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -101,17 +101,6 @@ struct meson_clk_pll_data {
  
-+	{ .compatible = "qcom,ipq8064", },
-+	{ .compatible = "qcom,apq8064", },
-+	{ .compatible = "qcom,msm8974", },
-+	{ .compatible = "qcom,msm8960", },
-+
- 	{ }
- };
+ #define to_meson_clk_pll(_hw) container_of(_hw, struct meson_clk_pll, hw)
  
-diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
-new file mode 100644
-index 0000000..20d9fa8
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq.c
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/cpu.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+
-+static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver,
-+					  struct nvmem_cell *pvs_nvmem, u8 *buf)
-+{
-+	u32 pte_efuse;
-+
-+	pte_efuse = *((u32 *)buf);
-+
-+	*speed = pte_efuse & 0xf;
-+	if (*speed == 0xf)
-+		*speed = (pte_efuse >> 4) & 0xf;
-+
-+	if (*speed == 0xf) {
-+		*speed = 0;
-+		pr_warn("Speed bin: Defaulting to %d\n", *speed);
-+	} else {
-+		pr_info("Speed bin: %d\n", *speed);
-+	}
-+
-+	*pvs = (pte_efuse >> 10) & 0x7;
-+	if (*pvs == 0x7)
-+		*pvs = (pte_efuse >> 13) & 0x7;
-+
-+	if (*pvs == 0x7) {
-+		*pvs = 0;
-+		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
-+	} else {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	}
-+
-+	kfree(buf);
-+}
-+
-+static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver,
-+					  struct nvmem_cell *pvs_nvmem, u8 *buf)
-+{
-+	u32 pte_efuse, redundant_sel;
-+
-+	pte_efuse = *((u32 *)buf);
-+	redundant_sel = (pte_efuse >> 24) & 0x7;
-+	*speed = pte_efuse & 0x7;
-+
-+	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
-+	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
-+	*pvs_ver = (pte_efuse >> 4) & 0x3;
-+
-+	switch (redundant_sel) {
-+	case 1:
-+		*speed = (pte_efuse >> 27) & 0xf;
-+		break;
-+	case 2:
-+		*pvs = (pte_efuse >> 27) & 0xf;
-+		break;
-+	}
-+
-+	/* Check SPEED_BIN_BLOW_STATUS */
-+	if (pte_efuse & BIT(3)) {
-+		pr_info("Speed bin: %d\n", *speed);
-+	} else {
-+		pr_warn("Speed bin not set. Defaulting to 0!\n");
-+		*speed = 0;
-+	}
-+
-+	/* Check PVS_BLOW_STATUS */
-+	pte_efuse = *(((u32 *)buf) + 4);
-+	if (pte_efuse) {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	} else {
-+		pr_warn("PVS bin not set. Defaulting to 0!\n");
-+		*pvs = 0;
-+	}
-+
-+	pr_info("PVS version: %d\n", *pvs_ver);
-+	kfree(buf);
-+}
-+
-+static int __init qcom_cpufreq_populate_opps(struct nvmem_cell *pvs_nvmem,
-+					     struct opp_table **tbl)
-+{
-+	int speed = 0, pvs = 0, pvs_ver = 0, cpu;
-+	struct device *cpu_dev;
-+	u8 *buf;
-+	size_t len;
-+	char pvs_name[] = "speedXX-pvsXX-vXX";
-+
-+	buf = nvmem_cell_read(pvs_nvmem, &len);
-+	if (len == 4)
-+		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-+	else if (len == 8)
-+		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-+	else
-+		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
-+
-+	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
-+		 speed, pvs, pvs_ver);
-+
-+	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
-+		cpu_dev = get_cpu_device(cpu);
-+		if (!cpu_dev)
-+			return -ENODEV;
-+
-+		tbl[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
-+
-+		if (IS_ERR(tbl[cpu])) {
-+			tbl[cpu] = 0;
-+			pr_warn("failed to add OPP name %s\n", pvs_name);
-+			return PTR_ERR(tbl[cpu]);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init qcom_cpufreq_driver_init(void)
-+{
-+	struct platform_device *pdev;
-+	struct device *cpu_dev;
-+	struct device_node *np;
-+	struct nvmem_cell *pvs_nvmem;
-+	struct opp_table *tbl[NR_CPUS] = { NULL };
-+	int ret, cpu = 0;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	if (!np)
-+		return -ENOENT;
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	pvs_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(pvs_nvmem)) {
-+		dev_err(cpu_dev, "Could not get nvmem cell\n");
-+		ret = PTR_ERR(pvs_nvmem);
-+		goto free_np;
-+	}
-+
-+	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl);
-+	if (ret)
-+		goto free_opp_name;
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (IS_ERR(pdev)) {
-+		ret = PTR_ERR(pdev);
-+		goto free_opp_name;
-+	}
-+
-+	of_node_put(np);
-+
-+	return 0;
-+
-+free_opp_name:
-+	while (tbl[cpu]) {
-+		dev_pm_opp_put_prop_name(tbl[cpu]);
-+		cpu++;
-+	}
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
-+MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
-+MODULE_LICENSE("GPL v2");
+-struct meson_clk_cpu {
+-	struct clk_hw hw;
+-	void __iomem *base;
+-	u16 reg_off;
+-	struct notifier_block clk_nb;
+-	const struct clk_div_table *div_table;
+-};
+-
+-int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
+-		void *data);
+-
+ struct meson_clk_mpll_data {
+ 	struct parm sdm;
+ 	struct parm sdm_en;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.3
