@@ -1,69 +1,81 @@
-Return-Path: <marcel@ziswiler.com>
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: linux-tegra@vger.kernel.org
-Cc: Dmitry Osipenko <digetx@gmail.com>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: tegra: fix pllu rate configuration
-Date: Fri, 23 Feb 2018 00:04:51 +0100
-Message-Id: <20180222230451.15515-1-marcel@ziswiler.com>
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 04/19] clk: meson: remove obsolete comments
+Date: Mon, 12 Feb 2018 15:58:31 +0100
+Message-Id: <20180212145846.19380-5-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Turns out latest upstream U-Boot does not configure/enable pllu which
-leaves it at some default rate of 500 kHz:
+Over time things changes in CCF and issues have been fixed in meson
+controllers.
 
-root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
-       pll_u                  3        3        0      500000          0
+Now, clk81 is decently modeled by read-only PLLs, a mux, a divider
+and a gate. We can remove the FIXME comments related to clk81.
+Also remove the comment about devm_clk_hw_register, as there is
+apparently nothing wrong with it.
 
-Of course this won't quite work leading to the following messages:
-
-[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-ehci
-[   11.759173] usb 2-1: device descriptor read/64, error -110
-[   27.119453] usb 2-1: device descriptor read/64, error -110
-[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-ehci
-[   32.559454] usb 2-1: device descriptor read/64, error -110
-[   47.929777] usb 2-1: device descriptor read/64, error -110
-[   48.049658] usb usb2-port1: attempt power cycle
-[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-ehci
-[   59.349457] usb 2-1: device not accepting address 4, error -110
-[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-ehci
-[   70.069457] usb 2-1: device not accepting address 5, error -110
-[   70.079721] usb usb2-port1: unable to enumerate USB device
-
-Fix this by actually allowing the rate also being set from within
-the Linux kernel.
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
+ drivers/clk/meson/axg.c     | 5 -----
+ drivers/clk/meson/gxbb.c    | 6 ------
+ drivers/clk/meson/meson8b.c | 1 -
+ 3 files changed, 12 deletions(-)
 
- drivers/clk/tegra/clk-pll.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 7c369e21c91c..830d1c87fa7c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pllu_ops = {
- 	.enable = clk_pllu_enable,
- 	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
-+	.round_rate = clk_pll_round_rate,
-+	.set_rate = clk_pll_set_rate,
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 3bb77b4f1e8d..bc5c29f13282 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -411,11 +411,6 @@ static struct meson_clk_mpll axg_mpll3 = {
+ 	},
  };
  
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+-/*
+- * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
+- * and should be modeled with their respective PLLs via the forthcoming
+- * coordinated clock rates feature
+- */
+ static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+ static const char * const clk81_parent_names[] = {
+ 	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index e6adab49c0ba..6609024eee00 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -575,12 +575,6 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+ 	},
+ };
+ 
+-/*
+- * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
+- * and should be modeled with their respective PLLs via the forthcoming
+- * coordinated clock rates feature
+- */
+-
+ static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+ static const char * const clk81_parent_names[] = {
+ 	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index ffadad27375e..db017c29a84c 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -849,7 +849,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 		if (!meson8b_hw_onecell_data.hws[i])
+ 			continue;
+ 
+-		/* FIXME convert to devm_clk_register */
+ 		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
+ 		if (ret)
+ 			return ret;
 -- 
 2.14.3
