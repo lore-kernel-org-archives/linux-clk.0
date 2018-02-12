@@ -1,281 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53934 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932732AbeBUKPi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Feb 2018 05:15:38 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/6] clk: samsung: exynos542x: Move PD-dependent clocks to
- Exynos5x sub-CMU driver
-Date: Wed, 21 Feb 2018 11:15:24 +0100
-Message-id: <20180221101527.25554-4-m.szyprowski@samsung.com>
-In-reply-to: <20180221101527.25554-1-m.szyprowski@samsung.com>
-References: <20180221101527.25554-1-m.szyprowski@samsung.com>
-        <CGME20180221101533eucas1p2c0fdc0b744b1e026906bd047507f5701@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 15/26] clk: renesas: r8a7743: Add rwdt clock
+Date: Mon, 12 Feb 2018 17:44:24 +0000
+Message-Id: <1518457475-4480-16-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks related to DISP, GSC and MFC blocks require special handling for
-power domain turn on/off sequences. Till now this was handled by Exynos
-power domain driver, but that approach was limited only to some special
-cases. This patch moves handling of those operations to clock controller
-driver. This gives more flexibility and allows fine tune values of some
-clock-specific registers. This patch moves handling of those mentioned
-clocks to Exynos5x sub-CMU driver instantiated from Exynos5420 driver.
+Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/samsung/Makefile              |   1 +
- drivers/clk/samsung/clk-exynos5420.c      | 121 +++++++++++++++++++++++-------
- drivers/clk/samsung/clk-exynos5x-subcmu.c |   2 +
- drivers/soc/samsung/pm_domains.c          |   2 +
- 4 files changed, 100 insertions(+), 26 deletions(-)
+v4->v5:
+* no change
 
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index ef8900bc077f..f70b3f66be89 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-+obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5x-subcmu.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 45d34f601e9e..dbf4b5243987 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -19,6 +19,7 @@
- 
- #include "clk.h"
- #include "clk-cpu.h"
-+#include "clk-exynos5x-subcmu.h"
- 
- #define APLL_LOCK		0x0
- #define APLL_CON0		0x100
-@@ -863,7 +864,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 	DIV(0, "dout_mipi1", "mout_mipi1", DIV_DISP10, 16, 8),
- 	DIV(0, "dout_dp1", "mout_dp1", DIV_DISP10, 24, 4),
- 	DIV(CLK_DOUT_PIXEL, "dout_hdmi_pixel", "mout_pixel", DIV_DISP10, 28, 4),
--	DIV(0, "dout_disp1_blk", "aclk200_disp1", DIV2_RATIO0, 16, 2),
- 	DIV(CLK_DOUT_ACLK400_DISP1, "dout_aclk400_disp1",
- 			"mout_aclk400_disp1", DIV_TOP2, 4, 3),
- 
-@@ -912,8 +912,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 	DIV(0, "dout_spi1", "mout_spi1", DIV_PERIC1, 24, 4),
- 	DIV(0, "dout_spi2", "mout_spi2", DIV_PERIC1, 28, 4),
- 
--	/* Mfc Block */
--	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
- 
- 	/* PCM */
- 	DIV(0, "dout_pcm1", "dout_audio1", DIV_PERIC2, 16, 8),
-@@ -932,8 +930,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 	DIV(0, "dout_spi2_pre", "dout_spi2", DIV_PERIC4, 24, 8),
- 
- 	/* GSCL Block */
--	DIV(0, "dout_gscl_blk_300", "mout_user_aclk300_gscl",
--			DIV2_RATIO0, 4, 2),
- 	DIV(0, "dout_gscl_blk_333", "aclk333_432_gscl", DIV2_RATIO0, 6, 2),
- 
- 	/* MSCL Block */
-@@ -1190,8 +1186,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_SCLK_GSCL_WB, "sclk_gscl_wb", "mout_user_aclk333_432_gscl",
- 			GATE_TOP_SCLK_GSCL, 7, 0, 0),
- 
--	GATE(CLK_GSCL0, "gscl0", "aclk300_gscl", GATE_IP_GSCL0, 0, 0, 0),
--	GATE(CLK_GSCL1, "gscl1", "aclk300_gscl", GATE_IP_GSCL0, 1, 0, 0),
- 	GATE(CLK_FIMC_3AA, "fimc_3aa", "aclk333_432_gscl",
- 			GATE_IP_GSCL0, 4, 0, 0),
- 	GATE(CLK_FIMC_LITE0, "fimc_lite0", "aclk333_432_gscl",
-@@ -1205,10 +1199,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 			GATE_IP_GSCL1, 3, 0, 0),
- 	GATE(CLK_SMMU_FIMCL1, "smmu_fimcl1", "dout_gscl_blk_333",
- 			GATE_IP_GSCL1, 4, 0, 0),
--	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "dout_gscl_blk_300",
--			GATE_IP_GSCL1, 6, 0, 0),
--	GATE(CLK_SMMU_GSCL1, "smmu_gscl1", "dout_gscl_blk_300",
--			GATE_IP_GSCL1, 7, 0, 0),
- 	GATE(CLK_GSCL_WA, "gscl_wa", "sclk_gscl_wa", GATE_IP_GSCL1, 12, 0, 0),
- 	GATE(CLK_GSCL_WB, "gscl_wb", "sclk_gscl_wb", GATE_IP_GSCL1, 13, 0, 0),
- 	GATE(CLK_SMMU_FIMCL3, "smmu_fimcl3,", "dout_gscl_blk_333",
-@@ -1227,18 +1217,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_SMMU_MSCL2, "smmu_mscl2", "dout_mscl_blk",
- 			GATE_IP_MSCL, 10, 0, 0),
- 
--	GATE(CLK_FIMD1, "fimd1", "aclk300_disp1", GATE_IP_DISP1, 0, 0, 0),
--	GATE(CLK_DSIM1, "dsim1", "aclk200_disp1", GATE_IP_DISP1, 3, 0, 0),
--	GATE(CLK_DP1, "dp1", "aclk200_disp1", GATE_IP_DISP1, 4, 0, 0),
--	GATE(CLK_MIXER, "mixer", "aclk200_disp1", GATE_IP_DISP1, 5, 0, 0),
--	GATE(CLK_HDMI, "hdmi", "aclk200_disp1", GATE_IP_DISP1, 6, 0, 0),
--	GATE(CLK_SMMU_FIMD1M0, "smmu_fimd1m0", "dout_disp1_blk",
--			GATE_IP_DISP1, 7, 0, 0),
--	GATE(CLK_SMMU_FIMD1M1, "smmu_fimd1m1", "dout_disp1_blk",
--			GATE_IP_DISP1, 8, 0, 0),
--	GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1",
--			GATE_IP_DISP1, 9, 0, 0),
--
- 	/* ISP */
- 	GATE(CLK_SCLK_UART_ISP, "sclk_uart_isp", "dout_uart_isp",
- 			GATE_TOP_SCLK_ISP, 0, CLK_SET_RATE_PARENT, 0),
-@@ -1255,11 +1233,98 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "dout_isp_sensor2",
- 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
- 
-+	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
-+};
-+
-+static const struct samsung_div_clock exynos5x_disp_div_clks[] __initconst = {
-+	DIV(0, "dout_disp1_blk", "aclk200_disp1", DIV2_RATIO0, 16, 2),
-+};
-+
-+static const struct samsung_gate_clock exynos5x_disp_gate_clks[] __initconst = {
-+	GATE(CLK_FIMD1, "fimd1", "aclk300_disp1", GATE_IP_DISP1, 0, 0, 0),
-+	GATE(CLK_DSIM1, "dsim1", "aclk200_disp1", GATE_IP_DISP1, 3, 0, 0),
-+	GATE(CLK_DP1, "dp1", "aclk200_disp1", GATE_IP_DISP1, 4, 0, 0),
-+	GATE(CLK_MIXER, "mixer", "aclk200_disp1", GATE_IP_DISP1, 5, 0, 0),
-+	GATE(CLK_HDMI, "hdmi", "aclk200_disp1", GATE_IP_DISP1, 6, 0, 0),
-+	GATE(CLK_SMMU_FIMD1M0, "smmu_fimd1m0", "dout_disp1_blk",
-+			GATE_IP_DISP1, 7, 0, 0),
-+	GATE(CLK_SMMU_FIMD1M1, "smmu_fimd1m1", "dout_disp1_blk",
-+			GATE_IP_DISP1, 8, 0, 0),
-+	GATE(CLK_SMMU_MIXER, "smmu_mixer", "aclk200_disp1",
-+			GATE_IP_DISP1, 9, 0, 0),
-+};
-+
-+static struct samsung_clk_ext_reg_dump exynos_5x_disp_suspend_regs[] = {
-+	{ GATE_IP_DISP1, 0xffffffff, 0xffffffff }, /* DISP1 gates */
-+	{ SRC_TOP5, 0, BIT(0) },	/* MUX mout_user_aclk400_disp1 */
-+	{ SRC_TOP5, 0, BIT(24) },	/* MUX mout_user_aclk300_disp1 */
-+	{ SRC_TOP3, 0, BIT(8) },	/* MUX mout_user_aclk200_disp1 */
-+	{ DIV2_RATIO0, 0, 0x30000 },		/* DIV dout_disp1_blk */
-+};
-+
-+static const struct samsung_div_clock exynos5x_gsc_div_clks[] __initconst = {
-+	DIV(0, "dout_gscl_blk_300", "mout_user_aclk300_gscl",
-+			DIV2_RATIO0, 4, 2),
-+};
-+
-+static const struct samsung_gate_clock exynos5x_gsc_gate_clks[] __initconst = {
-+	GATE(CLK_GSCL0, "gscl0", "aclk300_gscl", GATE_IP_GSCL0, 0, 0, 0),
-+	GATE(CLK_GSCL1, "gscl1", "aclk300_gscl", GATE_IP_GSCL0, 1, 0, 0),
-+	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "dout_gscl_blk_300",
-+			GATE_IP_GSCL1, 6, 0, 0),
-+	GATE(CLK_SMMU_GSCL1, "smmu_gscl1", "dout_gscl_blk_300",
-+			GATE_IP_GSCL1, 7, 0, 0),
-+};
-+
-+static struct samsung_clk_ext_reg_dump exynos_5x_gsc_suspend_regs[] = {
-+	{ GATE_IP_GSCL0, 0x3, 0x3 },	/* GSC gates */
-+	{ GATE_IP_GSCL1, 0xc0, 0xc0 },	/* GSC gates */
-+	{ SRC_TOP5, 0, BIT(28) },	/* MUX mout_user_aclk300_gscl */
-+	{ DIV2_RATIO0, 0, 0x30 },	/* DIV dout_gscl_blk_300 */
-+};
-+
-+static const struct samsung_div_clock exynos5x_mfc_div_clks[] __initconst = {
-+	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
-+};
-+
-+static const struct samsung_gate_clock exynos5x_mfc_gate_clks[] __initconst = {
- 	GATE(CLK_MFC, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
- 	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "dout_mfc_blk", GATE_IP_MFC, 1, 0, 0),
- 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "dout_mfc_blk", GATE_IP_MFC, 2, 0, 0),
-+};
- 
--	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
-+static struct samsung_clk_ext_reg_dump exynos_5x_mfc_suspend_regs[] = {
-+	{ GATE_IP_MFC, 0xffffffff, 0xffffffff }, /* MFC gates */
-+	{ SRC_TOP4, 0, BIT(28) },		/* MUX mout_user_aclk333 */
-+	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
-+};
-+
-+static const struct samsung_5x_subcmu_info exynos_5x_subcmus[] = {
-+	{
-+		.div_clks	= exynos5x_disp_div_clks,
-+		.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
-+		.gate_clks	= exynos5x_disp_gate_clks,
-+		.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
-+		.suspend_regs	= exynos_5x_disp_suspend_regs,
-+		.nr_suspend_regs = ARRAY_SIZE(exynos_5x_disp_suspend_regs),
-+		.pd_name	= "DISP",
-+	}, {
-+		.div_clks	= exynos5x_gsc_div_clks,
-+		.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
-+		.gate_clks	= exynos5x_gsc_gate_clks,
-+		.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
-+		.suspend_regs	= exynos_5x_gsc_suspend_regs,
-+		.nr_suspend_regs = ARRAY_SIZE(exynos_5x_gsc_suspend_regs),
-+		.pd_name	= "GSC",
-+	}, {
-+		.div_clks	= exynos5x_mfc_div_clks,
-+		.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
-+		.gate_clks	= exynos5x_mfc_gate_clks,
-+		.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
-+		.suspend_regs	= exynos_5x_mfc_suspend_regs,
-+		.nr_suspend_regs = ARRAY_SIZE(exynos_5x_mfc_suspend_regs),
-+		.pd_name	= "MFC",
-+	},
+ drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+index 6dc0b30..d3c8b1e 100644
+--- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+@@ -117,6 +117,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7743_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7743_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7743_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7743_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7743_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7743_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7743_CLK_HP),
+@@ -195,6 +196,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
  };
  
- static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
-@@ -1472,6 +1537,8 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 		exynos5420_kfcclk_d, ARRAY_SIZE(exynos5420_kfcclk_d), 0);
- 
- 	exynos5420_clk_sleep_init();
-+	samsung_clk_subcmus_init(ctx, ARRAY_SIZE(exynos_5x_subcmus),
-+				 exynos_5x_subcmus);
- 
- 	samsung_clk_of_add_provider(np, ctx);
- }
-@@ -1480,10 +1547,12 @@ static void __init exynos5420_clk_init(struct device_node *np)
- {
- 	exynos5x_clk_init(np, EXYNOS5420);
- }
--CLK_OF_DECLARE(exynos5420_clk, "samsung,exynos5420-clock", exynos5420_clk_init);
-+CLK_OF_DECLARE_DRIVER(exynos5420_clk, "samsung,exynos5420-clock",
-+		      exynos5420_clk_init);
- 
- static void __init exynos5800_clk_init(struct device_node *np)
- {
- 	exynos5x_clk_init(np, EXYNOS5800);
- }
--CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
-+CLK_OF_DECLARE_DRIVER(exynos5800_clk, "samsung,exynos5800-clock",
-+		      exynos5800_clk_init);
-diff --git a/drivers/clk/samsung/clk-exynos5x-subcmu.c b/drivers/clk/samsung/clk-exynos5x-subcmu.c
-index 9ff6d5d17f57..256473b83264 100644
---- a/drivers/clk/samsung/clk-exynos5x-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5x-subcmu.c
-@@ -159,6 +159,8 @@ static int __init exynos5x_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id exynos5x_clk_of_match[] = {
-+	{ .compatible = "samsung,exynos5420-clock", },
-+	{ .compatible = "samsung,exynos5800-clock", },
- 	{ },
+ static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
  };
  
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index cef30bdf19b1..f2d6d7a09c16 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -148,6 +148,8 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- }
- 
- static const char *soc_force_no_clk[] = {
-+	"samsung,exynos5420-clock",
-+	"samsung,exynos5800-clock",
- };
- 
- static __init int exynos4_pm_init_power_domain(void)
 -- 
-2.15.0
-
+2.7.4
