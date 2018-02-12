@@ -1,341 +1,306 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v1 3/5] dt-bindings: clock: add clocks for MT2712
-Date: Thu, 22 Feb 2018 13:48:49 +0800
-Message-ID: <20180222054851.26096-5-weiyi.lu@mediatek.com>
-In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexey Klimov <klimov.linux@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH v5 16/20] clk: add support for clocks provided by SCMI
+Date: Mon, 12 Feb 2018 18:45:20 +0000
+Message-Id: <1518461124-17371-17-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
+References: <1518461124-17371-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-add new clocks according to ECO design change
+On some ARM based systems, a separate Cortex-M based System Control
+Processor(SCP) provides the overall power, clock, reset and system
+control. System Control and Management Interface(SCMI) Message Protocol
+is defined for the communication between the Application Cores(AP)
+and the SCP.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+This patch adds support for the clocks provided by SCP using SCMI
+protocol.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- include/dt-bindings/clock/mt2712-clk.h | 294 +++++++++++++++++----------------
- 1 file changed, 151 insertions(+), 143 deletions(-)
+ MAINTAINERS            |   2 +-
+ drivers/clk/Kconfig    |  10 +++
+ drivers/clk/Makefile   |   1 +
+ drivers/clk/clk-scmi.c | 213 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 225 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-scmi.c
 
-diff --git a/include/dt-bindings/clock/mt2712-clk.h b/include/dt-bindings/clock/mt2712-clk.h
-index 48a8e797a617..0690f24391b3 100644
---- a/include/dt-bindings/clock/mt2712-clk.h
-+++ b/include/dt-bindings/clock/mt2712-clk.h
-@@ -81,148 +81,154 @@
- #define CLK_TOP_F_BUS_PLL2		42
- #define CLK_TOP_APLL1			43
- #define CLK_TOP_APLL1_D2		44
--#define CLK_TOP_APLL1_D4		45
--#define CLK_TOP_APLL1_D8		46
--#define CLK_TOP_APLL1_D16		47
--#define CLK_TOP_APLL2			48
--#define CLK_TOP_APLL2_D2		49
--#define CLK_TOP_APLL2_D4		50
--#define CLK_TOP_APLL2_D8		51
--#define CLK_TOP_APLL2_D16		52
--#define CLK_TOP_LVDSPLL			53
--#define CLK_TOP_LVDSPLL_D2		54
--#define CLK_TOP_LVDSPLL_D4		55
--#define CLK_TOP_LVDSPLL_D8		56
--#define CLK_TOP_LVDSPLL2		57
--#define CLK_TOP_LVDSPLL2_D2		58
--#define CLK_TOP_LVDSPLL2_D4		59
--#define CLK_TOP_LVDSPLL2_D8		60
--#define CLK_TOP_ETHERPLL_125M		61
--#define CLK_TOP_ETHERPLL_50M		62
--#define CLK_TOP_CVBS			63
--#define CLK_TOP_CVBS_D2			64
--#define CLK_TOP_SYS_26M			65
--#define CLK_TOP_MMPLL			66
--#define CLK_TOP_MMPLL_D2		67
--#define CLK_TOP_VENCPLL			68
--#define CLK_TOP_VENCPLL_D2		69
--#define CLK_TOP_VCODECPLL		70
--#define CLK_TOP_VCODECPLL_D2		71
--#define CLK_TOP_TVDPLL			72
--#define CLK_TOP_TVDPLL_D2		73
--#define CLK_TOP_TVDPLL_D4		74
--#define CLK_TOP_TVDPLL_D8		75
--#define CLK_TOP_TVDPLL_429M		76
--#define CLK_TOP_TVDPLL_429M_D2		77
--#define CLK_TOP_TVDPLL_429M_D4		78
--#define CLK_TOP_MSDCPLL			79
--#define CLK_TOP_MSDCPLL_D2		80
--#define CLK_TOP_MSDCPLL_D4		81
--#define CLK_TOP_MSDCPLL2		82
--#define CLK_TOP_MSDCPLL2_D2		83
--#define CLK_TOP_MSDCPLL2_D4		84
--#define CLK_TOP_CLK26M_D2		85
--#define CLK_TOP_D2A_ULCLK_6P5M		86
--#define CLK_TOP_VPLL3_DPIX		87
--#define CLK_TOP_VPLL_DPIX		88
--#define CLK_TOP_LTEPLL_FS26M		89
--#define CLK_TOP_DMPLL			90
--#define CLK_TOP_DSI0_LNTC		91
--#define CLK_TOP_DSI1_LNTC		92
--#define CLK_TOP_LVDSTX3_CLKDIG_CTS	93
--#define CLK_TOP_LVDSTX_CLKDIG_CTS	94
--#define CLK_TOP_CLKRTC_EXT		95
--#define CLK_TOP_CLKRTC_INT		96
--#define CLK_TOP_CSI0			97
--#define CLK_TOP_CVBSPLL			98
--#define CLK_TOP_AXI_SEL			99
--#define CLK_TOP_MEM_SEL			100
--#define CLK_TOP_MM_SEL			101
--#define CLK_TOP_PWM_SEL			102
--#define CLK_TOP_VDEC_SEL		103
--#define CLK_TOP_VENC_SEL		104
--#define CLK_TOP_MFG_SEL			105
--#define CLK_TOP_CAMTG_SEL		106
--#define CLK_TOP_UART_SEL		107
--#define CLK_TOP_SPI_SEL			108
--#define CLK_TOP_USB20_SEL		109
--#define CLK_TOP_USB30_SEL		110
--#define CLK_TOP_MSDC50_0_HCLK_SEL	111
--#define CLK_TOP_MSDC50_0_SEL		112
--#define CLK_TOP_MSDC30_1_SEL		113
--#define CLK_TOP_MSDC30_2_SEL		114
--#define CLK_TOP_MSDC30_3_SEL		115
--#define CLK_TOP_AUDIO_SEL		116
--#define CLK_TOP_AUD_INTBUS_SEL		117
--#define CLK_TOP_PMICSPI_SEL		118
--#define CLK_TOP_DPILVDS1_SEL		119
--#define CLK_TOP_ATB_SEL			120
--#define CLK_TOP_NR_SEL			121
--#define CLK_TOP_NFI2X_SEL		122
--#define CLK_TOP_IRDA_SEL		123
--#define CLK_TOP_CCI400_SEL		124
--#define CLK_TOP_AUD_1_SEL		125
--#define CLK_TOP_AUD_2_SEL		126
--#define CLK_TOP_MEM_MFG_IN_AS_SEL	127
--#define CLK_TOP_AXI_MFG_IN_AS_SEL	128
--#define CLK_TOP_SCAM_SEL		129
--#define CLK_TOP_NFIECC_SEL		130
--#define CLK_TOP_PE2_MAC_P0_SEL		131
--#define CLK_TOP_PE2_MAC_P1_SEL		132
--#define CLK_TOP_DPILVDS_SEL		133
--#define CLK_TOP_MSDC50_3_HCLK_SEL	134
--#define CLK_TOP_HDCP_SEL		135
--#define CLK_TOP_HDCP_24M_SEL		136
--#define CLK_TOP_RTC_SEL			137
--#define CLK_TOP_SPINOR_SEL		138
--#define CLK_TOP_APLL_SEL		139
--#define CLK_TOP_APLL2_SEL		140
--#define CLK_TOP_A1SYS_HP_SEL		141
--#define CLK_TOP_A2SYS_HP_SEL		142
--#define CLK_TOP_ASM_L_SEL		143
--#define CLK_TOP_ASM_M_SEL		144
--#define CLK_TOP_ASM_H_SEL		145
--#define CLK_TOP_I2SO1_SEL		146
--#define CLK_TOP_I2SO2_SEL		147
--#define CLK_TOP_I2SO3_SEL		148
--#define CLK_TOP_TDMO0_SEL		149
--#define CLK_TOP_TDMO1_SEL		150
--#define CLK_TOP_I2SI1_SEL		151
--#define CLK_TOP_I2SI2_SEL		152
--#define CLK_TOP_I2SI3_SEL		153
--#define CLK_TOP_ETHER_125M_SEL		154
--#define CLK_TOP_ETHER_50M_SEL		155
--#define CLK_TOP_JPGDEC_SEL		156
--#define CLK_TOP_SPISLV_SEL		157
--#define CLK_TOP_ETHER_50M_RMII_SEL	158
--#define CLK_TOP_CAM2TG_SEL		159
--#define CLK_TOP_DI_SEL			160
--#define CLK_TOP_TVD_SEL			161
--#define CLK_TOP_I2C_SEL			162
--#define CLK_TOP_PWM_INFRA_SEL		163
--#define CLK_TOP_MSDC0P_AES_SEL		164
--#define CLK_TOP_CMSYS_SEL		165
--#define CLK_TOP_GCPU_SEL		166
--#define CLK_TOP_AUD_APLL1_SEL		167
--#define CLK_TOP_AUD_APLL2_SEL		168
--#define CLK_TOP_DA_AUDULL_VTX_6P5M_SEL	169
--#define CLK_TOP_APLL_DIV0		170
--#define CLK_TOP_APLL_DIV1		171
--#define CLK_TOP_APLL_DIV2		172
--#define CLK_TOP_APLL_DIV3		173
--#define CLK_TOP_APLL_DIV4		174
--#define CLK_TOP_APLL_DIV5		175
--#define CLK_TOP_APLL_DIV6		176
--#define CLK_TOP_APLL_DIV7		177
--#define CLK_TOP_APLL_DIV_PDN0		178
--#define CLK_TOP_APLL_DIV_PDN1		179
--#define CLK_TOP_APLL_DIV_PDN2		180
--#define CLK_TOP_APLL_DIV_PDN3		181
--#define CLK_TOP_APLL_DIV_PDN4		182
--#define CLK_TOP_APLL_DIV_PDN5		183
--#define CLK_TOP_APLL_DIV_PDN6		184
--#define CLK_TOP_APLL_DIV_PDN7		185
--#define CLK_TOP_NR_CLK			186
-+#define CLK_TOP_APLL1_D3		45
-+#define CLK_TOP_APLL1_D4		46
-+#define CLK_TOP_APLL1_D8		47
-+#define CLK_TOP_APLL1_D16		48
-+#define CLK_TOP_APLL2			49
-+#define CLK_TOP_APLL2_D2		50
-+#define CLK_TOP_APLL2_D4		51
-+#define CLK_TOP_APLL2_D8		52
-+#define CLK_TOP_APLL2_D16		53
-+#define CLK_TOP_LVDSPLL			54
-+#define CLK_TOP_LVDSPLL_D2		55
-+#define CLK_TOP_LVDSPLL_D4		56
-+#define CLK_TOP_LVDSPLL_D8		57
-+#define CLK_TOP_LVDSPLL2		58
-+#define CLK_TOP_LVDSPLL2_D2		59
-+#define CLK_TOP_LVDSPLL2_D4		60
-+#define CLK_TOP_LVDSPLL2_D8		61
-+#define CLK_TOP_ETHERPLL_125M		62
-+#define CLK_TOP_ETHERPLL_50M		63
-+#define CLK_TOP_CVBS			64
-+#define CLK_TOP_CVBS_D2			65
-+#define CLK_TOP_SYS_26M			66
-+#define CLK_TOP_MMPLL			67
-+#define CLK_TOP_MMPLL_D2		68
-+#define CLK_TOP_VENCPLL			69
-+#define CLK_TOP_VENCPLL_D2		70
-+#define CLK_TOP_VCODECPLL		71
-+#define CLK_TOP_VCODECPLL_D2		72
-+#define CLK_TOP_TVDPLL			73
-+#define CLK_TOP_TVDPLL_D2		74
-+#define CLK_TOP_TVDPLL_D4		75
-+#define CLK_TOP_TVDPLL_D8		76
-+#define CLK_TOP_TVDPLL_429M		77
-+#define CLK_TOP_TVDPLL_429M_D2		78
-+#define CLK_TOP_TVDPLL_429M_D4		79
-+#define CLK_TOP_MSDCPLL			80
-+#define CLK_TOP_MSDCPLL_D2		81
-+#define CLK_TOP_MSDCPLL_D4		82
-+#define CLK_TOP_MSDCPLL2		83
-+#define CLK_TOP_MSDCPLL2_D2		84
-+#define CLK_TOP_MSDCPLL2_D4		85
-+#define CLK_TOP_CLK26M_D2		86
-+#define CLK_TOP_D2A_ULCLK_6P5M		87
-+#define CLK_TOP_VPLL3_DPIX		88
-+#define CLK_TOP_VPLL_DPIX		89
-+#define CLK_TOP_LTEPLL_FS26M		90
-+#define CLK_TOP_DMPLL			91
-+#define CLK_TOP_DSI0_LNTC		92
-+#define CLK_TOP_DSI1_LNTC		93
-+#define CLK_TOP_LVDSTX3_CLKDIG_CTS	94
-+#define CLK_TOP_LVDSTX_CLKDIG_CTS	95
-+#define CLK_TOP_CLKRTC_EXT		96
-+#define CLK_TOP_CLKRTC_INT		97
-+#define CLK_TOP_CSI0			98
-+#define CLK_TOP_CVBSPLL			99
-+#define CLK_TOP_AXI_SEL			100
-+#define CLK_TOP_MEM_SEL			101
-+#define CLK_TOP_MM_SEL			102
-+#define CLK_TOP_PWM_SEL			103
-+#define CLK_TOP_VDEC_SEL		104
-+#define CLK_TOP_VENC_SEL		105
-+#define CLK_TOP_MFG_SEL			106
-+#define CLK_TOP_CAMTG_SEL		107
-+#define CLK_TOP_UART_SEL		108
-+#define CLK_TOP_SPI_SEL			109
-+#define CLK_TOP_USB20_SEL		110
-+#define CLK_TOP_USB30_SEL		111
-+#define CLK_TOP_MSDC50_0_HCLK_SEL	112
-+#define CLK_TOP_MSDC50_0_SEL		113
-+#define CLK_TOP_MSDC30_1_SEL		114
-+#define CLK_TOP_MSDC30_2_SEL		115
-+#define CLK_TOP_MSDC30_3_SEL		116
-+#define CLK_TOP_AUDIO_SEL		117
-+#define CLK_TOP_AUD_INTBUS_SEL		118
-+#define CLK_TOP_PMICSPI_SEL		119
-+#define CLK_TOP_DPILVDS1_SEL		120
-+#define CLK_TOP_ATB_SEL			121
-+#define CLK_TOP_NR_SEL			122
-+#define CLK_TOP_NFI2X_SEL		123
-+#define CLK_TOP_IRDA_SEL		124
-+#define CLK_TOP_CCI400_SEL		125
-+#define CLK_TOP_AUD_1_SEL		126
-+#define CLK_TOP_AUD_2_SEL		127
-+#define CLK_TOP_MEM_MFG_IN_AS_SEL	128
-+#define CLK_TOP_AXI_MFG_IN_AS_SEL	129
-+#define CLK_TOP_SCAM_SEL		130
-+#define CLK_TOP_NFIECC_SEL		131
-+#define CLK_TOP_PE2_MAC_P0_SEL		132
-+#define CLK_TOP_PE2_MAC_P1_SEL		133
-+#define CLK_TOP_DPILVDS_SEL		134
-+#define CLK_TOP_MSDC50_3_HCLK_SEL	135
-+#define CLK_TOP_HDCP_SEL		136
-+#define CLK_TOP_HDCP_24M_SEL		137
-+#define CLK_TOP_RTC_SEL			138
-+#define CLK_TOP_SPINOR_SEL		139
-+#define CLK_TOP_APLL_SEL		140
-+#define CLK_TOP_APLL2_SEL		141
-+#define CLK_TOP_A1SYS_HP_SEL		142
-+#define CLK_TOP_A2SYS_HP_SEL		143
-+#define CLK_TOP_ASM_L_SEL		144
-+#define CLK_TOP_ASM_M_SEL		145
-+#define CLK_TOP_ASM_H_SEL		146
-+#define CLK_TOP_I2SO1_SEL		147
-+#define CLK_TOP_I2SO2_SEL		148
-+#define CLK_TOP_I2SO3_SEL		149
-+#define CLK_TOP_TDMO0_SEL		150
-+#define CLK_TOP_TDMO1_SEL		151
-+#define CLK_TOP_I2SI1_SEL		152
-+#define CLK_TOP_I2SI2_SEL		153
-+#define CLK_TOP_I2SI3_SEL		154
-+#define CLK_TOP_ETHER_125M_SEL		155
-+#define CLK_TOP_ETHER_50M_SEL		156
-+#define CLK_TOP_JPGDEC_SEL		157
-+#define CLK_TOP_SPISLV_SEL		158
-+#define CLK_TOP_ETHER_50M_RMII_SEL	159
-+#define CLK_TOP_CAM2TG_SEL		160
-+#define CLK_TOP_DI_SEL			161
-+#define CLK_TOP_TVD_SEL			162
-+#define CLK_TOP_I2C_SEL			163
-+#define CLK_TOP_PWM_INFRA_SEL		164
-+#define CLK_TOP_MSDC0P_AES_SEL		165
-+#define CLK_TOP_CMSYS_SEL		166
-+#define CLK_TOP_GCPU_SEL		167
-+#define CLK_TOP_AUD_APLL1_SEL		168
-+#define CLK_TOP_AUD_APLL2_SEL		169
-+#define CLK_TOP_APLL1_REF_SEL		170
-+#define CLK_TOP_APLL2_REF_SEL		171
-+#define CLK_TOP_DA_AUDULL_VTX_6P5M_SEL	172
-+#define CLK_TOP_APLL_DIV0		173
-+#define CLK_TOP_APLL_DIV1		174
-+#define CLK_TOP_APLL_DIV2		175
-+#define CLK_TOP_APLL_DIV3		176
-+#define CLK_TOP_APLL_DIV4		177
-+#define CLK_TOP_APLL_DIV5		178
-+#define CLK_TOP_APLL_DIV6		179
-+#define CLK_TOP_APLL_DIV7		180
-+#define CLK_TOP_APLL_DIV_PDN0		181
-+#define CLK_TOP_APLL_DIV_PDN1		182
-+#define CLK_TOP_APLL_DIV_PDN2		183
-+#define CLK_TOP_APLL_DIV_PDN3		184
-+#define CLK_TOP_APLL_DIV_PDN4		185
-+#define CLK_TOP_APLL_DIV_PDN5		186
-+#define CLK_TOP_APLL_DIV_PDN6		187
-+#define CLK_TOP_APLL_DIV_PDN7		188
-+#define CLK_TOP_NFI2X_EN		189
-+#define CLK_TOP_NFIECC_EN		190
-+#define CLK_TOP_NFI1X_CK_EN		191
-+#define CLK_TOP_NR_CLK			192
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7cede6e7dfed..d6e9e3eae5ac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13384,7 +13384,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
+ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/arm,sc[mp]i.txt
+-F:	drivers/clk/clk-scpi.c
++F:	drivers/clk/clk-sc[mp]i.c
+ F:	drivers/cpufreq/scpi-cpufreq.c
+ F:	drivers/firmware/arm_scpi.c
+ F:	drivers/firmware/arm_scmi/
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..7ae23b25b406 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -62,6 +62,16 @@ config COMMON_CLK_HI655X
+ 	  multi-function device has one fixed-rate oscillator, clocked
+ 	  at 32KHz.
  
- /* INFRACFG */
- 
-@@ -281,7 +287,9 @@
- #define CLK_PERI_MSDC30_3_EN		41
- #define CLK_PERI_MSDC50_0_HCLK_EN	42
- #define CLK_PERI_MSDC50_3_HCLK_EN	43
--#define CLK_PERI_NR_CLK			44
-+#define CLK_PERI_MSDC30_0_QTR_EN	44
-+#define CLK_PERI_MSDC30_3_QTR_EN	45
-+#define CLK_PERI_NR_CLK			46
- 
- /* MCUCFG */
- 
++config COMMON_CLK_SCMI
++	tristate "Clock driver controlled via SCMI interface"
++	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
++	  ---help---
++	  This driver provides support for clocks that are controlled
++	  by firmware that implements the SCMI interface.
++
++	  This driver uses SCMI Message Protocol to interact with the
++	  firmware providing all the clock controls.
++
+ config COMMON_CLK_SCPI
+ 	tristate "Clock driver controlled via SCPI interface"
+ 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e6364f..6605513eaa94 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -41,6 +41,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
++obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+new file mode 100644
+index 000000000000..1e4d7a57779b
+--- /dev/null
++++ b/drivers/clk/clk-scmi.c
+@@ -0,0 +1,213 @@
++/*
++ * System Control and Power Interface (SCMI) Protocol based clock driver
++ *
++ * Copyright (C) 2017 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/scmi_protocol.h>
++#include <asm/div64.h>
++
++struct scmi_clk {
++	u32 id;
++	struct clk_hw hw;
++	const struct scmi_clock_info *info;
++	const struct scmi_handle *handle;
++};
++
++#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
++
++static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	int ret;
++	u64 rate;
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
++	if (ret)
++		return 0;
++	return rate;
++}
++
++static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	int step;
++	u64 fmin, fmax, ftmp;
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	/*
++	 * We can't figure out what rate it will be, so just return the
++	 * rate back to the caller. scmi_clk_recalc_rate() will be called
++	 * after the rate is set and we'll know what rate the clock is
++	 * running at then.
++	 */
++	if (clk->info->rate_discrete)
++		return rate;
++
++	fmin = clk->info->range.min_rate;
++	fmax = clk->info->range.max_rate;
++	if (rate <= fmin)
++		return fmin;
++	else if (rate >= fmax)
++		return fmax;
++
++	ftmp = rate - fmin;
++	ftmp += clk->info->range.step_size - 1; /* to round up */
++	step = do_div(ftmp, clk->info->range.step_size);
++
++	return step * clk->info->range.step_size + fmin;
++}
++
++static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
++}
++
++static int scmi_clk_enable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	return clk->handle->clk_ops->enable(clk->handle, clk->id);
++}
++
++static void scmi_clk_disable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	clk->handle->clk_ops->disable(clk->handle, clk->id);
++}
++
++static const struct clk_ops scmi_clk_ops = {
++	.recalc_rate = scmi_clk_recalc_rate,
++	.round_rate = scmi_clk_round_rate,
++	.set_rate = scmi_clk_set_rate,
++	/*
++	 * We can't provide enable/disable callback as we can't perform the same
++	 * in atomic context. Since the clock framework provides standard API
++	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
++	 * context, it should be fine providing prepare/unprepare.
++	 */
++	.prepare = scmi_clk_enable,
++	.unprepare = scmi_clk_disable,
++};
++
++static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
++{
++	int ret;
++	struct clk_init_data init = {
++		.flags = CLK_GET_RATE_NOCACHE,
++		.num_parents = 0,
++		.ops = &scmi_clk_ops,
++		.name = sclk->info->name,
++	};
++
++	sclk->hw.init = &init;
++	ret = devm_clk_hw_register(dev, &sclk->hw);
++	if (!ret)
++		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
++				      sclk->info->range.max_rate);
++	return ret;
++}
++
++static int scmi_clocks_probe(struct scmi_device *sdev)
++{
++	int idx, count, err;
++	struct clk_hw **hws;
++	struct clk_hw_onecell_data *clk_data;
++	struct device *dev = &sdev->dev;
++	struct device_node *np = dev->of_node;
++	const struct scmi_handle *handle = sdev->handle;
++
++	if (!handle || !handle->clk_ops)
++		return -ENODEV;
++
++	count = handle->clk_ops->count_get(handle);
++	if (count < 0) {
++		dev_err(dev, "%s: invalid clock output count\n", np->name);
++		return -EINVAL;
++	}
++
++	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
++				sizeof(*clk_data->hws) * count, GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = count;
++	hws = clk_data->hws;
++
++	for (idx = 0; idx < count; idx++) {
++		struct scmi_clk *sclk;
++
++		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
++		if (!sclk)
++			return -ENOMEM;
++
++		sclk->info = handle->clk_ops->info_get(handle, idx);
++		if (!sclk->info) {
++			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
++			continue;
++		}
++
++		sclk->id = idx;
++		sclk->handle = handle;
++
++		err = scmi_clk_ops_init(dev, sclk);
++		if (err) {
++			dev_err(dev, "failed to register clock %d\n", idx);
++			devm_kfree(dev, sclk);
++			hws[idx] = NULL;
++		} else {
++			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
++			hws[idx] = &sclk->hw;
++		}
++	}
++
++	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++}
++
++static void scmi_clocks_remove(struct scmi_device *sdev)
++{
++	struct device *dev = &sdev->dev;
++	struct device_node *np = dev->of_node;
++
++	of_clk_del_provider(np);
++}
++
++static const struct scmi_device_id scmi_id_table[] = {
++	{ SCMI_PROTOCOL_CLOCK },
++	{ },
++};
++MODULE_DEVICE_TABLE(scmi, scmi_id_table);
++
++static struct scmi_driver scmi_clocks_driver = {
++	.name = "scmi-clocks",
++	.probe = scmi_clocks_probe,
++	.remove = scmi_clocks_remove,
++	.id_table = scmi_id_table,
++};
++module_scmi_driver(scmi_clocks_driver);
++
++MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++MODULE_DESCRIPTION("ARM SCMI clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.12.5
+2.7.4
