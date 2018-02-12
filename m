@@ -1,64 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39381 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeBZMyG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:06 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/6] soc: samsung: pm_domains: Add blacklisting clock
- handling
-Date: Mon, 26 Feb 2018 13:53:50 +0100
-Message-id: <20180226125355.9052-2-m.szyprowski@samsung.com>
-In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
-References: <20180226125355.9052-1-m.szyprowski@samsung.com>
-        <CGME20180226125402eucas1p26624013733dcc44cf5f8d2818d0899c9@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Mon, 12 Feb 2018 21:59:39 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 13/26] watchdog: renesas_wdt: Add restart handler
+Message-ID: <20180212205939.75pszm5ih6ndw32h@katana>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="smjbq6gp6e7bfkkm"
+In-Reply-To: <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Handling of clock reparenting will be move to clock controller driver, so
-add possibility to blacklist clock handling on systems, where the clock
-controller already does all needed operations. This is needed to avoid
-potential deadlock on clock reparenting during power domain on/off
-procedure.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/soc/samsung/pm_domains.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--smjbq6gp6e7bfkkm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index b6a436594a19..cef30bdf19b1 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -147,6 +147,9 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- 	return kstrdup_const(name, GFP_KERNEL);
- }
- 
-+static const char *soc_force_no_clk[] = {
-+};
-+
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct device_node *np;
-@@ -183,6 +186,11 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
-+		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
-+			if (of_find_compatible_node(NULL, NULL,
-+						    soc_force_no_clk[i]))
-+				goto no_clk;
-+
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			char clk_name[8];
- 
--- 
-2.15.0
+On Mon, Feb 12, 2018 at 05:44:22PM +0000, Fabrizio Castro wrote:
+> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+> by means of the watchdog.
+> This patch adds a restart handler to rwdt_ops, and also makes sure we
+> keep its priority to a medium level, in order to not override other more
+> effective handlers.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--smjbq6gp6e7bfkkm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqCADsACgkQFA3kzBSg
+KbYw3xAAqmVQNhipNdgNc9uvqAS594wbi0zVXZ8vFS4xAklaG28qdwhqnh67w6ev
+CnQdwxtU0XUPgSUvUcx/TWSpTqWF/pGyGiKpKAFZjEYntgDTMPA3LwItRBsAVrhW
+z8v8Hoeq1UBUga0P7o++LNC5N/4IWiDJ/2rjomW6GsR9ubcvh+bLKXxtMQoNInNU
+hU1eRMCAnnZhkTzUQs/1ckcbClub5q6eCDm+P5PqQhhDMLlAOgKlPjkUrjqrRxFK
+glrx+nFDNN9gKyb2DsO2fp4ngIXFWz9j5ajasBIqiTwy8Bto1hCv/eP8p2NgQ3xm
+tszMJrv1JCsxwNqwAAaRfejZmWaE1mA+kRdKoooE51bwqrpmRd216IWIGjhJSXTX
+JiYO0LoGTTrw+uB0AziFbXLZsBKO3EHsx1acOHyPBaSjz7rOQDfgSbAMa7Im6vBW
+tcj8SQ93x3jdoTnqN/6/xqPTqyR7WF2GeJ0u5t+wHuvc+5sT6lJkXL10095qR4is
+C6Ux2JHjizJoJMLD5B+OiVjNWewB+J1b5vuYa5gQs0cBFeEmbUE8H08H8QIRreJM
+efQmbShjMgohs44YjU5EHp6ofBA1D9bH7X3Q8ciK43zvdQrSCxd/WDXUFucIbMen
+lDmnEeZmw1bf7p108qI9Y2d6zQ06pKh+obuAAwSm3EpaDmiBLr0=
+=diQv
+-----END PGP SIGNATURE-----
+
+--smjbq6gp6e7bfkkm--
