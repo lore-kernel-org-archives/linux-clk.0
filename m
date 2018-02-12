@@ -1,66 +1,56 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
-	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea@microchip.com>
-Subject: [PATCH v3 02/10] pwm: clps711x: populate PWM mode in of_xlate function
-Date: Thu, 22 Feb 2018 14:01:13 +0200
-Message-ID: <1519300881-8136-3-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: claudiu.beznea@microchip.com
+Return-Path: <riku.voipio@linaro.org>
+Return-Path: <riku.voipio@linaro.org>
+From: riku.voipio@linaro.org
+To: linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: arnd@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Riku Voipio <riku.voipio@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH] clk: enable hi655x common clk automatically
+Date: Mon, 12 Feb 2018 15:33:29 +0200
+Message-Id: <20180212133329.10518-1-riku.voipio@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
+From: Riku Voipio <riku.voipio@linaro.org>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
+As suggested by Arnd, enable the driver automatically when the parent
+driver is selected. With sensible defaults in place, we can leave other
+choices for EXPERT.
+
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Suggested-by: Arnd Bergmann <arnd@linaro.org>
+Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
 ---
- drivers/pwm/pwm-clps711x.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Previous discussion at https://patchwork.kernel.org/patch/9767143/
+---
+ drivers/clk/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
-index 26ec24e457b1..2a4d31ab3af0 100644
---- a/drivers/pwm/pwm-clps711x.c
-+++ b/drivers/pwm/pwm-clps711x.c
-@@ -109,10 +109,20 @@ static const struct pwm_ops clps711x_pwm_ops = {
- static struct pwm_device *clps711x_pwm_xlate(struct pwm_chip *chip,
- 					     const struct of_phandle_args *args)
- {
-+	struct pwm_device *pwm;
-+	struct pwm_caps caps;
-+
- 	if (args->args[0] >= chip->npwm)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..448ce83b334d 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -55,8 +55,10 @@ config COMMON_CLK_RK808
+ 	  by control register.
  
--	return pwm_request_from_chip(chip, args->args[0], NULL);
-+	pwm = pwm_request_from_chip(chip, args->args[0], NULL);
-+	if (IS_ERR(pwm))
-+		return pwm;
-+
-+	pwm_get_caps(chip, pwm, &caps);
-+	pwm->args.mode = BIT(ffs(caps.modes) - 1);
-+
-+	return pwm;
- }
- 
- static int clps711x_pwm_probe(struct platform_device *pdev)
+ config COMMON_CLK_HI655X
+-	tristate "Clock driver for Hi655x"
+-	depends on MFD_HI655X_PMIC || COMPILE_TEST
++	tristate "Clock driver for Hi655x" if EXPERT
++	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
++	depends on REGMAP
++	default MFD_HI655X_PMIC
+ 	---help---
+ 	  This driver supports the hi655x PMIC clock. This
+ 	  multi-function device has one fixed-rate oscillator, clocked
 -- 
-2.7.4
+2.15.1
