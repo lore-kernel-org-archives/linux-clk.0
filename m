@@ -1,65 +1,62 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
- propagation
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-	m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
-Date: Wed, 07 Feb 2018 16:18:32 +0100
-MIME-version: 1.0
-In-reply-to: <5A7929C1.8040706@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-	<CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
-	<20180205142230.9755-2-s.nawrocki@samsung.com>
-	<5A7929C1.8040706@samsung.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
+	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
+	<ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+Date: Mon, 12 Feb 2018 11:38:41 +0000
+Message-ID: <TY1PR06MB08958A4A75A0F3BB2BF1D086C0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180207230309.goxig2irkpxrw5el@katana>
+ <TY1PR06MB089578618AA33335D90D16CEC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20180212105456.3zejp3j7hfuzyc3c@ninjato>
+In-Reply-To: <20180212105456.3zejp3j7hfuzyc3c@ninjato>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
-
-On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
->>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index 74b70ddab4d6..d74361736e64 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
->>  
->>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
->>  	/* MUX_SEL_TOP0 */
->> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->> -			4, 1),
->> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->> +	      4, 1, CLK_SET_RATE_PARENT, 0),
+> > > I used to have this simpler version (back then for the UP case):
+> > >
+> > > +rwdt_start(wdev);
+> > > +rwdt_write(priv, 0xffff, RWTCNT);
+> > > +return 0;
+> > >
+> > > It should still work probably...
+> >
+> > It should still work, but it would be slower, I would stick with the
+> > version I have submitted if you don't mind.
 >
-> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
-> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
-> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
-> mout_aud_pll_user would not want to change the parent's clock.
-> 
->     fout_aud_pll                          2            2   196608009          0 0  
->        mout_aud_pll_user                  1            1   196608009          0 0  
->        mout_aud_pll                       0            0   196608009          0 0  
+> Actually, I do mind. Because of code duplication reasons. We have a fix
+> in the works for rwdt_start() and it would be too easy to overlook the
+> same fix will be needed for a restart.
 
-I'd say the range of changes is such that the consumers of the affected child 
-clocks can cope and could adjust to the changed frequencies. Those consumer 
-devices are all components/peripherals of the audio subsystem (LPASS) and, 
-for example, in case of TM2 there is no issues at all with varying the AUD PLL
-frequency depending on the HDMI audio sample rate. The other audio path uses
-the audio CODEC's internal PLL as the root clock source. The AUD PLL frequency
-will need to be adjusted somehow anyway, we could also get the PLL clock 
-directly and set it's rate, instead of relying on that rate propagation 
-algorithm.  I think we could also export a function from the exynos-lpass mfd 
-driver for setting the PLL's rate directly, after listing the AUD PLL clock 
-in the lpass DT node. That would be more flexible API, easier to adopt for 
-various use cases/boards, now we have only TM2. I can't list the PLL clock 
-in the sound node, that would not have passed the DT maintainters' review. 
+The code is very similar indeed, but not exactly duplicated as it sets the =
+registers in order to reset
+the system as quickly as possible.
+But since you have strong feelings about this I'll reuse this other version=
+ for the next submission.
 
--- 
-Regards,
-Sylwester
+Thanks,
+Fabrizio
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
