@@ -1,71 +1,77 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 05/15] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
-Date: Sat, 24 Feb 2018 22:45:35 +0100
-Message-Id: <20180224214545.3740-6-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
+	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
+	<ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+Date: Mon, 12 Feb 2018 10:33:47 +0000
+Message-ID: <TY1PR06MB089578618AA33335D90D16CEC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180207230309.goxig2irkpxrw5el@katana>
+In-Reply-To: <20180207230309.goxig2irkpxrw5el@katana>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing compatibles for H3 HDMI pipeline. These compatibles can also
-be used with H5 SoC.
+Hello Wolfram,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+thank you for your feedback!
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index b995bfee734a..8bdef4920edc 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -102,6 +102,7 @@ DWC HDMI PHY
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-hdmi-phy
-+    * allwinner,sun8i-h3-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
-@@ -110,6 +111,9 @@ Required properties:
-   - resets: phandle to the reset controller driving the PHY
-   - reset-names: must be "phy"
- 
-+H3 HDMI PHY requires additional clock:
-+  - pll-0: parent of phy clock
-+
- TV Encoder
- ----------
- 
-@@ -275,6 +279,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-de2-mixer-0
-     * allwinner,sun8i-a83t-de2-mixer-1
-+    * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-@@ -305,6 +310,7 @@ Required properties:
-     * allwinner,sun7i-a20-display-engine
-     * allwinner,sun8i-a33-display-engine
-     * allwinner,sun8i-a83t-display-engine
-+    * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--- 
-2.16.2
+> Subject: Re: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+>
+>
+> > +static int rwdt_restart(struct watchdog_device *wdev, unsigned long ac=
+tion,
+> > +void *data)
+> > +{
+> > +struct rwdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> > +
+> > +pm_runtime_get_sync(wdev->parent);
+> > +
+> > +rwdt_write(priv, 0x00, RWTCSRB);
+> > +rwdt_write(priv, 0x00, RWTCSRA);
+> > +rwdt_write(priv, 0xffff, RWTCNT);
+> > +
+> > +while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+> > +cpu_relax();
+> > +
+> > +rwdt_write(priv, 0x80, RWTCSRA);
+> > +return 0;
+> > +}
+>
+> I used to have this simpler version (back then for the UP case):
+>
+> +rwdt_start(wdev);
+> +rwdt_write(priv, 0xffff, RWTCNT);
+> +return 0;
+>
+> It should still work probably...
+
+It should still work, but it would be slower, I would stick with the versio=
+n I have submitted if you don't mind.
+
+Thanks,
+Fabrizio
+
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
