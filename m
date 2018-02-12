@@ -1,32 +1,48 @@
-Return-Path: <horms@verge.net.au>
-Date: Mon, 5 Feb 2018 09:59:51 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A77980 support
-Message-ID: <20180205085951.vcsoqcmuqjdcqhsa@verge.net.au>
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
- <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5A820B19.8080902@samsung.com>
+Date: Tue, 13 Feb 2018 06:46:01 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH v2] clk: exynos5433: Extend list of available AUD_PLL
+ output frequencies
+In-reply-to: <20180212155227.20605-1-s.nawrocki@samsung.com>
+References: <CGME20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3@epcas2p3.samsung.com>
+	<20180212155227.20605-1-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 11:31:05PM +0300, Sergei Shtylyov wrote:
-> Add R-Car V3H (R8A77980) Clock Pulse Generator / Module Standby and
-> Software Reset support,  using the CPG/MSSR driver core and the common
-> R-Car Gen3 code.
-> 
-> Based on the original (and large) patch by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On 2018년 02월 13일 00:52, Sylwester Nawrocki wrote:
+> Add one more entry to the exynos5433_aud_pll_rates table, this allows
+> to support audio sample rates: 48000, 96000, 192000 Hz with minimum
+> error. The M, P, S, K values re confirmed by the HW team.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index ebd18586e325..b08a9028653f 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -765,6 +765,7 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
+>  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+>  	{ /* sentinel */ }
+>  };
+
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
