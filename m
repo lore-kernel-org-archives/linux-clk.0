@@ -1,353 +1,56 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-he1eur01on0067.outbound.protection.outlook.com ([104.47.0.67]:44192
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750751AbeBXGH4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 24 Feb 2018 01:07:56 -0500
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc for
- imx6sll
-Date: Sat, 24 Feb 2018 06:07:52 +0000
-Message-ID: <HE1PR04MB3113ABD88EDACA6F5E56587E87C30@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
- <1517968819-12869-3-git-send-email-ping.bai@nxp.com>
- <20180224032041.GX3217@dragon>
-In-Reply-To: <20180224032041.GX3217@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:40706 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752515AbeBLSVn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 13:21:43 -0500
+To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
+        wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+From: Philipp Rossak <embed3d@gmail.com>
+Subject: BUG: A31s Not booting anymore
+Message-ID: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
+Date: Mon, 12 Feb 2018 19:21:40 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc =
-for
-> imx6sll
->=20
-> On Wed, Feb 07, 2018 at 10:00:18AM +0800, Bai Ping wrote:
-> > Add clock binding doc update for imx6sll.
-> >
-> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> > ---
-> > change from v2->v3:
-> >  - remove the leading 0s
-> >  - move the  imx6sll-clock.h to this patch.
-> > ---
-> >  .../devicetree/bindings/clock/imx6sll-clock.txt    |  37 ++++
-> >  include/dt-bindings/clock/imx6sll-clock.h          | 204
-> +++++++++++++++++++++
-> >  2 files changed, 241 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> >  create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > new file mode 100644
-> > index 0000000..b5d272f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > @@ -0,0 +1,37 @@
-> > +* Clock bindings for Freescale i.MX6 SLL
-> > +
-> > +Required properties:
-> > +- compatible: Should be "fsl,imx6sll-ccm"
-> > +- reg: Address and length of the register set
-> > +- #clock-cells: Should be <1>
-> > +- clocks: list of clock specifiers, must contain an entry for each
-> > +required
-> > +  entry in clock-names
-> > +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ip=
-p_di1"
-> > +
-> > +The clock consumer should specify the desired clock by having the
-> > +clock ID in its "clocks" phandle cell.  See
-> > +include/dt-bindings/clock/imx6sll-clock.h
-> > +for the full list of i.MX6 SLL clock IDs.
-> > +
-> > +Examples:
-> > +
-> > +#include <dt-bindings/clock/imx6sll-clock.h>
-> > +
-> > +clks: ccm@20c4000 {
->=20
-> s/ccm/clock-controller
+Hey,
 
-OK, will fix it.=20
+When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting 
+kernel ... . After enabling the earlyprintk I could capture this log: [1].
 
->=20
-> > +		compatible =3D "fsl,imx6sll-ccm";
-> > +		reg =3D <0x020c4000 0x4000>;
-> > +		interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-> > +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> > +		#clock-cells =3D <1>;
-> > +		clocks =3D <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
-> > +		clock-names =3D "ckil", "osc", "ipp_di0", "ipp_di1"; };
-> > +
-> > +uart1: serial@2020000 {
-> > +		compatible =3D "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart"=
-;
-> > +		reg =3D <0x02020000 0x4000>;
-> > +		interrupts =3D <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> > +		clocks =3D <&clks IMX6SLL_CLK_UART1_IPG>,
-> > +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
-> > +		clock-names =3D "ipg", "per";
-> > +		status =3D "disabled";
->=20
-> The status line can be dropped in example.
->=20
+After reverting those 5 commits from Chen-Yu I was able to boot again:
 
-OK, will fix it.
 
-> > +};
-> > diff --git a/include/dt-bindings/clock/imx6sll-clock.h
-> > b/include/dt-bindings/clock/imx6sll-clock.h
-> > new file mode 100644
-> > index 0000000..39c2567
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/imx6sll-clock.h
-> > @@ -0,0 +1,204 @@
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > +modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
->=20
-> Can we use SPDX tag instead?  You can look at Lucas' i.MX8MQ clock patch =
-for
-> example, or document Documentation/process/license-rules.rst for details.
->=20
+clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
 
-Ok, will fix in next version.=20
+clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+10e6eb4f2c5b35ae71c9bc0db83d74238719b453
 
-BR
-Jacky Bai
-> Shawn
->=20
-> > + *
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H #define
-> > +__DT_BINDINGS_CLOCK_IMX6SLL_H
-> > +
-> > +#define IMX6SLL_CLK_DUMMY		0
-> > +#define IMX6SLL_CLK_CKIL		1
-> > +#define IMX6SLL_CLK_OSC			2
-> > +#define IMX6SLL_PLL1_BYPASS_SRC		3
-> > +#define IMX6SLL_PLL2_BYPASS_SRC		4
-> > +#define IMX6SLL_PLL3_BYPASS_SRC		5
-> > +#define IMX6SLL_PLL4_BYPASS_SRC		6
-> > +#define IMX6SLL_PLL5_BYPASS_SRC		7
-> > +#define IMX6SLL_PLL6_BYPASS_SRC		8
-> > +#define IMX6SLL_PLL7_BYPASS_SRC		9
-> > +#define IMX6SLL_CLK_PLL1		10
-> > +#define IMX6SLL_CLK_PLL2		11
-> > +#define IMX6SLL_CLK_PLL3		12
-> > +#define IMX6SLL_CLK_PLL4		13
-> > +#define IMX6SLL_CLK_PLL5		14
-> > +#define IMX6SLL_CLK_PLL6		15
-> > +#define IMX6SLL_CLK_PLL7		16
-> > +#define IMX6SLL_PLL1_BYPASS		17
-> > +#define IMX6SLL_PLL2_BYPASS		18
-> > +#define IMX6SLL_PLL3_BYPASS		19
-> > +#define IMX6SLL_PLL4_BYPASS		20
-> > +#define IMX6SLL_PLL5_BYPASS		21
-> > +#define IMX6SLL_PLL6_BYPASS		22
-> > +#define IMX6SLL_PLL7_BYPASS		23
-> > +#define IMX6SLL_CLK_PLL1_SYS		24
-> > +#define IMX6SLL_CLK_PLL2_BUS		25
-> > +#define IMX6SLL_CLK_PLL3_USB_OTG	26
-> > +#define IMX6SLL_CLK_PLL4_AUDIO		27
-> > +#define IMX6SLL_CLK_PLL5_VIDEO		28
-> > +#define IMX6SLL_CLK_PLL6_ENET		29
-> > +#define IMX6SLL_CLK_PLL7_USB_HOST	30
-> > +#define IMX6SLL_CLK_USBPHY1		31
-> > +#define IMX6SLL_CLK_USBPHY2		32
-> > +#define IMX6SLL_CLK_USBPHY1_GATE	33
-> > +#define IMX6SLL_CLK_USBPHY2_GATE	34
-> > +#define IMX6SLL_CLK_PLL2_PFD0		35
-> > +#define IMX6SLL_CLK_PLL2_PFD1		36
-> > +#define IMX6SLL_CLK_PLL2_PFD2		37
-> > +#define IMX6SLL_CLK_PLL2_PFD3		38
-> > +#define IMX6SLL_CLK_PLL3_PFD0		39
-> > +#define IMX6SLL_CLK_PLL3_PFD1		40
-> > +#define IMX6SLL_CLK_PLL3_PFD2		41
-> > +#define IMX6SLL_CLK_PLL3_PFD3		42
-> > +#define IMX6SLL_CLK_PLL4_POST_DIV	43
-> > +#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
-> > +#define IMX6SLL_CLK_PLL5_POST_DIV	45
-> > +#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
-> > +#define IMX6SLL_CLK_PLL2_198M		47
-> > +#define IMX6SLL_CLK_PLL3_120M		48
-> > +#define IMX6SLL_CLK_PLL3_80M		49
-> > +#define IMX6SLL_CLK_PLL3_60M		50
-> > +#define IMX6SLL_CLK_STEP		51
-> > +#define IMX6SLL_CLK_PLL1_SW		52
-> > +#define IMX6SLL_CLK_AXI_ALT_SEL		53
-> > +#define IMX6SLL_CLK_AXI_SEL		54
-> > +#define IMX6SLL_CLK_PERIPH_PRE		55
-> > +#define IMX6SLL_CLK_PERIPH2_PRE		56
-> > +#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
-> > +#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
-> > +#define IMX6SLL_CLK_PERCLK_SEL		59
-> > +#define IMX6SLL_CLK_USDHC1_SEL		60
-> > +#define IMX6SLL_CLK_USDHC2_SEL		61
-> > +#define IMX6SLL_CLK_USDHC3_SEL		62
-> > +#define IMX6SLL_CLK_SSI1_SEL		63
-> > +#define IMX6SLL_CLK_SSI2_SEL		64
-> > +#define IMX6SLL_CLK_SSI3_SEL		65
-> > +#define IMX6SLL_CLK_PXP_SEL		66
-> > +#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
-> > +#define IMX6SLL_CLK_LCDIF_SEL		68
-> > +#define IMX6SLL_CLK_EPDC_PRE_SEL	69
-> > +#define IMX6SLL_CLK_SPDIF_SEL		70
-> > +#define IMX6SLL_CLK_ECSPI_SEL		71
-> > +#define IMX6SLL_CLK_UART_SEL		72
-> > +#define IMX6SLL_CLK_ARM			73
-> > +#define IMX6SLL_CLK_PERIPH		74
-> > +#define IMX6SLL_CLK_PERIPH2		75
-> > +#define IMX6SLL_CLK_PERIPH2_CLK2	76
-> > +#define IMX6SLL_CLK_PERIPH_CLK2		77
-> > +#define IMX6SLL_CLK_MMDC_PODF		78
-> > +#define IMX6SLL_CLK_AXI_PODF		79
-> > +#define IMX6SLL_CLK_AHB			80
-> > +#define IMX6SLL_CLK_IPG			81
-> > +#define IMX6SLL_CLK_PERCLK		82
-> > +#define IMX6SLL_CLK_USDHC1_PODF		83
-> > +#define IMX6SLL_CLK_USDHC2_PODF		84
-> > +#define IMX6SLL_CLK_USDHC3_PODF		85
-> > +#define IMX6SLL_CLK_SSI1_PRED		86
-> > +#define IMX6SLL_CLK_SSI2_PRED		87
-> > +#define IMX6SLL_CLK_SSI3_PRED		88
-> > +#define IMX6SLL_CLK_SSI1_PODF		89
-> > +#define IMX6SLL_CLK_SSI2_PODF		90
-> > +#define IMX6SLL_CLK_SSI3_PODF		91
-> > +#define IMX6SLL_CLK_PXP_PODF		92
-> > +#define IMX6SLL_CLK_LCDIF_PRED		93
-> > +#define IMX6SLL_CLK_LCDIF_PODF		94
-> > +#define IMX6SLL_CLK_EPDC_SEL		95
-> > +#define IMX6SLL_CLK_EPDC_PODF		96
-> > +#define IMX6SLL_CLK_SPDIF_PRED		97
-> > +#define IMX6SLL_CLK_SPDIF_PODF		98
-> > +#define IMX6SLL_CLK_ECSPI_PODF		99
-> > +#define IMX6SLL_CLK_UART_PODF		100
-> > +
-> > +/* CCGR 0 */
-> > +#define IMX6SLL_CLK_AIPSTZ1		101
-> > +#define IMX6SLL_CLK_AIPSTZ2		102
-> > +#define IMX6SLL_CLK_DCP			103
-> > +#define IMX6SLL_CLK_UART2_IPG		104
-> > +#define IMX6SLL_CLK_UART2_SERIAL	105
-> > +
-> > +/* CCGR 1 */
-> > +#define IMX6SLL_CLK_ECSPI1		106
-> > +#define IMX6SLL_CLK_ECSPI2		107
-> > +#define IMX6SLL_CLK_ECSPI3		108
-> > +#define IMX6SLL_CLK_ECSPI4		109
-> > +#define IMX6SLL_CLK_UART3_IPG		110
-> > +#define IMX6SLL_CLK_UART3_SERIAL	111
-> > +#define IMX6SLL_CLK_UART4_IPG		112
-> > +#define IMX6SLL_CLK_UART4_SERIAL	113
-> > +#define IMX6SLL_CLK_EPIT1		114
-> > +#define IMX6SLL_CLK_EPIT2		115
-> > +#define IMX6SLL_CLK_GPT_BUS		116
-> > +#define IMX6SLL_CLK_GPT_SERIAL		117
-> > +
-> > +/* CCGR2 */
-> > +#define IMX6SLL_CLK_CSI			118
-> > +#define IMX6SLL_CLK_I2C1		119
-> > +#define IMX6SLL_CLK_I2C2		120
-> > +#define IMX6SLL_CLK_I2C3		121
-> > +#define IMX6SLL_CLK_OCOTP		122
-> > +#define IMX6SLL_CLK_LCDIF_APB		123
-> > +#define IMX6SLL_CLK_PXP			124
-> > +
-> > +/* CCGR3 */
-> > +#define IMX6SLL_CLK_UART5_IPG		125
-> > +#define IMX6SLL_CLK_UART5_SERIAL	126
-> > +#define IMX6SLL_CLK_EPDC_AXI		127
-> > +#define IMX6SLL_CLK_EPDC_PIX		128
-> > +#define IMX6SLL_CLK_LCDIF_PIX		129
-> > +#define IMX6SLL_CLK_WDOG1		130
-> > +#define IMX6SLL_CLK_MMDC_P0_FAST	131
-> > +#define IMX6SLL_CLK_MMDC_P0_IPG		132
-> > +#define IMX6SLL_CLK_OCRAM		133
-> > +
-> > +/* CCGR4 */
-> > +#define IMX6SLL_CLK_PWM1		134
-> > +#define IMX6SLL_CLK_PWM2		135
-> > +#define IMX6SLL_CLK_PWM3		136
-> > +#define IMX6SLL_CLK_PWM4		137
-> > +
-> > +/* CCGR 5 */
-> > +#define IMX6SLL_CLK_ROM			138
-> > +#define IMX6SLL_CLK_SDMA		139
-> > +#define IMX6SLL_CLK_KPP			140
-> > +#define IMX6SLL_CLK_WDOG2		141
-> > +#define IMX6SLL_CLK_SPBA		142
-> > +#define IMX6SLL_CLK_SPDIF		143
-> > +#define IMX6SLL_CLK_SPDIF_GCLK		144
-> > +#define IMX6SLL_CLK_SSI1		145
-> > +#define IMX6SLL_CLK_SSI1_IPG		146
-> > +#define IMX6SLL_CLK_SSI2		147
-> > +#define IMX6SLL_CLK_SSI2_IPG		148
-> > +#define IMX6SLL_CLK_SSI3		149
-> > +#define IMX6SLL_CLK_SSI3_IPG		150
-> > +#define IMX6SLL_CLK_UART1_IPG		151
-> > +#define IMX6SLL_CLK_UART1_SERIAL	152
-> > +
-> > +/* CCGR 6 */
-> > +#define IMX6SLL_CLK_USBOH3		153
-> > +#define IMX6SLL_CLK_USDHC1		154
-> > +#define IMX6SLL_CLK_USDHC2		155
-> > +#define IMX6SLL_CLK_USDHC3		156
-> > +
-> > +#define IMX6SLL_CLK_IPP_DI0		157
-> > +#define IMX6SLL_CLK_IPP_DI1		158
-> > +#define IMX6SLL_CLK_LDB_DI0_SEL		159
-> > +#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
-> > +#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
-> > +#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
-> > +#define IMX6SLL_CLK_LDB_DI0		163
-> > +#define IMX6SLL_CLK_LDB_DI1_SEL		164
-> > +#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
-> > +#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
-> > +#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
-> > +#define IMX6SLL_CLK_LDB_DI1		168
-> > +#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
-> > +#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
-> > +#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
-> > +#define IMX6SLL_CLK_EXTERN_AUDIO        172
-> > +
-> > +#define IMX6SLL_CLK_END			173
-> > +
-> > +#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
-> > --
-> > 1.9.1
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flis=
-t
-> >
-> s.infradead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&data=3D02%7C01%7
-> >
-> Cping.bai%40nxp.com%7Ccc849c553d0440b4ec8e08d57b359fdb%7C686ea1d3
-> bc2b4
-> >
-> c6fa92cd99c5c301635%7C0%7C0%7C636550392672754015&sdata=3DeUk%2BM
-> NWxWfiBQ
-> > AI1AZ7IxwqRrJxsFmOdJAJJBCtlxM8%3D&reserved=3D0
+clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
+
+clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+946797aa3f08e2f6f5992f3ec2be44791e9b9260
+
+clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
+83fe3be4d1974f5f50c5e2039a1609f4960e8579
+
+
+I allready tried to fix it with making them save against zero:
+
+if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
+     	cmp->fixed_post_div with)
+                rate *= cmp->fixed_post_div;
+
+But that didn't help.
+
+Any ideas?
+
+Regards,
+Philipp
+
+[1]: https://pastebin.com/64Fzzqvg
