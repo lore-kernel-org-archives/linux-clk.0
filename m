@@ -1,112 +1,89 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 2/9] clk: fractional-divider: add
- CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Date: Tue, 13 Feb 2018 21:28:07 +0800
-Message-ID: <1518528494-25723-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 12 Feb 2018 17:09:03 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+Message-ID: <20180212160903.GA4287@ulmo>
+References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
-denominator value in register are start from 0.
 
-This can be used to support frac dividers like below:
-Divider output clock = Divider input clock x [(frac +1) / (div +1)]
-where frac/div in register is:
-000b - Divide by 1.
-001b - Divide by 2.
-010b - Divide by 3.
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
+> This patch series introduces the Memory Built-In Self Test (MBIST)
+> work around (WAR) needed when power ungating certain domains. More
+> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+> implement the WAR in the Tegra210 clock driver, because most accesses are
+> to CAR registers and for the VENC domain, we need to make sure the CSI
+> clock source is not changed during the WAR execution.
+>=20
+> Changes in v4:
+> * moved locking and clock control to tegra210_clk_handle_mbist_war()
+> * propagate errors during WAR execution to user
+> * rework error handling tegra210_mbist_clk_init() slightly
+>=20
+> Changes in v3:
+> * fix compile problem on non-Tegra210 platforms
+> * fix clock handling bug in tegra210_generic_mbist_war()
+> * addressed minor comments
+>=20
+> Changes in v2:
+> * Use readl for fence_delay() rather than readl_relaxed
+> * clarify MBIST and WAR acronyms
+>=20
+> Peter De Schrijver (4):
+>   clk: tegra: Add la clock for Tegra210
+>   clk: tegra: add fence_delay for clock registers
+>   clk: tegra: MBIST work around for Tegra210
+>   soc/tegra: pmc: MBIST work around for Tegra210
+>=20
+>  drivers/clk/tegra/clk-tegra210.c         | 357 +++++++++++++++++++++++++=
++++++-
+>  drivers/clk/tegra/clk.h                  |   7 +
+>  drivers/soc/tegra/pmc.c                  |   7 +
+>  include/dt-bindings/clock/tegra210-car.h |   2 +-
+>  include/linux/clk/tegra.h                |   6 +
+>  5 files changed, 376 insertions(+), 3 deletions(-)
 
----
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * improve comments suggested by Stephen
----
- drivers/clk/clk-fractional-divider.c | 10 ++++++++++
- include/linux/clk-provider.h         |  8 ++++++++
- 2 files changed, 18 insertions(+)
+Hi Mike, Stephen,
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index fdf625f..7ccde6b 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 	m = (val & fd->mmask) >> fd->mshift;
- 	n = (val & fd->nmask) >> fd->nshift;
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m++;
-+		n++;
-+	}
-+
- 	if (!n || !m)
- 		return parent_rate;
- 
-@@ -103,6 +108,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
- 			&m, &n);
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m--;
-+		n--;
-+	}
-+
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
- 	else
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 68ccd36..cb55b67 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -566,6 +566,12 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-  * @lock:	register lock
-  *
-  * Clock with adjustable fractional divider affecting its output frequency.
-+ *
-+ * Flags:
-+ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
-+ *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
-+ *	is set then the numerator and denominator are both the value read
-+ *	plus one.
-  */
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
-@@ -585,6 +591,8 @@ struct clk_fractional_divider {
- 
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
- 
-+#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
-+
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
--- 
-2.7.4
+since there's a dependency from patch 4 to patch 3 in the series, do you
+mind if I take this in via the Tegra tree? I can send out a pull request
+for the clock branch sometime later in the release cycle and pick up any
+other Tegra clock related patches that may show up in the meantime.
 
+Thierry
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqBvBoACgkQ3SOs138+
+s6Ft8BAAtOzBwzUiHNLPri6diF44f8zNJF6wTuRMxpZfT8prqa7FmLoEEuwchW5O
+VYcXNmO8l+5nlB743EMu8hD/4jDMXPvFq8wgp4SnUCA/yJHZr7/fno2iA7y1+aMB
+edJYbjUpTyMJhJcr2VmjINGKBwmvEpTNedkrmb/1+dnVIVBeIWSRwsA/eqQg9XJM
+y+8mapXJitpljKaURiesbE4t3fRk3hWrjFeY+LmxTQGfw1lHXSlf/K71Xx3YXAzI
++czkZc3ig+4n988M1ClZDHf2TzMuLzggFXXSxfb4dqMB4EKF8mbQA3s65jO3e3de
+UiC5RJNYUu2qDQHPMnMnwqc/3JbyVYa7Z/QJT1/YnCqry4elG+rMa0AB5IQFFCBD
+tlx2tKc/UeH3mtW20c/8JYJUvYJPIjevN2DYBY+gClLZAjHbR9ziSEtdi++E0HUl
+7suXGhH68W2sfQlBZ8I9hQD7sXkiKBxQfIPCCw99wgpeLlkRNz+TOquFaPWOV8E7
+k77BYISrq4mHV+FA95tRV/ERDp4epoii9SnG1EIJWYiy1DkXEcEFzPNgZAoFlSHn
+2A+soPmMFYSCS27N1MkOSY6wwDgQVMQoHl55SqZtzwJUYLVlRRZ8qaM0aLiVuvps
+oXV9Tk+e0GH77AqoLU7XgM5HFWXjUO7e/PEJ1ce1W/J9hYrUbd4=
+=FFUS
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
