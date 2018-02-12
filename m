@@ -1,62 +1,100 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
 	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 08/16] drm/sun4i: Add support for H3 mixer 0
-Date: Tue, 27 Feb 2018 23:26:53 +0100
-Message-Id: <20180227222701.9716-9-jernej.skrabec@siol.net>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 10/26] ARM: shmobile: rcar-gen2: Add watchdog support
+Date: Mon, 12 Feb 2018 17:44:19 +0000
+Message-Id: <1518457475-4480-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This mixer supports 1 VI plane, 3 UI plane and HW scaling on all planes.
+This patch adds watchdog support by installing shmobile_boot_vector_gen2
+to ICRAM1 when enough memory is available, in which case we also keep a
+copy of MPIDR to complete the reset vector logic.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+v4->v5:
+* reworked comment style
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 9b0256d31a61..126899d6f0d3 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -492,6 +492,14 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
- 	.vi_num		= 1,
- };
+ arch/arm/mach-shmobile/platsmp-apmu.c |  1 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 15 ++++++++++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 4422b61..ba732ef 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -191,6 +191,7 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ {
+ 	/* install boot code shared by all CPUs */
+ 	shmobile_boot_fn = __pa_symbol(shmobile_smp_boot);
++	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
  
-+static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.mod_rate	= 432000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -509,6 +517,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
- 		.data = &sun8i_a83t_mixer1_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-h3-de2-mixer-0",
-+		.data = &sun8i_h3_mixer0_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
+ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index e5f215c..5a798b4 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -17,6 +17,7 @@
+ #include <linux/smp.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
+ #include <asm/io.h>
++#include <asm/cputype.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
+ 
+@@ -37,7 +38,6 @@
+ #define CA7RESCNT_CODE	0x5a5a0000
+ #define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
+ 
+-
+ /* On-chip RAM */
+ #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
+ 
+@@ -119,8 +119,17 @@ void __init rcar_gen2_pm_init(void)
+ 	p = ioremap(res.start, resource_size(&res));
+ 	if (!p)
+ 		return;
+-
+-	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	/*
++	 * install the reset vector, use the largest version if we have enough
++	 * memory available
++	 */
++	if (resource_size(&res) >= shmobile_boot_size_gen2) {
++		shmobile_boot_cpu_gen2 = read_cpuid_mpidr();
++		memcpy_toio(p, shmobile_boot_vector_gen2,
++			    shmobile_boot_size_gen2);
++	} else {
++		memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	}
+ 	iounmap(p);
+ 
+ 	/* setup reset vectors */
 -- 
-2.16.2
+2.7.4
