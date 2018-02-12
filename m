@@ -1,112 +1,84 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
- Controller (RCC) bindings
-Date: Mon, 5 Feb 2018 07:15:28 +0000
-Message-ID: <1f0de7b8-6607-e0f0-0f77-59be53328f7a@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
- <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
-In-Reply-To: <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wsa-dev@sang-engineering.com>
+Date: Mon, 12 Feb 2018 21:58:58 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+Message-ID: <20180212205857.54nmli2jnv4fxrwm@katana>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fwmxrfzpbjqoxo45"
+In-Reply-To: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCk9uIDAyLzA1LzIwMTggMDc6MDkgQU0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBGcmks
-IEZlYiAwMiwgMjAxOCBhdCAwMzowMzoyOVBNICswMTAwLCBnYWJyaWVsLmZlcm5hbmRlekBzdC5j
-b20gd3JvdGU6DQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpA
-c3QuY29tPg0KPj4NCj4+IFRoZSBSQ0MgYmxvY2sgaXMgcmVzcG9uc2libGUgb2YgdGhlIG1hbmFn
-ZW1lbnQgb2YgdGhlIGNsb2NrIGFuZCByZXNldA0KPj4gZ2VuZXJhdGlvbiBmb3IgdGhlIGNvbXBs
-ZXRlIGNpcmN1aXQuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogR2FicmllbCBGZXJuYW5kZXogPGdh
-YnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+IC0tLQ0KPj4gICAuLi4vZGV2aWNldHJlZS9iaW5k
-aW5ncy9tZmQvc3Qsc3RtMzItcmNjLnR4dCAgICAgICB8IDg1ICsrKysrKysrKysrKysrKysrKysr
-KysNCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDg1IGluc2VydGlvbnMoKykNCj4+ICAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qsc3RtMzIt
-cmNjLnR4dA0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiBp
-bmRleCAwMDAwMDAwLi4yODAxN2ExDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+IEBAIC0w
-LDAgKzEsODUgQEANCj4+ICtTVE1pY3JvZWxlY3Ryb25pY3MgU1RNMzIgUGVyaXBoZXJhbCBSZXNl
-dCBDbG9jayBDb250cm9sbGVyDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPj4gKw0KPj4gK1RoZSBSQ0MgSVAgaXMgYm90aCBh
-IHJlc2V0IGFuZCBhIGNsb2NrIGNvbnRyb2xsZXIuDQo+PiArDQo+PiArUGxlYXNlIGFsc28gcmVm
-ZXIgdG8gcmVzZXQudHh0IGZvciBjb21tb24gcmVzZXQgY29udHJvbGxlciBiaW5kaW5nIHVzYWdl
-Lg0KPj4gKw0KPj4gK1BsZWFzZSBhbHNvIHJlZmVyIHRvIGNsb2NrLWJpbmRpbmdzLnR4dCBmb3Ig
-Y29tbW9uIGNsb2NrIGNvbnRyb2xsZXINCj4+ICtiaW5kaW5nIHVzYWdlLg0KPj4gKw0KPj4gKw0K
-Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+PiArLSBjb21wYXRpYmxlOiAic2ltcGxlLW1mZCIs
-ICJzeXNjb24iDQo+DQo+PiArLSByZWc6IHNob3VsZCBiZSByZWdpc3RlciBiYXNlIGFuZCBsZW5n
-dGggYXMgZG9jdW1lbnRlZCBpbiB0aGUgZGF0YXNoZWV0DQo+PiArDQo+PiArLSBTdWItbm9kZXM6
-DQo+PiArICAtIGNvbXBhdGlibGU6ICJzdCxzdG0zMm1wMS1yY2MtY2xrIg0KPj4gKwktICNjbG9j
-ay1jZWxsczogMSwgZGV2aWNlIG5vZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSBjbG9jayBpbiB0aGVp
-cg0KPj4gKwkgICJjbG9ja3MiIHByb3BlcnR5LCBjb250YWluaW5nIGEgcGhhbmRsZSB0byB0aGUg
-Y2xvY2sgZGV2aWNlIG5vZGUsDQo+PiArCSAgYW4gaW5kZXggc3BlY2lmeWluZyB0aGUgY2xvY2sg
-dG8gdXNlLg0KPj4gKw0KPj4gKyAgLSBjb21wYXRpYmxlOiAic3Qsc3RtMzJtcDEtcmNjLXJzdCIN
-Cj4+ICsJLSAjcmVzZXQtY2VsbHM6IFNoYWxsIGJlIDENCj4+ICsNCj4+ICtFeGFtcGxlOg0KPj4g
-KwlyY2M6IHJjY0A1MDAwMDAwMCB7DQo+PiArCQljb21wYXRpYmxlID0gInN5c2NvbiIsICJzaW1w
-bGUtbWZkIjsNCj4+ICsJCXJlZyA9IDwweDUwMDAwMDAwIDB4MTAwMD47DQo+PiArDQo+PiArCQly
-Y2NfY2xrOiByY2MtY2xrQDUwMDAwMDAwIHsNCj4+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+
-PiArCQkJY29tcGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1yY2MtY2xrIjsNCj4+ICsJCX07DQo+PiAr
-DQo+PiArCQlyY2NfcnN0OiByY2MtcmVzZXRANTAwMDAwMDAgew0KPiBZb3Ugc2hvdWxkIG5vdCBo
-YXZlIHRoZSBzYW1lIHVuaXQtYWRkcmVzcyB0d2ljZS4NCmkgY2FuIGNoYW5nZSBpZiB5b3Ugd2Fu
-dCBpbnRvOg0KDQogwqDCoMKgIMKgwqDCoCByY2M6IHJjY0A1MDAwMDAwMCB7DQogwqDCoMKgIMKg
-wqDCoCDCoMKgwqAgY29tcGF0aWJsZSA9ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQoNCiDCoMKg
-wqAgwqDCoMKgIMKgwqDCoCByZWcgPSA8MHg1MDAwMDAwMCAweDEwMDA+Ow0KDQogwqDCoMKgIMKg
-wqDCoCDCoMKgwqAgcmNjX2NsazogcmNjLWNsayB7DQogwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDC
-oMKgICNjbG9jay1jZWxscyA9IDwxPjsNCiDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgY29t
-cGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1yY2MtY2xrIjsNCiDCoMKgwqAgwqDCoMKgIMKgwqDCoCB9
-Ow0KDQogwqDCoMKgIMKgwqDCoCDCoMKgwqAgcmNjX3JzdDogcmNjLXJlc2V0IHsNCiDCoMKgwqAg
-wqDCoMKgIMKgwqDCoCDCoMKgwqAgI3Jlc2V0LWNlbGxzID0gPDE+Ow0KIMKgwqDCoCDCoMKgwqAg
-wqDCoMKgIMKgwqDCoCBjb21wYXRpYmxlID0gInN0LHN0bTMybXAxLXJjYy1yc3QiOw0KIMKgwqDC
-oCDCoMKgwqAgwqDCoMKgIH07DQpCUg0KR2FicmllbA0KDQo+IElNTywgdGhpcyBzaG91bGQganVz
-dCBiZToNCj4NCj4gCXJjYzogcmNjQDUwMDAwMDAwIHsNCj4gCQljb21wYXRpYmxlID0gInN0LXN0
-bTMybXAxLXJjYyI7DQo+IAkJcmVnID0gPDB4NTAwMDAwMDAgMHgxMDAwPjsNCj4gCQkjY2xvY2st
-Y2VsbHMgPSA8MT47DQo+IAkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPiAJfTsNCj4NCj4gVGhlcmUn
-cyBubyByZWFzb24gYSBub2RlIGNhbid0IHByb3ZpZGUgbW9yZSB0aGFuIDEgZnVuY3Rpb24uDQo+
-DQo+DQo+PiArCQkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPj4gKwkJCWNvbXBhdGlibGUgPSAic3Qs
-c3RtMzJtcDEtcmNjLXJzdCI7DQo+PiArCQl9Ow0KPj4gKwl9Ow0KPj4gKw0KPj4gK1NwZWNpZnlp
-bmcgY2xvY2tzDQo+PiArPT09PT09PT09PT09PT09PT0NCj4+ICsNCj4+ICtBbGwgYXZhaWxhYmxl
-IGNsb2NrcyBhcmUgZGVmaW5lZCBhcyBwcmVwcm9jZXNzb3IgbWFjcm9zIGluDQo+PiArZHQtYmlu
-ZGluZ3MvY2xvY2svc3RtMzJtcDEtY2xrcy5oIGhlYWRlciBhbmQgY2FuIGJlIHVzZWQgaW4gZGV2
-aWNlDQo+PiArdHJlZSBzb3VyY2VzLg0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+PiArDQo+PiArCS8q
-IEFjY2Vzc2luZyBETUExIGNsb2NrICovDQo+PiArCS4uLiB7DQo+PiArCQljbG9ja3MgPSA8JnJj
-Y19jbGsgRE1BMT4NCj4+ICsJfTsNCj4+ICsNCj4+ICsJLyogQWNjZXNzaW5nIFNQSTYga2VybmVs
-IGNsb2NrICovDQo+PiArCS4uLiB7DQo+PiArCQljbG9ja3MgPSA8JnJjY19jbGsgU1BJNl9LPg0K
-Pj4gKwl9Ow0KPiBPdGhlciB0aGFuIHRoZSBwYXRoIHRvIGhlYWRlciwgdGhlIGNsb2NrIGJpbmRp
-bmcgZXhwbGFpbnMgYWxsIHRoaXMuIE5vDQo+IG5lZWQgdG8gZHVwbGljYXRlIGhlcmUuDQo+DQo+
-PiArDQo+PiArU3BlY2lmeWluZyBzb2Z0cmVzZXQgY29udHJvbCBvZiBkZXZpY2VzDQo+PiArPT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+PiArDQo+PiArRGV2aWNlIG5v
-ZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSByZXNldCBjaGFubmVsIHJlcXVpcmVkIGluIHRoZWlyICJy
-ZXNldHMiDQo+PiArcHJvcGVydHksIGNvbnRhaW5pbmcgYSBwaGFuZGxlIHRvIHRoZSByZXNldCBk
-ZXZpY2Ugbm9kZSBhbmQgYW4gaW5kZXggc3BlY2lmeWluZw0KPj4gK3doaWNoIGNoYW5uZWwgdG8g
-dXNlLg0KPj4gK1RoZSBpbmRleCBpcyB0aGUgYml0IG51bWJlciB3aXRoaW4gdGhlIFJDQyByZWdp
-c3RlcnMgYmFuaywgc3RhcnRpbmcgZnJvbSBSQ0MNCj4+ICtiYXNlIGFkZHJlc3MuDQo+PiArSXQg
-aXMgY2FsY3VsYXRlZCBhczogaW5kZXggPSByZWdpc3Rlcl9vZmZzZXQgLyA0ICogMzIgKyBiaXRf
-b2Zmc2V0Lg0KPj4gK1doZXJlIGJpdF9vZmZzZXQgaXMgdGhlIGJpdCBvZmZzZXQgd2l0aGluIHRo
-ZSByZWdpc3Rlci4NCj4+ICsNCj4+ICtGb3IgZXhhbXBsZSBvbiBTVE0zMk1QMSwgZm9yIExUREMg
-cmVzZXQ6DQo+PiArIGx0ZGMgPSBBUEI0X1JTVFNFVFJfb2Zmc2V0IC8gNCAqIDMyICsgTFREQ19i
-aXRfb2Zmc2V0DQo+PiArICAgICAgPSAweDE4MCAvIDQgKiAzMiArIDAgPSAzMDcyDQo+PiArDQo+
-PiArVGhlIGxpc3Qgb2YgdmFsaWQgaW5kaWNlcyBmb3IgU1RNMzJNUDEgaXMgYXZhaWxhYmxlIGlu
-Og0KPj4gK2luY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQtY29udHJvbGxlci9zdG0zMm1wMS1yZXNl
-dHMuaA0KPj4gKw0KPj4gK1RoaXMgZmlsZSBpbXBsZW1lbnRzIGRlZmluZXMgbGlrZToNCj4+ICsj
-ZGVmaW5lIExURENfUgkzMDcyDQo+PiArDQo+PiArZXhhbXBsZToNCj4+ICsNCj4+ICsJbHRkYyB7
-DQo+PiArCQlyZXNldHMgPSA8JnJjY19yc3QgTFREQ19SPjsNCj4+ICsJfTsNCj4+IC0tIA0KPj4g
-MS45LjENCj4+DQo=
+
+--fwmxrfzpbjqoxo45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 12, 2018 at 05:44:21PM +0000, Fabrizio Castro wrote:
+> Due to commits:
+> * "ARM: shmobile: Add watchdog support",
+> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
+> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+> we now have everything we needed for the watchdog to work on Gen2 and
+> RZ/G1.
+>=20
+> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+> always ON, when suspending to RAM we need to explicitly disable the
+> counting by clearing TME from RWTCSRA.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> ---
+> v4->v5:
+> * various improvements suggested by Wolfram
+>=20
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--fwmxrfzpbjqoxo45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqCAA0ACgkQFA3kzBSg
+KbbZ+w/9FyTriWtGeRWOvopVj5eil9PSeM1rjVIwx399i7/OiqC+180H214SwvrP
+U6knmbhPDT5hK42DPyY9OXRcMAInFbkxdNNnCyOysYW95ukf5xWSG0A0s3NoUE0e
+ALbzhebzjVNfvIPANTswz+Eykih+NEv0xlOCjbHos2aESJIfUcarrPQgcJXgubOt
+06cX+fAV7f20g2dg/g1sqE9np0N8CPIrDTCHUVi4bsAd7iwpYvOKy6pDEWgnk09z
+Q4bjFRY/xXbzjThl93n+RsuOQBEQtsfcGTeG7b2hMtQLyQ02QRmwsGT2BK829u3k
+aIHtxmrm8O6uJLTCF/qaWIu3ZheVOvRuF4gbjdKTgDpv0hLV7OLLKp4lWpqAfJ+7
+pVKxKdRPi5O+t3L36SngaYRXob751s1f+51ut89Nf1iCfLr7MfY0Yl/7gUTgP+ys
+1kDAH7oWqstKspSRQkOw4MAyoUpWMMIjVLfzsG3i1zbn4T9iWlpKJb+teTd9pdfb
+UnS7EjAa9ciggTwSadK5kfj/3l15lmmqRBJRHHC5P0c107NjjjPWdOYRYstTFlxF
+20V+74xmZ8y1BJkvAox4gR6p6Ialldi99xduDMDfJ0YxhSV5WR8DGjWPOF+U80hw
+NCcDCaxkFdvjmHJO4M4KyZqQS6vc+HW9kxh9WahzW/yZrzJamZY=
+=YcjP
+-----END PGP SIGNATURE-----
+
+--fwmxrfzpbjqoxo45--
