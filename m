@@ -1,292 +1,441 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-he1eur01on0071.outbound.protection.outlook.com ([104.47.0.71]:5834
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752488AbeBGB6X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Feb 2018 20:58:23 -0500
-From: Bai Ping <ping.bai@nxp.com>
-To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
-        kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, jacky.baip@gmail.com
-Subject: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc for imx6sll
-Date: Wed,  7 Feb 2018 10:00:18 +0800
-Message-Id: <1517968819-12869-3-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
-References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v3 5/5] arm: dts: mediatek: add audio-subsystem node for both MT2701 and MT7623
+Date: Mon, 12 Feb 2018 19:28:51 +0800
+Message-ID: <62eba8ef2a0ab47c3014aaf25253f78219ced835.1518424204.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1518424204.git.ryder.lee@mediatek.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock binding doc update for imx6sll.
+Add audio-subsystem node and its clock support for both MT2701/MT7623.
+Then modify afe node to adapt it.
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
-change from v2->v3:
- - remove the leading 0s
- - move the  imx6sll-clock.h to this patch.
----
- .../devicetree/bindings/clock/imx6sll-clock.txt    |  37 ++++
- include/dt-bindings/clock/imx6sll-clock.h          | 204 +++++++++++++++++++++
- 2 files changed, 241 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
- create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
+ arch/arm/boot/dts/mt2701.dtsi | 192 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/mt7623.dtsi | 193 +++++++++++++++++++++---------------------
+ 2 files changed, 189 insertions(+), 196 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-new file mode 100644
-index 0000000..b5d272f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-@@ -0,0 +1,37 @@
-+* Clock bindings for Freescale i.MX6 SLL
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 05557fc..9109a2b 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -426,104 +426,100 @@
+ 		status = "disabled";
+ 	};
+ 
+-	afe: audio-controller@11220000 {
+-		compatible = "mediatek,mt2701-audio";
+-		reg = <0 0x11220000 0 0x2000>,
+-		      <0 0x112a0000 0 0x20000>;
+-		interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
+-			      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names	= "afe", "asys";
+-		power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
+-
+-		clocks = <&infracfg CLK_INFRA_AUDIO>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_DIV>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_DIV>,
+-			 <&topckgen CLK_TOP_AUD_48K_TIMING>,
+-			 <&topckgen CLK_TOP_AUD_44K_TIMING>,
+-			 <&topckgen CLK_TOP_AUDPLL_MUX_SEL>,
+-			 <&topckgen CLK_TOP_APLL_SEL>,
+-			 <&topckgen CLK_TOP_AUD1PLL_98M>,
+-			 <&topckgen CLK_TOP_AUD2PLL_90M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_98M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_294M>,
+-			 <&topckgen CLK_TOP_AUDPLL>,
+-			 <&topckgen CLK_TOP_AUDPLL_D4>,
+-			 <&topckgen CLK_TOP_AUDPLL_D8>,
+-			 <&topckgen CLK_TOP_AUDPLL_D16>,
+-			 <&topckgen CLK_TOP_AUDPLL_D24>,
+-			 <&topckgen CLK_TOP_AUDINTBUS_SEL>,
+-			 <&clk26m>,
+-			 <&topckgen CLK_TOP_SYSPLL1_D4>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S5_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S6_MCLK>,
+-			 <&topckgen CLK_TOP_ASM_M_SEL>,
+-			 <&topckgen CLK_TOP_ASM_H_SEL>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D4>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D2>,
+-			 <&topckgen CLK_TOP_SYSPLL_D5>;
+-
+-		clock-names = "infra_sys_audio_clk",
+-			 "top_audio_mux1_sel",
+-			 "top_audio_mux2_sel",
+-			 "top_audio_mux1_div",
+-			 "top_audio_mux2_div",
+-			 "top_audio_48k_timing",
+-			 "top_audio_44k_timing",
+-			 "top_audpll_mux_sel",
+-			 "top_apll_sel",
+-			 "top_aud1_pll_98M",
+-			 "top_aud2_pll_90M",
+-			 "top_hadds2_pll_98M",
+-			 "top_hadds2_pll_294M",
+-			 "top_audpll",
+-			 "top_audpll_d4",
+-			 "top_audpll_d8",
+-			 "top_audpll_d16",
+-			 "top_audpll_d24",
+-			 "top_audintbus_sel",
+-			 "clk_26m",
+-			 "top_syspll1_d4",
+-			 "top_aud_k1_src_sel",
+-			 "top_aud_k2_src_sel",
+-			 "top_aud_k3_src_sel",
+-			 "top_aud_k4_src_sel",
+-			 "top_aud_k5_src_sel",
+-			 "top_aud_k6_src_sel",
+-			 "top_aud_k1_src_div",
+-			 "top_aud_k2_src_div",
+-			 "top_aud_k3_src_div",
+-			 "top_aud_k4_src_div",
+-			 "top_aud_k5_src_div",
+-			 "top_aud_k6_src_div",
+-			 "top_aud_i2s1_mclk",
+-			 "top_aud_i2s2_mclk",
+-			 "top_aud_i2s3_mclk",
+-			 "top_aud_i2s4_mclk",
+-			 "top_aud_i2s5_mclk",
+-			 "top_aud_i2s6_mclk",
+-			 "top_asm_m_sel",
+-			 "top_asm_h_sel",
+-			 "top_univpll2_d4",
+-			 "top_univpll2_d2",
+-			 "top_syspll_d5";
++	audio-subsystem@11220000 {
++		compatible = "syscon", "simple-mfd";
++		reg = <0 0x11220000 0 0x2000>;
 +
-+Required properties:
-+- compatible: Should be "fsl,imx6sll-ccm"
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of clock specifiers, must contain an entry for each required
-+  entry in clock-names
-+- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
++		audsys: clock {
++			compatible = "mediatek,mt2701-audsys";
++			#clock-cells = <1>;
++		};
 +
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
-+for the full list of i.MX6 SLL clock IDs.
++		afe: audio {
++			compatible = "mediatek,mt2701-audio";
++			interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
++				      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names	= "afe", "asys";
++			power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
 +
-+Examples:
++			clocks = <&infracfg CLK_INFRA_AUDIO>,
++				 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++				 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++				 <&topckgen CLK_TOP_AUD_48K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_44K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
++				 <&audsys CLK_AUD_I2SO1>,
++				 <&audsys CLK_AUD_I2SO2>,
++				 <&audsys CLK_AUD_I2SO3>,
++				 <&audsys CLK_AUD_I2SO4>,
++				 <&audsys CLK_AUD_I2SIN1>,
++				 <&audsys CLK_AUD_I2SIN2>,
++				 <&audsys CLK_AUD_I2SIN3>,
++				 <&audsys CLK_AUD_I2SIN4>,
++				 <&audsys CLK_AUD_ASRCO1>,
++				 <&audsys CLK_AUD_ASRCO2>,
++				 <&audsys CLK_AUD_ASRCO3>,
++				 <&audsys CLK_AUD_ASRCO4>,
++				 <&audsys CLK_AUD_AFE>,
++				 <&audsys CLK_AUD_AFE_CONN>,
++				 <&audsys CLK_AUD_A1SYS>,
++				 <&audsys CLK_AUD_A2SYS>,
++				 <&audsys CLK_AUD_AFE_MRGIF>;
 +
-+#include <dt-bindings/clock/imx6sll-clock.h>
++			clock-names = "infra_sys_audio_clk",
++				      "top_audio_mux1_sel",
++				      "top_audio_mux2_sel",
++				      "top_audio_a1sys_hp",
++				      "top_audio_a2sys_hp",
++				      "i2s0_src_sel",
++				      "i2s1_src_sel",
++				      "i2s2_src_sel",
++				      "i2s3_src_sel",
++				      "i2s0_src_div",
++				      "i2s1_src_div",
++				      "i2s2_src_div",
++				      "i2s3_src_div",
++				      "i2s0_mclk_en",
++				      "i2s1_mclk_en",
++				      "i2s2_mclk_en",
++				      "i2s3_mclk_en",
++				      "i2so0_hop_ck",
++				      "i2so1_hop_ck",
++				      "i2so2_hop_ck",
++				      "i2so3_hop_ck",
++				      "i2si0_hop_ck",
++				      "i2si1_hop_ck",
++				      "i2si2_hop_ck",
++				      "i2si3_hop_ck",
++				      "asrc0_out_ck",
++				      "asrc1_out_ck",
++				      "asrc2_out_ck",
++				      "asrc3_out_ck",
++				      "audio_afe_pd",
++				      "audio_afe_conn_pd",
++				      "audio_a1sys_pd",
++				      "audio_a2sys_pd",
++				      "audio_mrgif_pd";
 +
-+clks: ccm@20c4000 {
-+		compatible = "fsl,imx6sll-ccm";
-+		reg = <0x020c4000 0x4000>;
-+		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+		#clock-cells = <1>;
-+		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
-+		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
-+};
++			assigned-clocks = <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX1_DIV>,
++					  <&topckgen CLK_TOP_AUD_MUX2_DIV>;
++			assigned-clock-parents = <&topckgen CLK_TOP_AUD1PLL_98M>,
++						 <&topckgen CLK_TOP_AUD2PLL_90M>;
++			assigned-clock-rates = <0>, <0>, <49152000>, <45158400>;
++		};
+ 	};
+ 
+ 	mmsys: syscon@14000000 {
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index b750da5..629c92b 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -538,105 +538,102 @@
+ 		status = "disabled";
+ 	};
+ 
+-	afe: audio-controller@11220000 {
+-		compatible = "mediatek,mt7623-audio",
+-			     "mediatek,mt2701-audio";
+-		reg = <0 0x11220000 0 0x2000>,
+-		      <0 0x112a0000 0 0x20000>;
+-		interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
+-			      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names	= "afe", "asys";
+-		power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++	audio-subsystem@11220000 {
++		compatible = "syscon", "simple-mfd";
++		reg = <0 0x11220000 0 0x2000>;
 +
-+uart1: serial@2020000 {
-+		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
-+		reg = <0x02020000 0x4000>;
-+		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
-+			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
-+		clock-names = "ipg", "per";
-+		status = "disabled";
-+};
-diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
-new file mode 100644
-index 0000000..39c2567
---- /dev/null
-+++ b/include/dt-bindings/clock/imx6sll-clock.h
-@@ -0,0 +1,204 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
++		audsys: clock {
++			compatible = "mediatek,mt7623-audsys",
++				     "mediatek,mt2701-audsys";
++			#clock-cells = <1>;
++		};
+ 
+-		clocks = <&infracfg CLK_INFRA_AUDIO>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_DIV>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_DIV>,
+-			 <&topckgen CLK_TOP_AUD_48K_TIMING>,
+-			 <&topckgen CLK_TOP_AUD_44K_TIMING>,
+-			 <&topckgen CLK_TOP_AUDPLL_MUX_SEL>,
+-			 <&topckgen CLK_TOP_APLL_SEL>,
+-			 <&topckgen CLK_TOP_AUD1PLL_98M>,
+-			 <&topckgen CLK_TOP_AUD2PLL_90M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_98M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_294M>,
+-			 <&topckgen CLK_TOP_AUDPLL>,
+-			 <&topckgen CLK_TOP_AUDPLL_D4>,
+-			 <&topckgen CLK_TOP_AUDPLL_D8>,
+-			 <&topckgen CLK_TOP_AUDPLL_D16>,
+-			 <&topckgen CLK_TOP_AUDPLL_D24>,
+-			 <&topckgen CLK_TOP_AUDINTBUS_SEL>,
+-			 <&clk26m>,
+-			 <&topckgen CLK_TOP_SYSPLL1_D4>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S5_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S6_MCLK>,
+-			 <&topckgen CLK_TOP_ASM_M_SEL>,
+-			 <&topckgen CLK_TOP_ASM_H_SEL>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D4>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D2>,
+-			 <&topckgen CLK_TOP_SYSPLL_D5>;
+-
+-		clock-names = "infra_sys_audio_clk",
+-			 "top_audio_mux1_sel",
+-			 "top_audio_mux2_sel",
+-			 "top_audio_mux1_div",
+-			 "top_audio_mux2_div",
+-			 "top_audio_48k_timing",
+-			 "top_audio_44k_timing",
+-			 "top_audpll_mux_sel",
+-			 "top_apll_sel",
+-			 "top_aud1_pll_98M",
+-			 "top_aud2_pll_90M",
+-			 "top_hadds2_pll_98M",
+-			 "top_hadds2_pll_294M",
+-			 "top_audpll",
+-			 "top_audpll_d4",
+-			 "top_audpll_d8",
+-			 "top_audpll_d16",
+-			 "top_audpll_d24",
+-			 "top_audintbus_sel",
+-			 "clk_26m",
+-			 "top_syspll1_d4",
+-			 "top_aud_k1_src_sel",
+-			 "top_aud_k2_src_sel",
+-			 "top_aud_k3_src_sel",
+-			 "top_aud_k4_src_sel",
+-			 "top_aud_k5_src_sel",
+-			 "top_aud_k6_src_sel",
+-			 "top_aud_k1_src_div",
+-			 "top_aud_k2_src_div",
+-			 "top_aud_k3_src_div",
+-			 "top_aud_k4_src_div",
+-			 "top_aud_k5_src_div",
+-			 "top_aud_k6_src_div",
+-			 "top_aud_i2s1_mclk",
+-			 "top_aud_i2s2_mclk",
+-			 "top_aud_i2s3_mclk",
+-			 "top_aud_i2s4_mclk",
+-			 "top_aud_i2s5_mclk",
+-			 "top_aud_i2s6_mclk",
+-			 "top_asm_m_sel",
+-			 "top_asm_h_sel",
+-			 "top_univpll2_d4",
+-			 "top_univpll2_d2",
+-			 "top_syspll_d5";
++		afe: audio {
++			compatible = "mediatek,mt7623-audio",
++				     "mediatek,mt2701-audio";
++			interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
++				      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names	= "afe", "asys";
++			power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
 +
-+#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H
-+#define __DT_BINDINGS_CLOCK_IMX6SLL_H
++			clocks = <&infracfg CLK_INFRA_AUDIO>,
++				 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++				 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++				 <&topckgen CLK_TOP_AUD_48K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_44K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
++				 <&audsys CLK_AUD_I2SO1>,
++				 <&audsys CLK_AUD_I2SO2>,
++				 <&audsys CLK_AUD_I2SO3>,
++				 <&audsys CLK_AUD_I2SO4>,
++				 <&audsys CLK_AUD_I2SIN1>,
++				 <&audsys CLK_AUD_I2SIN2>,
++				 <&audsys CLK_AUD_I2SIN3>,
++				 <&audsys CLK_AUD_I2SIN4>,
++				 <&audsys CLK_AUD_ASRCO1>,
++				 <&audsys CLK_AUD_ASRCO2>,
++				 <&audsys CLK_AUD_ASRCO3>,
++				 <&audsys CLK_AUD_ASRCO4>,
++				 <&audsys CLK_AUD_AFE>,
++				 <&audsys CLK_AUD_AFE_CONN>,
++				 <&audsys CLK_AUD_A1SYS>,
++				 <&audsys CLK_AUD_A2SYS>,
++				 <&audsys CLK_AUD_AFE_MRGIF>;
 +
-+#define IMX6SLL_CLK_DUMMY		0
-+#define IMX6SLL_CLK_CKIL		1
-+#define IMX6SLL_CLK_OSC			2
-+#define IMX6SLL_PLL1_BYPASS_SRC		3
-+#define IMX6SLL_PLL2_BYPASS_SRC		4
-+#define IMX6SLL_PLL3_BYPASS_SRC		5
-+#define IMX6SLL_PLL4_BYPASS_SRC		6
-+#define IMX6SLL_PLL5_BYPASS_SRC		7
-+#define IMX6SLL_PLL6_BYPASS_SRC		8
-+#define IMX6SLL_PLL7_BYPASS_SRC		9
-+#define IMX6SLL_CLK_PLL1		10
-+#define IMX6SLL_CLK_PLL2		11
-+#define IMX6SLL_CLK_PLL3		12
-+#define IMX6SLL_CLK_PLL4		13
-+#define IMX6SLL_CLK_PLL5		14
-+#define IMX6SLL_CLK_PLL6		15
-+#define IMX6SLL_CLK_PLL7		16
-+#define IMX6SLL_PLL1_BYPASS		17
-+#define IMX6SLL_PLL2_BYPASS		18
-+#define IMX6SLL_PLL3_BYPASS		19
-+#define IMX6SLL_PLL4_BYPASS		20
-+#define IMX6SLL_PLL5_BYPASS		21
-+#define IMX6SLL_PLL6_BYPASS		22
-+#define IMX6SLL_PLL7_BYPASS		23
-+#define IMX6SLL_CLK_PLL1_SYS		24
-+#define IMX6SLL_CLK_PLL2_BUS		25
-+#define IMX6SLL_CLK_PLL3_USB_OTG	26
-+#define IMX6SLL_CLK_PLL4_AUDIO		27
-+#define IMX6SLL_CLK_PLL5_VIDEO		28
-+#define IMX6SLL_CLK_PLL6_ENET		29
-+#define IMX6SLL_CLK_PLL7_USB_HOST	30
-+#define IMX6SLL_CLK_USBPHY1		31
-+#define IMX6SLL_CLK_USBPHY2		32
-+#define IMX6SLL_CLK_USBPHY1_GATE	33
-+#define IMX6SLL_CLK_USBPHY2_GATE	34
-+#define IMX6SLL_CLK_PLL2_PFD0		35
-+#define IMX6SLL_CLK_PLL2_PFD1		36
-+#define IMX6SLL_CLK_PLL2_PFD2		37
-+#define IMX6SLL_CLK_PLL2_PFD3		38
-+#define IMX6SLL_CLK_PLL3_PFD0		39
-+#define IMX6SLL_CLK_PLL3_PFD1		40
-+#define IMX6SLL_CLK_PLL3_PFD2		41
-+#define IMX6SLL_CLK_PLL3_PFD3		42
-+#define IMX6SLL_CLK_PLL4_POST_DIV	43
-+#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
-+#define IMX6SLL_CLK_PLL5_POST_DIV	45
-+#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
-+#define IMX6SLL_CLK_PLL2_198M		47
-+#define IMX6SLL_CLK_PLL3_120M		48
-+#define IMX6SLL_CLK_PLL3_80M		49
-+#define IMX6SLL_CLK_PLL3_60M		50
-+#define IMX6SLL_CLK_STEP		51
-+#define IMX6SLL_CLK_PLL1_SW		52
-+#define IMX6SLL_CLK_AXI_ALT_SEL		53
-+#define IMX6SLL_CLK_AXI_SEL		54
-+#define IMX6SLL_CLK_PERIPH_PRE		55
-+#define IMX6SLL_CLK_PERIPH2_PRE		56
-+#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
-+#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
-+#define IMX6SLL_CLK_PERCLK_SEL		59
-+#define IMX6SLL_CLK_USDHC1_SEL		60
-+#define IMX6SLL_CLK_USDHC2_SEL		61
-+#define IMX6SLL_CLK_USDHC3_SEL		62
-+#define IMX6SLL_CLK_SSI1_SEL		63
-+#define IMX6SLL_CLK_SSI2_SEL		64
-+#define IMX6SLL_CLK_SSI3_SEL		65
-+#define IMX6SLL_CLK_PXP_SEL		66
-+#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
-+#define IMX6SLL_CLK_LCDIF_SEL		68
-+#define IMX6SLL_CLK_EPDC_PRE_SEL	69
-+#define IMX6SLL_CLK_SPDIF_SEL		70
-+#define IMX6SLL_CLK_ECSPI_SEL		71
-+#define IMX6SLL_CLK_UART_SEL		72
-+#define IMX6SLL_CLK_ARM			73
-+#define IMX6SLL_CLK_PERIPH		74
-+#define IMX6SLL_CLK_PERIPH2		75
-+#define IMX6SLL_CLK_PERIPH2_CLK2	76
-+#define IMX6SLL_CLK_PERIPH_CLK2		77
-+#define IMX6SLL_CLK_MMDC_PODF		78
-+#define IMX6SLL_CLK_AXI_PODF		79
-+#define IMX6SLL_CLK_AHB			80
-+#define IMX6SLL_CLK_IPG			81
-+#define IMX6SLL_CLK_PERCLK		82
-+#define IMX6SLL_CLK_USDHC1_PODF		83
-+#define IMX6SLL_CLK_USDHC2_PODF		84
-+#define IMX6SLL_CLK_USDHC3_PODF		85
-+#define IMX6SLL_CLK_SSI1_PRED		86
-+#define IMX6SLL_CLK_SSI2_PRED		87
-+#define IMX6SLL_CLK_SSI3_PRED		88
-+#define IMX6SLL_CLK_SSI1_PODF		89
-+#define IMX6SLL_CLK_SSI2_PODF		90
-+#define IMX6SLL_CLK_SSI3_PODF		91
-+#define IMX6SLL_CLK_PXP_PODF		92
-+#define IMX6SLL_CLK_LCDIF_PRED		93
-+#define IMX6SLL_CLK_LCDIF_PODF		94
-+#define IMX6SLL_CLK_EPDC_SEL		95
-+#define IMX6SLL_CLK_EPDC_PODF		96
-+#define IMX6SLL_CLK_SPDIF_PRED		97
-+#define IMX6SLL_CLK_SPDIF_PODF		98
-+#define IMX6SLL_CLK_ECSPI_PODF		99
-+#define IMX6SLL_CLK_UART_PODF		100
++			clock-names = "infra_sys_audio_clk",
++				      "top_audio_mux1_sel",
++				      "top_audio_mux2_sel",
++				      "top_audio_a1sys_hp",
++				      "top_audio_a2sys_hp",
++				      "i2s0_src_sel",
++				      "i2s1_src_sel",
++				      "i2s2_src_sel",
++				      "i2s3_src_sel",
++				      "i2s0_src_div",
++				      "i2s1_src_div",
++				      "i2s2_src_div",
++				      "i2s3_src_div",
++				      "i2s0_mclk_en",
++				      "i2s1_mclk_en",
++				      "i2s2_mclk_en",
++				      "i2s3_mclk_en",
++				      "i2so0_hop_ck",
++				      "i2so1_hop_ck",
++				      "i2so2_hop_ck",
++				      "i2so3_hop_ck",
++				      "i2si0_hop_ck",
++				      "i2si1_hop_ck",
++				      "i2si2_hop_ck",
++				      "i2si3_hop_ck",
++				      "asrc0_out_ck",
++				      "asrc1_out_ck",
++				      "asrc2_out_ck",
++				      "asrc3_out_ck",
++				      "audio_afe_pd",
++				      "audio_afe_conn_pd",
++				      "audio_a1sys_pd",
++				      "audio_a2sys_pd",
++				      "audio_mrgif_pd";
 +
-+/* CCGR 0 */
-+#define IMX6SLL_CLK_AIPSTZ1		101
-+#define IMX6SLL_CLK_AIPSTZ2		102
-+#define IMX6SLL_CLK_DCP			103
-+#define IMX6SLL_CLK_UART2_IPG		104
-+#define IMX6SLL_CLK_UART2_SERIAL	105
-+
-+/* CCGR 1 */
-+#define IMX6SLL_CLK_ECSPI1		106
-+#define IMX6SLL_CLK_ECSPI2		107
-+#define IMX6SLL_CLK_ECSPI3		108
-+#define IMX6SLL_CLK_ECSPI4		109
-+#define IMX6SLL_CLK_UART3_IPG		110
-+#define IMX6SLL_CLK_UART3_SERIAL	111
-+#define IMX6SLL_CLK_UART4_IPG		112
-+#define IMX6SLL_CLK_UART4_SERIAL	113
-+#define IMX6SLL_CLK_EPIT1		114
-+#define IMX6SLL_CLK_EPIT2		115
-+#define IMX6SLL_CLK_GPT_BUS		116
-+#define IMX6SLL_CLK_GPT_SERIAL		117
-+
-+/* CCGR2 */
-+#define IMX6SLL_CLK_CSI			118
-+#define IMX6SLL_CLK_I2C1		119
-+#define IMX6SLL_CLK_I2C2		120
-+#define IMX6SLL_CLK_I2C3		121
-+#define IMX6SLL_CLK_OCOTP		122
-+#define IMX6SLL_CLK_LCDIF_APB		123
-+#define IMX6SLL_CLK_PXP			124
-+
-+/* CCGR3 */
-+#define IMX6SLL_CLK_UART5_IPG		125
-+#define IMX6SLL_CLK_UART5_SERIAL	126
-+#define IMX6SLL_CLK_EPDC_AXI		127
-+#define IMX6SLL_CLK_EPDC_PIX		128
-+#define IMX6SLL_CLK_LCDIF_PIX		129
-+#define IMX6SLL_CLK_WDOG1		130
-+#define IMX6SLL_CLK_MMDC_P0_FAST	131
-+#define IMX6SLL_CLK_MMDC_P0_IPG		132
-+#define IMX6SLL_CLK_OCRAM		133
-+
-+/* CCGR4 */
-+#define IMX6SLL_CLK_PWM1		134
-+#define IMX6SLL_CLK_PWM2		135
-+#define IMX6SLL_CLK_PWM3		136
-+#define IMX6SLL_CLK_PWM4		137
-+
-+/* CCGR 5 */
-+#define IMX6SLL_CLK_ROM			138
-+#define IMX6SLL_CLK_SDMA		139
-+#define IMX6SLL_CLK_KPP			140
-+#define IMX6SLL_CLK_WDOG2		141
-+#define IMX6SLL_CLK_SPBA		142
-+#define IMX6SLL_CLK_SPDIF		143
-+#define IMX6SLL_CLK_SPDIF_GCLK		144
-+#define IMX6SLL_CLK_SSI1		145
-+#define IMX6SLL_CLK_SSI1_IPG		146
-+#define IMX6SLL_CLK_SSI2		147
-+#define IMX6SLL_CLK_SSI2_IPG		148
-+#define IMX6SLL_CLK_SSI3		149
-+#define IMX6SLL_CLK_SSI3_IPG		150
-+#define IMX6SLL_CLK_UART1_IPG		151
-+#define IMX6SLL_CLK_UART1_SERIAL	152
-+
-+/* CCGR 6 */
-+#define IMX6SLL_CLK_USBOH3		153
-+#define IMX6SLL_CLK_USDHC1		154
-+#define IMX6SLL_CLK_USDHC2		155
-+#define IMX6SLL_CLK_USDHC3		156
-+
-+#define IMX6SLL_CLK_IPP_DI0		157
-+#define IMX6SLL_CLK_IPP_DI1		158
-+#define IMX6SLL_CLK_LDB_DI0_SEL		159
-+#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
-+#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
-+#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
-+#define IMX6SLL_CLK_LDB_DI0		163
-+#define IMX6SLL_CLK_LDB_DI1_SEL		164
-+#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
-+#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
-+#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
-+#define IMX6SLL_CLK_LDB_DI1		168
-+#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
-+#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
-+#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
-+#define IMX6SLL_CLK_EXTERN_AUDIO        172
-+
-+#define IMX6SLL_CLK_END			173
-+
-+#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
++			assigned-clocks = <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX1_DIV>,
++					  <&topckgen CLK_TOP_AUD_MUX2_DIV>;
++			assigned-clock-parents = <&topckgen CLK_TOP_AUD1PLL_98M>,
++						 <&topckgen CLK_TOP_AUD2PLL_90M>;
++			assigned-clock-rates = <0>, <0>, <49152000>, <45158400>;
++		};
+ 	};
+ 
+ 	mmc0: mmc@11230000 {
 -- 
 1.9.1
-
