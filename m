@@ -1,52 +1,61 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 25/41] ARM: dm646x: add new clock init using common
- clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-26-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <d874e568-315d-0325-1b60-920ed35ca740@ti.com>
-Date: Fri, 2 Feb 2018 20:25:56 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-26-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 08/26] ARM: dts: r8a7794: Adjust SMP routine size
+Date: Mon, 12 Feb 2018 17:44:17 +0000
+Message-Id: <1518457475-4480-9-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
->  void __init dm646x_init_time(unsigned long ref_clk_rate,
->  			     unsigned long aux_clkin_rate)
->  {
-> +#ifdef CONFIG_COMMON_CLK
-> +	void __iomem *pll1, *pll2, *psc;
-> +	struct clk *clk;
-> +
-> +	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_4K);
-> +	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_4K);
-> +	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-> +
-> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
-> +	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
-> +
-> +	dm646x_pll_clk_init(pll1, pll2);
-> +
-> +	dm646x_psc_clk_init(psc);
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-> +	/* no LPSC, always enabled; c.f. spruep9a */
-> +	clk = clk_register_fixed_factor(NULL, "timer2", "pll1_sysclk3", 0, 1, 1);
-> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4->v5:
+* no change
 
-Lets move this to dm646x_pll_clk_init() and directly register to clkdev
-to pll1_sysclk3?
+ arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Sekhar
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index d588efa..e47c5f4 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -348,7 +348,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
