@@ -1,320 +1,245 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49620 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752245AbeBSKH1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Feb 2018 05:07:27 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180219100725euoutp020076792b0b85f7e128697570dacc8b6b~UsiSyV_8z1295612956euoutp02Z
-        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2018 10:07:25 +0000 (GMT)
-Subject: Re: [PATCH v2 7/7] clk: samsung: add compile time PLL rate
- validators
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <99c5621b-7a35-51d5-9642-0e8c599df0fa@samsung.com>
-Date: Mon, 19 Feb 2018 11:07:17 +0100
-MIME-Version: 1.0
-In-Reply-To: <5A8A9C74.6080503@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-        <CGME20180216145807eucas1p27282e8889ea210ee082a5ffa3c94a4ff@eucas1p2.samsung.com>
-        <20180216145754.14428-8-a.hajda@samsung.com> <5A8A9C74.6080503@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 14/19] clk: meson: migrate the audio divider clock to clk_regmap
+Date: Mon, 12 Feb 2018 15:58:41 +0100
+Message-Id: <20180212145846.19380-15-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19.02.2018 10:44, Chanwoo Choi wrote:
-> Hi,
->
-> On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
->> Rates declared in PLL rate tables should match exactly rates calculated
->> from PLL coefficients. To avoid possible mistakes we can use compile
->> time validation.
->> The patch introduces such validators and expands all initializers
->> with additional input frequency parameter, required to validate rates.
->> Since S3C24xx PLLs requires different validators two new macros have
->> been introduced to deal with it.
->> As the patch adds only compile time validators it should not have impact
->> on compiled code.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
->> ---
->> Thanks Krzysztof for ack, I hope my changes do not invalidate it.
->>
->> v2:
->> - replaced custom checker with existing BUILD_BUG_ON_ZERO,
->> - fixed comment (by annihilation),
->> - added Acked-By
->> ---
->>  drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++-----------------
->>  drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++---------------
->>  drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++--------
->>  drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
->>  drivers/clk/samsung/clk-exynos5410.c |  20 +++---
->>  drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
->>  drivers/clk/samsung/clk-exynos5433.c | 116 +++++++++++++++++------------------
->>  drivers/clk/samsung/clk-exynos7.c    |   2 +-
->>  drivers/clk/samsung/clk-pll.h        |  48 ++++++++++++---
->>  drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++----------------
->>  10 files changed, 372 insertions(+), 344 deletions(-)
-> [snip]
->
->>  
->> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
->> index 61eb8abbfd9c..1d8c0a581249 100644
->> --- a/drivers/clk/samsung/clk-pll.h
->> +++ b/drivers/clk/samsung/clk-pll.h
->> @@ -41,35 +41,62 @@ enum samsung_pll_type {
->>  	pll_1460x,
->>  };
->>  
->> -#define PLL_35XX_RATE(_rate, _m, _p, _s)			\
->> +#define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
->> +	((u64)(_fin) * (BIT(_ks) * (_m) + (_k)) / BIT(_ks) / ((_p) << (_s)))
->> +#define PLL_VALID_RATE(_fin, _fout, _m, _p, _s, _k, _ks) ((_fout) + \
->> +	BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
->> +
->> +#define PLL_35XX_RATE(_fin, _rate, _m, _p, _s)			\
->> +	{							\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m, _p, _s, 0, 16),		\
->> +		.mdiv	=	(_m),				\
->> +		.pdiv	=	(_p),				\
->> +		.sdiv	=	(_s),				\
->> +	}
->> +
->> +#define PLL_S3C2410_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
->> +	{							\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m + 8, _p + 2, _s, 0, 16),	\
->> +		.mdiv	=	(_m),				\
->> +		.pdiv	=	(_p),				\
->> +		.sdiv	=	(_s),				\
->> +	}
->> +
->> +#define PLL_S3C2440_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
->>  	{							\
->> -		.rate	=	(_rate),				\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m + 8, _p + 2, _s - 1, 0, 16),	\
->>  		.mdiv	=	(_m),				\
->>  		.pdiv	=	(_p),				\
->>  		.sdiv	=	(_s),				\
-> Do you use 's - 1' instead of 'multiplication 2' of numerator?
+Rework meson audio divider driver to use clk_regmap and move gxbb
+clock using meson_clk_audio_divider to clk_regmap.
 
-Yes, it does the same thing, with assumption _s is greater than 0,
-which is true, but I can switch it to multiplication by 2 of numerator,
-to be more consistent with current code.
->
->>  	}
->>  
->> -#define PLL_36XX_RATE(_rate, _m, _p, _s, _k)			\
->> +#define PLL_36XX_RATE(_fin, _rate, _m, _p, _s, _k)		\
->>  	{							\
->> -		.rate	=	(_rate),				\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m, _p, _s, _k, 16),		\
->>  		.mdiv	=	(_m),				\
->>  		.pdiv	=	(_p),				\
->>  		.sdiv	=	(_s),				\
->>  		.kdiv	=	(_k),				\
->>  	}
->>  
->> -#define PLL_45XX_RATE(_rate, _m, _p, _s, _afc)			\
->> +#define PLL_45XX_RATE(_fin, _rate, _m, _p, _s, _afc)		\
->>  	{							\
->> -		.rate	=	(_rate),			\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m, _p, _s - 1, 0, 16),		\
-> In clk-exynos4.c
-> PLL_45XX_RATE() is used for exynos4210_plls[apll] which is pll_4508 type.
->
-> In clk-pll.c,
-> Both pll_4502 and pll_4508 shares the samsung_pll45xx_recalc_rate()
-> which is samsung_pll45xx_clk_ops.recalc_rate().
->
-> The samsung_pll45xx_recalc_rate() contains the following if statement.
-> 	if (pll->type == pll_4508)
-> 		sdiv = sdiv - 1;
->
-> It means that following 's - 1' is not valid for 'pll_4502'.
->> +				_m, _p, _s - 1, 0, 16),		\
-> Even if there are not any use-case of PLL_45XX_RATE for pll_4502 type,
-> you need to use the correct name as following.
-> - PLL_45XX_RATE() -> PLL_4508_RATE()
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clk-audio-divider.c | 63 +++++++++++------------------------
+ drivers/clk/meson/clkc.h              |  5 +--
+ drivers/clk/meson/gxbb.c              | 30 +++++------------
+ 3 files changed, 30 insertions(+), 68 deletions(-)
 
-Yes, you are right, I will rename it.
-
-Regards
-Andrzej
-
->
->
->>  		.mdiv	=	(_m),				\
->>  		.pdiv	=	(_p),				\
->>  		.sdiv	=	(_s),				\
->>  		.afc	=	(_afc),				\
->>  	}
->>  
->> -#define PLL_4600_RATE(_rate, _m, _p, _s, _k, _vsel)		\
->> +#define PLL_4600_RATE(_fin, _rate, _m, _p, _s, _k, _vsel)	\
->>  	{							\
->> -		.rate	=	(_rate),			\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m, _p, _s, _k, 16),		\
->>  		.mdiv	=	(_m),				\
->>  		.pdiv	=	(_p),				\
->>  		.sdiv	=	(_s),				\
->> @@ -77,9 +104,10 @@ enum samsung_pll_type {
->>  		.vsel	=	(_vsel),			\
->>  	}
->>  
->> -#define PLL_4650_RATE(_rate, _m, _p, _s, _k, _mfr, _mrr, _vsel)	\
->> +#define PLL_4650_RATE(_fin, _rate, _m, _p, _s, _k, _mfr, _mrr, _vsel) \
->>  	{							\
->> -		.rate	=	(_rate),			\
->> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
->> +				_m, _p, _s, _k, 10),		\
->>  		.mdiv	=	(_m),				\
->>  		.pdiv	=	(_p),				\
->>  		.sdiv	=	(_s),				\
->> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
->> index d8e58a659467..0c6aa3e51336 100644
->> --- a/drivers/clk/samsung/clk-s3c2410.c
->> +++ b/drivers/clk/samsung/clk-s3c2410.c
->> @@ -162,34 +162,34 @@ struct samsung_clock_alias s3c2410_common_aliases[] __initdata = {
->>  static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
->>  	/* sorted in descending order */
->>  	/* 2410A extras */
->> -	PLL_35XX_RATE(270000000, 127, 1, 1),
->> -	PLL_35XX_RATE(268000000, 126, 1, 1),
->> -	PLL_35XX_RATE(266000000, 125, 1, 1),
->> -	PLL_35XX_RATE(226000000, 105, 1, 1),
->> -	PLL_35XX_RATE(210000000, 132, 2, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 270000000, 127, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 268000000, 126, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 266000000, 125, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 226000000, 105, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 210000000, 132, 2, 1),
->>  	/* 2410 common */
->> -	PLL_35XX_RATE(202800000, 161, 3, 1),
->> -	PLL_35XX_RATE(192000000, 88, 1, 1),
->> -	PLL_35XX_RATE(186000000, 85, 1, 1),
->> -	PLL_35XX_RATE(180000000, 82, 1, 1),
->> -	PLL_35XX_RATE(170000000, 77, 1, 1),
->> -	PLL_35XX_RATE(158000000, 71, 1, 1),
->> -	PLL_35XX_RATE(152000000, 68, 1, 1),
->> -	PLL_35XX_RATE(147000000, 90, 2, 1),
->> -	PLL_35XX_RATE(135000000, 82, 2, 1),
->> -	PLL_35XX_RATE(124000000, 116, 1, 2),
->> -	PLL_35XX_RATE(118500000, 150, 2, 2),
->> -	PLL_35XX_RATE(113000000, 105, 1, 2),
->> -	PLL_35XX_RATE(101250000, 127, 2, 2),
->> -	PLL_35XX_RATE(90000000, 112, 2, 2),
->> -	PLL_35XX_RATE(84750000, 105, 2, 2),
->> -	PLL_35XX_RATE(79000000, 71, 1, 2),
->> -	PLL_35XX_RATE(67500000, 82, 2, 2),
->> -	PLL_35XX_RATE(56250000, 142, 2, 3),
->> -	PLL_35XX_RATE(48000000, 120, 2, 3),
->> -	PLL_35XX_RATE(50700000, 161, 3, 3),
->> -	PLL_35XX_RATE(45000000, 82, 1, 3),
->> -	PLL_35XX_RATE(33750000, 82, 2, 3),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 202800000, 161, 3, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 192000000, 88, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 186000000, 85, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 180000000, 82, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 170000000, 77, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 158000000, 71, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 152000000, 68, 1, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 147000000, 90, 2, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 135000000, 82, 2, 1),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 124000000, 116, 1, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 118500000, 150, 2, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 113000000, 105, 1, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 101250000, 127, 2, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 90000000, 112, 2, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 84750000, 105, 2, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 79000000, 71, 1, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 67500000, 82, 2, 2),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 56250000, 142, 2, 3),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 48000000, 120, 2, 3),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 50700000, 161, 3, 3),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 45000000, 82, 1, 3),
->> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 33750000, 82, 2, 3),
->>  	{ /* sentinel */ },
->>  };
->>  
->> @@ -229,33 +229,33 @@ struct samsung_clock_alias s3c2410_aliases[] __initdata = {
->>  
->>  static struct samsung_pll_rate_table pll_s3c244x_12mhz_tbl[] __initdata = {
->>  	/* sorted in descending order */
->> -	PLL_35XX_RATE(400000000, 0x5c, 1, 1),
->> -	PLL_35XX_RATE(390000000, 0x7a, 2, 1),
->> -	PLL_35XX_RATE(380000000, 0x57, 1, 1),
->> -	PLL_35XX_RATE(370000000, 0xb1, 4, 1),
->> -	PLL_35XX_RATE(360000000, 0x70, 2, 1),
->> -	PLL_35XX_RATE(350000000, 0xa7, 4, 1),
->> -	PLL_35XX_RATE(340000000, 0x4d, 1, 1),
->> -	PLL_35XX_RATE(330000000, 0x66, 2, 1),
->> -	PLL_35XX_RATE(320000000, 0x98, 4, 1),
->> -	PLL_35XX_RATE(310000000, 0x93, 4, 1),
->> -	PLL_35XX_RATE(300000000, 0x75, 3, 1),
->> -	PLL_35XX_RATE(240000000, 0x70, 1, 2),
->> -	PLL_35XX_RATE(230000000, 0x6b, 1, 2),
->> -	PLL_35XX_RATE(220000000, 0x66, 1, 2),
->> -	PLL_35XX_RATE(210000000, 0x84, 2, 2),
->> -	PLL_35XX_RATE(200000000, 0x5c, 1, 2),
->> -	PLL_35XX_RATE(190000000, 0x57, 1, 2),
->> -	PLL_35XX_RATE(180000000, 0x70, 2, 2),
->> -	PLL_35XX_RATE(170000000, 0x4d, 1, 2),
->> -	PLL_35XX_RATE(160000000, 0x98, 4, 2),
->> -	PLL_35XX_RATE(150000000, 0x75, 3, 2),
->> -	PLL_35XX_RATE(120000000, 0x70, 1, 3),
->> -	PLL_35XX_RATE(110000000, 0x66, 1, 3),
->> -	PLL_35XX_RATE(100000000, 0x5c, 1, 3),
->> -	PLL_35XX_RATE(90000000, 0x70, 2, 3),
->> -	PLL_35XX_RATE(80000000, 0x98, 4, 3),
->> -	PLL_35XX_RATE(75000000, 0x75, 3, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 400000000, 0x5c, 1, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 390000000, 0x7a, 2, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 380000000, 0x57, 1, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 370000000, 0xb1, 4, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 360000000, 0x70, 2, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 350000000, 0xa7, 4, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 340000000, 0x4d, 1, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 330000000, 0x66, 2, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 320000000, 0x98, 4, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 310000000, 0x93, 4, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 300000000, 0x75, 3, 1),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 240000000, 0x70, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 230000000, 0x6b, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 220000000, 0x66, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 210000000, 0x84, 2, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 200000000, 0x5c, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 190000000, 0x57, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 180000000, 0x70, 2, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 170000000, 0x4d, 1, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 160000000, 0x98, 4, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 150000000, 0x75, 3, 2),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 120000000, 0x70, 1, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 110000000, 0x66, 1, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 100000000, 0x5c, 1, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 90000000, 0x70, 2, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 80000000, 0x98, 4, 3),
->> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 75000000, 0x75, 3, 3),
->>  	{ /* sentinel */ },
->>  };
->>  
->>
->
-
+diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
+index 6c07db06642d..f7ab5b1db342 100644
+--- a/drivers/clk/meson/clk-audio-divider.c
++++ b/drivers/clk/meson/clk-audio-divider.c
+@@ -28,8 +28,11 @@
+ #include <linux/clk-provider.h>
+ #include "clkc.h"
+ 
+-#define to_meson_clk_audio_divider(_hw) container_of(_hw, \
+-				struct meson_clk_audio_divider, hw)
++static inline struct meson_clk_audio_div_data *
++meson_clk_audio_div_data(struct clk_regmap *clk)
++{
++	return (struct meson_clk_audio_div_data *)clk->data;
++}
+ 
+ static int _div_round(unsigned long parent_rate, unsigned long rate,
+ 		      unsigned long flags)
+@@ -45,15 +48,9 @@ static int _get_val(unsigned long parent_rate, unsigned long rate)
+ 	return DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
+ }
+ 
+-static int _valid_divider(struct clk_hw *hw, int divider)
++static int _valid_divider(unsigned int width, int divider)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	int max_divider;
+-	u8 width;
+-
+-	width = adiv->div.width;
+-	max_divider = 1 << width;
++	int max_divider = 1 << width;
+ 
+ 	return clamp(divider, 1, max_divider);
+ }
+@@ -61,14 +58,11 @@ static int _valid_divider(struct clk_hw *hw, int divider)
+ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
+ 					       unsigned long parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	struct parm *p;
+-	unsigned long reg, divider;
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
++	unsigned long divider;
+ 
+-	p = &adiv->div;
+-	reg = readl(adiv->base + p->reg_off);
+-	divider = PARM_GET(p->width, p->shift, reg) + 1;
++	divider = meson_parm_read(clk->map, &adiv->div);
+ 
+ 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
+ }
+@@ -77,14 +71,14 @@ static long audio_divider_round_rate(struct clk_hw *hw,
+ 				     unsigned long rate,
+ 				     unsigned long *parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
+ 	unsigned long max_prate;
+ 	int divider;
+ 
+ 	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
+ 		divider = _div_round(*parent_rate, rate, adiv->flags);
+-		divider = _valid_divider(hw, divider);
++		divider = _valid_divider(adiv->div.width, divider);
+ 		return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
+ 	}
+ 
+@@ -93,7 +87,7 @@ static long audio_divider_round_rate(struct clk_hw *hw,
+ 
+ 	/* Get the corresponding rounded down divider */
+ 	divider = max_prate / rate;
+-	divider = _valid_divider(hw, divider);
++	divider = _valid_divider(adiv->div.width, divider);
+ 
+ 	/* Get actual rate of the parent */
+ 	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
+@@ -106,28 +100,11 @@ static int audio_divider_set_rate(struct clk_hw *hw,
+ 				  unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+-	struct meson_clk_audio_divider *adiv =
+-		to_meson_clk_audio_divider(hw);
+-	struct parm *p;
+-	unsigned long reg, flags = 0;
+-	int val;
+-
+-	val = _get_val(parent_rate, rate);
+-
+-	if (adiv->lock)
+-		spin_lock_irqsave(adiv->lock, flags);
+-	else
+-		__acquire(adiv->lock);
+-
+-	p = &adiv->div;
+-	reg = readl(adiv->base + p->reg_off);
+-	reg = PARM_SET(p->width, p->shift, reg, val);
+-	writel(reg, adiv->base + p->reg_off);
+-
+-	if (adiv->lock)
+-		spin_unlock_irqrestore(adiv->lock, flags);
+-	else
+-		__release(adiv->lock);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
++	int val = _get_val(parent_rate, rate);
++
++	meson_parm_write(clk->map, &adiv->div, val);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 08a1ebfc65dc..a4a526cbca4c 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -142,12 +142,9 @@ struct meson_clk_mpll_data {
+ 	spinlock_t *lock;
+ };
+ 
+-struct meson_clk_audio_divider {
+-	struct clk_hw hw;
+-	void __iomem *base;
++struct meson_clk_audio_div_data {
+ 	struct parm div;
+ 	u8 flags;
+-	spinlock_t *lock;
+ };
+ 
+ #define MESON_GATE(_name, _reg, _bit)					\
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index d2724a7ce9e7..196557f11608 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -826,14 +826,15 @@ static struct clk_regmap gxbb_cts_amclk_sel = {
+ 	},
+ };
+ 
+-static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
+-	.div = {
+-		.reg_off = HHI_AUD_CLK_CNTL,
+-		.shift   = 0,
+-		.width   = 8,
++static struct clk_regmap gxbb_cts_amclk_div = {
++	.data = &(struct meson_clk_audio_div_data){
++		.div = {
++			.reg_off = HHI_AUD_CLK_CNTL,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+-	.flags = CLK_DIVIDER_ROUND_CLOSEST,
+-	.lock = &meson_clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_amclk_div",
+ 		.ops = &meson_clk_audio_divider_ops,
+@@ -1777,10 +1778,6 @@ static struct meson_clk_pll *const gxl_clk_plls[] = {
+ 	&gxl_gp0_pll,
+ };
+ 
+-static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+-	&gxbb_cts_amclk_div,
+-};
+-
+ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_clk81,
+ 	&gxbb_ddr,
+@@ -1912,29 +1909,24 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_mpll0,
+ 	&gxbb_mpll1,
+ 	&gxbb_mpll2,
++	&gxbb_cts_amclk_div,
+ };
+ 
+ struct clkc_data {
+ 	struct meson_clk_pll *const *clk_plls;
+ 	unsigned int clk_plls_count;
+-	struct meson_clk_audio_divider *const *clk_audio_dividers;
+-	unsigned int clk_audio_dividers_count;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+ 
+ static const struct clkc_data gxbb_clkc_data = {
+ 	.clk_plls = gxbb_clk_plls,
+ 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
+-	.clk_audio_dividers = gxbb_audio_dividers,
+-	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+ };
+ 
+ static const struct clkc_data gxl_clkc_data = {
+ 	.clk_plls = gxl_clk_plls,
+ 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
+-	.clk_audio_dividers = gxbb_audio_dividers,
+-	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+ };
+ 
+@@ -1981,10 +1973,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < clkc_data->clk_plls_count; i++)
+ 		clkc_data->clk_plls[i]->base = clk_base;
+ 
+-	/* Populate base address for the audio dividers */
+-	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
+-		clkc_data->clk_audio_dividers[i]->base = clk_base;
+-
+ 	/* Populate regmap for the common regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
+ 		gx_clk_regmaps[i]->map = map;
+-- 
+2.14.3
