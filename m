@@ -1,93 +1,104 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v7 05/15] dt-bindings: clock: Document qcom,hfpll
-Date: Mon, 26 Feb 2018 15:23:21 +0530
-Message-Id: <1519638811-17269-6-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
-References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 07/19] clk: meson: remove superseded aoclk_gate_regmap
+Date: Mon, 12 Feb 2018 15:58:34 +0100
+Message-Id: <20180212145846.19380-8-jbrunet@baylibre.com>
+In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+References: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+aoclk_gate_regmap has been replaced by meson's clk_regmap.
+It is no longer necessary so, remove it
 
-Adds bindings document for qcom,hfpll instantiated within
-the Krait processor subsystem as separate register region.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+ drivers/clk/meson/gxbb-aoclk-regmap.c | 46 -----------------------------------
+ drivers/clk/meson/gxbb-aoclk.h        | 10 --------
+ 2 files changed, 56 deletions(-)
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-new file mode 100644
-index 0000000..771cb0a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -0,0 +1,46 @@
-+High-Frequency PLL (HFPLL)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>:
-+		shall contain only one of the following. The generic
-+		compatible "qcom,hfpll" should be also included.
-+
-+                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-+                        "qcom,hfpll-apq8064", "qcom,hfpll"
-+                        "qcom,hfpll-msm8974", "qcom,hfpll"
-+                        "qcom,hfpll-msm8960", "qcom,hfpll"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: address and size of HPLL registers. An optional second
-+		    element specifies the address and size of the alias
-+		    register region.
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-+		    starting at 0. Otherwise hfpll_Y where Y is more specific
-+		    such as "l2".
-+
-+Example:
-+
-+1) An HFPLL for the L2 cache.
-+
-+	clock-controller@f9016000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf9016000 0x30>;
-+		clock-output-names = "hfpll_l2";
-+	};
-+
-+2) An HFPLL for CPU0. This HFPLL has the alias register region.
-+
-+	clock-controller@f908a000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-+		clock-output-names = "hfpll0";
-+	};
+diff --git a/drivers/clk/meson/gxbb-aoclk-regmap.c b/drivers/clk/meson/gxbb-aoclk-regmap.c
+deleted file mode 100644
+index 2515fbfa0467..000000000000
+--- a/drivers/clk/meson/gxbb-aoclk-regmap.c
++++ /dev/null
+@@ -1,46 +0,0 @@
+-/*
+- * Copyright (c) 2017 BayLibre, SAS.
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- *
+- * SPDX-License-Identifier: GPL-2.0+
+- */
+-
+-#include <linux/clk-provider.h>
+-#include <linux/bitfield.h>
+-#include <linux/regmap.h>
+-#include "gxbb-aoclk.h"
+-
+-static int aoclk_gate_regmap_enable(struct clk_hw *hw)
+-{
+-	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
+-
+-	return regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
+-				  BIT(gate->bit_idx), BIT(gate->bit_idx));
+-}
+-
+-static void aoclk_gate_regmap_disable(struct clk_hw *hw)
+-{
+-	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
+-
+-	regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
+-			   BIT(gate->bit_idx), 0);
+-}
+-
+-static int aoclk_gate_regmap_is_enabled(struct clk_hw *hw)
+-{
+-	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
+-	unsigned int val;
+-	int ret;
+-
+-	ret = regmap_read(gate->regmap, AO_RTI_GEN_CNTL_REG0, &val);
+-	if (ret)
+-		return ret;
+-
+-	return (val & BIT(gate->bit_idx)) != 0;
+-}
+-
+-const struct clk_ops meson_aoclk_gate_regmap_ops = {
+-	.enable = aoclk_gate_regmap_enable,
+-	.disable = aoclk_gate_regmap_disable,
+-	.is_enabled = aoclk_gate_regmap_is_enabled,
+-};
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index 127d58954cca..0be78383f257 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -17,16 +17,6 @@
+ #define AO_RTC_ALT_CLK_CNTL0	0x94
+ #define AO_RTC_ALT_CLK_CNTL1	0x98
+ 
+-struct aoclk_gate_regmap {
+-	struct clk_hw hw;
+-	unsigned bit_idx;
+-	struct regmap *regmap;
+-	spinlock_t *lock;
+-};
+-
+-#define to_aoclk_gate_regmap(_hw) \
+-	container_of(_hw, struct aoclk_gate_regmap, hw)
+-
+ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
+ 
+ struct aoclk_cec_32k {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.3
