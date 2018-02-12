@@ -1,39 +1,58 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 23/41] ARM: dm365: add new clock init using common
- clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-24-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <1550e88d-9f89-3185-7da4-0cf5ebb7475a@ti.com>
-Date: Fri, 2 Feb 2018 20:07:49 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54341 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934034AbeBLL3p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 06:29:45 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v3 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD device
+Date: Mon, 12 Feb 2018 19:28:48 +0800
+Message-ID: <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1518424204.git.ryder.lee@mediatek.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-24-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This adds the new board-specific clock init in mach-davinci/dm365.c
-> using the new common clock framework drivers.
-> 
-> The #ifdefs are needed to prevent compile errors until the entire
-> ARCH_DAVINCI is converted.
-> 
-> Also clean up the #includes since we are adding some here.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+As the new MFD device is in place, switch probing method to adapt it.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt7622-aud.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index 13f752d..68c52a9 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -142,11 +142,16 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct device_node *pnode = pdev->dev.parent->of_node;
+ 	int r;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+ 
+-	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
++	/* Check if called from MFD */
++	if (!pnode)
++		pnode = node;
++
++	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
+ 			       clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-- 
+1.9.1
+
