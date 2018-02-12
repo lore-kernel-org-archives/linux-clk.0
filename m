@@ -1,109 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37702 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933047AbeBMB0F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 20:26:05 -0500
-Subject: Re: BUG: A31s Not booting anymore
-From: Philipp Rossak <embed3d@gmail.com>
-To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
-        wens@csie.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
-Message-ID: <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
-Date: Tue, 13 Feb 2018 02:25:58 +0100
-MIME-Version: 1.0
-In-Reply-To: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 03/26] ARM: dts: r8a7745: Adjust SMP routine size
+Date: Mon, 12 Feb 2018 17:44:12 +0000
+Message-Id: <1518457475-4480-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4->v5:
+* no change
 
-On 12.02.2018 19:21, Philipp Rossak wrote:
-> Hey,
-> 
-> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting 
-> kernel ... . After enabling the earlyprintk I could capture this log: [1].
-> 
-> After reverting those 5 commits from Chen-Yu I was able to boot again:
-> 
-> 
-> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
-> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
-> 
-> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
-> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
-> 
-> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
-> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
-> 
-> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
-> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
-> 
-> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
-> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
-> 
-> 
-> I allready tried to fix it with making them save against zero:
-> 
-> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
->          cmp->fixed_post_div with)
->                 rate *= cmp->fixed_post_div;
-> 
-> But that didn't help.
-> 
-> Any ideas?
-> 
-> Regards,
-> Philipp
-> 
-> [1]: https://pastebin.com/64Fzzqvg
+ arch/arm/boot/dts/r8a7745.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It took me some time, but I have now a few more infos:
-
-Right now the code breaks at this point here [1], with this clock [2].
-If we have a look now at the clock config [3], we see here a table which 
-is an u8 array and also a fixed_predivs struct.
-
-If we have a look at the function call where it breaks [4], shouldn't 
-the table be a clk_div_table struct instead of an u8?
-
-The a31s is the only board where we have this combination of a 
-fixed_predivs and a table.
-
-Philipp
-
-
-Related Clock source register A31s:
-
-0000: OSC24MHz/750=32KHz
-0001: LOSC
-0010: OSC24MHz
-0011: /
-0100: /
-0101: /
-0110: /
-0111: /
-1000: /
-1001: /
-1010: /
-1011: AXICLK/4
-1100: /
-1101: AHB1CLK/4
-1110: /
-1111: /
-
-
-[1]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
-
-[2]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
-
-[3]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
-
-[4]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
-
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index ddc3da2..6bc1cf4 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -755,7 +755,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
+-- 
+2.7.4
