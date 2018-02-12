@@ -1,152 +1,115 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 7/9] clk: imx: make mux parent strings const
-Date: Tue, 13 Feb 2018 21:28:12 +0800
-Message-ID: <1518528494-25723-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 09/26] soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
+Date: Mon, 12 Feb 2018 17:44:18 +0000
+Message-Id: <1518457475-4480-10-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+This patch allows for platform specific quirks as some of the SoC need
+further customization for the watchdog to work properly, like for R-Car
+Gen2 and for RZ/G.
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
-
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-ChangeLog:
-v1->v3: no changes
----
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+v4->v5:
+* no change
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 6df3389..ba1541f 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
+ drivers/soc/renesas/rcar-rst.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 3316b02..93febe6 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -13,8 +13,18 @@
+ #include <linux/of_address.h>
+ #include <linux/soc/renesas/rcar-rst.h>
  
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
++#define WDTRSTCR_RESET		0xA55A0002
++#define WDTRSTCR		0x0054
++
++static int rcar_rst_enable_wdt_reset(void __iomem *base)
++{
++	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
++	return 0;
++}
++
+ struct rst_config {
+-	unsigned int modemr;	/* Mode Monitoring Register Offset */
++	unsigned int modemr;		/* Mode Monitoring Register Offset */
++	int (*configure)(void *base);	/* Platform specific configuration */
  };
  
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index fed7660..956155c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ static const struct rst_config rcar_rst_gen1 __initconst = {
+@@ -23,6 +33,11 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
  
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
+ static const struct rst_config rcar_rst_gen2 __initconst = {
+ 	.modemr = 0x60,
++	.configure = rcar_rst_enable_wdt_reset,
++};
++
++static const struct rst_config rcar_rst_gen3 __initconst = {
++	.modemr = 0x60,
+ };
  
- struct clk_hw *imx_clk_composite(const char *name,
- 				 const char * const *parent_names,
-@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void (*fixup)(u32 *val));
+ static const struct of_device_id rcar_rst_matches[] __initconst = {
+@@ -38,11 +53,11 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
+-	/* R-Car Gen3 is handled like R-Car Gen2 */
+-	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
+-	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
++	/* R-Car Gen3 */
++	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
+ 	{ /* sentinel */ }
+ };
  
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
+@@ -71,6 +86,14 @@ static int __init rcar_rst_init(void)
+ 	rcar_rst_base = base;
+ 	cfg = match->data;
+ 	saved_mode = ioread32(base + cfg->modemr);
++	if (cfg->configure) {
++		error = cfg->configure(base);
++		if (error) {
++			pr_warn("%pOF: Cannot run SoC specific configuration\n",
++				np);
++			goto out_put;
++		}
++	}
  
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
+ 	pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
  
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -190,7 +191,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -198,7 +200,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -206,8 +209,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
