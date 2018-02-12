@@ -1,250 +1,87 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
 	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 09/15] drm/sun4i: Add support for variants to DW HDMI PHY
-Date: Sat, 24 Feb 2018 22:45:39 +0100
-Message-Id: <20180224214545.3740-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+Date: Mon, 12 Feb 2018 17:44:20 +0000
+Message-Id: <1518457475-4480-12-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-There are multiple variants of DW HDMI PHYs in Allwinner SoCs. While
-some things like clock and reset setup are the same, PHY configuration
-differs a lot.
+This commit documents the compatibility with R-Car Gen2 and RZ/G
+devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+Also, this patch expands the list of SoC-specific compatible strings to
+include RZ/G and R-Car Gen2 devices.
 
-Split out code which is PHY specific to separate functions and create
-a structure which holds pointers to those functions.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 20 ++++++--
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 91 +++++++++++++++++++++++-----------
- 2 files changed, 77 insertions(+), 34 deletions(-)
+v4->v5:
+* no change
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index d8d0684fc8aa..1e9eb6072615 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -12,11 +12,23 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
+ .../devicetree/bindings/watchdog/renesas-wdt.txt      | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index bf6d1ca..4815128 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -1,17 +1,26 @@
+ Renesas Watchdog Timer (WDT) Controller
  
-+struct sun8i_hdmi_phy;
-+
-+struct sun8i_hdmi_phy_variant {
-+	void (*phy_init)(struct sun8i_hdmi_phy *phy);
-+	void (*phy_disable)(struct dw_hdmi *hdmi,
-+			    struct sun8i_hdmi_phy *phy);
-+	int  (*phy_config)(struct dw_hdmi *hdmi,
-+			   struct sun8i_hdmi_phy *phy,
-+			   unsigned int clk_rate);
-+};
-+
- struct sun8i_hdmi_phy {
--	struct clk		*clk_bus;
--	struct clk		*clk_mod;
--	struct regmap		*regs;
--	struct reset_control	*rst_phy;
-+	struct clk			*clk_bus;
-+	struct clk			*clk_mod;
-+	struct regmap			*regs;
-+	struct reset_control		*rst_phy;
-+	struct sun8i_hdmi_phy_variant	*variant;
- };
+ Required properties:
+-- compatible : Should be "renesas,<soctype>-wdt", and
+-	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
++ - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
++		fallback compatible string when compatible with the generic
++		version.
+ 	       Examples with soctypes are:
++		 - "renesas,r8a7743-wdt" (RZ/G1M)
++		 - "renesas,r8a7745-wdt" (RZ/G1E)
++	         - "renesas,r8a7790-wdt" (R-Car H2)
++	         - "renesas,r8a7791-wdt" (R-Car M2-W)
++	         - "renesas,r8a7792-wdt" (R-Car V2H)
++	         - "renesas,r8a7793-wdt" (R-Car M2-N)
++	         - "renesas,r8a7794-wdt" (R-Car E2)
+ 	         - "renesas,r8a7795-wdt" (R-Car H3)
+ 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
+ 	         - "renesas,r8a77995-wdt" (R-Car D3)
+ 	         - "renesas,r7s72100-wdt" (RZ/A1)
++		The generic compatible string must be:
++		 - "renesas,rza-wdt" for RZ/A
++		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
++		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
  
- struct sun8i_dw_hdmi {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index f48e8b70fabe..ab758f040acd 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -29,22 +29,10 @@
-  */
- #define I2C_ADDR	0x69
+-  When compatible with the generic version, nodes must list the SoC-specific
+-  version corresponding to the platform first, followed by the generic
+-  version.
  
--static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
--				 struct drm_display_mode *mode)
-+static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
-+				      struct sun8i_hdmi_phy *phy,
-+				      unsigned int clk_rate)
- {
--	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
--	u32 val = 0;
--
--	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
--		val |= 0x01;
--
--	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
--		val |= 0x02;
--
--	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
--			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
--			   SUN8I_HDMI_PHY_DBG_CTRL_POL(val));
--
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
-@@ -64,21 +52,21 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	 * release any documentation, explanation of this values can
- 	 * be found in i.MX 6Dual/6Quad Reference Manual.
- 	 */
--	if (mode->crtc_clock <= 27000) {
-+	if (clk_rate <= 27000000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x01e0, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x08da, 0x10);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0318, 0x0e);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
--	} else if (mode->crtc_clock <= 74250) {
-+	} else if (clk_rate <= 74250000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0540, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0005, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x02b5, 0x0e);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
--	} else if (mode->crtc_clock <= 148500) {
-+	} else if (clk_rate <= 148500000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x04a0, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x000a, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
-@@ -103,10 +91,28 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	return 0;
- };
- 
--static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
-+				 struct drm_display_mode *mode)
- {
- 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
-+	u32 val = 0;
-+
-+	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+		val |= 0x01;
-+
-+	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+		val |= 0x02;
-+
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
-+			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
-+			   SUN8I_HDMI_PHY_DBG_CTRL_POL(val));
-+
-+	return phy->variant->phy_config(hdmi, phy, mode->crtc_clock * 1000);
-+};
- 
-+static void sun8i_hdmi_phy_disable_a83t(struct dw_hdmi *hdmi,
-+					struct sun8i_hdmi_phy *phy)
-+{
- 	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
- 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
- 
-@@ -114,6 +120,13 @@ static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN, 0);
- }
- 
-+static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+{
-+	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
-+
-+	phy->variant->phy_disable(hdmi, phy);
-+}
-+
- static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
- 	.init = &sun8i_hdmi_phy_config,
- 	.disable = &sun8i_hdmi_phy_disable,
-@@ -122,16 +135,8 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
- 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
- };
- 
--void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
-+static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
- {
--	/* enable read access to HDMI controller */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
--		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
--
--	/* unscramble register offsets */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
--		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
--
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
-@@ -145,6 +150,19 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- 			   SUN8I_HDMI_PHY_DBG_CTRL_ADDR(I2C_ADDR));
- }
- 
-+void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
-+{
-+	/* enable read access to HDMI controller */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
-+		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
-+
-+	/* unscramble register offsets */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
-+		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-+
-+	phy->variant->phy_init(phy);
-+}
-+
- const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
- {
- 	return &sun8i_hdmi_phy_ops;
-@@ -158,20 +176,31 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 	.name		= "phy"
- };
- 
-+static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
-+	.phy_init = &sun8i_hdmi_phy_init_a83t,
-+	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
-+	.phy_config = &sun8i_hdmi_phy_config_a83t,
-+};
-+
- static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
--	{ .compatible = "allwinner,sun8i-a83t-hdmi-phy" },
-+	{
-+		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
-+		.data = &sun8i_a83t_hdmi_phy,
-+	},
- 	{ /* sentinel */ }
- };
- 
- int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- {
-+	const struct of_device_id *match;
- 	struct device *dev = hdmi->dev;
- 	struct sun8i_hdmi_phy *phy;
- 	struct resource res;
- 	void __iomem *regs;
- 	int ret;
- 
--	if (!of_match_node(sun8i_hdmi_phy_of_table, node)) {
-+	match = of_match_node(sun8i_hdmi_phy_of_table, node);
-+	if (!match) {
- 		dev_err(dev, "Incompatible HDMI PHY\n");
- 		return -EINVAL;
- 	}
-@@ -180,6 +209,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	if (!phy)
- 		return -ENOMEM;
- 
-+	phy->variant = (struct sun8i_hdmi_phy_variant *)match->data;
-+
- 	ret = of_address_to_resource(node, 0, &res);
- 	if (ret) {
- 		dev_err(dev, "phy: Couldn't get our resources\n");
+ - reg : Should contain WDT registers location and length
+ - clocks : the clock feeding the watchdog timer.
 -- 
-2.16.2
+2.7.4
