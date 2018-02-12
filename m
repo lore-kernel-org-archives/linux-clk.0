@@ -1,8 +1,6 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Mon, 12 Feb 2018 21:59:39 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Wim Van Sebroeck <wim@iguana.be>,
@@ -14,62 +12,91 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 13/26] watchdog: renesas_wdt: Add restart handler
-Message-ID: <20180212205939.75pszm5ih6ndw32h@katana>
+Subject: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+Date: Mon, 12 Feb 2018 17:44:21 +0000
+Message-Id: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="smjbq6gp6e7bfkkm"
-In-Reply-To: <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Due to commits:
+* "ARM: shmobile: Add watchdog support",
+* "ARM: shmobile: rcar-gen2: Add watchdog support", and
+* "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+we now have everything we needed for the watchdog to work on Gen2 and
+RZ/G1.
 
---smjbq6gp6e7bfkkm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+always ON, when suspending to RAM we need to explicitly disable the
+counting by clearing TME from RWTCSRA.
 
-On Mon, Feb 12, 2018 at 05:44:22PM +0000, Fabrizio Castro wrote:
-> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> by means of the watchdog.
-> This patch adds a restart handler to rwdt_ops, and also makes sure we
-> keep its priority to a medium level, in order to not override other more
-> effective handlers.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+v4->v5:
+* various improvements suggested by Wolfram
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ drivers/watchdog/renesas_wdt.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-
---smjbq6gp6e7bfkkm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqCADsACgkQFA3kzBSg
-KbYw3xAAqmVQNhipNdgNc9uvqAS594wbi0zVXZ8vFS4xAklaG28qdwhqnh67w6ev
-CnQdwxtU0XUPgSUvUcx/TWSpTqWF/pGyGiKpKAFZjEYntgDTMPA3LwItRBsAVrhW
-z8v8Hoeq1UBUga0P7o++LNC5N/4IWiDJ/2rjomW6GsR9ubcvh+bLKXxtMQoNInNU
-hU1eRMCAnnZhkTzUQs/1ckcbClub5q6eCDm+P5PqQhhDMLlAOgKlPjkUrjqrRxFK
-glrx+nFDNN9gKyb2DsO2fp4ngIXFWz9j5ajasBIqiTwy8Bto1hCv/eP8p2NgQ3xm
-tszMJrv1JCsxwNqwAAaRfejZmWaE1mA+kRdKoooE51bwqrpmRd216IWIGjhJSXTX
-JiYO0LoGTTrw+uB0AziFbXLZsBKO3EHsx1acOHyPBaSjz7rOQDfgSbAMa7Im6vBW
-tcj8SQ93x3jdoTnqN/6/xqPTqyR7WF2GeJ0u5t+wHuvc+5sT6lJkXL10095qR4is
-C6Ux2JHjizJoJMLD5B+OiVjNWewB+J1b5vuYa5gQs0cBFeEmbUE8H08H8QIRreJM
-efQmbShjMgohs44YjU5EHp6ofBA1D9bH7X3Q8ciK43zvdQrSCxd/WDXUFucIbMen
-lDmnEeZmw1bf7p108qI9Y2d6zQ06pKh+obuAAwSm3EpaDmiBLr0=
-=diQv
------END PGP SIGNATURE-----
-
---smjbq6gp6e7bfkkm--
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83..e972b7b 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -203,13 +203,29 @@ static int rwdt_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-/*
+- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+- * to work there, one also needs a RESET (RST) driver which does not exist yet
+- * due to HW issues. This needs to be solved before adding compatibles here.
+- */
++static int __maybe_unused rwdt_suspend(struct device *dev)
++{
++	struct rwdt_priv *priv = dev_get_drvdata(dev);
++
++	if (watchdog_active(&priv->wdev))
++		rwdt_write(priv, priv->cks, RWTCSRA);
++	return 0;
++}
++
++static int __maybe_unused rwdt_resume(struct device *dev)
++{
++	struct rwdt_priv *priv = dev_get_drvdata(dev);
++
++	if (watchdog_active(&priv->wdev))
++		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
++
+ static const struct of_device_id rwdt_ids[] = {
+ 	{ .compatible = "renesas,rcar-gen3-wdt", },
++	{ .compatible = "renesas,rcar-gen2-wdt", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rwdt_ids);
+@@ -218,6 +234,7 @@ static struct platform_driver rwdt_driver = {
+ 	.driver = {
+ 		.name = "renesas_wdt",
+ 		.of_match_table = rwdt_ids,
++		.pm = &rwdt_pm_ops,
+ 	},
+ 	.probe = rwdt_probe,
+ 	.remove = rwdt_remove,
+-- 
+2.7.4
