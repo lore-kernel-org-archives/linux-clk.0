@@ -1,226 +1,121 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Michael Turquette <mturquette@baylibre.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <9f534bee-9d27-f878-f0b8-58d8d9ece9fa@lechnology.com>
-Date: Sun, 11 Feb 2018 21:03:40 -0600
-MIME-Version: 1.0
-In-Reply-To: <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/19] clk: meson: use regmap in clock controllers
+Date: Mon, 12 Feb 2018 15:58:27 +0100
+Message-Id: <20180212145846.19380-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/09/2018 10:48 AM, Michael Turquette wrote:
-> Hi Bartosz, all,
-> 
-> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
->>> This adds platform-specific declarations for the PSC clocks on TI DA850/
->>> OMAP-L138/AM18XX SoCs.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->>>   drivers/clk/davinci/Makefile    |   1 +
->>>   drivers/clk/davinci/psc-da850.c | 117 ++++++++++++++++++++++++++++++++++++++++
->>>   include/linux/clk/davinci.h     |   1 +
->>>   3 files changed, 119 insertions(+)
->>>   create mode 100644 drivers/clk/davinci/psc-da850.c
->>>
->>> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
->>> index fb14c8c..aef0390 100644
->>> --- a/drivers/clk/davinci/Makefile
->>> +++ b/drivers/clk/davinci/Makefile
->>> @@ -11,4 +11,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)     += pll-dm646x.o
->>>
->>>   obj-y += psc.o
->>>   obj-$(CONFIG_ARCH_DAVINCI_DA830)       += psc-da830.o
->>> +obj-$(CONFIG_ARCH_DAVINCI_DA850)       += psc-da850.o
->>>   endif
->>> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
->>> new file mode 100644
->>> index 0000000..3b4583d
->>> --- /dev/null
->>> +++ b/drivers/clk/davinci/psc-da850.c
->>> @@ -0,0 +1,117 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * PSC clock descriptions for TI DA850/OMAP-L138/AM18XX
->>> + *
->>> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
->>> + */
->>> +
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/clkdev.h>
->>> +#include <linux/init.h>
->>> +#include <linux/of.h>
->>> +#include <linux/types.h>
->>> +
->>> +#include "psc.h"
->>> +
->>> +static const struct davinci_psc_clk_info da850_psc0_info[] __initconst = {
->>> +       LPSC(0, 0, tpcc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(3, 0, aemif, pll0_sysclk3, 0),
->>> +       LPSC(4, 0, spi0, pll0_sysclk2, 0),
->>> +       LPSC(5, 0, mmcsd0, pll0_sysclk2, 0),
->>> +       LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(9, 0, uart0, pll0_sysclk2, 0),
->>> +       LPSC(13, 0, pruss, pll0_sysclk2, 0),
->>> +       LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
->>> +       { }
->>> +};
->>> +
->>> +static const struct davinci_psc_clk_info da850_psc1_info[] __initconst = {
->>> +       LPSC(0, 0, tpcc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(1, 0, usb0, pll0_sysclk2, 0),
->>> +       LPSC(2, 0, usb1, pll0_sysclk4, 0),
->>> +       LPSC(3, 0, gpio, pll0_sysclk4, 0),
->>> +       LPSC(5, 0, emac, pll0_sysclk4, 0),
->>> +       LPSC(6, 0, emif3, pll0_sysclk5, LPSC_ALWAYS_ENABLED),
->>> +       LPSC(7, 0, mcasp0, async3, 0),
->>> +       LPSC(8, 0, sata, pll0_sysclk2, LPSC_FORCE),
->>> +       LPSC(9, 0, vpif, pll0_sysclk2, 0),
->>> +       LPSC(10, 0, spi1, async3, 0),
->>> +       LPSC(11, 0, i2c1, pll0_sysclk4, 0),
->>> +       LPSC(12, 0, uart1, async3, 0),
->>> +       LPSC(13, 0, uart2, async3, 0),
->>> +       LPSC(14, 0, mcbsp0, async3, 0),
->>> +       LPSC(15, 0, mcbsp1, async3, 0),
->>> +       LPSC(16, 0, lcdc, pll0_sysclk2, 0),
->>> +       LPSC(17, 0, ehrpwm, async3, 0),
->>> +       LPSC(18, 0, mmcsd1, pll0_sysclk2, 0),
->>> +       LPSC(20, 0, ecap, async3, 0),
->>> +       LPSC(21, 0, tptc2, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->>> +       { }
->>> +};
->>> +
->>> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->>> +{
->>> +       struct clk_onecell_data *clk_data;
->>> +
->>> +       clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
->>> +       if (!clk_data)
->>> +               return;
->>> +
->>> +       clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
->>> +       clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
->>> +       clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->>> +       clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->>> +       clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->>> +       clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->>> +       clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
->>> +
->>> +       clk_free_onecell_data(clk_data);
->>> +
->>> +       clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
->>> +       if (!clk_data)
->>> +               return;
->>> +
->>> +       clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
->>> +       clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->>> +       clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
->>> +       clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
->>> +       clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
->>> +       clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
->>> +       clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
->>> +       clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
->>> +       clk_register_clkdev(clk_data->clks[8], "fck", "ahci_da850");
->>> +       clk_register_clkdev(clk_data->clks[9], NULL, "vpif");
->>> +       clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
->>> +       clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
->>> +       clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
->>> +       clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
->>> +       clk_register_clkdev(clk_data->clks[14], NULL, "davinci-mcbsp.0");
->>> +       clk_register_clkdev(clk_data->clks[15], NULL, "davinci-mcbsp.1");
->>> +       clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
->>> +       clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
->>> +       clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
->>> +       clk_register_clkdev(clk_data->clks[18], NULL, "da830-mmc.1");
->>> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
->>> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
->>> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
->>> +
->>> +       clk_free_onecell_data(clk_data);
->>> +}
->>> +
->>> +#ifdef CONFIG_OF
->>> +static void __init of_da850_psc0_clk_init(struct device_node *node)
->>> +{
->>> +       of_davinci_psc_clk_init(node, da850_psc0_info, 16);
->>> +}
->>> +CLK_OF_DECLARE(da850_psc0_clk, "ti,da850-psc0", of_da850_psc0_clk_init);
->>> +
->>> +static void __init of_da850_psc1_clk_init(struct device_node *node)
->>> +{
->>> +       of_davinci_psc_clk_init(node, da850_psc1_info, 32);
->>> +}
->>> +CLK_OF_DECLARE(da850_psc1_clk, "ti,da850-psc1", of_da850_psc1_clk_init);
->>> +#endif
->>> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
->>> index 3ec8100..3d8bdfa 100644
->>> --- a/include/linux/clk/davinci.h
->>> +++ b/include/linux/clk/davinci.h
->>> @@ -17,5 +17,6 @@ void dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
->>>   void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
->>>
->>>   void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
->>> +void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
->>>
->>>   #endif /* __LINUX_CLK_DAVINCI_H__ */
->>> --
->>> 2.7.4
->>>
->>
->> Hi David,
->>
->> I've been working on moving the genpd code from its own driver to the
->> psc one. I couldn't get the system to boot though and problems
->> happened very early in the boot sequence. I struggled to figure out
->> what's happening, but eventually I noticed that psc uses
->> CLK_OF_DECLARE() to initialize clocks. The functions registered this
->> way are called very early in the boot sequence, way before
->> late_initcall() in which the genpd framework is initialized. This of
->> course makes it impossible to register genpd at the same time we
->> register PSCs.
->>
->> Mike, Stephen - it would be great if you could confirm, but I believe
->> the clock framework now only accepts clock drivers which create real
->> platform drivers, in which case this series would need to be modified.
-> 
-> You are correct. All new uses of CLK_OF_DECLARE are met with high
-> suspicion, and all new drivers should be platform drivers.
+This changeset is a rework of meson's clock controllers to use regmap
+instead of directly using io memory. It based clk-meson next/drivers
+and depends on few core clock patches, mainly to export generic clocks
+helpers: [0],[1]. The line count is pretty high but the changes are
+actually fairly simple and repetitive.
 
-Oh boy. I'll try to get a v7 out this week with these changes.
+This work has been triggered by the fact that the HHI register space on
+gxbb and axg provides more than just clocks. The display driver already
+uses a syscon for HHI on gxbb. This is why gxbb did not use
+devm_ioremap_resource() to map the registers, since it would have
+reserved the memory region, preventing another driver from re-mapping
+it. The cleaner solution is, of course, to use syscon to handle. The
+purpose of this changeset is to allow it. Even if meson8b does not need
+this ATM, there is real reason to leave it behind. It is actually easier
+to migrate it as well, so all meson clock drivers may support regmap
+only.
 
+The rework starts with a few easy clean-ups. The real deal starts with
+patch 5, which adds meson's clk_regmap. This will be used as common
+structure to implement all the controller clocks. Having this replaces
+the gxbb AO controller specific regmap gate. This structure will also be
+re-used in upcoming controllers, such as the axg's AO and audio
+controllers.  Each clock type is then migrated, one at a time, to this
+new structure.
 
+While at it, the meson clock drivers have been cleaned-up a bit,
+removing the gate embedded in the mpll driver, simplifying the pll
+driver and removing the legacy cpu_clk of meson8b.
 
-> 
-> There are cases when CLK_OF_DECLARE is necessary (sometimes
-> temporarily while things are reworked), but it seems this is not the
-> case for this driver based on your testing of the platform driver
-> approach. Please use the platform driver approach instead.
-> 
-> Thanks,
-> Mike
-> 
->>
->> David: FYI I quickly converted the functions in psc-da850.c to actual
->> probe callbacks and it worked just fine on a da850-lcdk board.
->>
->> Best regards,
->> Bartosz Golaszewski
+The new code around the cpu clk of the meson8b is just re-implementation,
+using simple elements, of the old cpu_clk. As explained by Martin, the
+old cpu_clk would hang quite often when changing the rate of the cpu
+clock. Surprisingly, the new implementation improved the situation a bit,
+but still hangs from time to time. As this is not acceptable, the cpu
+clk subtree as been switched to a read-only mode, preventing any change
+of the cpu rate, until an acceptable solution is found.
+
+With this series applied, the clock controllers of the gxbb, gxl and axg
+SoC will try get regmap from their parent DT node. If this fails, they
+will fallback to mapping the register themselves. This fallback will be
+kept until platform DTs have changed so clock controllers is a child of
+the HHI system controller.
+
+Based on this changeset, more patches are coming. For those interested,
+the WIP is available here [2]
+
+Changes since v1 [3]:
+* Fixed a few typos in patches descriptions
+* Fixed cpu clock names on meson8b, as suggested by Martin
+* Switched cpu clock subtree to reead-only mode
+* Fix clk_regmap mux documentation, as reported by Yixun
+
+[0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
+[2]: https://github.com/jeromebrunet/linux/tree/v4.17/meson/clk-regmap
+[1]: https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
+
+Jerome Brunet (19):
+  clk: meson: use dev pointer where possible
+  clk: meson: use devm_of_clk_add_hw_provider
+  clk: meson: only one loop index is necessary in probe
+  clk: meson: remove obsolete comments
+  clk: meson: add regmap clocks
+  clk: meson: switch gxbb ao_clk to clk_regmap
+  clk: meson: remove superseded aoclk_gate_regmap
+  clk: meson: add regmap to the clock controllers
+  clk: meson: migrate gates to clk_regmap
+  clk: meson: migrate dividers to clk_regmap
+  clk: meson: migrate muxes to clk_regmap
+  clk: meson: add regmap helpers for parm
+  clk: meson: migrate mplls clocks to clk_regmap
+  clk: meson: migrate the audio divider clock to clk_regmap
+  clk: meson: migrate plls clocks to clk_regmap
+  clk: meson: split divider and gate part of mpll
+  clk: meson: rework meson8b cpu clock
+  clk: meson: remove obsolete cpu_clk
+  clk: meson: use hhi syscon if available
+
+ drivers/clk/meson/Kconfig             |    9 +
+ drivers/clk/meson/Makefile            |    5 +-
+ drivers/clk/meson/axg.c               |  722 +++++++++--------
+ drivers/clk/meson/axg.h               |    6 +-
+ drivers/clk/meson/clk-audio-divider.c |   63 +-
+ drivers/clk/meson/clk-cpu.c           |  178 -----
+ drivers/clk/meson/clk-mpll.c          |  132 +---
+ drivers/clk/meson/clk-pll.c           |  243 +++---
+ drivers/clk/meson/clk-regmap.c        |  166 ++++
+ drivers/clk/meson/clk-regmap.h        |  111 +++
+ drivers/clk/meson/clkc.h              |   93 +--
+ drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
+ drivers/clk/meson/gxbb-aoclk.c        |   20 +-
+ drivers/clk/meson/gxbb-aoclk.h        |   11 -
+ drivers/clk/meson/gxbb.c              | 1402 ++++++++++++++++++---------------
+ drivers/clk/meson/gxbb.h              |    5 +-
+ drivers/clk/meson/meson8b.c           |  588 ++++++++------
+ drivers/clk/meson/meson8b.h           |   11 +-
+ 18 files changed, 1978 insertions(+), 1833 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-cpu.c
+ create mode 100644 drivers/clk/meson/clk-regmap.c
+ create mode 100644 drivers/clk/meson/clk-regmap.h
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+
+-- 
+2.14.3
