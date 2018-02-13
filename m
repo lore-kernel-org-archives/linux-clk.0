@@ -1,96 +1,188 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 28 Feb 2018 20:44:30 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
-	linux@armlinux.org.uk, mturquette@baylibre.com,
-	sboyd@codeaurora.org, jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-	airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
-	jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
-	rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-	mchehab@kernel.org, sean@mess.org, lee.jones@linaro.org,
-	daniel.thompson@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: dinguyen@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Message-ID: <20180228194429.GD22932@mithrandir>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
-In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Subject: [PATCHv4 1/3] dt-bindings: documentation: add clock bindings information for Stratix10
+Date: Tue, 13 Feb 2018 04:04:44 -0600
+Message-Id: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Document that Stratix10 clock bindings, and add the clock header file. The
+clock header is an enumeration of all the different clocks on the Stratix10
+platform.
 
---YToU2i3Vx8H2dn7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v4:
+- remove '_' in node names
+- remove stray tab
+- add clock-frequency property for fixed-clocks
+- put SPDX license as the very top line
+v3:
+- s/intc/intel for correct vendor prefix
+- fixup node name to "intel,stratix10-clkmgr"
+- document the required fixed-clock for oscillators
+v2:
+- use a single binding for the clock controller
+---
+ .../devicetree/bindings/clock/intc_stratix10.txt   | 51 +++++++++++++
+ include/dt-bindings/clock/stratix10-clock.h        | 84 ++++++++++++++++++++++
+ 2 files changed, 135 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+ create mode 100644 include/dt-bindings/clock/stratix10-clock.h
 
-On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
-> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
-> were adapted to this change.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->  drivers/bus/ts-nbus.c                |  2 +-
->  drivers/clk/clk-pwm.c                |  3 ++-
->  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->  drivers/hwmon/pwm-fan.c              |  2 +-
->  drivers/input/misc/max77693-haptic.c |  2 +-
->  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->  drivers/leds/leds-pwm.c              |  5 ++++-
->  drivers/media/rc/ir-rx51.c           |  5 ++++-
->  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->  include/linux/pwm.h                  |  6 ++++--
->  16 files changed, 70 insertions(+), 21 deletions(-)
-
-I don't think it makes sense to leak mode support into the legacy API.
-The pwm_config() function is considered legacy and should eventually go
-away. As such it doesn't make sense to integrate a new feature such as
-PWM modes into it. All users of pwm_config() assume normal mode, and
-that's what pwm_config() should provide.
-
-Anyone that needs something other than normal mode should use the new
-atomic PWM API.
-
-Thierry
-
---YToU2i3Vx8H2dn7O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqXBpoACgkQ3SOs138+
-s6GLrhAAuRLaoghLArJWd7JYjdi7JlVWdIer5OiGaY3qO2G2OnJBxBWctd+VJ/t+
-uTtC29oNgm7jzgwf7JiGUm3yVMx/S2rW6+s0JbeVp0xXBO7Lhd6EMZbSzOC3BBHB
-0RyqgEGoZRfaI++4LM9L6sMvHQ5lEt0PimKAug9MsXsxWOW88slB4Ll9Z/APl/Wr
-mCWW1qN2fs2F1hQdFAhE3ujMogEfRuW0/KwFkHa223ud/i1LJNe0jkIMnEYgWsCX
-x1my31QvhyMRxYQwp1FA3eAqHGnWo3yTXZYOYGBc3nJdm0UVQL59XX0UXduCVVPo
-YDwxSRZn04DADA5nBXplNIpG7qsELxrLUXcnB84D6Jstz17m4NSDknnHh/XkHgS7
-Q0SM/+jDqLzHHlhnCWmAJ9SBbvvrUDnXlCoMzmDoTzGN7fp74wFT1flIXILA91Lh
-AF/x1TWs5HV78+fowFUWVK2Fhc0zyNGYmDd7wQ2jlKjxETDcmXH+IoRHn48bcuio
-FphZkj4Un2o5X9O7jSRi5vHuJcmlHT30NsWgMduK9dWzq0wXih6zH/TTQk8N2rHM
-2+eijd/BDQum2RuK8mg2klvye5jrXp7f+iT305hUYoz4fmmMddqFiybi1nUHkTkA
-UG05BweYZ6hjEkpavMW0zeGEvWuZWwZZNHzKaOpJ/aRseA7Jpb0=
-=zbqh
------END PGP SIGNATURE-----
-
---YToU2i3Vx8H2dn7O--
+diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+new file mode 100644
+index 0000000..0652ff1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+@@ -0,0 +1,51 @@
++Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be
++	"intel,stratix10-clkmgr"
++
++- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
++
++- #clock-cells : from common clock binding, shall be set to 1.
++
++- clocks : Should contain fixed-clock sources, such as oscillators.
++
++Example:
++	clkmgr: clock-controller@ffd10000 {
++		compatible = "intel,stratix10-clkmgr";
++		reg = <0xffd10000 0x1000>;
++		#clock-cells = <1>;
++
++		clocks {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			cb_intosc_ls_clk: cb-intosc-ls-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			f2s_free_clk: f2s-free-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			osc1: osc1 {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++		};
++	};
+diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
+new file mode 100644
+index 0000000..5be885d
+--- /dev/null
++++ b/include/dt-bindings/clock/stratix10-clock.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier:	GPL-2.0
++ *
++ * Copyright (C) 2017, Intel Corporation
++ */
++
++#ifndef __STRATIX10_CLOCK_H
++#define __STRATIX10_CLOCK_H
++
++/* fixed rate clocks */
++#define STRATIX10_OSC1			0
++#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
++#define STRATIX10_CB_INTOSC_LS_CLK	2
++#define STRATIX10_F2S_FREE_CLK		3
++
++/* fixed factor clocks */
++#define STRATIX10_L4_SYS_FREE_CLK	4
++#define STRATIX10_MPU_PERIPH_CLK	5
++#define STRATIX10_MPU_L2RAM_CLK		6
++#define STRATIX10_SDMMC_CIU_CLK		7
++
++/* PLL clocks */
++#define STRATIX10_MAIN_PLL_CLK		8
++#define STRATIX10_PERIPH_PLL_CLK	9
++#define STRATIX10_BOOT_CLK		10
++
++/* Periph clocks */
++#define STRATIX10_MAIN_MPU_BASE_CLK	11
++#define STRATIX10_MAIN_NOC_BASE_CLK	12
++#define STRATIX10_MAIN_EMACA_CLK	13
++#define STRATIX10_MAIN_EMACB_CLK	14
++#define STRATIX10_MAIN_EMAC_PTP_CLK	15
++#define STRATIX10_MAIN_GPIO_DB_CLK	16
++#define STRATIX10_MAIN_SDMMC_CLK	17
++#define STRATIX10_MAIN_S2F_USR0_CLK	18
++#define STRATIX10_MAIN_S2F_USR1_CLK	19
++#define STRATIX10_MAIN_PSI_REF_CLK	20
++
++#define STRATIX10_PERI_MPU_BASE_CLK	21
++#define STRATIX10_PERI_NOC_BASE_CLK	22
++#define STRATIX10_PERI_EMACA_CLK	23
++#define STRATIX10_PERI_EMACB_CLK	24
++#define STRATIX10_PERI_EMAC_PTP_CLK	25
++#define STRATIX10_PERI_GPIO_DB_CLK	26
++#define STRATIX10_PERI_SDMMC_CLK	27
++#define STRATIX10_PERI_S2F_USR0_CLK	28
++#define STRATIX10_PERI_S2F_USR1_CLK	29
++#define STRATIX10_PERI_PSI_REF_CLK	30
++
++#define STRATIX10_MPU_FREE_CLK		31
++#define STRATIX10_NOC_FREE_CLK		32
++#define STRATIX10_S2F_USR0_CLK		33
++#define STRATIX10_NOC_CLK		34
++#define STRATIX10_EMAC_A_FREE_CLK	35
++#define STRATIX10_EMAC_B_FREE_CLK	36
++#define STRATIX10_EMAC_PTP_FREE_CLK	37
++#define STRATIX10_GPIO_DB_FREE_CLK	38
++#define STRATIX10_SDMMC_FREE_CLK	39
++#define STRATIX10_S2F_USER1_FREE_CLK	40
++#define STRATIX10_PSI_REF_FREE_CLK	41
++
++/* Gate clocks */
++#define STRATIX10_MPU_CLK		42
++#define STRATIX10_L4_MAIN_CLK		43
++#define STRATIX10_L4_MP_CLK		44
++#define STRATIX10_L4_SP_CLK		45
++#define STRATIX10_CS_AT_CLK		46
++#define STRATIX10_CS_TRACE_CLK		47
++#define STRATIX10_CS_PDBG_CLK		48
++#define STRATIX10_CS_TIMER_CLK		49
++#define STRATIX10_S2F_USER0_CLK		50
++#define STRATIX10_S2F_USER1_CLK		51
++#define STRATIX10_EMAC0_CLK		52
++#define STRATIX10_EMAC1_CLK		53
++#define STRATIX10_EMAC2_CLK		54
++#define STRATIX10_EMAC_PTP_CLK		55
++#define STRATIX10_GPIO_DB_CLK		56
++#define STRATIX10_SDMMC_CLK		57
++#define STRATIX10_PSI_REF_CLK		58
++#define STRATIX10_USB_CLK		59
++#define STRATIX10_SPI_M_CLK		60
++#define STRATIX10_NAND_CLK		61
++#define STRATIX10_NUM_CLKS		62
++
++#endif	/* __STRATIX10_CLOCK_H */
+-- 
+2.7.4
