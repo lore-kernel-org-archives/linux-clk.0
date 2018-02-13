@@ -1,64 +1,60 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A8A6E7E.4040009@samsung.com>
-Date: Mon, 19 Feb 2018 15:28:14 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
- list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
- list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 5/7] clk: samsung: exynos7: fix PLL rates
-In-reply-to: <20180216145754.14428-6-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145806eucas1p1e939d3138e29d3446df90e1a69ea9624@eucas1p1.samsung.com>
-	<20180216145754.14428-6-a.hajda@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58111 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964778AbeBMNlB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Feb 2018 08:41:01 -0500
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG SOC CLOCK
+        DRIVERS),
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH 0/7] clk: samsung: fix PLL rates
+Date: Tue, 13 Feb 2018 14:40:25 +0100
+Message-id: <20180213134032.30235-1-a.hajda@samsung.com>
+References: <CGME20180213134056eucas1p270dae5e31eeb96f5c317fe512d761ddd@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
-> Rates declared in PLL rate tables should match exactly rates calculated
-> from PLL coefficients. If that is not the case, rate of parent might be being
-> set not as expected. For instance, if in the PLL rates table we have
-> a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-> callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-> will return 393216003. If we now attempt to set rate of a PLL's child divider
-> clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-> That is the divider will be set to 3 instead of 2, because 393216003/2 is
-> greater than 196608000.
-> 
-> To fix this issue declared rates are changed to exactly match rates generated
-> by a PLL, as calculated from the P, M, S, K coefficients.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index 5931a4140c3d..bbfa57b4e017 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -140,7 +140,7 @@ static const struct samsung_div_clock topc_div_clks[] __initconst = {
->  };
->  
->  static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
-> -	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
-> +	PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
->  	{},
->  };
->  
-> 
+Hi,
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+This patchset fixes PLL clock rates in all Samsung PLLs, moreover it adds
+compile time validators to avoid such mistakes in the future.
+The patchset has been compile tested for all variants, and runtime tested on
+TM2 and Odroid XU3.
 
+Regards
+Andrzej
+
+
+Andrzej Hajda (7):
+  clk: samsung: exynos3250: fix PLL rates
+  clk: samsung: exynos5250: fix PLL rates
+  clk: samsung: exynos5260: fix PLL rates
+  clk: samsung: exynos5433: fix PLL rates
+  clk: samsung: exynos7: fix PLL rates
+  clk: samsung: s3c2410: fix PLL rates
+  clk: samsung: add compile time PLL rate validators
+
+ drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++------------------
+ drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++----------------
+ drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++---------
+ drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
+ drivers/clk/samsung/clk-exynos5410.c |  20 +++---
+ drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
+ drivers/clk/samsung/clk-exynos5433.c | 114 +++++++++++++++++------------------
+ drivers/clk/samsung/clk-exynos7.c    |   2 +-
+ drivers/clk/samsung/clk-pll.h        |  55 ++++++++++++++---
+ drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++-----------------
+ 10 files changed, 378 insertions(+), 343 deletions(-)
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.16.1
+
