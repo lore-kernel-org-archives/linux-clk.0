@@ -1,90 +1,102 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A8BC9ED.7010303@samsung.com>
-Date: Tue, 20 Feb 2018 16:10:37 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
- list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
- list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 6/7] clk: samsung: s3c2410: fix PLL rates
-In-reply-to: <20180216145754.14428-7-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145807eucas1p2260082a8178bc746dc8110982f2b0c2b@eucas1p2.samsung.com>
-	<20180216145754.14428-7-a.hajda@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
+Date: Tue, 13 Feb 2018 21:28:05 +0800
+Message-ID: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
-> Rates declared in PLL rate tables should match exactly rates calculated
-> from PLL coefficients. If that is not the case, rate of parent might be being
-> set not as expected. For instance, if in the PLL rates table we have
-> a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-> callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-> will return 393216003. If we now attempt to set rate of a PLL's child divider
-> clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-> That is the divider will be set to 3 instead of 2, because 393216003/2 is
-> greater than 196608000.
-> 
-> To fix this issue declared rates are changed to exactly match rates generated
-> by a PLL, as calculated from the P, M, S, K coefficients.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/clk/samsung/clk-s3c2410.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-> index e0650c33863b..d8e58a659467 100644
-> --- a/drivers/clk/samsung/clk-s3c2410.c
-> +++ b/drivers/clk/samsung/clk-s3c2410.c
-> @@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
->  	PLL_35XX_RATE(226000000, 105, 1, 1),
->  	PLL_35XX_RATE(210000000, 132, 2, 1),
->  	/* 2410 common */
-> -	PLL_35XX_RATE(203000000, 161, 3, 1),
-> +	PLL_35XX_RATE(202800000, 161, 3, 1),
->  	PLL_35XX_RATE(192000000, 88, 1, 1),
->  	PLL_35XX_RATE(186000000, 85, 1, 1),
->  	PLL_35XX_RATE(180000000, 82, 1, 1),
-> @@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
->  	PLL_35XX_RATE(147000000, 90, 2, 1),
->  	PLL_35XX_RATE(135000000, 82, 2, 1),
->  	PLL_35XX_RATE(124000000, 116, 1, 2),
-> -	PLL_35XX_RATE(118000000, 150, 2, 2),
-> +	PLL_35XX_RATE(118500000, 150, 2, 2),
->  	PLL_35XX_RATE(113000000, 105, 1, 2),
-> -	PLL_35XX_RATE(101000000, 127, 2, 2),
-> +	PLL_35XX_RATE(101250000, 127, 2, 2),
->  	PLL_35XX_RATE(90000000, 112, 2, 2),
-> -	PLL_35XX_RATE(85000000, 105, 2, 2),
-> +	PLL_35XX_RATE(84750000, 105, 2, 2),
->  	PLL_35XX_RATE(79000000, 71, 1, 2),
-> -	PLL_35XX_RATE(68000000, 82, 2, 2),
-> -	PLL_35XX_RATE(56000000, 142, 2, 3),
-> +	PLL_35XX_RATE(67500000, 82, 2, 2),
-> +	PLL_35XX_RATE(56250000, 142, 2, 3),
->  	PLL_35XX_RATE(48000000, 120, 2, 3),
-> -	PLL_35XX_RATE(51000000, 161, 3, 3),
-> +	PLL_35XX_RATE(50700000, 161, 3, 3),
->  	PLL_35XX_RATE(45000000, 82, 1, 3),
-> -	PLL_35XX_RATE(34000000, 82, 2, 3),
-> +	PLL_35XX_RATE(33750000, 82, 2, 3),
->  	{ /* sentinel */ },
->  };
->  
-> 
+This is a resend patch series.
+See the original one from here:
+[PATCH V3 00/10] clk: add imx7ulp clk support
+https://lkml.org/lkml/2018/1/19/351
+No function changes but remove the last one which is used for the test.
+Rebased against clk-next branch.
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+This patch series intends to add imx7ulp clk support.
 
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
+
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
+
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+
+Note: this series only adds A7 clock domain support as M4 clock
+domain will be handled by M4 seperately.
+
+Change Log:
+v2->v3:
+ * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
+   Others no changes.
+
+v1->v2:
+ * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+ * use clk_hw apis to register clocks
+ * use of_clk_add_hw_provider
+ * split the clocks register process into two parts: early part for possible
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
+
+
+Dong Aisheng (9):
+  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+  clk: imx: add pllv4 support
+  clk: imx: add pfdv2 support
+  clk: imx: add composite clk support
+  dt-bindings: clock: add imx7ulp clock binding doc
+  clk: imx: make mux parent strings const
+  clk: imx: implement new clk_hw based APIs
+  clk: imx: add imx7ulp clk driver
+
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+ drivers/clk/clk-divider.c                          | 152 ++++++++++++++
+ drivers/clk/clk-fractional-divider.c               |  10 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-busy.c                         |   2 +-
+ drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+ drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+ drivers/clk/imx/clk-imx7ulp.c                      | 232 +++++++++++++++++++++
+ drivers/clk/imx/clk-pfdv2.c                        | 207 ++++++++++++++++++
+ drivers/clk/imx/clk-pllv4.c                        | 188 +++++++++++++++++
+ drivers/clk/imx/clk.c                              |  22 ++
+ drivers/clk/imx/clk.h                              |  92 +++++++-
+ include/dt-bindings/clock/imx7ulp-clock.h          | 108 ++++++++++
+ include/linux/clk-provider.h                       |  17 ++
+ 14 files changed, 1180 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+ create mode 100644 drivers/clk/imx/clk-composite.c
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
