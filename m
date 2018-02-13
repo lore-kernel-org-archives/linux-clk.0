@@ -1,68 +1,61 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 21/26] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-Date: Mon, 12 Feb 2018 17:44:30 +0000
-Message-Id: <1518457475-4480-22-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
+ device
+To: Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
+ <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <cb75cdaa-eb84-d01e-60bd-21a928ddc090@gmail.com>
+Date: Tue, 13 Feb 2018 10:24:47 +0100
+MIME-Version: 1.0
+In-Reply-To: <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7745 SoC dtsi.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
 
- arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 02/12/2018 12:28 PM, Ryder Lee wrote:
+> As the new MFD device is in place, switch probing method to adapt it.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-mt7622-aud.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+> index 13f752d..68c52a9 100644
+> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
+> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+> @@ -142,11 +142,16 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+>  {
+>  	struct clk_onecell_data *clk_data;
+>  	struct device_node *node = pdev->dev.of_node;
+> +	struct device_node *pnode = pdev->dev.parent->of_node;
+>  	int r;
+>  
+>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+>  
+> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> +	/* Check if called from MFD */
+> +	if (!pnode)
+> +		pnode = node;
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6bc1cf4..5d1b8f2 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -321,6 +321,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7745-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7745-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
--- 
-2.7.4
+This is needed for backwards compatibility, correct?
+Please change the comment accordingly. The same holds for mt2701 driver.
+
+Thanks,
+Matthias
+
+> +
+> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
+>  			       clk_data);
+>  
+>  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> 
