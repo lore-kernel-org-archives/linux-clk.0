@@ -1,62 +1,283 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner H6
- DTSI file
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
- <20180223152038.2bflylwa6vj4gzfj@flea.lan>
- <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
- <20180226092645.xghkmfowenzlbm42@flea.lan>
-From: Samuel Holland <samuel@sholland.org>
-Message-ID: <b9bc5944-b9e3-91d7-8012-c87a2b2d17fa@sholland.org>
-Date: Mon, 26 Feb 2018 09:54:01 -0600
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH RESEND V3 3/9] clk: imx: add pllv4 support
+Date: Tue, 13 Feb 2018 21:28:08 +0800
+Message-ID: <1518528494-25723-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180226092645.xghkmfowenzlbm42@flea.lan>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/26/18 03:26, Maxime Ripard wrote:
-> On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
->>>> +	psci {
->>>> +		compatible = "arm,psci-0.2";
->>>> +		method = "smc";
->>>> +	};
->>>
->>> Is it needed? The bootloader should fill it with whatever version it
->>> has, shouldn't it?
->>
->> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
->> info.
->>
->> See A64/H5 device trees.
-> 
-> So if the PSCI version implemented in ATF ever changes, we would have
-> to update all the DT everywhere, but only if you're running the new
-> version?
+pllv4 is designed for System Clock Generation (SCG) module observed
+in IMX ULP SoC series. e.g. i.MX7ULP.
 
-Yes but no. PSCI 1.0 is generally backward compatible with PSCI 0.2. In fact,
-the Linux driver treats them exactly the same:
+The SCG modules generates clock used to derive processor, system,
+peripheral bus and external memory interface clocks while this patch
+intends to support the PLL part.
 
-        { .compatible = "arm,psci-0.2", .data = psci_0_2_init},
-        { .compatible = "arm,psci-1.0", .data = psci_0_2_init},
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-For the H6, however, the oldest ATF source available (which I believe was the
-one in use during bringup) is based on mainline 1.4, and is already at PSCI
-version 1.1:
+---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:
+ * remove clk_pllv4_is_enabled() check in set_rate, instead it will
+   be handled by core later.
+ * use readl_poll_timeout
+ * use clk_hw_register instead of clk_register
+ * other minor changes
+---
+ drivers/clk/imx/Makefile    |   1 +
+ drivers/clk/imx/clk-pllv4.c | 188 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 192 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
 
-[    0.000000] psci: probing for conduit method from DT.
-[    0.000000] psci: PSCIv1.1 detected in firmware.
-[    0.000000] psci: Using standard PSCI v0.2 function IDs
-[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index f91f2b2..2f00b03 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -11,6 +11,7 @@ obj-y += \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
++	clk-pllv4.o \
+ 	clk-pfd.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+new file mode 100644
+index 0000000..47e4d1c
+--- /dev/null
++++ b/drivers/clk/imx/clk-pllv4.c
+@@ -0,0 +1,188 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/* PLL Control Status Register (xPLLCSR) */
++#define PLL_CSR_OFFSET		0x0
++#define PLL_VLD			BIT(24)
++#define PLL_EN			BIT(0)
++
++/* PLL Configuration Register (xPLLCFG) */
++#define PLL_CFG_OFFSET		0x08
++#define BP_PLL_MULT		16
++#define BM_PLL_MULT		(0x7f << 16)
++
++/* PLL Numerator Register (xPLLNUM) */
++#define PLL_NUM_OFFSET		0x10
++
++/* PLL Denominator Register (xPLLDENOM) */
++#define PLL_DENOM_OFFSET	0x14
++
++struct clk_pllv4 {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
++
++/* Valid PLL MULT Table */
++static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
++
++#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static inline int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
++{
++	u32 csr;
++
++	return readl_poll_timeout(pll->base  + PLL_CSR_OFFSET,
++				  csr, csr & PLL_VLD, 0, LOCK_TIMEOUT_US);
++}
++
++static int clk_pllv4_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	if (readl_relaxed(pll->base) & PLL_EN)
++		return 1;
++
++	return 0;
++}
++
++static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++	u32 div;
++
++	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
++	div &= BM_PLL_MULT;
++	div >>= BP_PLL_MULT;
++
++	return parent_rate * div;
++}
++
++static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	unsigned long round_rate, i;
++
++	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
++		round_rate = parent_rate * pllv4_mult_table[i];
++		if (rate >= round_rate)
++			return round_rate;
++	}
++
++	return round_rate;
++}
++
++static bool clk_pllv4_is_valid_mult(unsigned int mult)
++{
++	int i;
++
++	/* check if mult is in valid MULT table */
++	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
++		if (pllv4_mult_table[i] == mult)
++			return true;
++	}
++
++	return false;
++}
++
++static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++	u32 val, mult;
++
++	mult = rate / parent_rate;
++
++	if (clk_pllv4_is_valid_mult(mult))
++		return -EINVAL;
++
++	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
++	val &= ~BM_PLL_MULT;
++	val |= mult << BP_PLL_MULT;
++	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
++
++	return 0;
++}
++
++static int clk_pllv4_enable(struct clk_hw *hw)
++{
++	u32 val;
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	val = readl_relaxed(pll->base);
++	val |= PLL_EN;
++	writel_relaxed(val, pll->base);
++
++	return clk_pllv4_wait_lock(pll);
++}
++
++static void clk_pllv4_disable(struct clk_hw *hw)
++{
++	u32 val;
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	val = readl_relaxed(pll->base);
++	val &= ~PLL_EN;
++	writel_relaxed(val, pll->base);
++}
++
++static const struct clk_ops clk_pllv4_ops = {
++	.recalc_rate	= clk_pllv4_recalc_rate,
++	.round_rate	= clk_pllv4_round_rate,
++	.set_rate	= clk_pllv4_set_rate,
++	.enable		= clk_pllv4_enable,
++	.disable	= clk_pllv4_disable,
++	.is_enabled	= clk_pllv4_is_enabled,
++};
++
++struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
++			  void __iomem *base)
++{
++	struct clk_pllv4 *pll;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++	int ret;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++
++	init.name = name;
++	init.ops = &clk_pllv4_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	pll->hw.init = &init;
++
++	hw = &pll->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pll);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bb..52f7c9d 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -42,6 +42,9 @@ enum imx_pllv3_type {
+ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		const char *parent_name, void __iomem *base, u32 div_mask);
+ 
++struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
++			     void __iomem *base);
++
+ struct clk *clk_register_gate2(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx, u8 cgr_val,
+-- 
+2.7.4
 
-So we could go ahead and bump the compatible to "arm,psci-1.0".
 
-Thanks,
-Samuel
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
