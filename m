@@ -1,48 +1,131 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>, "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-Date: Mon, 26 Feb 2018 17:16:44 +0100
-Message-ID: <2676311.2IEVhXnSIE@jernej-laptop>
-In-Reply-To: <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
+References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com> <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 13 Feb 2018 10:59:51 +0800
+Message-ID: <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
+Subject: Re: BUG: A31s Not booting anymore
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Julian,
+On Tue, Feb 13, 2018 at 9:25 AM, Philipp Rossak <embed3d@gmail.com> wrote:
+>
+>
+> On 12.02.2018 19:21, Philipp Rossak wrote:
+>>
+>> Hey,
+>>
+>> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting
+>> kernel ... . After enabling the earlyprintk I could capture this log: [1].
+>>
+>> After reverting those 5 commits from Chen-Yu I was able to boot again:
+>>
+>>
+>> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+>> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
+>>
+>> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+>> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
+>>
+>> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+>> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
+>>
+>> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+>> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
+>>
+>> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
+>> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
+>>
+>>
+>> I allready tried to fix it with making them save against zero:
+>>
+>> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
+>>          cmp->fixed_post_div with)
+>>                 rate *= cmp->fixed_post_div;
+>>
+>> But that didn't help.
+>>
+>> Any ideas?
+>>
+>> Regards,
+>> Philipp
+>>
+>> [1]: https://pastebin.com/64Fzzqvg
+>
+>
+> It took me some time, but I have now a few more infos:
+>
+> Right now the code breaks at this point here [1], with this clock [2].
+> If we have a look now at the clock config [3], we see here a table which is
+> an u8 array and also a fixed_predivs struct.
 
-Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby napisal(a):
-> Hi Jernej,
-> 
-> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Enable HDMI output on all boards which have HDMI connector.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts        
-> >   | 25 ++++++++++++++++++++++
-> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts         
-> >   | 25 ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts  
-> >         | 25 ++++++++++++++++++++++
-> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
-> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts      
-> >   | 24 +++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts  
-> >        | 25 ++++++++++++++++++++++ 8 files changed, 199 insertions(+)
-> 
-> As I understand it, the H2+ is just a slightly trimmed down H3. In
-> terms of HDMI support, the difference is that the H2+ can't output 4k.
-> If this code is compatible with the H2+, could you please add the
-> necessary bits and pieces to the h2-plus DTSs too?
+The u8 array is for mapping the parents from the index in the parents
+array to the actual register value you listed below.
 
-There are only 3 H2+ boards in kernel and none of them has HDMI connector, so 
-there's nothing to do actually. But if such board is added to kernel, it would 
-be trivially add proper nodes, since all H2+ boards include H3 DTSI.
+How are you figuring out which clock is triggering this? Because that
+is not even the right type of clock. The backtrace you posted shows
+the error occurring in a DIV or M type clock, not the MP type you
+are pointing to.
 
-Best regards,
-Jernej
+Could you add some noisy printk calls to the sunxi_ccu_probe()
+function in drivers/clk/sunxi-ng/ccu_common.c so it's much clearer
+which clock is failing?
+
+
+>
+> If we have a look at the function call where it breaks [4], shouldn't the
+> table be a clk_div_table struct instead of an u8?
+
+The table argument is an option. Did you go through how the sunxi-ng driver
+calls this function? As mentioned above, you are looking at the wrong thing.
+
+Thanks
+ChenYu
+
+>
+> The a31s is the only board where we have this combination of a fixed_predivs
+> and a table.
+>
+> Philipp
+>
+>
+> Related Clock source register A31s:
+>
+> 0000: OSC24MHz/750=32KHz
+> 0001: LOSC
+> 0010: OSC24MHz
+> 0011: /
+> 0100: /
+> 0101: /
+> 0110: /
+> 0111: /
+> 1000: /
+> 1001: /
+> 1010: /
+> 1011: AXICLK/4
+> 1100: /
+> 1101: AHB1CLK/4
+> 1110: /
+> 1111: /
+>
+>
+> [1]:
+> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
+>
+> [2]:
+> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
+>
+> [3]:
+> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
+>
+> [4]:
+> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
+>
