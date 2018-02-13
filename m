@@ -1,100 +1,320 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46199 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752045AbeB0JDv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Feb 2018 04:03:51 -0500
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH RESEND V3 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Date: Tue, 13 Feb 2018 21:28:06 +0800
+Message-ID: <1518528494-25723-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQBLTk7rduT2eQQKRhRiGTw-8MRhpz2ZJdEwKTx=-zY-Q@mail.gmail.com>
-References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
- <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
- <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com> <CAK7LNAQBLTk7rduT2eQQKRhRiGTw-8MRhpz2ZJdEwKTx=-zY-Q@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 27 Feb 2018 10:03:50 +0100
-Message-ID: <CAK8P3a1cEcBTiH7_gcUPZtsuRaeoOYaH3H4cYxkUBQiLMTMq=A@mail.gmail.com>
-Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
- 'select MFD_SYSCON'
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 1:46 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-02-26 21:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> On Mon, Feb 26, 2018 at 12:53 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> 2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->>>> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
->>>> <yamada.masahiro@socionext.com> wrote:
->>>>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
->>>>> used with care - it forces a lower limit of another symbol, ignoring
->>>>> the dependency.
->>>>>
->>>>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
->>>>> select it.
->>>>>
->>>>> This causes unmet dependencies for architecture without HAS_IOMEM.
->>>>>
->>>>>   $ make ARCH=score randconfig
->>>>>   scripts/kconfig/conf  --randconfig Kconfig
->>>>>   KCONFIG_SEED=0x27C47F43
->>>>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
->>>>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
->>>>>
->>>>> Use 'depends on' to observe the dependency.
->>>>>
->>>>> This commit was created by the following command:
->>>>>
->>>>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
->>>>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
->>>>>
->>>>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
->>>>>
->>>>> Also, make MFD_SYSCON 'default y' because some defconfig files may
->>>>> rely on someone select's MFD_SYSCON.
->>>>>
->>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>> ---
->>>>>
->>>>> If you have a better idea to fix 'unmet dependencies',
->>>>> please suggest.
->>>>
->>>> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
->>>> of defconfig configurations, I'd rather not do that.
->>>
->>>
->>> Could you explain why?
->>>
->>> I set 'default y' for MFD_SYSCON.
->>>
->>> Would it still break defconfig configurations?
->>
->> No, you are right, that would not break defconfigs, it would just mean one
->> useless driver being enabled for many configurations that don't need it.
->
-> If we are unhappy about this,
-> we can send per-arch patches
-> to add CONFIG_MTD_SYSCON=y to defconfigs that need it.
->
-> But, we need to decide what the right solution is.
+For dividers with zero indicating clock is disabled, instead of giving a
+warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
+set" in exist code, we'd like to introduce enable/disable function for it.
+e.g.
+000b - Clock disabled
+001b - Divide by 1
+010b - Divide by 2
+...
 
-I think for consistency, we should change the existing
-'depends on MFD_SYSCON' to 'select MFD_SYSCON'. This
-matches what we do with REGMAP_MMIO.
+Set rate when the clk is disabled will cache the rate request and only
+when the clk is enabled will the driver actually program the hardware to
+have the requested divider value. Similarly, when the clk is disabled we'll
+write a 0 there, but when the clk is enabled we'll restore whatever rate
+(divider) was chosen last.
 
-MFD_SYSCON is really a thin wrapper around REGMAP_MMIO,
-so I would keep using the same conventions here, even though
-we normally prefer to not 'select' any user-visible options.
+It does mean that recalc rate will be sort of odd, because when the clk is
+off it will return 0, and when the clk is on it will return the right rate.
+So to make things work, we'll need to return the cached rate in recalc rate
+when the clk is off and read the hardware when the clk is on.
 
-It might be possible to make MFD_SYSCON a silent symbol
-as well, but we'd have to make sure that all users select the symbol
-then.
+NOTE for the default off divider, the recalc rate will still return 0 as
+there's still no proper preset rate. Enable such divider will give user
+a reminder error message.
 
-        Arnd
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+---
+ChangeLog:
+v2->v3:
+ * split normal and gate ops
+ * fix the possible racy
+v1->v2:
+ * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+---
+ drivers/clk/clk-divider.c    | 152 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |   9 +++
+ 2 files changed, 161 insertions(+)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index b49942b..6143895 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -124,6 +124,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 
+ 	div = _get_div(table, val, flags, width);
+ 	if (!div) {
++		if (flags & CLK_DIVIDER_ZERO_GATE)
++			return 0;
++
+ 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+ 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+ 			clk_hw_get_name(hw));
+@@ -147,6 +150,34 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 				   divider->flags, divider->width);
+ }
+ 
++static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	unsigned int val;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	if (!clk_hw_is_enabled(hw)) {
++		val = divider->cached_val;
++	} else {
++		val = clk_readl(divider->reg) >> divider->shift;
++		val &= div_mask(divider->width);
++	}
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return divider_recalc_rate(hw, parent_rate, val, divider->table,
++				   divider->flags, divider->width);
++}
++
+ static bool _is_valid_table_div(const struct clk_div_table *table,
+ 							 unsigned int div)
+ {
+@@ -415,6 +446,108 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	int value;
++	u32 val;
++
++	value = divider_get_val(rate, parent_rate, divider->table,
++				divider->width, divider->flags);
++	if (value < 0)
++		return value;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	if (clk_hw_is_enabled(hw)) {
++		if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
++			val = div_mask(divider->width) << (divider->shift + 16);
++		} else {
++			val = clk_readl(divider->reg);
++			val &= ~(div_mask(divider->width) << divider->shift);
++		}
++		val |= (u32)value << divider->shift;
++		clk_writel(val, divider->reg);
++	} else {
++		divider->cached_val = value;
++	}
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static int clk_divider_enable(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	u32 val;
++
++	if (!divider->cached_val) {
++		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	/* restore div val */
++	val = clk_readl(divider->reg);
++	val |= divider->cached_val << divider->shift;
++	clk_writel(val, divider->reg);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return 0;
++}
++
++static void clk_divider_disable(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	u32 val;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	/* store the current div val */
++	val = clk_readl(divider->reg) >> divider->shift;
++	val &= div_mask(divider->width);
++	divider->cached_val = val;
++	clk_writel(0, divider->reg);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++}
++
++static int clk_divider_is_enabled(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	u32 val;
++
++	val = clk_readl(divider->reg) >> divider->shift;
++	val &= div_mask(divider->width);
++
++	return val ? 1 : 0;
++}
++
+ const struct clk_ops clk_divider_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+ 	.round_rate = clk_divider_round_rate,
+@@ -422,6 +555,16 @@ const struct clk_ops clk_divider_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ops);
+ 
++const struct clk_ops clk_divider_gate_ops = {
++	.recalc_rate = clk_divider_gate_recalc_rate,
++	.round_rate = clk_divider_round_rate,
++	.set_rate = clk_divider_gate_set_rate,
++	.enable = clk_divider_enable,
++	.disable = clk_divider_disable,
++	.is_enabled = clk_divider_is_enabled,
++};
++EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
++
+ const struct clk_ops clk_divider_ro_ops = {
+ 	.recalc_rate = clk_divider_recalc_rate,
+ 	.round_rate = clk_divider_round_rate,
+@@ -437,6 +580,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	struct clk_divider *div;
+ 	struct clk_hw *hw;
+ 	struct clk_init_data init;
++	u32 val;
+ 	int ret;
+ 
+ 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+@@ -454,6 +598,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	init.name = name;
+ 	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
+ 		init.ops = &clk_divider_ro_ops;
++	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
++		init.ops = &clk_divider_gate_ops;
+ 	else
+ 		init.ops = &clk_divider_ops;
+ 	init.flags = flags | CLK_IS_BASIC;
+@@ -469,6 +615,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 	div->hw.init = &init;
+ 	div->table = table;
+ 
++	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
++		val = clk_readl(reg) >> shift;
++		val &= div_mask(width);
++		div->cached_val = val;
++	}
++
+ 	/* register the clock */
+ 	hw = &div->hw;
+ 	ret = clk_hw_register(dev, hw);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f711be6..68ccd36 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -360,6 +360,7 @@ struct clk_div_table {
+  * @shift:	shift to the divider bit field
+  * @width:	width of the divider bit field
+  * @table:	array of value/divider pairs, last entry should have div = 0
++ * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
+  * @lock:	register lock
+  *
+  * Clock with an adjustable divider affecting its output frequency.  Implements
+@@ -388,6 +389,12 @@ struct clk_div_table {
+  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+  *	except when the value read from the register is zero, the divisor is
+  *	2^width of the field.
++ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
++ *	when the value read from the register is zero, it means the divisor
++ *	is gated. For this case, the cached_val will be used to store the
++ *	intermediate div for the normal rate operation, like set_rate/get_rate/
++ *	recalc_rate. When the divider is ungated, the driver will actually
++ *	program the hardware to have the requested divider value.
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+@@ -396,6 +403,7 @@ struct clk_divider {
+ 	u8		width;
+ 	u8		flags;
+ 	const struct clk_div_table	*table;
++	u32		cached_val;
+ 	spinlock_t	*lock;
+ };
+ 
+@@ -408,6 +416,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
++#define CLK_DIVIDER_ZERO_GATE		BIT(7)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
+-- 
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
