@@ -1,44 +1,38 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751094AbeBZPaF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:30:05 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:55727 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754112AbeBMFyw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Feb 2018 00:54:52 -0500
+From: Andre Heider <a.heider@gmail.com>
+Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: jonathanh@nvidia.com, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+Message-ID: <4de03c4d-c5c1-f3ea-1ddc-cd5990aadb47@gmail.com>
+Date: Tue, 13 Feb 2018 06:54:48 +0100
 MIME-Version: 1.0
-In-Reply-To: <20180226125355.9052-6-m.szyprowski@samsung.com>
-References: <CGME20180226125403eucas1p27d32d02417f3cda5b809e62bf894bef8@eucas1p2.samsung.com>
- <20180226125355.9052-1-m.szyprowski@samsung.com> <20180226125355.9052-6-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 26 Feb 2018 16:15:29 +0100
-Message-ID: <CAJKOXPcMndkWP4ZGp95pEibEcm8vZDZkai9Xjrhb+VT=AtuLmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] soc: samsung: pm_domains: Deprecate support for clocks
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 1:53 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Handling of special clock operations on power domain on/off sequences has
-> been moved to respective Exynos clock controller drivers, so there is no
-> need to keep the duplicated (and conflicting) code in Exynos power domain
-> driver. Mark clock related properties in Exynos power domain bindings as
-> deprecated. This change has no inpact on backwards-compatibility, as the
-> new drivers properly work with old DTBs (deprecated properties are
-> ignored).
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
->  drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
->  2 files changed, 5 insertions(+), 105 deletions(-)
+On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
+ > This patch series introduces the Memory Built-In Self Test (MBIST)
+ > work around (WAR) needed when power ungating certain domains. More
+ > details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
+ > implement the WAR in the Tegra210 clock driver, because most accesses are
+ > to CAR registers and for the VENC domain, we need to make sure the CSI
+ > clock source is not changed during the WAR execution.
 
-Looks okay, as you mentioned in cover letter, I'll take this and 6/6
-for the release coming after successful merge of 1-4.
+For the series:
+Tested-by: Andre Heider <a.heider@gmail.com>
 
-Best regards,
-Krzysztof
+With one patch on top [0] this finally fixes the 'green bars' issue, see 
+[1].
+
+Thanks!
+Andre
+
+[0] 
+https://github.com/thierryreding/linux/commit/13eea63a70de753466fc644f55a134a13b9b584b
+[1] https://github.com/denysvitali/linux-on-pixel-c/issues/1
