@@ -1,34 +1,100 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 28/41] ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-29-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a2ae4132-7098-b4f1-5d27-c3eed92ffc3f@ti.com>
-Date: Fri, 2 Feb 2018 20:33:35 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-29-git-send-email-david@lechnology.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com"
+	<gabriel.fernandez.st@gmail.com>,
+        Olivier BIDEAU <olivier.bideau@st.com>
+Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Date: Tue, 13 Feb 2018 14:36:24 +0000
+Message-ID: <3152089f-5a87-513b-7d6b-93ba38cf1d9f@st.com>
+References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+ <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
+ <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
+ <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
+ <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
+In-Reply-To: <CAL_JsqJFD5g46mkyEWo2uH_ogYLhnvBLQ0f6mU9DG_bdh9n7sA@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> The common clock framework will take care of disabling unused clocks when
-> we switch from the legacy davinci clocks and having this enabled will
-> cause compile errors after we switch, so remove it now.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+DQoNCk9uIDAyLzA3LzIwMTggMDc6MDMgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBNb24s
+IEZlYiA1LCAyMDE4IGF0IDE6MDEgQU0sIEdhYnJpZWwgRkVSTkFOREVaDQo+IDxnYWJyaWVsLmZl
+cm5hbmRlekBzdC5jb20+ICB3cm90ZToNCj4+IEhpIFJvYiwNCj4+DQo+PiBUaGFua3MgZm9yIHJl
+dmlld2luZy4NCj4+DQo+Pg0KPj4gT24gMDIvMDUvMjAxOCAwNzowOSBBTSwgUm9iIEhlcnJpbmcg
+d3JvdGU6DQo+Pj4gT24gRnJpLCBGZWIgMDIsIDIwMTggYXQgMDM6MDM6MjlQTSArMDEwMCxnYWJy
+aWVsLmZlcm5hbmRlekBzdC5jb20gIHdyb3RlOg0KPj4+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRl
+ejxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+Pj4+DQo+Pj4+IFRoZSBSQ0MgYmxvY2sgaXMg
+cmVzcG9uc2libGUgb2YgdGhlIG1hbmFnZW1lbnQgb2YgdGhlIGNsb2NrIGFuZCByZXNldA0KPj4+
+PiBnZW5lcmF0aW9uIGZvciB0aGUgY29tcGxldGUgY2lyY3VpdC4NCj4+Pj4NCj4+Pj4gU2lnbmVk
+LW9mZi1ieTogR2FicmllbCBGZXJuYW5kZXo8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4+
+PiAtLS0NCj4+Pj4gICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50
+eHQgICAgICAgfCA4NSArKysrKysrKysrKysrKysrKysrKysrDQo+Pj4+ICAgIDEgZmlsZSBjaGFu
+Z2VkLCA4NSBpbnNlcnRpb25zKCspDQo+Pj4+ICAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+Pj4NCj4+
+Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qs
+c3RtMzItcmNjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Qs
+c3RtMzItcmNjLnR4dA0KPj4+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4+PiBpbmRleCAwMDAw
+MDAwLi4yODAxN2ExDQo+Pj4+IC0tLSAvZGV2L251bGwNCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9zdCxzdG0zMi1yY2MudHh0DQo+Pj4+IEBAIC0wLDAg
+KzEsODUgQEANCj4+Pj4gK1NUTWljcm9lbGVjdHJvbmljcyBTVE0zMiBQZXJpcGhlcmFsIFJlc2V0
+IENsb2NrIENvbnRyb2xsZXINCj4+Pj4gKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4+Pj4gKw0KPj4+PiArVGhlIFJDQyBJUCBpcyBi
+b3RoIGEgcmVzZXQgYW5kIGEgY2xvY2sgY29udHJvbGxlci4NCj4+Pj4gKw0KPj4+PiArUGxlYXNl
+IGFsc28gcmVmZXIgdG8gcmVzZXQudHh0IGZvciBjb21tb24gcmVzZXQgY29udHJvbGxlciBiaW5k
+aW5nIHVzYWdlLg0KPj4+PiArDQo+Pj4+ICtQbGVhc2UgYWxzbyByZWZlciB0byBjbG9jay1iaW5k
+aW5ncy50eHQgZm9yIGNvbW1vbiBjbG9jayBjb250cm9sbGVyDQo+Pj4+ICtiaW5kaW5nIHVzYWdl
+Lg0KPj4+PiArDQo+Pj4+ICsNCj4+Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+Pj4+ICstIGNv
+bXBhdGlibGU6ICJzaW1wbGUtbWZkIiwgInN5c2NvbiINCj4+Pj4gKy0gcmVnOiBzaG91bGQgYmUg
+cmVnaXN0ZXIgYmFzZSBhbmQgbGVuZ3RoIGFzIGRvY3VtZW50ZWQgaW4gdGhlIGRhdGFzaGVldA0K
+Pj4+PiArDQo+Pj4+ICstIFN1Yi1ub2RlczoNCj4+Pj4gKyAgLSBjb21wYXRpYmxlOiAic3Qsc3Rt
+MzJtcDEtcmNjLWNsayINCj4+Pj4gKyAgICAtICNjbG9jay1jZWxsczogMSwgZGV2aWNlIG5vZGVz
+IHNob3VsZCBzcGVjaWZ5IHRoZSBjbG9jayBpbiB0aGVpcg0KPj4+PiArICAgICAgImNsb2NrcyIg
+cHJvcGVydHksIGNvbnRhaW5pbmcgYSBwaGFuZGxlIHRvIHRoZSBjbG9jayBkZXZpY2Ugbm9kZSwN
+Cj4+Pj4gKyAgICAgIGFuIGluZGV4IHNwZWNpZnlpbmcgdGhlIGNsb2NrIHRvIHVzZS4NCj4+Pj4g
+Kw0KPj4+PiArICAtIGNvbXBhdGlibGU6ICJzdCxzdG0zMm1wMS1yY2MtcnN0Ig0KPj4+PiArICAg
+IC0gI3Jlc2V0LWNlbGxzOiBTaGFsbCBiZSAxDQo+Pj4+ICsNCj4+Pj4gK0V4YW1wbGU6DQo+Pj4+
+ICsgICAgcmNjOiByY2NANTAwMDAwMDAgew0KPj4+PiArICAgICAgICAgICAgY29tcGF0aWJsZSA9
+ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQo+Pj4+ICsgICAgICAgICAgICByZWcgPSA8MHg1MDAw
+MDAwMCAweDEwMDA+Ow0KPj4+PiArDQo+Pj4+ICsgICAgICAgICAgICByY2NfY2xrOiByY2MtY2xr
+QDUwMDAwMDAwIHsNCj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+
+Ow0KPj4+PiArICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInN0LHN0bTMybXAxLXJj
+Yy1jbGsiOw0KPj4+PiArICAgICAgICAgICAgfTsNCj4+Pj4gKw0KPj4+PiArICAgICAgICAgICAg
+cmNjX3JzdDogcmNjLXJlc2V0QDUwMDAwMDAwIHsNCj4+PiBZb3Ugc2hvdWxkIG5vdCBoYXZlIHRo
+ZSBzYW1lIHVuaXQtYWRkcmVzcyB0d2ljZS4NCj4+Pg0KPj4+IElNTywgdGhpcyBzaG91bGQganVz
+dCBiZToNCj4+Pg0KPj4+ICAgICAgICByY2M6IHJjY0A1MDAwMDAwMCB7DQo+Pj4gICAgICAgICAg
+ICAgICAgY29tcGF0aWJsZSA9ICJzdC1zdG0zMm1wMS1yY2MiOw0KPj4+ICAgICAgICAgICAgICAg
+IHJlZyA9IDwweDUwMDAwMDAwIDB4MTAwMD47DQo+Pj4gICAgICAgICAgICAgICAgI2Nsb2NrLWNl
+bGxzID0gPDE+Ow0KPj4+ICAgICAgICAgICAgICAgICNyZXNldC1jZWxscyA9IDwxPjsNCj4+PiAg
+ICAgICAgfTsNCj4+Pg0KPj4+IFRoZXJlJ3Mgbm8gcmVhc29uIGEgbm9kZSBjYW4ndCBwcm92aWRl
+IG1vcmUgdGhhbiAxIGZ1bmN0aW9uLg0KPj4gUkNDIGlzIGFuIGRlZGljYXRlZCBJUCBmb3IgY2xv
+Y2tzIGFuZCByZXNldHMsIGJ1dCBhbHNvIGZvciBwb3dlcg0KPj4gbWFuYWdlbWVudCAocGF0Y2hl
+cyB3aWxsIGJlIHNlbnQgbGF0ZXIpDQo+IElmIHRoZXJlJ3MgYWRkaXRpb25hbCBmdW5jdGlvbnMs
+IHRoZXkgc2hvdWxkIGJlIHBhcnQgb2YgdGhlIGJpbmRpbmcNCj4gbm93LCBub3QgbGF0ZXIuIGJp
+bmRpbmdzIHNob3VsZCBub3QgdW5uZWNlc3NhcmlseSBldm9sdmUuDQpZZXMgeW91J3JlIHJpZ2h0
+IGkgd2lsbCBkbyBpdC4NCj4+IFRoZW4gaSBuZWVkIHRvIHByb2JlIDMgZHJpdmVycyB3aXRoIHNh
+bWUgSVAuDQo+IERyaXZlcnMgYW5kIERUIG5vZGVzIGRvbid0IGhhdmUgdG8gYmUgMS0xLiBBIHBh
+cmVudCBkcml2ZXIgY2FuIGNyZWF0ZQ0KPiBhZGRpdGlvbmFsIGNoaWxkIGRldmljZXMuDQo+DQo+
+IEFsc28sIGxvb2tpbmcgYXQgeW91ciBleGlzdGluZyBiaW5kaW5ncyBmb3IgUkNDIElQLCBpdCBp
+cyBkb25lIGFzIEkgc3VnZ2VzdGVkLg0KPg0KPj4gSXQncyBhbHNvIGEgd2F5IHRvIGF2b2lkIHVz
+ZSBvZiAnQ0xLX09GX0RFQ0xBUkVfRFJJVkVSJyBhbmQgaSBuZWVkIGl0IHRvDQo+PiBwcm9iZSB0
+aGUgM3RoIGRyaXZlci4NCj4gU291bmRzIGxpa2UgYSBMaW51eCBwcm9ibGVtLCBub3QgYSBEVCBp
+c3N1ZS4NCj4NCj4gUm9iDQpSQ0MgaXMgYW4gSVAgYmxvY2sgd2ljaCBleHBvc2VkIG11bHRpcGxl
+IGZ1bmN0aW9uYWxpdGllcyAoY2xvY2ssIHJlc2V0LCANCnBvd2VyIG1hbmFnZW1lbnQpLA0KbWZk
+IHNob3VsZCBiZSB0aGUgYmVzdCBzb2x1dGlvbiB0byBwb3B1bGF0ZSBlYWNoIGZ1bmN0aW9uYWxp
+dHkgaW4gDQpuYXR1cmFsIHdheSwNCmFuZCB0byBhY2Nlc3MgdG8gcmVnaXN0ZXJzID8NCg0KR2Fi
+cmllbA0KDQoNCg==
