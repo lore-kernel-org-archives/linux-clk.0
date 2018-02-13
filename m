@@ -1,422 +1,103 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 11/15] clk: qcom: Add Krait clock controller driver
-Date: Tue, 27 Feb 2018 19:36:58 +0530
-Message-Id: <1519740422-3835-12-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <horms@verge.net.au>
+Date: Tue, 13 Feb 2018 09:05:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
+Message-ID: <20180213080512.huhc6pkowhie74nq@verge.net.au>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Mon, Feb 12, 2018 at 05:44:09PM +0000, Fabrizio Castro wrote:
+> Dear All,
+> 
+> this series has been around for some time as RFC, and it has collected
+> useful comments from the community along the way.
+> The solution proposed by this patch set works for most R-Car Gen2 and
+> RZ/G1 devices, but not all of them. We now know that for some R-Car
+> Gen2 early revisions there is no proper software fix. Anyway, no
+> product has been built around early revisions, but development boards
+> mounting early revisions (basically prototypes) are still out there.
+> As a result, this series isn't enabling the internal watchdog on R-Car
+> Gen2 boards, developers may enable it in board specific device trees
+> if needed.
+> This series has been tested by me on the iwg20d, iwg22d, Lager, Alt,
+> and Koelsch boards.
+> 
+> The problem
+> ===========
+> To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
+> to ICRAM1 and we program the [S]BAR registers so that when we turn ON
+> the non-boot CPUs they are redirected to the reset vector installed by
+> Linux in ICRAM1, and eventually they continue the execution to RAM,
+> where the SMP bring-up code will take care of the rest.
+> The content of the [S]BAR registers survives a watchdog triggered reset,
+> and as such after the watchdog fires the boot core will try and execute
+> the SMP bring-up code instead of jumping to the bootrom code.
+> 
+> The fix
+> =======
+> The main strategy for the solution is to let the reset vector decide
+> if it needs to jump to shmobile_boot_fn or to the bootrom code.
+> In a watchdog triggered reset scenario, since the [S]BAR registers keep
+> their values, the boot CPU will jump into the newly designed reset
+> vector, the assembly routine will eventually test WOVF (a bit in register
+> RWTCSRA that indicates if the watchdog counter has overflown, the value
+> of this bit gets retained in this scenario), and jump to the bootrom code
+> which will in turn load up the bootloader, etc.
+> When bringing up SMP or using CPU hotplug, the reset vector will jump
+> to shmobile_boot_fn instead.
+> 
+> Thank you All for your help.
+> 
+> Best regards,
+> 
+> Fabrizio Castro (26):
+>   ARM: shmobile: Add watchdog support
+>   ARM: dts: r8a7743: Adjust SMP routine size
+>   ARM: dts: r8a7745: Adjust SMP routine size
+>   ARM: dts: r8a7790: Adjust SMP routine size
+>   ARM: dts: r8a7791: Adjust SMP routine size
+>   ARM: dts: r8a7792: Adjust SMP routine size
+>   ARM: dts: r8a7793: Adjust SMP routine size
+>   ARM: dts: r8a7794: Adjust SMP routine size
+>   soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
+>   ARM: shmobile: rcar-gen2: Add watchdog support
+>   dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+>   watchdog: renesas_wdt: Add R-Car Gen2 support
+>   watchdog: renesas_wdt: Add restart handler
+>   ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
+>   clk: renesas: r8a7743: Add rwdt clock
+>   clk: renesas: r8a7745: Add rwdt clock
+>   clk: renesas: r8a7790: Add rwdt clock
+>   clk: renesas: r8a7791/r8a7793: Add rwdt clock
+>   clk: renesas: r8a7794: Add rwdt clock
+>   ARM: dts: r8a7743: Add watchdog support to SoC dtsi
+>   ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+>   ARM: dts: r8a7790: Add watchdog support to SoC dtsi
+>   ARM: dts: r8a7791: Add watchdog support to SoC dtsi
+>   ARM: dts: r8a7794: Add watchdog support to SoC dtsi
+>   ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+>   ARM: dts: iwg22m: Add watchdog support to SoM dtsi
 
-The Krait CPU clocks are made up of a primary mux and secondary
-mux for each CPU and the L2, controlled via cp15 accessors. For
-Kraits within KPSSv1 each secondary mux accepts a different aux
-source, but on KPSSv2 each secondary mux accepts the same aux
-source.
-
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/Kconfig    |   8 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/krait-cc.c | 341 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 350 insertions(+)
- create mode 100644 drivers/clk/qcom/krait-cc.c
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 8fca65d..73cb840 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -243,6 +243,14 @@ config KPSS_XCC
- 	  if you want to support CPU frequency scaling on devices such
- 	  as MSM8960, APQ8064, etc.
- 
-+config KRAITCC
-+	tristate "Krait Clock Controller"
-+	depends on COMMON_CLK_QCOM && ARM
-+	select KRAIT_CLOCKS
-+	help
-+	  Support for the Krait CPU clocks on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling.
-+
- config KRAIT_CLOCKS
- 	bool
- 	select KRAIT_L2_ACCESSORS
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 24e598a..cd99c7b 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
- obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-+obj-$(CONFIG_KRAITCC) += krait-cc.o
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-new file mode 100644
-index 0000000..7c9dfb0
---- /dev/null
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -0,0 +1,341 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+
-+#include "clk-krait.h"
-+
-+static unsigned int sec_mux_map[] = {
-+	2,
-+	0,
-+};
-+
-+static unsigned int pri_mux_map[] = {
-+	1,
-+	2,
-+	0,
-+};
-+
-+static int
-+krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
-+{
-+	struct krait_div2_clk *div;
-+	struct clk_init_data init = {
-+		.num_parents = 1,
-+		.ops = &krait_div2_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	const char *p_names[1];
-+	struct clk *clk;
-+
-+	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return -ENOMEM;
-+
-+	div->width = 2;
-+	div->shift = 6;
-+	div->lpl = id >= 0;
-+	div->offset = offset;
-+	div->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
-+	if (!init.name)
-+		return -ENOMEM;
-+
-+	init.parent_names = p_names;
-+	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!p_names[0]) {
-+		kfree(init.name);
-+		return -ENOMEM;
-+	}
-+
-+	clk = devm_clk_register(dev, &div->hw);
-+	kfree(p_names[0]);
-+	kfree(init.name);
-+
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static int
-+krait_add_sec_mux(struct device *dev, int id, const char *s,
-+		  unsigned int offset, bool unique_aux)
-+{
-+	struct krait_mux_clk *mux;
-+	static const char *sec_mux_list[] = {
-+		"acpu_aux",
-+		"qsb",
-+	};
-+	struct clk_init_data init = {
-+		.parent_names = sec_mux_list,
-+		.num_parents = ARRAY_SIZE(sec_mux_list),
-+		.ops = &krait_mux_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	struct clk *clk;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return -ENOMEM;
-+
-+	mux->offset = offset;
-+	mux->lpl = id >= 0;
-+	mux->mask = 0x3;
-+	mux->shift = 2;
-+	mux->parent_map = sec_mux_map;
-+	mux->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
-+	if (!init.name)
-+		return -ENOMEM;
-+
-+	if (unique_aux) {
-+		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
-+		if (!sec_mux_list[0]) {
-+			clk = ERR_PTR(-ENOMEM);
-+			goto err_aux;
-+		}
-+	}
-+
-+	clk = devm_clk_register(dev, &mux->hw);
-+
-+	if (unique_aux)
-+		kfree(sec_mux_list[0]);
-+err_aux:
-+	kfree(init.name);
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static struct clk *
-+krait_add_pri_mux(struct device *dev, int id, const char *s,
-+		  unsigned int offset)
-+{
-+	struct krait_mux_clk *mux;
-+	const char *p_names[3];
-+	struct clk_init_data init = {
-+		.parent_names = p_names,
-+		.num_parents = ARRAY_SIZE(p_names),
-+		.ops = &krait_mux_clk_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	struct clk *clk;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mux->mask = 0x3;
-+	mux->shift = 0;
-+	mux->offset = offset;
-+	mux->lpl = id >= 0;
-+	mux->parent_map = pri_mux_map;
-+	mux->hw.init = &init;
-+
-+	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
-+	if (!init.name)
-+		return ERR_PTR(-ENOMEM);
-+
-+	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
-+	if (!p_names[0]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p0;
-+	}
-+
-+	p_names[1] = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
-+	if (!p_names[1]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p1;
-+	}
-+
-+	p_names[2] = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
-+	if (!p_names[2]) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto err_p2;
-+	}
-+
-+	clk = devm_clk_register(dev, &mux->hw);
-+
-+	kfree(p_names[2]);
-+err_p2:
-+	kfree(p_names[1]);
-+err_p1:
-+	kfree(p_names[0]);
-+err_p0:
-+	kfree(init.name);
-+	return clk;
-+}
-+
-+/* id < 0 for L2, otherwise id == physical CPU number */
-+static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
-+{
-+	int ret;
-+	unsigned int offset;
-+	void *p = NULL;
-+	const char *s;
-+	struct clk *clk;
-+
-+	if (id >= 0) {
-+		offset = 0x4501 + (0x1000 * id);
-+		s = p = kasprintf(GFP_KERNEL, "%d", id);
-+		if (!s)
-+			return ERR_PTR(-ENOMEM);
-+	} else {
-+		offset = 0x500;
-+		s = "_l2";
-+	}
-+
-+	ret = krait_add_div(dev, id, s, offset);
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err;
-+	}
-+
-+	ret = krait_add_sec_mux(dev, id, s, offset, unique_aux);
-+	if (ret) {
-+		clk = ERR_PTR(ret);
-+		goto err;
-+	}
-+
-+	clk = krait_add_pri_mux(dev, id, s, offset);
-+err:
-+	kfree(p);
-+	return clk;
-+}
-+
-+static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	unsigned int idx = clkspec->args[0];
-+	struct clk **clks = data;
-+
-+	if (idx >= 5) {
-+		pr_err("%s: invalid clock index %d\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return clks[idx] ? : ERR_PTR(-ENODEV);
-+}
-+
-+static const struct of_device_id krait_cc_match_table[] = {
-+	{ .compatible = "qcom,krait-cc-v1", (void *)1UL },
-+	{ .compatible = "qcom,krait-cc-v2" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, krait_cc_match_table);
-+
-+static int krait_cc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct of_device_id *id;
-+	unsigned long cur_rate, aux_rate;
-+	int cpu;
-+	struct clk *clk;
-+	struct clk **clks;
-+	struct clk *l2_pri_mux_clk;
-+
-+	id = of_match_device(krait_cc_match_table, dev);
-+	if (!id)
-+		return -ENODEV;
-+
-+	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
-+	clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	if (!id->data) {
-+		clk = clk_register_fixed_factor(dev, "acpu_aux",
-+						"gpll0_vote", 0, 1, 2);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+	}
-+
-+	/* Krait configurations have at most 4 CPUs and one L2 */
-+	clks = devm_kcalloc(dev, 5, sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	for_each_possible_cpu(cpu) {
-+		clk = krait_add_clks(dev, cpu, id->data);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+		clks[cpu] = clk;
-+	}
-+
-+	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
-+	if (IS_ERR(l2_pri_mux_clk))
-+		return PTR_ERR(l2_pri_mux_clk);
-+	clks[4] = l2_pri_mux_clk;
-+
-+	/*
-+	 * We don't want the CPU or L2 clocks to be turned off at late init
-+	 * if CPUFREQ or HOTPLUG configs are disabled. So, bump up the
-+	 * refcount of these clocks. Any cpufreq/hotplug manager can assume
-+	 * that the clocks have already been prepared and enabled by the time
-+	 * they take over.
-+	 */
-+	for_each_online_cpu(cpu) {
-+		clk_prepare_enable(l2_pri_mux_clk);
-+		WARN(clk_prepare_enable(clks[cpu]),
-+		     "Unable to turn on CPU%d clock", cpu);
-+	}
-+
-+	/*
-+	 * Force reinit of HFPLLs and muxes to overwrite any potential
-+	 * incorrect configuration of HFPLLs and muxes by the bootloader.
-+	 * While at it, also make sure the cores are running at known rates
-+	 * and print the current rate.
-+	 *
-+	 * The clocks are set to aux clock rate first to make sure the
-+	 * secondary mux is not sourcing off of QSB. The rate is then set to
-+	 * two different rates to force a HFPLL reinit under all
-+	 * circumstances.
-+	 */
-+	cur_rate = clk_get_rate(l2_pri_mux_clk);
-+	aux_rate = 384000000;
-+	if (cur_rate == 1) {
-+		pr_info("L2 @ QSB rate. Forcing new rate.\n");
-+		cur_rate = aux_rate;
-+	}
-+	clk_set_rate(l2_pri_mux_clk, aux_rate);
-+	clk_set_rate(l2_pri_mux_clk, 2);
-+	clk_set_rate(l2_pri_mux_clk, cur_rate);
-+	pr_info("L2 @ %lu KHz\n", clk_get_rate(l2_pri_mux_clk) / 1000);
-+	for_each_possible_cpu(cpu) {
-+		clk = clks[cpu];
-+		cur_rate = clk_get_rate(clk);
-+		if (cur_rate == 1) {
-+			pr_info("CPU%d @ QSB rate. Forcing new rate.\n", cpu);
-+			cur_rate = aux_rate;
-+		}
-+
-+		clk_set_rate(clk, aux_rate);
-+		clk_set_rate(clk, 2);
-+		clk_set_rate(clk, cur_rate);
-+		pr_info("CPU%d @ %lu KHz\n", cpu, clk_get_rate(clk) / 1000);
-+	}
-+
-+	of_clk_add_provider(dev->of_node, krait_of_get, clks);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver krait_cc_driver = {
-+	.probe = krait_cc_probe,
-+	.driver = {
-+		.name = "krait-cc",
-+		.of_match_table = krait_cc_match_table,
-+	},
-+};
-+module_platform_driver(krait_cc_driver);
-+
-+MODULE_DESCRIPTION("Krait CPU Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:krait-cc");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Thanks, I have applied the above "dts" and "defconfig" patches for v4.17.
